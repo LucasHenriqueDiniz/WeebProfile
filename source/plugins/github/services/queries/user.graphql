@@ -1,0 +1,12 @@
+query BaseUser {
+  user(login: "$login") {
+    databaseId
+    name
+    login
+    location
+    createdAt
+    avatarUrl
+    websiteUrl
+    twitterUsername
+  }
+}

@@ -1,0 +1,25 @@
+name: WeebProfile
+on:
+  # 🦀 Schedule
+  schedule: [{ cron: "0 12 * * *" }] # Everyday at 12:00 UTC
+  # 💡 The following line lets you run workflow manually from the action tab!
+  workflow_dispatch:
+jobs:
+  weeb_profile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🦀 LastFM & Github 🦀
+        uses: LucasHenriqueDiniz/WeebProfile@main
+        with:
+          FILENAME: LastFM.svg
+          GIST_ID: ${{ secrets.GIST_ID }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          STORAGE_METHOD: gist
+          STYLE: default
+          SIZE: half
+
+          PLUGIN_GITHUB: true
+          PLUGIN_GITHUB_HIDE_HEADER: true
+          PLUGIN_GITHUB_USERNAME: LucasHenriqueDiniz
+          PLUGIN_GITHUB_SECTIONS: favorite_languages
+          PLUGIN_GITHUB_FAVORITE_LANGUAGES_TITLE: "Languages (<qnt>)"

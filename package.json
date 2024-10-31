@@ -1,0 +1,10 @@
+{
+  "name": "weeb-profile",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "weeb-profile-core",
+    "weeb-profile-source",
+    "weeb-profile-web-client"
+  ]
+}

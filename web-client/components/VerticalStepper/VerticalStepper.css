@@ -1,0 +1,99 @@
+/* <div className="step-icon">{number}</div>
+<span className="step-title">{title}</span>
+<span className="step-line" />
+<div className="step-content">
+{children}
+</div>
+<div className="step-connector-line" />
+</> */
+
+.step-container {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-family);
+}
+
+.stepper {
+  display: grid;
+  grid-template-areas:
+    "icon title"
+    "line content"
+    "connector .";
+  grid-template-rows: auto auto auto;
+  grid-template-columns: 50px 1fr;
+}
+
+.step-icon-container {
+  grid-area: icon;
+  display: flex;
+  justify-content: center;
+}
+
+.step-icon {
+  display: flex;
+  background-color: var(--background-elevated);
+  border-radius: 50%;
+  color: var(--text-primary);
+  width: 35px;
+  height: 35px;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.step-title {
+  grid-area: title;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-left: 8px;
+}
+
+.step-line {
+  grid-area: line;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin-top: 10px;
+}
+
+.step-line::after {
+  content: "";
+  width: 2px;
+  height: 100%;
+  background-color: var(--background-elevated);
+}
+
+.step-content {
+  grid-area: content;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 24px;
+  padding-top: 6px;
+}
+
+.step-connector-line {
+  grid-area: connector;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 25px;
+  margin-bottom: 10px;
+}
+
+.step-connector-line::after {
+  content: "";
+  width: 2px;
+  height: 100%;
+  background-color: var(--background-elevated);
+}
+
+.hide-line {
+  display: none !important;
+}

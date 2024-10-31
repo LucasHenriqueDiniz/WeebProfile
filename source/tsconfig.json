@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "WeebProfile Source",
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "preserve",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "auto",
+    "jsx": "react",
+    "paths": {
+      "source/*": ["./*"],
+      "styles/*": ["./styles/*"],
+      "plugins/*": ["./plugins/*"],
+      "templates/*": ["./templates/*"],
+      "web-client/*": ["../web-client/*"],
+      "core/*": ["../core/*"],
+      "helpers/*": ["./helpers/*"]
+    },
+    "incremental": true,
+    "baseUrl": ".",
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "include": ["source/**/*", "styles/**/*", "plugins/**/*", "templates/**/*"],
+  "exclude": ["node_modules"]
+}

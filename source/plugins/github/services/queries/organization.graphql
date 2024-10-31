@@ -1,0 +1,13 @@
+query BaseOrganization {
+  organization(login: "$login") {
+    databaseId
+    name
+    login
+    location
+    createdAt
+    avatarUrl
+    websiteUrl
+    isVerified
+    twitterUsername
+  }
+}

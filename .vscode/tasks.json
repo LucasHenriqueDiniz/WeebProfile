@@ -1,0 +1,97 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "WEB-CLIENT: Run npm dev",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/web-client"
+      },
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "WEB-CLIENT: Run npm build",
+      "type": "shell",
+      "command": "npm run build",
+      "options": {
+        "cwd": "${workspaceFolder}/web-client"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "WEB-CLIENT: Run npm test",
+      "type": "shell",
+      "command": "npm run test",
+      "options": {
+        "cwd": "${workspaceFolder}/web-client"
+      },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "CORE: fix lint and prettier",
+      "type": "shell",
+      "command": "yarn lint:fix && yarn prettier:fix",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "CORE: check lint and prettier",
+      "type": "shell",
+      "command": "yarn lint && yarn prettier",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "CORE: start",
+      "type": "shell",
+      "command": "npm run start",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "CORE: setup-fonts",
+      "type": "shell",
+      "command": "npm run setup-fonts",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "CORE: generate-readme",
+      "type": "shell",
+      "command": "npm run generate-readme",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

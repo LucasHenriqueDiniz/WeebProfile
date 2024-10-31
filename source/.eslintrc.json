@@ -1,0 +1,53 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/stylistic"
+  ],
+  "ignorePatterns": ["node_modules/", ".npm-only-allow"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true,
+      "warnOnUnsupportedTypeScriptVersion": false
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "no-console": "warn",
+    "quotes": ["error", "double", { "avoidEscape": true }],
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "warn",
+    "react/jsx-no-duplicate-props": "error",
+    "@typescript-eslint/no-unused-expressions": "error",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true,
+        "vars": "all",
+        "args": "after-used",
+        "caughtErrors": "none"
+      }
+    ],
+    "sort-imports": [
+      "error",
+      {
+        "ignoreCase": true,
+        "ignoreDeclarationSort": true,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+      }
+    ]
+  }
+}

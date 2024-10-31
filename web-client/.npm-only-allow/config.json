@@ -1,0 +1,11 @@
+{
+	"PM": "yarn",
+	"server": "install",
+	"npm": {
+		"name": "yarn",
+		"version": "1.22.22"
+	},
+	"lang": "en",
+	"userScript": [],
+	"_npm_postintall_throw_err": false
+}

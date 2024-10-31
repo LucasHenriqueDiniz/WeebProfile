@@ -1,0 +1,17 @@
+- name: 🦀 LastFM 🦀
+  uses: LucasHenriqueDiniz/WeebProfile@main
+  with:
+    FILENAME: LastFM.svg
+    GIST_ID: ${{ secrets.GIST_ID }}
+    GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    STORAGE_METHOD: gist
+    SIZE: half
+
+    PLUGIN_LASTFM: true
+    PLUGIN_LASTFM_HIDE_HEADER: true
+    PLUGIN_LASTFM_USERNAME: Amayacrab
+    PLUGIN_LASTFM_STYLE: default
+    PLUGIN_LASTFM_SECTIONS: recent_tracks, top_artists_default, top_albums_grid
+    PLUGIN_LASTFM_RECENTTRACKS_MAX: 5
+    PLUGIN_LASTFM_TOPARTISTS_MAX: 5
+    PLUGIN_LASTFM_TOPALBUMS_MAX: 4

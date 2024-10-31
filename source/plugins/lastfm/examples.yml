@@ -1,0 +1,28 @@
+name: WeebProfile
+on:
+  # 🦀 Schedule
+  schedule: [{ cron: "0 12 * * *" }] # Everyday at 12:00 UTC
+  # 💡 The following line lets you run workflow manually from the action tab!
+  workflow_dispatch:
+jobs:
+  weeb_profile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🦀 MyAnimeList 🦀
+        uses: LucasHenriqueDiniz/WeebProfile@main
+        with:
+          FILENAME: MyAnimeList.svg
+          GIST_ID: ${{ secrets.GIST_ID }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          STORAGE_METHOD: gist
+          SIZE: half
+          STYLE: default
+
+          PLUGIN_MAL: true
+          PLUGIN_MAL_HIDE_HEADER: true
+          PLUGIN_MAL_USERNAME: Amayacrab
+          PLUGIN_MAL_SECTIONS: statistics_simple, character_simple_favorites, anime_favorites
+          PLUGIN_MAL_ANIME_FAVORITES_MAX: 3
+          PLUGIN_MAL_CHARACTER_FAVORITES_MAX: 5
+          PLUGIN_MAL_CHARACTER_FAVORITES_TITLE: "Waifus"
+          PLUGIN_MAL_STATISTICS_SIMPLE_TITLE: "MAL Stats"

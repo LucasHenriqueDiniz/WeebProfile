@@ -1,0 +1,106 @@
+.code-block {
+  background-color: var(--code-background);
+  color: var(--code-text);
+  padding: 16px;
+  border-radius: 6px;
+  font-family: var(--code-font);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid var(--borderColor-default);
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    &:hover {
+      background-color: var(--scrollbar-thumb-hover);
+    }
+  }
+  &::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+}
+
+.code-line {
+  font-family: var(--code-font);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: var(--code-text);
+  transition: background-color 0.2s;
+  &:hover {
+    background-color: var(--code-line-hover);
+    & .line-number {
+      font-weight: bold;
+    }
+  }
+}
+
+.line-number {
+  font-family: var(--code-font);
+  text-align: right;
+  margin-right: 12px;
+  margin-left: 8px;
+  background-color: var(--code-background);
+  user-select: none;
+  transition: font-weight 0.2s;
+}
+
+.code-block .line-number::before {
+  content: attr(data-line);
+}
+
+.code-line span {
+  white-space: pre-wrap;
+}
+
+.json-code-block {
+  font-family: var(--code-font);
+  background-color: var(--code-background);
+  color: var(--code-text);
+  padding: 16px;
+  border-radius: 6px;
+  font-family: var(--code-font);
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid var(--borderColor-default);
+  overflow-y: scroll;
+  height: 100%;
+  max-height: 75vh;
+  position: relative;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+    &:hover {
+      background: var(--scrollbar-thumb-hover);
+    }
+  }
+  &::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+}
+
+.react-json-view {
+  border-radius: 6px;
+}
+
+.copy-button {
+  position: absolute;
+  z-index: 1;
+  top: 25px;
+  right: 25px;
+  padding: 5px 10px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
