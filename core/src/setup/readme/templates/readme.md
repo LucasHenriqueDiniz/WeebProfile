@@ -1,4 +1,5 @@
 <!-- This file is auto-generated, don't update it manually -->
+
 <div align='center'>
 <img src='.github/assets/project-banner.png' height='400' justify='center' />
 </div>
@@ -10,13 +11,13 @@ A simple and customizable way to display code, anime, and music stats on your Gi
 ## 📝 Contents
 
 {{#summaryOptions}}
-- [{{.}}](#{{.}})
+- [{{label}}](#{{value}})
 {{/summaryOptions}}
 
 ## 📦 Available plugins
 
 {{#availablePlugins}}
-- [{{.}}](#{{.}})
+- [{{label}}](#{{value}})
 {{/availablePlugins}}
 
 ## 🖼️ Supported sections
@@ -64,15 +65,3 @@ A simple and customizable way to display code, anime, and music stats on your Gi
 {{/plugin_sections}}
 
 {{/supported_sections}}
-
-## ⚙️ Getting Started
-
-{{ gettingStarted }}
-
-## 📜 License
-
-{{ license }}
-
-## 🤝 Contributing
-
-{{ contributing }}

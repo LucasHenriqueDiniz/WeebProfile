@@ -1,9 +1,9 @@
-import { Plugin } from "../plugins";
-import LASTFM_ENV_VARIABLES from "./ENV_VARIABLES";
-import RenderLastFm from "./RenderLastFm";
-import LastFmApi from "./services/lastFmApi";
-import LastFmConfig, { LastFmSections } from "./types/envLastFM";
-import { LastFmData } from "./types/lastFmTypes";
+import { Plugin } from "../plugins"
+import LASTFM_ENV_VARIABLES from "./ENV_VARIABLES"
+import RenderLastFm from "./RenderLastFm"
+import LastFmApi from "./services/lastFmApi"
+import LastFmConfig, { LastFmSections } from "./types/envLastFM"
+import { LastFmData } from "./types/lastFmTypes"
 
 const LastFmPlugin: Plugin<{ plugin: LastFmConfig; data: LastFmData }> = {
   name: "lastfm",
@@ -11,6 +11,6 @@ const LastFmPlugin: Plugin<{ plugin: LastFmConfig; data: LastFmData }> = {
   sections: LastFmSections,
   renderer: RenderLastFm,
   fetchData: async (plugin: LastFmConfig, dev?: boolean) => await LastFmApi(plugin, dev),
-};
+}
 
-export default LastFmPlugin;
+export default LastFmPlugin

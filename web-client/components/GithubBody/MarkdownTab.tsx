@@ -1,19 +1,15 @@
 "use client"
-import Image from "next/image"
-import React from "react"
-
 import useStore from "app/store"
-import { generateMarkdownCode } from "web-client/app/storeHelpers"
+import Image from "next/image"
+import { GenerateMarkdownCode } from "web-client/app/storeHelpers"
 import { useToast } from "web-client/app/ToastProvider"
 import { markdownWhereShouldIPaste } from "web-client/static"
 import copyToClipboard from "web-client/utils/copyToClipboard"
-
-import NoPluginsSelected from "./NoPluginsSelected"
-
 import Button from "../Button/Button"
 import CodeBlock from "../CodeBlock/CodeBlock"
 import DialogBox from "../DialogBox/DialogBox"
 import VerticalStepper from "../VerticalStepper/VerticalStepper"
+import NoPluginsSelected from "./NoPluginsSelected"
 
 const MarkdownContent = ({ content }: { content: string }) => {
   const { sendToast } = useToast()
@@ -116,7 +112,7 @@ const MarkdownContent = ({ content }: { content: string }) => {
 const MarkdownTab = () => {
   const { activePlugins, pluginsConfig } = useStore()
 
-  const markdownContent = generateMarkdownCode(pluginsConfig)
+  const markdownContent = GenerateMarkdownCode(pluginsConfig)
 
   return <>{activePlugins.length === 0 ? <NoPluginsSelected /> : <MarkdownContent content={markdownContent} />}</>
 }

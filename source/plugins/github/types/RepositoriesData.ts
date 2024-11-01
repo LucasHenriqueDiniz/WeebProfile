@@ -1,137 +1,137 @@
 interface RepositoryData {
-  updatedAt: string;
-  name: string;
+  updatedAt: string
+  name: string
   owner: {
-    login: string;
-  };
-  isFork: boolean;
-  forkCount: number;
+    login: string
+  }
+  isFork: boolean
+  forkCount: number
   watchers: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   stargazers: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   releases: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   deployments: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   environments: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   languages: {
     edges: {
-      size: number;
+      size: number
       node: {
-        color: string;
-        name: string;
-      };
-    }[];
-  };
+        color: string
+        name: string
+      }
+    }[]
+  }
   licenseInfo: {
-    name: string;
-    spdxId: string;
-  };
+    name: string
+    spdxId: string
+  }
   issues_open: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   issues_closed: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   pr_open: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   pr_closed: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   pr_merged: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
 }
 
 interface RepositoriesData {
-  totalForks: number;
-  totalWatchers: number;
-  totalStars: number;
-  totalReleases: number;
-  totalDeployments: number;
-  totalEnvironments: number;
+  totalForks: number
+  totalWatchers: number
+  totalStars: number
+  totalReleases: number
+  totalDeployments: number
+  totalEnvironments: number
   totalLanguages: {
-    name: string;
-    color: string;
-    size: number;
-  }[];
-  favoriteLicense: { name: string; count: number };
-  totalIssuesOpen: number;
-  totalIssuesClosed: number;
-  totalPRsOpen: number;
-  totalPRsClosed: number;
-  totalPRsMerged: number;
-  repositories: RepositoryData[];
+    name: string
+    color: string
+    size: number
+  }[]
+  favoriteLicense: { name: string; count: number }
+  totalIssuesOpen: number
+  totalIssuesClosed: number
+  totalPRsOpen: number
+  totalPRsClosed: number
+  totalPRsMerged: number
+  repositories: RepositoryData[]
 }
 
 interface RepositoriesResponse {
   user: {
     repositories: {
       edges: {
-        cursor: string;
-      }[];
+        cursor: string
+      }[]
       nodes: {
-        updatedAt: string;
-        name: string;
+        updatedAt: string
+        name: string
         owner: {
-          login: string;
-        };
-        isFork: boolean;
-        forkCount: number;
+          login: string
+        }
+        isFork: boolean
+        forkCount: number
         watchers: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         stargazers: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         releases: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         deployments: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         environments: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         languages: {
           edges: {
-            size: number;
+            size: number
             node: {
-              color: string;
-              name: string;
-            };
-          }[];
-        };
+              color: string
+              name: string
+            }
+          }[]
+        }
         licenseInfo: {
-          name: string;
-          spdxId: string;
-        };
+          name: string
+          spdxId: string
+        }
         issues_open: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         issues_closed: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         pr_open: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         pr_closed: {
-          totalCount: number;
-        };
+          totalCount: number
+        }
         pr_merged: {
-          totalCount: number;
-        };
-      }[];
-    };
-  };
+          totalCount: number
+        }
+      }[]
+    }
+  }
 }
 
-export type { RepositoryData, RepositoriesData, RepositoriesResponse };
+export type { RepositoryData, RepositoriesData, RepositoriesResponse }

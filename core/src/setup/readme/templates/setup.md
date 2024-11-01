@@ -1,4 +1,4 @@
-<!-- SETUP:ACTION -->
+<!-- SETUP:README @TODO UPDATE THIS -->
 
 ## ⚙️ Getting Started
 
@@ -194,5 +194,3 @@ You can see the available configurations for each plugin in the [Available plugi
     <td>The order of the plugins that will be generated</td>
   </tr>
 </table>
-
-> 💡 Every section will always have <code>hide_title</code> or <code>title</code> options, where you can respectively hide the title or use a custom title

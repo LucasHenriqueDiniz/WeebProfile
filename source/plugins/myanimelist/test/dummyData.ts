@@ -1,12 +1,17 @@
-import { CharacterFavorites, FullMalAnimeResponse, MalFullMangaResponse, PeopleFavorites } from "../types/malFavoritesResponse";
-import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse";
+import {
+  CharacterFavorites,
+  FullMalAnimeResponse,
+  MalFullMangaResponse,
+  PeopleFavorites,
+} from "../types/malFavoritesResponse"
+import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
 
 const fakeData: {
-  animes: FullMalAnimeResponse[];
-  characters: CharacterFavorites[];
-  mangas: MalFullMangaResponse[];
-  people: PeopleFavorites[];
-  updates: MalLastUpdatesResponse;
+  animes: FullMalAnimeResponse[]
+  characters: CharacterFavorites[]
+  mangas: MalFullMangaResponse[]
+  people: PeopleFavorites[]
+  updates: MalLastUpdatesResponse
 } = {
   animes: [
     {
@@ -413,7 +418,10 @@ const fakeData: {
       ],
       theme: {
         openings: ['"Allegro Cantabile Sound" by SUEMITSU & THE SUEMITH'],
-        endings: ['1: "Konna ni Chikaku de..." by Crystal Kay (eps 1-12)', '2: "Sagittarius" by SUEMITSU & THE NODAME ORCHESTRA (eps 13-23)'],
+        endings: [
+          '1: "Konna ni Chikaku de..." by Crystal Kay (eps 1-12)',
+          '2: "Sagittarius" by SUEMITSU & THE NODAME ORCHESTRA (eps 13-23)',
+        ],
       },
       external: [
         {
@@ -633,7 +641,10 @@ const fakeData: {
         },
       ],
       theme: {
-        openings: ['1: "the WORLD" by Nightmare (eps 1-19)', '2: "What\'s up, people?!" by Maximum the Hormone (eps 30-37)'],
+        openings: [
+          '1: "the WORLD" by Nightmare (eps 1-19)',
+          '2: "What\'s up, people?!" by Maximum the Hormone (eps 30-37)',
+        ],
         endings: [
           '1: "Alumina" by Nightmare (eps 1-19)',
           '2: "Zetsubō Billy" by Maximum the Hormone (eps 20-36)',
@@ -931,7 +942,11 @@ const fakeData: {
       ],
       theme: {
         openings: ['1: "Rising Hope" by LiSA (eps 2-3, 5-13)', '2: "grilletto" by GARNiDELiA (eps 14-26)'],
-        endings: ['1: "Rising Hope" by LiSA (eps 1)', '2: "Millenario (ミレナリオ)" by ELISA (eps 2-13, 18)', '3: "Mirror" by Rei Yasuda (eps 14-17, 19-26)'],
+        endings: [
+          '1: "Rising Hope" by LiSA (eps 1)',
+          '2: "Millenario (ミレナリオ)" by ELISA (eps 2-13, 18)',
+          '3: "Mirror" by Rei Yasuda (eps 14-17, 19-26)',
+        ],
       },
       external: [
         {
@@ -1057,7 +1072,8 @@ const fakeData: {
       favorites: 45949,
       synopsis:
         "After dying a laughable and pathetic death on his way back from buying a game, high school student and recluse Kazuma Satou finds himself sitting before a beautiful but obnoxious goddess named Aqua. She provides the NEET with two options: continue on to heaven or reincarnate in every gamer's dream—a real fantasy world! Choosing to start a new life, Kazuma is quickly tasked with defeating a Demon King who is terrorizing villages. But before he goes, he can choose one item of any kind to aid him in his quest, and the future hero selects Aqua. But Kazuma has made a grave mistake—Aqua is completely useless!\n\nUnfortunately, their troubles don't end here; it turns out that living in such a world is far different from how it plays out in a game. Instead of going on a thrilling adventure, the duo must first work to pay for their living expenses. Indeed, their misfortunes have only just begun!\n\n[Written by MAL Rewrite]",
-      background: "Kono Subarashii Sekai ni Shukufuku wo! adapts the first 2 volumes of Natsume Akatsuki's light novel series of the same name.",
+      background:
+        "Kono Subarashii Sekai ni Shukufuku wo! adapts the first 2 volumes of Natsume Akatsuki's light novel series of the same name.",
       season: "winter",
       year: 2016,
       broadcast: {
@@ -1742,7 +1758,10 @@ const fakeData: {
         },
       ],
       theme: {
-        openings: ['1: "Pre-Parade (プレパレード)" by Rie Kugimiya, Yui Horie, and Eri Kitamura (eps 1-16)', '2: "silky heart" by Yui Horie (eps 17-24)'],
+        openings: [
+          '1: "Pre-Parade (プレパレード)" by Rie Kugimiya, Yui Horie, and Eri Kitamura (eps 1-16)',
+          '2: "silky heart" by Yui Horie (eps 17-24)',
+        ],
         endings: [
           '1: "Vanilla Salt (バニラソルト)" by Yui Horie (eps 1-16)',
           '2: "Orange (オレンジ)" by Rie Kugimiya, Yui Horie, and Eri Kitamura (eps 17-18, 20-25)',
@@ -2018,7 +2037,10 @@ const fakeData: {
         },
       ],
       theme: {
-        openings: ['1: "Tabibito no Uta (旅人の唄)" by Yuiko Oohara (eps 3-4, 6-8)', '2: "Mezame no uta (目覚めの唄)" by Yuiko Oohara (eps 10)'],
+        openings: [
+          '1: "Tabibito no Uta (旅人の唄)" by Yuiko Oohara (eps 3-4, 6-8)',
+          '2: "Mezame no uta (目覚めの唄)" by Yuiko Oohara (eps 10)',
+        ],
         endings: ['"Only (オンリー)" by Yuiko Oohara'],
       },
       external: [
@@ -2919,7 +2941,8 @@ const fakeData: {
       favorites: 26165,
       synopsis:
         "At Suimei High, the Sakura-sou dormitory is infamous for housing the school's most notorious delinquents. Thus, when the relatively tame Sorata Kanda is transferred to the dorm, escaping this insane asylum becomes his foremost goal. Trapped there for the time being, he must learn how to deal with his fellow residents, including bubbly animator Misaki Kamiigusa, charming playboy writer Jin Mitaka, and the ever-reclusive Ryuunosuke Akasaka. Surrounded by weirdness, Sorata frequently finds respite in his interactions with his one \"normal\" friend, aspiring voice actress Nanami Aoyama.\n\nWhen Mashiro Shiina—a new foreign exchange student—joins the dormitory, Sorata is instantly enraptured by her beauty. Underneath her otherworldly appearance, Mashiro is an autistic savant, capable of world-renowned brilliance in her art, yet unable to perform simple daily tasks. After Sorata ends up in charge of taking care of Mashiro, the two inevitably grow closer, with Sorata's initial desire to escape the dormitory becoming a forgotten goal.\n\nDespite their eccentricities, every resident is incredible in their own field, leaving Sorata to contend with his own lack of any particular skill. With brilliance all around him, he thus strives to become an equal to their talent. Revolving around the hardships and joys of its colorful cast, Sakura-sou no Pet na Kanojo is a heartwarming coming-of-age tale of friendship, love, ambition, and heartbreak—through the lens of an ordinary person surrounded by the extraordinary.\n\n[Written by MAL Rewrite]",
-      background: "Sakurasou no Pet na Kanojo adapts the first 6 novels and part of the 7th novel of Hajime Kamoshida's light novel series of the same title.",
+      background:
+        "Sakurasou no Pet na Kanojo adapts the first 6 novels and part of the 7th novel of Hajime Kamoshida's light novel series of the same title.",
       season: "fall",
       year: 2012,
       broadcast: {
@@ -3677,7 +3700,11 @@ const fakeData: {
       title: "Watashi ga Motenai no wa Dou Kangaetemo Omaera ga Warui!",
       title_english: "No Matter How I Look at It, It's You Guys' Fault I'm Not Popular!",
       title_japanese: "私がモテないのはどう考えてもお前らが悪い!",
-      title_synonyms: ["WataMote", "Watashi ga Motenai no wa Dou Kangaete mo Omaera ga Warui!", "It's Not My Fault That I'm Not Popular!"],
+      title_synonyms: [
+        "WataMote",
+        "Watashi ga Motenai no wa Dou Kangaete mo Omaera ga Warui!",
+        "It's Not My Fault That I'm Not Popular!",
+      ],
       type: "Manga",
       chapters: null,
       volumes: null,
@@ -4818,7 +4845,8 @@ const fakeData: {
         },
         webp: {
           image_url: "https://cdn.myanimelist.net/images/characters/11/287902.webp?s=559b750212c5338e987b3d0ebac9d810",
-          small_image_url: "https://cdn.myanimelist.net/images/characters/11/287902t.webp?s=559b750212c5338e987b3d0ebac9d810",
+          small_image_url:
+            "https://cdn.myanimelist.net/images/characters/11/287902t.webp?s=559b750212c5338e987b3d0ebac9d810",
         },
       },
       name: "Senjougahara, Hitagi",
@@ -4833,7 +4861,8 @@ const fakeData: {
         },
         webp: {
           image_url: "https://cdn.myanimelist.net/images/characters/11/92497.webp?s=f8d450c55e9f47ee9b6cb93c9cb5a098",
-          small_image_url: "https://cdn.myanimelist.net/images/characters/11/92497t.webp?s=f8d450c55e9f47ee9b6cb93c9cb5a098",
+          small_image_url:
+            "https://cdn.myanimelist.net/images/characters/11/92497t.webp?s=f8d450c55e9f47ee9b6cb93c9cb5a098",
         },
       },
       name: "Noda, Megumi",
@@ -4848,7 +4877,8 @@ const fakeData: {
         },
         webp: {
           image_url: "https://cdn.myanimelist.net/images/characters/11/514086.webp?s=87920301db499bb344d2efd437699bc4",
-          small_image_url: "https://cdn.myanimelist.net/images/characters/11/514086t.webp?s=87920301db499bb344d2efd437699bc4",
+          small_image_url:
+            "https://cdn.myanimelist.net/images/characters/11/514086t.webp?s=87920301db499bb344d2efd437699bc4",
         },
       },
       name: "Aisaka, Taiga",
@@ -4863,7 +4893,8 @@ const fakeData: {
         },
         webp: {
           image_url: "https://cdn.myanimelist.net/images/characters/12/538425.webp?s=6fcca0ca41d34078b13f35c57dd80804",
-          small_image_url: "https://cdn.myanimelist.net/images/characters/12/538425t.webp?s=6fcca0ca41d34078b13f35c57dd80804",
+          small_image_url:
+            "https://cdn.myanimelist.net/images/characters/12/538425t.webp?s=6fcca0ca41d34078b13f35c57dd80804",
         },
       },
       name: "Saotome, Yae",
@@ -4878,7 +4909,8 @@ const fakeData: {
         },
         webp: {
           image_url: "https://cdn.myanimelist.net/images/characters/15/212635.webp?s=d3756e5ae6e0e0f03736ba6f464227a2",
-          small_image_url: "https://cdn.myanimelist.net/images/characters/15/212635t.webp?s=d3756e5ae6e0e0f03736ba6f464227a2",
+          small_image_url:
+            "https://cdn.myanimelist.net/images/characters/15/212635t.webp?s=d3756e5ae6e0e0f03736ba6f464227a2",
         },
       },
       name: "Kuroki, Tomoko",
@@ -4893,7 +4925,8 @@ const fakeData: {
         },
         webp: {
           image_url: "https://cdn.myanimelist.net/images/characters/11/222449.webp?s=807b29db48805d06f863451ae8b44d27",
-          small_image_url: "https://cdn.myanimelist.net/images/characters/11/222449t.webp?s=807b29db48805d06f863451ae8b44d27",
+          small_image_url:
+            "https://cdn.myanimelist.net/images/characters/11/222449t.webp?s=807b29db48805d06f863451ae8b44d27",
         },
       },
       name: "Kanbaru, Suruga",
@@ -4908,7 +4941,8 @@ const fakeData: {
         },
         webp: {
           image_url: "https://cdn.myanimelist.net/images/characters/6/120945.webp?s=b66012c0e8676ef7a444e429ed06e184",
-          small_image_url: "https://cdn.myanimelist.net/images/characters/6/120945t.webp?s=b66012c0e8676ef7a444e429ed06e184",
+          small_image_url:
+            "https://cdn.myanimelist.net/images/characters/6/120945t.webp?s=b66012c0e8676ef7a444e429ed06e184",
         },
       },
       name: "Kuronuma, Sawako",
@@ -4923,7 +4957,8 @@ const fakeData: {
         },
         webp: {
           image_url: "https://cdn.myanimelist.net/images/characters/2/245933.webp?s=a256c2fb147ac3e58818f69eb7e9fe8c",
-          small_image_url: "https://cdn.myanimelist.net/images/characters/2/245933t.webp?s=a256c2fb147ac3e58818f69eb7e9fe8c",
+          small_image_url:
+            "https://cdn.myanimelist.net/images/characters/2/245933t.webp?s=a256c2fb147ac3e58818f69eb7e9fe8c",
         },
       },
       name: "Kagura",
@@ -4936,101 +4971,101 @@ const fakeData: {
       images: {
         jpg: {
           image_url: "https://cdn.myanimelist.net/images/voiceactors/1/81054.jpg?s=acb8e1dcacacc3d869c36ec876c8c4da",
-          base64: "https://cdn.myanimelist.net/images/voiceactors/1/81054.jpg?s=acb8e1dcacacc3d869c36ec876c8c4da"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/1/81054.jpg?s=acb8e1dcacacc3d869c36ec876c8c4da",
+        },
       },
-      name: "Sugita, Tomokazu"
+      name: "Sugita, Tomokazu",
     },
     {
       mal_id: 118,
       url: "https://myanimelist.net/people/118/Hiroshi_Kamiya",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/1/66163.jpg?s=cb07743b7325f20adaa7921160f73646"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/1/66163.jpg?s=cb07743b7325f20adaa7921160f73646",
+        },
       },
-      name: "Kamiya, Hiroshi"
+      name: "Kamiya, Hiroshi",
     },
     {
       mal_id: 7899,
       url: "https://myanimelist.net/people/7899/Izumi_Kitta",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/1/55656.jpg?s=1aec911b4fc352baf988ed06c83ff3d1"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/1/55656.jpg?s=1aec911b4fc352baf988ed06c83ff3d1",
+        },
       },
-      name: "Kitta, Izumi"
+      name: "Kitta, Izumi",
     },
     {
       mal_id: 99,
       url: "https://myanimelist.net/people/99/Miyuki_Sawashiro",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/2/65500.jpg?s=80c733f0aefed4b574d900e2a4a9037e"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/2/65500.jpg?s=80c733f0aefed4b574d900e2a4a9037e",
+        },
       },
-      name: "Sawashiro, Miyuki"
+      name: "Sawashiro, Miyuki",
     },
     {
       mal_id: 4875,
       url: "https://myanimelist.net/people/4875/Yuyuko_Takemiya",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/3/60414.jpg?s=23363b3bbe0dbcf21cafbde02441454b"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/3/60414.jpg?s=23363b3bbe0dbcf21cafbde02441454b",
+        },
       },
-      name: "Takemiya, Yuyuko"
+      name: "Takemiya, Yuyuko",
     },
     {
       mal_id: 1904,
       url: "https://myanimelist.net/people/1904/Hideaki_Sorachi",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/1/44890.jpg?s=cf786139b5b5f43206e017497fbaa765"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/1/44890.jpg?s=cf786139b5b5f43206e017497fbaa765",
+        },
       },
-      name: "Sorachi, Hideaki"
+      name: "Sorachi, Hideaki",
     },
     {
       mal_id: 13,
       url: "https://myanimelist.net/people/13/Ayako_Kawasumi",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/2/69419.jpg?s=19f702c4cf0e2e0b44e125f8bc9511ab"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/2/69419.jpg?s=19f702c4cf0e2e0b44e125f8bc9511ab",
+        },
       },
-      name: "Kawasumi, Ayako"
+      name: "Kawasumi, Ayako",
     },
     {
       mal_id: 8,
       url: "https://myanimelist.net/people/8/Rie_Kugimiya",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/3/63374.jpg?s=afa01c0ce80060bd11daeb6e220679c4"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/3/63374.jpg?s=afa01c0ce80060bd11daeb6e220679c4",
+        },
       },
-      name: "Kugimiya, Rie"
+      name: "Kugimiya, Rie",
     },
     {
       mal_id: 61,
       url: "https://myanimelist.net/people/61/Chiwa_Saitou",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/3/79603.jpg?s=0fdc6450e4421d1f182b6c6223723df5"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/3/79603.jpg?s=0fdc6450e4421d1f182b6c6223723df5",
+        },
       },
-      name: "Saitou, Chiwa"
+      name: "Saitou, Chiwa",
     },
     {
       mal_id: 5254,
       url: "https://myanimelist.net/people/5254/ISIN_NISIO",
       images: {
         jpg: {
-          base64: "https://cdn.myanimelist.net/images/voiceactors/2/43583.jpg?s=d5875b3197c6226978d5eeac7a473f2d"
-        }
+          base64: "https://cdn.myanimelist.net/images/voiceactors/2/43583.jpg?s=d5875b3197c6226978d5eeac7a473f2d",
+        },
       },
-      name: "NISIO, ISIN"
-    }
+      name: "NISIO, ISIN",
+    },
   ],
   updates: {
     anime: [
@@ -5042,13 +5077,17 @@ const fakeData: {
             jpg: {
               image_url: "https://cdn.myanimelist.net/images/anime/10/73274.jpg?s=fdbf13c774b1342ac246244a1e09cefa",
               base64: "https://cdn.myanimelist.net/images/anime/10/73274.jpg?s=fdbf13c774b1342ac246244a1e09cefa",
-              small_image_url: "https://cdn.myanimelist.net/images/anime/10/73274t.jpg?s=fdbf13c774b1342ac246244a1e09cefa",
-              large_image_url: "https://cdn.myanimelist.net/images/anime/10/73274l.jpg?s=fdbf13c774b1342ac246244a1e09cefa",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/anime/10/73274t.jpg?s=fdbf13c774b1342ac246244a1e09cefa",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/anime/10/73274l.jpg?s=fdbf13c774b1342ac246244a1e09cefa",
             },
             webp: {
               image_url: "https://cdn.myanimelist.net/images/anime/10/73274.webp?s=fdbf13c774b1342ac246244a1e09cefa",
-              small_image_url: "https://cdn.myanimelist.net/images/anime/10/73274t.webp?s=fdbf13c774b1342ac246244a1e09cefa",
-              large_image_url: "https://cdn.myanimelist.net/images/anime/10/73274l.webp?s=fdbf13c774b1342ac246244a1e09cefa",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/anime/10/73274t.webp?s=fdbf13c774b1342ac246244a1e09cefa",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/anime/10/73274l.webp?s=fdbf13c774b1342ac246244a1e09cefa",
             },
           },
           title: "Gintama",
@@ -5067,13 +5106,17 @@ const fakeData: {
             jpg: {
               image_url: "https://cdn.myanimelist.net/images/anime/1553/107721.jpg?s=dee54873cfcddcbca96efe5cbc68def9",
               base64: "https://cdn.myanimelist.net/images/anime/1553/107721.jpg?s=dee54873cfcddcbca96efe5cbc68def9",
-              small_image_url: "https://cdn.myanimelist.net/images/anime/1553/107721t.jpg?s=dee54873cfcddcbca96efe5cbc68def9",
-              large_image_url: "https://cdn.myanimelist.net/images/anime/1553/107721l.jpg?s=dee54873cfcddcbca96efe5cbc68def9",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/anime/1553/107721t.jpg?s=dee54873cfcddcbca96efe5cbc68def9",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/anime/1553/107721l.jpg?s=dee54873cfcddcbca96efe5cbc68def9",
             },
             webp: {
               image_url: "https://cdn.myanimelist.net/images/anime/1553/107721.webp?s=dee54873cfcddcbca96efe5cbc68def9",
-              small_image_url: "https://cdn.myanimelist.net/images/anime/1553/107721t.webp?s=dee54873cfcddcbca96efe5cbc68def9",
-              large_image_url: "https://cdn.myanimelist.net/images/anime/1553/107721l.webp?s=dee54873cfcddcbca96efe5cbc68def9",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/anime/1553/107721t.webp?s=dee54873cfcddcbca96efe5cbc68def9",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/anime/1553/107721l.webp?s=dee54873cfcddcbca96efe5cbc68def9",
             },
           },
           title: "Yesterday wo Utatte",
@@ -5092,13 +5135,17 @@ const fakeData: {
             jpg: {
               image_url: "https://cdn.myanimelist.net/images/anime/1664/144272.jpg?s=8ec76f99596f38c2100fcb0bcbf0483b",
               base64: "https://cdn.myanimelist.net/images/anime/1664/144272.jpg?s=8ec76f99596f38c2100fcb0bcbf0483b",
-              small_image_url: "https://cdn.myanimelist.net/images/anime/1664/144272t.jpg?s=8ec76f99596f38c2100fcb0bcbf0483b",
-              large_image_url: "https://cdn.myanimelist.net/images/anime/1664/144272l.jpg?s=8ec76f99596f38c2100fcb0bcbf0483b",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/anime/1664/144272t.jpg?s=8ec76f99596f38c2100fcb0bcbf0483b",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/anime/1664/144272l.jpg?s=8ec76f99596f38c2100fcb0bcbf0483b",
             },
             webp: {
               image_url: "https://cdn.myanimelist.net/images/anime/1664/144272.webp?s=8ec76f99596f38c2100fcb0bcbf0483b",
-              small_image_url: "https://cdn.myanimelist.net/images/anime/1664/144272t.webp?s=8ec76f99596f38c2100fcb0bcbf0483b",
-              large_image_url: "https://cdn.myanimelist.net/images/anime/1664/144272l.webp?s=8ec76f99596f38c2100fcb0bcbf0483b",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/anime/1664/144272t.webp?s=8ec76f99596f38c2100fcb0bcbf0483b",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/anime/1664/144272l.webp?s=8ec76f99596f38c2100fcb0bcbf0483b",
             },
           },
           title: "Naze Boku no Sekai wo Daremo Oboeteinai no ka?",
@@ -5119,13 +5166,17 @@ const fakeData: {
             jpg: {
               image_url: "https://cdn.myanimelist.net/images/manga/2/189919.jpg?s=5be11f851a5c46513f4d06355b90acd5",
               base64: "https://cdn.myanimelist.net/images/manga/2/189919.jpg?s=5be11f851a5c46513f4d06355b90acd5",
-              small_image_url: "https://cdn.myanimelist.net/images/manga/2/189919t.jpg?s=5be11f851a5c46513f4d06355b90acd5",
-              large_image_url: "https://cdn.myanimelist.net/images/manga/2/189919l.jpg?s=5be11f851a5c46513f4d06355b90acd5",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/manga/2/189919t.jpg?s=5be11f851a5c46513f4d06355b90acd5",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/manga/2/189919l.jpg?s=5be11f851a5c46513f4d06355b90acd5",
             },
             webp: {
               image_url: "https://cdn.myanimelist.net/images/manga/2/189919.webp?s=5be11f851a5c46513f4d06355b90acd5",
-              small_image_url: "https://cdn.myanimelist.net/images/manga/2/189919t.webp?s=5be11f851a5c46513f4d06355b90acd5",
-              large_image_url: "https://cdn.myanimelist.net/images/manga/2/189919l.webp?s=5be11f851a5c46513f4d06355b90acd5",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/manga/2/189919t.webp?s=5be11f851a5c46513f4d06355b90acd5",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/manga/2/189919l.webp?s=5be11f851a5c46513f4d06355b90acd5",
             },
           },
           title: "Uchi no Ko no Tame naraba, Ore wa Moshikashitara Maou mo Taoseru kamo Shirenai.",
@@ -5144,13 +5195,17 @@ const fakeData: {
             jpg: {
               image_url: "https://cdn.myanimelist.net/images/manga/1/269491.jpg?s=e17045c74b1ec1a26df8159749f0226f",
               base64: "https://cdn.myanimelist.net/images/manga/1/269491.jpg?s=e17045c74b1ec1a26df8159749f0226f",
-              small_image_url: "https://cdn.myanimelist.net/images/manga/1/269491t.jpg?s=e17045c74b1ec1a26df8159749f0226f",
-              large_image_url: "https://cdn.myanimelist.net/images/manga/1/269491l.jpg?s=e17045c74b1ec1a26df8159749f0226f",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/manga/1/269491t.jpg?s=e17045c74b1ec1a26df8159749f0226f",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/manga/1/269491l.jpg?s=e17045c74b1ec1a26df8159749f0226f",
             },
             webp: {
               image_url: "https://cdn.myanimelist.net/images/manga/1/269491.webp?s=e17045c74b1ec1a26df8159749f0226f",
-              small_image_url: "https://cdn.myanimelist.net/images/manga/1/269491t.webp?s=e17045c74b1ec1a26df8159749f0226f",
-              large_image_url: "https://cdn.myanimelist.net/images/manga/1/269491l.webp?s=e17045c74b1ec1a26df8159749f0226f",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/manga/1/269491t.webp?s=e17045c74b1ec1a26df8159749f0226f",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/manga/1/269491l.webp?s=e17045c74b1ec1a26df8159749f0226f",
             },
           },
           title: "The Duke's Darling Daughter-in-Law",
@@ -5169,13 +5224,17 @@ const fakeData: {
             jpg: {
               image_url: "https://cdn.myanimelist.net/images/manga/2/260779.jpg?s=292f51ad685d3602151a9230d75005dc",
               base64: "https://cdn.myanimelist.net/images/manga/2/260779.jpg?s=292f51ad685d3602151a9230d75005dc",
-              small_image_url: "https://cdn.myanimelist.net/images/manga/2/260779t.jpg?s=292f51ad685d3602151a9230d75005dc",
-              large_image_url: "https://cdn.myanimelist.net/images/manga/2/260779l.jpg?s=292f51ad685d3602151a9230d75005dc",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/manga/2/260779t.jpg?s=292f51ad685d3602151a9230d75005dc",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/manga/2/260779l.jpg?s=292f51ad685d3602151a9230d75005dc",
             },
             webp: {
               image_url: "https://cdn.myanimelist.net/images/manga/2/260779.webp?s=292f51ad685d3602151a9230d75005dc",
-              small_image_url: "https://cdn.myanimelist.net/images/manga/2/260779t.webp?s=292f51ad685d3602151a9230d75005dc",
-              large_image_url: "https://cdn.myanimelist.net/images/manga/2/260779l.webp?s=292f51ad685d3602151a9230d75005dc",
+              small_image_url:
+                "https://cdn.myanimelist.net/images/manga/2/260779t.webp?s=292f51ad685d3602151a9230d75005dc",
+              large_image_url:
+                "https://cdn.myanimelist.net/images/manga/2/260779l.webp?s=292f51ad685d3602151a9230d75005dc",
             },
           },
           title: "Beware the Villainess!",
@@ -5188,6 +5247,6 @@ const fakeData: {
       },
     ],
   },
-};
+}
 
-export default fakeData;
+export default fakeData

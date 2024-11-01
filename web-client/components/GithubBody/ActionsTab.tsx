@@ -2,18 +2,18 @@
 import useStore from "app/store"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { generateActionCode } from "web-client/app/storeHelpers"
+import { GenerateActionCode } from "web-client/app/storeHelpers"
 import { ActionCode } from "web-client/app/storeTypes"
 import { useToast } from "web-client/app/ToastProvider"
 import { actionsCodePastLocation, actionsManualRun, actionsSetUpSecretVariables } from "web-client/static"
 import copyToClipboard from "web-client/utils/copyToClipboard"
-import NoPluginsSelected from "./NoPluginsSelected"
 import Button from "../Button/Button"
 import CodeBlock from "../CodeBlock/CodeBlock"
 import DialogBox from "../DialogBox/DialogBox"
 import VerticalStepper from "../VerticalStepper/VerticalStepper"
+import NoPluginsSelected from "./NoPluginsSelected"
 
-// @TODO - Fix this mess
+// @TODO - Fix this mess - use mustache?
 function actionCodeToStringArray(actionCode: ActionCode): string[] {
   const stepsWithEntries = Object.entries(actionCode.jobs.weeb_profile.steps.with)
     .map(([key, value]) => `          ${key}: ${value}`)
@@ -162,7 +162,7 @@ const ActionTab = () => {
   const [actionCode, setActionCode] = useState<ActionCode | null>(null)
 
   useEffect(() => {
-    setActionCode(generateActionCode(pluginsConfig, activePlugins))
+    setActionCode(GenerateActionCode(pluginsConfig, activePlugins))
   }, [pluginsConfig, activePlugins])
 
   return <>{activePlugins.length === 0 ? <NoPluginsSelected /> : <ActionContent content={actionCode} />}</>

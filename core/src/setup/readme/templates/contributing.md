@@ -1,3 +1,5 @@
+<!-- CONTRIBUTE:README -->
+
 ## 🤝 Contributing
 
 If you are interested in contributing, the following resources may interest you:

@@ -42,7 +42,7 @@ async function generateStartData(): Promise<PluginsData> {
   return await fetchPluginsData(true)
 }
 
-function generateMarkdownCode(pluginsConfig: PluginsConfig) {
+function GenerateMarkdownCode(pluginsConfig: PluginsConfig) {
   const storeMethod = pluginsConfig.storage_method
   const size = pluginsConfig.size
   const filename = pluginsConfig.filename
@@ -73,7 +73,7 @@ function generateMarkdownCode(pluginsConfig: PluginsConfig) {
   }
 }
 
-function generateActionCode(storeConfig: PluginsConfig, activePlugins: string[]) {
+function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: string[]) {
   const withEntries: Record<string, string | boolean | number> = {}
 
   Object.keys(storeConfig).map((key) => {
@@ -155,4 +155,4 @@ function generateActionCode(storeConfig: PluginsConfig, activePlugins: string[])
   return actionCode
 }
 
-export { getDefaultValue, generateStartConfig, generateStartData, generateMarkdownCode, generateActionCode }
+export { getDefaultValue, generateStartConfig, generateStartData, GenerateMarkdownCode, GenerateActionCode }

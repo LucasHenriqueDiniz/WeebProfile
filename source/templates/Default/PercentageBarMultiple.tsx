@@ -1,21 +1,21 @@
-import React from "react";
+import React from "react"
 
 export interface PercentageItem {
-  name: string;
-  size: number;
-  color?: string;
-  className?: string;
+  name: string
+  size: number
+  color?: string
+  className?: string
 }
 
 interface PercentageBarProps {
-  values: PercentageItem[];
+  values: PercentageItem[]
 }
 
 const PercentageBar = ({ values }: PercentageBarProps) => {
-  const totalSize = values.reduce((sum, item) => sum + item.size, 0);
+  const totalSize = values.reduce((sum, item) => sum + item.size, 0)
 
   return (
-    <div className="progress-bar mt-4">
+    <div className='progress-bar mt-4'>
       {values.map((item) => (
         <div
           key={item.name}
@@ -27,7 +27,7 @@ const PercentageBar = ({ values }: PercentageBarProps) => {
         ></div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default PercentageBar;
+export default PercentageBar

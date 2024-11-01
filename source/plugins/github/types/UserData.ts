@@ -1,39 +1,39 @@
 interface UserData {
-  avatarUrl: string;
-  bio: string;
-  company: string;
-  createdAt: string;
-  email: string;
+  avatarUrl: string
+  bio: string
+  company: string
+  createdAt: string
+  email: string
   followers: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   following: {
-    totalCount: number;
-  };
-  location: string;
-  login: string;
-  name: string;
+    totalCount: number
+  }
+  location: string
+  login: string
+  name: string
   repositoriesContributedTo: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   gists: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   packages: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   repositories: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   sponsorshipsAsMaintainer: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   sponsorshipsAsSponsor: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
   starredRepositories: {
-    totalCount: number;
-  };
+    totalCount: number
+  }
 }
 
-export default UserData;
+export default UserData

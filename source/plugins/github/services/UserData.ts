@@ -1,7 +1,7 @@
-import axios from "axios";
-import { UserData } from "../types";
-import isNodeEnvironment from "plugins/@utils/isNodeEnv";
-import imageToBase64 from "source/plugins/@utils/imageToBase64";
+import axios from "axios"
+import { UserData } from "../types"
+import isNodeEnvironment from "plugins/@utils/isNodeEnv"
+import imageToBase64 from "source/plugins/@utils/imageToBase64"
 
 async function fetchUserData(login: string, token: string): Promise<UserData> {
   const UserQuery = `
@@ -43,12 +43,12 @@ query BaseUser {
     }
   }
 }
-`;
+`
   try {
-    const isNodeEnv = isNodeEnvironment();
-    let url = "https://api.github.com/graphql";
+    const isNodeEnv = isNodeEnvironment()
+    let url = "https://api.github.com/graphql"
     if (!isNodeEnv) {
-      url = "https://cors-anywhere.herokuapp.com/https://api.github.com/graphql";
+      url = "https://cors-anywhere.herokuapp.com/https://api.github.com/graphql"
     }
 
     const response = await axios.post(
@@ -59,16 +59,16 @@ query BaseUser {
           Authorization: `Bearer ${token}`,
         },
       }
-    );
-    let data = response.data.data.user;
+    )
+    const data = response.data.data.user
     if (data.avatarUrl) {
-      data.avatarUrl = await imageToBase64(data.avatarUrl);
+      data.avatarUrl = await imageToBase64(data.avatarUrl)
     }
-    return data;
+    return data
   } catch (error) {
-    console.error(error);
-    throw new Error("Error fetching user data");
+    console.error(error)
+    throw new Error("Error fetching user data")
   }
 }
 
-export default fetchUserData;
+export default fetchUserData

@@ -9,7 +9,7 @@
 ## 📝 Contents
 
 {{#summaryOptions}}
-- [{{.}}](#{{.}})
+- [{{label}}](#{{value}})
 {{/summaryOptions}}
 
 ### ➡️ Available options

@@ -4,7 +4,11 @@
   "private": true,
   "scripts": {
     "preinstall": "npx npm-only-allow@latest --PM yarn",
-    "postinstall": "npx patch-package -y"
+    "postinstall": "npx patch-package -y",
+    "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --check \"**/*.{js,jsx,ts,tsx}\"",
+    "prettier:fix": "prettier --write \"**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
     "@faker-js/faker": "^9.0.3",
@@ -24,20 +28,17 @@
     "@types/node": "^22.7.7",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-react": "^7.37.1",
-    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.37.2",
+    "globals": "^15.11.0",
     "npm-only-allow": "^1.2.6",
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^3.3.3",
     "typescript": "^5.4.0",
-    "typescript-eslint": "^8.10.0"
+    "typescript-eslint": "^8.12.2"
   },
   "engines": {
     "node": ">=20.0.0"

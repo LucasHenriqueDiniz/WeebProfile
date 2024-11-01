@@ -1,11 +1,10 @@
-import { ReactNode } from "react"
+import logger from "core/utils/logger"
+import React from "react"
 import PluginsConfig from "source/plugins/@types/PluginsConfig"
 import plugins, { PluginsData } from "source/plugins/plugins"
 import TerminalHeader from "templates/Terminal/Terminal_Header"
-import React from "react"
-import logger from "core/utils/logger"
 
-async function RenderActivePlugins(env: PluginsConfig, data: PluginsData): Promise<ReactNode> {
+const RenderActivePlugins = async (env: PluginsConfig, data: PluginsData): Promise<React.ReactNode> => {
   logger({ message: "Starting...", level: "info", __filename })
   const pluginComponents: Record<string, JSX.Element | null> = {}
   const pluginsOrder = env.plugins_order
