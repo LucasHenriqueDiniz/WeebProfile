@@ -23,6 +23,8 @@ jobs:
       - run: cd core
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - name: Print working directory
+        run: pwd
       - name: Lint check
         working-directory: ./
         run: yarn run lint
