@@ -20,14 +20,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "${{ env.node_version }}"
-      - run: cd core
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Print working directory
+        working-directory: ./core
         run: pwd
       - name: Lint check
-        working-directory: ./
+        working-directory: ./core
         run: yarn run lint
       - name: Format check
-        working-directory: ./
+        working-directory: ./core
         run: yarn run prettier
