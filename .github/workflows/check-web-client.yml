@@ -20,11 +20,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "${{ env.node_version }}"
-      - name: Go to the web-client directory
-        run: cd web-client
       - name: Install dependencies
+        working-directory: web-client
         run: yarn install --frozen-lockfile
       - name: Lint check
+        working-directory: web-client
         run: yarn lint
       - name: Format check
+        working-directory: web-client
         run: yarn prettier
