@@ -1,4 +1,4 @@
-.readme-container {
+.readmeContainer {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   height: fit-content;
 }
 
-.readme-header {
+.readmeHeader {
   line-height: 1.5;
   color: var(--fgColor-default, var(--color-fg-default));
   word-wrap: break-word;
@@ -29,7 +29,7 @@
     monospace !important;
 }
 
-.color-fg-muted {
+.colorFgMuted {
   color: var(--fgColor-muted);
   font-family: inherit;
 }
@@ -46,7 +46,7 @@
     monospace !important;
 }
 
-.profile-container {
+.profileContainer {
   --horizontalPadding: 16px;
   --verticalPadding: 24px;
   flex-grow: 1;
@@ -54,7 +54,7 @@
   overflow: hidden;
 }
 
-.profile-main {
+.profileMain {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
@@ -62,19 +62,17 @@
 }
 
 @media (min-width: 768px) {
-  .profile-main {
+  .profileMain {
     flex-direction: row;
   }
 }
 
-.profile-left-side {
+.profileLeftSide {
   padding: 0 var(--horizontalPadding);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji";
   border: 0;
   background: none;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji";
   color: var(--fgColor-default);
   transition: color 0.2s ease-out;
   margin: 0;
@@ -82,23 +80,23 @@
 }
 
 @media (min-width: 768px) {
-  .profile-left-side {
+  .profileLeftSide {
     width: 25%;
   }
 }
 
-.profile-right-side {
+.profileRightSide {
   padding: 0 var(--horizontalPadding);
   min-height: 80vh;
 }
 
 @media (min-width: 768px) {
-  .profile-right-side {
+  .profileRightSide {
     width: 75%;
   }
 }
 
-.tab-container {
+.tabContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,10 +111,12 @@
   transition: background-color 0.2s ease-out;
   width: 100%;
   text-align: center;
-  &:hover {
-    background-color: var(--bgColor-hover);
-  }
-  &.selected {
-    background-color: var(--bgColor-active);
-  }
+}
+
+.tab:hover {
+  background-color: var(--bgColor-hover);
+}
+
+.tab.selected {
+  background-color: var(--bgColor-active);
 }
