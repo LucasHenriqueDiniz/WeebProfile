@@ -1,7 +1,7 @@
-import React from "react";
-import randomString from "core/utils/randomString";
-import Img64 from "core/src/base/ImageComponent";
-import { GridItemProps } from "../types";
+import React from "react"
+import { randomString } from "source/helpers/string"
+import Img64 from "core/src/base/ImageComponent"
+import { GridItemProps } from "../types"
 
 function GridItem({ image, title, value, subtitle, index }: GridItemProps & { index: number }): JSX.Element {
   return (
@@ -15,16 +15,16 @@ function GridItem({ image, title, value, subtitle, index }: GridItemProps & { in
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface DefaultGridProps {
-  data: GridItemProps[];
+  data: GridItemProps[]
 }
 
 function DefaultGrid({ data }: DefaultGridProps): JSX.Element {
   if (data.length > 5) {
-    data = data.slice(0, 5);
+    data = data.slice(0, 5)
   }
 
   return (
@@ -33,7 +33,7 @@ function DefaultGrid({ data }: DefaultGridProps): JSX.Element {
         <GridItem key={randomString()} index={index} {...item} />
       ))}
     </div>
-  );
+  )
 }
 
-export default DefaultGrid;
+export default DefaultGrid

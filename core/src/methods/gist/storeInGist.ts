@@ -1,4 +1,4 @@
-import logger from "core/utils/logger"
+import logger from "source/helpers/logger"
 import updateGithubGist from "../../requests/updateGist"
 
 async function storeInGist(gistId: string, token: string, data: string, filename: string) {

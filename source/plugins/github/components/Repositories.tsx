@@ -8,28 +8,35 @@ import {
   RiGitPullRequestLine,
   RiGitRepositoryLine,
   RiStarLine,
-} from "react-icons/ri";
-import { StatisticRow } from "templates/Default/Default_StatRow";
-import DefaultTitle from "templates/Default/Default_Title";
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle";
-import TerminalCommand from "templates/Terminal/Terminal_Command";
-import TerminalGrid from "templates/Terminal/Terminal_Grid";
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak";
-import getPseudoCommands from "core/utils/getPseudoCommands";
-import { RepositoriesData } from "../types";
-import React from "react";
-import getEnvVariables from "source/plugins/@utils/getEnvVariables";
-import { abbreviateNumber } from "source/helpers/number";
-
+} from "react-icons/ri"
+import { StatisticRow } from "templates/Default/Default_StatRow"
+import DefaultTitle from "templates/Default/Default_Title"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalGrid from "templates/Terminal/Terminal_Grid"
+import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
+import getPseudoCommands from "core/utils/getPseudoCommands"
+import { RepositoriesData } from "../types"
+import React from "react"
+import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { abbreviateNumber } from "source/helpers/number"
+import logger from "source/helpers/logger"
 interface Metric {
-  icon: JSX.Element;
-  title: string;
-  value: number;
+  icon: JSX.Element
+  title: string
+  value: number
 }
 
-const DefaultRepositories = ({ repositoriesData, relevantMetrics }: { repositoriesData: RepositoriesData; relevantMetrics: Metric[] }) => {
-  const firstRow = relevantMetrics.slice(0, 2);
-  const secondRow = relevantMetrics.slice(2, 4);
+const DefaultRepositories = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  repositoriesData,
+  relevantMetrics,
+}: {
+  repositoriesData: RepositoriesData
+  relevantMetrics: Metric[]
+}) => {
+  const firstRow = relevantMetrics.slice(0, 2)
+  const secondRow = relevantMetrics.slice(2, 4)
 
   return (
     <>
@@ -53,43 +60,100 @@ const DefaultRepositories = ({ repositoriesData, relevantMetrics }: { repositori
         />
       </div>
     </>
-  );
-};
+  )
+}
 
-const TerminalRepositories = ({ repositoriesData, relevantMetrics }: { repositoriesData: RepositoriesData; relevantMetrics: Metric[] }) => {
+const TerminalRepositories = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  repositoriesData,
+  relevantMetrics,
+}: {
+  repositoriesData: RepositoriesData
+  relevantMetrics: Metric[]
+}) => {
+  logger({
+    message: `Rendering TerminalRepositories component`,
+    level: "debug",
+    __filename,
+  })
+
   const gridData = relevantMetrics.map((metric) => ({
     title: metric.title,
     value: abbreviateNumber(metric.value),
-  }));
+  }))
 
-  return <TerminalGrid data={gridData} rightText="Metric" leftText="Value" />;
-};
+  return <TerminalGrid data={gridData} rightText="Metric" leftText="Value" />
+}
 
 export default function GithubRepositories({ repositoriesData }: { repositoriesData: RepositoriesData }): JSX.Element {
-  const { pluginGithub } = getEnvVariables();
-  if (!pluginGithub) throw new Error("Github plugin not found in GithubProfile component");
+  const { pluginGithub } = getEnvVariables()
+  if (!pluginGithub) throw new Error("Github plugin not found in GithubProfile component")
 
-  const title = pluginGithub.repositories_title.replace("<qnt>", repositoriesData.repositories.length.toString());
-  const hideTitle = pluginGithub.repositories_hide_title;
+  const title = pluginGithub.repositories_title.replace("<qnt>", repositoriesData.repositories.length.toString())
+  const hideTitle = pluginGithub.repositories_hide_title
 
   const allMetrics = [
-    { icon: <RiStarLine />, title: "Stars", value: repositoriesData.totalStars },
-    { icon: <RiGitForkLine />, title: "Forks", value: repositoriesData.totalForks },
-    { icon: <RiEyeLine />, title: "Watchers", value: repositoriesData.totalWatchers },
-    { icon: <RiFileCodeLine />, title: "Total Releases", value: repositoriesData.totalReleases },
-    { icon: <RiGitMergeLine />, title: "Total Deployments", value: repositoriesData.totalDeployments },
-    { icon: <RiGitMergeLine />, title: "Total Environments", value: repositoriesData.totalEnvironments },
-    { icon: <RiGitClosePullRequestLine />, title: "Total Issues Open", value: repositoriesData.totalIssuesOpen },
-    { icon: <RiGitClosePullRequestLine />, title: "Total Issues Closed", value: repositoriesData.totalIssuesClosed },
-    { icon: <RiGitPullRequestLine />, title: "Total PRs Open", value: repositoriesData.totalPRsOpen },
-    { icon: <RiGitClosePullRequestLine />, title: "Total PRs Closed", value: repositoriesData.totalPRsClosed },
-    { icon: <RiGitBranchLine />, title: "Total PRs Merged", value: repositoriesData.totalPRsMerged },
-  ];
+    {
+      icon: <RiStarLine />,
+      title: "Stars",
+      value: repositoriesData.totalStars,
+    },
+    {
+      icon: <RiGitForkLine />,
+      title: "Forks",
+      value: repositoriesData.totalForks,
+    },
+    {
+      icon: <RiEyeLine />,
+      title: "Watchers",
+      value: repositoriesData.totalWatchers,
+    },
+    {
+      icon: <RiFileCodeLine />,
+      title: "Total Releases",
+      value: repositoriesData.totalReleases,
+    },
+    {
+      icon: <RiGitMergeLine />,
+      title: "Total Deployments",
+      value: repositoriesData.totalDeployments,
+    },
+    {
+      icon: <RiGitMergeLine />,
+      title: "Total Environments",
+      value: repositoriesData.totalEnvironments,
+    },
+    {
+      icon: <RiGitClosePullRequestLine />,
+      title: "Total Issues Open",
+      value: repositoriesData.totalIssuesOpen,
+    },
+    {
+      icon: <RiGitClosePullRequestLine />,
+      title: "Total Issues Closed",
+      value: repositoriesData.totalIssuesClosed,
+    },
+    {
+      icon: <RiGitPullRequestLine />,
+      title: "Total PRs Open",
+      value: repositoriesData.totalPRsOpen,
+    },
+    {
+      icon: <RiGitClosePullRequestLine />,
+      title: "Total PRs Closed",
+      value: repositoriesData.totalPRsClosed,
+    },
+    {
+      icon: <RiGitBranchLine />,
+      title: "Total PRs Merged",
+      value: repositoriesData.totalPRsMerged,
+    },
+  ]
 
   const relevantMetrics = allMetrics
     .filter((metric) => metric.value > 0)
     .sort((a, b) => b.value - a.value)
-    .slice(0, 4);
+    .slice(0, 4)
 
   return (
     <section id="github" className="github-profile">
@@ -115,5 +179,5 @@ export default function GithubRepositories({ repositoriesData }: { repositoriesD
         }
       />
     </section>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-import React from "react";
+import React from "react"
 
 interface foreignObject {
-  children: JSX.Element;
-  x?: number;
-  y?: number;
+  children: JSX.Element
+  x?: number
+  y?: number
 }
 
 function ForeignObject({ children, x = 0, y = 0 }: foreignObject): JSX.Element {
@@ -14,7 +14,7 @@ function ForeignObject({ children, x = 0, y = 0 }: foreignObject): JSX.Element {
         {children}
       </div>
     </foreignObject>
-  );
+  )
 }
 
-export default ForeignObject;
+export default ForeignObject

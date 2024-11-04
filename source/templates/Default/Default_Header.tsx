@@ -1,8 +1,8 @@
-import React from "react";
+import React from "react"
 
 interface Props {
-  icon: JSX.Element;
-  title: string;
+  icon: JSX.Element
+  title: string
 }
 
 export const Header = ({ icon, title }: Props): JSX.Element => {
@@ -12,7 +12,7 @@ export const Header = ({ icon, title }: Props): JSX.Element => {
       <span className="default-header-divider">|</span>
       <div className="xl-text-bold flex-center">{title}</div>
     </div>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

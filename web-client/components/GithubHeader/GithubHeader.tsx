@@ -1,20 +1,16 @@
-// @TODO FIX THIS MESS OF A HEADER :D
 "use client"
+import useStore from "app/store"
 import Image from "next/image"
 import Link from "next/link"
-import React, { useState } from "react"
+import { useState } from "react"
 import { FaDev, FaLanguage } from "react-icons/fa"
-import { MdLogout, MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
-
-import useStore from "app/store"
+import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
 import { icon, weebProfile } from "static"
 import { useToast } from "web-client/app/ToastProvider"
-
-import DropdownMenuComp from "./DropdownMenu"
-
 import Button from "../Button/Button"
 import JsonCodeBlock from "../CodeBlock/JsonCodeBlock"
 import DialogBox from "../DialogBox/DialogBox"
+import DropdownMenuComp from "./DropdownMenu/DropdownMenu"
 import "./GithubHeader.css"
 
 const DevtoolsHeader = ({ open }: { open: boolean }) => {
@@ -74,14 +70,14 @@ const DevtoolsHeader = ({ open }: { open: boolean }) => {
   ]
 
   return (
-    <div className='second-header-container' data-open={open}>
-      <ul className='flex justify-start gap-4'>
+    <div className="second-header-container" data-open={open}>
+      <ul className="flex justify-start gap-4">
         {DEV_HEADER_ITEMS.map((item) => (
-          <li key={item.title} className='flex items-center gap-2'>
+          <li key={item.title} className="flex items-center gap-2">
             {item.type === "dialog" ? (
               <DialogBox
                 trigger={
-                  <Button variant='secondary' size='sm'>
+                  <Button variant="secondary" size="sm">
                     {item.title}
                   </Button>
                 }
@@ -91,7 +87,7 @@ const DevtoolsHeader = ({ open }: { open: boolean }) => {
                 <JsonCodeBlock json={item.json} showCopyToClipboard={true} name={item.title} />
               </DialogBox>
             ) : (
-              <Button key={item.title} onClick={item.onClick} variant='secondary' size='sm'>
+              <Button key={item.title} onClick={item.onClick} variant="secondary" size="sm">
                 {item.title}
               </Button>
             )}
@@ -102,47 +98,47 @@ const DevtoolsHeader = ({ open }: { open: boolean }) => {
   )
 }
 
-function GithubHeader() {
-  const { githubUser, changeTheme, theme, unassignUser } = useStore()
+function MainHeader() {
+  const { changeTheme, theme } = useStore()
   const [open, setOpen] = useState<boolean>(false)
   const invertedTheme = theme === "light" ? "dark" : "light"
   const { sendToast } = useToast()
 
   return (
     <>
-      <header className='header-container'>
-        <div className='header-content'>
-          <div className='flex items-center gap-2'>
+      <header className="header-container">
+        <div className="header-content">
+          <div className="flex items-center gap-2">
             <DropdownMenuComp />
             <Link
-              href='/'
-              className='group flex w-[225px] items-center justify-center gap-2 px-2 transition-all hover:gap-3'
+              href="/"
+              className="group flex w-[225px] items-center justify-center gap-2 px-2 transition-all hover:gap-3"
             >
               <Image
                 src={icon}
-                alt='icon'
+                alt="icon"
                 width={30}
                 height={30}
                 priority
-                className='transition-all group-hover:scale-110'
+                className="transition-all group-hover:scale-110"
               />
               <Image
                 src={weebProfile}
-                alt='weebProfile'
+                alt="weebProfile"
                 height={25}
                 priority
-                className='transition-all group-hover:scale-110'
+                className="transition-all group-hover:scale-110"
               />
             </Link>
           </div>
 
-          <div className='flex items-center gap-4'>
-            <Button style={{ padding: "10px" }} onClick={() => setOpen(!open)} variant='secondary'>
-              <FaDev size={20} color='inherit' />
+          <div className="flex items-center gap-4">
+            <Button style={{ padding: "10px" }} onClick={() => setOpen(!open)} variant="secondary">
+              <FaDev size={20} color="inherit" />
             </Button>
             <Button
               style={{ padding: "10px" }}
-              variant='secondary'
+              variant="secondary"
               onClick={() => {
                 sendToast({
                   title: "Change language not implemented",
@@ -151,34 +147,22 @@ function GithubHeader() {
                 })
               }}
             >
-              <FaLanguage size={20} color='inherit' />
+              <FaLanguage size={20} color="inherit" />
             </Button>
             <Button
               style={{ padding: "10px" }}
-              variant='secondary'
+              variant="secondary"
               onClick={() => {
                 changeTheme(invertedTheme)
                 sendToast({ title: "Theme Changed", description: `The theme has been changed to ${invertedTheme}` })
               }}
             >
               {theme === "light" ? (
-                <MdOutlineDarkMode size={20} color='inherit' />
+                <MdOutlineDarkMode size={20} color="inherit" />
               ) : (
-                <MdOutlineLightMode size={20} color='inherit' />
+                <MdOutlineLightMode size={20} color="inherit" />
               )}
             </Button>
-            {githubUser && (
-              <Button
-                style={{ padding: "10px" }}
-                variant='secondary'
-                onClick={() => {
-                  unassignUser()
-                  sendToast({ title: "User Unassigned", description: "The github user has been unassigned" })
-                }}
-              >
-                <MdLogout size={20} color='inherit' />
-              </Button>
-            )}
           </div>
         </div>
       </header>
@@ -187,4 +171,4 @@ function GithubHeader() {
   )
 }
 
-export default GithubHeader
+export default MainHeader

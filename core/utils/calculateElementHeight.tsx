@@ -1,14 +1,14 @@
+import fs from "fs"
+import path from "path"
+import puppeteer from "puppeteer"
 import React, { JSXElementConstructor, ReactElement, ReactNode } from "react"
 import { renderToString } from "react-dom/server"
+import { PluginsConfig } from "source/plugins/@types/plugins"
 import getSvgWidth from "./getSvgWidth"
-import path from "path"
-import PluginsConfig from "source/plugins/@types/PluginsConfig"
-import fs from "fs"
-import puppeteer from "puppeteer"
-import logger from "./logger"
+import logger from "../../source/helpers/logger"
 
 async function calculateElementHeight(activePlugins: ReactNode, env: PluginsConfig): Promise<number> {
-  logger({ message: "Starting...", level: "info", __filename })
+  logger({ message: "Calculating element height...", level: "info", __filename })
   const isHalf = env.size === "half"
 
   const htmlstring = (
@@ -16,20 +16,20 @@ async function calculateElementHeight(activePlugins: ReactNode, env: PluginsConf
     css: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode>
   ) => {
     return renderToString(
-      <html lang='en' data-color-mode='dark' data-light-theme='light' data-dark-theme='dark'>
+      <html lang="en" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark">
         <head>
-          <meta charSet='UTF-8' />
-          <link rel='preconnect' href='https://fonts.googleapis.com' />
-          <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='' />
+          <meta charSet="UTF-8" />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
           <link
-            href='https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'
-            rel='stylesheet'
+            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet"
           />
           {css}
         </head>
         <body>
           <div
-            id='svg-main'
+            id="svg-main"
             className={`${env.size} ${env.style}`}
             style={{ width: "100%", maxWidth: getSvgWidth(isHalf), display: "flex", flexDirection: "column" }}
           >

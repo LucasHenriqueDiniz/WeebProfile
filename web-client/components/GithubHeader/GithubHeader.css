@@ -88,7 +88,8 @@
   padding: 4px 12px;
   max-width: 100vw;
   border-bottom: 1px solid var(--borderColor-default);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji";
   color: var(--fgColor-default);
   max-height: 36px;
   display: flex;

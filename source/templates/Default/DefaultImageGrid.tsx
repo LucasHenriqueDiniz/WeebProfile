@@ -1,7 +1,7 @@
-import randomString from "core/utils/randomString";
-import Img64 from "core/src/base/ImageComponent";
-import { GridItemProps } from "../types";
-import React from "react";
+import { randomString } from "source/helpers/string"
+import Img64 from "core/src/base/ImageComponent"
+import { GridItemProps } from "../types"
+import React from "react"
 
 function GridItem({ title, image, value }: GridItemProps): JSX.Element {
   return (
@@ -14,16 +14,16 @@ function GridItem({ title, image, value }: GridItemProps): JSX.Element {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface ImageGridProps {
-  data: GridItemProps[];
+  data: GridItemProps[]
 }
 
 function ImageGrid({ data }: ImageGridProps): JSX.Element {
   if (data.length % 4 !== 0) {
-    data = data.slice(0, 4);
+    data = data.slice(0, 4)
   }
 
   return (
@@ -32,7 +32,7 @@ function ImageGrid({ data }: ImageGridProps): JSX.Element {
         <GridItem key={randomString()} {...item} />
       ))}
     </div>
-  );
+  )
 }
 
-export default ImageGrid;
+export default ImageGrid

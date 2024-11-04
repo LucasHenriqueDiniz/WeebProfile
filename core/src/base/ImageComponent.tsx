@@ -1,5 +1,5 @@
 import React from "react"
-import isNodeEnvironment from "../../../source/plugins/@utils/isNodeEnv"
+import isNodeEnvironment from "source/plugins/@utils/isNodeEnv"
 
 interface img64Props {
   url64: string | undefined

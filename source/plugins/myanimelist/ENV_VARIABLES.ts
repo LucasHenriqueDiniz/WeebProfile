@@ -1,21 +1,31 @@
-import PluginVariables from "source/plugins/@types/PluginVariables";
-import MyAnimeListPlugin, { MyAnimeListSections } from "./types/envMal";
-// anime_simple_favorites
-// manga_simple_favorites
-// people_simple_favorites
-// character_simple_favorites
+import PluginVariables from "source/plugins/@types/PluginVariables"
+import MyAnimeListPlugin, { MyAnimeListSections } from "./types/MyAnimeListConfig"
+
 const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
-  plugin_myanimelist: { required: true, type: "boolean", description: "Enable MyAnimeList plugin", sections: ["main"] },
-  username: { required: true, type: "string", description: "MyAnimeList username", sections: ["main"] },
+  plugin_enabled: {
+    required: true,
+    type: "boolean",
+    description: "Enable MyAnimeList plugin",
+    sections: ["main"],
+  },
+  username: {
+    required: true,
+    type: "string",
+    description: "MyAnimeList username",
+    sections: ["main"],
+  },
   sections: {
     type: "stringArray",
-    defaultValue: ["statistics_simple", "anime_favorites", "last_activity"],
-    description: `Sections to display in the profile`,
+    defaultValue: [],
+    description: "Sections to display in the profile",
     sections: ["main"],
     options: MyAnimeListSections,
   },
-  hide_header: { type: "boolean", description: "Hide the header of the profile", sections: ["main"] },
-  hide_terminal_emojis: { type: "boolean", description: "Hide the terminal emojis", sections: ["main"] },
+  hide_header: {
+    type: "boolean",
+    description: "Hide the header of the profile",
+    sections: ["main"],
+  },
   anime_favorites_max: {
     type: "number",
     defaultValue: "5",
@@ -84,8 +94,18 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     description: "Hide the title of the manga favorites section",
     sections: ["manga_favorites", "manga_simple_favorites"],
   },
-  statistics_anime_title: { type: "string", defaultValue: "Anime Statistics", description: "Title of the anime statistics section", sections: ["statistics"] },
-  statistics_manga_title: { type: "string", defaultValue: "Manga Statistics", description: "Title of the manga statistics section", sections: ["statistics"] },
+  statistics_anime_title: {
+    type: "string",
+    defaultValue: "Anime Statistics",
+    description: "Title of the anime statistics section",
+    sections: ["statistics"],
+  },
+  statistics_manga_title: {
+    type: "string",
+    defaultValue: "Manga Statistics",
+    description: "Title of the manga statistics section",
+    sections: ["statistics"],
+  },
   statistics_media: {
     type: "stringRadio",
     defaultValue: "both",
@@ -93,21 +113,61 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     sections: ["statistics"],
     options: ["anime", "manga", "both"],
   },
-  statistics_hide_title: { type: "boolean", description: "Hide the title of the statistics section", sections: ["statistics"] },
-  anime_bar_title: { defaultValue: "Anime Statistics", description: "Title of the anime statistics section", sections: ["anime_bar"], type: "string" },
-  anime_bar_hide_title: { type: "boolean", description: "Hide the title of the anime statistics section", sections: ["anime_bar"] },
-  manga_bar_title: { type: "string", defaultValue: "Manga Statistics", description: "Title of the manga statistics section", sections: ["manga_bar"] },
-  manga_bar_hide_title: { type: "boolean", description: "Hide the title of the manga statistics section", sections: ["manga_bar"] },
+  statistics_hide_title: {
+    type: "boolean",
+    description: "Hide the title of the statistics section",
+    sections: ["statistics"],
+  },
+  anime_bar_title: {
+    defaultValue: "Anime Statistics",
+    description: "Title of the anime statistics section",
+    sections: ["anime_bar"],
+    type: "string",
+  },
+  anime_bar_hide_title: {
+    type: "boolean",
+    description: "Hide the title of the anime statistics section",
+    sections: ["anime_bar"],
+  },
+  manga_bar_title: {
+    type: "string",
+    defaultValue: "Manga Statistics",
+    description: "Title of the manga statistics section",
+    sections: ["manga_bar"],
+  },
+  manga_bar_hide_title: {
+    type: "boolean",
+    description: "Hide the title of the manga statistics section",
+    sections: ["manga_bar"],
+  },
   statistics_simple_title: {
     type: "string",
     defaultValue: "Simple Statistics",
     description: "Title of the simple statistics section",
     sections: ["statistics_simple"],
   },
-  statistics_simple_hide_title: { type: "boolean", description: "Hide the title of the simple statistics section", sections: ["statistics_simple"] },
-  last_activity_title: { type: "string", defaultValue: "Last Activity", description: "Title of the last activity section", sections: ["last_activity"] },
-  last_activity_max: { type: "number", defaultValue: "6", description: "Number of activities to display", sections: ["last_activity"] },
-  last_activity_hide_title: { type: "boolean", description: "Hide the title of the last activity section", sections: ["last_activity"] },
+  statistics_simple_hide_title: {
+    type: "boolean",
+    description: "Hide the title of the simple statistics section",
+    sections: ["statistics_simple"],
+  },
+  last_activity_title: {
+    type: "string",
+    defaultValue: "Last Activity",
+    description: "Title of the last activity section",
+    sections: ["last_activity"],
+  },
+  last_activity_max: {
+    type: "number",
+    defaultValue: "6",
+    description: "Number of activities to display",
+    sections: ["last_activity"],
+  },
+  last_activity_hide_title: {
+    type: "boolean",
+    description: "Hide the title of the last activity section",
+    sections: ["last_activity"],
+  },
   last_activity_media: {
     type: "stringRadio",
     defaultValue: "both",
@@ -118,8 +178,13 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
   favorites_hide_overlay: {
     type: "boolean",
     description: "Hide the overlay in the image with the name or title of the favorites section",
-    sections: ["anime_simple_favorites", "manga_simple_favorites", "people_simple_favorites", "character_simple_favorites"],
+    sections: [
+      "anime_simple_favorites",
+      "manga_simple_favorites",
+      "people_simple_favorites",
+      "character_simple_favorites",
+    ],
   },
-};
+}
 
-export default MAL_ENV_VARIABLES;
+export default MAL_ENV_VARIABLES

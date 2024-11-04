@@ -1,8 +1,8 @@
-import PluginVariables, { DefaultValue } from "plugins/@types/PluginVariables"
-import splitString from "./splitString"
-import toBoolean from "./toBoolean"
 import dotenv from "dotenv"
-import logger from "./logger"
+import PluginVariables, { DefaultValue } from "plugins/@types/PluginVariables"
+import { toBoolean } from "source/helpers/boolean"
+import { splitString } from "source/helpers/string"
+import logger from "source/helpers/logger"
 
 function loadPlugin<T>(
   env: dotenv.DotenvParseOutput,
@@ -10,25 +10,31 @@ function loadPlugin<T>(
   pluginName: string
 ): T | undefined {
   logger({ message: `Loading ${pluginName} environment variables...`, level: "info", __filename })
-  const returnConfig: Record<string, DefaultValue> = {}
 
-  // Verify if the plugin is active
-  const activePluginKeyName = `PLUGIN_${pluginName.toUpperCase()}`
-  const isPluginActive = toBoolean(env[activePluginKeyName])
+  const pluginPrefix = `PLUGIN_${pluginName.toUpperCase()}`
+  const isPluginActive = toBoolean(env[pluginPrefix])
+
+  // Log the actual value for debugging
+  logger({
+    message: `Plugin ${pluginName} activation value: ${env[pluginPrefix]}`,
+    level: "debug",
+    __filename,
+  })
 
   if (!isPluginActive) {
-    logger({ message: `Plugin ${pluginName} is not active, skipping`, level: "info", __filename })
+    logger({ message: `Plugin ${pluginName} is not active`, level: "info", __filename })
     return undefined
   }
 
-  // Process the plugin's environment variables
-  for (const [key, config] of Object.entries(ENV_VARIABLES)) {
-    if (key.toUpperCase() === activePluginKeyName) {
-      returnConfig[key] = isPluginActive
-      continue
-    }
+  const returnConfig: Record<string, DefaultValue> = {
+    plugin_enabled: true,
+  }
 
-    const envKey = `PLUGIN_${pluginName.toUpperCase()}_${key.toUpperCase()}`
+  // Process other environment variables
+  for (const [key, config] of Object.entries(ENV_VARIABLES)) {
+    if (key === "plugin_enabled") continue
+
+    const envKey = `${pluginPrefix}_${key.toUpperCase()}`
     let value = env[envKey]
 
     if (!value && config.required) {
@@ -40,21 +46,24 @@ function loadPlugin<T>(
       value = String(config.defaultValue)
     }
 
-    if (!value) continue
+    if (!value && config.defaultValue !== undefined) {
+      value = String(config.defaultValue)
+    }
 
-    // Verify and convert the variable type
-    switch (config.type) {
-      case "boolean":
-        returnConfig[key] = toBoolean(value)
-        break
-      case "number":
-        returnConfig[key] = parseInt(value, 10)
-        break
-      case "stringArray":
-        returnConfig[key] = splitString(value)
-        break
-      default:
-        returnConfig[key] = value
+    if (value !== undefined) {
+      switch (config.type) {
+        case "boolean":
+          returnConfig[key] = toBoolean(value)
+          break
+        case "number":
+          returnConfig[key] = parseInt(value, 10)
+          break
+        case "stringArray":
+          returnConfig[key] = splitString(value)
+          break
+        default:
+          returnConfig[key] = value
+      }
     }
   }
 

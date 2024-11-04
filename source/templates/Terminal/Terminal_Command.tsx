@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 
 const TerminalCommand = ({ command, className }: { command: string; className?: string }): JSX.Element => {
   return (
@@ -7,7 +7,7 @@ const TerminalCommand = ({ command, className }: { command: string; className?: 
       <span className="text-highlight">~</span>
       <span className="text-raw">$ {command}</span>
     </div>
-  );
-};
+  )
+}
 
-export default TerminalCommand;
+export default TerminalCommand

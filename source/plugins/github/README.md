@@ -6,10 +6,10 @@
 
 ## 📝 Contents
 
-- [Supported sections](#Supported sections)
-- [Setup](#Setup)
-- [Contributing](#Contributing)
-- [License](#License)
+- [Supported sections](#supported-sections)
+- [Setup](#setup)
+- [Contributing](#contributing)
+- [License](#license)
 
 ### ➡️ Available options
 
