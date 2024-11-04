@@ -13,6 +13,7 @@
     "action:start": "yarn workspace @weeb/core start",
     "vercel:dev": "yarn workspace @weeb/web-client dev",
     "vercel:build": "yarn workspace @weeb/web-client build",
+    "build": "yarn workspace @weeb/web-client build",
     "vercel:start": "yarn workspace @weeb/web-client start",
     "action:install": "yarn install",
     "vercel:install": "yarn install",

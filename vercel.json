@@ -1,6 +1,0 @@
-{
-  "buildCommand": "yarn vercel:build",
-  "outputDirectory": "web-client/.next",
-  "installCommand": "yarn install",
-  "framework": "nextjs"
-}
