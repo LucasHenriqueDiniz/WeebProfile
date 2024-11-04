@@ -8,7 +8,6 @@
     "**/*.code-search": true,
     "**/web-client/.next": true,
     "**/assets": true,
-    "**/.npm-only-allow": true,
     "**/yarn.lock": true
   }
 }
