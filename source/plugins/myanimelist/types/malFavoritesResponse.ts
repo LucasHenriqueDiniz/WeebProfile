@@ -120,8 +120,8 @@ interface FullMalAnimeResponse {
   genres?: BasicMalEntity[]
   themes?: BasicMalEntity[]
   relations?: RelationsEntity[]
-  streaming?: BasicMalEntity[]
-  external?: BasicMalEntity[]
+  streaming?: { name: string; url: string }[]
+  external?: { name: string; url: string }[]
   explicit_genres?: BasicMalEntity[]
   demographics: BasicMalEntity[]
   theme: {
@@ -169,7 +169,7 @@ export interface MalFullMangaResponse {
   themes?: BasicMalEntity[]
   demographics?: BasicMalEntity[]
   relations?: RelationsEntity[]
-  external?: BasicMalEntity[]
+  external?: { name: string; url: string }[]
   explicit_genres?: BasicMalEntity[]
 }
 

@@ -2,6 +2,7 @@
 import useStore from "app/store"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import { PluginManager } from "source/plugins/@utils/PluginManager"
 import { GenerateActionCode } from "web-client/app/storeHelpers"
 import { ActionCode } from "web-client/app/storeTypes"
 import { useToast } from "web-client/app/ToastProvider"
@@ -47,7 +48,7 @@ const ActionContent = ({ content }: { content: ActionCode | null }) => {
         <>
           <p>The action code is a YAML file that defines the workflow, including the triggers, jobs, and steps.</p>
           <Button
-            size='lg'
+            size="lg"
             style={{ marginBottom: "1rem", maxWidth: "fit-content" }}
             onClick={() => {
               copyToClipboard(codeLines.join("\n"))
@@ -58,7 +59,7 @@ const ActionContent = ({ content }: { content: ActionCode | null }) => {
           </Button>
           <Image
             src={actionsCodePastLocation}
-            alt='actions_code_paste_location'
+            alt="actions_code_paste_location"
             width={actionsCodePastLocation.width}
             height={actionsCodePastLocation.height}
           />
@@ -95,7 +96,7 @@ const ActionContent = ({ content }: { content: ActionCode | null }) => {
           </p>
           <Image
             src={actionsSetUpSecretVariables}
-            alt='actions_set_up_secret_variables'
+            alt="actions_set_up_secret_variables"
             width={actionsSetUpSecretVariables.width}
             height={actionsSetUpSecretVariables.height}
           />
@@ -118,7 +119,7 @@ const ActionContent = ({ content }: { content: ActionCode | null }) => {
           </p>
           <Image
             src={actionsManualRun}
-            alt='actions_manual_run_location'
+            alt="actions_manual_run_location"
             width={actionsManualRun.width}
             height={actionsManualRun.height}
           />
@@ -129,21 +130,21 @@ const ActionContent = ({ content }: { content: ActionCode | null }) => {
 
   return (
     <>
-      <div className='flex h-full items-center justify-between mb-2'>
+      <div className="flex h-full items-center justify-between mb-2">
         <DialogBox
           trigger={
-            <Button size='md' variant='secondary'>
+            <Button size="md" variant="secondary">
               What i do with this?
             </Button>
           }
-          title='What i do with the action code?'
+          title="What i do with the action code?"
         >
-          <div className='scrollable -y flex h-full flex-col items-center justify-between py-6'>
+          <div className="scrollable -y flex h-full flex-col items-center justify-between py-6">
             <VerticalStepper steps={steps} />
           </div>
         </DialogBox>
         <Button
-          size='lg'
+          size="lg"
           onClick={() => {
             copyToClipboard(codeLines.join("\n"))
             sendToast({ title: "Copied to clipboard", description: "The code was copied to your clipboard" })
@@ -158,12 +159,20 @@ const ActionContent = ({ content }: { content: ActionCode | null }) => {
 }
 
 const ActionTab = () => {
-  const { activePlugins, pluginsConfig } = useStore()
+  const { pluginsConfig } = useStore()
   const [actionCode, setActionCode] = useState<ActionCode | null>(null)
+  const [activePlugins, setActivePlugins] = useState(PluginManager.getInstance().getActivePlugins())
 
   useEffect(() => {
-    setActionCode(GenerateActionCode(pluginsConfig, activePlugins))
-  }, [pluginsConfig, activePlugins])
+    const plugins = PluginManager.getInstance().getActivePlugins()
+    setActivePlugins(plugins)
+    setActionCode(
+      GenerateActionCode(
+        pluginsConfig,
+        plugins.map(([key]) => key)
+      )
+    )
+  }, [pluginsConfig])
 
   return <>{activePlugins.length === 0 ? <NoPluginsSelected /> : <ActionContent content={actionCode} />}</>
 }

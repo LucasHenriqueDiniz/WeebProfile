@@ -1,60 +1,72 @@
 "use client"
-import plugins from "plugins/plugins"
 import React, { ReactNode, useEffect, useState } from "react"
+import { isArrayEmpty } from "source/helpers/array"
 import CheckPluginForRequiredValues from "source/plugins/@utils/checkPluginForRequiredValues"
+import { PluginManager } from "source/plugins/@utils/PluginManager"
 import ErrorMessage from "source/templates/Error_Style"
 import SvgContainer from "templates/Main/SvgContainer"
 import TerminalHeader from "templates/Terminal/Terminal_Header"
-
-import arrayIsEmpty from "web-client/utils/array"
-
 import useStore from "./store"
 
-function RenderActivePlugins(): JSX.Element {
+const RenderActivePlugins = (): JSX.Element => {
   const [pluginsComponents, setPluginsComponents] = useState<ReactNode[]>([])
-  const { activePlugins, pluginsConfig, pluginsData } = useStore()
+  const { pluginsConfig, pluginsData, initPluginsData } = useStore()
   const svgWidth = pluginsConfig.size
   const style = pluginsConfig.style
+  const pluginManager = PluginManager.getInstance()
+
+  // Initialize the plugins data when necessary
+  useEffect(() => {
+    const activePlugins = pluginManager.getActivePlugins()
+    const hasNullData = activePlugins.some(([name]) => !pluginsData[name])
+
+    if (hasNullData) {
+      initPluginsData()
+    }
+  }, [pluginsConfig, initPluginsData, pluginsData, pluginManager])
 
   useEffect(() => {
-    const newComponents: React.SetStateAction<ReactNode[]> | React.JSX.Element[] = []
-    plugins.forEach((plugin) => {
-      const pluginData = pluginsData[plugin.name]
-      const specificConfigs = pluginsConfig[plugin.name]
+    const newComponents = pluginManager
+      .getActivePlugins()
+      .map(([pluginName, plugin]) => {
+        const pluginData = pluginsData[pluginName]
+        const specificConfigs = pluginsConfig[pluginName]
 
-      const activePluginKey = `plugin_${plugin.name}`
-      const isPluginDisabled = !specificConfigs || !specificConfigs[activePluginKey]
-      const isSectionsEmpty = arrayIsEmpty(specificConfigs.sections)
+        // Early returns for invalid plugin states
+        if (!specificConfigs || !specificConfigs.plugin_enabled) {
+          return null
+        }
 
-      if (isPluginDisabled) {
-        return
-      }
+        if (isArrayEmpty(specificConfigs?.sections)) {
+          return <ErrorMessage message={`Plugin ${pluginName} has no sections`} key={pluginName} />
+        }
 
-      if (isSectionsEmpty) {
-        newComponents.push(<ErrorMessage message={`Plugin ${plugin.name} has no sections`} key={plugin.name} />)
-        return
-      }
+        const error = CheckPluginForRequiredValues({
+          plugin: specificConfigs,
+          ENV_VARIABLES: plugin.envVariables,
+          pluginName: plugin.name,
+        })
 
-      const error = CheckPluginForRequiredValues({
-        plugin: specificConfigs,
-        ENV_VARIABLES: plugin.envVariables,
-        pluginName: plugin.name,
+        if (error) {
+          return <React.Fragment key={pluginName}>{error}</React.Fragment>
+        }
+
+        // If we don't have data, we show a loading message
+        if (!pluginData) {
+          return <div key={pluginName}>Loading {pluginName} data...</div>
+        }
+
+        return <React.Fragment key={pluginName}>{plugin.renderer(specificConfigs, pluginData)}</React.Fragment>
       })
-      if (error) {
-        newComponents.push(<ErrorMessage message={error.props.message} key={plugin.name} />)
-        return
-      }
-
-      newComponents.push(<plugin.renderer data={pluginData} key={plugin.name} plugin={specificConfigs} />)
-    })
+      .filter(Boolean)
 
     setPluginsComponents(newComponents)
-  }, [pluginsConfig, pluginsData])
+  }, [pluginsConfig, pluginsData, pluginManager])
 
   return (
     <SvgContainer size={svgWidth} height={0} style={style} asDiv>
       <>
-        {style === "terminal" && activePlugins.length > 0 && <TerminalHeader />}
+        {style === "terminal" && pluginManager.getActivePlugins().length > 0 && <TerminalHeader />}
         {pluginsComponents}
       </>
     </SvgContainer>

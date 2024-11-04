@@ -16,11 +16,11 @@ const DefaultFavoriteLicense = ({ repositoriesData }: { repositoriesData: Reposi
   const total = repositories.length
 
   return (
-    <div className='flex gap-8 items-center'>
+    <div className="flex gap-8 items-center">
       <TbLicense size={32} />
-      <div className='flex-d gap-2'>
-        <span className='md-text text-bold'>{favoriteLicense.name}</span>
-        <span className='sm-text'>
+      <div className="flex-d gap-2">
+        <span className="md-text text-bold">{favoriteLicense.name}</span>
+        <span className="sm-text">
           Used in {favoriteLicense.count} out of {total} repositories
         </span>
       </div>
@@ -40,7 +40,7 @@ const TerminalFavoriteLicense = ({ repositoriesData }: { repositoriesData: Repos
     },
   ] as GridItemProps[]
 
-  return <TerminalTree data={TreeItems} title='Favorite License' />
+  return <TerminalTree data={TreeItems} title="Favorite License" />
 }
 
 const FavoriteLicense = ({ repositoriesData }: { repositoriesData: RepositoriesData }) => {
@@ -51,7 +51,7 @@ const FavoriteLicense = ({ repositoriesData }: { repositoriesData: RepositoriesD
   const hideTitle = pluginGithub.favorite_license_hide_title
 
   return (
-    <section id='github' className='favorite-license'>
+    <section id="github" className="favorite-license">
       <RenderBasedOnStyle
         defaultComponent={
           <>

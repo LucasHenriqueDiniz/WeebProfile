@@ -4,7 +4,12 @@
 const config = {
   reactStrictMode: true,
   images: {
-    domains: ["avatars.githubusercontent.com", "cdn.myanimelist.net", "lastfm.freetls.fastly.net", "placecats"],
+    remotePatterns: [
+      { hostname: "avatars.githubusercontent.com" },
+      { hostname: "cdn.myanimelist.net" },
+      { hostname: "lastfm.freetls.fastly.net" },
+      { hostname: "placecats" },
+    ],
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -21,6 +26,8 @@ const config = {
           dns: false,
           tls: false,
           request: false,
+          document: false,
+          'image-to-base64': false,
         },
       }
     }

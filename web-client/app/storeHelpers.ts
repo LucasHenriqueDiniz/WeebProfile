@@ -1,12 +1,11 @@
-import PluginsConfig, { PluginsRawConfig } from "source/plugins/@types/PluginsConfig"
+import { PluginDataMap, PluginName, PluginsConfig } from "source/plugins/@types/plugins"
 import fetchPluginsData from "source/plugins/@utils/fetchPluginsData"
+import { PluginManager } from "source/plugins/@utils/PluginManager"
 import MAIN_ENV_VARIABLES from "source/plugins/ENV_VARIABLES"
-import plugins, { PluginsData, pluginsNames } from "source/plugins/plugins"
-
-import { ActionCode } from "./storeTypes"
 import useStore from "./store"
+import { ActionCode } from "./storeTypes"
 
-function getDefaultValue(type: string): string | string[] | boolean | number | null {
+function getDefaultValue(type: string): string | string[] | boolean | number | undefined {
   switch (type) {
     case "string":
       return ""
@@ -16,29 +15,14 @@ function getDefaultValue(type: string): string | string[] | boolean | number | n
       return false
     case "number":
       return 0
-    default:
-      return null
   }
 }
 
 function generateStartConfig(): PluginsConfig {
-  const currentPluginConfig = Object.entries(MAIN_ENV_VARIABLES).reduce((acc, [key, env]) => {
-    ;(acc as PluginsRawConfig)[key] = env.defaultValue !== undefined ? env.defaultValue : getDefaultValue(env.type)
-    return acc
-  }, {} as PluginsRawConfig)
-
-  // Initialize pluginConfig as an empty object
-  const pluginConfig = { ...currentPluginConfig }
-
-  // Create a new empty object for each plugin
-  Object.entries(plugins).forEach(([_pluginName, plugin]) => {
-    pluginConfig[plugin.name] = {} // Assign an empty object to each plugin name
-  })
-
-  return pluginConfig
+  return PluginManager.getInstance().createDefaultConfig()
 }
 
-async function generateStartData(): Promise<PluginsData> {
+async function generateStartData(): Promise<PluginDataMap> {
   return await fetchPluginsData(true)
 }
 
@@ -47,7 +31,7 @@ function GenerateMarkdownCode(pluginsConfig: PluginsConfig) {
   const size = pluginsConfig.size
   const filename = pluginsConfig.filename
   const gistId = pluginsConfig.gist_id
-  const { githubUser } = useStore()
+  const { githubUser } = useStore.getState()
 
   switch (storeMethod) {
     case "gist": {
@@ -62,7 +46,7 @@ function GenerateMarkdownCode(pluginsConfig: PluginsConfig) {
       }
 
       const url = `https://gist.githubusercontent.com/${githubUser}/${gistId}/raw/${filename}`
-      return `<img src="${url}" width="${size == "full" ? "100%" : "49%"}"  align="top" alt="🦀 height="100%" />`
+      return `<img src="${url}" width="${size === "full" ? "100%" : "49%"}"  align="top" alt="🦀 height="100%" />`
     }
     case "repository":
       return "Not implemented yet"
@@ -73,65 +57,54 @@ function GenerateMarkdownCode(pluginsConfig: PluginsConfig) {
   }
 }
 
-function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: string[]) {
+function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: PluginName[]) {
   const withEntries: Record<string, string | boolean | number> = {}
+  const pluginManager = PluginManager.getInstance()
 
-  Object.keys(storeConfig).map((key) => {
+  // Processa configurações globais
+  Object.entries(MAIN_ENV_VARIABLES).forEach(([key, env]) => {
     const value = storeConfig[key]
     const entryName = key.toUpperCase()
 
-    // Process plugin specific config
-    if (pluginsNames.includes(key)) {
-      if (!activePlugins.includes(key)) {
-        return
-      }
-
-      const pluginName = "PLUGIN_" + entryName.replace("PLUGIN_", "")
-      // Process plugin specific config
-      Object.entries(value).forEach(([entryKey, entryValue]) => {
-        // Check if the entry is a plugin specific section
-        if (pluginName === entryKey.toUpperCase()) {
-          withEntries[pluginName] = true
-          return
-        }
-
-        withEntries[pluginName + "_" + entryKey.toUpperCase()] = entryValue as string | number | boolean
-      })
-
-      // remove config that is not in the sections
-      const sections = withEntries[pluginName + "_SECTIONS"]
-
-      Object.entries(withEntries).forEach(([entryKey, _entryValue]) => {
-        const isPluginRelatedConfig = entryKey.includes(pluginName)
-
-        if (isPluginRelatedConfig) {
-          const envVariables = plugins.find((plugin) => plugin.name.toUpperCase() === entryName)?.envVariables
-
-          const relatedSections = envVariables?.[entryKey.replace(pluginName + "_", "").toLowerCase()]?.sections
-          if (
-            relatedSections &&
-            sections &&
-            !relatedSections.includes("main") &&
-            !relatedSections.some((section) => Array.isArray(sections) && sections.includes(section))
-          ) {
-            delete withEntries[entryKey]
-          }
-        }
-      })
-    } else {
-      // Process global config (non-plugin specific)
-
-      if (key === "gh_token" || key === "gist_id") {
-        withEntries[entryName] = "${{ secrets." + entryName + " }}"
-      }
-
-      const defaultValue = MAIN_ENV_VARIABLES[key]?.defaultValue
-      if (value === defaultValue || !value) {
-        return
-      }
-
-      withEntries[key.toUpperCase()] = value
+    if (key === "gh_token" || key === "gist_id") {
+      withEntries[entryName] = "${{ secrets." + entryName + " }}"
+      return
     }
+
+    if (value !== env.defaultValue && value !== undefined) {
+      withEntries[entryName] = value
+    }
+  })
+
+  // Process the active plugins' configurations
+  activePlugins.forEach((pluginName) => {
+    const plugin = pluginManager.getPlugin(pluginName)
+    if (!plugin) return
+
+    const config = storeConfig[pluginName]
+    if (!config) return
+
+    const pluginPrefix = "PLUGIN_" + pluginName.toUpperCase()
+    withEntries[pluginPrefix] = true
+
+    // Process the plugin's configuration
+    Object.entries(config).forEach(([key, value]) => {
+      // Type guard to ensure key exists in envVariables
+      if (!(key in plugin.envVariables)) return
+      const envVariable = plugin.envVariables[key as keyof typeof plugin.envVariables]
+      if (!envVariable) return
+
+      const sections = config.sections as string[]
+      if (
+        !envVariable.sections?.includes("main") &&
+        !envVariable.sections?.some((section: string) => sections.includes(section))
+      ) {
+        return
+      }
+
+      const entryKey = `${pluginPrefix}_${key.toUpperCase()}`
+      withEntries[entryKey] = value
+    })
   })
 
   const actionCode: ActionCode = {
@@ -155,4 +128,4 @@ function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: string[])
   return actionCode
 }
 
-export { getDefaultValue, generateStartConfig, generateStartData, GenerateMarkdownCode, GenerateActionCode }
+export { GenerateActionCode, GenerateMarkdownCode, generateStartConfig, generateStartData, getDefaultValue }

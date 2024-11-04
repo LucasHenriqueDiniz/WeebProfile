@@ -29,7 +29,7 @@
     "incremental": true,
     "baseUrl": ".",
     "types": ["node"],
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["../node_modules/@types", "./node_modules/@types"]
   },
   "include": ["source/**/*", "styles/**/*", "plugins/**/*", "templates/**/*"],
   "exclude": ["node_modules"]

@@ -1,6 +1,5 @@
 import fillEmptySpaces from "../../../utils/fillEmptySpaces"
-import getEmojiNumber from "../../../utils/getEmojiNumber"
-import getEmojiStatus from "../../../utils/getEmojiStatus"
+import { emojiNumber, emojiStatus } from "source/helpers/emoji"
 
 function getPercentageBar(watched: number, total: number, title: string) {
   const percentage = Math.floor((watched / total) * 100)
@@ -44,13 +43,13 @@ function formatDisplay(
       return `${title}`
     case "status-emoji":
       // Bakemonogatari ............................................ ☑️
-      return `${title} ${fillEmptySpaces(title, 1, ".")}} ${getEmojiStatus(status)}`
+      return `${title} ${fillEmptySpaces(title, 1, ".")}} ${emojiStatus(status)}`
     case "status-text":
       // Bakemonogatari ...................................... Watching
       return `${title} ${fillEmptySpaces(title, status.length, ".")}} ${status}`
     case "score-emoji":
       // Bakemonogatari ............................................ 9️⃣
-      return `${title} ${fillEmptySpaces(title, 1, ".")} ${getEmojiNumber(score)}`
+      return `${title} ${fillEmptySpaces(title, 1, ".")} ${emojiNumber(score)}`
     case "score-text":
       // Bakemonogatari ............................................ 9/10
       return `${title} ${fillEmptySpaces(title, 5, ".")} ${score === 0 ? "~" : score}/10`

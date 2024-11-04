@@ -13,6 +13,7 @@ import { GridItemProps } from "templates/types"
 import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
 import { LastFmArtist } from "../types/lastFmTypes"
 import { abbreviateNumber } from "source/helpers/number"
+import logger from "source/helpers/logger"
 
 interface Props {
   data: LastFmArtist[]
@@ -20,10 +21,15 @@ interface Props {
 }
 
 function TopArtistsGrid({ data, interval }: Props): JSX.Element {
+  logger({
+    message: `Rendering TopArtistsGrid component`,
+    level: "debug",
+    __filename,
+  })
   const { lastfm } = getEnvVariables()
   if (!lastfm) throw new Error("LastFM plugin not found in TopArtistsGrid component")
   if (!data || data.length === 0) {
-    return <ErrorMessage message='No data found in TopArtistsGrid component' />
+    return <ErrorMessage message="No data found in TopArtistsGrid component" />
   }
 
   const title = lastfm.top_artists_title ?? (LASTFM_ENV_VARIABLES.top_artists_title.defaultValue as string)
@@ -38,7 +44,6 @@ function TopArtistsGrid({ data, interval }: Props): JSX.Element {
 
   //limit the data to the maxItems
   if (maxItems && dataLength > maxItems) {
-    console.log(`Limiting data to ${maxItems} items`)
     data = data.slice(0, maxItems)
   }
 
@@ -49,7 +54,7 @@ function TopArtistsGrid({ data, interval }: Props): JSX.Element {
   })) as GridItemProps[]
 
   return (
-    <section id='last-fm' className='top-artists'>
+    <section id="last-fm" className="top-artists">
       <RenderBasedOnStyle
         defaultComponent={
           <>
@@ -73,7 +78,7 @@ function TopArtistsGrid({ data, interval }: Props): JSX.Element {
                 period: interval,
               })}
             />
-            <TerminalGrid data={GridItems} rightText='Artist' leftText='Plays' />
+            <TerminalGrid data={GridItems} rightText="Artist" leftText="Plays" />
             <TerminalLineBreak />
           </>
         }

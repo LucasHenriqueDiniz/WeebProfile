@@ -12,6 +12,7 @@ import { ListItemProps } from "templates/types"
 import ErrorMessage from "source/templates/Error_Style"
 import getEnvVariables from "source/plugins/@utils/getEnvVariables"
 import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
+import logger from "source/helpers/logger"
 
 interface Props {
   data: LastFmTrack[]
@@ -19,9 +20,14 @@ interface Props {
 }
 
 function LastFMRecentTracks({ data, interval }: Props): JSX.Element {
+  logger({
+    message: `Rendering LastFMRecentTracks component`,
+    level: "debug",
+    __filename,
+  })
   const { lastfm } = getEnvVariables()
   if (!lastfm) throw new Error("LastFM plugin not found in LastFMRecentTracks component")
-  if (!data) return <ErrorMessage message='No data found in LastFMRecentTracks component' />
+  if (!data) return <ErrorMessage message="No data found in LastFMRecentTracks component" />
 
   const title = lastfm.recent_tracks_title ?? (LASTFM_ENV_VARIABLES.recent_tracks_title.defaultValue as string)
   const hideTitle = lastfm.recent_tracks_hide_title
@@ -32,7 +38,6 @@ function LastFMRecentTracks({ data, interval }: Props): JSX.Element {
 
   //limit the data to the maxItems
   if (maxItems && dataLength > maxItems) {
-    console.log(`Limiting data to ${maxItems} items`)
     data = data.slice(0, maxItems)
   }
 
@@ -44,7 +49,7 @@ function LastFMRecentTracks({ data, interval }: Props): JSX.Element {
   })) as ListItemProps[]
 
   return (
-    <section id='last-fm' className='recent-tracks'>
+    <section id="last-fm" className="recent-tracks">
       <RenderBasedOnStyle
         defaultComponent={
           <>

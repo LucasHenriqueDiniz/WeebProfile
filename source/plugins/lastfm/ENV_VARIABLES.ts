@@ -2,7 +2,7 @@ import PluginVariables from "source/plugins/@types/PluginVariables"
 import LastFmPlugin from "./types/envLastFM"
 
 const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
-  plugin_lastfm: {
+  plugin_enabled: {
     required: true,
     type: "boolean",
     description: "Enable LastFM plugin",
@@ -16,7 +16,7 @@ const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
   },
   sections: {
     type: "stringArray",
-    defaultValue: ["top_tracks", "recent_tracks"],
+    defaultValue: [],
     description: "Sections to display in the profile",
     sections: ["main"],
   },

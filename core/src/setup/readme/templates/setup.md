@@ -142,7 +142,7 @@ Example:
 ## 🛠️ Configuration
 
 The `weeb_profile.yml` file is where you can configure the plugins and the SVGs that will be generated.
-Each plugin has its own configuration, and you can enable or disable them by setting the `PLUGIN_NAME` to `true` or `false`.
+Each plugin has its own configuration, and you can enable or disable them by setting the `PLUGIN_ENABLED` to `true` or `false`.
 You can see the available configurations for each plugin in the [Available plugins](#-available-plugins) section.
 
 ### 🌐 Global configurations

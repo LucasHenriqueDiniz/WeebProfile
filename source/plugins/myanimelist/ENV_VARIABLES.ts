@@ -1,11 +1,8 @@
 import PluginVariables from "source/plugins/@types/PluginVariables"
-import MyAnimeListPlugin, { MyAnimeListSections } from "./types/envMal"
-// anime_simple_favorites
-// manga_simple_favorites
-// people_simple_favorites
-// character_simple_favorites
+import MyAnimeListPlugin, { MyAnimeListSections } from "./types/MyAnimeListConfig"
+
 const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
-  plugin_myanimelist: {
+  plugin_enabled: {
     required: true,
     type: "boolean",
     description: "Enable MyAnimeList plugin",
@@ -19,7 +16,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
   },
   sections: {
     type: "stringArray",
-    defaultValue: ["statistics_simple", "anime_favorites", "last_activity"],
+    defaultValue: [],
     description: "Sections to display in the profile",
     sections: ["main"],
     options: MyAnimeListSections,
@@ -27,11 +24,6 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
   hide_header: {
     type: "boolean",
     description: "Hide the header of the profile",
-    sections: ["main"],
-  },
-  hide_terminal_emojis: {
-    type: "boolean",
-    description: "Hide the terminal emojis",
     sections: ["main"],
   },
   anime_favorites_max: {

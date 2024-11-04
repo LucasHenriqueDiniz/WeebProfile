@@ -1,7 +1,8 @@
 import React from "react"
+import logger from "source/helpers/logger"
 import ErrorMessage from "source/templates/Error_Style"
-
-function CheckPluginForRequiredValues<T, D>({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function CheckPluginForRequiredValues<T extends Record<string, any>, D extends Record<string, any>>({
   plugin,
   ENV_VARIABLES,
   pluginName,
@@ -15,22 +16,37 @@ function CheckPluginForRequiredValues<T, D>({
   }
 
   if (!ENV_VARIABLES) {
+    logger({
+      message: `Environment variables (ENV_VARIABLES) for ${pluginName} are missing or not provided.`,
+      level: "error",
+      __filename,
+    })
     return (
       <ErrorMessage message={`Environment variables (ENV_VARIABLES) for ${pluginName} are missing or not provided.`} />
     )
   }
 
-  for (const key of Object.keys(ENV_VARIABLES as object) as Array<keyof typeof ENV_VARIABLES>) {
+  // Verifica se o plugin está habilitado
+  if (!plugin.plugin_enabled) {
+    logger({
+      message: `${pluginName} plugin is not enabled.`,
+      level: "debug",
+      __filename,
+    })
+    return <ErrorMessage message={`${pluginName} plugin is not enabled.`} />
+  }
+
+  // Verifica valores obrigatórios
+  for (const key of Object.keys(ENV_VARIABLES)) {
     const variable = ENV_VARIABLES[key as keyof typeof ENV_VARIABLES]
 
-    // @TODO find a way to don't use any, i am too lazy to do it now :(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((variable as { required: boolean }).required && !(plugin as any)[key]) {
+    // Verifica se a variável é obrigatória e se tem um valor válido
+    if (variable.required && (!plugin[key] || plugin[key] === "")) {
       return <ErrorMessage message={`The required variable "${String(key)}" is missing in the ${pluginName} plugin.`} />
     }
   }
 
-  return null // No errors, continue render
+  return null // Sem erros, continua renderização
 }
 
 export default CheckPluginForRequiredValues

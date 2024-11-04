@@ -32,8 +32,19 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "typeRoots": ["../node_modules/@types", "./node_modules/@types"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.mjs", "jest.config.js", ".next/types/**/*.ts", "../source/plugins/fetchPluginsData.ts", "prettier.config.js", "postcss.config.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mjs",
+    "jest.config.js",
+    ".next/types/**/*.ts",
+    "../source/plugins/fetchPluginsData.ts",
+    "prettier.config.js",
+    "postcss.config.js"
+  ],
   "exclude": ["node_modules"]
 }

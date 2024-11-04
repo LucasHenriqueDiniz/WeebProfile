@@ -1,3 +1,5 @@
+import { BasePluginConfig } from "source/plugins/@types/plugins"
+
 export const LastFmSections = [
   "recent_tracks",
   "statistics",
@@ -12,13 +14,10 @@ export const LastFmSections = [
   "top_tracks_default",
 ]
 
-export interface LastFmConfig {
-  plugin_lastfm: boolean
+export interface LastFmConfig extends BasePluginConfig {
   username: string
   sections: string[]
-
   hide_intervals?: boolean
-  hide_header?: boolean
 
   // Custom titles
   statistics_title?: string

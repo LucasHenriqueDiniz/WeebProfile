@@ -1,10 +1,10 @@
-import MyAnimeListConfig, { MyAnimeListSections } from "plugins/myanimelist/types/envMal"
 import React from "react"
 import { SiMyanimelist } from "react-icons/si"
 import { Header } from "templates/Default/Default_Header"
 import ErrorMessage from "templates/Error_Style"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalBody from "templates/Terminal/Terminal_Body"
+import CheckPluginForRequiredValues from "../@utils/checkPluginForRequiredValues"
 import AnimeFavorites from "./components/AnimeFavorites"
 import CharactersFavorites from "./components/CharactersFavorites"
 import StatisticsHorizontalBar from "./components/HorizontalBar"
@@ -14,9 +14,10 @@ import PeopleFavorites from "./components/PeopleFavorites"
 import SimpleFavorites from "./components/SimpleFavorites"
 import SimpleStatistics from "./components/SimpleStatistics"
 import Statistics from "./components/Statistics"
-import { MalData } from "./types/malTypes"
-import CheckPluginForRequiredValues from "../@utils/checkPluginForRequiredValues"
 import MAL_ENV_VARIABLES from "./ENV_VARIABLES"
+import { MalData } from "./types/malTypes"
+import MyAnimeListConfig, { MyAnimeListSections } from "./types/MyAnimeListConfig"
+import logger from "source/helpers/logger"
 
 const sectionRenderers: Record<string, (malData: MalData) => JSX.Element> = {
   statistics: (malData: MalData) => <Statistics data={malData.statistics} />,
@@ -27,11 +28,11 @@ const sectionRenderers: Record<string, (malData: MalData) => JSX.Element> = {
   anime_bar: (malData: MalData) => <StatisticsHorizontalBar data={malData.statistics.anime} />,
   manga_bar: (malData: MalData) => <StatisticsHorizontalBar data={malData.statistics.manga} />,
 
-  anime_simple_favorites: (malData: MalData) => <SimpleFavorites data={malData.favorites.anime} type='anime' />,
-  manga_simple_favorites: (malData: MalData) => <SimpleFavorites data={malData.favorites.manga} type='manga' />,
-  people_simple_favorites: (malData: MalData) => <SimpleFavorites data={malData.favorites.people} type='people' />,
+  anime_simple_favorites: (malData: MalData) => <SimpleFavorites data={malData.favorites.anime} type="anime" />,
+  manga_simple_favorites: (malData: MalData) => <SimpleFavorites data={malData.favorites.manga} type="manga" />,
+  people_simple_favorites: (malData: MalData) => <SimpleFavorites data={malData.favorites.people} type="people" />,
   character_simple_favorites: (malData: MalData) => (
-    <SimpleFavorites data={malData.favorites.characters} type='characters' />
+    <SimpleFavorites data={malData.favorites.characters} type="characters" />
   ),
 
   anime_favorites: (malData: MalData) => <AnimeFavorites data={malData.favorites_full.anime} />,
@@ -40,8 +41,9 @@ const sectionRenderers: Record<string, (malData: MalData) => JSX.Element> = {
   character_favorites: (malData: MalData) => <CharactersFavorites data={malData.favorites.characters} />,
 }
 
-function RenderMyAnimeList({ plugin, data }: { plugin: MyAnimeListConfig; data: MalData }): JSX.Element {
-  if (!data) return <ErrorMessage message='MyAnimeList data not found in RenderMyAnimeList' />
+function RenderMyAnimeList({ plugin, data }: { plugin: MyAnimeListConfig; data: MalData }): React.ReactNode {
+  logger({ message: `Rendering MAL sections`, level: "info", __filename })
+  if (!data) return <ErrorMessage message="MyAnimeList data not found in RenderMyAnimeList" />
   const error = CheckPluginForRequiredValues({
     plugin,
     ENV_VARIABLES: MAL_ENV_VARIABLES,
@@ -56,7 +58,11 @@ function RenderMyAnimeList({ plugin, data }: { plugin: MyAnimeListConfig; data: 
     if (sectionRenderers[section]) {
       return sectionRenderers[section](data)
     }
-    console.error(`Section "${section}" not found, available sections: \n${MyAnimeListSections.join("\n")}`)
+    logger({
+      message: `Section "${section}" not found, available sections: \n${MyAnimeListSections.join("\n")}`,
+      level: "error",
+      __filename,
+    })
     return <ErrorMessage message={`Section ${section} not found`} />
   }
   return (

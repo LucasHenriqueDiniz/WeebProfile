@@ -14,7 +14,7 @@ function SvgContainer({ children, size, height, style, asDiv }: MalProfileBoxPro
 
   if (asDiv) {
     return (
-      <div className={`${size} ${style}`} style={{ width: getSvgWidth(isHalf) }} id='svg-main'>
+      <div className={`${size} ${style}`} style={{ width: getSvgWidth(isHalf) }} id="svg-main">
         {children}
       </div>
     )
@@ -22,8 +22,8 @@ function SvgContainer({ children, size, height, style, asDiv }: MalProfileBoxPro
 
   return (
     <svg
-      xmlns='http://www.w3.org/2000/svg'
-      id='svg-main'
+      xmlns="http://www.w3.org/2000/svg"
+      id="svg-main"
       width={getSvgWidth(isHalf)}
       height={height}
       className={`${size} ${style}`}

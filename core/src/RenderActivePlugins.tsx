@@ -1,34 +1,56 @@
-import logger from "core/utils/logger"
+import logger from "source/helpers/logger"
 import React from "react"
-import PluginsConfig from "source/plugins/@types/PluginsConfig"
-import plugins, { PluginsData } from "source/plugins/plugins"
-import TerminalHeader from "templates/Terminal/Terminal_Header"
+import { PluginDataMap } from "source/plugins/@types/plugins"
+import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { PluginManager } from "source/plugins/@utils/PluginManager"
+import { PluginRegistry } from "source/plugins/plugins"
 
-const RenderActivePlugins = async (env: PluginsConfig, data: PluginsData): Promise<React.ReactNode> => {
-  logger({ message: "Starting...", level: "info", __filename })
-  const pluginComponents: Record<string, JSX.Element | null> = {}
-  const pluginsOrder = env.plugins_order
+interface RenderActivePluginsProps {
+  pluginsData: PluginDataMap
+}
 
-  plugins.forEach((plugin) => {
-    if (env[plugin.name]) {
-      logger({ message: `Rendering ${plugin.name}...`, level: "info", __filename })
+const RenderActivePlugins = ({ pluginsData }: RenderActivePluginsProps): JSX.Element => {
+  const pluginManager = PluginManager.getInstance()
+  const activePlugins = pluginManager.getActivePlugins()
+  const env = getEnvVariables()
 
-      if (!data[plugin.name]) {
-        return null
-      }
-
-      pluginComponents[plugin.name] = (
-        <plugin.renderer data={data[plugin.name]} key={plugin.name} plugin={env[plugin.name]} />
-      )
-    }
-  })
-
-  const orderedPlugins = pluginsOrder.map((plugin) => pluginComponents[plugin])
+  if (activePlugins.length === 0) {
+    logger({ message: "No active plugins found", level: "error", __filename })
+  }
 
   return (
     <>
-      {env.style === "terminal" && <TerminalHeader />}
-      {orderedPlugins}
+      {activePlugins.map(([name, plugin]) => {
+        const data = pluginsData[name]
+        const config = env[name]
+
+        if (!data || !config) {
+          logger({
+            message: `Missing ${!data ? "data" : "config"} for plugin ${name}`,
+            level: "error",
+            __filename,
+          })
+          return null
+        }
+
+        try {
+          return (
+            <React.Fragment key={name}>
+              {plugin.renderer(
+                config as PluginRegistry[typeof name]["config"],
+                data as PluginRegistry[typeof name]["data"]
+              )}
+            </React.Fragment>
+          )
+        } catch (error) {
+          logger({
+            message: `Error rendering plugin ${name}: ${error}`,
+            level: "error",
+            __filename,
+          })
+          return null
+        }
+      })}
     </>
   )
 }

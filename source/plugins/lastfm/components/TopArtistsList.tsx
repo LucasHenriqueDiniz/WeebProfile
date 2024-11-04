@@ -13,6 +13,7 @@ import getEnvVariables from "source/plugins/@utils/getEnvVariables"
 import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
 import ErrorMessage from "source/templates/Error_Style"
 import { abbreviateNumber } from "source/helpers/number"
+import logger from "source/helpers/logger"
 
 interface Props {
   data: LastFmArtist[]
@@ -20,10 +21,15 @@ interface Props {
 }
 
 function TopArtistsList({ data, interval }: Props): JSX.Element {
+  logger({
+    message: `Rendering TopArtistsList component`,
+    level: "debug",
+    __filename,
+  })
   const { lastfm } = getEnvVariables()
   if (!lastfm) throw new Error("LastFM plugin not found in TopArtistsList component")
   if (!data || data.length === 0) {
-    return <ErrorMessage message='No data found in TopArtistsList component' />
+    return <ErrorMessage message="No data found in TopArtistsList component" />
   }
 
   const title = lastfm.top_artists_title ?? (LASTFM_ENV_VARIABLES.top_artists_title.defaultValue as string)
@@ -40,7 +46,6 @@ function TopArtistsList({ data, interval }: Props): JSX.Element {
 
   //limit the data to the maxItems
   if (maxItems && dataLength > maxItems) {
-    console.log(`Limiting data to ${maxItems} items`)
     data = data.slice(0, maxItems)
   }
 
@@ -51,7 +56,7 @@ function TopArtistsList({ data, interval }: Props): JSX.Element {
   })) as ListItemProps[]
 
   return (
-    <section id='last-fm' className='top-artists'>
+    <section id="last-fm" className="top-artists">
       <RenderBasedOnStyle
         defaultComponent={
           <>

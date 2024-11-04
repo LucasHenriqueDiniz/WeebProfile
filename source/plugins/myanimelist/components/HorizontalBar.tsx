@@ -30,12 +30,12 @@ const HorizontalBar = ({ watching, completed, onHold, dropped, planToWatch }: Ho
   const planToWatchPercent = (planToWatch / total) * 100
 
   return (
-    <div className='horizontal-status-bar'>
-      <span className='bar-section default-bg-watching' style={{ width: `${watchingPercent}%` }}></span>
-      <span className='bar-section default-bg-completed' style={{ width: `${completedPercent}%` }}></span>
-      <span className='bar-section default-bg-on-hold' style={{ width: `${onHoldPercent}%` }}></span>
-      <span className='bar-section default-bg-dropped' style={{ width: `${droppedPercent}%` }}></span>
-      <span className='bar-section default-bg-plan-to-watch' style={{ width: `${planToWatchPercent}%` }}></span>
+    <div className="horizontal-status-bar">
+      <span className="bar-section default-bg-watching" style={{ width: `${watchingPercent}%` }}></span>
+      <span className="bar-section default-bg-completed" style={{ width: `${completedPercent}%` }}></span>
+      <span className="bar-section default-bg-on-hold" style={{ width: `${onHoldPercent}%` }}></span>
+      <span className="bar-section default-bg-dropped" style={{ width: `${droppedPercent}%` }}></span>
+      <span className="bar-section default-bg-plan-to-watch" style={{ width: `${planToWatchPercent}%` }}></span>
     </div>
   )
 }
@@ -43,7 +43,7 @@ const HorizontalBar = ({ watching, completed, onHold, dropped, planToWatch }: Ho
 export default function StatisticsHorizontalBar({ data }: { data: AnimeStatistics | MangaStatistics }): JSX.Element {
   const { myanimelist } = getEnvVariables()
   if (!myanimelist) throw new Error("MAL plugin not found in MalStatistics component")
-  if (!data) return <ErrorMessage message='No data found in StatisticsHorizontalBar component' />
+  if (!data) return <ErrorMessage message="No data found in StatisticsHorizontalBar component" />
 
   const watching = data.watching || data.reading
   const completed = data.completed
@@ -69,23 +69,23 @@ export default function StatisticsHorizontalBar({ data }: { data: AnimeStatistic
               dropped={dropped}
               planToWatch={planToWatch}
             />
-            <ul className='default-status-horizontal'>
+            <ul className="default-status-horizontal">
               <Stat
                 title={isAnime ? "Watching" : "Reading"}
                 value={watching.toString()}
-                icon={<FaCirclePlay className='default-watching' />}
+                icon={<FaCirclePlay className="default-watching" />}
               />
               <Stat
-                title='Completed'
+                title="Completed"
                 value={completed.toString()}
-                icon={<FaCircleCheck className='default-completed' />}
+                icon={<FaCircleCheck className="default-completed" />}
               />
-              <Stat title='On Hold' value={onHold.toString()} icon={<FaCirclePause className='default-on-hold' />} />
-              <Stat title='Dropped' value={dropped.toString()} icon={<FaCircleXmark className='default-dropped' />} />
+              <Stat title="On Hold" value={onHold.toString()} icon={<FaCirclePause className="default-on-hold" />} />
+              <Stat title="Dropped" value={dropped.toString()} icon={<FaCircleXmark className="default-dropped" />} />
               <Stat
-                title='Plan to Watch'
+                title="Plan to Watch"
                 value={planToWatch.toString()}
-                icon={<FaQuestionCircle className='default-plan-to-watch' />}
+                icon={<FaQuestionCircle className="default-plan-to-watch" />}
               />
             </ul>
           </>

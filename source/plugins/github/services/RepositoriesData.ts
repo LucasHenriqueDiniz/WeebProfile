@@ -1,6 +1,6 @@
 import axios from "axios"
+import logger from "source/helpers/logger"
 import { RepositoriesData, RepositoriesResponse } from "../types"
-import isNodeEnvironment from "plugins/@utils/isNodeEnv"
 
 async function Repositories({
   token,
@@ -84,17 +84,9 @@ query BaseRepositories {
   }
 }
 `
-
-  const isNodeEnv = isNodeEnvironment()
-  // @TODO Fix CORS issue, this is a temporary solution
-  let url = "https://api.github.com/graphql"
-  if (!isNodeEnv) {
-    url = "https://cors-anywhere.herokuapp.com/https://api.github.com/graphql"
-  }
-
   try {
     const response = await axios.post(
-      url,
+      "https://api.github.com/graphql",
       { query: RepositoriesQuery },
       {
         headers: {
@@ -105,7 +97,11 @@ query BaseRepositories {
 
     return response.data.data
   } catch (error) {
-    console.error(error)
+    logger({
+      message: `Error fetching repositories data ${error}`,
+      level: "error",
+      __filename,
+    })
     throw new Error("Error fetching repositories data")
   }
 }
@@ -253,7 +249,11 @@ export async function getSpecificRepository(login: string, token: string, reposi
     }
   )
 
-  console.log(response)
+  logger({
+    message: `Response: ${JSON.stringify(response)}`,
+    level: "debug",
+    __filename,
+  })
 
   return response
 }

@@ -8,12 +8,13 @@ import {
   MalFullMangaResponse,
 } from "../types/malFavoritesResponse"
 import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
-import MyAnimeListPlugin from "../types/envMal"
+import MyAnimeListPlugin from "../types/MyAnimeListConfig"
 import { MalProfileResponse } from "../types/malProfileResponse"
 import { MalData } from "../types/malTypes"
 import imageToBase64 from "source/plugins/@utils/imageToBase64"
 import generateTestMyAnimeListData from "../test/generateTestData"
 import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import logger from "source/helpers/logger"
 
 const limiter = new Bottleneck({
   maxConcurrent: 1,
@@ -241,7 +242,7 @@ export async function convertFavoritesFullImagesToBase64(
 }
 
 export async function myAnimeListFullRequest(username: string): Promise<MalProfileResponse> {
-  console.log("Started fetching Full MAL data for", username)
+  logger({ message: `Started fetching Full MAL data for ${username}`, level: "info", __filename })
   const response = await axios.get(`https://api.jikan.moe/v4/users/${username}/full`)
 
   if (response.status === 429) {
@@ -258,8 +259,7 @@ export async function myAnimeListFullRequest(username: string): Promise<MalProfi
 }
 
 async function FullMalMediaRequest(media: string, malId: number): Promise<FullMalAnimeResponse | MalFullMangaResponse> {
-  console.log("Fetching Full MAL data for", media, malId)
-  // https://api.jikan.moe/v4/{media}/{MalId}/full
+  logger({ message: `Fetching Full MAL data for ${media} ${malId}`, level: "info", __filename })
 
   const response = await axios.get(`https://api.jikan.moe/v4/${media}/${malId}/full`)
 
@@ -287,7 +287,7 @@ export async function fetchMalData(plugin: MyAnimeListPlugin, dev = false): Prom
   }
 
   const username = plugin.username
-  console.log("Fetching MyAnimeList data for", username)
+  logger({ message: `Fetching MyAnimeList data for ${username}`, level: "info", __filename })
 
   const fullRequest = await limiter.schedule(() => myAnimeListFullRequest(username))
 
@@ -353,9 +353,9 @@ export async function fetchMalData(plugin: MyAnimeListPlugin, dev = false): Prom
       anime: lastUpdatesAnime,
       manga: lastUpdatesManga,
     }),
-    statistics: await fullRequest.data.statistics,
+    statistics: fullRequest.data.statistics,
   }
-  console.log("Finished fetching MyAnimeList data for", username)
+  logger({ message: `Finished fetching MyAnimeList data for ${username}`, level: "info", __filename })
 
   return malData
 }

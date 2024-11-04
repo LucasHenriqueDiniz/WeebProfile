@@ -1,12 +1,13 @@
-async function fetchRateLimit(token: string) {
+import RateLimit from "../types/Rate"
+
+async function fetchRateLimit(token: string): Promise<RateLimit> {
   const url = "https://api.github.com/rate_limit"
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
-  const data = await response.json()
-  return data
+  return (await response.json()) as RateLimit
 }
 
 export default fetchRateLimit

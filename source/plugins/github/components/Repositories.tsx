@@ -20,7 +20,7 @@ import { RepositoriesData } from "../types"
 import React from "react"
 import getEnvVariables from "source/plugins/@utils/getEnvVariables"
 import { abbreviateNumber } from "source/helpers/number"
-
+import logger from "source/helpers/logger"
 interface Metric {
   icon: JSX.Element
   title: string
@@ -28,7 +28,8 @@ interface Metric {
 }
 
 const DefaultRepositories = ({
-  _repositoriesData,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  repositoriesData,
   relevantMetrics,
 }: {
   repositoriesData: RepositoriesData
@@ -39,7 +40,7 @@ const DefaultRepositories = ({
 
   return (
     <>
-      <div className='w100 flex justify-between'>
+      <div className="w100 flex justify-between">
         <StatisticRow
           rows={firstRow.map((metric) => ({
             icon: metric.icon,
@@ -49,7 +50,7 @@ const DefaultRepositories = ({
           }))}
         />
         <StatisticRow
-          className='align-flexend'
+          className="align-flexend"
           rows={secondRow.map((metric) => ({
             icon: metric.icon,
             title: metric.title,
@@ -63,19 +64,25 @@ const DefaultRepositories = ({
 }
 
 const TerminalRepositories = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   repositoriesData,
   relevantMetrics,
 }: {
   repositoriesData: RepositoriesData
   relevantMetrics: Metric[]
 }) => {
-  console.log(repositoriesData)
+  logger({
+    message: `Rendering TerminalRepositories component`,
+    level: "debug",
+    __filename,
+  })
+
   const gridData = relevantMetrics.map((metric) => ({
     title: metric.title,
     value: abbreviateNumber(metric.value),
   }))
 
-  return <TerminalGrid data={gridData} rightText='Metric' leftText='Value' />
+  return <TerminalGrid data={gridData} rightText="Metric" leftText="Value" />
 }
 
 export default function GithubRepositories({ repositoriesData }: { repositoriesData: RepositoriesData }): JSX.Element {
@@ -149,7 +156,7 @@ export default function GithubRepositories({ repositoriesData }: { repositoriesD
     .slice(0, 4)
 
   return (
-    <section id='github' className='github-profile'>
+    <section id="github" className="github-profile">
       <RenderBasedOnStyle
         defaultComponent={
           <>

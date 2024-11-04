@@ -23,7 +23,7 @@ function LastFMTopArtistsDefault({ data, interval }: Props): JSX.Element {
   const { lastfm } = getEnvVariables()
   if (!lastfm) throw new Error("LastFM plugin not found in LastFMTopArtistsDefault component")
   if (!data || data.length === 0) {
-    return <ErrorMessage message='No data found in LastFMTopArtistsDefault component' />
+    return <ErrorMessage message="No data found in LastFMTopArtistsDefault component" />
   }
 
   const title = lastfm.top_artists_title ?? (LASTFM_ENV_VARIABLES.top_artists_title.defaultValue as string)
@@ -51,7 +51,7 @@ function LastFMTopArtistsDefault({ data, interval }: Props): JSX.Element {
   })) as GridItemProps[]
 
   return (
-    <section id='last-fm' className='top-artists'>
+    <section id="last-fm" className="top-artists">
       <RenderBasedOnStyle
         defaultComponent={
           <>

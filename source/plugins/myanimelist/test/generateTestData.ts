@@ -3,7 +3,6 @@ import { MalStatisticsResponse } from "../types/malStatisticsResponse"
 import { MalFavoritesResponse, MalFullFavoritesResponse } from "../types/malFavoritesResponse"
 import fakeData from "./dummyData"
 import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
-import { MalProfileResponse } from "../types/malProfileResponse"
 import { MalData } from "../types/malTypes"
 
 function generateTestStatisticsData(): MalStatisticsResponse {
@@ -77,38 +76,8 @@ function generateTestLastUpdatesData(): MalLastUpdatesResponse {
   }
 }
 
-function _generateTestProfileData(): MalProfileResponse {
-  const data = {
-    mal_id: faker.number.int({ min: 0, max: 100000 }),
-    username: faker.internet.userName(),
-    url: faker.internet.url(),
-    images: {
-      jpg: {
-        image_url: faker.image.avatar(),
-      },
-    },
-    last_online: faker.date.recent().toString(),
-    gender: faker.person.gender(),
-    birthday: faker.date.past().toString(),
-    location: faker.location.country(),
-    joined: faker.date.past().toString(),
-    statistics: generateTestStatisticsData(),
-    favorites: generateTestFavoritesData(),
-    updates: generateTestLastUpdatesData(),
-  }
-  const about = faker.lorem.paragraph()
-  const external = null
-  const profile = {
-    data,
-    about,
-    external,
-  }
-  return profile
-}
-
 function generateTestMyAnimeListData(): MalData {
   return {
-    // profile: generateTestProfileData(),
     last_updated: generateTestLastUpdatesData(),
     statistics: generateTestStatisticsData(),
     favorites: generateTestFavoritesData(),

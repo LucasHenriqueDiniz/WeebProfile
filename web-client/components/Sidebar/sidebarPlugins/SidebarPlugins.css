@@ -9,22 +9,10 @@ h3 {
 }
 
 .AccordionRoot {
-  /* max-height: 80vh;
-  overflow-y: auto; */
   border-radius: 6px;
   overflow: hidden;
   width: 300px;
   box-shadow: 0 2px 10px var(--black-a4);
-  /* &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--form-primary);
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: var(--form-background-secondary);
-  } */
 }
 
 .AccordionItem {

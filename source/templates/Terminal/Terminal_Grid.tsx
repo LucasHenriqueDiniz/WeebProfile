@@ -1,13 +1,13 @@
 import React from "react"
-import randomString from "core/utils/randomString"
+import { randomString } from "source/helpers/string"
 import { GridItemProps } from "../types"
 
 function TerminalGridItem({ title, subtitle, value }: GridItemProps): JSX.Element {
   return (
     <>
-      <span className='text-bold text-overflow sm-text text-warning'>{title}</span>
-      {subtitle && <span className='text-muted-light text-overflow sm-text'>{subtitle}</span>}
-      <span className='text-muted sm-text text-nowrap flex-end '>{value}</span>
+      <span className="text-bold text-overflow sm-text text-warning">{title}</span>
+      {subtitle && <span className="text-muted-light text-overflow sm-text">{subtitle}</span>}
+      <span className="text-muted sm-text text-nowrap flex-end ">{value}</span>
     </>
   )
 }
@@ -25,9 +25,9 @@ function TerminalGridHeader({
     <>
       {rightText && (
         <>
-          {rightText && <span className='text-bold text-overflow sm-text text-warning border-b'>{rightText}</span>}
-          {centerText && <span className='text-muted-light text-overflow sm-text border-b'>{centerText}</span>}
-          {leftText && <span className='text-muted sm-text text-nowrap border-b'>{leftText}</span>}
+          {rightText && <span className="text-bold text-overflow sm-text text-warning border-b">{rightText}</span>}
+          {centerText && <span className="text-muted-light text-overflow sm-text border-b">{centerText}</span>}
+          {leftText && <span className="text-muted sm-text text-nowrap border-b">{leftText}</span>}
         </>
       )}
     </>

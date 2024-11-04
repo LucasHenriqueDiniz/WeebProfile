@@ -1,16 +1,15 @@
-import { Plugin } from "../plugins"
+import { createPlugin } from "../@types/plugins"
 import MAL_ENV_VARIABLES from "./ENV_VARIABLES"
 import RenderMyAnimeList from "./RenderMyAnimeList"
 import { fetchMalData } from "./services/malApi"
-import MyAnimeListConfig, { MyAnimeListSections } from "./types/envMal"
-import { MalData } from "./types/malTypes"
+import { MyAnimeListSections } from "./types/MyAnimeListConfig"
 
-const MyAnimeListPlugin: Plugin<{ plugin: MyAnimeListConfig; data: MalData }> = {
+const MyAnimeListPlugin = createPlugin({
   name: "myanimelist",
   envVariables: MAL_ENV_VARIABLES,
   sections: MyAnimeListSections,
-  renderer: RenderMyAnimeList,
-  fetchData: async (plugin: MyAnimeListConfig, dev?: boolean) => await fetchMalData(plugin, dev),
-}
+  renderer: (plugin, data) => RenderMyAnimeList({ plugin, data }),
+  fetchData: async (plugin, dev) => await fetchMalData(plugin, dev),
+})
 
 export default MyAnimeListPlugin

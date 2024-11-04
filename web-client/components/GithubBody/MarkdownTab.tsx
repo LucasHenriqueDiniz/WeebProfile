@@ -1,6 +1,8 @@
 "use client"
 import useStore from "app/store"
 import Image from "next/image"
+import { useEffect, useState } from "react"
+import { PluginManager } from "source/plugins/@utils/PluginManager"
 import { GenerateMarkdownCode } from "web-client/app/storeHelpers"
 import { useToast } from "web-client/app/ToastProvider"
 import { markdownWhereShouldIPaste } from "web-client/static"
@@ -20,7 +22,7 @@ const MarkdownContent = ({ content }: { content: string }) => {
         <>
           <p>The markdown code is how you can display your generated svg on your GitHub readme.</p>
           <Button
-            size='lg'
+            size="lg"
             style={{ marginBottom: "1rem", maxWidth: "fit-content" }}
             onClick={() => {
               copyToClipboard(content.toString())
@@ -53,7 +55,7 @@ const MarkdownContent = ({ content }: { content: string }) => {
             repository.
             <Image
               src={markdownWhereShouldIPaste}
-              alt='Where should I paste the markdown code?'
+              alt="Where should I paste the markdown code?"
               width={markdownWhereShouldIPaste.width}
               height={markdownWhereShouldIPaste.height}
             />
@@ -81,21 +83,21 @@ const MarkdownContent = ({ content }: { content: string }) => {
 
   return (
     <>
-      <div className='flex h-full items-center justify-between mb-2'>
+      <div className="flex h-full items-center justify-between mb-2">
         <DialogBox
           trigger={
-            <Button size='md' variant='secondary'>
+            <Button size="md" variant="secondary">
               What i do with this?
             </Button>
           }
-          title='What i do with the action code?'
+          title="What i do with the action code?"
         >
-          <div className='scrollable -y flex h-full flex-col items-center justify-between py-6'>
+          <div className="scrollable -y flex h-full flex-col items-center justify-between py-6">
             <VerticalStepper steps={steps} />
           </div>
         </DialogBox>
         <Button
-          size='lg'
+          size="lg"
           onClick={() => {
             copyToClipboard(content.toString())
             sendToast({ title: "Copied to clipboard!", description: "The code was copied to your clipboard" })
@@ -110,11 +112,17 @@ const MarkdownContent = ({ content }: { content: string }) => {
 }
 
 const MarkdownTab = () => {
-  const { activePlugins, pluginsConfig } = useStore()
+  const { pluginsConfig } = useStore()
+  const [activePlugins, setActivePlugins] = useState(PluginManager.getInstance().getActivePlugins())
+  const [markdownContent, setMarkdownContent] = useState<string | null>(null)
 
-  const markdownContent = GenerateMarkdownCode(pluginsConfig)
+  useEffect(() => {
+    const plugins = PluginManager.getInstance().getActivePlugins()
+    setActivePlugins(plugins)
+    setMarkdownContent(GenerateMarkdownCode(pluginsConfig))
+  }, [pluginsConfig])
 
-  return <>{activePlugins.length === 0 ? <NoPluginsSelected /> : <MarkdownContent content={markdownContent} />}</>
+  return <>{activePlugins.length === 0 ? <NoPluginsSelected /> : <MarkdownContent content={markdownContent ?? ""} />}</>
 }
 
 export default MarkdownTab

@@ -1,16 +1,15 @@
-import { Plugin } from "../plugins"
+import { createPlugin } from "../@types/plugins"
 import LASTFM_ENV_VARIABLES from "./ENV_VARIABLES"
 import RenderLastFm from "./RenderLastFm"
 import LastFmApi from "./services/lastFmApi"
-import LastFmConfig, { LastFmSections } from "./types/envLastFM"
-import { LastFmData } from "./types/lastFmTypes"
+import { LastFmSections } from "./types/envLastFM"
 
-const LastFmPlugin: Plugin<{ plugin: LastFmConfig; data: LastFmData }> = {
+const LastFmPlugin = createPlugin({
   name: "lastfm",
   envVariables: LASTFM_ENV_VARIABLES,
   sections: LastFmSections,
-  renderer: RenderLastFm,
-  fetchData: async (plugin: LastFmConfig, dev?: boolean) => await LastFmApi(plugin, dev),
-}
+  renderer: (plugin, data) => RenderLastFm({ plugin, data }),
+  fetchData: async (plugin, dev) => await LastFmApi(plugin, dev),
+})
 
 export default LastFmPlugin

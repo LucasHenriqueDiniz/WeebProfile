@@ -24,7 +24,7 @@ const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     return () => clearTimeout(timerRef.current)
   }, [])
 
-  function sendToast({ title, description }: { title: string; description?: string; error?: boolean }) {
+  function sendToast({ title, description, error }: { title: string; description?: string; error?: boolean }) {
     setToastOpen(false)
     setError(false)
 
@@ -43,9 +43,9 @@ const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
 
   return (
     <ToastContext.Provider value={{ sendToast }}>
-      <Toast.Provider swipeDirection='right'>
+      <Toast.Provider swipeDirection="right">
         {children}
-        <Toast.Root className='ToastRoot' open={toastOpen} onOpenChange={setToastOpen}>
+        <Toast.Root className="ToastRoot" open={toastOpen} onOpenChange={setToastOpen}>
           <Toast.Title className={`ToastTitle ${error ? "error" : ""}`}>
             <>
               {error && <MdError />}
@@ -58,7 +58,7 @@ const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
             </Toast.Description>
           )}
         </Toast.Root>
-        <Toast.Viewport className='ToastViewport' />
+        <Toast.Viewport className="ToastViewport" />
       </Toast.Provider>
     </ToastContext.Provider>
   )

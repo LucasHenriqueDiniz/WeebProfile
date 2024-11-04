@@ -2,7 +2,19 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "WEB-CLIENT: Run npm dev",
+      "label": "lint and prettier",
+      "type": "shell",
+      "command": "yarn lint && yarn prettier",
+      "problemMatcher": []
+    },
+    {
+      "label": "lint and prettier fix",
+      "type": "shell",
+      "command": "yarn lint:fix && yarn prettier:fix",
+      "problemMatcher": []
+    },
+    {
+      "label": "WEB-CLIENT: next dev",
       "type": "shell",
       "command": "npm run dev",
       "options": {
@@ -15,49 +27,13 @@
       "problemMatcher": []
     },
     {
-      "label": "WEB-CLIENT: Run npm build",
+      "label": "WEB-CLIENT: next build",
       "type": "shell",
       "command": "npm run build",
       "options": {
         "cwd": "${workspaceFolder}/web-client"
       },
       "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "WEB-CLIENT: Run npm test",
-      "type": "shell",
-      "command": "npm run test",
-      "options": {
-        "cwd": "${workspaceFolder}/web-client"
-      },
-      "group": "test",
-      "problemMatcher": []
-    },
-    {
-      "label": "CORE: fix lint and prettier",
-      "type": "shell",
-      "command": "yarn lint:fix && yarn prettier:fix",
-      "options": {
-        "cwd": "${workspaceFolder}/core"
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "CORE: check lint and prettier",
-      "type": "shell",
-      "command": "yarn lint && yarn prettier",
-      "options": {
-        "cwd": "${workspaceFolder}/core"
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
       "problemMatcher": []
     },
     {

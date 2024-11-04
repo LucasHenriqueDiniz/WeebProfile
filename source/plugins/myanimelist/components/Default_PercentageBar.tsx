@@ -11,7 +11,7 @@ function PercentageBar({ current, total, status }: { current: number; total: num
   if (isPlanTo) percentage = -1
 
   return (
-    <div className='w100 flex drop-shadow color-bg-primary-15 radius-16 h-15 default-percentage-bar'>
+    <div className="w100 flex drop-shadow color-bg-primary-15 radius-16 h-15 default-percentage-bar">
       <span
         className={`${isCompleted || isPlanTo ? "flex-center" : "flex-end"} bg-${status.toLowerCase().split(" ").join("-")} ${
           isPlanTo ? "bg-transparent" : ""
@@ -23,11 +23,11 @@ function PercentageBar({ current, total, status }: { current: number; total: num
         ) : isCompleted ? (
           <FaCheck />
         ) : (
-          <span className='pr-8 text-bold'>{current ? `${percentage.toFixed(0)}%` : "?"}</span>
+          <span className="pr-8 text-bold">{current ? `${percentage.toFixed(0)}%` : "?"}</span>
         )}
       </span>
       {percentage < 97 && (
-        <p className='flex-end pr-8 sm-text align-center color-white-50 absolute right-0 h100 half:xs-text'>
+        <p className="flex-end pr-8 sm-text align-center color-white-50 absolute right-0 h100 half:xs-text">
           {total === 0 ? "?" : total}
         </p>
       )}

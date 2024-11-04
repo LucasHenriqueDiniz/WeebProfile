@@ -1,4 +1,4 @@
-"use server"
+"use client"
 import Axios from "axios"
 import { CacheOptions, setupCache } from "axios-cache-interceptor"
 import Bottleneck from "bottleneck"
@@ -8,6 +8,7 @@ import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
 import { lastFmTestGenerateData } from "../tests/generateTestData"
 import LastFmPlugin from "../types/envLastFM"
 import { LastFmAlbum, LastFmArtist, LastFmData, LastFmFeaturedTrack, LastFmTrack, TopTrack } from "../types/lastFmTypes"
+import logger from "source/helpers/logger"
 
 const limiter = new Bottleneck({
   maxConcurrent: 1,
@@ -32,10 +33,19 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
     return lastFmTestGenerateData()
   }
 
-  console.log("Fetching LastFM data")
+  logger({
+    message: `Fetching LastFM data for ${plugin.username}`,
+    level: "info",
+    __filename,
+  })
   const response = await limiter.schedule(() => axios.get(`https://www.last.fm/user/${plugin.username}`))
 
-  console.log("Data fetched")
+  logger({
+    message: `Data fetched`,
+    level: "info",
+    __filename,
+  })
+
   const $ = cheerio.load(response.data)
 
   let recentTracksArray: LastFmTrack[] = []
@@ -74,7 +84,11 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
   const hasStatistics = sections.includes("statistics")
 
   if (hasRecentTracks) {
-    console.log("Parsing recent tracks")
+    logger({
+      message: `Parsing recent tracks`,
+      level: "debug",
+      __filename,
+    })
     try {
       const recentTracks = $("#recent-tracks-section .chartlist-row")
       recentTracksArray = recentTracks
@@ -88,15 +102,25 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
         })
         .get()
     } catch (error) {
-      console.log("Error parsing recent tracks", error)
+      logger({
+        message: `Error parsing recent tracks ${error}`,
+        level: "error",
+        __filename,
+      })
     }
-    console.log("Recent tracks parsed", recentTracksArray.length)
+    logger({
+      message: `Recent tracks parsed ${recentTracksArray.length}`,
+      level: "debug",
+      __filename,
+    })
   }
 
-  console.log("recentTracksArray", recentTracksArray)
-
   if (hasTopArtists) {
-    console.log("Parsing top artists")
+    logger({
+      message: `Parsing top artists`,
+      level: "debug",
+      __filename,
+    })
     try {
       let topArtists = $("#top-artists .chartlist-row")
       topArtistsInterval = $("#top-artists .section-control").text().replace("Sorted by:", "").trim()
@@ -124,13 +148,25 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
           .get()
       }
     } catch (error) {
-      console.log("Error parsing top artists", error)
+      logger({
+        message: `Error parsing top artists ${error}`,
+        level: "error",
+        __filename,
+      })
     }
-    console.log("Top artists parsed", topArtistsArray.length)
+    logger({
+      message: `Top artists parsed ${topArtistsArray.length}`,
+      level: "debug",
+      __filename,
+    })
   }
 
   if (hasTopAlbums) {
-    console.log("Parsing top albums")
+    logger({
+      message: `Parsing top albums`,
+      level: "debug",
+      __filename,
+    })
     try {
       let topAlbums = $("#top-albums .chartlist-row")
       topAlbumsInterval = $("#top-albums .section-control").text().replace("Sorted by:", "").trim()
@@ -160,13 +196,25 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
           .get()
       }
     } catch (error) {
-      console.log("Error parsing top albums", error)
+      logger({
+        message: `Error parsing top albums ${error}`,
+        level: "error",
+        __filename,
+      })
     }
-    console.log("Top albums parsed", topAlbumsArray.length)
+    logger({
+      message: `Top albums parsed ${topAlbumsArray.length}`,
+      level: "debug",
+      __filename,
+    })
   }
 
   if (hasTopTracks) {
-    console.log("Parsing top tracks")
+    logger({
+      message: `Parsing top tracks`,
+      level: "debug",
+      __filename,
+    })
     try {
       let topTracks = $("#top-tracks .chartlist-row")
       topTracksInterval = $("#top-tracks .section-control").text().replace("Sorted by:", "").trim()
@@ -196,20 +244,40 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
           .get()
       }
     } catch (error) {
-      console.log("Error parsing top tracks", error)
+      logger({
+        message: `Error parsing top tracks ${error}`,
+        level: "error",
+        __filename,
+      })
     }
-    console.log("Top tracks parsed", topTracksArray.length)
+    logger({
+      message: `Top tracks parsed ${topTracksArray.length}`,
+      level: "debug",
+      __filename,
+    })
   }
 
   if (hasStatistics) {
-    console.log("Parsing metadata")
+    logger({
+      message: `Parsing metadata`,
+      level: "debug",
+      __filename,
+    })
     try {
       totalScrobbles = $('.header-metadata-item a[href$="/library"]').text().trim()
       totalArtists = $('.header-metadata-item a[href$="/artists"]').text().trim()
       lovedTracks = $('.header-metadata-item a[href$="/loved"]').text().trim()
-      console.log("Loved tracks", lovedTracks, "Total scrobbles", totalScrobbles, "Total artists", totalArtists)
+      logger({
+        message: `Loved tracks ${lovedTracks} Total scrobbles ${totalScrobbles} Total artists ${totalArtists}`,
+        level: "debug",
+        __filename,
+      })
     } catch (error) {
-      console.log("Error parsing metadata", error)
+      logger({
+        message: `Error parsing metadata ${error}`,
+        level: "error",
+        __filename,
+      })
     }
     try {
       const featuredTrack = $(".header-featured-track")
@@ -219,9 +287,17 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
         image: featuredTrack.find(".featured-item-art img").attr("src"),
       }
     } catch (error) {
-      console.log("Error parsing featured track", error)
+      logger({
+        message: `Error parsing featured track ${error}`,
+        level: "error",
+        __filename,
+      })
     }
-    console.log("featured track parsed", treatedFeaturedTrack?.track)
+    logger({
+      message: `Featured track parsed ${treatedFeaturedTrack?.track}`,
+      level: "debug",
+      __filename,
+    })
   }
 
   // get image 64 | TODO: refactor to use Promise.all
@@ -244,7 +320,11 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
   if (treatedFeaturedTrack) {
     treatedFeaturedTrack.image = await getImage64(treatedFeaturedTrack.image)
   }
-  console.log("LastFM data parsed")
+  logger({
+    message: `LastFM data parsed`,
+    level: "info",
+    __filename,
+  })
 
   const LastFmData: LastFmData = {
     totalScrobbles,
@@ -255,9 +335,9 @@ async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastF
     topAlbums: topAlbumsArray,
     topTracks: topTracksArray,
     featuredTrack: treatedFeaturedTrack,
-    topArtistsInterval,
-    topAlbumsInterval,
-    topTracksInterval,
+    topArtistsInterval: topArtistsInterval ?? "Unknow",
+    topAlbumsInterval: topAlbumsInterval ?? "Unknown",
+    topTracksInterval: topTracksInterval ?? "Unknown",
   }
 
   return LastFmData

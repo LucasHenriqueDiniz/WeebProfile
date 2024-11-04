@@ -1,4 +1,4 @@
-import { PluginsRawConfig } from "./@types/PluginsConfig"
+import { PluginsRawConfig } from "source/plugins/@types/plugins"
 import pluginVariables from "./@types/PluginVariables"
 
 const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
@@ -52,6 +52,16 @@ const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
     description: "The order of the plugins that will be generated",
     options: ["github", "lastfm", "myanimelist"],
     sections: ["none"],
+  },
+  hide_terminal_emojis: {
+    type: "boolean",
+    description: "Hide the terminal emojis",
+    sections: ["main"],
+  },
+  custom_path: {
+    type: "string",
+    description: "The custom path of the SVG",
+    sections: ["main"],
   },
 }
 

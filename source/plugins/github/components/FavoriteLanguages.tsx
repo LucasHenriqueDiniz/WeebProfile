@@ -25,17 +25,17 @@ const DefaultFavoriteLanguages = ({
   const topLanguages = totalLanguages.sort((a, b) => b.size - a.size).slice(0, maxLanguages)
 
   return (
-    <div className='flex-d gap-4'>
+    <div className="flex-d gap-4">
       <PercentageBar values={topLanguages} />
 
       {topLanguages.map((lang) => (
-        <div key={lang.name} className='grid-col-3'>
-          <span className='md-text flex items-center'>
-            <GoDotFill color={lang.color} className='mr-2' />
+        <div key={lang.name} className="grid-col-3">
+          <span className="md-text flex items-center">
+            <GoDotFill color={lang.color} className="mr-2" />
             {lang.name}
           </span>
-          <span className='md-text flex-center'>{((lang.size / totalSize) * 100).toFixed(2)}%</span>
-          <span className='md-text flex-end'>{abbreviateNumber(lang.size)} lines</span>
+          <span className="md-text flex-center">{((lang.size / totalSize) * 100).toFixed(2)}%</span>
+          <span className="md-text flex-end">{abbreviateNumber(lang.size)} lines</span>
         </div>
       ))}
     </div>
@@ -59,7 +59,7 @@ const TerminalFavoriteLanguages = ({
     value: `${abbreviateNumber(lang.size)} lines`,
   }))
 
-  return <TerminalGrid data={gridData} rightText='Language' leftText='Lines of Code' />
+  return <TerminalGrid data={gridData} rightText="Language" leftText="Lines of Code" />
 }
 
 const FavoriteLanguages = ({ repositoriesData }: { repositoriesData: RepositoriesData }) => {
@@ -74,7 +74,7 @@ const FavoriteLanguages = ({ repositoriesData }: { repositoriesData: Repositorie
   const maxLanguages = 4 // pluginGithub.favorite_languages_max_languages
 
   return (
-    <section id='github' className='favorite-languages'>
+    <section id="github" className="favorite-languages">
       <RenderBasedOnStyle
         defaultComponent={
           <>

@@ -28,42 +28,42 @@ const DefaultProfile = ({ userData }: { userData: UserData }) => {
 
   const allMetrics = [
     {
-      icon: <FaUserFriends className='color-primary' />,
+      icon: <FaUserFriends className="color-primary" />,
       title: "Followers",
       value: userData.followers.totalCount,
     },
     {
-      icon: <FaHeart className='default-completed' />,
+      icon: <FaHeart className="default-completed" />,
       title: "Following",
       value: userData.following.totalCount,
     },
     {
-      icon: <FaCode className='color-primary' />,
+      icon: <FaCode className="color-primary" />,
       title: "Gists",
       value: userData.gists.totalCount,
     },
     {
-      icon: <FaBoxOpen className='default-completed' />,
+      icon: <FaBoxOpen className="default-completed" />,
       title: "Packages",
       value: userData.packages.totalCount,
     },
     {
-      icon: <FaDonate className='color-primary' />,
+      icon: <FaDonate className="color-primary" />,
       title: "Sponsorships",
       value: userData.sponsorshipsAsMaintainer.totalCount + userData.sponsorshipsAsSponsor.totalCount,
     },
     {
-      icon: <FaStar className='default-completed' />,
+      icon: <FaStar className="default-completed" />,
       title: "Starred Repos",
       value: userData.starredRepositories?.totalCount || 0,
     },
     {
-      icon: <FaAward className='color-primary' />,
+      icon: <FaAward className="color-primary" />,
       title: "Achievements",
       value: 0,
     }, // Placeholder for future achievements
     {
-      icon: <FaGitAlt className='default-completed' />,
+      icon: <FaGitAlt className="default-completed" />,
       title: "Repositories",
       value: userData.repositories.totalCount,
     },
@@ -78,19 +78,19 @@ const DefaultProfile = ({ userData }: { userData: UserData }) => {
   const secondRow = relevantMetrics.slice(2, 4)
 
   return (
-    <div className='flex flex-d gap-4 mt-8'>
-      <div className='flex flex-d gap-2'>
-        <span className='color-primary md-text flex items-center'>
-          <FaGithub className='mr-2' />
+    <div className="flex flex-d gap-4 mt-8">
+      <div className="flex flex-d gap-2">
+        <span className="color-primary md-text flex items-center">
+          <FaGithub className="mr-2" />
           Joined GitHub {years} years ago
         </span>
-        <span className='color-primary md-text flex items-center'>
-          <RiGitRepositoryCommitsLine className='mr-2' />
+        <span className="color-primary md-text flex items-center">
+          <RiGitRepositoryCommitsLine className="mr-2" />
           Contributed to {userData.repositoriesContributedTo.totalCount} repositories
         </span>
       </div>
 
-      <div className='w100 flex justify-between'>
+      <div className="w100 flex justify-between">
         <StatisticRow
           rows={firstRow.map((metric) => ({
             icon: metric.icon,
@@ -100,7 +100,7 @@ const DefaultProfile = ({ userData }: { userData: UserData }) => {
           }))}
         />
         <StatisticRow
-          className='align-flexend'
+          className="align-flexend"
           rows={secondRow.map((metric) => ({
             icon: metric.icon,
             title: metric.title,
@@ -118,42 +118,42 @@ const TerminalProfile = ({ userData }: { userData: UserData }) => {
 
   const allMetrics = [
     {
-      icon: <FaUserFriends className='color-primary' />,
+      icon: <FaUserFriends className="color-primary" />,
       title: "Followers",
       value: userData.followers.totalCount,
     },
     {
-      icon: <FaHeart className='default-completed' />,
+      icon: <FaHeart className="default-completed" />,
       title: "Following",
       value: userData.following.totalCount,
     },
     {
-      icon: <FaCode className='color-primary' />,
+      icon: <FaCode className="color-primary" />,
       title: "Gists",
       value: userData.gists.totalCount,
     },
     {
-      icon: <FaBoxOpen className='default-completed' />,
+      icon: <FaBoxOpen className="default-completed" />,
       title: "Packages",
       value: userData.packages.totalCount,
     },
     {
-      icon: <FaDonate className='color-primary' />,
+      icon: <FaDonate className="color-primary" />,
       title: "Sponsorships",
       value: userData.sponsorshipsAsMaintainer.totalCount + userData.sponsorshipsAsSponsor.totalCount,
     },
     {
-      icon: <FaStar className='default-completed' />,
+      icon: <FaStar className="default-completed" />,
       title: "Starred Repos",
       value: userData.starredRepositories?.totalCount || 0,
     },
     {
-      icon: <FaAward className='color-primary' />,
+      icon: <FaAward className="color-primary" />,
       title: "Achievements",
       value: 0,
     }, // Placeholder for future achievements
     {
-      icon: <FaGitAlt className='default-completed' />,
+      icon: <FaGitAlt className="default-completed" />,
       title: "Repositories",
       value: userData.repositories.totalCount,
     },
@@ -166,7 +166,7 @@ const TerminalProfile = ({ userData }: { userData: UserData }) => {
 
   return (
     <>
-      <TerminalLineWithDots title='On GitHub' value={`${years}+ years`} />
+      <TerminalLineWithDots title="On GitHub" value={`${years}+ years`} />
       {relevantMetrics.map((metric) => (
         <TerminalLineWithDots key={metric.title} title={metric.title} value={abbreviateNumber(metric.value)} />
       ))}
@@ -182,12 +182,12 @@ export default function GithubProfile({ userData }: { userData: UserData }): JSX
   const hideTitle = pluginGithub.profile_hide_title
 
   const Avatar = () => (
-    <div className='avatar'>
+    <div className="avatar">
       <Img64 url64={userData.avatarUrl} alt={`${userData.name}'s avatar`} width={36} height={36} />
     </div>
   )
   return (
-    <section id='github' className='github-profile'>
+    <section id="github" className="github-profile">
       <RenderBasedOnStyle
         defaultComponent={
           <>

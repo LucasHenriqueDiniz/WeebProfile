@@ -1,25 +1,25 @@
+import React from "react"
 import { FaGithub } from "react-icons/fa"
 import { Header } from "templates/Default/Default_Header"
 import ErrorMessage from "templates/Error_Style"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalBody from "templates/Terminal/Terminal_Body"
+import CheckPluginForRequiredValues from "../@utils/checkPluginForRequiredValues"
 import FavoriteLanguages from "./components/FavoriteLanguages"
 import FavoriteLicense from "./components/FavoriteLicenses"
 import GithubProfile from "./components/Profile"
 import GithubRepositories from "./components/Repositories"
-import { githubResponse } from "./types"
-import githubPlugin, { GithubSections } from "./types/envGithub"
-import React from "react"
-import CheckPluginForRequiredValues from "../@utils/checkPluginForRequiredValues"
 import GITHUB_ENV_VARIABLES from "./ENV_VARIABLES"
+import { githubResponse } from "./types"
+import GithubConfig, { GithubSections } from "./types/GithubConfig"
 
 interface Props {
-  plugin: githubPlugin
+  plugin: GithubConfig
   data: githubResponse
 }
 
 export default function RenderGithub({ plugin, data }: Props): JSX.Element {
-  if (!data) return <ErrorMessage message='Data not found' />
+  if (!data) return <ErrorMessage message="Data not found" />
   const error = CheckPluginForRequiredValues({
     plugin,
     ENV_VARIABLES: GITHUB_ENV_VARIABLES,

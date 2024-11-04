@@ -1,47 +1,11 @@
 {
-  "name": "weeb-profile-source",
+  "name": "@weeb/source",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "preinstall": "npx npm-only-allow@latest --PM yarn",
-    "postinstall": "npx patch-package -y",
-    "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
-    "lint:fix": "eslint . --fix",
-    "prettier": "prettier --check \"**/*.{js,jsx,ts,tsx}\"",
-    "prettier:fix": "prettier --write \"**/*.{js,jsx,ts,tsx}\""
-  },
+  "main": "index.ts",
+  "types": "index.ts",
   "dependencies": {
     "@faker-js/faker": "^9.0.3",
-    "axios": "^1.7.7",
-    "axios-cache-interceptor": "^1.6.1",
-    "bottleneck": "^2.19.5",
-    "cheerio": "^1.0.0",
-    "date-fns": "^4.1.0",
-    "image-to-base64": "^2.2.0",
-    "react": "^18.3.1",
-    "react-icons": "^5.3.0"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.13.0",
-    "@types/axios": "^0.9.36",
-    "@types/image-to-base64": "^2.1.2",
-    "@types/node": "^22.7.7",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "eslint": "^9.13.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react": "^7.37.2",
-    "globals": "^15.11.0",
-    "npm-only-allow": "^1.2.6",
-    "patch-package": "^8.0.0",
-    "postinstall-postinstall": "^2.1.0",
-    "prettier": "^3.3.3",
-    "typescript": "^5.4.0",
-    "typescript-eslint": "^8.12.2"
-  },
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "packageManager": "yarn@1.22.19"
+    "bottleneck": "^2.19.5"
+  }
 }

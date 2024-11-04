@@ -23,7 +23,7 @@ function LastFmTopAlbumsGrid({ data, interval }: Props): JSX.Element {
   const { lastfm } = getEnvVariables()
   if (!lastfm) throw new Error("LastFM plugin not found in LastFmTopAlbumsGrid component")
   if (!data || data.length === 0) {
-    return <ErrorMessage message='No data found in LastFmTopAlbumsGrid component' />
+    return <ErrorMessage message="No data found in LastFmTopAlbumsGrid component" />
   }
 
   const title = lastfm.top_albums_title ?? (LASTFM_ENV_VARIABLES.top_albums_title.defaultValue as string)
@@ -49,7 +49,7 @@ function LastFmTopAlbumsGrid({ data, interval }: Props): JSX.Element {
   })) as GridItemProps[]
 
   return (
-    <section id='last-fm' className='top-albums'>
+    <section id="last-fm" className="top-albums">
       <RenderBasedOnStyle
         defaultComponent={
           <>
@@ -70,7 +70,7 @@ function LastFmTopAlbumsGrid({ data, interval }: Props): JSX.Element {
                 limit: maxItems,
               })}
             />
-            <TerminalGrid data={GridItems} rightText='Album' leftText='Plays' />
+            <TerminalGrid data={GridItems} rightText="Album" leftText="Plays" />
             <TerminalLineBreak />
           </>
         }

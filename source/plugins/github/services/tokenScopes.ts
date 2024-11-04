@@ -1,4 +1,5 @@
 import axios from "axios"
+import logger from "source/helpers/logger"
 
 export interface TokenScopes {
   repo: boolean
@@ -64,7 +65,11 @@ async function getTokenScope(token: string) {
   })
 
   //print only the scopes that are true
-  console.log(scopesResponse)
+  logger({
+    message: `Token scopes: ${JSON.stringify(scopesResponse)}`,
+    level: "debug",
+    __filename,
+  })
   return scopesResponse
 }
 

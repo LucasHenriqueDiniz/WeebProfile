@@ -1,12 +1,12 @@
 import React from "react"
-import randomString from "core/utils/randomString"
+import { randomString } from "source/helpers/string"
 import { ListItemProps } from "../types"
 
 function TerminalListItem({ right, left }: ListItemProps): JSX.Element {
   return (
-    <div className='terminal-list-item'>
-      <span className='text-bold text-overflow sm-text text-warning'>{right}</span>
-      <span className='text-muted ml-auto sm-text'>{left}</span>
+    <div className="terminal-list-item">
+      <span className="text-bold text-overflow sm-text text-warning">{right}</span>
+      <span className="text-muted ml-auto sm-text">{left}</span>
     </div>
   )
 }

@@ -6,10 +6,11 @@
 /core/node_modules
 /core/.npm-only-allow
 /core/.gitignore
-core/.env
+/core/.env
 
 /source/node_modules
 /source/.npm-only-allow
 /source/.gitignore
 /core/.npm-only-allow
-/core/.npm-only-allow
+node_modules
+.npm-only-allow

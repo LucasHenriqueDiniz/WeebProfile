@@ -1,8 +1,8 @@
-import ENV_VARIABLES_TYPE from "source/plugins/PluginVariables"
-import githubPlugin from "./types/envGithub"
+import PluginVariables from "../@types/PluginVariables"
+import GithubConfig from "./types/GithubConfig"
 
-const GITHUB_ENV_VARIABLES: Record<keyof githubPlugin, ENV_VARIABLES_TYPE> = {
-  plugin_github: {
+const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
+  plugin_enabled: {
     required: true,
     type: "boolean",
     description: "Enable GitHub plugin",
@@ -16,7 +16,7 @@ const GITHUB_ENV_VARIABLES: Record<keyof githubPlugin, ENV_VARIABLES_TYPE> = {
   },
   sections: {
     type: "stringArray",
-    defaultValue: ["favorite_languages"],
+    defaultValue: [],
     description: "Sections to display in the profile",
     sections: ["main"],
   },

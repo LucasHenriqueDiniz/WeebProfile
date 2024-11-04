@@ -2,11 +2,13 @@ import fs from "fs"
 import path from "path"
 import mustache from "mustache"
 import PluginVariables from "source/plugins/@types/PluginVariables"
-import plugins, { PluginType } from "source/plugins/plugins"
-import logger from "core/utils/logger"
+import logger from "source/helpers/logger"
+import { PluginManager } from "source/plugins/@utils/PluginManager"
+import { Plugin, PluginName } from "source/plugins/@types/plugins"
 
 const rootDir = path.resolve(__dirname, "..", "..", "..", "..")
 const pluginsRoot = path.join(rootDir, "source/plugins")
+const pluginManager = PluginManager.getInstance()
 
 type SummaryOption = { label: string; value: string }
 
@@ -40,7 +42,7 @@ interface ReadmeMainTemplate {
   }
 }
 
-function getSections(plugin: PluginType, type = "default"): ReadmeSection[] {
+function getSections<TName extends PluginName>(plugin: Plugin<TName>, type = "default"): ReadmeSection[] {
   const sections: ReadmeSection[] = []
 
   if (type !== "default" && type !== "terminal") {
@@ -48,7 +50,7 @@ function getSections(plugin: PluginType, type = "default"): ReadmeSection[] {
     return sections
   }
 
-  plugin.sections.map((section) => {
+  plugin.sections.map((section: string) => {
     const imagePath = path.join(rootDir, "source/plugins/", plugin.name, `assets/${type}`, `${section}.svg`)
     const imageExists = fs.existsSync(imagePath)
     const relativeImagePath = path.relative(rootDir, imagePath)
@@ -70,7 +72,9 @@ function generateMainReadmeContent() {
   logger({ message: "Generating main readme", level: "info" })
   const templatePath = path.join(__dirname, "./templates/readme.md")
   const template = fs.readFileSync(templatePath, "utf8")
-  const pluginsSectionsLength = plugins.map((plugin) => plugin.sections.length).reduce((a, b) => a + b, 0)
+
+  const allPlugins = pluginManager.getAllPlugins()
+  const pluginsSectionsLength = allPlugins.map((plugin) => plugin.sections.length).reduce((a, b) => a + b, 0)
 
   const GettingStartedContent = fs.readFileSync(path.join(__dirname, "./templates/setup.md"), "utf8")
   const LicenseContent = fs.readFileSync(path.join(__dirname, "./templates/license.md"), "utf8")
@@ -79,13 +83,13 @@ function generateMainReadmeContent() {
 
   const data: ReadmeMainTemplate = {
     summaryOptions: SummaryArray.map((label) => ({ label, value: label.toLowerCase().replace(" ", "-") })),
-    availablePlugins: plugins.map((plugin) => ({
+    availablePlugins: allPlugins.map((plugin) => ({
       label: plugin.name,
       value: plugin.name.toLowerCase().replace(" ", "-"),
     })),
     supported_sections: {
       supported_total: pluginsSectionsLength,
-      plugin_sections: plugins.map((plugin) => ({
+      plugin_sections: allPlugins.map((plugin) => ({
         name: plugin.name,
         defaultSections: getSections(plugin, "default"),
         terminalSections: getSections(plugin, "terminal"),
@@ -102,7 +106,7 @@ function generateMainReadmeContent() {
   return body
 }
 
-function generatePluginReadmeContent(plugin: PluginType) {
+function generatePluginReadmeContent<TName extends PluginName>(plugin: Plugin<TName>) {
   const templatePath = path.join(__dirname, "./templates/plugin.md")
   const template = fs.readFileSync(templatePath, "utf8")
   const SummaryArray = ["Supported sections", "Setup", "Contributing", "License"]
@@ -124,7 +128,6 @@ function generatePluginReadmeContent(plugin: PluginType) {
 
 function saveReadme(content: string, root = rootDir) {
   try {
-    // create a readme file in the location of the plugin, if exists, overwrite it and log the action
     if (fs.existsSync(path.join(root, "README.md"))) {
       logger({ message: `Overwriting readme file in ${root}`, level: "info" })
     } else {
@@ -141,7 +144,8 @@ logger({ message: "Generating readme files", level: "info", header: true })
 const readmeContent = generateMainReadmeContent()
 saveReadme(readmeContent)
 
-plugins.forEach((plugin) => {
+// Generate readme for each plugin
+pluginManager.getAllPlugins().forEach((plugin) => {
   logger({ message: `Generating readme for ${plugin.name}`, level: "info" })
   const pluginReadmeContent = generatePluginReadmeContent(plugin)
   saveReadme(pluginReadmeContent, path.join(pluginsRoot, plugin.name))

@@ -75,7 +75,7 @@ export default function RenderLastFm({ plugin, data }: Props): JSX.Element {
   })
   if (error) return error
 
-  if (!data) return <ErrorMessage message='LastFM Data not found in render component' />
+  if (!data) return <ErrorMessage message="LastFM Data not found in render component" />
 
   const sections = plugin.sections
 
@@ -102,7 +102,7 @@ export default function RenderLastFm({ plugin, data }: Props): JSX.Element {
         }
         defaultComponent={
           <>
-            {!hideHeader && <Header title='LastFM' icon={<FaLastfm />} />}
+            {!hideHeader && <Header title="LastFM" icon={<FaLastfm />} />}
             {sections.map((section) => (
               <div key={section}>{renderSection(section)}</div>
             ))}

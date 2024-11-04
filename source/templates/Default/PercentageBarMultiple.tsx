@@ -15,7 +15,7 @@ const PercentageBar = ({ values }: PercentageBarProps) => {
   const totalSize = values.reduce((sum, item) => sum + item.size, 0)
 
   return (
-    <div className='progress-bar mt-4'>
+    <div className="progress-bar mt-4">
       {values.map((item) => (
         <div
           key={item.name}
