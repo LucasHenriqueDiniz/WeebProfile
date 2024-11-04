@@ -2,5 +2,5 @@
   "version": 2,
   "buildCommand": "yarn build",
   "outputDirectory": "web-client/.next",
-  "ignoreCommand": "git diff HEAD^ HEAD --quiet web-client/"
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet web-client/ || exit 0"
 }
