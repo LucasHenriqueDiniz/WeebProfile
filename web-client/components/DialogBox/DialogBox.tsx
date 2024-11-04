@@ -40,7 +40,7 @@ const DialogBox: DialogBoxComponent = ({ trigger, children, title, description, 
           )}
           {children}
           <Dialog.Close asChild>
-            <button aria-label='Close' className={groupClasses("dialog-close-button", classNames?.closeButton)}>
+            <button aria-label="Close" className={groupClasses("dialog-close-button", classNames?.closeButton)}>
               <MdClose />
             </button>
           </Dialog.Close>

@@ -1,9 +1,9 @@
-import React from "react";
+import React from "react"
 
 interface DefaultTitleProps {
-  icon?: JSX.Element;
-  title: string;
-  subtitle?: string | null;
+  icon?: JSX.Element
+  title: string
+  subtitle?: string | null
 }
 
 export default function DefaultTitle({ icon, title, subtitle }: DefaultTitleProps): JSX.Element {
@@ -15,5 +15,5 @@ export default function DefaultTitle({ icon, title, subtitle }: DefaultTitleProp
         {subtitle && <h3 className="sm-text text-shadow flex align-flexend">{subtitle}</h3>}
       </div>
     </div>
-  );
+  )
 }

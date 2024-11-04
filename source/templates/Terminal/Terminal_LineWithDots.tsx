@@ -1,5 +1,5 @@
-import React from "react";
-import TerminalDots from "./Terminal_Dots";
+import React from "react"
+import TerminalDots from "./Terminal_Dots"
 
 const TerminalLineWithDots = ({ title, value }: { title: string; value: string }): JSX.Element => (
   <div className="terminal-statistic sm-text">
@@ -7,6 +7,6 @@ const TerminalLineWithDots = ({ title, value }: { title: string; value: string }
     <TerminalDots />
     <span className="z-2">{value}</span>
   </div>
-);
+)
 
-export default TerminalLineWithDots;
+export default TerminalLineWithDots

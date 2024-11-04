@@ -1,30 +1,31 @@
-import { FaCalendar, FaHashtag, FaHeart, FaStar, FaVideo } from "react-icons/fa";
-import { GoDotFill } from "react-icons/go";
-import DefaultTitle from "templates/Default/Default_Title";
-import { DefaultTag, TerminalTag } from "templates/Genre_Tags";
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle";
-import TerminalCommand from "templates/Terminal/Terminal_Command";
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak";
-import getPseudoCommands from "core/utils/getPseudoCommands";
-import Img64 from "core/src/base/ImageComponent";
-import { FullMalAnimeResponse } from "../types/malFavoritesResponse";
-import React from "react";
-import ErrorMessage from "source/templates/Error_Style";
-import getEnvVariables from "source/plugins/@utils/getEnvVariables";
-import MAL_ENV_VARIABLES from "../ENV_VARIABLES";
+import { FaCalendar, FaHashtag, FaHeart, FaStar, FaVideo } from "react-icons/fa"
+import { GoDotFill } from "react-icons/go"
+import DefaultTitle from "templates/Default/Default_Title"
+import { DefaultTag, TerminalTag } from "templates/Genre_Tags"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
+import getPseudoCommands from "core/utils/getPseudoCommands"
+import Img64 from "core/src/base/ImageComponent"
+import { FullMalAnimeResponse } from "../types/malFavoritesResponse"
+import React from "react"
+import ErrorMessage from "source/templates/Error_Style"
+import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import logger from "source/helpers/logger"
 
 function DefaultFavoriteImage({ favorite, isHalf }: { favorite: FullMalAnimeResponse; isHalf: boolean }): JSX.Element {
-  const imageUrl = favorite.images.jpg?.base64;
-  const title = favorite.title;
-  const mean_score = favorite.score;
-  const release_year = favorite.year || favorite.aired.prop.from.year;
-  const synopsis = favorite.synopsis;
-  const num_episodes = favorite.episodes;
-  const genres = favorite.genres?.map((genre) => genre.name) ?? [];
-  const status = favorite.status;
-  const popularity = favorite.popularity;
+  const imageUrl = favorite.images.jpg?.base64
+  const title = favorite.title
+  const mean_score = favorite.score
+  const release_year = favorite.year || favorite.aired.prop.from.year
+  const synopsis = favorite.synopsis
+  const num_episodes = favorite.episodes
+  const genres = favorite.genres?.map((genre) => genre.name) ?? []
+  const status = favorite.status
+  const popularity = favorite.popularity
   if (isHalf) {
-    genres.splice(4);
+    genres.splice(4)
   }
 
   return (
@@ -59,7 +60,9 @@ function DefaultFavoriteImage({ favorite, isHalf }: { favorite: FullMalAnimeResp
             </span>
           )}
           {status && (
-            <span className={`${status.toLowerCase().split(" ").join("-")} md-text-bold flex items-center gap-2 half:hidden`}>
+            <span
+              className={`${status.toLowerCase().split(" ").join("-")} md-text-bold flex items-center gap-2 half:hidden`}
+            >
               <GoDotFill size={14} color="inherit" />
               {status}
             </span>
@@ -75,18 +78,18 @@ function DefaultFavoriteImage({ favorite, isHalf }: { favorite: FullMalAnimeResp
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function TerminalFavoriteImage({ favorite }: { favorite: FullMalAnimeResponse }): JSX.Element {
-  const title = favorite.title;
-  const mean_score = favorite.score;
-  const release_year = favorite.year || favorite.aired.prop.from.year;
-  const synopsis = favorite.synopsis;
-  const num_episodes = favorite.episodes;
-  const genres = favorite.genres?.map((genre) => genre.name) || [];
-  const status = favorite.status;
-  const popularity = favorite.popularity;
+  const title = favorite.title
+  const mean_score = favorite.score
+  const release_year = favorite.year || favorite.aired.prop.from.year
+  const synopsis = favorite.synopsis
+  const num_episodes = favorite.episodes
+  const genres = favorite.genres?.map((genre) => genre.name) || []
+  const status = favorite.status
+  const popularity = favorite.popularity
 
   return (
     <div className="sm-text">
@@ -100,30 +103,30 @@ function TerminalFavoriteImage({ favorite }: { favorite: FullMalAnimeResponse })
       </div>
       <div className="flex mt-2 gap-2">
         {genres.map((genre) => (
-          <TerminalTag text={genre} />
+          <TerminalTag text={genre} key={genre} />
         ))}
       </div>
       <div className="w100 overflow-hidden mt-2">
         <span className="synopsis line-clamp-2">{synopsis}</span>
       </div>
     </div>
-  );
+  )
 }
 function AnimeFavorites({ data }: { data: FullMalAnimeResponse[] }): JSX.Element {
-  const { myanimelist, size } = getEnvVariables();
-  if (!myanimelist) throw new Error("myanimelist not found in env variables");
-  if (!data) return <ErrorMessage message="No data found in MalStatistics component" />;
+  logger({ message: `Fetching MAL favorites for anime`, level: "info", __filename })
+  const { myanimelist, size } = getEnvVariables()
+  if (!myanimelist) throw new Error("myanimelist not found in env variables")
+  if (!data) return <ErrorMessage message="No data found in MalStatistics component" />
 
-  const title = myanimelist.anime_favorites_title ?? (MAL_ENV_VARIABLES.anime_favorites_title.defaultValue as string);
-  const maxItems = myanimelist.anime_favorites_max ?? (MAL_ENV_VARIABLES.anime_favorites_max.defaultValue as number);
-  const hideTitle = myanimelist.anime_favorites_hide_title;
-  const isHalf = size === "half";
-  const dataLength = data.length;
+  const title = myanimelist.anime_favorites_title ?? (MAL_ENV_VARIABLES.anime_favorites_title.defaultValue as string)
+  const maxItems = myanimelist.anime_favorites_max ?? (MAL_ENV_VARIABLES.anime_favorites_max.defaultValue as number)
+  const hideTitle = myanimelist.anime_favorites_hide_title
+  const isHalf = size === "half"
+  const dataLength = data.length
 
   //limit the data to the maxItems
   if (maxItems && dataLength > maxItems) {
-    console.log(`Limiting data to ${maxItems} items`);
-    data = data.slice(0, maxItems);
+    data = data.slice(0, maxItems)
   }
 
   return (
@@ -141,7 +144,14 @@ function AnimeFavorites({ data }: { data: FullMalAnimeResponse[] }): JSX.Element
         }
         terminalComponent={
           <>
-            <TerminalCommand command={getPseudoCommands({ plugin: "mal", section: "anime_favorites", username: myanimelist.username, limit: maxItems })} />
+            <TerminalCommand
+              command={getPseudoCommands({
+                plugin: "mal",
+                section: "anime_favorites",
+                username: myanimelist.username,
+                limit: maxItems,
+              })}
+            />
             {data.map((data) => (
               <TerminalFavoriteImage favorite={data} key={data.mal_id} />
             ))}
@@ -150,7 +160,7 @@ function AnimeFavorites({ data }: { data: FullMalAnimeResponse[] }): JSX.Element
         }
       />
     </section>
-  );
+  )
 }
 
-export default AnimeFavorites;
+export default AnimeFavorites

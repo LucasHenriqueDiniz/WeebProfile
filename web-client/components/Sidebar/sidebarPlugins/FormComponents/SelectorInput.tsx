@@ -1,7 +1,6 @@
 import React from "react"
 import Select from "react-select"
 import makeAnimated from "react-select/animated"
-
 import DescriptionTooltip from "./DescriptionTooltip"
 import "./FormComponents.css"
 
@@ -33,8 +32,8 @@ const SelectorInput: React.FC<SelectorInputProps> = ({
   }))
 
   return (
-    <div className='form-input-container'>
-      <label htmlFor={name} className='form-input-label'>
+    <div className="form-input-container">
+      <label htmlFor={name} className="form-input-label">
         {label}
         {description && <DescriptionTooltip description={description} required={required} />}
       </label>

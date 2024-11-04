@@ -1,37 +1,16 @@
-import { Metadata } from "next"
-import React from "react"
+"use client"
+// Find a way to make this not a client component, but something is using document so we need to ssr: false
+import dynamic from "next/dynamic"
 
-import GithubBody from "components/GithubBody/GithubBody"
-import GithubFooter from "components/GithubFooter/GithubFooter"
-import GithubHeader from "components/GithubHeader/GithubHeader"
-
-export const metadata: Metadata = {
-  title: "Weeb Profile",
-  description: "Create a beautiful profile README for your GitHub profile using the Weeb Profile generator.",
-  keywords: ["weeb", "profile", "github", "readme", "generator", "anime", "manga", "japanese", "culture", "otaku"],
-  twitter: {
-    card: "summary_large_image",
-  },
-  openGraph: {
-    url: "https://github.com/LucasHenriqueDiniz/WeebProfile",
-    type: "website",
-    title: "Weeb Profile",
-    description: "Create a beautiful profile README for your GitHub profile using the Weeb Profile generator.",
-    siteName: "Weeb Profile",
-    images: [
-      {
-        width: 959,
-        height: 890,
-        url: "https://raw.githubusercontent.com/Blazity/next-enterprise/main/.github/assets/project-banner.png",
-      },
-    ],
-  },
-  authors: [{ name: "Lucas Henrique Diniz Ostroski", url: "https://github.com/LucasHenriqueDiniz" }],
-}
+const GithubBody = dynamic(() => import("components/GithubBody/GithubBody"), { ssr: false })
+const GithubHeader = dynamic(() => import("components/GithubHeader/GithubHeader"), { ssr: false })
+const GithubFooter = dynamic(() => import("components/GithubFooter/GithubFooter"), { ssr: false })
+const ThemeHandler = dynamic(() => import("components/ThemeHandler"), { ssr: false })
 
 export default function Web() {
   return (
     <>
+      <ThemeHandler />
       <GithubHeader />
       <GithubBody />
       <GithubFooter />

@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { blackA, mauve, violet } from "@radix-ui/colors"
-const { pick, omit } = require("lodash")
-const colors = require("tailwindcss/colors")
 const defaultTheme = require("tailwindcss/defaultTheme")
 
 /** @type {import('tailwindcss').Config} */

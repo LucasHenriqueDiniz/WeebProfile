@@ -1,6 +1,6 @@
-import React from "react";
-import { GoDotFill } from "react-icons/go";
-import { LiaWindowCloseSolid, LiaWindowMaximizeSolid, LiaWindowMinimize } from "react-icons/lia";
+import React from "react"
+import { GoDotFill } from "react-icons/go"
+import { LiaWindowCloseSolid, LiaWindowMaximizeSolid, LiaWindowMinimize } from "react-icons/lia"
 
 const LeftSection = () => {
   return (
@@ -11,18 +11,19 @@ const LeftSection = () => {
         <GoDotFill color="green" />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const UrlSection = () => {
   return (
     <div className="flex items-center justify-center w100">
       <span className="text-overflow text-center sm-text text-muted">
-        <span className="text-bold text-success">root</span>@<span className="text-bold text-success">weeb-profile</span>: ~
+        <span className="text-bold text-success">root</span>@
+        <span className="text-bold text-success">weeb-profile</span>: ~
       </span>
     </div>
-  );
-};
+  )
+}
 
 const RightSection = () => {
   return (
@@ -31,8 +32,8 @@ const RightSection = () => {
       <LiaWindowMaximizeSolid className="half:hidden" />
       <LiaWindowCloseSolid />
     </div>
-  );
-};
+  )
+}
 
 function TerminalHeader(): JSX.Element {
   return (
@@ -41,7 +42,7 @@ function TerminalHeader(): JSX.Element {
       <UrlSection />
       <RightSection />
     </div>
-  );
+  )
 }
 
-export default TerminalHeader;
+export default TerminalHeader

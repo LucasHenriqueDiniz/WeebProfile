@@ -1,6 +1,6 @@
-import React from "react";
-import randomString from "core/utils/randomString";
-import { GridItemProps } from "../types";
+import React from "react"
+import { randomString } from "source/helpers/string"
+import { GridItemProps } from "../types"
 
 function TerminalGridItem({ title, subtitle, value }: GridItemProps): JSX.Element {
   return (
@@ -9,10 +9,18 @@ function TerminalGridItem({ title, subtitle, value }: GridItemProps): JSX.Elemen
       {subtitle && <span className="text-muted-light text-overflow sm-text">{subtitle}</span>}
       <span className="text-muted sm-text text-nowrap flex-end ">{value}</span>
     </>
-  );
+  )
 }
 
-function TerminalGridHeader({ rightText, centerText, leftText }: { rightText?: string; centerText?: string; leftText?: string }): JSX.Element {
+function TerminalGridHeader({
+  rightText,
+  centerText,
+  leftText,
+}: {
+  rightText?: string
+  centerText?: string
+  leftText?: string
+}): JSX.Element {
   return (
     <>
       {rightText && (
@@ -23,22 +31,22 @@ function TerminalGridHeader({ rightText, centerText, leftText }: { rightText?: s
         </>
       )}
     </>
-  );
+  )
 }
 
 interface Props {
-  data: GridItemProps[];
-  rightText?: string;
-  centerText?: string;
-  leftText?: string;
+  data: GridItemProps[]
+  rightText?: string
+  centerText?: string
+  leftText?: string
 }
 
 function TerminalGrid({ data, rightText, centerText, leftText }: Props): JSX.Element {
-  let col = 2;
+  let col = 2
 
   data.forEach((item) => {
-    if (item.subtitle) col = 3;
-  });
+    if (item.subtitle) col = 3
+  })
 
   return (
     <div className={`terminal-grid-${col}`}>
@@ -47,7 +55,7 @@ function TerminalGrid({ data, rightText, centerText, leftText }: Props): JSX.Ele
         <TerminalGridItem key={randomString()} {...item} />
       ))}
     </div>
-  );
+  )
 }
 
-export default TerminalGrid;
+export default TerminalGrid

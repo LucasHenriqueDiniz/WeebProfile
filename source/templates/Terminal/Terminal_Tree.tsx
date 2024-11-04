@@ -1,5 +1,5 @@
-import React from "react";
-import { GridItemProps } from "../types";
+import React from "react"
+import { GridItemProps } from "../types"
 
 // [TEST TREE]
 // ├── title
@@ -13,12 +13,12 @@ import { GridItemProps } from "../types";
 
 const TerminalTree = ({ data, title }: { data: GridItemProps[]; title: string }): JSX.Element => {
   const renderTreeItem = (item: GridItemProps, last = false) => {
-    const { title, subtitle, value } = item;
+    const { title, subtitle, value } = item
 
-    const T = () => <span className="text-raw">├──</span>;
-    const S = () => <span className="text-raw">│</span>;
-    const L = () => <span className="text-raw">└──</span>;
-    const N = () => <span></span>;
+    const T = () => <span className="text-raw">├──</span>
+    const S = () => <span className="text-raw">│</span>
+    const L = () => <span className="text-raw">└──</span>
+    const N = () => <span></span>
 
     return (
       <div className="flex-d md-2-text" key={title}>
@@ -38,15 +38,15 @@ const TerminalTree = ({ data, title }: { data: GridItemProps[]; title: string })
           <L /> <span>{value}</span>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className="terminal-tree">
       <div className="text-raw md-text text-bold text-uppercase">{title}</div>
       {data.map((item, index) => renderTreeItem(item, index === data.length - 1))}
     </div>
-  );
-};
+  )
+}
 
-export default TerminalTree;
+export default TerminalTree

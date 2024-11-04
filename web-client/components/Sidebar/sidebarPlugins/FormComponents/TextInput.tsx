@@ -22,13 +22,13 @@ const InputText = ({
   onDelete?: () => void
 }) => {
   return (
-    <div className='form-input-container'>
-      <label htmlFor={name} className='form-input-label'>
+    <div className="form-input-container">
+      <label htmlFor={name} className="form-input-label">
         {label}
         {description && <DescriptionTooltip description={description} required={required} />}
       </label>
-      <div className='relative size-full'>
-        <input type='text' name={name} className='text-plugins-input' value={value} onChange={onChange} />
+      <div className="relative size-full">
+        <input type="text" name={name} className="text-plugins-input" value={value} onChange={onChange} />
         {onDelete && (
           <IoMdCloseCircleOutline
             className={`absolute bottom-1/2 right-1 translate-y-1/2 cursor-pointer text-gray-300 transition-all hover:text-gray-500 ${

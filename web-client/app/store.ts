@@ -1,8 +1,7 @@
-import plugins, { PluginsData } from "plugins/plugins"
-import PluginsConfig from "source/plugins/@types/PluginsConfig"
+import { PluginDataMap, PluginName, PluginsConfig } from "source/plugins/@types/plugins"
+import { PluginManager } from "source/plugins/@utils/PluginManager"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-
 import { generateStartConfig, generateStartData } from "./storeHelpers"
 import { Language, Theme } from "./storeTypes"
 
@@ -15,53 +14,32 @@ interface Store {
   githubUser: string | null
   setGithubUser: (user: string) => void
   userError: string | null
-  activePlugins: string[]
-  addActivePlugin: (plugin: string) => void
-  removeActivePlugin: (plugin: string) => void
   pluginsConfig: PluginsConfig
   setPluginsConfig: (config: PluginsConfig) => void
   updateConfigKey: (plugin: string, key: string, value: string | number | boolean | string[]) => void
-  pluginsData: PluginsData
-  setPluginsData: (data: PluginsData) => void
+  pluginsData: PluginDataMap
+  setPluginsData: (data: PluginDataMap) => void
   initPluginsData: () => Promise<void>
   theme: Theme
   changeTheme: (theme: Theme) => void
   language: Language
   setLanguage: (language: Language) => void
-  //dev tools
   resetConfig: () => void
   resetData: () => void
+  initializeStore: () => void
 }
 
 const useStore = create<Store>()(
   persist(
-    (set) => ({
+    (set, get) => ({
+      initializeStore: () => {
+        const config = get().pluginsConfig
+        const pluginManager = PluginManager.getInstance()
+        pluginManager.initializeActivePlugins(config)
+      },
       githubUser: null,
       setGithubUser: (user) => set({ githubUser: user }),
       userError: null,
-      activePlugins: [],
-      addActivePlugin: (plugin) => {
-        set((state) => {
-          // Check if the plugin is already active
-          if (!state.activePlugins.includes(plugin)) {
-            return { activePlugins: [...state.activePlugins, plugin] }
-          }
-          return state
-        })
-        // If the plugin data is not initialized, initialize it
-        if (useStore.getState().pluginsData[plugin] === null) {
-          useStore.getState().initPluginsData()
-        }
-      },
-      removeActivePlugin: (plugin) => {
-        set((state) => ({
-          activePlugins: state.activePlugins.filter((p) => p !== plugin),
-        }))
-      },
-      initPluginsData: async () => {
-        const data = await generateStartData()
-        set({ pluginsData: data })
-      },
       pluginsConfig: generateStartConfig(),
       setPluginsConfig: (config) => set({ pluginsConfig: config }),
       updateConfigKey: (plugin, key, value) => {
@@ -70,47 +48,50 @@ const useStore = create<Store>()(
             return { pluginsConfig: { ...state.pluginsConfig, [key]: value } }
           }
           return {
-            pluginsConfig: { ...state.pluginsConfig, [plugin]: { ...state.pluginsConfig[plugin], [key]: value } },
+            pluginsConfig: {
+              ...state.pluginsConfig,
+              [plugin]: { ...state.pluginsConfig[plugin], [key]: value },
+            },
           }
         })
 
-        if (key === `plugin_${plugin}`) {
+        if (key === "plugin_enabled") {
+          const pluginManager = PluginManager.getInstance()
           if (value === false) {
-            useStore.getState().removeActivePlugin(plugin)
+            pluginManager.deactivatePlugin(plugin as PluginName)
           } else {
-            useStore.getState().addActivePlugin(plugin)
+            pluginManager.activatePlugin(plugin as PluginName)
+            useStore.getState().initPluginsData()
           }
+          pluginManager.initializeActivePlugins(useStore.getState().pluginsConfig)
         }
       },
-      // initialize pluginsData with null values
-      pluginsData: plugins.reduce((acc, plugin) => {
-        acc[plugin.name] = null
-        return acc
-      }, {} as PluginsData),
+      pluginsData: PluginManager.getInstance().createEmptyDataMap(),
       setPluginsData: (data) => set({ pluginsData: data }),
+      initPluginsData: async () => {
+        const data = await generateStartData()
+        set({ pluginsData: data })
+      },
       theme: "light",
       changeTheme: (theme: Theme) => {
-        if (theme !== "light" && theme !== "dark") {
-          return
-        }
+        if (theme !== "light" && theme !== "dark") return
         set({ theme })
         document.documentElement.setAttribute("data-theme", theme)
       },
       language: "en",
       setLanguage: (language: Language) => set({ language }),
       resetConfig: () => {
-        set({ activePlugins: [] })
-        set({ githubUser: null })
-        set({ pluginsConfig: generateStartConfig() })
+        set({
+          githubUser: null,
+          pluginsConfig: generateStartConfig(),
+        })
+        PluginManager.getInstance().initializeActivePlugins({})
       },
       resetData: async () => {
-        const data = await generateStartData()
-        set({ pluginsData: data })
-        set({ activePlugins: [] })
+        set({ pluginsData: await generateStartData() })
       },
     }),
     {
-      // Options for persist middleware
       name: "weeb-profile-storage",
       storage: createJSONStorage(() => localStorage),
     }

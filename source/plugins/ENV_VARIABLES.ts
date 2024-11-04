@@ -1,11 +1,32 @@
-import { PluginsRawConfig } from "./@types/PluginsConfig";
-import pluginVariables from "./@types/PluginVariables";
+import { PluginsRawConfig } from "source/plugins/@types/plugins"
+import pluginVariables from "./@types/PluginVariables"
 
 const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
-  filename: { defaultValue: "WeeboProfile.svg", type: "string", description: "The name of the SVG file that will be generated", sections: ["none"] },
-  gist_id: { required: true, type: "string", description: "The Gist ID where the SVG will be saved", sections: ["none"] },
-  gh_token: { required: true, type: "string", description: "The GitHub Token used to save the SVG", sections: ["none"] },
-  size: { defaultValue: "half", type: "stringRadio", description: "The size of the SVG", sections: ["none"], options: ["half", "full"] },
+  filename: {
+    defaultValue: "WeeboProfile.svg",
+    type: "string",
+    description: "The name of the SVG file that will be generated",
+    sections: ["none"],
+  },
+  gist_id: {
+    required: true,
+    type: "string",
+    description: "The Gist ID where the SVG will be saved",
+    sections: ["none"],
+  },
+  gh_token: {
+    required: true,
+    type: "string",
+    description: "The GitHub Token used to save the SVG",
+    sections: ["none"],
+  },
+  size: {
+    defaultValue: "half",
+    type: "stringRadio",
+    description: "The size of the SVG",
+    sections: ["none"],
+    options: ["half", "full"],
+  },
   style: {
     defaultValue: "default",
     type: "stringRadio",
@@ -20,7 +41,11 @@ const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
     sections: ["none"],
     options: ["gist", "local", "repository"],
   },
-  custom_css: { type: "string", description: "The custom CSS that will be applied to the SVG", sections: ["none"] },
+  custom_css: {
+    type: "string",
+    description: "The custom CSS that will be applied to the SVG",
+    sections: ["none"],
+  },
   plugins_order: {
     defaultValue: ["github", "lastfm", "myanimelist"],
     type: "stringArray",
@@ -28,6 +53,16 @@ const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
     options: ["github", "lastfm", "myanimelist"],
     sections: ["none"],
   },
-};
+  hide_terminal_emojis: {
+    type: "boolean",
+    description: "Hide the terminal emojis",
+    sections: ["main"],
+  },
+  custom_path: {
+    type: "string",
+    description: "The custom path of the SVG",
+    sections: ["main"],
+  },
+}
 
-export default MAIN_ENV_VARIABLES;
+export default MAIN_ENV_VARIABLES

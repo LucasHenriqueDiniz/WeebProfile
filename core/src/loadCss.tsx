@@ -1,13 +1,13 @@
 import React from "react"
-import PluginsConfig from "source/plugins/@types/PluginsConfig"
+import { PluginsConfig } from "source/plugins/@types/plugins"
 import fs from "fs"
 import path from "path"
-import logger from "core/utils/logger"
+import logger from "source/helpers/logger"
 
 export async function LoadCss(Env: PluginsConfig) {
   logger({ message: "Loading CSS", level: "info", __filename })
   const isHalf = Env.size === "half"
-  const customCss = Env.customCss
+  const customCss = Env.customCss as string | undefined
   const style = Env.style
   let css: string
 

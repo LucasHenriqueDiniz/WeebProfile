@@ -14,13 +14,19 @@ export function createRandomGithubUser(): UserData {
     following: { totalCount: faker.number.int({ min: 0, max: 10000 }) },
     createdAt: faker.date.past().toISOString(),
     email: faker.internet.email(),
-    repositoriesContributedTo: { totalCount: faker.number.int({ min: 0, max: 100 }) },
+    repositoriesContributedTo: {
+      totalCount: faker.number.int({ min: 0, max: 100 }),
+    },
     gists: { totalCount: faker.number.int({ min: 0, max: 100 }) },
     starredRepositories: { totalCount: faker.number.int({ min: 0, max: 100 }) },
     packages: { totalCount: faker.number.int({ min: 0, max: 100 }) },
     repositories: { totalCount: faker.number.int({ min: 0, max: 100 }) },
-    sponsorshipsAsMaintainer: { totalCount: faker.number.int({ min: 0, max: 100 }) },
-    sponsorshipsAsSponsor: { totalCount: faker.number.int({ min: 0, max: 100 }) },
+    sponsorshipsAsMaintainer: {
+      totalCount: faker.number.int({ min: 0, max: 100 }),
+    },
+    sponsorshipsAsSponsor: {
+      totalCount: faker.number.int({ min: 0, max: 100 }),
+    },
   }
 }
 

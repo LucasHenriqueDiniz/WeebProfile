@@ -1,5 +1,6 @@
-import logger from "core/utils/logger"
-// @TODO - transform in axios because its already in the project
+import logger from "source/helpers/logger"
+import axios from "axios"
+
 export default async function updateGithubGist(
   gistId: string,
   ghToken: string,
@@ -17,13 +18,9 @@ export default async function updateGithubGist(
     const formattedHtml = data.replace(/<!--.*?-->/g, "")
 
     const gistApiUrl = `https://api.github.com/gists/${gistId}`
-    const response = await fetch(gistApiUrl, {
-      method: "PATCH",
-      headers: {
-        Authorization: `token ${ghToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const response = await axios.patch(
+      gistApiUrl,
+      {
         description: gistTitle,
         files: {
           github_profile_charts: {
@@ -33,8 +30,14 @@ export default async function updateGithubGist(
             type: "text/plain",
           },
         },
-      }),
-    })
+      },
+      {
+        headers: {
+          Authorization: `token ${ghToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
 
     if (response.status !== 200) {
       throw new Error(`Error updating Gist: ${response.status} - ${response.statusText}`)

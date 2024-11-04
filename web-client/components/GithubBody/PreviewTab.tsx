@@ -1,27 +1,24 @@
 "use client"
-import React, { Suspense } from "react"
-
-import useStore from "app/store"
+import { useEffect, useState } from "react"
+import { PluginManager } from "source/plugins/@utils/PluginManager"
 import RenderActivePlugins from "web-client/app/RenderActivePlugins"
-
+import useStore from "web-client/app/store"
 import NoPluginsSelected from "./NoPluginsSelected"
 
-import LoadingIcon from "../LoadingIcon"
-
 const PreviewTab = () => {
-  const { activePlugins } = useStore()
+  const [activePlugins, setActivePlugins] = useState(PluginManager.getInstance().getActivePlugins())
+  const { pluginsConfig, initializeStore } = useStore()
 
-  return (
-    <>
-      {activePlugins.length === 0 ? (
-        <NoPluginsSelected />
-      ) : (
-        <Suspense fallback={<LoadingIcon />}>
-          <RenderActivePlugins />
-        </Suspense>
-      )}
-    </>
-  )
+  useEffect(() => {
+    initializeStore()
+    setActivePlugins(PluginManager.getInstance().getActivePlugins())
+  }, [initializeStore])
+
+  useEffect(() => {
+    setActivePlugins(PluginManager.getInstance().getActivePlugins())
+  }, [pluginsConfig])
+
+  return <>{activePlugins.length === 0 ? <NoPluginsSelected /> : <RenderActivePlugins />}</>
 }
 
 export default PreviewTab

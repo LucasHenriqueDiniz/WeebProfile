@@ -1,7 +1,7 @@
-import React from "react";
-import randomString from "core/utils/randomString";
-import Img64 from "core/src/base/ImageComponent";
-import { ListItemProps } from "../types";
+import React from "react"
+import Img64 from "core/src/base/ImageComponent"
+import { ListItemProps } from "../types"
+import { randomString } from "source/helpers/string"
 
 function ListItem({ right, center, left, image }: ListItemProps): JSX.Element {
   return (
@@ -17,7 +17,7 @@ function ListItem({ right, center, left, image }: ListItemProps): JSX.Element {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function List({ data }: { data: ListItemProps[] }): JSX.Element {
@@ -27,7 +27,7 @@ function List({ data }: { data: ListItemProps[] }): JSX.Element {
         <ListItem key={randomString()} {...item} />
       ))}
     </div>
-  );
+  )
 }
 
-export default List;
+export default List
