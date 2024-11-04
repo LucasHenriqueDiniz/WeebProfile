@@ -2,24 +2,21 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "lint and prettier",
+      "label": "Check lint and prettier",
       "type": "shell",
-      "command": "yarn lint && yarn prettier",
+      "command": "yarn check:lint && yarn check:prettier",
       "problemMatcher": []
     },
     {
-      "label": "lint and prettier fix",
+      "label": "Fix lint and prettier",
       "type": "shell",
-      "command": "yarn lint:fix && yarn prettier:fix",
+      "command": "yarn format",
       "problemMatcher": []
     },
     {
       "label": "WEB-CLIENT: next dev",
       "type": "shell",
-      "command": "npm run dev",
-      "options": {
-        "cwd": "${workspaceFolder}/web-client"
-      },
+      "command": "yarn vercel:dev",
       "group": {
         "kind": "none",
         "isDefault": true
@@ -29,20 +26,14 @@
     {
       "label": "WEB-CLIENT: next build",
       "type": "shell",
-      "command": "npm run build",
-      "options": {
-        "cwd": "${workspaceFolder}/web-client"
-      },
+      "command": "yarn vercel:build",
       "group": "build",
       "problemMatcher": []
     },
     {
-      "label": "CORE: start",
+      "label": "CORE: Start",
       "type": "shell",
-      "command": "npm run start",
-      "options": {
-        "cwd": "${workspaceFolder}/core"
-      },
+      "command": "yarn action:start",
       "group": {
         "kind": "none",
         "isDefault": true
@@ -52,7 +43,7 @@
     {
       "label": "CORE: setup-fonts",
       "type": "shell",
-      "command": "npm run setup-fonts",
+      "command": "yarn setup-fonts",
       "options": {
         "cwd": "${workspaceFolder}/core"
       },
@@ -60,12 +51,9 @@
       "problemMatcher": []
     },
     {
-      "label": "CORE: generate-readme",
+      "label": "Generate README",
       "type": "shell",
-      "command": "npm run generate-readme",
-      "options": {
-        "cwd": "${workspaceFolder}/core"
-      },
+      "command": "yarn generate:readme",
       "group": "build",
       "problemMatcher": []
     }
