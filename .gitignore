@@ -1,23 +1,17 @@
 # Core
 /core/node_modules
-/core/.npm-only-allow
 /core/.env
 
 # Source
 /source/node_modules
-/source/.npm-only-allow
-/core/.npm-only-allow
 
 # Dependencies
-/.npm-only-allow
-.npm-only-allow
 node_modules
 .pnp
 .pnp.js
 
 # Next.js
 /web-client/node_modules
-/web-client/.npm-only-allow
 /web-client/.next/
 /web-client/out/
 /web-client/build

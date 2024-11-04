@@ -8,8 +8,6 @@
     "web-client"
   ],
   "scripts": {
-    "preinstall": "npx npm-only-allow@latest --PM yarn",
-    "postinstall": "npx patch-package -y",
     "action:start": "yarn workspace @weeb/core start",
     "vercel:dev": "yarn workspace @weeb/web-client dev",
     "vercel:start": "yarn workspace @weeb/web-client start",
@@ -17,7 +15,6 @@
     "build": "yarn workspace @weeb/web-client build",
     "dev": "yarn workspace @weeb/web-client dev",
     "start": "yarn workspace @weeb/web-client start",
-    "install": "yarn install",
     "check:lint": "eslint \"./core/src/**/*.{ts,tsx}\" \"./source/**/*.{ts,tsx}\" \"./web-client/**/*.{ts,tsx}\" --max-warnings=0",
     "check:lint-fix": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
     "check:prettier": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
@@ -32,31 +29,33 @@
     "axios-cache-interceptor": "^1.6.1",
     "cheerio": "^1.0.0",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.4.5",
     "lodash": "^4.17.21",
     "mustache": "^4.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-icons": "^5.3.0",
-    "dotenv": "^16.4.5"
+    "react-icons": "^5.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@types/mustache": "^4.2.5",
+    "@types/node": "^20.11.18",
     "@types/react-dom": "^18.3.1",
-    "@typescript-eslint/eslint-plugin": "^8.12.2",
-    "@typescript-eslint/parser": "^8.12.2",
-    "eslint": "^9.13.0",
+    "@typescript-eslint/eslint-plugin": "^8.13.0",
+    "@typescript-eslint/parser": "^8.13.0",
+    "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.2",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
-    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-tailwindcss": "^3.13.0",
     "globals": "^13.24.0",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.5.7",
-    "typescript": "^5.4.0",
-    "tsx": "^4.19.2"
+    "tailwindcss": "^3.4.14",
+    "tsx": "^4.19.2",
+    "typescript": "^5.4.0"
   }
 }

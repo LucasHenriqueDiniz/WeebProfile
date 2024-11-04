@@ -15,7 +15,6 @@ module.exports = [
       "**/dist/**",
       "**/build/**",
       "**/coverage/**",
-      "**/npm-only-allow/**",
       "**/.next/**",
       "**/plugins/@!plugin_example/**",
     ],
