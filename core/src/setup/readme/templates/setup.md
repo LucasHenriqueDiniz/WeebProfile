@@ -9,14 +9,14 @@ Setting up your <b>WeebProfile</b> is easy and can be done in a few steps:
 - Go to your GitHub profile and create a new public Gist
 - Copy the Gist ID from the URL (e.g. `https://gist.github.com/username/gist_id`)
 
-![Gist ID example](/src/readme/imgs/gist_id_example.png)
+![Gist ID example](/core/src/readme/imgs/gist_id_example.png)
 
 ### 2. If you haven't already, create a readme repository
 
 - Create a new repository with your username as the repository name (e.g. `github.com/username/username`)
 - Create a new file called `README.md`
 - Commit the changes, now in your profile, you should see the repository like this:
-  ![Repository example](/src/readme/imgs/create_readme_repo.png)
+  ![Repository example](/core/src/readme/imgs/create_readme_repo.png)
 
 ### 3. Create a new GitHub Token
 
@@ -47,7 +47,7 @@ As a general rule, the following scopes may be required:
 - Go to the <code>Actions</code> section <code>https://github.com/username/username/settings/secrets/actions</code>
 - Add a new secret called `GIST_ID` with the Gist ID
 - Add a new secret called `WEEB_GH_TOKEN` with the GitHub Token
-  ![Repository secrets](/src/readme/imgs/add_secrets_repo.png)
+  ![Repository secrets](/core/src/readme/imgs/add_secrets_repo.png)
 
 ### 5. Create a new GitHub Action
 
@@ -102,7 +102,7 @@ jobs:
           PLUGIN_MAL_SECTIONS: statistics_simple, character_simple_favorites, anime_favorites
 ```
 
-![Repository workflow](/src/readme/imgs/workflow_example.png)
+![Repository workflow](/core/src/readme/imgs/workflow_example.png)
 
 - Commit the changes
 - Go to the Actions tab in your repository, you should see the workflow running
@@ -135,7 +135,7 @@ jobs:
 > 💡 Now in your profile, you should see the SVGs like this
 
 Example:
-![Profile example](/src/readme/imgs/profile_example.png)
+![Profile example](/core/src/readme/imgs/profile_example.png)
 
 <!-- CONFIGS -->
 
@@ -157,6 +157,11 @@ You can see the available configurations for each plugin in the [Available plugi
     <td>FILENAME</td>
     <td>MyProfile.svg</td>
     <td>The name of the SVG file that will be generated</td>
+  </tr>
+  <tr>
+    <td>DEV</td>
+    <td>false</td>
+    <td>If the action is running in dev mode (will not fetch data from API)</td>
   </tr>
   <tr>
     <td>GIST_ID</td>
