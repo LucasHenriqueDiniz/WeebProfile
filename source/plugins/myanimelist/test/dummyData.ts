@@ -5,8 +5,9 @@ import {
   PeopleFavorites,
 } from "../types/malFavoritesResponse"
 import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
+import { shuffleArray } from "helpers/array"
 
-const fakeData: {
+const baseData: {
   animes: FullMalAnimeResponse[]
   characters: CharacterFavorites[]
   mangas: MalFullMangaResponse[]
@@ -5246,6 +5247,27 @@ const fakeData: {
         date: "2024-10-13T09:32:00+00:00",
       },
     ],
+  },
+}
+
+const fakeData = {
+  get animes() {
+    return shuffleArray(baseData.animes)
+  },
+  get characters() {
+    return shuffleArray(baseData.characters)
+  },
+  get mangas() {
+    return shuffleArray(baseData.mangas)
+  },
+  get people() {
+    return shuffleArray(baseData.people)
+  },
+  get updates() {
+    return {
+      anime: shuffleArray(baseData.updates.anime),
+      manga: shuffleArray(baseData.updates.manga),
+    }
   },
 }
 

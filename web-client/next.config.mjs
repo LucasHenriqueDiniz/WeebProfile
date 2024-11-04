@@ -3,6 +3,7 @@
  */
 const config = {
   reactStrictMode: true,
+  transpilePackages: ["@core", "@source"],
   images: {
     remotePatterns: [
       { hostname: "avatars.githubusercontent.com" },
@@ -27,7 +28,7 @@ const config = {
           tls: false,
           request: false,
           document: false,
-          'image-to-base64': false,
+          "image-to-base64": false,
         },
       }
     }

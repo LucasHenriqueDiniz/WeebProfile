@@ -44,7 +44,8 @@
     ".next/types/**/*.ts",
     "../source/plugins/fetchPluginsData.ts",
     "prettier.config.js",
-    "postcss.config.js"
+    "postcss.config.js",
+    "../reset.d.ts"
   ],
   "exclude": ["node_modules"]
 }
