@@ -88,7 +88,7 @@ const SidebarPlugins = () => {
             />
           </div>
           {Object.entries(MAIN_ENV_VARIABLES)
-            .filter(([key]) => !["sections", "storage_method", "custom_css", "custom_path"].includes(key))
+            .filter(([key]) => !["sections", "storage_method", "custom_css", "custom_path", "dev"].includes(key))
             .map(([key, value]) => (
               <div key={key} className="grid w-full">
                 <RenderPluginInput name={key} pluginVariables={value} pluginName="global" />

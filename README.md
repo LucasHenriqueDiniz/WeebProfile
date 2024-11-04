@@ -18,15 +18,165 @@ A simple and customizable way to display code, anime, and music stats on your Gi
 
 ## 📦 Available plugins
 
-- [myanimelist](#myanimelist)
-- [lastfm](#lastfm)
 - [github](#github)
+- [lastfm](#lastfm)
+- [myanimelist](#myanimelist)
 
 ## 🖼️ Supported sections
 
 
-<h4>Right now we support 28 sections with 2 styles each</h4>
+<h4>Right now we support 26 sections with 2 styles each</h4>
 
+
+<details close>
+  <summary><b>github</b></summary>
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="600px">Default Image Showcase</td>
+    </tr>
+    <tr>
+      <td><code>favorite_languages</code></td>
+      <td><img src="source\plugins\github\assets\default\favorite_languages.svg"></td>
+    </tr>
+    <tr>
+      <td><code>favorite_license</code></td>
+      <td><img src="source\plugins\github\assets\default\favorite_license.svg"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="600px">Terminal Image Showcase</td>
+    </tr>
+    <tr>
+      <td><code>favorite_languages</code></td>
+      <td><img src="source\plugins\github\assets\terminal\favorite_languages.svg"></td>
+    </tr>
+    <tr>
+      <td><code>favorite_license</code></td>
+      <td><img src="source\plugins\github\assets\terminal\favorite_license.svg"></td>
+    </tr>
+  </table>
+</details>
+  
+
+<details close>
+  <summary><b>lastfm</b></summary>
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="600px">Default Image Showcase</td>
+    </tr>
+    <tr>
+      <td><code>recent_tracks</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\recent_tracks.svg"></td>
+    </tr>
+    <tr>
+      <td><code>statistics</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\statistics.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_artists_grid</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_artists_grid.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_artists_list</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_artists_list.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_artists_default</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_artists_default.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_albums_list</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_albums_list.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_albums_grid</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_albums_grid.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_albums_default</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_albums_default.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_tracks_list</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_tracks_list.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_tracks_grid</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_tracks_grid.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_tracks_default</code></td>
+      <td><img src="source\plugins\lastfm\assets\default\top_tracks_default.svg"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="600px">Terminal Image Showcase</td>
+    </tr>
+    <tr>
+      <td><code>recent_tracks</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\recent_tracks.svg"></td>
+    </tr>
+    <tr>
+      <td><code>statistics</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\statistics.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_artists_grid</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_artists_grid.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_artists_list</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_artists_list.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_artists_default</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_artists_default.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_albums_list</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_albums_list.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_albums_grid</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_albums_grid.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_albums_default</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_albums_default.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_tracks_list</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_tracks_list.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_tracks_grid</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_tracks_grid.svg"></td>
+    </tr>
+    <tr>
+      <td><code>top_tracks_default</code></td>
+      <td><img src="source\plugins\lastfm\assets\terminal\top_tracks_default.svg"></td>
+    </tr>
+  </table>
+</details>
+  
 
 <details close>
   <summary><b>myanimelist</b></summary>
@@ -155,173 +305,7 @@ A simple and customizable way to display code, anime, and music stats on your Gi
 </details>
   
 
-<details close>
-  <summary><b>lastfm</b></summary>
-
-### Default Style
-
-  <table>
-    <tr>
-      <td align="center">Section</td>
-      <td align="center" width="600px">Default Image Showcase</td>
-    </tr>
-    <tr>
-      <td><code>recent_tracks</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\recent_tracks.svg"></td>
-    </tr>
-    <tr>
-      <td><code>statistics</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\statistics.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_artists_grid</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_artists_grid.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_artists_list</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_artists_list.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_artists_default</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_artists_default.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_albums_list</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_albums_list.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_albums_grid</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_albums_grid.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_albums_default</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_albums_default.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_tracks_list</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_tracks_list.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_tracks_grid</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_tracks_grid.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_tracks_default</code></td>
-      <td><img src="source\plugins\lastfm\assets\default\top_tracks_default.svg"></td>
-    </tr>
-  </table>
-
-### Terminal Style
-
-  <table>
-    <tr>
-      <td align="center">Section</td>
-      <td align="center" width="600px">Terminal Image Showcase</td>
-    </tr>
-    <tr>
-      <td><code>recent_tracks</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\recent_tracks.svg"></td>
-    </tr>
-    <tr>
-      <td><code>statistics</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\statistics.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_artists_grid</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_artists_grid.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_artists_list</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_artists_list.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_artists_default</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_artists_default.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_albums_list</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_albums_list.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_albums_grid</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_albums_grid.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_albums_default</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_albums_default.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_tracks_list</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_tracks_list.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_tracks_grid</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_tracks_grid.svg"></td>
-    </tr>
-    <tr>
-      <td><code>top_tracks_default</code></td>
-      <td><img src="source\plugins\lastfm\assets\terminal\top_tracks_default.svg"></td>
-    </tr>
-  </table>
-</details>
-  
-
-<details close>
-  <summary><b>github</b></summary>
-
-### Default Style
-
-  <table>
-    <tr>
-      <td align="center">Section</td>
-      <td align="center" width="600px">Default Image Showcase</td>
-    </tr>
-    <tr>
-      <td><code>repositories</code></td>
-      <td><img src="Image not found"></td>
-    </tr>
-    <tr>
-      <td><code>favorite_languages</code></td>
-      <td><img src="source\plugins\github\assets\default\favorite_languages.svg"></td>
-    </tr>
-    <tr>
-      <td><code>favorite_license</code></td>
-      <td><img src="source\plugins\github\assets\default\favorite_license.svg"></td>
-    </tr>
-    <tr>
-      <td><code>repositories_data</code></td>
-      <td><img src="Image not found"></td>
-    </tr>
-  </table>
-
-### Terminal Style
-
-  <table>
-    <tr>
-      <td align="center">Section</td>
-      <td align="center" width="600px">Terminal Image Showcase</td>
-    </tr>
-    <tr>
-      <td><code>repositories</code></td>
-      <td><img src="Image not found"></td>
-    </tr>
-    <tr>
-      <td><code>favorite_languages</code></td>
-      <td><img src="source\plugins\github\assets\terminal\favorite_languages.svg"></td>
-    </tr>
-    <tr>
-      <td><code>favorite_license</code></td>
-      <td><img src="source\plugins\github\assets\terminal\favorite_license.svg"></td>
-    </tr>
-    <tr>
-      <td><code>repositories_data</code></td>
-      <td><img src="Image not found"></td>
-    </tr>
-  </table>
-</details>
-  
-
-<!-- SETUP:README -->
+<!-- SETUP:README @TODO UPDATE THIS -->
 
 ## ⚙️ Getting Started
 
@@ -465,7 +449,7 @@ Example:
 ## 🛠️ Configuration
 
 The `weeb_profile.yml` file is where you can configure the plugins and the SVGs that will be generated.
-Each plugin has its own configuration, and you can enable or disable them by setting the `PLUGIN_NAME` to `true` or `false`.
+Each plugin has its own configuration, and you can enable or disable them by setting the `PLUGIN_ENABLED` to `true` or `false`.
 You can see the available configurations for each plugin in the [Available plugins](#-available-plugins) section.
 
 ### 🌐 Global configurations

@@ -2,6 +2,11 @@ import { PluginsRawConfig } from "source/plugins/@types/plugins"
 import pluginVariables from "./@types/PluginVariables"
 
 const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
+  dev: {
+    type: "boolean",
+    description: "If the plugin is running in dev mode",
+    sections: ["none"],
+  },
   filename: {
     defaultValue: "WeeboProfile.svg",
     type: "string",
