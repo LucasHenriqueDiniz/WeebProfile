@@ -41,15 +41,17 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@csstools/selector-resolve-nested": "^1.0.2",
+    "@csstools/selector-specificity": "^3.0.2",
     "@total-typescript/ts-reset": "^0.5.1",
     "autoprefixer": "^10.4.20",
-    "tsc": "^2.0.4",
-    "webpack": "5.89.0",
+    "css-loader": "^7.1.2",
     "postcss": "^8.4.31",
-    "postcss-selector-parser": "^6.1.2",
     "postcss-nesting": "^12.0.2",
-    "@csstools/selector-resolve-nested": "^1.0.2",
-    "@csstools/selector-specificity": "^3.0.2"
+    "postcss-selector-parser": "^6.1.2",
+    "style-loader": "^4.0.0",
+    "tsc": "^2.0.4",
+    "webpack": "5.89.0"
   },
   "scripts": {
     "dev": "next dev",
