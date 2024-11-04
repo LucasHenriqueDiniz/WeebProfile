@@ -98,7 +98,7 @@ const DevtoolsHeader = ({ open }: { open: boolean }) => {
   )
 }
 
-function MainHeader() {
+function GithubHeader() {
   const { changeTheme, theme } = useStore()
   const [open, setOpen] = useState<boolean>(false)
   const invertedTheme = theme === "light" ? "dark" : "light"
@@ -171,4 +171,4 @@ function MainHeader() {
   )
 }
 
-export default MainHeader
+export default GithubHeader
