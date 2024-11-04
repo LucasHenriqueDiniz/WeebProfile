@@ -11,7 +11,7 @@ const envLogLevel = (process.env.LOG_LEVEL as LogLevel) || "info"
 
 // Function to determine if a message should be logged based on the log level
 function shouldLog(level: LogLevel): boolean {
-  const levels: LogLevel[] = ["debug", "info", "warn", "error"]
+  const levels: LogLevel[] = ["debug", "info", "success", "warn", "error"]
   const envLevelIndex = levels.indexOf(envLogLevel)
   const messageLevelIndex = levels.indexOf(level)
   return messageLevelIndex >= envLevelIndex

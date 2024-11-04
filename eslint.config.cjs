@@ -16,6 +16,7 @@ module.exports = [
       "**/coverage/**",
       "**/npm-only-allow/**",
       "**/.next/**",
+      "**/plugins/@!plugin_example/**",
     ],
     languageOptions: {
       parser,

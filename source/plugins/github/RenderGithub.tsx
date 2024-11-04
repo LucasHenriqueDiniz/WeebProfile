@@ -9,9 +9,9 @@ import FavoriteLanguages from "./components/FavoriteLanguages"
 import FavoriteLicense from "./components/FavoriteLicenses"
 import GithubProfile from "./components/Profile"
 import GithubRepositories from "./components/Repositories"
-import GITHUB_ENV_VARIABLES from "./ENV_VARIABLES"
+import GITHUB_ENV_VARIABLES, { GithubSections } from "./ENV_VARIABLES"
 import { githubResponse } from "./types"
-import GithubConfig, { GithubSections } from "./types/GithubConfig"
+import GithubConfig from "./types/GithubConfig"
 
 interface Props {
   plugin: GithubConfig

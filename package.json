@@ -10,18 +10,21 @@
   "scripts": {
     "preinstall": "npx npm-only-allow@latest --PM yarn",
     "postinstall": "npx patch-package -y",
-    "action:install": "yarn install",
-    "action:build": "yarn workspace @weeb/core build && yarn workspace @weeb/source build",
-    "vercel:install": "yarn install",
+    "action:start": "yarn workspace @weeb/core start",
     "vercel:dev": "yarn workspace @weeb/web-client dev",
     "vercel:build": "yarn workspace @weeb/web-client build",
     "vercel:start": "yarn workspace @weeb/web-client start",
+    "action:install": "yarn install",
+    "vercel:install": "yarn install",
     "dev:install": "yarn install",
-    "lint": "eslint \"./core/src/**/*.{ts,tsx}\" \"./source/**/*.{ts,tsx}\" \"./web-client/**/*.{ts,tsx}\" --max-warnings=0",
-    "lint:fix": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
-    "prettier": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
-    "prettier:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
-    "format": "yarn prettier:fix && yarn lint:fix"
+    "check:lint": "eslint \"./core/src/**/*.{ts,tsx}\" \"./source/**/*.{ts,tsx}\" \"./web-client/**/*.{ts,tsx}\" --max-warnings=0",
+    "check:lint-fix": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
+    "check:prettier": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
+    "check:prettier-fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
+    "format": "yarn check:prettier-fix && yarn check:lint-fix",
+    "check:plugins": "tsx core/src/setup/checkPlugins/validatePlugins.ts",
+    "generate:readme": "tsx core/src/setup/readme/generateReadme.ts",
+    "generate:action": "tsx core/src/setup/action/generateAction.ts"
   },
   "dependencies": {
     "axios": "^1.7.7",
@@ -52,6 +55,7 @@
     "globals": "^13.24.0",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.5.7",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "tsx": "^4.19.2"
   }
 }

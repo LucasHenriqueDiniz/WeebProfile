@@ -13,7 +13,7 @@ import MyAnimeListConfig from "source/plugins/myanimelist/types/MyAnimeListConfi
 import { splitString } from "../../source/helpers/string"
 import loadPlugin from "../utils/loadPlugin"
 
-function loadEnv(): PluginsConfig {
+function loadCoreEnv(): PluginsConfig {
   logger({ message: "Loading environment variables...", level: "info", __filename })
   const env = dotenv.config().parsed
 
@@ -75,6 +75,7 @@ function loadEnv(): PluginsConfig {
   const hideTerminalEmojis = toBoolean(env.HIDE_TERMINAL_EMOJIS)
 
   const baseEnv: PluginsRawConfig = {
+    dev: toBoolean(env.DEV),
     gist_id: gistId,
     gh_token: "***********", // Ocultar token nos logs
     filename: filename,
@@ -106,4 +107,4 @@ function loadEnv(): PluginsConfig {
   return config
 }
 
-export default loadEnv
+export default loadCoreEnv

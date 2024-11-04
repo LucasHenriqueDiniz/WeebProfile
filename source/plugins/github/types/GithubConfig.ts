@@ -1,6 +1,5 @@
 import { BasePluginConfig } from "source/plugins/@types/plugins"
 
-export const GithubSections = ["repositories", "favorite_languages", "favorite_license", "repositories_data"]
 export interface GithubConfig extends BasePluginConfig {
   title?: string
   username?: string

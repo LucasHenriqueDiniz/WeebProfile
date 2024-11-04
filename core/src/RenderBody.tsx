@@ -13,7 +13,10 @@ import { toBoolean } from "source/helpers/boolean"
 async function RenderBody({ env }: { env: PluginsConfig }): Promise<string> {
   logger({ message: "Starting...", level: "info", __filename, header: true })
   // check if dev mode is enabled - default is false
-  const isDev = toBoolean(env.DEV) || false
+  const isDev = toBoolean(env.dev) || false
+  if (isDev) {
+    logger({ message: "Dev mode is enabled", level: "warn", __filename })
+  }
 
   const data = await fetchPluginsData(isDev)
   const activePlugins = RenderActivePlugins({ pluginsData: data })

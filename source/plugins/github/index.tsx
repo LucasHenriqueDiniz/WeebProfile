@@ -1,8 +1,7 @@
 import { createPlugin } from "../@types/plugins"
-import GITHUB_ENV_VARIABLES from "./ENV_VARIABLES"
+import GITHUB_ENV_VARIABLES, { GithubSections } from "./ENV_VARIABLES"
 import RenderGithub from "./RenderGithub"
 import fetchGithubData from "./services/fetchGithub"
-import { GithubSections } from "./types/GithubConfig"
 
 const GithubPlugin = createPlugin({
   name: "github",

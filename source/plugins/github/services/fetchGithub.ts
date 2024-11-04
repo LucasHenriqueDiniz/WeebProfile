@@ -1,16 +1,17 @@
-import { githubResponse } from "../types"
-import fetchUserData from "./fetchUserData"
-import fetchAllRepositoriesData from "./RepositoriesData"
-import fetchRateLimit from "./rateLimit"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import GithubConfig from "../types/GithubConfig"
 import logger from "source/helpers/logger"
+import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { githubTestGenerateRepositoriesData, githubTestGenerateUserData } from "../test/generateTestData"
+import { githubResponse } from "../types"
+import GithubConfig from "../types/GithubConfig"
+import fetchUserData from "./fetchUserData"
+import fetchRateLimit from "./rateLimit"
+import fetchAllRepositoriesData from "./RepositoriesData"
 
 async function fetchGithubData(plugin: GithubConfig, dev: boolean = false): Promise<githubResponse> {
   if (dev) {
     return {
-      userData: null,
-      repositoriesData: null,
+      userData: githubTestGenerateUserData(),
+      repositoriesData: githubTestGenerateRepositoriesData(),
     }
   }
 

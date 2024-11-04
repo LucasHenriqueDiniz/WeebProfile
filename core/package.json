@@ -6,16 +6,18 @@
     "@weeb/source": "*",
     "image-to-base64": "^2.2.0",
     "puppeteer": "^23.3.0",
-    "string-width": "4.2.3",
-    "tsx": "^4.19.1"
+    "string-width": "4.2.3"
   },
   "scripts": {
-    "start": "npx tsx src/index.ts",
+    "start": "tsx src/index.ts",
     "setup-fonts": "npx tsx src/setup/setupFonts.ts",
     "generate-readme": "npx tsx src/setup/readme/generateReadme.ts",
-    "generate-action": "npx tsx src/setup/action/generateAction.ts"
+    "generate-action": "npx tsx src/setup/action/generateAction.ts",
+    "check:plugins": "tsx src/setup/checkPlugins/validatePlugins.ts"
   },
   "devDependencies": {
-    "@types/image-to-base64": "^2.1.2"
+    "@types/image-to-base64": "^2.1.2",
+    "@types/node": "^22.8.7",
+    "tsx": "4.19.2"
   }
 }

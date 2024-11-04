@@ -5,6 +5,7 @@ import { PluginRegistry } from "../plugins"
 
 // WeebProfile base configuration
 export interface PluginsRawConfig {
+  dev?: boolean
   gist_id: string
   gh_token: string
   filename: string

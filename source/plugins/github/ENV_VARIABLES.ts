@@ -1,6 +1,8 @@
 import PluginVariables from "../@types/PluginVariables"
 import GithubConfig from "./types/GithubConfig"
 
+export const GithubSections = ["favorite_languages", "favorite_license"]
+
 const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
   plugin_enabled: {
     required: true,
@@ -18,6 +20,7 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     type: "stringArray",
     defaultValue: [],
     description: "Sections to display in the profile",
+    options: GithubSections,
     sections: ["main"],
   },
   hide_header: {
