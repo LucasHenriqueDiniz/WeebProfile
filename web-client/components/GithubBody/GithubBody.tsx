@@ -8,7 +8,7 @@ import "styles/main.css"
 import "styles/terminal.css"
 import useStore from "web-client/app/store"
 import ActionsTab from "./ActionsTab"
-import "./GithubBody.css"
+import styles from "./GithubBody.module.css"
 import MarkdownTab from "./MarkdownTab"
 
 const PreviewTab = dynamic(() => import("./PreviewTab"), { ssr: false })
@@ -20,38 +20,38 @@ const GithubBody = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="profile-container">
-        <main className="profile-main flex flex-1">
-          <div className="profile-left-side w-1/4 p-4">
+      <div className={styles.profileContainer}>
+        <main className={styles.profileMain}>
+          <div className={styles.profileLeftSide}>
             <SidebarContainer />
           </div>
-          <div className="profile-right-side flex-1 p-4">
-            <div className="tab-container flex justify-center space-x-4">
+          <div className={styles.profileRightSide}>
+            <div className={styles.tabContainer}>
               <button
-                className={`tab ${selectedTab === "preview" ? "selected" : ""}`}
+                className={`${styles.tab} ${selectedTab === "preview" ? styles.selected : ""}`}
                 onClick={() => setSelectedTab("preview")}
               >
                 Preview
               </button>
               <button
-                className={`tab ${selectedTab === "actions" ? "selected" : ""}`}
+                className={`${styles.tab} ${selectedTab === "actions" ? styles.selected : ""}`}
                 onClick={() => setSelectedTab("actions")}
               >
                 Actions Code
               </button>
               <button
-                className={`tab ${selectedTab === "markdown" ? "selected" : ""}`}
+                className={`${styles.tab} ${selectedTab === "markdown" ? styles.selected : ""}`}
                 onClick={() => setSelectedTab("markdown")}
               >
                 Markdown Code
               </button>
             </div>
-            <div className="readme-container flex flex-col">
-              <div className="readme-header">
+            <div className={styles.readmeContainer}>
+              <div className={styles.readmeHeader}>
                 {githubUser ?? "Username"}
-                <span className="color-fg-muted">/</span>
-                <span className="monospace">README</span>
-                <span className="color-fg-muted">.md</span>
+                <span className={styles.colorFgMuted}>/</span>
+                <span className={styles.monospace}>README</span>
+                <span className={styles.colorFgMuted}>.md</span>
               </div>
               <div className="size-full flex-1">
                 {selectedTab === "actions" && <ActionsTab />}

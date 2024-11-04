@@ -56,6 +56,12 @@
     "prettier-plugin-tailwindcss": "^0.5.7",
     "tailwindcss": "^3.4.14",
     "tsx": "^4.19.2",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "postcss-loader": "^7.3.4",
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "postcss": "^8.4.31",
+    "postcss-import": "^15.1.0",
+    "postcss-nesting": "^12.0.2"
   }
 }

@@ -11,7 +11,7 @@ import Button from "../Button/Button"
 import JsonCodeBlock from "../CodeBlock/JsonCodeBlock"
 import DialogBox from "../DialogBox/DialogBox"
 import DropdownMenuComp from "./DropdownMenu/DropdownMenu"
-import "./GithubHeader.css"
+import styles from "web-client/components/GithubHeader/GithubHeader.module.css"
 
 const DevtoolsHeader = ({ open }: { open: boolean }) => {
   const { changeTheme, theme, resetConfig, resetData, pluginsData, pluginsConfig } = useStore()
@@ -70,7 +70,7 @@ const DevtoolsHeader = ({ open }: { open: boolean }) => {
   ]
 
   return (
-    <div className="second-header-container" data-open={open}>
+    <div className={styles.secondHeaderContainer} data-open={open}>
       <ul className="flex justify-start gap-4">
         {DEV_HEADER_ITEMS.map((item) => (
           <li key={item.title} className="flex items-center gap-2">
@@ -106,8 +106,8 @@ function GithubHeader() {
 
   return (
     <>
-      <header className="header-container">
-        <div className="header-content">
+      <header className={styles.headerContainer}>
+        <div className={styles.headerContent}>
           <div className="flex items-center gap-2">
             <DropdownMenuComp />
             <Link
