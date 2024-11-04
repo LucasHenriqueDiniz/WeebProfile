@@ -16,3 +16,7 @@ export function isArrayEmpty(arr: unknown[] | null | undefined): boolean {
     return true
   }
 }
+
+export function shuffleArray<T>(array: T[]): T[] {
+  return [...array].sort(() => 0.5 - Math.random())
+}

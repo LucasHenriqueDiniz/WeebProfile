@@ -12,6 +12,6 @@
     },
     "incremental": true
   },
-  "include": ["web-client/**/*", "core/**/*", "source/**/*"],
+  "include": ["web-client/**/*", "core/**/*", "source/**/*", "reset.d.ts"],
   "exclude": ["node_modules"]
 }

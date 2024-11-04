@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { icon } from "static"
+import { icon } from "web-client/public"
 import "./GithubFooter.css"
 
 const GithubFooter = () => {

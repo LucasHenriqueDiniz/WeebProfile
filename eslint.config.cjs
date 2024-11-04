@@ -5,6 +5,7 @@ const react = require("eslint-plugin-react")
 const reactHooks = require("eslint-plugin-react-hooks")
 const prettier = require("eslint-plugin-prettier")
 const globals = require("globals")
+const next = require("@next/eslint-plugin-next")
 
 module.exports = [
   {
@@ -42,6 +43,7 @@ module.exports = [
       react,
       "react-hooks": reactHooks,
       prettier,
+      "@next/next": next,
     },
     rules: {
       ...js.configs.recommended.rules,
