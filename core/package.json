@@ -10,9 +10,9 @@
   },
   "scripts": {
     "start": "tsx src/index.ts",
-    "setup-fonts": "npx tsx src/setup/setupFonts.ts",
-    "generate-readme": "npx tsx src/setup/readme/generateReadme.ts",
-    "generate-action": "npx tsx src/setup/action/generateAction.ts",
+    "setup-fonts": "tsx src/setup/setupFonts.ts",
+    "generate-readme": "tsx src/setup/readme/generateReadme.ts",
+    "generate-action": "tsx src/setup/action/generateAction.ts",
     "check:plugins": "tsx src/setup/checkPlugins/validatePlugins.ts"
   },
   "devDependencies": {
