@@ -2,11 +2,5 @@
   "version": 2,
   "buildCommand": "yarn build",
   "outputDirectory": "web-client/.next",
-  "framework": "nextjs",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/web-client/$1"
-    }
-  ]
+  "framework": "nextjs"
 }
