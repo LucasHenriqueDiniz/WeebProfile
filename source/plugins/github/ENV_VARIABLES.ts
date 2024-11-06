@@ -83,7 +83,6 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     sections: ["repositories_data"],
   },
   repository_name: {
-    required: true,
     type: "string",
     description: "Name of the repository",
     sections: ["repositories_data"],
