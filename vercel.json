@@ -1,5 +1,6 @@
 {
   "version": 2,
   "buildCommand": "yarn build",
-  "outputDirectory": "web-client/.next"
+  "outputDirectory": "web-client/.next",
+  "framework": "nextjs"
 }
