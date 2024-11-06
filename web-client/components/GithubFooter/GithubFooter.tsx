@@ -1,14 +1,14 @@
 import Image from "next/image"
 import Link from "next/link"
 import { icon } from "web-client/public"
-import "./GithubFooter.css"
+import styles from "./GithubFooter.module.css"
 
 const GithubFooter = () => {
   const currentYear = new Date().getFullYear()
   return (
-    <footer className="flex h-[100px] w-full flex-col items-center justify-center">
-      <div className="footer-line" />
-      <div className="footer-links">
+    <footer className={styles.footerContainer}>
+      <div className={styles.footerLine} />
+      <div className={styles.footerLinks}>
         <Image src={icon} alt="icon" width={30} height={30} />
         <Link href="#">© {currentYear} WeebProfile</Link>
       </div>
