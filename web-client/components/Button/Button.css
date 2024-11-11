@@ -12,6 +12,9 @@
   text-decoration: none;
   line-height: 1;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition:
     background-color 0.2s,
     color 0.2s,
@@ -57,6 +60,15 @@
   font-size: 10px;
 }
 
+.button-icon {
+  &.before {
+    margin-right: 4px;
+  }
+  &.after {
+    margin-left: 4px;
+  }
+}
+
 .button-primary {
   background-color: var(--button-primary);
   color: var(--button-primary-text);
@@ -88,4 +100,20 @@
   &:active {
     background-color: var(--button-danger-active);
   }
+}
+
+.button-ghost {
+  background-color: transparent;
+}
+
+.button-ghost:hover {
+  background-color: var(--button-ghost-hover);
+}
+
+.button-ghost:active {
+  background-color: var(--button-ghost-active);
+}
+
+.button-ghost:disabled {
+  background-color: transparent;
 }

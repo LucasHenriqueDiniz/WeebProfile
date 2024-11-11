@@ -3,19 +3,19 @@ import { FaGithub } from "react-icons/fa"
 import { Header } from "templates/Default/Default_Header"
 import ErrorMessage from "templates/Error_Style"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalBody from "templates/Terminal/Terminal_Body"
+import TerminalBody from "templates/Terminal/TerminalBody"
 import CheckPluginForRequiredValues from "../@utils/checkPluginForRequiredValues"
 import FavoriteLanguages from "./components/FavoriteLanguages"
 import FavoriteLicense from "./components/FavoriteLicenses"
 import GithubProfile from "./components/Profile"
 import GithubRepositories from "./components/Repositories"
 import GITHUB_ENV_VARIABLES, { GithubSections } from "./ENV_VARIABLES"
-import { githubResponse } from "./types"
+import GithubData from "./types/GithubData"
 import GithubConfig from "./types/GithubConfig"
 
 interface Props {
   plugin: GithubConfig
-  data: githubResponse
+  data: GithubData
 }
 
 export default function RenderGithub({ plugin, data }: Props): JSX.Element {
@@ -30,7 +30,7 @@ export default function RenderGithub({ plugin, data }: Props): JSX.Element {
   const sections = plugin.sections
 
   interface SectionRenderers {
-    [key: string]: (githubData: githubResponse) => JSX.Element
+    [key: string]: (githubData: GithubData) => JSX.Element
   }
 
   const sectionRenderers: SectionRenderers = {
@@ -38,7 +38,7 @@ export default function RenderGithub({ plugin, data }: Props): JSX.Element {
       if (githubData.userData === null) {
         return <ErrorMessage message={`User "${plugin.username}" not found`} />
       }
-      return <GithubProfile userData={githubData.userData} />
+      return <GithubProfile data={githubData.userData} />
     },
     repositories: (githubData) => {
       if (githubData.repositoriesData === null) {
@@ -50,7 +50,7 @@ export default function RenderGithub({ plugin, data }: Props): JSX.Element {
       if (githubData.repositoriesData === null) {
         return <ErrorMessage message={`User "${plugin.username}" not found`} />
       }
-      return <FavoriteLanguages repositoriesData={githubData.repositoriesData} />
+      return <FavoriteLanguages data={githubData.languagesData} />
     },
     favorite_license: (githubData) => {
       if (githubData.repositoriesData === null) {

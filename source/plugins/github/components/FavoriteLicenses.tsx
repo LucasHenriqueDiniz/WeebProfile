@@ -2,14 +2,15 @@ import { FaCode } from "react-icons/fa"
 import { TbLicense } from "react-icons/tb"
 import DefaultTitle from "templates/Default/Default_Title"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import TerminalTree from "templates/Terminal/Terminal_Tree"
 import { GridItemProps } from "templates/types"
 import getPseudoCommands from "core/utils/getPseudoCommands"
-import { RepositoriesData } from "../types"
 import React from "react"
 import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { RepositoriesData } from "../types/RepositoriesData"
+import ENV_VARIABLES from "../ENV_VARIABLES"
 
 const DefaultFavoriteLicense = ({ repositoriesData }: { repositoriesData: RepositoriesData }) => {
   const { favoriteLicense, repositories } = repositoriesData
@@ -44,18 +45,18 @@ const TerminalFavoriteLicense = ({ repositoriesData }: { repositoriesData: Repos
 }
 
 const FavoriteLicense = ({ repositoriesData }: { repositoriesData: RepositoriesData }) => {
-  const { pluginGithub } = getEnvVariables()
-  if (!pluginGithub) throw new Error("GitHub plugin not found")
+  const { github } = getEnvVariables()
+  if (!github) throw new Error("GitHub plugin not found")
 
-  const title = pluginGithub.favorite_license_title
-  const hideTitle = pluginGithub.favorite_license_hide_title
+  const title = github.favorite_license_title ?? (ENV_VARIABLES.favorite_license_title.defaultValue as string)
+  const hideTitle = github.favorite_license_hide_title ?? false
 
   return (
     <section id="github" className="favorite-license">
       <RenderBasedOnStyle
         defaultComponent={
           <>
-            {!hideTitle && <DefaultTitle title={title || "Favorite License"} icon={<FaCode />} />}
+            {!hideTitle && <DefaultTitle title={title} icon={<FaCode />} />}
             <DefaultFavoriteLicense repositoriesData={repositoriesData} />
           </>
         }

@@ -130,7 +130,7 @@ const ActionContent = ({ content }: { content: ActionCode | null }) => {
 
   return (
     <>
-      <div className="flex h-full items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2">
         <DialogBox
           trigger={
             <Button size="md" variant="secondary">

@@ -1,31 +1,88 @@
-import { MalImage } from "./malTypes"
-
-interface BaseFavorite {
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+// Base interfaces
+interface BaseMalEntity {
   mal_id: number
   url: string
-  images: MalImage
+  image: string
 }
 
-interface AnimeFavorites extends BaseFavorite {
+interface BaseMediaEntity extends BaseMalEntity {
   title: string | null
   type: string | null
   start_year?: number | null
 }
 
-interface MangaFavorites extends BaseFavorite {
-  title: string | null
-  type: string | null
-  start_year?: number | null
-}
-
-interface CharacterFavorites extends BaseFavorite {
+interface BasePersonEntity extends BaseMalEntity {
   name: string
 }
 
-interface PeopleFavorites extends BaseFavorite {
-  name: string
+// Full response interfaces
+interface TitlesEntity {
+  type: string
+  title: string
 }
 
+interface DateProp {
+  day: number | null
+  month: number | null
+  year: number | null
+}
+
+interface AiredPublishedInfo {
+  from: string
+  to: string | null
+  prop: {
+    from: DateProp
+    to: DateProp
+  }
+  string?: string
+}
+
+interface GenreTheme {
+  mal_id: number
+  type: string
+  name: string
+  url: string
+}
+
+// Full Media Response interfaces
+interface BaseFullMediaResponse extends BaseMalEntity {
+  titles?: TitlesEntity[] | null
+  title: string
+  title_english?: string | null
+  title_japanese?: string | null
+  title_synonyms?: string[]
+  type: string
+  status: string
+  score: number
+  rank: number
+  popularity: number
+  synopsis: string | null
+  year: number | null
+  genres?: GenreTheme[]
+  themes?: GenreTheme[]
+}
+
+interface FullMalAnimeResponse extends BaseFullMediaResponse {
+  episodes: number | null
+  airing: boolean
+  aired: AiredPublishedInfo
+}
+
+interface MalFullMangaResponse extends BaseFullMediaResponse {
+  chapters: number | null
+  volumes: number | null
+  publishing: boolean
+  published: AiredPublishedInfo
+}
+
+// Define the missing favorite interfaces
+interface AnimeFavorites extends BaseMediaEntity {}
+interface MangaFavorites extends BaseMediaEntity {}
+interface CharacterFavorites extends BasePersonEntity {}
+interface PeopleFavorites extends BasePersonEntity {}
+
+// Response type interfaces
 interface MalFavoritesDynamicResponse {
   [key: string]: AnimeFavorites[] | MangaFavorites[] | CharacterFavorites[] | PeopleFavorites[]
 }
@@ -37,161 +94,45 @@ interface MalFavoritesResponse extends MalFavoritesDynamicResponse {
   people: PeopleFavorites[]
 }
 
-interface TitlesEntity {
-  type: string
-  title: string
-}
-
-interface FromOrTo {
-  day: number | null
-  month: number | null
-  year: number | null
-}
-
-interface BasicMalEntity {
-  mal_id: number
-  type: string
-  name: string
-  url: string
-}
-
-interface RelationsEntity {
-  relation: string
-  entry: BasicMalEntity[]
-}
-
-interface FullMalAnimeResponse {
-  mal_id: number
-  url: string
-  images: MalImage
-  trailer: {
-    youtube_id: string | null
-    url: string | null
-    embed_url: string | null
-    images: {
-      image_url: string | null
-      small_image_url: string | null
-      medium_image_url: string | null
-      large_image_url: string | null
-      maximum_image_url: string | null
-    }
-  }
-  approved: boolean
-  titles?: TitlesEntity[] | null
-  title: string
-  title_english?: string | null
-  title_japanese?: string
-  title_synonyms?: string[]
-  type: string
-  source: string
-  episodes: number | null
-  status: string
-  airing: boolean
-  aired: {
-    from: string
-    to: string | null
-    prop: {
-      from: FromOrTo
-      to: FromOrTo
-    }
-    string?: string
-  }
-  duration: string
-  rating: string
-  score: number
-  scored_by: number
-  rank: number
-  popularity: number
-  members: number | null
-  favorites: number | null
-  synopsis: string | null
-  background: string
-  season: string | null
-  year: number | null
-  broadcast: {
-    day: string | null
-    time: string | null
-    timezone: string | null
-    string: string | null
-  }
-  producers: BasicMalEntity[] | null
-  licensors: BasicMalEntity[] | null
-  studios: BasicMalEntity[] | null
-  genres?: BasicMalEntity[]
-  themes?: BasicMalEntity[]
-  relations?: RelationsEntity[]
-  streaming?: { name: string; url: string }[]
-  external?: { name: string; url: string }[]
-  explicit_genres?: BasicMalEntity[]
-  demographics: BasicMalEntity[]
-  theme: {
-    openings: string[]
-    endings: string[]
-  }
-}
-
-export interface MalFullMangaResponse {
-  mal_id: number
-  url: string
-  images: MalImage
-  approved: boolean
-  titles?: TitlesEntity[] | null
-  title: string
-  title_english?: string | null
-  title_japanese?: string | null
-  title_synonyms?: string[]
-  type: string
-  chapters: number | null
-  volumes: number | null
-  status: string
-  publishing: boolean
-  published: {
-    from: string
-    to: string | null
-    prop: {
-      from: FromOrTo
-      to: FromOrTo
-    }
-    string?: string
-  }
-  score: number
-  scored: number
-  scored_by: number
-  rank: number
-  popularity: number
-  members: number
-  favorites: number
-  synopsis: string
-  background: string
-  authors?: BasicMalEntity[]
-  serializations?: BasicMalEntity[]
-  genres?: BasicMalEntity[]
-  themes?: BasicMalEntity[]
-  demographics?: BasicMalEntity[]
-  relations?: RelationsEntity[]
-  external?: { name: string; url: string }[]
-  explicit_genres?: BasicMalEntity[]
-}
-
 interface MalFullFavoritesResponse {
-  [key: string]: FullMalAnimeResponse[] | MalFullMangaResponse[] | { images: MalImage }[]
+  [key: string]: FullMalAnimeResponse[] | MalFullMangaResponse[] | { image: string }[]
   anime: FullMalAnimeResponse[]
   manga: MalFullMangaResponse[]
-  characters: { images: MalImage }[]
-  people: { images: MalImage }[]
+  characters: { image: string }[] // TODO: Add type for characters
+  people: { image: string }[] // TODO: Add type for people
 }
 
+// Utility types
 type AnyMalFavoriteUnique = AnimeFavorites | MangaFavorites | CharacterFavorites | PeopleFavorites
 type AnyMalFavorite = AnimeFavorites[] | MangaFavorites[] | CharacterFavorites[] | PeopleFavorites[]
 
 export type {
-  MalFavoritesResponse,
+  // Base types
+  BaseMalEntity,
+  BaseMediaEntity,
+  BasePersonEntity,
+
+  // Favorite types
   AnimeFavorites,
   MangaFavorites,
   CharacterFavorites,
   PeopleFavorites,
+
+  // Full response types
+  FullMalAnimeResponse,
+  MalFullMangaResponse,
+
+  // Response interfaces
+  MalFavoritesResponse,
+  MalFullFavoritesResponse,
+
+  // Utility types
   AnyMalFavorite,
   AnyMalFavoriteUnique,
-  FullMalAnimeResponse,
-  MalFullFavoritesResponse,
+
+  // Shared types
+  TitlesEntity,
+  DateProp,
+  AiredPublishedInfo,
+  GenreTheme,
 }

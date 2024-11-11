@@ -1,5 +1,13 @@
 query BaseOrganizationX {
   organization(login: "$login") {
+    databaseId
+    name
+    login
+    location
+    createdAt
+    avatarUrl
+    websiteUrl
+    isVerified
     packages {
       totalCount
     }

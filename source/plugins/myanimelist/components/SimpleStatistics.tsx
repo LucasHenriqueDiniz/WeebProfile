@@ -9,9 +9,9 @@ import ErrorMessage from "source/templates/Error_Style"
 import { Stat } from "templates/Default/Default_StatRow"
 import DefaultTitle from "templates/Default/Default_Title"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import TerminalLineWithDots from "templates/Terminal/Terminal_LineWithDots"
+import TerminalLineWithDots from "source/templates/Terminal/TerminalLineWithDots"
 import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
 import { MalStatisticsResponse } from "../types/malStatisticsResponse"
 
@@ -32,36 +32,36 @@ export default function SimpleStatistics({ data }: { data: MalStatisticsResponse
   const EpisodesWatched = data.anime.episodes_watched
 
   return (
-    <section id="mal" className="simple-statistics">
+    <section id="mal-simple-statistics">
       <RenderBasedOnStyle
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<IoStatsChartOutline />} />}
-            <ul className="simple default-status-horizontal">
+            <ul className="flex flex-row gap-2 mt-2 justify-between h-full half-mode:grid half-mode:grid-cols-2">
               <Stat
                 title="Days Wasted"
                 strong
                 value={TotalDays.toFixed(1)}
-                icon={<FaCalendar className="color-primary pb-2" />}
+                icon={<FaCalendar className="text-primary" />}
               />
               <Stat
                 title="Mean Score"
                 strong
                 value={TotalMeanScore.toFixed(2)}
-                icon={<FaStar className="color-primary pb-2" />}
+                icon={<FaStar className="text-primary" />}
               />
               <Stat
-                title="Chapters Read"
+                title="CH's Read"
                 strong
                 value={abbreviateNumber(ChaptersRead)}
-                icon={<FaBookOpen className="color-primary pb-2" />}
+                icon={<FaBookOpen className="text-primary" />}
                 smallInHalf
               />
               <Stat
-                title="Episodes Watched"
+                title="EP's Watched"
                 strong
                 value={abbreviateNumber(EpisodesWatched)}
-                icon={<FaVideo className="color-primary pb-2" />}
+                icon={<FaVideo className="text-primary" />}
                 smallInHalf
               />
             </ul>

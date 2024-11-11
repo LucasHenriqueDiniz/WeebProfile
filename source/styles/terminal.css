@@ -1,5 +1,4 @@
-#svg-main.terminal {
-  /* //282c34 */
+/* #svg-main.terminal {
   --terminal-color-bg-surface: #343434;
   --terminal-color-bg: #1c1c1c;
   --terminal-color-highlight: #2443ff;
@@ -117,7 +116,7 @@ section {
   font-weight: bold;
 }
 
-/* List Item */
+List Item 
 
 .border-b {
   border-bottom: 1px solid var(--terminal-color-text-muted);
@@ -170,7 +169,6 @@ section {
   margin-left: auto;
 }
 
-/* Statistics */
 
 .terminal-featured-track {
   display: grid;
@@ -178,7 +176,7 @@ section {
   text-wrap: nowrap;
 }
 
-/* Tree */
+
 
 .tree-content {
   display: grid;
@@ -197,3 +195,4 @@ section {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+ */

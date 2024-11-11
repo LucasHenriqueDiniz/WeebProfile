@@ -3,58 +3,42 @@ import { GoDotFill } from "react-icons/go"
 import DefaultTitle from "templates/Default/Default_Title"
 import PercentageBar from "templates/Default/PercentageBarMultiple"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalGrid from "templates/Terminal/Terminal_Grid"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import TerminalGrid from "source/templates/Terminal/TerminalGrid"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
-import { RepositoriesData } from "../types"
 import React from "react"
 import getEnvVariables from "source/plugins/@utils/getEnvVariables"
 import { abbreviateNumber } from "source/helpers/number"
+import ENV_VARIABLES from "../ENV_VARIABLES"
+import { ProcessedLanguage } from "../types/LanguagesData.js"
+import logger from "source/helpers/logger"
 
-const DefaultFavoriteLanguages = ({
-  repositoriesData,
-  maxLanguages: maxLanguages,
-}: {
-  repositoriesData: RepositoriesData
-  maxLanguages: number
-}) => {
-  const { totalLanguages } = repositoriesData
+interface LanguagesProps {
+  data: ProcessedLanguage[]
+}
 
-  const totalSize = totalLanguages.reduce((sum, lang) => sum + lang.size, 0)
-  const topLanguages = totalLanguages.sort((a, b) => b.size - a.size).slice(0, maxLanguages)
-
+const DefaultFavoriteLanguages = ({ data }: LanguagesProps) => {
   return (
-    <div className="flex-d gap-4">
-      <PercentageBar values={topLanguages} />
+    <div className="flex flex-col gap-2">
+      <PercentageBar values={data} />
 
-      {topLanguages.map((lang) => (
-        <div key={lang.name} className="grid-col-3">
+      {data.map((lang) => (
+        <div key={lang.name} className="grid-cols-3">
           <span className="md-text flex items-center">
             <GoDotFill color={lang.color} className="mr-2" />
             {lang.name}
           </span>
-          <span className="md-text flex-center">{((lang.size / totalSize) * 100).toFixed(2)}%</span>
-          <span className="md-text flex-end">{abbreviateNumber(lang.size)} lines</span>
+          <span className="md-text flex items-center justify-end">{lang.percentage.toFixed(2)}%</span>
+          <span className="md-text flex items-center justify-end">{abbreviateNumber(lang.size)} lines</span>
         </div>
       ))}
     </div>
   )
 }
 
-const TerminalFavoriteLanguages = ({
-  repositoriesData,
-  maxLanguages: maxLanguages,
-}: {
-  repositoriesData: RepositoriesData
-  maxLanguages: number
-}) => {
-  const { totalLanguages } = repositoriesData
-
-  // Sort languages by size in descending order and take top 4
-  const topLanguages = totalLanguages.sort((a, b) => b.size - a.size).slice(0, maxLanguages)
-
-  const gridData = topLanguages.map((lang) => ({
+const TerminalFavoriteLanguages = ({ data }: { data: ProcessedLanguage[] }) => {
+  const gridData = data.map((lang) => ({
     title: lang.name,
     value: `${abbreviateNumber(lang.size)} lines`,
   }))
@@ -62,16 +46,28 @@ const TerminalFavoriteLanguages = ({
   return <TerminalGrid data={gridData} rightText="Language" leftText="Lines of Code" />
 }
 
-const FavoriteLanguages = ({ repositoriesData }: { repositoriesData: RepositoriesData }) => {
-  const { pluginGithub } = getEnvVariables()
-  if (!pluginGithub) throw new Error("GitHub plugin not found")
+const FavoriteLanguages = ({ data }: LanguagesProps) => {
+  const { github } = getEnvVariables()
+  if (!github) throw new Error("GitHub plugin not found")
 
-  const title = pluginGithub.favorite_languages_title.replace(
-    "<qnt>",
-    repositoriesData.totalLanguages.length.toString()
-  )
-  const hideTitle = pluginGithub.favorite_languages_hide_title
-  const maxLanguages = 4 // pluginGithub.favorite_languages_max_languages
+  const title = (
+    github.favorite_languages_title ?? (ENV_VARIABLES.favorite_languages_title.defaultValue as string)
+  ).replace("<qnt>", data.length.toString())
+  const hideTitle = github.favorite_languages_hide_title
+
+  // Filter ignored languages if specified
+  const ignoreLanguages = github.favorite_languages_ignore_languages ?? false
+  let filteredLanguages = [...data]
+
+  if (ignoreLanguages) {
+    const ignoreLanguagesArray = ignoreLanguages.split(",").map((lang) => lang.trim())
+    filteredLanguages = filteredLanguages.filter((lang) => !ignoreLanguagesArray.includes(lang.name))
+
+    if (filteredLanguages.length === 0) {
+      logger({ message: "No languages to display after ignoring", level: "warn" })
+      return null
+    }
+  }
 
   return (
     <section id="github" className="favorite-languages">
@@ -79,7 +75,7 @@ const FavoriteLanguages = ({ repositoriesData }: { repositoriesData: Repositorie
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaCode />} />}
-            <DefaultFavoriteLanguages repositoriesData={repositoriesData} maxLanguages={maxLanguages} />
+            <DefaultFavoriteLanguages data={filteredLanguages} />
           </>
         }
         terminalComponent={
@@ -88,10 +84,10 @@ const FavoriteLanguages = ({ repositoriesData }: { repositoriesData: Repositorie
               command={getPseudoCommands({
                 plugin: "github",
                 section: "favorite-languages",
-                username: pluginGithub.username,
+                username: github.username,
               })}
             />
-            <TerminalFavoriteLanguages repositoriesData={repositoriesData} maxLanguages={maxLanguages} />
+            <TerminalFavoriteLanguages data={filteredLanguages} />
             <TerminalLineBreak />
           </>
         }

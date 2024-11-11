@@ -5,13 +5,14 @@ import LASTFM_ENV_VARIABLES from "plugins/lastfm/ENV_VARIABLES"
 import { LastFmConfig } from "plugins/lastfm/types/envLastFM"
 import MAL_ENV_VARIABLES from "plugins/myanimelist/ENV_VARIABLES"
 import { toBoolean } from "source/helpers/boolean"
-import { PluginsConfig, PluginsRawConfig } from "source/plugins/@types/plugins"
 import { PluginManager } from "source/plugins/@utils/PluginManager"
 import MAIN_ENV_VARIABLES from "source/plugins/ENV_VARIABLES"
 import GithubConfig from "source/plugins/github/types/GithubConfig"
 import MyAnimeListConfig from "source/plugins/myanimelist/types/MyAnimeListConfig"
 import { splitString } from "../../source/helpers/string"
 import loadPlugin from "../utils/loadPlugin"
+import { PluginsConfig, PluginsRawConfig } from "source/plugins/@types/plugins"
+import { terminalThemes } from "source/plugins/@themes/terminal-themes"
 
 function loadCoreEnv(): PluginsConfig {
   logger({ message: "Loading environment variables...", level: "info", __filename })
@@ -73,6 +74,13 @@ function loadCoreEnv(): PluginsConfig {
   const customCss = env.CUSTOM_CSS as string
   const customPath = env.CUSTOM_PATH as string
   const hideTerminalEmojis = toBoolean(env.HIDE_TERMINAL_EMOJIS)
+  const hideTerminalHeader = toBoolean(env.HIDE_TERMINAL_HEADER)
+  let terminalTheme = env.TERMINAL_THEME ?? (MAIN_ENV_VARIABLES.terminal_theme?.defaultValue as string)
+
+  if (terminalTheme && !Object.keys(terminalThemes).includes(terminalTheme)) {
+    logger({ message: "Invalid TERMINAL_THEME, defaulting to default", level: "warn", __filename })
+    terminalTheme = "default"
+  }
 
   const baseEnv: PluginsRawConfig = {
     dev: toBoolean(env.DEV),
@@ -86,6 +94,8 @@ function loadCoreEnv(): PluginsConfig {
     plugins_order: pluginsOrder,
     custom_path: customPath,
     hide_terminal_emojis: hideTerminalEmojis,
+    hide_terminal_header: hideTerminalHeader,
+    terminal_theme: terminalTheme,
   }
 
   // Load plugin configs

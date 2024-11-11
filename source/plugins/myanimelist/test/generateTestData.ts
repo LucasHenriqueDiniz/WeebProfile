@@ -4,6 +4,7 @@ import { MalFavoritesResponse, MalFullFavoritesResponse } from "../types/malFavo
 import fakeData from "./dummyData"
 import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
 import { MalData } from "../types/malTypes"
+import logger from "source/helpers/logger"
 
 function generateTestStatisticsData(): MalStatisticsResponse {
   const animeStatistics = {
@@ -77,6 +78,7 @@ function generateTestLastUpdatesData(): MalLastUpdatesResponse {
 }
 
 function generateTestMyAnimeListData(): MalData {
+  logger({ message: `Generating test data for MyAnimeList`, level: "debug", __filename })
   return {
     last_updated: generateTestLastUpdatesData(),
     statistics: generateTestStatisticsData(),

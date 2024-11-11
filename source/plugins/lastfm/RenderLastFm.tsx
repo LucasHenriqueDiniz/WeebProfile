@@ -3,7 +3,7 @@ import { FaLastfm } from "react-icons/fa"
 import Header from "templates/Default/Default_Header"
 import ErrorMessage from "templates/Error_Style"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalBody from "templates/Terminal/Terminal_Body"
+import TerminalBody from "templates/Terminal/TerminalBody"
 import {
   RecentTracks,
   Statistics,

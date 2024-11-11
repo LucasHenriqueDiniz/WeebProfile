@@ -57,27 +57,12 @@ interface MalData {
   statistics: MalStatisticsResponse
 }
 
-interface MalImage {
-  jpg?: {
-    image_url?: string
-    small_image_url?: string
-    large_image_url?: string
-    base64?: string
-  }
-  webp?: {
-    image_url?: string
-    small_image_url?: string
-    large_image_url?: string
-  }
-}
-
 export type {
   ClassicFavoritesProps,
   ClassicLastUpdatesProps,
   ClassicProfileProps,
   LastUpdateItemProps,
   MalData,
-  MalImage,
   MalProfileBoxProps,
   MalProfileStatsProps,
   ProgressBarProps,

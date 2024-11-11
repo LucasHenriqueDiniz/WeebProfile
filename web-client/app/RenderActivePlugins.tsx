@@ -5,7 +5,6 @@ import CheckPluginForRequiredValues from "source/plugins/@utils/checkPluginForRe
 import { PluginManager } from "source/plugins/@utils/PluginManager"
 import ErrorMessage from "source/templates/Error_Style"
 import SvgContainer from "templates/Main/SvgContainer"
-import TerminalHeader from "templates/Terminal/Terminal_Header"
 import useStore from "./store"
 
 const RenderActivePlugins = (): JSX.Element => {
@@ -18,7 +17,7 @@ const RenderActivePlugins = (): JSX.Element => {
   // Initialize the plugins data when necessary
   useEffect(() => {
     const activePlugins = pluginManager.getActivePlugins()
-    const hasNullData = activePlugins.some(([name]) => !pluginsData[name])
+    const hasNullData = activePlugins.some(([name]) => !pluginsData?.[name])
 
     if (hasNullData) {
       initPluginsData()
@@ -29,7 +28,7 @@ const RenderActivePlugins = (): JSX.Element => {
     const newComponents = pluginManager
       .getActivePlugins()
       .map(([pluginName, plugin]) => {
-        const pluginData = pluginsData[pluginName]
+        const pluginData = pluginsData?.[pluginName]
         const specificConfigs = pluginsConfig[pluginName]
 
         // Early returns for invalid plugin states
@@ -65,10 +64,7 @@ const RenderActivePlugins = (): JSX.Element => {
 
   return (
     <SvgContainer size={svgWidth} height={0} style={style} asDiv>
-      <>
-        {style === "terminal" && pluginManager.getActivePlugins().length > 0 && <TerminalHeader />}
-        {pluginsComponents}
-      </>
+      {pluginsComponents}
     </SvgContainer>
   )
 }

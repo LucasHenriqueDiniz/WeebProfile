@@ -1,13 +1,14 @@
 import PluginVariables from "../@types/PluginVariables"
 import GithubConfig from "./types/GithubConfig"
 
-export const GithubSections = ["favorite_languages", "favorite_license"]
+export const GithubSections = ["favorite_languages", "favorite_license", "profile"]
 
 const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
   plugin_enabled: {
     required: true,
     type: "boolean",
     description: "Enable GitHub plugin",
+    defaultValue: false,
     sections: ["main"],
   },
   username: {
@@ -56,6 +57,18 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     description: "Title of the favorite languages section",
     sections: ["favorite_languages"],
   },
+  favorite_languages_max_languages: {
+    type: "number",
+    defaultValue: 4,
+    description: "Maximum number of languages to display in the favorite languages section",
+    sections: ["favorite_languages"],
+  },
+  favorite_languages_ignore_languages: {
+    type: "string",
+    defaultValue: "",
+    description: "Comma separated list of languages to ignore in the favorite languages section",
+    sections: ["favorite_languages"],
+  },
   favorite_languages_hide_title: {
     type: "boolean",
     description: "Hide the title of the favorite languages section",
@@ -83,7 +96,6 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     sections: ["repositories_data"],
   },
   repository_name: {
-    required: true,
     type: "string",
     description: "Name of the repository",
     sections: ["repositories_data"],

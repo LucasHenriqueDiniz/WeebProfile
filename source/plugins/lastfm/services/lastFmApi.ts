@@ -30,6 +30,11 @@ const axios = setupCache(axiosInstance, OPTIONS)
 
 async function fetchLastFmData(plugin: LastFmPlugin, dev = false): Promise<LastFmData> {
   if (dev) {
+    logger({
+      message: "Using test data",
+      level: "warn",
+      __filename,
+    })
     return lastFmTestGenerateData()
   }
 

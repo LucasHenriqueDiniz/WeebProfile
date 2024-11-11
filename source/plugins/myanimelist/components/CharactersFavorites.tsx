@@ -1,7 +1,7 @@
 import { FaHeart } from "react-icons/fa"
 import DefaultTitle from "templates/Default/Default_Title"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import { treatJapaneseName } from "source/helpers/string"
@@ -14,15 +14,15 @@ import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
 import logger from "source/helpers/logger"
 
 function DefaultCharacterFavorite({ character, index }: { character: CharacterFavorites; index: number }): JSX.Element {
-  const imgSrc = character.images.jpg?.base64
+  const img = character.image
   const name = treatJapaneseName(character.name)
 
   return (
-    <div className="h-50 flex radius-16 overflow-hidden border-primary-50">
-      <div className="favorite-index">{index + 1}</div>
-      <div className="fav-character-title">{name}</div>
-      <div className="character-favorite-image-container">
-        <Img64 url64={imgSrc} alt={name} className="image-center" />
+    <div className="h-[50px] flex rounded-2xl overflow-hidden border border-primary-50 border-solid">
+      <div className="w-20 bg-primary text-4xl font-bold flex items-center justify-center text-shadow">{index + 1}</div>
+      <div className="flex items-center pl-2 text-2xl font-bold truncate text-shadow w-full">{name}</div>
+      <div className="w-36 h-full aspect-character overflow-hidden">
+        <Img64 url64={img} alt={name} className="image-square" />
       </div>
     </div>
   )
@@ -39,9 +39,14 @@ function TerminalCharacterFavorite({
   const url = character.url
 
   return (
-    <div className="flex align-center sm-text gap-4">
+    <div className="flex align-center sm-text gap-1">
       <span className="text-raw">[{index + 1}]</span>
-      <a href={url ?? "#"} target="_blank" rel="noreferrer" className="text-warning md-2-text text-bold">
+      <a
+        href={url ?? "#"}
+        target="_blank"
+        rel="noreferrer"
+        className="text-terminal-warning md-2-text text-bold truncate no-underline"
+      >
         - {name}
       </a>
     </div>
@@ -67,12 +72,12 @@ function DefaultCharactersFavorites({ data }: { data: CharacterFavorites[] }): J
   }
 
   return (
-    <section id="mal" className="characters-favorites">
+    <section id="mal-characters-favorites">
       <RenderBasedOnStyle
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title ?? "Favorite Characters"} icon={<FaHeart />} />}
-            <div className="flex-d gap-4">
+            <div className="flex flex-col gap-1">
               {data.map((data, index) => (
                 <DefaultCharacterFavorite character={data} index={index} key={data.mal_id} />
               ))}
@@ -89,7 +94,7 @@ function DefaultCharactersFavorites({ data }: { data: CharacterFavorites[] }): J
                 limit: maxItems,
               })}
             />
-            <div className="flex-d gap-4">
+            <div className="flex flex-col gap-1">
               {data.map((data, index) => (
                 <TerminalCharacterFavorite character={data} index={index} key={data.mal_id} />
               ))}

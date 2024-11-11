@@ -8,3 +8,8 @@ export { default as actionsCodePastLocation } from "./actions/actions_code_paste
 export { default as actionsManualRun } from "./actions/actions_manual_run_location.webp"
 export { default as actionsSetUpSecretVariables } from "./actions/actions_set_up_secret_variables.webp"
 export { default as markdownWhereShouldIPaste } from "./markdown/markdown_where_should_i_paste.webp"
+
+// not found
+export { default as notFound } from "./not-found.png"
+export { default as avatar } from "./avatar.webp"
+export { default as avatar2 } from "./avatar2.webp"

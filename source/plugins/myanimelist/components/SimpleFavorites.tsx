@@ -1,7 +1,7 @@
 import { FaHeart } from "react-icons/fa"
 import DefaultTitle from "templates/Default/Default_Title"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import { treatJapaneseName } from "source/helpers/string"
@@ -25,13 +25,17 @@ function FavoriteImage({
   favorite: AnyMalFavoriteUnique
   hideOverlay: boolean
 }): JSX.Element {
-  const imageUrl = favorite.images.jpg?.base64
+  const imageUrl = favorite.image
   const title = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
-    <div className="full-favorite-image-container">
-      <Img64 url64={imageUrl} alt={title ?? "Name not found"} className="fav-image" />
-      {!hideOverlay && <div className="fav-overlay">{title}</div>}
+    <div className="favorite-container relative">
+      <Img64 url64={imageUrl} alt={title ?? "Name not found"} className="image-portrait" />
+      {!hideOverlay && (
+        <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-65 text-white p-1 text-[10px] truncate">
+          {title}
+        </div>
+      )}
     </div>
   )
 }
@@ -44,7 +48,7 @@ function RenderFavorites({
   hideOverlay: boolean | undefined
 }): JSX.Element {
   return (
-    <div className="gap-4 grid-col-10 half:grid-col-5 half:gap-2 half:min-w-full half:min-h-full">
+    <div className="grid grid-cols-10 half-mode:grid-cols-5 gap-4 half-mode:gap-2">
       {data.map((data) => (
         <FavoriteImage favorite={data} key={data.mal_id} hideOverlay={hideOverlay ?? false} />
       ))}
@@ -95,7 +99,7 @@ function SimpleFavorites({ data, type }: DefaultSimpleFavoritesProps): JSX.Eleme
   }
 
   return (
-    <section id="mal" className="simple-favorites">
+    <section id={`mal-simple-favorites-${type}`}>
       <RenderBasedOnStyle
         defaultComponent={
           <>
@@ -117,11 +121,11 @@ function SimpleFavorites({ data, type }: DefaultSimpleFavoritesProps): JSX.Eleme
               />
             )}
             {data.map((data) => (
-              <div className="terminal-grid-2 mb-4" key={data.mal_id}>
-                <p className="sm-text text-overflow text-nowrap text-warning">
+              <div className="truncate" key={data.mal_id}>
+                <p className="sm-text font-semibold text-terminal-warning">
                   * {"name" in data ? treatJapaneseName(data.name) : data.title}
                 </p>
-                <p className="sm-text text-overflow text-muted">
+                <p className="sm-text font-semibold text-overflow text-terminal-muted">
                   {"type" in data && "start_year" in data && `(${data.type}, ${data.start_year})`}
                 </p>
               </div>

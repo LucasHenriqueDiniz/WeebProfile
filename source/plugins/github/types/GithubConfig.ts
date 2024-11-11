@@ -13,6 +13,8 @@ export interface GithubConfig extends BasePluginConfig {
   favorite_languages_hide_title?: boolean
   favorite_license_title?: string
   favorite_license_hide_title?: boolean
+  favorite_languages_max_languages?: number
+  favorite_languages_ignore_languages?: string
 }
 
 export default GithubConfig

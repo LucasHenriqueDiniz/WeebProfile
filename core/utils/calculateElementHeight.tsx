@@ -1,15 +1,13 @@
-import fs from "fs"
-import path from "path"
+import LoadCss from "core/src/loadCss"
 import puppeteer from "puppeteer"
 import React, { JSXElementConstructor, ReactElement, ReactNode } from "react"
 import { renderToString } from "react-dom/server"
 import { PluginsConfig } from "source/plugins/@types/plugins"
-import getSvgWidth from "./getSvgWidth"
+import SvgContainer from "source/templates/Main/SvgContainer"
 import logger from "../../source/helpers/logger"
 
 async function calculateElementHeight(activePlugins: ReactNode, env: PluginsConfig): Promise<number> {
   logger({ message: "Calculating element height...", level: "info", __filename })
-  const isHalf = env.size === "half"
 
   const htmlstring = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,31 +26,13 @@ async function calculateElementHeight(activePlugins: ReactNode, env: PluginsConf
           {css}
         </head>
         <body>
-          <div
-            id="svg-main"
-            className={`${env.size} ${env.style}`}
-            style={{ width: "100%", maxWidth: getSvgWidth(isHalf), display: "flex", flexDirection: "column" }}
-          >
+          <SvgContainer height={0} asDiv={true} size={env.size} style={env.style}>
             {activePlugins}
-          </div>
+          </SvgContainer>
         </body>
       </html>
     )
   }
-
-  const fontsFile = fs.readFileSync(path.resolve(__dirname, "../../source/styles/fonts.css"), "utf8")
-
-  const halfCssFile = fs.readFileSync(path.resolve(__dirname, "../../source/styles/half.css"), "utf8")
-  const halfCompressedCss = halfCssFile.replace(/\s{2,10}/g, " ").replace(/(\r\n|\n|\r)/gm, "")
-
-  const mainCssFile = fs.readFileSync(path.resolve(__dirname, "../../source/styles/main.css"), "utf8")
-  const mainCompressedCss = mainCssFile.replace(/\s{2,10}/g, " ").replace(/(\r\n|\n|\r)/gm, "")
-
-  const terminalCss = fs.readFileSync(path.resolve(__dirname, "../../source/styles/terminal.css"), "utf8")
-  const terminalCompressedCss = terminalCss.replace(/\s{2,10}/g, " ").replace(/(\r\n|\n|\r)/gm, "")
-
-  const defaultCssFile = fs.readFileSync(path.resolve(__dirname, "../../source/styles/default.css"), "utf8")
-  const defaultCompressedCss = defaultCssFile.replace(/\s{2,10}/g, " ").replace(/(\r\n|\n|\r)/gm, "")
 
   const browser = await puppeteer.launch({
     headless: false,
@@ -60,20 +40,9 @@ async function calculateElementHeight(activePlugins: ReactNode, env: PluginsConf
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-minimized", "--window-size=1024,768"],
   })
   const page = await browser.newPage()
-
+  const css = await LoadCss(env)
   // Render the page
-  await page.setContent(
-    htmlstring(
-      <>
-        <style>{halfCompressedCss}</style>
-        <style>{mainCompressedCss}</style>
-        <style>{terminalCompressedCss}</style>
-        <style>{defaultCompressedCss}</style>
-        <style>{fontsFile}</style>
-        <style>{fontsFile}</style>
-      </>
-    )
-  )
+  await page.setContent(htmlstring(css))
 
   await page.waitForSelector("#svg-main")
 

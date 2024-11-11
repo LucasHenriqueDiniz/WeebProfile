@@ -1,66 +1,35 @@
+"use server"
 import axios from "axios"
-import { UserData } from "../types"
-import isNodeEnvironment from "plugins/@utils/isNodeEnv"
-import imageToBase64 from "source/plugins/@utils/imageToBase64"
+import fs from "fs"
+import path from "path"
 import logger from "source/helpers/logger"
-async function fetchUserData(login: string, token: string): Promise<UserData> {
-  const UserQuery = `
-query BaseUser {
-  user(login: "${login}") {
-    databaseId
-    name
-    login
-    location
-    createdAt
-    avatarUrl
-    company
-    followers {
-        totalCount
-    }
-    following {
-        totalCount
-    }
-    repositoriesContributedTo(includeUserRepositories: true) {
-      totalCount
-    }0
-    gists {
-      totalCount
-    }
-    packages {
-      totalCount
-    }
-    repositories {
-      totalCount
-    }
-    sponsorshipsAsMaintainer {
-      totalCount
-    }
-    sponsorshipsAsSponsor {
-      totalCount
-    }
-    starredRepositories {
-      totalCount
-    }
-  }
-}
-`
+import imageToBase64 from "source/plugins/@utils/imageToBase64"
+import { UserResponse } from "../types/UserResponse"
+
+async function fetchUserData(login: string, token: string): Promise<UserResponse> {
   try {
-    const isNodeEnv = isNodeEnvironment()
-    let url = "https://api.github.com/graphql"
-    if (!isNodeEnv) {
-      url = "https://cors-anywhere.herokuapp.com/https://api.github.com/graphql"
-    }
+    // Read the GraphQL query file
+    const queryPath = path.join(__dirname, "queries", "user.x.graphql")
+    const query = fs.readFileSync(queryPath, "utf8")
 
     const response = await axios.post(
-      url,
-      { query: UserQuery },
+      "https://api.github.com/graphql",
+      {
+        query: query,
+        variables: {
+          login: login,
+          from: new Date(new Date().getFullYear(), 0, 1).toISOString(), // January 1st of current year
+          to: new Date().toISOString(), // Current date
+          affiliations: ["OWNER", "COLLABORATOR", "ORGANIZATION_MEMBER"],
+        },
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     )
-    const data = response.data.data.user
+    const data: UserResponse = response.data
     if (data.avatarUrl) {
       data.avatarUrl = await imageToBase64(data.avatarUrl)
     }

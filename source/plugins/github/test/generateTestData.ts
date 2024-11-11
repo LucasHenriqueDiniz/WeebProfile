@@ -1,14 +1,13 @@
 import { faker } from "@faker-js/faker"
-import { RepositoriesData, UserData } from "../types"
+import { ProcessedLanguage } from "../types/LanguagesData"
+import { RepositoriesData } from "../types/RepositoriesData"
+import { UserResponse } from "../types/UserResponse"
 
-function githubTestGenerateUserData(): UserData {
+function githubTestGenerateUserData(): UserResponse {
   return {
     name: faker.person.fullName(),
     avatarUrl: faker.image.avatarGitHub(),
-    bio: faker.hacker.phrase(),
-    company: faker.company.name(),
     createdAt: faker.date.past().toISOString(),
-    email: faker.internet.email(),
     followers: {
       totalCount: faker.number.int({ min: 0, max: 1000000 }),
     },
@@ -28,6 +27,7 @@ function githubTestGenerateUserData(): UserData {
     },
     repositories: {
       totalCount: faker.number.int({ min: 0, max: 1000000 }),
+      totalDiskUsage: faker.number.int({ min: 0, max: 1000000 }),
     },
     starredRepositories: {
       totalCount: faker.number.int({ min: 0, max: 1000000 }),
@@ -37,6 +37,40 @@ function githubTestGenerateUserData(): UserData {
     },
     sponsorshipsAsSponsor: {
       totalCount: faker.number.int({ min: 0, max: 1000000 }),
+    },
+    databaseId: faker.number.int({ min: 1, max: 1000000 }),
+    watching: {
+      totalCount: faker.number.int({ min: 0, max: 1000000 }),
+    },
+    issueComments: {
+      totalCount: faker.number.int({ min: 0, max: 1000000 }),
+    },
+    organizations: {
+      totalCount: faker.number.int({ min: 0, max: 1000000 }),
+    },
+    contributionsCollection: {
+      totalRepositoriesWithContributedCommits: faker.number.int({ min: 0, max: 1000000 }),
+      totalCommitContributions: faker.number.int({ min: 0, max: 10000 }),
+      restrictedContributionsCount: faker.number.int({ min: 0, max: 1000 }),
+      totalIssueContributions: faker.number.int({ min: 0, max: 10000 }),
+      totalPullRequestContributions: faker.number.int({ min: 0, max: 10000 }),
+      totalPullRequestReviewContributions: faker.number.int({ min: 0, max: 10000 }),
+    },
+    calendar: {
+      contributionCalendar: {
+        weeks: faker.helpers.multiple(
+          () => ({
+            contributionDays: faker.helpers.multiple(
+              () => ({
+                contributionCount: faker.number.int({ min: 0, max: 10000 }),
+                color: faker.color.human(),
+              }),
+              { count: 7 }
+            ),
+          }),
+          { count: 52 }
+        ),
+      },
     },
   }
 }
@@ -121,4 +155,16 @@ function githubTestGenerateRepositoriesData(): RepositoriesData {
   }
 }
 
-export { githubTestGenerateUserData, githubTestGenerateRepositoriesData }
+function githubTestGenerateLanguagesData(): ProcessedLanguage[] {
+  return faker.helpers.multiple(
+    () => ({
+      name: faker.lorem.word(),
+      color: faker.color.human(),
+      size: faker.number.int({ min: 0, max: 1000000 }),
+      percentage: faker.number.int({ min: 0, max: 100 }),
+    }),
+    { count: 20 }
+  )
+}
+
+export { githubTestGenerateUserData, githubTestGenerateRepositoriesData, githubTestGenerateLanguagesData }

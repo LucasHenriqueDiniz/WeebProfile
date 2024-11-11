@@ -5,6 +5,7 @@
   border-radius: 6px;
   font-family: var(--code-font);
   font-size: 14px;
+  height: 100%;
   line-height: 1.5;
   overflow-x: auto;
   border: 1px solid var(--borderColor-default);

@@ -1,36 +1,32 @@
-import { MalImage } from "./malTypes"
-
 interface UpdateEntry {
   mal_id: number
   url: string
-  images: MalImage
+  image: string
   title: string
 }
 
-interface LastUpdatesAnime {
+interface BaseUpdate {
   entry: UpdateEntry
   score: number
   status: string
-  episodes_seen: number | null
-  episodes_total: number | null
   date: string
 }
 
-interface LastUpdatesManga {
-  entry: UpdateEntry
-  score: number
-  status: string
+interface LastUpdatesAnime extends BaseUpdate {
+  episodes_seen: number | null
+  episodes_total: number | null
+}
+
+interface LastUpdatesManga extends BaseUpdate {
   chapters_read: number | null
   chapters_total: number | null
-  date: string
 }
 
 interface MalLastUpdatesResponse {
-  [key: string]: LastUpdatesAnime[] | LastUpdatesManga[]
   anime: LastUpdatesAnime[]
   manga: LastUpdatesManga[]
 }
 
-type anyMalUpdate = LastUpdatesAnime | LastUpdatesManga
+type AnyMalUpdate = LastUpdatesAnime | LastUpdatesManga
 
-export type { UpdateEntry, LastUpdatesAnime, LastUpdatesManga, MalLastUpdatesResponse, anyMalUpdate }
+export type { UpdateEntry, LastUpdatesAnime, LastUpdatesManga, MalLastUpdatesResponse, AnyMalUpdate }

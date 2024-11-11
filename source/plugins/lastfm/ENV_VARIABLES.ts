@@ -6,6 +6,7 @@ const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
     required: true,
     type: "boolean",
     description: "Enable LastFM plugin",
+    defaultValue: false,
     sections: ["main"],
   },
   username: {

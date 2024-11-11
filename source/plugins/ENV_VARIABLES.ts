@@ -63,9 +63,20 @@ const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
     description: "Hide the terminal emojis",
     sections: ["main"],
   },
+  hide_terminal_header: {
+    type: "boolean",
+    description: "Hide the terminal header",
+    sections: ["main"],
+  },
   custom_path: {
     type: "string",
     description: "The custom path of the SVG",
+    sections: ["main"],
+  },
+  terminal_theme: {
+    defaultValue: "default",
+    type: "string",
+    description: "The theme of the terminal",
     sections: ["main"],
   },
 }

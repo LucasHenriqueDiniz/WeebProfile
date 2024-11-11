@@ -1,10 +1,9 @@
 import { IoStatsChartOutline } from "react-icons/io5"
 import DefaultTitle from "templates/Default/Default_Title"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalDots from "templates/Terminal/Terminal_Dots"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import TerminalLineWithDots from "templates/Terminal/Terminal_LineWithDots"
+import TerminalLineWithDots from "source/templates/Terminal/TerminalLineWithDots"
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import Img64 from "core/src/base/ImageComponent"
 import { LastFmData, LastFmFeaturedTrack } from "../types/lastFmTypes"
@@ -43,15 +42,7 @@ const DefaultStatistic = ({ title, value }: { title: string; value: string }): J
 )
 
 const TerminalFeaturedTrack = ({ track }: { track: LastFmFeaturedTrack }): JSX.Element => {
-  return (
-    <div className="terminal-statistic sm-text text-overflow">
-      <span className="z-2">Top Track:</span>
-      <TerminalDots />
-      <span className="text-bold z-2">
-        {track.track} - {track.artist}
-      </span>
-    </div>
-  )
+  return <TerminalLineWithDots title={"Top Track:"} value={`${track.track} - ${track.artist}`} />
 }
 
 function LastFMStatistics({ data }: { data: LastFmData }): JSX.Element {

@@ -3,12 +3,12 @@ import React from "react"
 import { renderToString } from "react-dom/server"
 import { PluginsConfig } from "source/plugins/@types/plugins"
 import fetchPluginsData from "source/plugins/@utils/fetchPluginsData"
-import ForeignObject from "templates/Main/ForeignObject"
 import SvgContainer from "templates/Main/SvgContainer"
 import calculateElementHeight from "../utils/calculateElementHeight"
 import LoadCss from "./loadCss"
 import RenderActivePlugins from "./RenderActivePlugins"
 import { toBoolean } from "source/helpers/boolean"
+import { buildTailwind } from "./setup/setupTailwind"
 
 async function RenderBody({ env }: { env: PluginsConfig }): Promise<string> {
   logger({ message: "Starting...", level: "info", __filename, header: true })
@@ -17,6 +17,9 @@ async function RenderBody({ env }: { env: PluginsConfig }): Promise<string> {
   if (isDev) {
     logger({ message: "Dev mode is enabled", level: "warn", __filename })
   }
+
+  // Gerar Tailwind CSS antes de renderizar
+  await buildTailwind()
 
   const data = await fetchPluginsData(isDev)
   const activePlugins = RenderActivePlugins({ pluginsData: data })
@@ -27,13 +30,8 @@ async function RenderBody({ env }: { env: PluginsConfig }): Promise<string> {
   }
 
   const htmlString = renderToString(
-    <SvgContainer size={env.size ?? "full"} height={svgHeight} style={env.style}>
-      <>
-        <defs>{await LoadCss(env)}</defs>
-        <ForeignObject>
-          <>{activePlugins}</>
-        </ForeignObject>
-      </>
+    <SvgContainer size={env.size ?? "full"} height={svgHeight} style={env.style} defs={await LoadCss(env)}>
+      {activePlugins}
     </SvgContainer>
   )
 
