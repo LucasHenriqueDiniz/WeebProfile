@@ -1,21 +1,24 @@
 import getSvgWidth from "core/utils/getSvgWidth"
-import React from "react"
+import React, { ReactNode } from "react"
+import PluginStyles from "source/styles/PluginStyles"
 
-interface MalProfileBoxProps {
-  children: JSX.Element
+interface SvgContainerProps {
+  children: JSX.Element | ReactNode
   size: string
   height: number | string
   style: string
   asDiv?: boolean
+  defs?: ReactNode
 }
 
-function SvgContainer({ children, size, height, style, asDiv }: MalProfileBoxProps) {
+function SvgContainer({ children, size, height, style, asDiv, defs }: SvgContainerProps) {
   const isHalf = size === "half"
 
   if (asDiv) {
     return (
-      <div className={`${size} ${style}`} style={{ width: getSvgWidth(isHalf) }} id="svg-main">
-        {children}
+      <div className={`${size} ${style} flex flex-col`} style={{ width: getSvgWidth(isHalf) }} id="svg-main">
+        {defs}
+        <PluginStyles style={style}>{children}</PluginStyles>
       </div>
     )
   }
@@ -28,7 +31,16 @@ function SvgContainer({ children, size, height, style, asDiv }: MalProfileBoxPro
       height={height}
       className={`${size} ${style}`}
     >
-      {children}
+      {defs}
+      <foreignObject width="100%" height="100%">
+        <div
+          // @ts-expect-error -- xmlns attributes required for SVG foreignObject
+          xmlns="http://www.w3.org/1999/xhtml"
+          xmlnsXlink="http://www.w3.org/1999/xlink"
+        >
+          <PluginStyles style={style}>{children}</PluginStyles>
+        </div>
+      </foreignObject>
     </svg>
   )
 }

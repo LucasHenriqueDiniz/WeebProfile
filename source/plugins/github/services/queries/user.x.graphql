@@ -1,5 +1,11 @@
-query BaseUserX {
-  user(login: "$login") {
+query BaseUser($login: String!, $from: DateTime!, $to: DateTime!, $affiliations: [RepositoryAffiliation]) {
+  user(login: $login) {
+    databaseId
+    name
+    login
+    location
+    createdAt
+    avatarUrl
     packages {
       totalCount
     }
@@ -13,6 +19,9 @@ query BaseUserX {
       totalCount
     }
     sponsorshipsAsMaintainer {
+      totalCount
+    }
+    gists {
       totalCount
     }
     followers {
@@ -30,7 +39,7 @@ query BaseUserX {
     repositoriesContributedTo(includeUserRepositories: true) {
       totalCount
     }
-    repositories(last: 0 $affiliations) {
+    repositories(affiliations: $affiliations) {
       totalCount
       totalDiskUsage
     }
@@ -42,7 +51,7 @@ query BaseUserX {
       totalPullRequestContributions
       totalPullRequestReviewContributions
     }
-    calendar:contributionsCollection(from: "$calendar.from", to: "$calendar.to") {
+    calendar: contributionsCollection(from: $from, to: $to) {
       contributionCalendar {
         weeks {
           contributionDays {

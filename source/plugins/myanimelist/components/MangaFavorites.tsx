@@ -1,9 +1,9 @@
 import { FaBook, FaCalendar, FaHashtag, FaHeart, FaStar } from "react-icons/fa"
 import { GoDotFill } from "react-icons/go"
 import DefaultTitle from "templates/Default/Default_Title"
-import { DefaultTag, TerminalTag } from "templates/Genre_Tags"
+import { DefaultTag, TerminalTag } from "templates/GenreTags"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import Img64 from "core/src/base/ImageComponent"
@@ -14,8 +14,16 @@ import getEnvVariables from "source/plugins/@utils/getEnvVariables"
 import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
 import logger from "source/helpers/logger"
 
-function DefaultFavoriteImage({ favorite, isHalf }: { favorite: MalFullMangaResponse; isHalf: boolean }): JSX.Element {
-  const imageUrl = favorite.images.jpg?.base64
+function DefaultFavoriteImage({
+  favorite,
+  isHalf,
+  noSummary,
+}: {
+  favorite: MalFullMangaResponse
+  isHalf: boolean
+  noSummary: boolean
+}): JSX.Element {
+  const imageUrl = favorite.image
   const title = favorite.title
   const mean_score = favorite.score
   const release_year = favorite.published.prop.from.year
@@ -29,59 +37,69 @@ function DefaultFavoriteImage({ favorite, isHalf }: { favorite: MalFullMangaResp
   const popularity = favorite.popularity
 
   return (
-    <div className="flex h-120 overflow-hidden gap-8">
-      <div className="full-favorite-image-container min-w-80 min-h-120">
-        <Img64 url64={imageUrl} alt={title} className="fav-image" />
+    <div className={`flex ${noSummary ? "h-[80px]" : "h-[120px]"} overflow-hidden gap-4`}>
+      <div className={`${noSummary ? "square-container h-full" : "favorite-container"}`}>
+        <Img64 url64={imageUrl} alt={title} className={noSummary ? "image-square" : "image-portrait"} />
       </div>
-      <div className="w100 flex-d justify-between overflow-hidden">
-        <span className="favorite-title">{title}</span>
-        <div className="flex gap-8 items-baseline">
+      <div className="w-full flex flex-col justify-between overflow-hidden">
+        <span className="text-lg font-bold truncate">{title}</span>
+        <div className="flex gap-4 items-baseline">
           {mean_score && (
-            <span className="color-primary md-text-bold flex items-center gap-2">
-              <FaStar className="color-primary" size={14} /> {mean_score}
+            <span className="text-primary font-bold flex items-center gap-1">
+              <FaStar className="text-primary" size={14} /> {mean_score}
             </span>
           )}
           {popularity && (
-            <span className="md-text-bold flex items-center gap-2">
+            <span className="font-bold flex items-center gap-1">
               <FaHashtag size={14} color="inherit" />
               {popularity}
             </span>
           )}
           {chapters && (
-            <span className="md-text-bold flex items-center gap-2">
+            <span className="font-bold flex items-center gap-1">
               <FaBook size={14} />
               {chapters}
             </span>
           )}
           {release_year && (
-            <span className="md-text-bold flex items-center gap-2">
+            <span className="font-bold flex items-center gap-1">
               <FaCalendar size={14} />
               {release_year}
             </span>
           )}
           {status && (
             <span
-              className={`${status.toLowerCase().split(" ").join("-")} md-text-bold flex items-center gap-2 half:hidden`}
+              className={`${status.toLowerCase().split(" ").join("-")} font-bold flex items-center gap-1 half-mode:hidden`}
             >
               <GoDotFill size={14} color="inherit" />
               {status}
             </span>
           )}
         </div>
-        <div className="flex mt-4 gap-4">
+        <div className="flex mt-1 gap-1">
           {genres.map((genre) => (
             <DefaultTag key={genre} text={genre} />
           ))}
         </div>
-        <div className="w100 overflow-hidden mt-4">
-          <span className="synopsis line-clamp-2">{synopsis}</span>
-        </div>
+        {!noSummary && (
+          <div className="w-full overflow-hidden mt-4">
+            <span className="synopsis-text line-clamp-2">{synopsis}</span>
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
-function TerminalFavoriteImage({ favorite }: { favorite: MalFullMangaResponse }): JSX.Element {
+function TerminalFavoriteImage({
+  favorite,
+  noSummary,
+}: {
+  favorite: MalFullMangaResponse
+  noSummary: boolean
+}): JSX.Element {
+  const { size } = getEnvVariables()
+  const isHalf = size === "half"
   const title = favorite.title
   const mean_score = favorite.score
   const release_year = favorite.published.prop.from.year
@@ -92,23 +110,27 @@ function TerminalFavoriteImage({ favorite }: { favorite: MalFullMangaResponse })
   const popularity = favorite.popularity
 
   return (
-    <div className="sm-text">
-      <div className="text-warning text-overflow text-nowrap">● {title}</div>
+    <div className="mt-[0.5rem]">
+      <div className="text-terminal-warning truncate">* {title}</div>
       <div className="flex gap-4 items-baseline">
-        {mean_score && <span className="text-bold">⭐{mean_score}</span>}
-        {popularity && <span className="text-bold">#{popularity}</span>}
-        {chapters && <span className="text-bold">📚{chapters} ch&apos;s</span>}
-        {release_year && <span className="text-bold">📅{release_year}</span>}
-        {status && <span className={`${status.toLowerCase().split(" ").join("-")} text-bold`}>●{status}</span>}
+        {mean_score && <span className="text-primary-75 font-bold truncate">⭐{mean_score}</span>}
+        {popularity && <span className="text-primary-75 font-bold truncate"># {popularity}</span>}
+        {chapters && <span className="text-primary-75 font-bold truncate">📚 {chapters} ch&apos;s</span>}
+        {release_year && <span className="text-primary-75 font-bold truncate">📅 {release_year}</span>}
+        {status && !isHalf && (
+          <span className={`${status.toLowerCase().split(" ").join("-")} text-primary-75 truncate`}>● {status}</span>
+        )}
       </div>
       <div className="flex mt-2 gap-2">
         {genres.map((genre) => (
           <TerminalTag text={genre} key={genre} />
         ))}
       </div>
-      <div className="w100 overflow-hidden mt-2">
-        <span className="synopsis line-clamp-2">{synopsis}</span>
-      </div>
+      {!noSummary && (
+        <div className="w-full overflow-hidden mt-2">
+          <span className="synopsis-text line-clamp-2">{synopsis}</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -124,6 +146,8 @@ function MangaFavorites({ data }: { data: MalFullMangaResponse[] }): JSX.Element
   const maxItems = myanimelist.manga_favorites_max ?? (MAL_ENV_VARIABLES.manga_favorites_max.defaultValue as number)
   const hideTitle = myanimelist.manga_favorites_hide_title
   const dataLength = data.length
+  const noSummary =
+    myanimelist.manga_favorites_no_summary ?? (MAL_ENV_VARIABLES.manga_favorites_no_summary.defaultValue as boolean)
 
   //limit the data to the maxItems
   if (maxItems && dataLength > maxItems) {
@@ -131,14 +155,14 @@ function MangaFavorites({ data }: { data: MalFullMangaResponse[] }): JSX.Element
   }
 
   return (
-    <section className="default-favorites">
+    <section id="mal-default-favorites-manga">
       <RenderBasedOnStyle
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-            <div className="flex-d gap-4">
+            <div className="flex flex-col gap-1">
               {data.map((data) => (
-                <DefaultFavoriteImage favorite={data} key={data.mal_id} isHalf={isHalf} />
+                <DefaultFavoriteImage favorite={data} key={data.mal_id} isHalf={isHalf} noSummary={noSummary} />
               ))}
             </div>
           </>
@@ -154,7 +178,7 @@ function MangaFavorites({ data }: { data: MalFullMangaResponse[] }): JSX.Element
               })}
             />
             {data.map((data) => (
-              <TerminalFavoriteImage favorite={data} key={data.mal_id} />
+              <TerminalFavoriteImage favorite={data} key={data.mal_id} noSummary={noSummary} />
             ))}
             <TerminalLineBreak />
           </>

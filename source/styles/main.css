@@ -1,4 +1,35 @@
+#svg-main {
+  color: #e0e0e0;
+  /* weeb - styles */
+  --color-primary: #ff4b8c;
+  --color-primary-75: #ff75a7;
+  --color-primary-50: rgba(255, 75, 140, 0.5);
+  --color-primary-25: rgba(255, 75, 140, 0.25);
+  --color-primary-15: rgba(255, 75, 140, 0.15);
+  --color-text-grey: #8a8a8a;
+  --color-status-blue: #00b4ff;
+  --color-status-grey: #a0a0a0;
+  --font-family: Poppins, sans-serif;
+  font-family: Poppins, sans-serif;
+}
+
 * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* MyAnimeList */
+
+#svg-main {
+  --color-watching: #2196f3;
+  --color-completed: #2ecc71;
+  --color-onhold: #f1c40f;
+  --color-dropped: #ff5252;
+  --color-plan-to-watch: #95a5a6;
+}
+
+/* * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -240,7 +271,6 @@ section {
 }
 
 .h100 {
-  /* don't know why i did w100 instead of w-full :( */
   height: 100%;
 }
 
@@ -459,7 +489,6 @@ px-4 {
   letter-spacing: 1px;
 }
 
-/* COLORS */
 
 .color-white-50 {
   color: rgba(255, 255, 255, 0.5);
@@ -631,6 +660,8 @@ px-4 {
   color: var(--color-watching);
   fill: var(--color-watching);
 }
+
+.bg-reading,
 .bg-watching {
   background-color: var(--color-watching);
 }
@@ -662,10 +693,13 @@ px-4 {
   background-color: var(--color-dropped);
 }
 
+.plan-to-read,
 .plan-to-watch {
   color: var(--color-plan-to-watch);
   fill: var(--color-plan-to-watch);
 }
+
+.bg-plan-to-read,
 .bg-plan-to-watch {
   background-color: var(--color-plan-to-watch);
 }
@@ -680,4 +714,5 @@ px-4 {
 
 .h-15 {
   height: 15px;
-}
+} 
+*/

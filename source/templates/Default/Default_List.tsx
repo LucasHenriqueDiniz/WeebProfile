@@ -5,7 +5,7 @@ import { randomString } from "source/helpers/string"
 
 function ListItem({ right, center, left, image }: ListItemProps): JSX.Element {
   return (
-    <div className="flex gap-8 items-center h-40">
+    <div className="flex gap-4 items-center h-40">
       <div className="music-image-container">
         <Img64 url64={image} alt={right} defaultType="lastfm" className="music-image" />
       </div>
@@ -22,7 +22,7 @@ function ListItem({ right, center, left, image }: ListItemProps): JSX.Element {
 
 function List({ data }: { data: ListItemProps[] }): JSX.Element {
   return (
-    <div className="flex-d gap-4">
+    <div className="flex flex-col gap-2">
       {data.map((item) => (
         <ListItem key={randomString()} {...item} />
       ))}

@@ -98,6 +98,9 @@ button {
   --button-danger: #d73a49;
   --button-danger-hover: #b22d3e;
   --button-danger-active: #802932;
+  --button-ghost: #f6f8fa;
+  --button-ghost-hover: #f3f4f6;
+  --button-ghost-active: #edeff2;
 
   --toast-background: #e5f2ff;
   --toast-color: #24292e;
@@ -195,6 +198,9 @@ button {
   --button-danger: #a02b37;
   --button-danger-hover: #b22d3e;
   --button-danger-active: #802932;
+  --button-ghost: #0d1117;
+  --button-ghost-hover: #161b22;
+  --button-ghost-active: #30363d;
 
   --toast-background: #0f1216;
   --toast-color: #c9d1d9;
@@ -378,12 +384,12 @@ code {
 
   /* For modern browsers */
   &::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
   }
   &::-webkit-scrollbar-thumb {
     background-color: var(--scrollbar-thumb);
-    border-radius: 6px;
+    border-radius: 4px;
   }
   &::-webkit-scrollbar-track {
     background-color: var(--scrollbar-track);
@@ -415,4 +421,13 @@ code {
   &.-x {
     overflow-x: auto;
   }
+}
+
+/* Add these new utility classes */
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
 }

@@ -1,9 +1,9 @@
 import { FaCalendar, FaHashtag, FaHeart, FaStar, FaVideo } from "react-icons/fa"
 import { GoDotFill } from "react-icons/go"
 import DefaultTitle from "templates/Default/Default_Title"
-import { DefaultTag, TerminalTag } from "templates/Genre_Tags"
+import { DefaultTag, TerminalTag } from "templates/GenreTags"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import Img64 from "core/src/base/ImageComponent"
@@ -14,8 +14,16 @@ import getEnvVariables from "source/plugins/@utils/getEnvVariables"
 import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
 import logger from "source/helpers/logger"
 
-function DefaultFavoriteImage({ favorite, isHalf }: { favorite: FullMalAnimeResponse; isHalf: boolean }): JSX.Element {
-  const imageUrl = favorite.images.jpg?.base64
+function DefaultFavoriteImage({
+  favorite,
+  isHalf,
+  noSummary,
+}: {
+  favorite: FullMalAnimeResponse
+  isHalf: boolean
+  noSummary: boolean
+}): JSX.Element {
+  const imageUrl = favorite.image
   const title = favorite.title
   const mean_score = favorite.score
   const release_year = favorite.year || favorite.aired.prop.from.year
@@ -24,64 +32,75 @@ function DefaultFavoriteImage({ favorite, isHalf }: { favorite: FullMalAnimeResp
   const genres = favorite.genres?.map((genre) => genre.name) ?? []
   const status = favorite.status
   const popularity = favorite.popularity
+
   if (isHalf) {
     genres.splice(4)
   }
 
   return (
-    <div className="flex h-120 overflow-hidden gap-8">
-      <div className="full-favorite-image-container min-w-80 min-h-120">
-        <Img64 url64={imageUrl} alt={title} className="fav-image" />
+    <div className={`flex ${noSummary ? "h-[80px]" : "h-[120px]"} overflow-hidden gap-4`}>
+      <div className={`${noSummary ? "square-container h-full" : "favorite-container"}`}>
+        <Img64 url64={imageUrl} alt={title} className={noSummary ? "image-square" : "image-portrait"} />
       </div>
-      <div className="w100 flex-d justify-between overflow-hidden">
-        <span className="favorite-title">{title}</span>
-        <div className="flex gap-8 items-baseline">
+      <div className="w-full flex flex-col justify-between overflow-hidden">
+        <span className="text-lg font-bold truncate">{title}</span>
+        <div className="flex gap-4 items-baseline">
           {mean_score && (
-            <span className="color-primary md-text-bold flex items-center gap-2">
-              <FaStar className="color-primary" size={14} /> {mean_score}
+            <span className="text-primary font-semibold flex items-center gap-2">
+              <FaStar className="text-primary" size={14} /> {mean_score}
             </span>
           )}
           {popularity && (
-            <span className="md-text-bold flex items-center gap-2">
+            <span className="font-semibold flex items-center gap-2">
               <FaHashtag size={14} color="inherit" />
               {popularity}
             </span>
           )}
           {num_episodes && (
-            <span className="md-text-bold flex items-center gap-2">
+            <span className="font-semibold flex items-center gap-2">
               <FaVideo size={14} />
               {num_episodes}
             </span>
           )}
           {release_year && (
-            <span className="md-text-bold flex items-center gap-2">
+            <span className="font-semibold flex items-center gap-2">
               <FaCalendar size={14} />
               {release_year}
             </span>
           )}
           {status && (
             <span
-              className={`${status.toLowerCase().split(" ").join("-")} md-text-bold flex items-center gap-2 half:hidden`}
+              className={`text-mal-${status.toLowerCase().split(" ").join("-")} font-semibold flex items-center gap-2 half-mode:hidden`}
             >
               <GoDotFill size={14} color="inherit" />
               {status}
             </span>
           )}
         </div>
-        <div className="flex mt-4 gap-4">
+        <div className="flex mt-1 gap-1">
           {genres.map((genre) => (
             <DefaultTag key={genre} text={genre} />
           ))}
         </div>
-        <div className="w100 overflow-hidden mt-4">
-          <span className="synopsis line-clamp-2">{synopsis}</span>
-        </div>
+        {!noSummary && (
+          <div className="w-full overflow-hidden mt-4">
+            <span className="synopsis-text line-clamp-2">{synopsis}</span>
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
-function TerminalFavoriteImage({ favorite }: { favorite: FullMalAnimeResponse }): JSX.Element {
+function TerminalFavoriteImage({
+  favorite,
+  noSummary,
+}: {
+  favorite: FullMalAnimeResponse
+  noSummary: boolean
+}): JSX.Element {
+  const { size } = getEnvVariables()
+  const isHalf = size === "half"
   const title = favorite.title
   const mean_score = favorite.score
   const release_year = favorite.year || favorite.aired.prop.from.year
@@ -92,23 +111,31 @@ function TerminalFavoriteImage({ favorite }: { favorite: FullMalAnimeResponse })
   const popularity = favorite.popularity
 
   return (
-    <div className="sm-text">
-      <div className="text-warning text-overflow text-nowrap">• {title}</div>
+    <div className="mt-[0.5rem]">
+      <div className="text-terminal-warning truncate">* {title}</div>
       <div className="flex gap-4 items-baseline">
-        {mean_score && <span className="text-bold">⭐{mean_score}</span>}
-        {popularity && <span className="text-bold">#{popularity}</span>}
-        {num_episodes && <span className="text-bold">🎞️{num_episodes} eps</span>}
-        {release_year && <span className="text-bold">📅{release_year}</span>}
-        {status && <span className={`${status.toLowerCase().split(" ").join("-")} text-bold`}>●{status}</span>}
+        {mean_score && <span className="text-primary-75 font-bold truncate">⭐{mean_score}</span>}
+        {popularity && <span className="text-primary-75 font-bold truncate"># {popularity}</span>}
+        {num_episodes && <span className="text-primary-75 font-bold truncate">🎞️ {num_episodes} eps</span>}
+        {release_year && <span className="text-primary-75 font-bold truncate">📅 {release_year}</span>}
+        {status && !isHalf && (
+          <span
+            className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "complete" : "watching"} font-bold half-mode:hidden truncate`}
+          >
+            ● {status}
+          </span>
+        )}
       </div>
-      <div className="flex mt-2 gap-2">
+      <div className="flex mt-1 gap-1">
         {genres.map((genre) => (
           <TerminalTag text={genre} key={genre} />
         ))}
       </div>
-      <div className="w100 overflow-hidden mt-2">
-        <span className="synopsis line-clamp-2">{synopsis}</span>
-      </div>
+      {!noSummary && (
+        <div className="w100 overflow-hidden mt-2">
+          <span className="synopsis-text line-clamp-2 truncate">{synopsis}</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -123,6 +150,8 @@ function AnimeFavorites({ data }: { data: FullMalAnimeResponse[] }): JSX.Element
   const hideTitle = myanimelist.anime_favorites_hide_title
   const isHalf = size === "half"
   const dataLength = data.length
+  const noSummary =
+    myanimelist.anime_favorites_no_summary ?? (MAL_ENV_VARIABLES.anime_favorites_no_summary.defaultValue as boolean)
 
   //limit the data to the maxItems
   if (maxItems && dataLength > maxItems) {
@@ -130,14 +159,14 @@ function AnimeFavorites({ data }: { data: FullMalAnimeResponse[] }): JSX.Element
   }
 
   return (
-    <section className="default-favorites">
+    <section id="mal-default-favorites-anime">
       <RenderBasedOnStyle
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-            <div className="flex-d gap-4">
+            <div className="flex flex-col gap-1">
               {data.map((data) => (
-                <DefaultFavoriteImage favorite={data} key={data.mal_id} isHalf={isHalf} />
+                <DefaultFavoriteImage favorite={data} key={data.mal_id} isHalf={isHalf} noSummary={noSummary} />
               ))}
             </div>
           </>
@@ -153,7 +182,7 @@ function AnimeFavorites({ data }: { data: FullMalAnimeResponse[] }): JSX.Element
               })}
             />
             {data.map((data) => (
-              <TerminalFavoriteImage favorite={data} key={data.mal_id} />
+              <TerminalFavoriteImage favorite={data} key={data.mal_id} noSummary={noSummary} />
             ))}
             <TerminalLineBreak />
           </>

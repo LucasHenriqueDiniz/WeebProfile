@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .image-portrait {
+    @apply w-full h-full object-cover object-top aspect-anime-cover;
+  }
+
+  .image-square {
+    @apply w-full h-full object-cover object-center aspect-square;
+  }
+
+  .favorite-container {
+    @apply relative overflow-hidden rounded-lg max-h-[120px] max-w-[75px] aspect-anime-cover min-h-[120px] min-w-[75px];
+  }
+
+  .square-container {
+    @apply w-[75px] h-[75px] overflow-hidden rounded-lg aspect-update min-w-[75px];
+  }
+
+  .synopsis-text {
+    @apply text-[11px] text-[var(--color-text-grey)] tracking-tight leading-[1.25em] mb-1;
+  }
+
+  .genre-tag {
+    @apply truncate w-auto w-min h-min flex items-center justify-center gap-1 uppercase font-semibold text-[0.65em];
+  }
+
+  .terminal-navbar {
+    @apply bg-terminal-surface text-terminal-default grid grid-cols-[min-content_auto_min-content] w-full p-2 rounded-t-lg font-mono;
+  }
+
+  .terminal-body {
+    @apply bg-terminal-background rounded-b-lg font-mono p-2 flex flex-col;
+  }
+
+  .terminal-header {
+    @apply flex items-center text-terminal-muted border-b border-terminal-muted p-2 justify-between bg-terminal-surface rounded-t-lg;
+  }
+}

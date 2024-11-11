@@ -1,20 +1,22 @@
 import { blackA, mauve, violet } from "@radix-ui/colors"
 const defaultTheme = require("tailwindcss/defaultTheme")
+import { tailwindConfig } from "../source/plugins/@themes/themes"
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["selector", "[data-theme*='dark']"],
   content: [
+    ...tailwindConfig.content,
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
+        ...tailwindConfig.theme.extend.colors,
         primary: {
           50: "#eff6ff",
           100: "#dbeafe",
@@ -82,6 +84,12 @@ module.exports = {
       minWidth: {
         ...defaultTheme.width,
       },
+      aspectRatio: {
+        ...tailwindConfig.theme.extend.aspectRatio,
+      },
+      gridTemplateColumns: {
+        ...tailwindConfig.theme.extend.gridTemplateColumns,
+      },
       keyframes: {
         slideDownAndFade: {
           from: { opacity: "0", transform: "translateY(-2px)" },
@@ -123,7 +131,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [...tailwindConfig.plugins],
   future: {
     hoverOnlyWhenSupported: true,
   },

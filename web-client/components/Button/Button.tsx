@@ -2,7 +2,7 @@ import classNames from "classnames"
 import React, { MouseEventHandler, ReactNode } from "react"
 import "./Button.css"
 
-type ButtonVariant = "primary" | "secondary" | "danger" | "unstyled"
+type ButtonVariant = "primary" | "secondary" | "danger" | "unstyled" | "ghost"
 type ButtonSize = "sm" | "md" | "lg"
 
 interface ButtonProps {
@@ -14,11 +14,24 @@ interface ButtonProps {
   size?: ButtonSize
   style?: React.CSSProperties
   asDiv?: boolean
+  beforeIcon?: ReactNode
+  afterIcon?: ReactNode
 }
 
 type ButtonComponent = React.FC<ButtonProps>
 
-const Button: ButtonComponent = ({ children, onClick, variant, className, ariaLabel, style, size, asDiv }) => {
+const Button: ButtonComponent = ({
+  children,
+  onClick,
+  variant,
+  className,
+  ariaLabel,
+  style,
+  size,
+  asDiv,
+  beforeIcon,
+  afterIcon,
+}) => {
   variant ??= "primary"
   size ??= "md"
   const isUnstyled = variant === "unstyled"
@@ -28,7 +41,9 @@ const Button: ButtonComponent = ({ children, onClick, variant, className, ariaLa
   if (asDiv) {
     return (
       <div className={classes} style={style} onClick={onClick as MouseEventHandler<HTMLDivElement>} title={ariaLabel}>
+        {beforeIcon && <span className="button-icon before">{beforeIcon}</span>}
         {children}
+        {afterIcon && <span className="button-icon after">{afterIcon}</span>}
       </div>
     )
   }
@@ -40,7 +55,9 @@ const Button: ButtonComponent = ({ children, onClick, variant, className, ariaLa
       aria-label={ariaLabel}
       style={style}
     >
+      {beforeIcon && <span className="button-icon before">{beforeIcon}</span>}
       {children}
+      {afterIcon && <span className="button-icon after">{afterIcon}</span>}
     </button>
   )
 }

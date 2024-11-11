@@ -1,7 +1,7 @@
 import { FaHeart } from "react-icons/fa"
 import DefaultTitle from "templates/Default/Default_Title"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import { treatJapaneseName } from "source/helpers/string"
@@ -14,15 +14,15 @@ import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
 import logger from "source/helpers/logger"
 
 function DefaultPeopleFavorite({ person, index }: { person: PeopleFavorites; index: number }): JSX.Element {
-  const imgSrc = person.images.jpg?.base64
+  const imgSrc = person.image
   const name = treatJapaneseName(person.name)
 
   return (
-    <div className="h-50 flex radius-16 overflow-hidden border-primary-50">
-      <div className="favorite-index">{index + 1}</div>
-      <div className="fav-character-title">{name}</div>
-      <div className="character-favorite-image-container">
-        <Img64 url64={imgSrc} alt={name} className="image-center" />
+    <div className="h-[50px] flex rounded-2xl overflow-hidden border border-primary-50 border-solid">
+      <div className="w-20 bg-primary text-4xl font-bold flex items-center justify-center text-shadow">{index + 1}</div>
+      <div className="flex items-center pl-2 text-2xl font-bold truncate text-shadow w-full">{name}</div>
+      <div className="w-36 h-full aspect-character overflow-hidden">
+        <Img64 url64={imgSrc} alt={name} className="image-square" />
       </div>
     </div>
   )
@@ -33,9 +33,14 @@ function TerminalPeopleFavorite({ person, index }: { person: PeopleFavorites; in
   const url = person.url
 
   return (
-    <div className="flex align-center sm-text gap-4">
+    <div className="flex align-center sm-text gap-1">
       <span className="text-raw">[{index + 1}]</span>
-      <a href={url ?? "#"} target="_blank" rel="noreferrer" className="text-warning md-2-text text-bold">
+      <a
+        href={url ?? "#"}
+        target="_blank"
+        rel="noreferrer"
+        className="text-terminal-warning md-2-text text-bold truncate no-underline"
+      >
         - {name}
       </a>
     </div>
@@ -53,18 +58,18 @@ function MainPeopleFavorites({ data }: { data: PeopleFavorites[] }): JSX.Element
   const title = myanimelist.people_favorites_title ?? (MAL_ENV_VARIABLES.people_favorites_title.defaultValue as string)
   const dataLength = data.length
 
-  //limit the data to the maxItems
+  // Limit the data to the maxItems
   if (maxItems && dataLength > maxItems) {
     data = data.slice(0, maxItems)
   }
 
   return (
-    <section id="mal" className="people-favorites">
+    <section id="mal-people-favorites">
       <RenderBasedOnStyle
         defaultComponent={
           <>
-            {!hideTitle && <DefaultTitle title={title ?? "Favorite People"} icon={<FaHeart />} />}
-            <div className="flex-d gap-4">
+            {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
+            <div className="flex flex-col gap-1">
               {data.map((data, index) => (
                 <DefaultPeopleFavorite person={data} index={index} key={data.mal_id} />
               ))}
@@ -76,12 +81,12 @@ function MainPeopleFavorites({ data }: { data: PeopleFavorites[] }): JSX.Element
             <TerminalCommand
               command={getPseudoCommands({
                 plugin: "mal",
-                section: "people_favorites",
+                section: "people_fav",
                 username: myanimelist.username,
                 limit: maxItems,
               })}
             />
-            <div className="flex-d gap-4">
+            <div className="flex flex-col gap-1">
               {data.map((data, index) => (
                 <TerminalPeopleFavorite person={data} index={index} key={data.mal_id} />
               ))}

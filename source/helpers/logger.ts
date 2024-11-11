@@ -7,7 +7,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 // Get the log level from environment variables
-const envLogLevel = (process.env.LOG_LEVEL as LogLevel) || "info"
+const envLogLevel = (process.env.LOG_LEVEL as LogLevel) || "debug"
 
 // Function to determine if a message should be logged based on the log level
 function shouldLog(level: LogLevel): boolean {

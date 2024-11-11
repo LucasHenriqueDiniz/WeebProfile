@@ -1,11 +1,6 @@
 "use client"
 import dynamic from "next/dynamic"
 import { useState } from "react"
-import "styles/default.css"
-import "styles/fonts.css"
-import "styles/half.css"
-import "styles/main.css"
-import "styles/terminal.css"
 import useStore from "web-client/app/store"
 import ActionsTab from "./ActionsTab"
 import styles from "./GithubBody.module.css"
@@ -53,7 +48,7 @@ const GithubBody = () => {
                 <span className={styles.monospace}>README</span>
                 <span className={styles.colorFgMuted}>.md</span>
               </div>
-              <div className="size-full flex-1">
+              <div className="flex flex-col flex-1 w-full">
                 {selectedTab === "actions" && <ActionsTab />}
                 {selectedTab === "preview" && <PreviewTab />}
                 {selectedTab === "markdown" && <MarkdownTab />}

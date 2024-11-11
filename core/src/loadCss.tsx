@@ -11,7 +11,10 @@ export async function LoadCss(Env: PluginsConfig) {
   const style = Env.style
   let css: string
 
+  const tailwindCss = fs.readFileSync(path.resolve(__dirname, "../../source/styles/generated-tailwind.css"), "utf8")
+
   const fontsFile = fs.readFileSync(path.resolve(__dirname, "../../source/styles/fonts.css"), "utf8")
+
   const halfCssFile = fs.readFileSync(path.resolve(__dirname, "../../source/styles/half.css"), "utf8")
   const halfCompressedCss = halfCssFile.replace(/\s{2,10}/g, " ").replace(/(\r\n|\n|\r)/gm, "")
   const mainCssFile = fs.readFileSync(path.resolve(__dirname, "../../source/styles/main.css"), "utf8")
@@ -32,6 +35,7 @@ export async function LoadCss(Env: PluginsConfig) {
   }
   return (
     <>
+      <style>{tailwindCss}</style>
       {isHalf ? <style>{halfCompressedCss}</style> : null}
       <style>{fontsFile}</style>
       <style>{css}</style>

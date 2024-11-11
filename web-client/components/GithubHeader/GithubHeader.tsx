@@ -3,18 +3,20 @@ import useStore from "app/store"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { FaDev, FaLanguage } from "react-icons/fa"
+import { FaArrowLeft, FaDev, FaLanguage } from "react-icons/fa"
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md"
-import { icon, weebProfile } from "web-client/public"
+import usePluginSectionStore from "web-client/app/[plugin]/[section]/pluginSectionStore"
 import { useToast } from "web-client/app/ToastProvider"
+import styles from "web-client/components/GithubHeader/GithubHeader.module.css"
+import { icon, weebProfile } from "web-client/public"
 import Button from "../Button/Button"
 import JsonCodeBlock from "../CodeBlock/JsonCodeBlock"
 import DialogBox from "../DialogBox/DialogBox"
 import DropdownMenuComp from "./DropdownMenu/DropdownMenu"
-import styles from "web-client/components/GithubHeader/GithubHeader.module.css"
 
-const DevtoolsHeader = ({ open }: { open: boolean }) => {
+const DevtoolsHeader = ({ open, pluginSecton }: { open: boolean; pluginSecton?: boolean }) => {
   const { changeTheme, theme, resetConfig, resetData, pluginsData, pluginsConfig } = useStore()
+  const { config, data, restartConfig, restartData } = usePluginSectionStore()
   const invertedTheme = theme === "light" ? "dark" : "light"
   const { sendToast } = useToast()
   const DEV_HEADER_ITEMS = [
@@ -69,10 +71,46 @@ const DevtoolsHeader = ({ open }: { open: boolean }) => {
     },
   ]
 
+  const PLUGIN_SECTION_ITEMS = [
+    {
+      title: "Reset Data",
+      description: "This will show the data",
+      type: "button",
+      onClick: () => {
+        restartData()
+        sendToast({ title: "Data Reset", description: "The data has been reset" })
+      },
+    },
+    {
+      title: "Reset Config",
+      description: "This will show the config",
+      type: "button",
+      onClick: () => {
+        restartConfig()
+      },
+    },
+    {
+      title: "See Data",
+      description: "This will show the data",
+      type: "dialog",
+      json: data,
+      dialogTitle: "Plugins Data",
+    },
+    {
+      title: "See Config",
+      description: "This will show the config",
+      type: "dialog",
+      json: config,
+      dialogTitle: "Plugins Config",
+    },
+  ]
+
+  const items = pluginSecton ? PLUGIN_SECTION_ITEMS : DEV_HEADER_ITEMS
+
   return (
     <div className={styles.secondHeaderContainer} data-open={open}>
       <ul className="flex justify-start gap-4">
-        {DEV_HEADER_ITEMS.map((item) => (
+        {items.map((item) => (
           <li key={item.title} className="flex items-center gap-2">
             {item.type === "dialog" ? (
               <DialogBox
@@ -98,7 +136,7 @@ const DevtoolsHeader = ({ open }: { open: boolean }) => {
   )
 }
 
-function GithubHeader() {
+function GithubHeader({ pluginSecton }: { pluginSecton?: boolean }) {
   const { changeTheme, theme } = useStore()
   const [open, setOpen] = useState<boolean>(false)
   const invertedTheme = theme === "light" ? "dark" : "light"
@@ -109,7 +147,13 @@ function GithubHeader() {
       <header className={styles.headerContainer}>
         <div className={styles.headerContent}>
           <div className="flex items-center gap-2">
-            <DropdownMenuComp />
+            {pluginSecton ? (
+              <Button variant="secondary" onClick={() => window.history.back()}>
+                <FaArrowLeft />
+              </Button>
+            ) : (
+              <DropdownMenuComp />
+            )}
             <Link
               href="/"
               className="group flex w-[225px] items-center justify-center gap-2 px-2 transition-all hover:gap-3"
@@ -166,7 +210,7 @@ function GithubHeader() {
           </div>
         </div>
       </header>
-      <DevtoolsHeader open={open} />
+      <DevtoolsHeader open={open} pluginSecton={pluginSecton} />
     </>
   )
 }

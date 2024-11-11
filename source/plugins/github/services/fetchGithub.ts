@@ -1,17 +1,23 @@
 import logger from "source/helpers/logger"
 import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import { githubTestGenerateRepositoriesData, githubTestGenerateUserData } from "../test/generateTestData"
-import { githubResponse } from "../types"
+import {
+  githubTestGenerateLanguagesData,
+  githubTestGenerateRepositoriesData,
+  githubTestGenerateUserData,
+} from "../test/generateTestData"
 import GithubConfig from "../types/GithubConfig"
 import fetchUserData from "./fetchUserData"
 import fetchRateLimit from "./rateLimit"
 import fetchAllRepositoriesData from "./RepositoriesData"
+import GithubData from "../types/GithubData"
+import fetchPreferredLanguages from "./fetchPreferredLanguages"
 
-async function fetchGithubData(plugin: GithubConfig, dev: boolean = false): Promise<githubResponse> {
+async function fetchGithubData(plugin: GithubConfig, dev: boolean = false): Promise<GithubData> {
   if (dev) {
     return {
       userData: githubTestGenerateUserData(),
       repositoriesData: githubTestGenerateRepositoriesData(),
+      languagesData: githubTestGenerateLanguagesData(),
     }
   }
 
@@ -34,12 +40,19 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean = false): Prom
 
   let userData = null
   let repositoriesData = null
+  let languagesData = null
 
   if (sections.includes("profile")) {
     userData = await fetchUserData(login, ghToken)
   }
 
-  repositoriesData = await fetchAllRepositoriesData(login, ghToken)
+  if (sections.includes("repositories")) {
+    repositoriesData = await fetchAllRepositoriesData(login, ghToken)
+  }
+
+  if (sections.includes("languages")) {
+    languagesData = await fetchPreferredLanguages(login, ghToken)
+  }
 
   const rateLimit = await fetchRateLimit(ghToken)
 
@@ -49,7 +62,7 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean = false): Prom
     __filename,
   })
 
-  return { userData, repositoriesData } as githubResponse
+  return { userData, repositoriesData, languagesData } as GithubData
 }
 
 export default fetchGithubData
