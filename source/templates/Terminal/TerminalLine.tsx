@@ -7,15 +7,32 @@ interface ClassNames {
   container?: string
 }
 
-export interface Props extends TerminalLineProps {
-  className?: ClassNames
+interface Styles {
+  right?: React.CSSProperties
+  left?: React.CSSProperties
+  container?: React.CSSProperties
 }
 
-function TerminalLine({ right, className, left }: Props): JSX.Element {
+export interface Props extends TerminalLineProps {
+  className?: ClassNames
+  style?: Styles
+}
+
+function TerminalLine({ right, className, left, style }: Props): JSX.Element {
   return (
-    <div className={`grid grid-cols-[1fr_min-content] text-wrap px-1 ${className?.container}`}>
-      <span className={`text-bold text-overflow sm-text ${className?.right}`}>{right}</span>
-      <span className={`text-terminal-muted ml-auto sm-text ${className?.left}`}>{left}</span>
+    <div
+      className={`grid grid-cols-[auto_min-content] overflow-hidden px-1 ${className?.container}`}
+      style={{ ...(style?.container ? style.container : {}) }}
+    >
+      <span
+        className={`text-bold text-overflow truncate sm-text ${className?.right}`}
+        style={{ ...(style?.right ? style.right : {}) }}
+      >
+        {right}
+      </span>
+      <span className={`text-terminal-muted truncate sm-text ${className?.left}`} style={style?.left}>
+        {left}
+      </span>
     </div>
   )
 }

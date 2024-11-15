@@ -1,14 +1,13 @@
 import React from "react"
-import { SiMyanimelist } from "react-icons/si"
-import { Header } from "templates/Default/Default_Header"
+import logger from "source/helpers/logger"
 import ErrorMessage from "templates/Error_Style"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalBody from "templates/Terminal/TerminalBody"
 import CheckPluginForRequiredValues from "../@utils/checkPluginForRequiredValues"
 import AnimeFavorites from "./components/AnimeFavorites"
 import CharactersFavorites from "./components/CharactersFavorites"
-import StatisticsHorizontalBar from "./components/HorizontalBar"
 import LastUpdates from "./components/LastUpdates"
+import StatisticsHorizontalBar from "./components/MangaAnimeBar"
 import MangaFavorites from "./components/MangaFavorites"
 import PeopleFavorites from "./components/PeopleFavorites"
 import SimpleFavorites from "./components/SimpleFavorites"
@@ -17,7 +16,6 @@ import Statistics from "./components/Statistics"
 import MAL_ENV_VARIABLES from "./ENV_VARIABLES"
 import { MalData } from "./types/malTypes"
 import MyAnimeListConfig, { MyAnimeListSections } from "./types/MyAnimeListConfig"
-import logger from "source/helpers/logger"
 
 const sectionRenderers: Record<string, (malData: MalData) => JSX.Element> = {
   statistics: (malData: MalData) => <Statistics key="statistics" data={malData.statistics} />,
@@ -50,7 +48,11 @@ const sectionRenderers: Record<string, (malData: MalData) => JSX.Element> = {
 }
 
 function RenderMyAnimeList({ plugin, data }: { plugin: MyAnimeListConfig; data: MalData }): React.ReactNode {
-  logger({ message: `Rendering MAL sections`, level: "info", __filename })
+  logger({
+    message: `Rendering MAL sections with data: ${JSON.stringify(data).slice(0, 200)}...`,
+    level: "debug",
+    __filename,
+  })
   if (!data) return <ErrorMessage message="MyAnimeList data not found in RenderMyAnimeList" />
   const error = CheckPluginForRequiredValues({
     plugin,
@@ -60,7 +62,6 @@ function RenderMyAnimeList({ plugin, data }: { plugin: MyAnimeListConfig; data: 
   if (error) return error
 
   const sections = plugin.sections
-  const hideHeader = plugin.hide_header
 
   const renderSection = (section: string): JSX.Element => {
     if (sectionRenderers[section]) {
@@ -74,17 +75,10 @@ function RenderMyAnimeList({ plugin, data }: { plugin: MyAnimeListConfig; data: 
     return <ErrorMessage message={`Section ${section} not found`} />
   }
   return (
-    <>
-      <RenderBasedOnStyle
-        terminalComponent={<TerminalBody>{sections.map((section) => renderSection(section))}</TerminalBody>}
-        defaultComponent={
-          <>
-            {!hideHeader && <Header icon={<SiMyanimelist />} title={"MyAnimeList"} />}
-            {sections.map((section) => renderSection(section))}
-          </>
-        }
-      />
-    </>
+    <RenderBasedOnStyle
+      terminalComponent={<TerminalBody>{sections.map((section) => renderSection(section))}</TerminalBody>}
+      defaultComponent={<>{sections.map((section) => renderSection(section))}</>}
+    />
   )
 }
 

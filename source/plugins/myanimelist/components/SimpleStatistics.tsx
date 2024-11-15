@@ -4,19 +4,22 @@ import { FaBookOpen, FaCalendar, FaStar, FaVideo } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
 import { emojiStatus } from "source/helpers/emoji"
 import { abbreviateNumber } from "source/helpers/number"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 import ErrorMessage from "source/templates/Error_Style"
-import { Stat } from "templates/Default/Default_StatRow"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalCommand from "source/templates/Terminal/TerminalCommand"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import TerminalLineWithDots from "source/templates/Terminal/TerminalLineWithDots"
+import { Stat } from "templates/Default/Default_StatRow"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
-import { MalStatisticsResponse } from "../types/malStatisticsResponse"
+import { MalStatistics } from "../types/malStatistics"
 
-export default function SimpleStatistics({ data }: { data: MalStatisticsResponse }): JSX.Element {
-  const { myanimelist } = getEnvVariables()
+export default function SimpleStatistics({ data }: { data: MalStatistics }): JSX.Element {
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
+
   if (!myanimelist) throw new Error("MAL plugin not found in MalStatistics component")
   if (!data) return <ErrorMessage message="No data found in MalStatistics component" />
 
@@ -42,26 +45,26 @@ export default function SimpleStatistics({ data }: { data: MalStatisticsResponse
                 title="Days Wasted"
                 strong
                 value={TotalDays.toFixed(1)}
-                icon={<FaCalendar className="text-primary" />}
+                icon={<FaCalendar className="text-default-highlight" />}
               />
               <Stat
                 title="Mean Score"
                 strong
                 value={TotalMeanScore.toFixed(2)}
-                icon={<FaStar className="text-primary" />}
+                icon={<FaStar className="text-default-highlight" />}
               />
               <Stat
                 title="CH's Read"
                 strong
                 value={abbreviateNumber(ChaptersRead)}
-                icon={<FaBookOpen className="text-primary" />}
+                icon={<FaBookOpen className="text-default-highlight" />}
                 smallInHalf
               />
               <Stat
                 title="EP's Watched"
                 strong
                 value={abbreviateNumber(EpisodesWatched)}
-                icon={<FaVideo className="text-primary" />}
+                icon={<FaVideo className="text-default-highlight" />}
                 smallInHalf
               />
             </ul>

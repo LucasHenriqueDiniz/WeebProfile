@@ -1,15 +1,21 @@
+import { ActivityData } from "./ActivityData"
+import { CalendarData } from "./CalendarData"
+import { CodeHabitsData } from "./CodeHabitsData"
 import { ProcessedLanguage } from "./LanguagesData"
-import { RepositoriesData } from "./RepositoriesData"
+import { RepositoriesData } from "./RepositoryData"
 import { UserResponse } from "./UserResponse"
 
-interface GithubDynamicData {
-  [key: string]: UserResponse | RepositoriesData | ProcessedLanguage[]
-}
-
-interface GithubData extends GithubDynamicData {
-  userData: UserResponse
-  repositoriesData: RepositoriesData
-  languagesData: ProcessedLanguage[]
+interface GithubData {
+  user: UserResponse
+  activity: ActivityData
+  calendar: CalendarData
+  languages: ProcessedLanguage[]
+  repositories: RepositoriesData
+  favoriteLicense: {
+    name: string
+    count: number
+  }
+  codeHabits: CodeHabitsData
 }
 
 export default GithubData

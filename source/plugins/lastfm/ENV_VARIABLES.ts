@@ -21,11 +21,6 @@ const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
     description: "Sections to display in the profile",
     sections: ["main"],
   },
-  hide_header: {
-    type: "boolean",
-    description: "Hide the header of the profile",
-    sections: ["main"],
-  },
   hide_intervals: {
     type: "boolean",
     description: "Hide the intervals of the profile",

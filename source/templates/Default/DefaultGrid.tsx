@@ -1,17 +1,33 @@
 import React from "react"
+import logger from "source/helpers/logger"
 import { randomString } from "source/helpers/string"
-import Img64 from "core/src/base/ImageComponent"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ImageComponent from "source/templates/ImageComponent"
 import { GridItemProps } from "../types"
 
 function GridItem({ image, title, value, subtitle, index }: GridItemProps & { index: number }): JSX.Element {
   return (
-    <div className={`relative overflow-hidden rounded-lg ${index === 0 ? "col-span-2 row-span-2" : ""}`}>
-      <Img64 url64={image} alt={title} defaultType="lastfm" className="w-full h-full object-cover object-center" />
-      <div className="absolute bottom-0 left-0 w-full bg-black/65 text-white px-1.5 py-1">
+    <div
+      className={`relative overflow-hidden rounded-lg min-w-0 w-auto min-h-100 
+      ${index === 0 ? "col-span-2 row-span-2" : ""}`}
+    >
+      <div
+        className={` 
+        ${index === 0 ? "image-square-container-200" : "image-square-container-100"}`}
+      >
+        <ImageComponent
+          url64={image}
+          alt={title}
+          className="image-square"
+          width={index === 0 ? 200 : 100}
+          height={index === 0 ? 200 : 100}
+        />
+      </div>
+      <div className="favorite-overlay">
         <div className="flex flex-col">
-          <p className="text-base font-bold truncate half-mode:text-sm">{title}</p>
-          {subtitle && <p className="text-xs text-gray-300 leading-none">{subtitle}</p>}
-          <p className="text-xs text-gray-300 leading-none">{value}</p>
+          <p className="font-semibold text-default truncate text-xs">{title}</p>
+          {subtitle && <p className="text-xs text-default">{subtitle}</p>}
+          <p className="text-xs text-default">{value}</p>
         </div>
       </div>
     </div>
@@ -23,12 +39,23 @@ interface DefaultGridProps {
 }
 
 function DefaultGrid({ data }: DefaultGridProps): JSX.Element {
-  if (data.length > 5) {
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const size = env.size
+
+  if (data.length > 5 && size === "half") {
     data = data.slice(0, 5)
+  } else if (data.length > 13 && size === "full") {
+    logger({
+      message: `Limiting data to 13 items in DefaultGrid component`,
+      level: "warn",
+      __filename,
+    })
+    data = data.slice(0, 13)
   }
 
   return (
-    <div className="grid grid-cols-3 gap-2 auto-rows-fr">
+    <div className="grid grid-cols-8 gap-1 half-mode:grid-cols-4 grid-rows-2">
       {data.map((item, index) => (
         <GridItem key={randomString()} index={index} {...item} />
       ))}

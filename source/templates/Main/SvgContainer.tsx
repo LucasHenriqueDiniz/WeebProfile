@@ -12,11 +12,11 @@ interface SvgContainerProps {
 }
 
 function SvgContainer({ children, size, height, style, asDiv, defs }: SvgContainerProps) {
-  const isHalf = size === "half"
+  const containerClass = `${size} ${style} flex flex-col relative`
 
   if (asDiv) {
     return (
-      <div className={`${size} ${style} flex flex-col`} style={{ width: getSvgWidth(isHalf) }} id="svg-main">
+      <div className={containerClass} style={{ width: getSvgWidth(size === "half") }} id="svg-main">
         {defs}
         <PluginStyles style={style}>{children}</PluginStyles>
       </div>
@@ -27,9 +27,9 @@ function SvgContainer({ children, size, height, style, asDiv, defs }: SvgContain
     <svg
       xmlns="http://www.w3.org/2000/svg"
       id="svg-main"
-      width={getSvgWidth(isHalf)}
+      width={getSvgWidth(size === "half")}
       height={height}
-      className={`${size} ${style}`}
+      className={containerClass}
     >
       {defs}
       <foreignObject width="100%" height="100%">

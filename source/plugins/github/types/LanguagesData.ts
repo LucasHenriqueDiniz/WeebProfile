@@ -1,32 +1,26 @@
-export interface LanguageNode {
-  name: string
-  color: string
-}
-
-export interface LanguageEdge {
-  size: number
-  node: LanguageNode
-}
-
-export interface Repository {
-  languages: {
-    edges: LanguageEdge[]
-  }
-}
-
 export interface LanguagesResponse {
-  data: {
-    user: {
+  data?: {
+    user?: {
       repositories: {
-        nodes: Repository[]
+        nodes: Array<{
+          languages?: {
+            edges: Array<{
+              node: {
+                name: string
+                color: string
+              }
+              size: number
+            }>
+          }
+        }>
       }
     }
   }
+  errors?: Array<{ message: string }>
 }
 
 export interface ProcessedLanguage {
   name: string
   color: string
-  percentage: number
   size: number
 }

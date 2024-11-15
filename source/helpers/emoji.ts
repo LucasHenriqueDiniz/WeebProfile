@@ -1,7 +1,10 @@
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 
 function emojiStatus(status: string) {
-  const { hide_terminal_emojis } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const { hide_terminal_emojis } = env
+
   if (hide_terminal_emojis) return ""
 
   while (status.includes(" ")) {
@@ -77,4 +80,4 @@ function emojiNumber(number: number) {
   }
 }
 
-export { emojiStatus, emojiNumber }
+export { emojiNumber, emojiStatus }

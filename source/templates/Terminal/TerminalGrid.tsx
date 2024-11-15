@@ -14,9 +14,11 @@ function TerminalGridItem({ title, subtitle, value, index }: TerminalGridItemPro
         {title}
       </span>
       {subtitle && (
-        <span className={`text-terminal-muted-light truncate text-sm ${isOdd ? "bg-black/25" : ""}`}>{subtitle}</span>
+        <span className={`text-terminal-muted-light text-center truncate text-sm ${isOdd ? "bg-black/25" : ""}`}>
+          {subtitle}
+        </span>
       )}
-      <span className={`text-terminal-muted text-sm whitespace-nowrap pr-1 text-right ${isOdd ? "bg-black/25" : ""}`}>
+      <span className={`text-terminal-muted text-sm whitespace-nowrap pr-1 text-end ${isOdd ? "bg-black/25" : ""}`}>
         {value}
       </span>
     </>
@@ -36,16 +38,16 @@ function TerminalGridHeader({
     <>
       {rightText && (
         <>
-          <span className="truncate text-sm text-white font-semibold bg-terminal-highlight text-start px-1">
+          <span className="truncate text-sm text-white font-semibold bg-terminal-highlight text-center px-1">
             {rightText}
           </span>
           {centerText && (
-            <span className="truncate text-sm bg-terminal-highlight text-white font-semibold text-end px-1">
+            <span className="truncate text-sm bg-terminal-highlight text-white font-semibold text-center px-1">
               {centerText}
             </span>
           )}
           {leftText && (
-            <span className="text-sm whitespace-nowrap border-b text-right bg-terminal-highlight text-white font-semibold text-end px-1">
+            <span className="text-sm whitespace-nowrap bg-terminal-highlight text-white font-semibold text-center px-1">
               {leftText}
             </span>
           )}

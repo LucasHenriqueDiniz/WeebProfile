@@ -1,12 +1,16 @@
-query BaseRepositories {
-  $account(login: "$login") {
-    $type($after first: $repositories $forks $affiliations $constraints, orderBy: {field: UPDATED_AT, direction: DESC}) {
-      edges {
-        cursor
-      }
+query userRepositories($login: String!) {
+  user(login: $login) {
+    repositories(
+      first: 100
+      ownerAffiliations: [OWNER]
+      isFork: false
+      orderBy: { field: UPDATED_AT, direction: DESC }
+    ) {
       nodes {
         updatedAt
         name
+        description
+        url
         owner {
           login
         }
@@ -56,6 +60,14 @@ query BaseRepositories {
           totalCount
         }
       }
+      totalDiskUsage
+    }
+    contributionsCollection {
+      totalCommitContributions
+      totalRepositoriesWithContributedCommits
+      totalIssueContributions
+      totalPullRequestContributions
+      totalPullRequestReviewContributions
     }
   }
 }

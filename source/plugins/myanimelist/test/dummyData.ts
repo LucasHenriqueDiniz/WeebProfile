@@ -4,8 +4,8 @@ import {
   FullMalAnimeResponse,
   MalFullMangaResponse,
   PeopleFavorites,
-} from "../types/malFavoritesResponse"
-import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
+} from "../types/FavoritesResponse"
+import { MalLastUpdatesResponse } from "../types/malLastUpdates"
 
 const animeData: FullMalAnimeResponse[] = [
   {

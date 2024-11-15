@@ -1,0 +1,60 @@
+@import "./fonts.css";
+
+.default-container {
+  /* weeb - styles */
+  --font-family: Poppins, sans-serif;
+  color: var(--default-color-default);
+  font-family: Poppins, sans-serif;
+}
+
+.terminal-container {
+  --font-family: ui-monospace, monospace;
+  color: var(--terminal-color-default);
+  font-family: ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+section {
+  width: 100%;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* MyAnimeList */
+
+#svg-main {
+  --color-watching: #2196f3;
+  --color-completed: #2ecc71;
+  --color-onhold: #f1c40f;
+  --color-dropped: #ff5252;
+  --color-plan-to-watch: #95a5a6;
+}
+
+/* GitHub */
+
+#svg-main {
+  --color-python: #3572a5;
+  --color-javascript: #f1e05a;
+  --color-typescript: #2b7489;
+  --color-html: #e34c26;
+  --color-css: #563d7c;
+  --color-bash: #89e051;
+  --color-c: #55a548;
+  --color-csharp: #239120;
+  --color-coffeescript: #244776;
+  --color-cpp: #f34b7d;
+  --color-java: #b07219;
+  --color-swift: #ffac45;
+  --color-go: #00add8;
+  --color-rust: #dea584;
+  --color-php: #4f5d95;
+  --color-ruby: #701516;
+  --color-scala: #c22d40;
+  --color-kotlin: #f18e33;
+}

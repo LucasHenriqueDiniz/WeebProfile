@@ -1,16 +1,18 @@
 import { randomString } from "source/helpers/string"
-import Img64 from "core/src/base/ImageComponent"
+import ImageComponent from "source/templates/ImageComponent"
 import { GridItemProps } from "../types"
 import React from "react"
 
 function GridItem({ title, image, value }: GridItemProps): JSX.Element {
   return (
-    <div className="relative overflow-hidden radius-8 min-w-200 min-h-200 half:min-w-0 half:w-auto half:min-h-100">
-      <Img64 url64={image} alt={title} defaultType="lastfm" className="image-center-full" />
-      <div className="fav-overlay">
-        <div className="flex-d">
-          <p className="md-text-bold text-nowrap text-overflow half:sm-text">{title}</p>
-          <p className="sm-text text-slate line-100 half:xs-text">{value}</p>
+    <div className="relative overflow-hidden rounded-lg min-w-0 w-auto min-h-100">
+      <div className="image-square-container-100">
+        <ImageComponent url64={image} alt={title} className="image-square" width={100} height={100} />
+      </div>
+      <div className="favorite-overlay">
+        <div className="flex flex-col">
+          <p className="font-semibold text-default truncate text-xs">{title}</p>
+          <p className="text-xs text-default leading-none">{value}</p>
         </div>
       </div>
     </div>
@@ -27,7 +29,7 @@ function ImageGrid({ data }: ImageGridProps): JSX.Element {
   }
 
   return (
-    <div className="image-grid-container">
+    <div className="grid grid-cols-8 gap-1 half-mode:grid-cols-4">
       {data.map((item) => (
         <GridItem key={randomString()} {...item} />
       ))}

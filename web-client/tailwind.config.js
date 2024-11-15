@@ -12,6 +12,10 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "../source/plugins/**/*.{js,ts,jsx,tsx}",
+    "../source/styles/**/*.{js,ts,jsx,tsx}",
+    "../source/templates/**/*.{js,ts,jsx,tsx}",
+    "!./node_modules", // 👈
   ],
   theme: {
     extend: {

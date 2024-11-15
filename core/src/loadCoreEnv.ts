@@ -13,6 +13,7 @@ import { splitString } from "../../source/helpers/string"
 import loadPlugin from "../utils/loadPlugin"
 import { PluginsConfig, PluginsRawConfig } from "source/plugins/@types/plugins"
 import { terminalThemes } from "source/plugins/@themes/terminal-themes"
+import { defaultThemes } from "source/plugins/@themes/default-themes"
 
 function loadCoreEnv(): PluginsConfig {
   logger({ message: "Loading environment variables...", level: "info", __filename })
@@ -21,24 +22,6 @@ function loadCoreEnv(): PluginsConfig {
   if (!env) {
     throw new Error("No .env file found")
   }
-
-  // Create a copy of the env for logging, removing sensitive data
-  const sanitizedEnv = { ...env }
-  const sensitiveKeys = ["GH_TOKEN", "API_KEY", "API_SECRET"]
-
-  // Remove sensitive data for logging
-  sensitiveKeys.forEach((key) => {
-    if (sanitizedEnv[key]) {
-      sanitizedEnv[key] = "**** SENSITIVE DATA ****"
-    }
-  })
-
-  // Log environment variables for debugging with sanitized data
-  logger({
-    message: `Environment variables: ${JSON.stringify(sanitizedEnv, null, 2)}`,
-    level: "debug",
-    __filename,
-  })
 
   // Load main configs
   const ghToken = env.GH_TOKEN
@@ -82,10 +65,17 @@ function loadCoreEnv(): PluginsConfig {
     terminalTheme = "default"
   }
 
+  let defaultTheme = env.DEFAULT_THEME ?? (MAIN_ENV_VARIABLES.default_theme?.defaultValue as string)
+
+  if (defaultTheme && !Object.keys(defaultThemes).includes(defaultTheme)) {
+    logger({ message: "Invalid DEFAULT_THEME, defaulting to default", level: "warn", __filename })
+    defaultTheme = "default"
+  }
+
   const baseEnv: PluginsRawConfig = {
     dev: toBoolean(env.DEV),
     gist_id: gistId,
-    gh_token: "***********", // Ocultar token nos logs
+    gh_token: ghToken,
     filename: filename,
     size: size,
     style: style,
@@ -96,6 +86,7 @@ function loadCoreEnv(): PluginsConfig {
     hide_terminal_emojis: hideTerminalEmojis,
     hide_terminal_header: hideTerminalHeader,
     terminal_theme: terminalTheme,
+    default_theme: defaultTheme,
   }
 
   // Load plugin configs

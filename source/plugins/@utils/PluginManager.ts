@@ -99,6 +99,11 @@ export class PluginManager {
         __filename,
       })
       const data = await plugin.fetchData(config, dev)
+      logger({
+        message: `Fetched data for ${name}: ${JSON.stringify(data).slice(0, 200)}...`,
+        level: "debug",
+        __filename,
+      })
       return { name, data }
     } catch (error) {
       logger({
@@ -130,7 +135,7 @@ export class PluginManager {
       }
 
       logger({
-        message: `Checking plugin ${name}: config = ${JSON.stringify(sanitizedConfig)}`,
+        message: `Checking plugin ${name}: config = ${JSON.stringify(sanitizedConfig).slice(0, 200)}...`,
         level: "debug",
         __filename,
       })
@@ -221,28 +226,6 @@ export class PluginManager {
       return {} as PluginRegistry[TName]["config"]
     }
 
-    // const config = {
-    //   ...Object.entries(plugin).reduce(
-    //     (acc, [name, plugin]) => {
-    //       acc[name] = {
-    //         plugin_enabled: enabled ?? false,
-    //         sections: sections ?? [],
-    //         ...Object.entries(plugin.envVariables as Record<string, PluginVariables>).reduce(
-    //           (vars, [key, value]) => {
-    //             if (value.defaultValue !== undefined) {
-    //               vars[key] = value.defaultValue
-    //             }
-    //             return vars
-    //           },
-    //           {} as Record<string, any>
-    //         ),
-    //       }
-    //       return acc
-    //     },
-    //     {} as Record<string, any>
-    //   ),
-    // }
-
     const pluginConfig = Object.entries(plugin.envVariables).reduce(
       (acc, [key, value]) => {
         if (key === "plugin_enabled") {
@@ -278,6 +261,9 @@ export class PluginManager {
       plugins_order: (MAIN_ENV_VARIABLES.plugins_order?.defaultValue as string[]) || [],
       custom_path: "",
       hide_terminal_emojis: (MAIN_ENV_VARIABLES.hide_terminal_emojis?.defaultValue as boolean) || false,
+      hide_terminal_header: (MAIN_ENV_VARIABLES.hide_terminal_header?.defaultValue as boolean) || false,
+      terminal_theme: (MAIN_ENV_VARIABLES.terminal_theme?.defaultValue as string) || "default",
+      default_theme: (MAIN_ENV_VARIABLES.default_theme?.defaultValue as string) || "default",
     }
 
     // Adiciona as configurações padrão de cada plugin

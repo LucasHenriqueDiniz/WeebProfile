@@ -1,10 +1,14 @@
-query BaseCalendar {
-  user(login: "$login") {
-    calendar:contributionsCollection(from: "$calendar.from", to: "$calendar.to") {
+query userCalendar($login: String!) {
+  user(login: $login) {
+    contributionsCollection {
       contributionCalendar {
+        totalContributions
         weeks {
           contributionDays {
             color
+            contributionCount
+            date
+            weekday
           }
         }
       }

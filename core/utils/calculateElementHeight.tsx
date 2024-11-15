@@ -1,6 +1,6 @@
 import LoadCss from "core/src/loadCss"
 import puppeteer from "puppeteer"
-import React, { JSXElementConstructor, ReactElement, ReactNode } from "react"
+import React, { ReactNode } from "react"
 import { renderToString } from "react-dom/server"
 import { PluginsConfig } from "source/plugins/@types/plugins"
 import SvgContainer from "source/templates/Main/SvgContainer"
@@ -9,10 +9,7 @@ import logger from "../../source/helpers/logger"
 async function calculateElementHeight(activePlugins: ReactNode, env: PluginsConfig): Promise<number> {
   logger({ message: "Calculating element height...", level: "info", __filename })
 
-  const htmlstring = (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    css: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode>
-  ) => {
+  const htmlstring = (css: React.JSX.Element) => {
     return renderToString(
       <html lang="en" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark">
         <head>
@@ -26,7 +23,7 @@ async function calculateElementHeight(activePlugins: ReactNode, env: PluginsConf
           {css}
         </head>
         <body>
-          <SvgContainer height={0} asDiv={true} size={env.size} style={env.style}>
+          <SvgContainer height={0} asDiv={true} size={env.size} style={env.style} defs={css}>
             {activePlugins}
           </SvgContainer>
         </body>

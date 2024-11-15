@@ -6,6 +6,7 @@ import { PluginManager } from "source/plugins/@utils/PluginManager"
 import ErrorMessage from "source/templates/Error_Style"
 import SvgContainer from "templates/Main/SvgContainer"
 import useStore from "./store"
+import "./globals.css"
 
 const RenderActivePlugins = (): JSX.Element => {
   const [pluginsComponents, setPluginsComponents] = useState<ReactNode[]>([])

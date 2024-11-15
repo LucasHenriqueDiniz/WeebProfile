@@ -1,9 +1,11 @@
 import React from "react"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 
 const TerminalCommand = ({ command, className }: { command: string; className?: string }): JSX.Element => {
-  const { size } = getEnvVariables()
-  const isHalf = size === "half"
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const isHalf = env.size === "half"
+
   return (
     <div className={`truncate font-mono text-sm ${className} my-1`}>
       {!isHalf ? (

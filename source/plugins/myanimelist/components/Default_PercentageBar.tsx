@@ -33,7 +33,7 @@ function PercentageBar({ current, total, status }: { current: number; total: num
   if (isPlanTo) percentage = -1
 
   return (
-    <div className="w-full flex shadow-md bg-primary-15 rounded-2xl h-[15px]">
+    <div className="w-full flex shadow-md bg-default-15 rounded-2xl h-[15px]">
       <span
         className={`${
           isCompleted || isPlanTo ? "flex items-center justify-center" : "flex items-center justify-end"

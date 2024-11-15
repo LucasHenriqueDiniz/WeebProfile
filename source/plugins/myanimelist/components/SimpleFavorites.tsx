@@ -1,17 +1,17 @@
-import { FaHeart } from "react-icons/fa"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "source/templates/Terminal/TerminalCommand"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
-import { treatJapaneseName } from "source/helpers/string"
-import Img64 from "core/src/base/ImageComponent"
-import { AnyMalFavorite, AnyMalFavoriteUnique } from "../types/malFavoritesResponse"
 import React from "react"
-import ErrorMessage from "source/templates/Error_Style"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { FaHeart } from "react-icons/fa"
 import logger from "source/helpers/logger"
+import { treatJapaneseName } from "source/helpers/string"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import ImageComponent from "source/templates/ImageComponent"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { AnyMalFavorite, AnyMalFavoriteUnique } from "../types/malFavorites"
 
 interface DefaultSimpleFavoritesProps {
   data: AnyMalFavorite
@@ -30,12 +30,14 @@ function FavoriteImage({
 
   return (
     <div className="favorite-container relative">
-      <Img64 url64={imageUrl} alt={title ?? "Name not found"} className="image-portrait" />
-      {!hideOverlay && (
-        <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-65 text-white p-1 text-[10px] truncate">
-          {title}
-        </div>
-      )}
+      <ImageComponent
+        url64={imageUrl}
+        alt={title ?? "Name not found"}
+        className="image-portrait"
+        width={120}
+        height={75}
+      />
+      {!hideOverlay && <div className="favorite-overlay">{title}</div>}
     </div>
   )
 }
@@ -57,7 +59,9 @@ function RenderFavorites({
 }
 
 function SimpleFavorites({ data, type }: DefaultSimpleFavoritesProps): JSX.Element {
-  const { myanimelist } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
   logger({ message: `Fetching MAL favorites for ${type}`, level: "info", __filename })
   if (!myanimelist) throw new Error("MAL plugin not found in DefaultSimpleFavorites component")
   if (!data) return <ErrorMessage message="No data found in MalStatistics component" />
