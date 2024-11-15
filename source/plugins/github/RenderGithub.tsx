@@ -1,6 +1,4 @@
 import React from "react"
-import { FaGithub } from "react-icons/fa"
-import { Header } from "templates/Default/Default_Header"
 import ErrorMessage from "templates/Error_Style"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalBody from "templates/Terminal/TerminalBody"
@@ -10,8 +8,11 @@ import FavoriteLicense from "./components/FavoriteLicenses"
 import GithubProfile from "./components/Profile"
 import GithubRepositories from "./components/Repositories"
 import GITHUB_ENV_VARIABLES, { GithubSections } from "./ENV_VARIABLES"
-import GithubData from "./types/GithubData"
 import GithubConfig from "./types/GithubConfig"
+import GithubData from "./types/GithubData"
+import GithubActivity from "./components/Activity"
+import GithubCodeHabits from "./components/CodeHabits"
+import GithubCalendar from "./components/Calendar"
 
 interface Props {
   plugin: GithubConfig
@@ -35,28 +36,47 @@ export default function RenderGithub({ plugin, data }: Props): JSX.Element {
 
   const sectionRenderers: SectionRenderers = {
     profile: (githubData) => {
-      if (githubData.userData === null) {
-        return <ErrorMessage message={`User "${plugin.username}" not found`} />
-      }
-      return <GithubProfile data={githubData.userData} />
+      return <GithubProfile key="profile" data={githubData.user} />
     },
     repositories: (githubData) => {
-      if (githubData.repositoriesData === null) {
-        return <ErrorMessage message={`User "${plugin.username}" not found`} />
-      }
-      return <GithubRepositories repositoriesData={githubData.repositoriesData} />
+      return <GithubRepositories key="repositories" data={githubData.repositories} />
     },
     favorite_languages: (githubData) => {
-      if (githubData.repositoriesData === null) {
-        return <ErrorMessage message={`User "${plugin.username}" not found`} />
-      }
-      return <FavoriteLanguages data={githubData.languagesData} />
+      return (
+        <FavoriteLanguages
+          key="favorite_languages"
+          languageData={githubData.languages}
+          repositoriesData={githubData.repositories}
+        />
+      )
     },
     favorite_license: (githubData) => {
-      if (githubData.repositoriesData === null) {
-        return <ErrorMessage message={`User "${plugin.username}" not found`} />
-      }
-      return <FavoriteLicense repositoriesData={githubData.repositoriesData} />
+      return <FavoriteLicense key="favorite_license" data={githubData.repositories} />
+    },
+    activity: (githubData) => {
+      return <GithubActivity key="activity" data={githubData.activity} />
+    },
+    calendar: (githubData) => {
+      const weeks = githubData.user.contributionCalendar.weeks.map((week) => ({
+        ...week,
+        contributionDays: week.contributionDays.map((day, index) => ({
+          ...day,
+          weekday: index,
+        })),
+      }))
+
+      return (
+        <GithubCalendar
+          key="calendar"
+          data={{
+            totalContributions: githubData.user.contributionCalendar.totalContributions,
+            weeks,
+          }}
+        />
+      )
+    },
+    code_habits: (githubData) => {
+      return <GithubCodeHabits key="code_habits" data={githubData.codeHabits} />
     },
   }
 
@@ -67,26 +87,11 @@ export default function RenderGithub({ plugin, data }: Props): JSX.Element {
     return <ErrorMessage message={`Section "${section}" not found, available sections: \n${GithubSections}`} />
   }
 
-  const hideHeader = plugin.hide_header
-
   return (
     <>
       <RenderBasedOnStyle
-        terminalComponent={
-          <TerminalBody>
-            {sections.map((section) => (
-              <div key={section}>{renderSection(section)}</div>
-            ))}
-          </TerminalBody>
-        }
-        defaultComponent={
-          <>
-            {!hideHeader && <Header title={"GitHub"} icon={<FaGithub />} />}
-            {sections.map((section) => (
-              <div key={section}>{renderSection(section)}</div>
-            ))}
-          </>
-        }
+        terminalComponent={<TerminalBody>{sections.map((section) => renderSection(section))}</TerminalBody>}
+        defaultComponent={<>{sections.map((section) => renderSection(section))}</>}
       />
     </>
   )

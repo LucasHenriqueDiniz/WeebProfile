@@ -11,7 +11,7 @@ interface PseudoCommandProps {
 function getPseudoCommands({ plugin, section, username, period, limit, min, type }: PseudoCommandProps): string {
   let command = `${plugin} --${section}`
 
-  if (username) command += ` --user=${username}`
+  if (username) command += ` --user="${username}"`
   if (period) command += ` --period=${period.replace("Last ", "").replace(" days", "d")}`
   if (limit) command += ` --limit=${limit}`
   if (min) command += ` --min=${min}`

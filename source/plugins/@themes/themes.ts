@@ -1,8 +1,9 @@
+import { DefaultTheme, defaultThemes } from "./default-themes"
 import { TerminalTheme, terminalThemes } from "./terminal-themes"
 import plugin from "tailwindcss/plugin"
 
 // Cores base dos plugins
-export const pluginThemes = {
+export const pluginColors = {
   mal: {
     watching: "var(--color-watching)",
     reading: "var(--color-reading)",
@@ -37,16 +38,31 @@ export const getTerminalThemeColors = (theme: TerminalTheme = "default") => {
   const selectedTheme = terminalThemes[theme]
   return {
     terminal: {
-      surface: selectedTheme.surface,
-      background: selectedTheme.background,
-      default: selectedTheme.default,
-      error: selectedTheme.error,
-      success: selectedTheme.success,
-      warning: selectedTheme.warning,
-      muted: selectedTheme.muted,
-      "muted-light": selectedTheme.mutedLight,
-      raw: selectedTheme.raw,
-      highlight: selectedTheme.highlight,
+      DEFAULT: selectedTheme.default, // Default color
+      surface: selectedTheme.surface, // Front background color
+      background: selectedTheme.background, // Back background color
+      success: selectedTheme.success, // Text success color
+      muted: selectedTheme.muted, // Text muted color
+      "muted-light": selectedTheme.mutedLight, // Text muted light color
+      raw: selectedTheme.raw, // Text raw color
+      highlight: selectedTheme.highlight, // highlight color
+    },
+  }
+}
+
+const getDefaultThemeColors = (theme: DefaultTheme = "default") => {
+  const selectedTheme = defaultThemes[theme]
+
+  return {
+    default: {
+      DEFAULT: selectedTheme.default, // Default color
+      surface: selectedTheme.surface, // Front background color
+      background: selectedTheme.background, // Back background color
+      success: selectedTheme.success, // Text success color
+      muted: selectedTheme.muted, // Text muted color
+      "muted-light": selectedTheme.mutedLight, // Text muted light color
+      raw: selectedTheme.raw, // Text raw color
+      highlight: selectedTheme.highlight, // Highlight color
     },
   }
 }
@@ -65,8 +81,9 @@ export const tailwindConfig = {
   theme: {
     extend: {
       colors: {
-        ...pluginThemes,
+        ...pluginColors,
         ...getTerminalThemeColors(),
+        ...getDefaultThemeColors(),
       },
       aspectRatio: {
         "anime-cover": "70/105",

@@ -6,20 +6,23 @@ import { FaCircleCheck, FaCirclePause, FaCirclePlay, FaCircleXmark } from "react
 import { IoStatsChartOutline } from "react-icons/io5"
 import { RiRestartFill } from "react-icons/ri"
 import { emojiStatus } from "source/helpers/emoji"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 import ErrorMessage from "source/templates/Error_Style"
-import { StatisticRow } from "templates/Default/Default_StatRow"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalGrid from "source/templates/Terminal/TerminalGrid"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
+import { StatisticRow } from "templates/Default/Default_StatRow"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import { GridItemProps } from "templates/types"
 import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
-import { MalStatisticsResponse } from "../types/malStatisticsResponse"
+import { MalStatistics } from "../types/malStatistics"
 
-export default function MalStatistics({ data }: { data: MalStatisticsResponse }): JSX.Element {
-  const { myanimelist } = getEnvVariables()
+export default function Statistics({ data }: { data: MalStatistics }): JSX.Element {
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
+
   if (!myanimelist) throw new Error("MAL plugin not found in MalStatistics component")
   if (!data) return <ErrorMessage message="No data found in MalStatistics component" />
 
@@ -148,7 +151,7 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
                     <StatisticRow
                       rows={[
                         {
-                          icon: <FaStar className="fill-primary" />,
+                          icon: <FaStar className="fill-default-highlight" />,
                           title: "Mean Score",
                           value: abbreviateNumber(animeStatistics.mean_score),
                           strong: true,
@@ -183,23 +186,23 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
                     <StatisticRow
                       rows={[
                         {
-                          icon: <FaCalendar className="fill-primary" />,
+                          icon: <FaCalendar className="fill-default-highlight" />,
                           title: "Total Days",
                           value: abbreviateNumber(animeStatistics.days_watched),
                           strong: true,
                         },
                         {
-                          icon: <FaDatabase className="fill-primary" />,
+                          icon: <FaDatabase className="fill-default-highlight" />,
                           title: "Total Entries",
                           value: abbreviateNumber(animeStatistics.total_entries),
                         },
                         {
-                          icon: <RiRestartFill className="fill-primary" size={16} />,
+                          icon: <RiRestartFill className="fill-default-highlight" size={16} />,
                           title: "Rewatched",
                           value: abbreviateNumber(animeStatistics.rewatched),
                         },
                         {
-                          icon: <FaVideo className="fill-primary" />,
+                          icon: <FaVideo className="fill-default-highlight" />,
                           title: "Episodes Watched",
                           value: abbreviateNumber(animeStatistics.episodes_watched),
                         },
@@ -215,7 +218,7 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
                     <StatisticRow
                       rows={[
                         {
-                          icon: <FaStar className="fill-primary" />,
+                          icon: <FaStar className="fill-default-highlight" />,
                           title: "Mean Score",
                           value: abbreviateNumber(mangaStatistics.mean_score),
                           strong: true,
@@ -250,28 +253,28 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
                     <StatisticRow
                       rows={[
                         {
-                          icon: <FaCalendar className="fill-primary" />,
+                          icon: <FaCalendar className="fill-default-highlight" />,
                           title: "Total Days",
                           value: abbreviateNumber(mangaStatistics.days_read),
                           strong: true,
                         },
                         {
-                          icon: <FaDatabase className="fill-primary" />,
+                          icon: <FaDatabase className="fill-default-highlight" />,
                           title: "Total Entries",
                           value: abbreviateNumber(mangaStatistics.total_entries),
                         },
                         {
-                          icon: <RiRestartFill className="fill-primary" />,
+                          icon: <RiRestartFill className="fill-default-highlight" size={16} />,
                           title: "Reread",
                           value: abbreviateNumber(mangaStatistics.reread),
                         },
                         {
-                          icon: <FaBookOpen className="fill-primary" />,
+                          icon: <FaBookOpen className="fill-default-highlight" />,
                           title: "Chapters Read",
                           value: abbreviateNumber(mangaStatistics.chapters_read),
                         },
                         {
-                          icon: <FaVideo className="fill-primary" />,
+                          icon: <FaVideo className="fill-default-highlight" />,
                           title: "Volumes Read",
                           value: abbreviateNumber(mangaStatistics.volumes_read),
                         },

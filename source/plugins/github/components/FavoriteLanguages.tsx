@@ -1,63 +1,125 @@
-import { FaCode } from "react-icons/fa"
-import { GoDotFill } from "react-icons/go"
-import DefaultTitle from "templates/Default/Default_Title"
-import PercentageBar from "templates/Default/PercentageBarMultiple"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "source/templates/Terminal/TerminalCommand"
-import TerminalGrid from "source/templates/Terminal/TerminalGrid"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import { abbreviateNumber } from "source/helpers/number"
-import ENV_VARIABLES from "../ENV_VARIABLES"
-import { ProcessedLanguage } from "../types/LanguagesData.js"
+import { FaCode } from "react-icons/fa"
+import { GoDotFill } from "react-icons/go"
 import logger from "source/helpers/logger"
+import { abbreviateNumber } from "source/helpers/number"
+import randomColorWithString from "source/helpers/string"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import HorizontalMultipleItemsBar from "source/templates/Default/DefaultHorizontalMultipleItems"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import TerminalHorizontalMultipleItemsBar from "source/templates/Terminal/TerminalHorizontalMultipleItems"
+import TerminalLine from "source/templates/Terminal/TerminalLine"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import ENV_VARIABLES from "../ENV_VARIABLES"
+import { ProcessedLanguage } from "../types/LanguagesData"
+import { RepositoriesData } from "../types/RepositoryData"
 
 interface LanguagesProps {
   data: ProcessedLanguage[]
+  maxItems: number
+  totalSize: number
 }
 
-const DefaultFavoriteLanguages = ({ data }: LanguagesProps) => {
+const DefaultFavoriteLanguages = ({ data, totalSize, maxItems }: LanguagesProps) => {
   return (
-    <div className="flex flex-col gap-2">
-      <PercentageBar values={data} />
+    <div className="flex flex-col gap-1">
+      <HorizontalMultipleItemsBar
+        items={data.map((lang) => ({
+          value: lang.size,
+          style: { backgroundColor: lang.color ?? randomColorWithString(lang.name) },
+        }))}
+        total={totalSize}
+      />
 
-      {data.map((lang) => (
-        <div key={lang.name} className="grid-cols-3">
-          <span className="md-text flex items-center">
+      {data.slice(0, maxItems).map((lang) => (
+        <div key={lang.name} className="grid grid-cols-3 items-center">
+          <span className="text-base flex items-center">
             <GoDotFill color={lang.color} className="mr-2" />
             {lang.name}
           </span>
-          <span className="md-text flex items-center justify-end">{lang.percentage.toFixed(2)}%</span>
-          <span className="md-text flex items-center justify-end">{abbreviateNumber(lang.size)} lines</span>
+          <span className="text-base flex items-center justify-end">{((lang.size / totalSize) * 100).toFixed(2)}%</span>
+          <span className="text-base flex items-center justify-end">{abbreviateNumber(lang.size)} lines</span>
         </div>
       ))}
     </div>
   )
 }
 
-const TerminalFavoriteLanguages = ({ data }: { data: ProcessedLanguage[] }) => {
-  const gridData = data.map((lang) => ({
-    title: lang.name,
-    value: `${abbreviateNumber(lang.size)} lines`,
-  }))
-
-  return <TerminalGrid data={gridData} rightText="Language" leftText="Lines of Code" />
+const TerminalFavoriteLanguages = ({ data, totalSize, maxItems }: LanguagesProps) => {
+  return (
+    <>
+      <TerminalHorizontalMultipleItemsBar
+        items={data.map((lang) => ({
+          value: lang.size,
+          style: { color: lang.color ?? randomColorWithString(lang.name) },
+        }))}
+        total={totalSize}
+      />
+      {data.slice(0, maxItems).map((lang) => (
+        <span className="flex flex-col" key={lang.name}>
+          <TerminalLine
+            className={{ right: "mt-[0.25rem]" }}
+            style={{ right: { color: lang.color ?? randomColorWithString(lang.name) } }}
+            right={`██ ${lang.name}`}
+            left={abbreviateNumber(lang.size)}
+          />
+        </span>
+      ))}
+    </>
+  )
 }
 
-const FavoriteLanguages = ({ data }: LanguagesProps) => {
-  const { github } = getEnvVariables()
+interface FavoriteLanguagesProps {
+  languageData?: ProcessedLanguage[]
+  repositoriesData?: RepositoriesData
+}
+
+const FavoriteLanguages = ({ languageData, repositoriesData }: FavoriteLanguagesProps) => {
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const github = env.github
   if (!github) throw new Error("GitHub plugin not found")
 
-  const title = (
-    github.favorite_languages_title ?? (ENV_VARIABLES.favorite_languages_title.defaultValue as string)
-  ).replace("<qnt>", data.length.toString())
-  const hideTitle = github.favorite_languages_hide_title
+  let processedLanguages = languageData
+
+  // Se não tiver languageData mas tiver repositoriesData, processa as linguagens dos repositórios
+  if (!processedLanguages && repositoriesData) {
+    const languagesMap = new Map<string, { color: string; size: number }>()
+
+    repositoriesData.repositories.forEach((repo) => {
+      if (repo.languages?.edges) {
+        repo.languages.edges.forEach((edge: any) => {
+          const current = languagesMap.get(edge.node.name) || {
+            color: edge.node.color,
+            size: 0,
+          }
+          languagesMap.set(edge.node.name, {
+            color: edge.node.color,
+            size: current.size + edge.size,
+          })
+        })
+      }
+    })
+
+    processedLanguages = Array.from(languagesMap.entries()).map(([name, data]) => ({
+      name,
+      color: data.color,
+      size: data.size,
+    }))
+  }
+
+  if (!processedLanguages || processedLanguages.length === 0) {
+    logger({ message: "No language data available", level: "warn" })
+    return null
+  }
 
   // Filter ignored languages if specified
   const ignoreLanguages = github.favorite_languages_ignore_languages ?? false
-  let filteredLanguages = [...data]
+  let filteredLanguages = [...processedLanguages]
 
   if (ignoreLanguages) {
     const ignoreLanguagesArray = ignoreLanguages.split(",").map((lang) => lang.trim())
@@ -69,13 +131,24 @@ const FavoriteLanguages = ({ data }: LanguagesProps) => {
     }
   }
 
+  const totalSize = filteredLanguages.reduce((acc, lang) => acc + lang.size, 0)
+  const maxItems = github.favorite_languages_max_languages ?? 10
+
+  filteredLanguages = filteredLanguages.sort((a, b) => b.size - a.size)
+
+  const languageCount = filteredLanguages?.length ?? 0
+  const title = (
+    github.favorite_languages_title ?? (ENV_VARIABLES.favorite_languages_title.defaultValue as string)
+  ).replace("<qnt>", languageCount.toString())
+  const hideTitle = github.favorite_languages_hide_title
+
   return (
-    <section id="github" className="favorite-languages">
+    <section id="github-favorite-languages">
       <RenderBasedOnStyle
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaCode />} />}
-            <DefaultFavoriteLanguages data={filteredLanguages} />
+            <DefaultFavoriteLanguages data={filteredLanguages} totalSize={totalSize} maxItems={maxItems} />
           </>
         }
         terminalComponent={
@@ -87,7 +160,7 @@ const FavoriteLanguages = ({ data }: LanguagesProps) => {
                 username: github.username,
               })}
             />
-            <TerminalFavoriteLanguages data={filteredLanguages} />
+            <TerminalFavoriteLanguages data={filteredLanguages} totalSize={totalSize} maxItems={maxItems} />
             <TerminalLineBreak />
           </>
         }

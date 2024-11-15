@@ -1,7 +1,15 @@
 import PluginVariables from "../@types/PluginVariables"
 import GithubConfig from "./types/GithubConfig"
 
-export const GithubSections = ["favorite_languages", "favorite_license", "profile"]
+export const GithubSections = [
+  "favorite_languages",
+  "favorite_license",
+  "profile",
+  "repositories",
+  "activity",
+  "calendar",
+  "code_habits",
+]
 
 const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
   plugin_enabled: {
@@ -24,32 +32,21 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     options: GithubSections,
     sections: ["main"],
   },
-  hide_header: {
-    type: "boolean",
-    description: "Hide the header of the profile",
-    sections: ["main"],
-  },
-  title: {
-    type: "string",
-    defaultValue: "GitHub",
-    description: "Title of the profile",
-    sections: ["main"],
-  },
   profile_hide_title: {
     type: "boolean",
     description: "Hide the title of the profile section",
-    sections: ["main"],
+    sections: ["profile"],
   },
-  repository_title: {
-    type: "string",
-    defaultValue: "<qnt> Repositories",
-    description: "Title of the repositories section",
-    sections: ["repositories"],
-  },
-  repository_hide_title: {
+  profile_hide_avatar: {
     type: "boolean",
-    description: "Hide the title of the repositories section",
-    sections: ["repositories"],
+    description: "Hide the avatar of the profile section",
+    sections: ["profile"],
+  },
+  profile_title: {
+    type: "string",
+    defaultValue: "<username>",
+    description: "Title of the profile section (use <username> to display the username)",
+    sections: ["profile"],
   },
   favorite_languages_title: {
     type: "string",
@@ -85,20 +82,53 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     description: "Hide the title of the favorite license section",
     sections: ["favorite_license"],
   },
-  repositories_data_title: {
+  repositories_title: {
     type: "string",
-    description: "Title of the repositories data section",
-    sections: ["repositories_data"],
+    description: "Title of the repositories section",
+    sections: ["repositories"],
   },
-  repositories_data_hide_title: {
+  repositories_hide_title: {
     type: "boolean",
-    description: "Hide the title of the repositories data section",
-    sections: ["repositories_data"],
+    description: "Hide the title of the repositories section",
+    sections: ["repositories"],
   },
-  repository_name: {
+  repositories_use_private: {
+    type: "boolean",
+    description: "Show private repositories in the repositories section",
+    sections: ["repositories"],
+  },
+  activity_title: {
     type: "string",
-    description: "Name of the repository",
-    sections: ["repositories_data"],
+    defaultValue: "Github Activity",
+    description: "Title of the activity section",
+    sections: ["activity"],
+  },
+  activity_hide_title: {
+    type: "boolean",
+    description: "Hide the title of the activity section",
+    sections: ["activity"],
+  },
+  calendar_title: {
+    type: "string",
+    defaultValue: "Contribution Calendar",
+    description: "Title of the calendar section",
+    sections: ["calendar"],
+  },
+  calendar_hide_title: {
+    type: "boolean",
+    description: "Hide the title of the calendar section",
+    sections: ["calendar"],
+  },
+  code_habits_title: {
+    type: "string",
+    defaultValue: "Code Habits",
+    description: "Title of the code habits section",
+    sections: ["code_habits"],
+  },
+  code_habits_hide_title: {
+    type: "boolean",
+    description: "Hide the title of the code habits section",
+    sections: ["code_habits"],
   },
 }
 

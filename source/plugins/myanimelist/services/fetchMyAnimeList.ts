@@ -6,10 +6,11 @@ import generateTestMyAnimeListData from "../test/generateTestData"
 import { MalData } from "../types/malTypes"
 import MyAnimeListPlugin from "../types/MyAnimeListConfig"
 import { fetchFavorites } from "./favorites"
-import fetchLastUpdates from "./lastUpdates"
+import transformLastUpdates from "./lastUpdates"
 import { fetchFullProfile } from "./profile"
+import { transformStatistics } from "./statistics"
 
-// Setup rate limiting
+// Setup rate limiting | 1 request per second with a reservoir of 60 requests is the limit for this API
 const limiter = new Bottleneck({
   maxConcurrent: 1,
   minTime: 1000,
@@ -18,7 +19,7 @@ const limiter = new Bottleneck({
   reservoirRefreshInterval: 60 * 1000,
 })
 
-// Setup axios with cache
+// Setup axios with cache | dont know if this is needed anymore or even working need to test :/
 const axiosInstance = Axios.create()
 const OPTIONS = {
   maxAge: 1 * 60 * 60 * 1000,
@@ -44,16 +45,36 @@ export async function fetchMalData(plugin: MyAnimeListPlugin, dev = false): Prom
   // Get full profile data
   const fullProfile = await limiter.schedule(() => fetchFullProfile(username))
 
-  // Get favorites and last updates with configured limits
-  const favorites = await fetchFavorites(fullProfile, plugin)
-  const lastUpdates = await fetchLastUpdates(fullProfile, plugin)
+  // Treat the data and get favorites and last updates
+  const favorites = await fetchFavorites(fullProfile, plugin, limiter)
+  const lastUpdates = await transformLastUpdates(fullProfile, plugin)
+  const statistics = transformStatistics(fullProfile.statistics)
 
   const malData: MalData = {
     favorites: favorites.basic,
     favorites_full: favorites.full,
     last_updated: lastUpdates,
-    statistics: fullProfile.data.statistics,
+    statistics,
   }
+
+  logger({
+    message: `Favorites data: ${JSON.stringify({
+      basicCount: {
+        anime: favorites.basic.anime.length,
+        manga: favorites.basic.manga.length,
+        characters: favorites.basic.characters.length,
+        people: favorites.basic.people.length,
+      },
+      fullCount: {
+        anime: favorites.full.anime.length,
+        manga: favorites.full.manga.length,
+        characters: favorites.full.characters.length,
+        people: favorites.full.people.length,
+      },
+    })}`,
+    level: "debug",
+    __filename,
+  })
 
   logger({ message: `Finished fetching MyAnimeList data for ${username}`, level: "info", __filename })
   return malData

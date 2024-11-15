@@ -1,19 +1,21 @@
-import logger from "source/helpers/logger"
 import React from "react"
 import { renderToString } from "react-dom/server"
-import { PluginsConfig } from "source/plugins/@types/plugins"
+import { toBoolean } from "source/helpers/boolean"
+import logger from "source/helpers/logger"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 import fetchPluginsData from "source/plugins/@utils/fetchPluginsData"
 import SvgContainer from "templates/Main/SvgContainer"
 import calculateElementHeight from "../utils/calculateElementHeight"
 import LoadCss from "./loadCss"
 import RenderActivePlugins from "./RenderActivePlugins"
-import { toBoolean } from "source/helpers/boolean"
 import { buildTailwind } from "./setup/setupTailwind"
 
-async function RenderBody({ env }: { env: PluginsConfig }): Promise<string> {
-  logger({ message: "Starting...", level: "info", __filename, header: true })
-  // check if dev mode is enabled - default is false
-  const isDev = toBoolean(env.dev) || false
+async function RenderBody(): Promise<string> {
+  logger({ message: "Rendering body...", level: "info", __filename, header: true })
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const isDev = toBoolean(env.dev)
+
   if (isDev) {
     logger({ message: "Dev mode is enabled", level: "warn", __filename })
   }

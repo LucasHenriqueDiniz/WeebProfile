@@ -1,6 +1,6 @@
 import React from "react"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 import ErrorMessage from "./Error_Style"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
 
 const RenderBasedOnStyle = ({
   terminalComponent,
@@ -9,7 +9,9 @@ const RenderBasedOnStyle = ({
   terminalComponent: JSX.Element
   defaultComponent: JSX.Element
 }): JSX.Element => {
-  const { style } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const style = env.style
 
   switch (style) {
     case "default":

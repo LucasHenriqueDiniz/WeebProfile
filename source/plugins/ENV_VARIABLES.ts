@@ -1,5 +1,7 @@
 import { PluginsRawConfig } from "source/plugins/@types/plugins"
 import pluginVariables from "./@types/PluginVariables"
+import { terminalThemes } from "./@themes/terminal-themes"
+import { defaultThemes } from "./@themes/default-themes"
 
 const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
   dev: {
@@ -75,9 +77,17 @@ const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
   },
   terminal_theme: {
     defaultValue: "default",
-    type: "string",
+    type: "stringRadio",
     description: "The theme of the terminal",
     sections: ["main"],
+    options: Object.keys(terminalThemes),
+  },
+  default_theme: {
+    defaultValue: "default",
+    type: "stringRadio",
+    description: "The default theme of the SVG",
+    sections: ["main"],
+    options: Object.keys(defaultThemes),
   },
 }
 

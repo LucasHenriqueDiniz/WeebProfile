@@ -1,8 +1,8 @@
 import { faker } from "@faker-js/faker"
-import { MalStatisticsResponse } from "../types/malStatisticsResponse"
-import { MalFavoritesResponse, MalFullFavoritesResponse } from "../types/malFavoritesResponse"
+import { MalStatisticsResponse } from "../types/malStatistics"
+import { MalFavoritesResponse, MalFullFavoritesResponse } from "../types/FavoritesResponse"
 import fakeData from "./dummyData"
-import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
+import { MalLastUpdatesResponse } from "../types/malLastUpdates"
 import { MalData } from "../types/malTypes"
 import logger from "source/helpers/logger"
 

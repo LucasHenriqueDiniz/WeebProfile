@@ -27,10 +27,10 @@ interface MangaStatistics {
   volumes_read: number
 }
 
-interface MalStatisticsResponse {
+interface MalStatistics {
   [key: string]: AnimeStatistics | MangaStatistics
   anime: AnimeStatistics
   manga: MangaStatistics
 }
 
-export type { MalStatisticsResponse, AnimeStatistics, MangaStatistics }
+export type { MalStatistics, AnimeStatistics, MangaStatistics }

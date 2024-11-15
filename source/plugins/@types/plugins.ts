@@ -19,13 +19,13 @@ export interface PluginsRawConfig {
   hide_terminal_emojis: boolean
   hide_terminal_header: boolean
   terminal_theme: string
+  default_theme: string
 }
 
 // Base interface for all plugin configs
 export interface BasePluginConfig {
   plugin_enabled: boolean
   sections: string[]
-  hide_header?: boolean
 }
 
 // Base interface for plugin metadata

@@ -1,6 +1,5 @@
+import CheckPluginForRequiredValues from "plugins/@utils/checkPluginForRequiredValues"
 import React from "react"
-import { FaLastfm } from "react-icons/fa"
-import Header from "templates/Default/Default_Header"
 import ErrorMessage from "templates/Error_Style"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalBody from "templates/Terminal/TerminalBody"
@@ -17,10 +16,9 @@ import {
   TopTracksGrid,
   TopTracksList,
 } from "./components"
+import LASTFM_ENV_VARIABLES from "./ENV_VARIABLES"
 import LastFmPlugin, { LastFmSections } from "./types/envLastFM"
 import { LastFmData } from "./types/lastFmTypes"
-import LASTFM_ENV_VARIABLES from "./ENV_VARIABLES"
-import CheckPluginForRequiredValues from "plugins/@utils/checkPluginForRequiredValues"
 
 interface Props {
   plugin: LastFmPlugin
@@ -88,8 +86,6 @@ export default function RenderLastFm({ plugin, data }: Props): JSX.Element {
     )
   }
 
-  const hideHeader = plugin.hide_header
-
   return (
     <>
       <RenderBasedOnStyle
@@ -102,7 +98,6 @@ export default function RenderLastFm({ plugin, data }: Props): JSX.Element {
         }
         defaultComponent={
           <>
-            {!hideHeader && <Header title="LastFM" icon={<FaLastfm />} />}
             {sections.map((section) => (
               <div key={section}>{renderSection(section)}</div>
             ))}

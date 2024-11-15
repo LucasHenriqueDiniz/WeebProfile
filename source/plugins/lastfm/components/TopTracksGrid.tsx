@@ -1,18 +1,18 @@
+import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { AiOutlineTrophy } from "react-icons/ai"
-import getPseudoCommands from "core/utils/getPseudoCommands"
-import ImageGrid from "templates/Default/DefaultImageGrid"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import { abbreviateNumber } from "source/helpers/number"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
 import TerminalCommand from "source/templates/Terminal/TerminalCommand"
 import TerminalGrid from "source/templates/Terminal/TerminalGrid"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
+import ImageGrid from "templates/Default/DefaultImageGrid"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import { GridItemProps } from "templates/types"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import { TopTrack } from "../types/lastFmTypes"
-import ErrorMessage from "source/templates/Error_Style"
-import { abbreviateNumber } from "source/helpers/number"
 import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
+import { TopTrack } from "../types/lastFmTypes"
 
 interface Props {
   data: TopTrack[]
@@ -20,7 +20,9 @@ interface Props {
 }
 
 function LastFmTopTracksGrid({ data, interval }: Props): JSX.Element {
-  const { lastfm } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const lastfm = env.lastfm
   if (!lastfm) throw new Error("LastFM plugin not found in LastFmTopTracksGrid component")
   if (!data || data.length === 0) {
     return <ErrorMessage message="No data found in LastFmTopTracksGrid component" />
@@ -50,7 +52,7 @@ function LastFmTopTracksGrid({ data, interval }: Props): JSX.Element {
   })) as GridItemProps[]
 
   return (
-    <section id="last-fm" className="top-tracks">
+    <section id="lastfm-top-tracks">
       <RenderBasedOnStyle
         defaultComponent={
           <>

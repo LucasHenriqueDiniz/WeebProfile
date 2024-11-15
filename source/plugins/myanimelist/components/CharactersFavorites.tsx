@@ -1,28 +1,36 @@
-import { FaHeart } from "react-icons/fa"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "source/templates/Terminal/TerminalCommand"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
-import { treatJapaneseName } from "source/helpers/string"
-import Img64 from "core/src/base/ImageComponent"
-import { CharacterFavorites } from "../types/malFavoritesResponse"
 import React from "react"
-import ErrorMessage from "source/templates/Error_Style"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { FaHeart } from "react-icons/fa"
 import logger from "source/helpers/logger"
+import { treatJapaneseName } from "source/helpers/string"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import ImageComponent from "source/templates/ImageComponent"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { BasicCharacterFavorite } from "../types/malFavorites"
 
-function DefaultCharacterFavorite({ character, index }: { character: CharacterFavorites; index: number }): JSX.Element {
+function DefaultCharacterFavorite({
+  character,
+  index,
+}: {
+  character: BasicCharacterFavorite
+  index: number
+}): JSX.Element {
   const img = character.image
   const name = treatJapaneseName(character.name)
 
   return (
-    <div className="h-[50px] flex rounded-2xl overflow-hidden border border-primary-50 border-solid">
-      <div className="w-20 bg-primary text-4xl font-bold flex items-center justify-center text-shadow">{index + 1}</div>
-      <div className="flex items-center pl-2 text-2xl font-bold truncate text-shadow w-full">{name}</div>
+    <div className="h-[50px] flex rounded-2xl overflow-hidden border border-default-highlight border-solid">
+      <div className="w-20 bg-default-highlight text-4xl font-bold flex items-center justify-center text-default-surface">
+        {index + 1}
+      </div>
+      <div className="flex items-center pl-1 text-xl font-semibold truncate w-full text-default-hightlight">{name}</div>
       <div className="w-36 h-full aspect-character overflow-hidden">
-        <Img64 url64={img} alt={name} className="image-square" />
+        <ImageComponent url64={img} alt={name} className="image-square" width={144} height={144} />
       </div>
     </div>
   )
@@ -32,30 +40,24 @@ function TerminalCharacterFavorite({
   character,
   index,
 }: {
-  character: CharacterFavorites
+  character: BasicCharacterFavorite
   index: number
 }): JSX.Element {
   const name = treatJapaneseName(character.name)
-  const url = character.url
 
   return (
     <div className="flex align-center sm-text gap-1">
       <span className="text-raw">[{index + 1}]</span>
-      <a
-        href={url ?? "#"}
-        target="_blank"
-        rel="noreferrer"
-        className="text-terminal-warning md-2-text text-bold truncate no-underline"
-      >
-        - {name}
-      </a>
+      <span className="text-terminal-warning md-2-text text-bold truncate no-underline">- {name}</span>
     </div>
   )
 }
 
-function DefaultCharactersFavorites({ data }: { data: CharacterFavorites[] }): JSX.Element {
+function DefaultCharactersFavorites({ data }: { data: BasicCharacterFavorite[] }): JSX.Element {
   logger({ message: `Fetching MAL favorites for characters`, level: "info", __filename })
-  const { myanimelist } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
   if (!myanimelist) throw new Error("MAL plugin not found in DefaultCharactersFavorites component")
   if (!data) return <ErrorMessage message="No data found in MalStatistics component" />
 
@@ -76,7 +78,7 @@ function DefaultCharactersFavorites({ data }: { data: CharacterFavorites[] }): J
       <RenderBasedOnStyle
         defaultComponent={
           <>
-            {!hideTitle && <DefaultTitle title={title ?? "Favorite Characters"} icon={<FaHeart />} />}
+            {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
             <div className="flex flex-col gap-1">
               {data.map((data, index) => (
                 <DefaultCharacterFavorite character={data} index={index} key={data.mal_id} />

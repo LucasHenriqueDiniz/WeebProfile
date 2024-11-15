@@ -1,8 +1,6 @@
-import React from "react"
-
-import "./global.css"
-import ToastProvider from "./ToastProvider"
 import { Metadata } from "next"
+import React from "react"
+import ToastProvider from "./ToastProvider"
 
 export const metadata: Metadata = {
   title: "Weeb Profile",

@@ -1,32 +1,32 @@
+import getPseudoCommands from "core/utils/getPseudoCommands"
+import React from "react"
 import { FaCalendar, FaHashtag, FaHeart, FaStar, FaVideo } from "react-icons/fa"
 import { GoDotFill } from "react-icons/go"
-import DefaultTitle from "templates/Default/Default_Title"
+import logger from "source/helpers/logger"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import ImageComponent from "source/templates/ImageComponent"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import DefaultTitle from "templates/Default/DefaultTitle"
 import { DefaultTag, TerminalTag } from "templates/GenreTags"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "source/templates/Terminal/TerminalCommand"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import getPseudoCommands from "core/utils/getPseudoCommands"
-import Img64 from "core/src/base/ImageComponent"
-import { FullMalAnimeResponse } from "../types/malFavoritesResponse"
-import React from "react"
-import ErrorMessage from "source/templates/Error_Style"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
-import logger from "source/helpers/logger"
+import { FullAnimeFavorite } from "../types/malFavorites"
 
 function DefaultFavoriteImage({
   favorite,
   isHalf,
   noSummary,
 }: {
-  favorite: FullMalAnimeResponse
+  favorite: FullAnimeFavorite
   isHalf: boolean
   noSummary: boolean
 }): JSX.Element {
   const imageUrl = favorite.image
   const title = favorite.title
   const mean_score = favorite.score
-  const release_year = favorite.year || favorite.aired.prop.from.year
+  const release_year = favorite.year
   const synopsis = favorite.synopsis
   const num_episodes = favorite.episodes
   const genres = favorite.genres?.map((genre) => genre.name) ?? []
@@ -38,41 +38,48 @@ function DefaultFavoriteImage({
   }
 
   return (
-    <div className={`flex ${noSummary ? "h-[80px]" : "h-[120px]"} overflow-hidden gap-4`}>
-      <div className={`${noSummary ? "square-container h-full" : "favorite-container"}`}>
-        <Img64 url64={imageUrl} alt={title} className={noSummary ? "image-square" : "image-portrait"} />
+    <div className={`flex ${noSummary ? "h-[75px]" : "h-[120px]"} overflow-hidden gap-4`}>
+      <div className={`${noSummary ? "image-square-container-75 h-full" : "favorite-container"}`}>
+        <ImageComponent
+          url64={imageUrl}
+          alt={title}
+          className={noSummary ? "image-square" : "image-portrait"}
+          width={75}
+          height={noSummary ? 75 : 120}
+        />
       </div>
       <div className="w-full flex flex-col justify-between overflow-hidden">
-        <span className="text-lg font-bold truncate">{title}</span>
-        <div className="flex gap-4 items-baseline">
+        <span className="text-lg font-semibold truncate text-default-muted">{title}</span>
+        <div className="flex gap-2 items-baseline">
           {mean_score && (
-            <span className="text-primary font-semibold flex items-center gap-2">
-              <FaStar className="text-primary" size={14} /> {mean_score}
+            <span className="text-default-highlight font-semibold flex items-baseline gap-1">
+              <FaStar className="text-default-highlight" size={14} /> {mean_score}
             </span>
           )}
           {popularity && (
-            <span className="font-semibold flex items-center gap-2">
-              <FaHashtag size={14} color="inherit" />
+            <span className="font-semibold flex items-baseline gap-1">
+              <FaHashtag size={14} color="text-default-highlight" />
               {popularity}
             </span>
           )}
           {num_episodes && (
-            <span className="font-semibold flex items-center gap-2">
-              <FaVideo size={14} />
+            <span className="font-semibold flex items-baseline gap-1">
+              <FaVideo size={14} color="text-default-highlight" />
               {num_episodes}
             </span>
           )}
           {release_year && (
-            <span className="font-semibold flex items-center gap-2">
-              <FaCalendar size={14} />
+            <span className="font-semibold flex items-baseline gap-1">
+              <FaCalendar size={14} color="text-default-highlight" />
               {release_year}
             </span>
           )}
           {status && (
-            <span
-              className={`text-mal-${status.toLowerCase().split(" ").join("-")} font-semibold flex items-center gap-2 half-mode:hidden`}
-            >
-              <GoDotFill size={14} color="inherit" />
+            <span className={`font-semibold flex items-baseline gap-1 half-mode:hidden`}>
+              <GoDotFill
+                size={14}
+                color={`text-mal-${status === "Finished Airing" || status === "Finished" ? "complete" : "watching"}`}
+              />
               {status}
             </span>
           )}
@@ -96,14 +103,16 @@ function TerminalFavoriteImage({
   favorite,
   noSummary,
 }: {
-  favorite: FullMalAnimeResponse
+  favorite: FullAnimeFavorite
   noSummary: boolean
 }): JSX.Element {
-  const { size } = getEnvVariables()
-  const isHalf = size === "half"
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+
+  const isHalf = env.size === "half"
   const title = favorite.title
   const mean_score = favorite.score
-  const release_year = favorite.year || favorite.aired.prop.from.year
+  const release_year = favorite.year
   const synopsis = favorite.synopsis
   const num_episodes = favorite.episodes
   const genres = favorite.genres?.map((genre) => genre.name) || []
@@ -114,10 +123,10 @@ function TerminalFavoriteImage({
     <div className="mt-[0.5rem]">
       <div className="text-terminal-warning truncate">* {title}</div>
       <div className="flex gap-4 items-baseline">
-        {mean_score && <span className="text-primary-75 font-bold truncate">⭐{mean_score}</span>}
-        {popularity && <span className="text-primary-75 font-bold truncate"># {popularity}</span>}
-        {num_episodes && <span className="text-primary-75 font-bold truncate">🎞️ {num_episodes} eps</span>}
-        {release_year && <span className="text-primary-75 font-bold truncate">📅 {release_year}</span>}
+        {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
+        {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
+        {num_episodes && <span className="text-default-muted font-bold truncate">🎞️ {num_episodes} EP&apos;s</span>}
+        {release_year && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
           <span
             className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "complete" : "watching"} font-bold half-mode:hidden truncate`}
@@ -139,16 +148,18 @@ function TerminalFavoriteImage({
     </div>
   )
 }
-function AnimeFavorites({ data }: { data: FullMalAnimeResponse[] }): JSX.Element {
+function AnimeFavorites({ data }: { data: FullAnimeFavorite[] }): JSX.Element {
   logger({ message: `Fetching MAL favorites for anime`, level: "info", __filename })
-  const { myanimelist, size } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
   if (!myanimelist) throw new Error("myanimelist not found in env variables")
   if (!data) return <ErrorMessage message="No data found in MalStatistics component" />
 
   const title = myanimelist.anime_favorites_title ?? (MAL_ENV_VARIABLES.anime_favorites_title.defaultValue as string)
   const maxItems = myanimelist.anime_favorites_max ?? (MAL_ENV_VARIABLES.anime_favorites_max.defaultValue as number)
   const hideTitle = myanimelist.anime_favorites_hide_title
-  const isHalf = size === "half"
+  const isHalf = env.size === "half"
   const dataLength = data.length
   const noSummary =
     myanimelist.anime_favorites_no_summary ?? (MAL_ENV_VARIABLES.anime_favorites_no_summary.defaultValue as boolean)

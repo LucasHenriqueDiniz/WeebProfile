@@ -1,18 +1,18 @@
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { AiOutlineTrophy } from "react-icons/ai"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import ErrorMessage from "source/templates/Error_Style"
-import List from "templates/Default/Default_List"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "source/templates/Terminal/TerminalCommand"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import TerminalList from "source/templates/Terminal/TerminalList"
-import { ListItemProps } from "templates/types"
-import { TopTrack } from "../types/lastFmTypes"
 import { abbreviateNumber } from "source/helpers/number"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import TerminalList from "source/templates/Terminal/TerminalList"
+import List from "templates/Default/DefaultList"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import { ListItemProps } from "templates/types"
 import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
+import { TopTrack } from "../types/lastFmTypes"
 
 interface Props {
   data: TopTrack[]
@@ -20,7 +20,9 @@ interface Props {
 }
 
 function LastFmTopTracksList({ data, interval }: Props): JSX.Element {
-  const { lastfm } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const lastfm = env.lastfm
   if (!lastfm) throw new Error("LastFM plugin not found in TopTracksList component")
   if (!data || data.length === 0) {
     return <ErrorMessage message="No data found in LastFmTopTracksList component" />
@@ -49,7 +51,7 @@ function LastFmTopTracksList({ data, interval }: Props): JSX.Element {
   })) as ListItemProps[]
 
   return (
-    <section id="last-fm" className="top-tracks">
+    <section id="lastfm-top-tracks">
       <RenderBasedOnStyle
         defaultComponent={
           <>

@@ -1,36 +1,49 @@
-import { MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
-import { MalProfileResponse } from "../types/malProfileResponse"
+import { MalLastUpdates } from "../types/malLastUpdates"
+import { MalProfileResponse } from "../types/ProfileResponse"
 import MyAnimeListPlugin from "../types/MyAnimeListConfig"
 import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
 import imageToBase64 from "source/plugins/@utils/imageToBase64"
 
-async function fetchLastUpdates(
-  profile: MalProfileResponse,
-  plugin: MyAnimeListPlugin
-): Promise<MalLastUpdatesResponse> {
+async function transformLastUpdates(profile: MalProfileResponse, plugin: MyAnimeListPlugin): Promise<MalLastUpdates> {
   const lastUpdatesMax = plugin.last_activity_max ?? (MAL_ENV_VARIABLES.last_activity_max.defaultValue as number)
 
   const anime = await Promise.all(
-    profile.data.updates.anime.slice(0, lastUpdatesMax).map(async (item) => ({
-      ...item,
-      entry: {
-        ...item.entry,
-        image: (await imageToBase64(item.entry.image)) || item.entry.image,
-      },
+    profile.updates.anime.slice(0, lastUpdatesMax).map(async (item) => ({
+      title: item.entry.title,
+      image: await imageToBase64(
+        item.entry.images.jpg.image_url ||
+          item.entry.images.jpg.large_image_url ||
+          item.entry.images.jpg.small_image_url ||
+          item.entry.images.webp?.image_url ||
+          "https://placecats.com/300/300"
+      ),
+      score: item.score,
+      status: item.status,
+      episodes_seen: item.episodes_seen,
+      episodes_total: item.episodes_total,
+      date: item.date,
     }))
   )
 
   const manga = await Promise.all(
-    profile.data.updates.manga.slice(0, lastUpdatesMax).map(async (item) => ({
-      ...item,
-      entry: {
-        ...item.entry,
-        image: (await imageToBase64(item.entry.image)) || item.entry.image,
-      },
+    profile.updates.manga.slice(0, lastUpdatesMax).map(async (item) => ({
+      title: item.entry.title,
+      image: await imageToBase64(
+        item.entry.images.jpg.image_url ||
+          item.entry.images.jpg.large_image_url ||
+          item.entry.images.jpg.small_image_url ||
+          item.entry.images.webp?.image_url ||
+          "https://placecats.com/300/300"
+      ),
+      score: item.score,
+      status: item.status,
+      chapters_read: item.chapters_read,
+      chapters_total: item.chapters_total,
+      date: item.date,
     }))
   )
 
   return { anime, manga }
 }
 
-export default fetchLastUpdates
+export default transformLastUpdates

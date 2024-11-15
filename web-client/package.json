@@ -50,8 +50,9 @@
     "webpack": "5.89.0"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev & npm run build:css -- --watch",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "build:css": "tailwindcss -i ./app/globals.css -o ./app/generated-tailwind.css"
   }
 }

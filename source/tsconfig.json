@@ -31,6 +31,6 @@
     "types": ["node"],
     "typeRoots": ["../node_modules/@types", "./node_modules/@types"]
   },
-  "include": ["source/**/*", "styles/**/*", "plugins/**/*", "templates/**/*"],
+  "include": ["source/**/*", "styles/**/*", "plugins/**/*", "templates/**/*", "test.ts"],
   "exclude": ["node_modules"]
 }

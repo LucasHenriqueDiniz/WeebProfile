@@ -1,7 +1,9 @@
 import isNodeEnvironment from "plugins/@utils/isNodeEnv"
 import { PluginsConfig } from "plugins/@types/plugins"
+import logger from "source/helpers/logger"
 
 function getEnvVariables(): PluginsConfig {
+  logger({ message: "Getting environment variables...", level: "info", __filename })
   const isNodeEnv = isNodeEnvironment()
 
   if (isNodeEnv) {

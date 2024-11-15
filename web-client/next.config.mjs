@@ -1,18 +1,17 @@
 /**
  * @type {import('next').NextConfig}
  */
+
 const config = {
   reactStrictMode: true,
   transpilePackages: ["@core", "@source"],
-  images: {
-    remotePatterns: [
-      { hostname: "avatars.githubusercontent.com" },
-      { hostname: "cdn.myanimelist.net" },
-      { hostname: "lastfm.freetls.fastly.net" },
-      { hostname: "placecats" },
-    ],
-  },
   webpack: (config, { isServer }) => {
+    config.watchOptions = {
+      poll: 1000,
+      aggregateTimeout: 300,
+    }
+    config.cache = false
+
     if (!isServer) {
       config.resolve = {
         ...config.resolve,
@@ -32,8 +31,29 @@ const config = {
         },
       }
     }
+
     return config
   },
+  compiler: {
+    removeConsole: false,
+  },
+  images: {
+    remotePatterns: [
+      { hostname: "avatars.githubusercontent.com" },
+      { hostname: "cdn.myanimelist.net" },
+      { hostname: "lastfm.freetls.fastly.net" },
+      { hostname: "placecats" },
+    ],
+  },
+  headers:
+    process.env.NODE_ENV === "development"
+      ? () => [
+          {
+            source: "/_next/static/css/_app-client_src_app_globals_css.css",
+            headers: [{ key: "Vary", value: "*" }],
+          },
+        ]
+      : undefined,
   rewrites() {
     return [
       { source: "/healthz", destination: "/api/health" },

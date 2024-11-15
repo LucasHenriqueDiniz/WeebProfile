@@ -11,12 +11,28 @@
     @apply w-full h-full object-cover object-center aspect-square;
   }
 
+  .image-square-container-50 {
+    @apply w-[50px] h-[50px] overflow-hidden rounded-lg aspect-update min-w-[50px];
+  }
+
+  .image-square-container-60 {
+    @apply w-[60px] h-[60px] overflow-hidden rounded-lg aspect-update min-w-[60px];
+  }
+
   .favorite-container {
     @apply relative overflow-hidden rounded-lg max-h-[120px] max-w-[75px] aspect-anime-cover min-h-[120px] min-w-[75px];
   }
 
-  .square-container {
+  .image-square-container-75 {
     @apply w-[75px] h-[75px] overflow-hidden rounded-lg aspect-update min-w-[75px];
+  }
+
+  .image-square-container-100 {
+    @apply w-[100px] h-[100px] overflow-hidden rounded-lg aspect-update min-w-[100px];
+  }
+
+  .image-square-container-200 {
+    @apply w-[200px] h-[200px] overflow-hidden rounded-lg aspect-update min-w-[200px];
   }
 
   .synopsis-text {
@@ -24,11 +40,11 @@
   }
 
   .genre-tag {
-    @apply truncate w-auto w-min h-min flex items-center justify-center gap-1 uppercase font-semibold text-[0.65em];
+    @apply truncate w-auto h-min flex items-center justify-center gap-1 uppercase font-semibold text-[0.65em];
   }
 
   .terminal-navbar {
-    @apply bg-terminal-surface text-terminal-default grid grid-cols-[min-content_auto_min-content] w-full p-2 rounded-t-lg font-mono;
+    @apply bg-terminal-surface text-terminal grid grid-cols-[min-content_auto_min-content] w-full p-2 rounded-t-lg font-mono;
   }
 
   .terminal-body {
@@ -37,5 +53,9 @@
 
   .terminal-header {
     @apply flex items-center text-terminal-muted border-b border-terminal-muted p-2 justify-between bg-terminal-surface rounded-t-lg;
+  }
+
+  .favorite-overlay {
+    @apply absolute bottom-0 left-0 w-full bg-black bg-opacity-65 text-white p-1 text-[10px] truncate;
   }
 }

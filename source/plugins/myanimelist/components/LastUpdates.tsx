@@ -1,18 +1,18 @@
-import React from "react"
-import { format } from "date-fns"
-import { FaList, FaStar } from "react-icons/fa"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "source/templates/Terminal/TerminalCommand"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
-import Img64 from "core/src/base/ImageComponent"
-import { LastUpdatesAnime, LastUpdatesManga, MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
-import PercentageBar from "./Default_PercentageBar"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import ErrorMessage from "source/templates/Error_Style"
-import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { format } from "date-fns"
+import React from "react"
+import { FaList, FaStar } from "react-icons/fa"
 import { emojiStatus } from "source/helpers/emoji"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import ImageComponent from "source/templates/ImageComponent"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { LastUpdatesAnime, LastUpdatesManga, MalLastUpdates } from "../types/malLastUpdates"
+import PercentageBar from "./Default_PercentageBar"
 
 function getStatusColor(status: string) {
   // Needed for the tailwind load the color classes
@@ -38,8 +38,8 @@ function getStatusColor(status: string) {
 
 function DefaultUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga }): JSX.Element {
   const isAnime = "episodes_total" in update
-  const title = update.entry.title
-  const imgSrc = update.entry.image
+  const title = update.title
+  const imgSrc = update.image
   const total = isAnime ? (update.episodes_total ?? 0) : (update.chapters_total ?? 0)
   const current = isAnime ? (update.episodes_seen ?? 0) : (update.chapters_read ?? 0)
   const status = update.status
@@ -47,15 +47,15 @@ function DefaultUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga
   const score = update.score ?? 0
 
   return (
-    <div className="grid grid-cols-[74px_1fr] gap-4 h-20 min-h-20 max-h-20">
-      <div className="square-container">
-        <Img64 url64={imgSrc} alt={title} className="image-square" />
+    <div className="grid grid-cols-[75px_1fr] gap-4 h-20 min-h-[75px] max-h-[75px]">
+      <div className="image-square-container-75">
+        <ImageComponent url64={imgSrc} alt={title} className="image-square" width={75} height={75} />
       </div>
       <div className="flex flex-col justify-evenly w-full">
         <div className="grid grid-cols-[auto_1fr] items-center justify-end">
-          <h3 className="text-lg font-bold truncate">{title}</h3>
-          <span className="flex items-baseline justify-end text-xl text-primary gap-2">
-            {score === 0 || !score ? "-" : score} <FaStar size={18} className="text-primary" />
+          <h3 className="text-lg font-semibold truncate text-default-muted">{title}</h3>
+          <span className="flex items-baseline justify-end text-xl text-default-highlight gap-2">
+            {score === 0 || !score ? "-" : score} <FaStar size={18} className="text-default-highlight" />
           </span>
         </div>
 
@@ -77,7 +77,7 @@ function DefaultUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga
 
 function TerminalUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga }): JSX.Element {
   const isAnime = "episodes_total" in update
-  const title = update.entry.title
+  const title = update.title
   const total = isAnime ? (update.episodes_total ?? 0) : update.chapters_total || 0
   const current = isAnime ? (update.episodes_seen ?? 0) : update.chapters_read || 0
   const status = update.status
@@ -119,8 +119,10 @@ function TerminalUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesMang
   )
 }
 
-export default function LastUpdates({ data }: { data: MalLastUpdatesResponse }): JSX.Element {
-  const { myanimelist } = getEnvVariables()
+export default function LastUpdates({ data }: { data: MalLastUpdates }): JSX.Element {
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
   if (!myanimelist) throw new Error("Mal plugin not found in Default_LastUpdates component")
   if (!data) return <ErrorMessage message="No data found in Default_LastUpdates component" />
 
@@ -128,10 +130,14 @@ export default function LastUpdates({ data }: { data: MalLastUpdatesResponse }):
   const media = myanimelist?.statistics_media ?? (MAL_ENV_VARIABLES.statistics_media.defaultValue as string)
 
   const array = media === "both" ? [...data.anime, ...data.manga] : media === "anime" ? data.anime : data.manga
-  const allUpdates = array.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  let allUpdates = array.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   const title = myanimelist?.last_activity_title ?? (MAL_ENV_VARIABLES.last_activity_title.defaultValue as string)
   const maxItems = myanimelist?.last_activity_max ?? (MAL_ENV_VARIABLES.last_activity_max.defaultValue as number)
+
+  if (maxItems && allUpdates.length > maxItems) {
+    allUpdates = allUpdates.slice(0, maxItems)
+  }
 
   return (
     <section id="mal-last-updates">
@@ -139,7 +145,7 @@ export default function LastUpdates({ data }: { data: MalLastUpdatesResponse }):
         defaultComponent={
           <>
             <DefaultTitle title={title} icon={<FaList />} />
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1">
               {allUpdates.map((update, index) => (
                 <DefaultUpdate key={index} update={update} />
               ))}
