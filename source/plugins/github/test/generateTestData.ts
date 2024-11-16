@@ -2,11 +2,10 @@ import { faker } from "@faker-js/faker"
 import { ActivityData } from "../types/ActivityData"
 import { CalendarData } from "../types/CalendarData"
 import { CodeHabitsData } from "../types/CodeHabitsData"
-import { EventsData, GitHubEvent } from "../types/EventsData"
+import GithubData from "../types/GithubData"
 import { ProcessedLanguage } from "../types/LanguagesData"
 import { RepositoriesData, RepositoryData } from "../types/RepositoryData"
 import { UserResponse } from "../types/UserResponse"
-import GithubData from "../types/GithubData"
 
 function generateTestRepositoryData(count: number = 10): RepositoryData[] {
   return Array.from({ length: count }, () => ({
@@ -89,10 +88,13 @@ function generateTestCodeHabitsData(): CodeHabitsData {
     totalCommits: faker.number.int({ min: 1000, max: 10000 }),
     languages: generateTestLanguagesData().reduce(
       (acc, lang) => {
-        acc[lang.name] = lang.size
+        acc[lang.name] = {
+          count: lang.size,
+          color: lang.color,
+        }
         return acc
       },
-      {} as Record<string, number>
+      {} as Record<string, { count: number; color: string }>
     ),
 
     fileTypes: Array.from({ length: 10 }, () => ({
@@ -115,66 +117,6 @@ function generateTestCodeHabitsData(): CodeHabitsData {
     timeRange: {
       start: faker.date.past().toISOString(),
       end: faker.date.recent().toISOString(),
-    },
-  }
-}
-
-function generateTestEventsData(): EventsData {
-  const events: GitHubEvent[] = Array.from({ length: 10 }, () => {
-    const type = faker.helpers.arrayElement([
-      "PullRequestEvent",
-      "CreateEvent",
-      "IssueEvent",
-      "PushEvent",
-    ]) as GitHubEvent["type"]
-
-    const baseEvent = {
-      type,
-      repository: {
-        name: faker.internet.domainWord(),
-      },
-      createdAt: faker.date.recent().toISOString(),
-    }
-
-    switch (type) {
-      case "PullRequestEvent":
-        return {
-          ...baseEvent,
-          action: faker.helpers.arrayElement(["opened", "closed", "merged"]),
-          pullRequest: {
-            title: faker.git.commitMessage(),
-            repository: baseEvent.repository,
-            changedFiles: faker.number.int({ min: 1, max: 100 }),
-            additions: faker.number.int({ min: 1, max: 1000 }),
-            deletions: faker.number.int({ min: 1, max: 1000 }),
-          },
-        }
-      case "CreateEvent":
-        return {
-          ...baseEvent,
-          ref: faker.git.branch(),
-          refType: faker.helpers.arrayElement(["branch", "tag"]),
-        }
-      case "IssueEvent":
-        return {
-          ...baseEvent,
-          action: faker.helpers.arrayElement(["opened", "closed", "reopened"]),
-          issue: {
-            title: faker.git.commitMessage(),
-          },
-        }
-      case "PushEvent":
-        return {
-          ...baseEvent,
-          pushSize: faker.number.int({ min: 1, max: 10 }),
-          ref: `refs/heads/${faker.git.branch()}`,
-        }
-    }
-  })
-
-  return {
-    events: {
-      nodes: events,
     },
   }
 }

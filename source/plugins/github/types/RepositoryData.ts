@@ -18,6 +18,7 @@ export interface RepositoryData {
   } | null
 }
 
+// @ TODO: remove anys
 export interface RepositoriesData {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   repositories: any[]

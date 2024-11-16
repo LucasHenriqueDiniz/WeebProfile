@@ -22,7 +22,7 @@ const TerminalHorizontalMultipleItemsBar = ({
 
   return (
     <>
-      <div className="font-mono tracking-tighter text-center mx-1 overflow-hidden">
+      <div className="font-mono tracking-tighter text-center mx-1 overflow-hidden w-full">
         {items.map((item, index) => (
           <span
             {...(item.className ? { className: item.className } : {})}
