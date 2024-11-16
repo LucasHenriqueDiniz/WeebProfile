@@ -10,15 +10,19 @@ function TerminalGridItem({ title, subtitle, value, index }: TerminalGridItemPro
   const isOdd = index % 2 === 0
   return (
     <>
-      <span className={`font-semibold truncate text-sm text-terminal-warning pl-1 ${isOdd ? "bg-black/25" : ""}`}>
+      <span
+        className={`font-semibold w-full truncate text-sm text-terminal-warning pl-1 ${isOdd ? "bg-black/25" : ""}`}
+      >
         {title}
       </span>
       {subtitle && (
-        <span className={`text-terminal-muted-light text-center truncate text-sm ${isOdd ? "bg-black/25" : ""}`}>
+        <span className={`text-terminal-muted-light w-full text-center truncate text-sm ${isOdd ? "bg-black/25" : ""}`}>
           {subtitle}
         </span>
       )}
-      <span className={`text-terminal-muted text-sm whitespace-nowrap pr-1 text-end ${isOdd ? "bg-black/25" : ""}`}>
+      <span
+        className={`text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ${isOdd ? "bg-black/25" : ""}`}
+      >
         {value}
       </span>
     </>

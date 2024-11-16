@@ -1,5 +1,4 @@
 import axios from "axios"
-import logger from "source/helpers/logger"
 
 export interface TokenScopes {
   repo: boolean
@@ -84,12 +83,6 @@ export async function getTokenScopes(token: string): Promise<TokenScopes> {
   }
 
   const scopes = scopesHeader.split(",").map((s: string) => s.trim())
-
-  logger({
-    message: `Token scopes: ${scopes}`,
-    level: "info",
-  })
-
   const scopesResponse = {
     repo: false,
   } as TokenScopes

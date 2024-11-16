@@ -24,7 +24,10 @@ export interface CodeHabitsData {
   }
   totalCommits: number
   languages: {
-    [key: string]: number // extension -> count
+    [key: string]: {
+      count: number
+      color: string
+    }
   }
   fileTypes: {
     [key: string]: number // filename -> count

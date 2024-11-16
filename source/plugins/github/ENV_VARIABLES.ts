@@ -130,6 +130,31 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     description: "Hide the title of the code habits section",
     sections: ["code_habits"],
   },
+  code_habits_hide_languages: {
+    type: "boolean",
+    description: "Hide the languages of the code habits section",
+    sections: ["code_habits"],
+  },
+  code_habits_hide_stats: {
+    type: "boolean",
+    description: "Hide the stats of the code habits section",
+    sections: ["code_habits"],
+  },
+  code_habits_hide_weekdays: {
+    type: "boolean",
+    description: "Hide the title of the code habits section",
+    sections: ["code_habits"],
+  },
+  code_habits_hide_hours: {
+    type: "boolean",
+    description: "Hide the hours of the code habits section",
+    sections: ["code_habits"],
+  },
+  code_habits_hide_footer: {
+    type: "boolean",
+    description: "Hide the footer of the code habits section",
+    sections: ["code_habits"],
+  },
 }
 
 export default GITHUB_ENV_VARIABLES

@@ -12,6 +12,7 @@ import { checkSectionScopes, getTokenScopes } from "./tokenScopes"
 import { RepositoriesData } from "../types/RepositoryData"
 import { CodeHabitsData } from "../types/CodeHabitsData"
 import fetchRateLimit from "./rateLimit"
+import { getLanguageFromExtension } from "../utils/fileExtensionToLanguage"
 
 interface GraphQLResponse {
   user: {
@@ -59,7 +60,8 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean | undefined): 
   const tokenScopes = await getTokenScopes(token)
   logger({
     message: `Token scopes: ${JSON.stringify(tokenScopes)}`,
-    level: "info",
+    level: "debug",
+    __filename,
   })
 
   const data: Partial<GithubData> = {}
@@ -67,8 +69,17 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean | undefined): 
   const rateLimit = await fetchRateLimit(token)
   logger({
     message: `Rate limit: ${rateLimit.rate.remaining} / ${rateLimit.rate.limit}`,
-    level: "info",
+    level: "debug",
+    __filename,
   })
+  if (rateLimit.rate.remaining < 1000) {
+    // @ TODO: Add a way to handle this
+    logger({
+      message: `Rate limit is low: ${rateLimit.rate.remaining} / ${rateLimit.rate.limit}`,
+      level: "warn",
+      __filename,
+    })
+  }
 
   const graphqlWithAuth = graphql.defaults({
     headers: {
@@ -84,22 +95,20 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean | undefined): 
     for (const section of sections) {
       logger({
         message: `Processing section: ${section}`,
-        level: "info",
+        level: "debug",
+        __filename,
       })
 
       if (!checkSectionScopes(tokenScopes, section)) {
         logger({
           message: `Skipping ${section} due to missing required scopes [${JSON.stringify(tokenScopes)}], fix your token scopes at https://github.com/settings/tokens`,
           level: "error",
+          __filename,
         })
         continue
       }
-
+      //  Because code habits dont use graphql, it comes before the graphql query
       if (section === "code_habits") {
-        logger({
-          message: "Processing code_habits section",
-          level: "info",
-        })
         data.codeHabits = await processCodeHabitsData(rest, username)
         continue
       }
@@ -151,14 +160,16 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean | undefined): 
     }
 
     logger({
-      message: `Final data object: ${JSON.stringify(data, null, 2)}`,
+      message: `Final data object: ${JSON.stringify(data).slice(0, 500)}`,
       level: "debug",
+      __filename,
     })
     return data as GithubData
   } catch (error) {
     logger({
       message: `Error fetching GitHub data: ${error instanceof Error ? error.message : "Unknown error"}`,
       level: "error",
+      __filename,
     })
     throw error
   }
@@ -177,28 +188,25 @@ function processLanguagesData(result: GraphQLResponse): ProcessedLanguage[] {
 }
 
 async function processCodeHabitsData(rest: any, login: string, days = 90): Promise<CodeHabitsData> {
-  logger({
-    message: "Starting processCodeHabitsData",
-    level: "info",
-  })
-
   const commitsByDay: Record<string, number> = {}
   const commitsByHour: Record<number, number> = {}
   let totalCommits = 0
+  let totalChanges = 0
+  let totalFilesChanged = 0
+  let largestCommit = 0
+  const languages: Record<string, { count: number; color: string }> = {}
+  const fileTypes: Record<string, number> = {}
 
   // Get user recent activity
   const events = []
   const pages = Math.ceil(days / 100)
 
-  let totalChanges = 0
-  let totalFiles = 0
-  let largestCommit = 0
-
   try {
     for (let page = 1; page <= pages; page++) {
       logger({
         message: `Fetching events page ${page}`,
-        level: "info",
+        level: "debug",
+        __filename,
       })
 
       const response = await rest.activity.listPublicEventsForUser({
@@ -210,74 +218,17 @@ async function processCodeHabitsData(rest: any, login: string, days = 90): Promi
       logger({
         message: `Got ${response.data.length} events from page ${page}`,
         level: "info",
+        __filename,
       })
 
       events.push(...response.data)
     }
-
-    // Filter push events
-    const commits = events
-      .filter(({ type }) => type === "PushEvent")
-      .filter(({ actor }) => actor.login?.toLowerCase() === login.toLowerCase())
-      .filter(({ created_at }) => new Date(created_at) > new Date(Date.now() - days * 24 * 60 * 60 * 1000))
-
-    // Process commits with their stats
-    for (const event of commits) {
-      const pushEvent = event.payload
-      if (pushEvent.commits) {
-        for (const commit of pushEvent.commits) {
-          const additions = commit.stats?.additions || 0
-          const deletions = commit.stats?.deletions || 0
-          const totalChangesInCommit = additions + deletions
-
-          totalChanges += totalChangesInCommit
-          totalFiles += commit.files?.length || 0
-          largestCommit = Math.max(largestCommit, totalChangesInCommit)
-        }
-      }
-    }
-
-    // Process commits
-    commits.forEach((event) => {
-      const date = new Date(event.created_at)
-      const day = date.toLocaleDateString("en-US", { weekday: "long" })
-      const hour = date.getHours()
-
-      commitsByDay[day] = (commitsByDay[day] || 0) + 1
-      commitsByHour[hour] = (commitsByHour[hour] || 0) + 1
-      totalCommits++
-    })
-
-    const result = {
-      commitsByDay,
-      commitsByHour,
-      totalCommits,
-      analyzedCommits: commits.length,
-      languages: {},
-      fileTypes: {},
-      commitStats: {
-        averageChangesPerCommit: commits.length > 0 ? Math.round(totalChanges / commits.length) : 0,
-        totalFilesChanged: totalFiles,
-        largestCommit: largestCommit,
-      },
-      timeRange: {
-        start: new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString(),
-        end: new Date().toISOString(),
-      },
-    }
-
-    logger({
-      message: `Processed code habits data: ${JSON.stringify(result)}`,
-      level: "info",
-    })
-
-    return result
   } catch (error) {
     logger({
       message: `Error fetching events: ${error instanceof Error ? error.message : "Unknown error"}`,
       level: "error",
+      __filename,
     })
-    // Return empty data structure on error
     return {
       commitsByDay: {},
       commitsByHour: {},
@@ -296,6 +247,100 @@ async function processCodeHabitsData(rest: any, login: string, days = 90): Promi
       },
     }
   }
+
+  // Filter push events
+  const commits = events
+    .filter(({ type }) => type === "PushEvent")
+    .filter(({ actor }) => actor.login?.toLowerCase() === login.toLowerCase())
+    .filter(({ created_at }) => new Date(created_at) > new Date(Date.now() - days * 24 * 60 * 60 * 1000))
+
+  logger({
+    message: `Filtered commits: ${commits.length}`,
+    level: "info",
+    __filename,
+  })
+
+  // Process commits with detailed stats
+  for (const event of commits) {
+    const date = new Date(event.created_at)
+    const day = date.toLocaleDateString("en-US", { weekday: "long" })
+    const hour = date.getHours()
+
+    commitsByDay[day] = (commitsByDay[day] || 0) + 1
+    commitsByHour[hour] = (commitsByHour[hour] || 0) + 1
+    totalCommits++
+
+    if (event.type === "PushEvent" && event.payload && event.payload.commits) {
+      for (const commit of event.payload.commits) {
+        try {
+          // Get detailed commit information
+          const [owner, repo] = event.repo.name.split("/")
+          const commitResponse = await rest.repos.getCommit({
+            owner,
+            repo,
+            ref: commit.sha,
+          })
+
+          const files = commitResponse.data.files || []
+          totalFilesChanged += files.length
+
+          // Process changes
+          const changes = files.reduce((acc: number, file: any) => {
+            const changes = (file.additions || 0) + (file.deletions || 0)
+            acc += changes
+
+            // Process language from file extension
+            const { name: language, color } = getLanguageFromExtension(file.filename)
+            if (!languages[language]) {
+              languages[language] = { count: 0, color }
+            }
+            languages[language].count += changes
+
+            // Process file types
+            fileTypes[file.filename] = (fileTypes[file.filename] || 0) + 1
+
+            return acc
+          }, 0)
+
+          totalChanges += changes
+          largestCommit = Math.max(largestCommit, changes)
+        } catch (error) {
+          logger({
+            message: `Error fetching commit details: ${error instanceof Error ? error.message : "Unknown error"}`,
+            level: "warn",
+            __filename,
+          })
+          continue
+        }
+      }
+    }
+  }
+
+  const result = {
+    commitsByDay,
+    commitsByHour,
+    totalCommits,
+    analyzedCommits: commits.length,
+    languages,
+    fileTypes,
+    commitStats: {
+      averageChangesPerCommit: commits.length > 0 ? Math.round(totalChanges / commits.length) : 0,
+      totalFilesChanged,
+      largestCommit,
+    },
+    timeRange: {
+      start: new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString(),
+      end: new Date().toISOString(),
+    },
+  }
+
+  logger({
+    message: `Processed code habits data: ${JSON.stringify(result).slice(0, 500)}`,
+    level: "debug",
+    __filename,
+  })
+
+  return result
 }
 
 function processRepositoriesData(result: GraphQLResponse): RepositoriesData {

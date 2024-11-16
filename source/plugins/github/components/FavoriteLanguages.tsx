@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { FaCode } from "react-icons/fa"
 import { GoDotFill } from "react-icons/go"
@@ -153,13 +152,7 @@ const FavoriteLanguages = ({ languageData, repositoriesData }: FavoriteLanguages
         }
         terminalComponent={
           <>
-            <TerminalCommand
-              command={getPseudoCommands({
-                plugin: "github",
-                section: "favorite-languages",
-                username: github.username,
-              })}
-            />
+            <TerminalCommand command={`gh languages ${github.username}`} />
             <TerminalFavoriteLanguages data={filteredLanguages} totalSize={totalSize} maxItems={maxItems} />
             <TerminalLineBreak />
           </>

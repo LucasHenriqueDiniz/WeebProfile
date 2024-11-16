@@ -20,6 +20,11 @@ export interface GithubConfig extends BasePluginConfig {
   calendar_hide_title?: boolean
   code_habits_title?: string
   code_habits_hide_title?: boolean
+  code_habits_hide_languages?: boolean
+  code_habits_hide_stats?: boolean
+  code_habits_hide_weekdays?: boolean
+  code_habits_hide_hours?: boolean
+  code_habits_hide_footer?: boolean
 }
 
 export default GithubConfig
