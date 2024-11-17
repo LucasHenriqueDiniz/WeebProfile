@@ -18,10 +18,9 @@ import { defaultThemes } from "source/plugins/@themes/default-themes"
 function loadCoreEnv(): PluginsConfig {
   logger({ message: "Loading environment variables...", level: "info", __filename })
 
-  // Primeiro tenta carregar do ambiente, depois do .env
   let env: NodeJS.ProcessEnv | dotenv.DotenvParseOutput = process.env
 
-  // Se não encontrar as variáveis necessárias no ambiente, tenta carregar do .env
+  // If the required variables are not found in the environment, try to load from .env
   if (!env.GH_TOKEN) {
     const dotenvResult = dotenv.config()
     if (dotenvResult.error) {

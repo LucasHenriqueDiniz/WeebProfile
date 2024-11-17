@@ -184,6 +184,72 @@ export function getTagIcon(genre: string): TagItem {
         colorClass: "text-green-500 border-green-500 bg-green-500/15",
         emoji: "😅",
       }
+    case "Vampire":
+      return {
+        icon: <FaRegGrinTongueSquint {...iconProps} />,
+        colorClass: "text-red-800 border-red-800 bg-red-800/15",
+        emoji: "🧛",
+      }
+    case "Sci-Fi":
+      return {
+        icon: <FaRobot {...iconProps} />,
+        colorClass: "text-cyan-500 border-cyan-500 bg-cyan-500/15",
+        emoji: "🚀",
+      }
+    case "Suspense":
+      return {
+        icon: <FaRegQuestionCircle {...iconProps} />,
+        colorClass: "text-yellow-700 border-yellow-700 bg-yellow-700/15",
+        emoji: "😰",
+      }
+    case "Psychological":
+      return {
+        icon: <FaBrain {...iconProps} />,
+        colorClass: "text-purple-600 border-purple-600 bg-purple-600/15",
+        emoji: "🧠",
+      }
+    case "Love Polygon":
+      return {
+        icon: <FaRegGrinTongueSquint {...iconProps} />,
+        colorClass: "text-pink-400 border-pink-400 bg-pink-400/15",
+        emoji: "💕",
+      }
+    case "School":
+      return {
+        icon: <FaLandmark {...iconProps} />,
+        colorClass: "text-blue-600 border-blue-600 bg-blue-600/15",
+        emoji: "🏫",
+      }
+    case "Adult Cast":
+      return {
+        icon: <FaRegGrinBeamSweat {...iconProps} />,
+        colorClass: "text-gray-600 border-gray-600 bg-gray-600/15",
+        emoji: "🧑",
+      }
+    case "Gag Humor":
+      return {
+        icon: <FaRegLaugh {...iconProps} />,
+        colorClass: "text-yellow-500 border-yellow-500 bg-yellow-500/15",
+        emoji: "😆",
+      }
+    case "Showbiz":
+      return {
+        icon: <IoIosMusicalNotes {...iconProps} />,
+        colorClass: "text-pink-300 border-pink-300 bg-pink-300/15",
+        emoji: "🎬",
+      }
+    case "Avant Garde":
+      return {
+        icon: <FaRegDizzy {...iconProps} />,
+        colorClass: "text-purple-500 border-purple-500 bg-purple-500/15",
+        emoji: "🎨",
+      }
+    case "Gore":
+      return {
+        icon: <FaRegDizzy {...iconProps} />,
+        colorClass: "text-red-900 border-red-900 bg-red-900/15",
+        emoji: "🔪",
+      }
     default:
       return {
         icon: <IoFilmOutline {...iconProps} />,

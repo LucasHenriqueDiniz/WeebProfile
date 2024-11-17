@@ -9,21 +9,21 @@ export default async function updateGithubGist(
   filename: string
 ) {
   logger({ message: "Updating Gist...", level: "info", __filename })
+
   if (!data || data.length === 0) {
     throw new Error("No data to update Gist with")
   }
 
   try {
-    // remove all the <!-- --> comments from the html
+    // Remove all the <!-- --> comments from the html
     const formattedHtml = data.replace(/<!--.*?-->/g, "")
 
-    const gistApiUrl = `https://api.github.com/gists/${gistId}`
     const response = await axios.patch(
-      gistApiUrl,
+      `https://api.github.com/gists/${gistId}`,
       {
         description: gistTitle,
         files: {
-          github_profile_charts: {
+          [filename]: {
             content: formattedHtml,
             filename: filename,
             description: `Updated at ${new Date().toISOString()}`,
@@ -33,7 +33,7 @@ export default async function updateGithubGist(
       },
       {
         headers: {
-          Authorization: `token ${ghToken}`,
+          Authorization: `Bearer ${ghToken}`,
           "Content-Type": "application/json",
         },
       }
@@ -41,10 +41,12 @@ export default async function updateGithubGist(
 
     if (response.status !== 200) {
       throw new Error(`Error updating Gist: ${response.status} - ${response.statusText}`)
-    } else {
-      logger({ message: "Gist updated successfully", level: "success", __filename })
     }
+
+    logger({ message: "Gist updated successfully", level: "success", __filename })
+    return response.data
   } catch (error) {
-    logger({ message: `Error updating Gist\n${error}`, level: "error", __filename })
+    logger({ message: `Error updating Gist, maybe you should check your token scopes?`, level: "error", __filename })
+    throw error
   }
 }
