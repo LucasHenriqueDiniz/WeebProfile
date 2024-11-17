@@ -25,11 +25,13 @@ const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the intervals of the profile",
     sections: ["main"],
+    defaultValue: false,
   },
   recent_tracks_hide_title: {
     type: "boolean",
     description: "Hide the title of the recent tracks section",
     sections: ["recent_tracks"],
+    defaultValue: false,
   },
   recent_tracks_max: {
     type: "number",
@@ -41,6 +43,7 @@ const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the top artists section",
     sections: ["top_artists_default", "top_artists_grid", "top_artists_list"],
+    defaultValue: false,
   },
   top_artists_max: {
     type: "number",
@@ -52,6 +55,7 @@ const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the top albums section",
     sections: ["top_albums_default", "top_albums_grid", "top_albums_list"],
+    defaultValue: false,
   },
   top_albums_max: {
     type: "number",
@@ -63,6 +67,7 @@ const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the top tracks section",
     sections: ["top_tracks_default", "top_tracks_grid", "top_tracks_list"],
+    defaultValue: false,
   },
   top_tracks_max: {
     type: "number",
@@ -74,6 +79,7 @@ const LASTFM_ENV_VARIABLES: Record<keyof LastFmPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the statistics section",
     sections: ["statistics"],
+    defaultValue: false,
   },
   top_tracks_title: {
     type: "string",

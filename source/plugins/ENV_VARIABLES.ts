@@ -8,6 +8,7 @@ const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
     type: "boolean",
     description: "If the plugin is running in dev mode",
     sections: ["none"],
+    defaultValue: false,
   },
   filename: {
     defaultValue: "WeeboProfile.svg",
@@ -61,11 +62,13 @@ const MAIN_ENV_VARIABLES: Record<keyof PluginsRawConfig, pluginVariables> = {
     sections: ["none"],
   },
   hide_terminal_emojis: {
+    defaultValue: false,
     type: "boolean",
     description: "Hide the terminal emojis",
     sections: ["main"],
   },
   hide_terminal_header: {
+    defaultValue: false,
     type: "boolean",
     description: "Hide the terminal header",
     sections: ["main"],
