@@ -7,10 +7,10 @@ interface Props {
 
 export const Header = ({ icon, title }: Props): JSX.Element => {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       {icon}
-      <span className="default-header-divider">|</span>
-      <div className="xl-text-bold flex-center">{title}</div>
+      <span className="text-default-highlight md-text-bold ">|</span>
+      <div className="text-lg font-bold">{title}</div>
     </div>
   )
 }

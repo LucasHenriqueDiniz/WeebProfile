@@ -4,22 +4,11 @@ import { PluginManager } from "source/plugins/@utils/PluginManager"
 import MAIN_ENV_VARIABLES from "source/plugins/ENV_VARIABLES"
 import useStore from "./store"
 import { ActionCode } from "./storeTypes"
-
-function getDefaultValue(type: string): string | string[] | boolean | number | undefined {
-  switch (type) {
-    case "string":
-      return ""
-    case "stringArray":
-      return []
-    case "boolean":
-      return false
-    case "number":
-      return 0
-  }
-}
+import logger from "source/helpers/logger"
 
 function generateStartConfig(): PluginsConfig {
-  return PluginManager.getInstance().createDefaultConfig()
+  const pluginManager = PluginManager.getInstance()
+  return pluginManager.createDefaultConfig()
 }
 
 async function generateStartData(): Promise<PluginDataMap> {
@@ -71,7 +60,7 @@ function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: PluginNam
       return
     }
 
-    if (value !== env.defaultValue && value !== undefined) {
+    if (value !== env.defaultValue && value) {
       withEntries[entryName] = value
     }
   })
@@ -79,10 +68,10 @@ function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: PluginNam
   // Process the active plugins' configurations
   activePlugins.forEach((pluginName) => {
     const plugin = pluginManager.getPlugin(pluginName)
-    if (!plugin) return
+    if (!plugin) return logger({ message: `Plugin ${pluginName} not found`, level: "error" })
 
     const config = storeConfig[pluginName]
-    if (!config) return
+    if (!config) return logger({ message: `Config for plugin ${pluginName} not found`, level: "error" })
 
     const pluginPrefix = "PLUGIN_" + pluginName.toUpperCase()
     withEntries[pluginPrefix] = true
@@ -93,8 +82,11 @@ function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: PluginNam
       if (!(key in plugin.envVariables)) return
       const envVariable = plugin.envVariables[key as keyof typeof plugin.envVariables]
       if (!envVariable) return
+      // skip plugin_enabled, the action use use "plugin_{pluginName} = true/false"
+      if (key === "plugin_enabled") return
 
       const sections = config.sections as string[]
+      // If the plugin is not in the main section and the section is not in the plugin's sections, return
       if (
         !envVariable.sections?.includes("main") &&
         !envVariable.sections?.some((section: string) => sections.includes(section))
@@ -102,8 +94,11 @@ function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: PluginNam
         return
       }
 
-      const entryKey = `${pluginPrefix}_${key.toUpperCase()}`
-      withEntries[entryKey] = value
+      // if the value is not undefined and is not equal to the default value, add it to the withEntries
+      if (value !== envVariable.defaultValue) {
+        const entryKey = `${pluginPrefix}_${key.toUpperCase()}`
+        withEntries[entryKey] = value
+      }
     })
   })
 
@@ -128,4 +123,4 @@ function GenerateActionCode(storeConfig: PluginsConfig, activePlugins: PluginNam
   return actionCode
 }
 
-export { GenerateActionCode, GenerateMarkdownCode, generateStartConfig, generateStartData, getDefaultValue }
+export { GenerateActionCode, GenerateMarkdownCode, generateStartConfig, generateStartData }

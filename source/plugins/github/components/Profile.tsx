@@ -1,210 +1,113 @@
-import {
-  FaAward,
-  FaBoxOpen,
-  FaCode,
-  FaDonate,
-  FaGitAlt,
-  FaGithub,
-  FaHeart,
-  FaStar,
-  FaUserFriends,
-} from "react-icons/fa"
-import { RiGitRepositoryCommitsLine } from "react-icons/ri"
-import { StatisticRow } from "templates/Default/Default_StatRow"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import TerminalLineWithDots from "templates/Terminal/Terminal_LineWithDots"
-import getPseudoCommands from "core/utils/getPseudoCommands"
-import Img64 from "core/src/base/ImageComponent"
-import { UserData } from "../types"
 import React from "react"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { FaGithub, FaUserFriends } from "react-icons/fa"
+import { RiGitRepositoryLine } from "react-icons/ri"
 import { abbreviateNumber } from "source/helpers/number"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ImageComponent from "source/templates/ImageComponent"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalCommand from "templates/Terminal/TerminalCommand"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import TerminalLineWithDots from "templates/Terminal/TerminalLineWithDots"
+import { UserResponse } from "../types/UserResponse"
+import getPseudoCommands from "core/utils/getPseudoCommands"
 
-const DefaultProfile = ({ userData }: { userData: UserData }) => {
-  const years = new Date().getFullYear() - new Date(userData.createdAt).getFullYear()
-
-  const allMetrics = [
-    {
-      icon: <FaUserFriends className="color-primary" />,
-      title: "Followers",
-      value: userData.followers.totalCount,
-    },
-    {
-      icon: <FaHeart className="default-completed" />,
-      title: "Following",
-      value: userData.following.totalCount,
-    },
-    {
-      icon: <FaCode className="color-primary" />,
-      title: "Gists",
-      value: userData.gists.totalCount,
-    },
-    {
-      icon: <FaBoxOpen className="default-completed" />,
-      title: "Packages",
-      value: userData.packages.totalCount,
-    },
-    {
-      icon: <FaDonate className="color-primary" />,
-      title: "Sponsorships",
-      value: userData.sponsorshipsAsMaintainer.totalCount + userData.sponsorshipsAsSponsor.totalCount,
-    },
-    {
-      icon: <FaStar className="default-completed" />,
-      title: "Starred Repos",
-      value: userData.starredRepositories?.totalCount || 0,
-    },
-    {
-      icon: <FaAward className="color-primary" />,
-      title: "Achievements",
-      value: 0,
-    }, // Placeholder for future achievements
-    {
-      icon: <FaGitAlt className="default-completed" />,
-      title: "Repositories",
-      value: userData.repositories.totalCount,
-    },
-  ]
-
-  const relevantMetrics = allMetrics
-    .filter((metric) => metric.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 4)
-
-  const firstRow = relevantMetrics.slice(0, 2)
-  const secondRow = relevantMetrics.slice(2, 4)
+const DefaultProfile = ({ data }: { data: UserResponse }) => {
+  const years = new Date().getFullYear() - new Date(data.createdAt).getFullYear()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const isHalfMode = env.size === "half"
+  // Define number of weeks to show based on size
+  const weeksToShow = isHalfMode ? 12 : 24
 
   return (
-    <div className="flex flex-d gap-4 mt-8">
-      <div className="flex flex-d gap-2">
-        <span className="color-primary md-text flex items-center">
-          <FaGithub className="mr-2" />
-          Joined GitHub {years} years ago
-        </span>
-        <span className="color-primary md-text flex items-center">
-          <RiGitRepositoryCommitsLine className="mr-2" />
-          Contributed to {userData.repositoriesContributedTo.totalCount} repositories
-        </span>
+    <div className="flex flex-col">
+      {/* Avatar Header */}
+      <div className="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5">
+        <ImageComponent
+          url64={data.avatarUrl}
+          alt={`${data.name}'s avatar`}
+          width={50}
+          height={50}
+          className="rounded-full"
+        />
+        <div>
+          <h2 className="text-lg font-semibold">{data.name}</h2>
+          <p className="text-default-muted text-sm">@{data.login}</p>
+        </div>
       </div>
 
-      <div className="w100 flex justify-between">
-        <StatisticRow
-          rows={firstRow.map((metric) => ({
-            icon: metric.icon,
-            title: metric.title,
-            value: abbreviateNumber(metric.value),
-            strong: true,
-          }))}
-        />
-        <StatisticRow
-          className="align-flexend"
-          rows={secondRow.map((metric) => ({
-            icon: metric.icon,
-            title: metric.title,
-            value: abbreviateNumber(metric.value),
-            strong: true,
-          }))}
-        />
+      <div className="grid grid-cols-2 gap-2 mb-3 text-base half-mode:text-sm">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2 truncate">
+            <FaGithub className="text-default-muted" />
+            <span>Joined {years} years ago</span>
+          </div>
+          <div className="flex items-center gap-2 truncate">
+            <FaUserFriends className="text-default-muted" />
+            <span>{abbreviateNumber(data.followers)} followers</span>
+          </div>
+        </div>
+
+        {/* Modified Contribution Calendar */}
+        <div className="flex flex-col justify-between">
+          <div className="flex gap-1">
+            {data.contributionCalendar.weeks.slice(-weeksToShow).map((week, weekIndex) => (
+              <div key={weekIndex} className="flex gap-1">
+                {week.contributionDays.slice(-1).map((day, dayIndex) => (
+                  <div
+                    key={`${weekIndex}-${dayIndex}`}
+                    className="h-3 w-3 rounded-sm"
+                    style={{ backgroundColor: day.color }}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-1 text-default-muted truncate">
+            <RiGitRepositoryLine />
+            Contributed to {data.repositoriesContributedTo} {isHalfMode ? "repos" : "repositories"}
+          </div>
+        </div>
       </div>
     </div>
   )
 }
 
-const TerminalProfile = ({ userData }: { userData: UserData }) => {
-  const years = new Date().getFullYear() - new Date(userData.createdAt).getFullYear()
-
-  const allMetrics = [
-    {
-      icon: <FaUserFriends className="color-primary" />,
-      title: "Followers",
-      value: userData.followers.totalCount,
-    },
-    {
-      icon: <FaHeart className="default-completed" />,
-      title: "Following",
-      value: userData.following.totalCount,
-    },
-    {
-      icon: <FaCode className="color-primary" />,
-      title: "Gists",
-      value: userData.gists.totalCount,
-    },
-    {
-      icon: <FaBoxOpen className="default-completed" />,
-      title: "Packages",
-      value: userData.packages.totalCount,
-    },
-    {
-      icon: <FaDonate className="color-primary" />,
-      title: "Sponsorships",
-      value: userData.sponsorshipsAsMaintainer.totalCount + userData.sponsorshipsAsSponsor.totalCount,
-    },
-    {
-      icon: <FaStar className="default-completed" />,
-      title: "Starred Repos",
-      value: userData.starredRepositories?.totalCount || 0,
-    },
-    {
-      icon: <FaAward className="color-primary" />,
-      title: "Achievements",
-      value: 0,
-    }, // Placeholder for future achievements
-    {
-      icon: <FaGitAlt className="default-completed" />,
-      title: "Repositories",
-      value: userData.repositories.totalCount,
-    },
-  ]
-
-  const relevantMetrics = allMetrics
-    .filter((metric) => metric.value > 0)
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 4)
+const TerminalProfile = ({ data }: { data: UserResponse }) => {
+  const years = new Date().getFullYear() - new Date(data.createdAt).getFullYear()
 
   return (
     <>
-      <TerminalLineWithDots title="On GitHub" value={`${years}+ years`} />
-      {relevantMetrics.map((metric) => (
-        <TerminalLineWithDots key={metric.title} title={metric.title} value={abbreviateNumber(metric.value)} />
-      ))}
+      <TerminalLineWithDots title="GitHub Profile" value={`@${data.login}`} />
+      <TerminalLineWithDots title="Member for" value={`${years} years`} />
+      <TerminalLineWithDots title="Followers" value={abbreviateNumber(data.followers)} />
+      <TerminalLineWithDots title="Following" value={abbreviateNumber(data.following)} />
+      <TerminalLineWithDots title="Contributed to" value={`${data.repositoriesContributedTo} repositories`} />
     </>
   )
 }
 
-export default function GithubProfile({ userData }: { userData: UserData }): JSX.Element {
-  const { pluginGithub } = getEnvVariables()
-  if (!pluginGithub) throw new Error("Github plugin not found in GithubProfile component")
+export default function GithubProfile({ data }: { data: UserResponse }): JSX.Element {
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const github = env.github
+  if (!github) throw new Error("Github plugin not found")
 
-  const title = userData.name
-  const hideTitle = pluginGithub.profile_hide_title
-
-  const Avatar = () => (
-    <div className="avatar">
-      <Img64 url64={userData.avatarUrl} alt={`${userData.name}'s avatar`} width={36} height={36} />
-    </div>
-  )
   return (
-    <section id="github" className="github-profile">
+    <section id="github-profile">
       <RenderBasedOnStyle
-        defaultComponent={
-          <>
-            {!hideTitle && <DefaultTitle title={title} icon={<Avatar />} />}
-            <DefaultProfile userData={userData} />
-          </>
-        }
+        defaultComponent={<DefaultProfile data={data} />}
         terminalComponent={
           <>
             <TerminalCommand
               command={getPseudoCommands({
+                prefix: "gh",
                 plugin: "github",
                 section: "profile",
-                username: pluginGithub.username,
+                username: github.username,
               })}
             />
-            <TerminalProfile userData={userData} />
+            <TerminalProfile data={data} />
             <TerminalLineBreak />
           </>
         }

@@ -1,18 +1,18 @@
+import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { MdAlbum } from "react-icons/md"
-import getPseudoCommands from "core/utils/getPseudoCommands"
-import List from "templates/Default/Default_List"
-import DefaultTitle from "templates/Default/Default_Title"
+import { abbreviateNumber } from "source/helpers/number"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import TerminalList from "source/templates/Terminal/TerminalList"
+import List from "templates/Default/DefaultList"
+import DefaultTitle from "templates/Default/DefaultTitle"
 import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import TerminalList from "templates/Terminal/Terminal_List"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import { ListItemProps } from "templates/types"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
 import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
 import { LastFmAlbum } from "../types/lastFmTypes"
-import ErrorMessage from "source/templates/Error_Style"
-import { abbreviateNumber } from "source/helpers/number"
 
 interface Props {
   data: LastFmAlbum[]
@@ -20,7 +20,9 @@ interface Props {
 }
 
 function lastfmTopAlbumsList({ data, interval }: Props): JSX.Element {
-  const { lastfm } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const lastfm = env.lastfm
   if (!lastfm) throw new Error("LastFM plugin not found in TopAlbumsList component")
   if (!data || data.length === 0) {
     return <ErrorMessage message="No data found in lastfmTopAlbumsList component" />
@@ -50,7 +52,7 @@ function lastfmTopAlbumsList({ data, interval }: Props): JSX.Element {
   })) as ListItemProps[]
 
   return (
-    <section id="last-fm" className="top-albums">
+    <section id="lastfm-top-albums">
       <RenderBasedOnStyle
         defaultComponent={
           <>

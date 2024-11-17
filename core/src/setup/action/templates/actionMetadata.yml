@@ -12,7 +12,7 @@ runs:
         node-version: 22
     - name: Install dependencies
       working-directory: ./WeebProfile
-      run: npm i
+      run: yarn install
       shell: bash
     - name: Install Xvfb
       shell: bash
@@ -22,7 +22,7 @@ runs:
       run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
     - name: Run the script
       working-directory: ./WeebProfile
-      run: npm run start
+      run: yarn run action:start
       shell: bash
       env:
         DISPLAY: :99

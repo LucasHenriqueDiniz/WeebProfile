@@ -4,11 +4,21 @@ import isNodeEnvironment from "./isNodeEnv"
 
 async function getImage64(imageUrl: string | undefined): Promise<string> {
   if (!imageUrl) {
+    logger({
+      message: `No image URL provided for ${imageUrl}`,
+      level: "debug",
+      __filename,
+    })
     return "https://placecats.com/300/200"
   }
 
   // Always return the URL during SSR or in browser
   if (!isNodeEnvironment()) {
+    logger({
+      message: `Returning image URL during SSR or in browser`,
+      level: "debug",
+      __filename,
+    })
     return imageUrl
   }
 

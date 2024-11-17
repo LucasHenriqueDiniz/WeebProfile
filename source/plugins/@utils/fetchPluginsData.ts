@@ -1,7 +1,7 @@
 import logger from "source/helpers/logger"
 import { PluginDataMap } from "../@types/plugins"
 import { PluginRegistry } from "../plugins"
-import getEnvVariables from "./getEnvVariables"
+import { EnvironmentManager } from "./EnvManager"
 import { PluginManager } from "./PluginManager"
 
 async function fetchPluginsData(dev = false): Promise<PluginDataMap> {
@@ -9,8 +9,9 @@ async function fetchPluginsData(dev = false): Promise<PluginDataMap> {
 
   try {
     const pluginManager = PluginManager.getInstance()
+    const envManager = EnvironmentManager.getInstance()
 
-    const env = getEnvVariables()
+    const env = envManager.getEnv()
     pluginManager.initializeActivePlugins(env)
 
     const activePlugins = pluginManager.getActivePlugins()
@@ -28,7 +29,7 @@ async function fetchPluginsData(dev = false): Promise<PluginDataMap> {
     })
 
     logger({
-      message: `Plugins data fetched successfully for ${activePlugins.map((p) => p[0]).join(", ")}`,
+      message: `Plugins data fetched for ${activePlugins.map((p) => p[0]).join(", ")}`,
       level: "success",
       __filename,
     })

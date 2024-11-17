@@ -1,0 +1,45 @@
+query userActivity($login: String!) {
+  user(login: $login) {
+    contributionsCollection {
+      totalCommitContributions
+      totalRepositoriesWithContributedCommits
+      totalPullRequestContributions
+      totalPullRequestReviewContributions
+      totalIssueContributions
+      restrictedContributionsCount
+    }
+    repositoriesContributedTo(includeUserRepositories: true) {
+      totalCount
+    }
+    issueComments {
+      totalCount
+    }
+    organizations {
+      totalCount
+    }
+    following {
+      totalCount
+    }
+    sponsorshipsAsSponsor {
+      totalCount
+    }
+    starredRepositories {
+      totalCount
+    }
+    watching {
+      totalCount
+    }
+    pullRequests(states: OPEN) {
+      totalCount
+    }
+    issues(states: OPEN) {
+      totalCount
+    }
+    gists {
+      totalCount
+    }
+    projects {
+      totalCount
+    }
+  }
+}

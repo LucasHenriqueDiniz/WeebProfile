@@ -1,7 +1,7 @@
 import { createPlugin } from "../@types/plugins"
 import MAL_ENV_VARIABLES from "./ENV_VARIABLES"
 import RenderMyAnimeList from "./RenderMyAnimeList"
-import { fetchMalData } from "./services/malApi"
+import { fetchMalData } from "./services/fetchMyAnimeList"
 import { MyAnimeListSections } from "./types/MyAnimeListConfig"
 
 const MyAnimeListPlugin = createPlugin({
