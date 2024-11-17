@@ -5,7 +5,7 @@ import { splitString } from "source/helpers/string"
 import logger from "source/helpers/logger"
 
 function loadPlugin<T>(
-  env: dotenv.DotenvParseOutput,
+  env: dotenv.DotenvParseOutput | NodeJS.ProcessEnv,
   ENV_VARIABLES: Record<string, PluginVariables>,
   pluginName: string
 ): T | undefined {

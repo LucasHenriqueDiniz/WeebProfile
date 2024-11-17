@@ -22,6 +22,7 @@ async function main() {
   //store data
   switch (storage_method) {
     case "gist":
+      logger({ message: "Storing in Gist", level: "info", __filename })
       await storeInGist(gist_id, gh_token, htmlString, filename)
       break
     case "local":
