@@ -32,6 +32,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the anime favorites section",
     sections: ["anime_favorites", "anime_simple_favorites"],
+    defaultValue: false,
   },
   anime_favorites_title: {
     type: "string",
@@ -43,6 +44,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the summary of the anime favorites section",
     sections: ["anime_favorites", "anime_simple_favorites"],
+    defaultValue: false,
   },
   character_favorites_title: {
     type: "string",
@@ -60,11 +62,13 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the character favorites section",
     sections: ["character_favorites", "character_simple_favorites"],
+    defaultValue: false,
   },
   people_favorites_hide_title: {
     type: "boolean",
     description: "Hide the title of the people favorites section",
     sections: ["people_favorites", "people_simple_favorites"],
+    defaultValue: false,
   },
   people_favorites_title: {
     type: "string",
@@ -94,11 +98,13 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the summary of the manga favorites section",
     sections: ["manga_favorites", "manga_simple_favorites"],
+    defaultValue: false,
   },
   manga_favorites_hide_title: {
     type: "boolean",
     description: "Hide the title of the manga favorites section",
     sections: ["manga_favorites", "manga_simple_favorites"],
+    defaultValue: false,
   },
   statistics_anime_title: {
     type: "string",
@@ -123,6 +129,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the statistics section",
     sections: ["statistics"],
+    defaultValue: false,
   },
   anime_bar_title: {
     defaultValue: "Anime Statistics",
@@ -134,6 +141,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the anime statistics section",
     sections: ["anime_bar"],
+    defaultValue: false,
   },
   manga_bar_title: {
     type: "string",
@@ -145,6 +153,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the manga statistics section",
     sections: ["manga_bar"],
+    defaultValue: false,
   },
   statistics_simple_title: {
     type: "string",
@@ -156,6 +165,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the simple statistics section",
     sections: ["statistics_simple"],
+    defaultValue: false,
   },
   last_activity_title: {
     type: "string",
@@ -173,6 +183,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the last activity section",
     sections: ["last_activity"],
+    defaultValue: false,
   },
   last_activity_media: {
     type: "stringRadio",

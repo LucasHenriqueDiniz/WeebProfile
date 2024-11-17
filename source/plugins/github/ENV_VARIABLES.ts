@@ -36,11 +36,13 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the profile section",
     sections: ["profile"],
+    defaultValue: false,
   },
   profile_hide_avatar: {
     type: "boolean",
     description: "Hide the avatar of the profile section",
     sections: ["profile"],
+    defaultValue: false,
   },
   profile_title: {
     type: "string",
@@ -70,6 +72,7 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the favorite languages section",
     sections: ["favorite_languages"],
+    defaultValue: false,
   },
   favorite_license_title: {
     type: "string",
@@ -81,6 +84,7 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the favorite license section",
     sections: ["favorite_license"],
+    defaultValue: false,
   },
   repositories_title: {
     type: "string",
@@ -91,6 +95,7 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the repositories section",
     sections: ["repositories"],
+    defaultValue: false,
   },
   repositories_use_private: {
     type: "boolean",
@@ -107,6 +112,7 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the activity section",
     sections: ["activity"],
+    defaultValue: false,
   },
   calendar_title: {
     type: "string",
@@ -118,6 +124,7 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the calendar section",
     sections: ["calendar"],
+    defaultValue: false,
   },
   code_habits_title: {
     type: "string",
@@ -129,31 +136,37 @@ const GITHUB_ENV_VARIABLES: Record<keyof GithubConfig, PluginVariables> = {
     type: "boolean",
     description: "Hide the title of the code habits section",
     sections: ["code_habits"],
+    defaultValue: false,
   },
   code_habits_hide_languages: {
     type: "boolean",
     description: "Hide the languages of the code habits section",
     sections: ["code_habits"],
+    defaultValue: false,
   },
   code_habits_hide_stats: {
     type: "boolean",
     description: "Hide the stats of the code habits section",
     sections: ["code_habits"],
+    defaultValue: false,
   },
   code_habits_hide_weekdays: {
     type: "boolean",
     description: "Hide the title of the code habits section",
     sections: ["code_habits"],
+    defaultValue: false,
   },
   code_habits_hide_hours: {
     type: "boolean",
     description: "Hide the hours of the code habits section",
     sections: ["code_habits"],
+    defaultValue: false,
   },
   code_habits_hide_footer: {
     type: "boolean",
     description: "Hide the footer of the code habits section",
     sections: ["code_habits"],
+    defaultValue: false,
   },
 }
 
