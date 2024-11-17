@@ -17,16 +17,28 @@ import { defaultThemes } from "source/plugins/@themes/default-themes"
 
 function loadCoreEnv(): PluginsConfig {
   logger({ message: "Loading environment variables...", level: "info", __filename })
-  const env = dotenv.config().parsed
 
-  if (!env) {
-    throw new Error("No .env file found")
+  // Primeiro tenta carregar do ambiente, depois do .env
+  let env: NodeJS.ProcessEnv | dotenv.DotenvParseOutput = process.env
+
+  // Se não encontrar as variáveis necessárias no ambiente, tenta carregar do .env
+  if (!env.GH_TOKEN) {
+    const dotenvResult = dotenv.config()
+    if (dotenvResult.error) {
+      logger({
+        message: "No .env file found, using environment variables",
+        level: "warn",
+        __filename,
+      })
+    } else {
+      env = { ...process.env, ...dotenvResult.parsed }
+    }
   }
 
   // Load main configs
-  const ghToken = env.GH_TOKEN
+  const ghToken = env.GH_TOKEN || env.GITHUB_TOKEN
   if (!ghToken) {
-    throw new Error("Missing GH_TOKEN, please add it to your environment variables")
+    throw new Error("Missing GH_TOKEN or GITHUB_TOKEN, please add it to your environment variables")
   }
 
   let storageMethod = env.STORAGE_METHOD?.toLowerCase() ?? (MAIN_ENV_VARIABLES.storage_method?.defaultValue as string)

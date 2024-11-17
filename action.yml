@@ -340,6 +340,7 @@ runs:
       run: git clone https://github.com/LucasHenriqueDiniz/WeebProfile.git
       shell: bash
       env:
+        GITHUB_TOKEN: ${{ inputs.GH_TOKEN }}
         GH_TOKEN: ${{ inputs.GH_TOKEN }}
     - name: Set Node.js 22
       uses: actions/setup-node@v2.4.1
@@ -355,11 +356,19 @@ runs:
     - name: Start Xvfb
       shell: bash
       run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+    - name: Set environment variables
+      shell: bash
+      run: |
+        echo "GITHUB_TOKEN=${{ inputs.GH_TOKEN }}" >> $GITHUB_ENV
+        echo "GH_TOKEN=${{ inputs.GH_TOKEN }}" >> $GITHUB_ENV
     - name: Run the script
       working-directory: ./WeebProfile
       shell: bash
+      run: |
+        GH_TOKEN="${{ inputs.GH_TOKEN }}" yarn run action:start
       env:
         DISPLAY: :99
+        GITHUB_TOKEN: ${{ inputs.GH_TOKEN }}
         GH_TOKEN: ${{ inputs.GH_TOKEN }}
         DEV: ${{ inputs.DEV }}
         FILENAME: ${{ inputs.FILENAME }}
@@ -457,9 +466,6 @@ runs:
         PLUGIN_MYANIMELIST_LAST_ACTIVITY_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_LAST_ACTIVITY_HIDE_TITLE }}
         PLUGIN_MYANIMELIST_LAST_ACTIVITY_MEDIA: ${{ inputs.PLUGIN_MYANIMELIST_LAST_ACTIVITY_MEDIA }}
         PLUGIN_MYANIMELIST_FAVORITES_HIDE_OVERLAY: ${{ inputs.PLUGIN_MYANIMELIST_FAVORITES_HIDE_OVERLAY }}
-      run: |
-        export GH_TOKEN="${{ inputs.GH_TOKEN }}"
-        yarn run action:start
     - name: Debug Environment
       shell: bash
       run: |
@@ -467,3 +473,4 @@ runs:
         echo "GIST_ID exists: ${{ inputs.GIST_ID != '' }}"
       env:
         GH_TOKEN: ${{ inputs.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.GH_TOKEN }}
