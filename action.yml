@@ -339,6 +339,8 @@ runs:
     - name: cloning WeebProfile
       run: git clone https://github.com/LucasHenriqueDiniz/WeebProfile.git
       shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.GH_TOKEN }}
     - name: Set Node.js 22
       uses: actions/setup-node@v2.4.1
       with:
@@ -355,7 +357,9 @@ runs:
       run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
     - name: Run the script
       working-directory: ./WeebProfile
-      run: yarn run action:start
+      run: |
+        echo "GH_TOKEN=${{ inputs.GH_TOKEN }}" >> $GITHUB_ENV
+        yarn run action:start
       shell: bash
       env:
         DISPLAY: :99
