@@ -1,5 +1,6 @@
 import { PluginDataMap, PluginName, PluginsConfig } from "source/plugins/@types/plugins"
 import { PluginManager } from "source/plugins/@utils/PluginManager"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import { generateStartConfig, generateStartData } from "./storeHelpers"
@@ -45,27 +46,34 @@ const useStore = create<Store>()(
         setPluginsConfig: (config) => set({ pluginsConfig: config }),
         updateConfigKey: (plugin, key, value) => {
           set((state) => {
-            if (plugin === "global") {
-              return { pluginsConfig: { ...state.pluginsConfig, [key]: value } }
-            }
-            return {
-              pluginsConfig: {
-                ...state.pluginsConfig,
-                [plugin]: { ...state.pluginsConfig[plugin], [key]: value },
-              },
-            }
-          })
+            const newConfig =
+              plugin === "global"
+                ? { ...state.pluginsConfig, [key]: value }
+                : {
+                    ...state.pluginsConfig,
+                    [plugin]: { ...state.pluginsConfig[plugin], [key]: value },
+                  }
 
-          if (key === "plugin_enabled") {
+            // Always update environment and plugin manager
             const pluginManager = PluginManager.getInstance()
-            if (value === false) {
-              pluginManager.deactivatePlugin(plugin as PluginName)
-            } else {
-              pluginManager.activatePlugin(plugin as PluginName)
-              get().initPluginsData()
+            const envManager = EnvironmentManager.getInstance()
+
+            // Special handling for plugin_enabled
+            if (key === "plugin_enabled") {
+              if (value === false) {
+                pluginManager.deactivatePlugin(plugin as PluginName)
+              } else {
+                pluginManager.activatePlugin(plugin as PluginName)
+                get().initPluginsData()
+              }
             }
-            pluginManager.initializeActivePlugins(get().pluginsConfig)
-          }
+
+            // Force environment refresh
+            pluginManager.initializeActivePlugins(newConfig)
+            envManager.hardSetEnv(newConfig)
+
+            return { pluginsConfig: newConfig }
+          })
         },
         pluginsData: null,
         setPluginsData: (data) => set({ pluginsData: data }),

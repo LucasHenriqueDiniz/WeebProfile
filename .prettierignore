@@ -1,0 +1,7 @@
+node_modules
+dist
+build
+coverage
+.next
+plugins/@!plugin_example/**
+source/styles/generated-tailwind.css

@@ -33,9 +33,9 @@ export interface FullMangaFavorite extends BasicMangaFavorite {
   synopsis: string
   score: number
   popularity: number
-  chapters: number
+  chapters: number | null
   rank: number
-  volumes: number
+  volumes: number | null
   status: string
   year: number | null
   genres?: {

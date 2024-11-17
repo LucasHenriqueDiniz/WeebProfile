@@ -1,5 +1,3 @@
-import { DefaultTheme, defaultThemes } from "./default-themes"
-import { TerminalTheme, terminalThemes } from "./terminal-themes"
 import plugin from "tailwindcss/plugin"
 
 // Cores base dos plugins
@@ -13,56 +11,35 @@ export const pluginColors = {
     "plan-to-watch": "var(--color-plan-to-watch)",
     "plan-to-read": "var(--color-plan-to-read)",
   },
-  languages: {
-    python: "var(--color-python)",
-    javascript: "var(--color-javascript)",
-    typescript: "var(--color-typescript)",
-    html: "var(--color-html)",
-    css: "var(--color-css)",
-    bash: "var(--color-bash)",
-    c: "var(--color-c)",
-    cpp: "var(--color-cpp)",
-    java: "var(--color-java)",
-    swift: "var(--color-swift)",
-    go: "var(--color-go)",
-    rust: "var(--color-rust)",
-    kotlin: "var(--color-kotlin)",
-    php: "var(--color-php)",
-    ruby: "var(--color-ruby)",
-    sql: "var(--color-sql)",
-  },
 } as const
 
 // Função para gerar as cores do terminal baseado no tema
-export const getTerminalThemeColors = (theme: TerminalTheme = "default") => {
-  const selectedTheme = terminalThemes[theme]
+export const getTerminalThemeColors = () => {
   return {
     terminal: {
-      DEFAULT: selectedTheme.default, // Default color
-      surface: selectedTheme.surface, // Front background color
-      background: selectedTheme.background, // Back background color
-      success: selectedTheme.success, // Text success color
-      muted: selectedTheme.muted, // Text muted color
-      "muted-light": selectedTheme.mutedLight, // Text muted light color
-      raw: selectedTheme.raw, // Text raw color
-      highlight: selectedTheme.highlight, // highlight color
+      DEFAULT: `var(--terminal-color-default)`,
+      surface: `var(--terminal-color-surface)`,
+      background: `var(--terminal-color-background)`,
+      success: `var(--terminal-color-success)`,
+      muted: `var(--terminal-color-muted)`,
+      "muted-light": `var(--terminal-color-muted-light)`,
+      raw: `var(--terminal-color-raw)`,
+      highlight: `var(--terminal-color-highlight)`,
     },
   }
 }
 
-const getDefaultThemeColors = (theme: DefaultTheme = "default") => {
-  const selectedTheme = defaultThemes[theme]
-
+const getDefaultThemeColors = () => {
   return {
     default: {
-      DEFAULT: selectedTheme.default, // Default color
-      surface: selectedTheme.surface, // Front background color
-      background: selectedTheme.background, // Back background color
-      success: selectedTheme.success, // Text success color
-      muted: selectedTheme.muted, // Text muted color
-      "muted-light": selectedTheme.mutedLight, // Text muted light color
-      raw: selectedTheme.raw, // Text raw color
-      highlight: selectedTheme.highlight, // Highlight color
+      DEFAULT: `var(--default-color-default)`,
+      surface: `var(--default-color-surface)`,
+      background: `var(--default-color-background)`,
+      success: `var(--default-color-success)`,
+      muted: `var(--default-color-muted)`,
+      "muted-light": `var(--default-color-muted-light)`,
+      raw: `var(--default-color-raw)`,
+      highlight: `var(--default-color-highlight)`,
     },
   }
 }

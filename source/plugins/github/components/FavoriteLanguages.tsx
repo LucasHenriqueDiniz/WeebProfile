@@ -16,6 +16,7 @@ import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import ENV_VARIABLES from "../ENV_VARIABLES"
 import { ProcessedLanguage } from "../types/LanguagesData"
 import { RepositoriesData } from "../types/RepositoryData"
+import getPseudoCommands from "core/utils/getPseudoCommands"
 
 interface LanguagesProps {
   data: ProcessedLanguage[]
@@ -152,7 +153,14 @@ const FavoriteLanguages = ({ languageData, repositoriesData }: FavoriteLanguages
         }
         terminalComponent={
           <>
-            <TerminalCommand command={`gh languages ${github.username}`} />
+            <TerminalCommand
+              command={getPseudoCommands({
+                prefix: "gh",
+                plugin: "github",
+                section: "languages",
+                username: github.username,
+              })}
+            />
             <TerminalFavoriteLanguages data={filteredLanguages} totalSize={totalSize} maxItems={maxItems} />
             <TerminalLineBreak />
           </>

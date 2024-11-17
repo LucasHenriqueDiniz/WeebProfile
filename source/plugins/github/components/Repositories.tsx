@@ -10,6 +10,7 @@ import TerminalCommand from "templates/Terminal/TerminalCommand"
 import TerminalGrid from "templates/Terminal/TerminalGrid"
 import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import { RepositoriesData } from "../types/RepositoryData"
+import getPseudoCommands from "core/utils/getPseudoCommands"
 
 const DefaultRepositories = ({ data }: { data: RepositoriesData }) => {
   const leftColumnMetrics = [
@@ -140,7 +141,14 @@ export default function GithubRepositories({ data }: { data: RepositoriesData })
         }
         terminalComponent={
           <>
-            <TerminalCommand command={`gh repo list ${github.username}`} />
+            <TerminalCommand
+              command={getPseudoCommands({
+                prefix: "gh",
+                plugin: "github",
+                section: "repositories",
+                username: github.username,
+              })}
+            />
             <TerminalRepositories data={data} />
             <TerminalLineBreak />
           </>

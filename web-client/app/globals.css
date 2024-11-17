@@ -1,7 +1,7 @@
 @import "@radix-ui/colors/black-alpha.css";
 @import "@radix-ui/colors/violet.css";
 @import "../../source/styles/tailwind.css";
-@import "../../source/styles/main.css";
+@import "../../source/styles/globals.css";
 
 @tailwind base;
 @tailwind components;

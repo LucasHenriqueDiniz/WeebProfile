@@ -26,6 +26,9 @@ function generateStartConfig(name: PluginName, section: string): PluginsConfig {
     plugins_order: (MAIN_ENV_VARIABLES.plugins_order?.defaultValue as string[]) || [],
     custom_path: "NOT USED IN DEV",
     hide_terminal_emojis: (MAIN_ENV_VARIABLES.hide_terminal_emojis?.defaultValue as boolean) || false,
+    hide_terminal_header: (MAIN_ENV_VARIABLES.hide_terminal_header?.defaultValue as boolean) || false,
+    terminal_theme: (MAIN_ENV_VARIABLES.terminal_theme?.defaultValue as string) || "default",
+    default_theme: (MAIN_ENV_VARIABLES.default_theme?.defaultValue as string) || "default",
   }
 
   const pluginManager = PluginManager.getInstance()
@@ -49,7 +52,7 @@ async function generateStartData(
   }
 
   const response = await pluginManager.fetchPluginData(name, config, true)
-  return response.data
+  return { name, data: response.data }
 }
 
 interface PluginSectionStore {

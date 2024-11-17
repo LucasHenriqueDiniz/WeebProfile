@@ -1,3 +1,4 @@
+import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { AiOutlineEye, AiOutlineStar } from "react-icons/ai"
 import { FaCode, FaComment, FaExclamationCircle, FaHistory } from "react-icons/fa"
@@ -11,8 +12,8 @@ import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalCommand from "templates/Terminal/TerminalCommand"
 import TerminalGrid from "templates/Terminal/TerminalGrid"
 import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
-import { ActivityData } from "../types/ActivityData"
 import ENV_VARIABLES from "../ENV_VARIABLES"
+import { ActivityData } from "../types/ActivityData"
 
 const DefaultActivity = ({ data }: { data: ActivityData }) => {
   const leftColumnMetrics = [
@@ -161,7 +162,14 @@ export default function GithubActivity({ data }: { data: ActivityData }): JSX.El
         }
         terminalComponent={
           <>
-            <TerminalCommand command={`gh activity view ${github.username}`} />
+            <TerminalCommand
+              command={getPseudoCommands({
+                prefix: "gh",
+                plugin: "github",
+                section: "activity",
+                username: github.username,
+              })}
+            />
             <TerminalActivity data={data} />
             <TerminalLineBreak />
           </>

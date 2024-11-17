@@ -7,23 +7,29 @@ import TerminalCommand from "templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import GITHUB_ENV_VARIABLES from "../ENV_VARIABLES"
 import { CalendarData } from "../types/CalendarData"
+import getPseudoCommands from "core/utils/getPseudoCommands"
 
 const DefaultCalendar = ({ data }: { data: CalendarData }) => {
-  const weeks = data.weeks.slice(-52).reverse()
+  let weeks = data.weeks.slice(-52).reverse()
   const envManager = EnvironmentManager.getInstance()
   const env = envManager.getEnv()
   const isHalfMode = env.size === "half"
 
+  if (isHalfMode) {
+    weeks = weeks.slice(-26)
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-1">
-        {weeks.slice(isHalfMode ? -26 : -52).map((week, weekIndex) => (
+        {weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="flex flex-col gap-1">
             {week.contributionDays.map((day, dayIndex) => (
               <div
                 key={`${weekIndex}-${dayIndex}`}
                 className="w-[0.7rem] h-[0.7rem] rounded-sm"
-                style={{ backgroundColor: day.color }}
+                // IF background is not white, make it slightly transparent
+                style={{ backgroundColor: day.color === "rgb(235, 237, 240)" ? "rgba(192, 192, 192,0.3)" : day.color }}
                 title={`${day.contributionCount} contributions on ${new Date(day.date).toLocaleDateString()}`}
               />
             ))}
@@ -38,7 +44,7 @@ const DefaultCalendar = ({ data }: { data: CalendarData }) => {
 }
 
 const TerminalCalendar = ({ data }: { data: CalendarData }) => {
-  const weeks = data.weeks.slice(-52).reverse()
+  let weeks = data.weeks.slice(-52).reverse()
   const envManager = EnvironmentManager.getInstance()
   const env = envManager.getEnv()
   const isHalfMode = env.size === "half"
@@ -51,10 +57,14 @@ const TerminalCalendar = ({ data }: { data: CalendarData }) => {
     return "▩"
   }
 
+  if (isHalfMode) {
+    weeks = weeks.slice(-26)
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <div className="inline-grid grid-flow-col gap-1 text-[0.75rem]">
-        {weeks.slice(isHalfMode ? -26 : -52).map((week, weekIndex) => (
+        {weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="grid grid-rows-7 w-[0.60rem]">
             {week.contributionDays.map((day, dayIndex) => (
               <span
@@ -98,7 +108,14 @@ export default function GithubCalendar({ data }: { data: CalendarData }): JSX.El
         }
         terminalComponent={
           <>
-            <TerminalCommand command={`gh contrib-calendar ${github.username}`} />
+            <TerminalCommand
+              command={getPseudoCommands({
+                prefix: "gh",
+                plugin: "github",
+                section: "contrib-calendar",
+                username: github.username,
+              })}
+            />
             <TerminalCalendar data={data} />
             <TerminalLineBreak />
           </>

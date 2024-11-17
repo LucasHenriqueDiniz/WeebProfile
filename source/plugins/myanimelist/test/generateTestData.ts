@@ -1,12 +1,12 @@
 import { faker } from "@faker-js/faker"
-import { MalStatisticsResponse } from "../types/malStatistics"
-import { MalFavoritesResponse, MalFullFavoritesResponse } from "../types/FavoritesResponse"
-import fakeData from "./dummyData"
-import { MalLastUpdatesResponse } from "../types/malLastUpdates"
-import { MalData } from "../types/malTypes"
 import logger from "source/helpers/logger"
+import { MalBasicFavorites, MalFullFavorites } from "../types/malFavorites"
+import { MalLastUpdates } from "../types/malLastUpdates"
+import { MalStatistics } from "../types/malStatistics"
+import { MalData } from "../types/malTypes"
+import { animeData, characterData, mangaData, peopleData } from "./dummyData"
 
-function generateTestStatisticsData(): MalStatisticsResponse {
+function generateTestStatisticsData(): MalStatistics {
   const animeStatistics = {
     days_watched: faker.number.float({ min: 50, max: 5000, fractionDigits: 1 }),
     mean_score: faker.number.float({ min: 1, max: 10, fractionDigits: 2 }),
@@ -40,11 +40,11 @@ function generateTestStatisticsData(): MalStatisticsResponse {
   }
 }
 
-function generateTestFavoritesFullData(): MalFullFavoritesResponse {
-  const animeFavorites = fakeData.animes
-  const mangaFavorites = fakeData.mangas
-  const peopleFavorites = fakeData.people
-  const charactersFavorites = fakeData.characters
+function generateTestFavoritesFullData(): MalFullFavorites {
+  const animeFavorites = faker.helpers.arrayElements(animeData, { min: 10, max: 20 })
+  const mangaFavorites = faker.helpers.arrayElements(mangaData, { min: 10, max: 20 })
+  const peopleFavorites = faker.helpers.arrayElements(peopleData, { min: 10, max: 20 })
+  const charactersFavorites = faker.helpers.arrayElements(characterData, { min: 10, max: 20 })
 
   return {
     anime: animeFavorites,
@@ -54,11 +54,11 @@ function generateTestFavoritesFullData(): MalFullFavoritesResponse {
   }
 }
 
-function generateTestFavoritesData(): MalFavoritesResponse {
-  const animeFavorites = fakeData.animes
-  const mangaFavorites = fakeData.mangas
-  const peopleFavorites = fakeData.people
-  const charactersFavorites = fakeData.characters
+function generateTestFavoritesData(): MalBasicFavorites {
+  const animeFavorites = faker.helpers.arrayElements(animeData, { min: 10, max: 20 })
+  const mangaFavorites = faker.helpers.arrayElements(mangaData, { min: 10, max: 20 })
+  const peopleFavorites = faker.helpers.arrayElements(peopleData, { min: 10, max: 20 })
+  const charactersFavorites = faker.helpers.arrayElements(characterData, { min: 10, max: 20 })
 
   return {
     anime: animeFavorites,
@@ -68,23 +68,39 @@ function generateTestFavoritesData(): MalFavoritesResponse {
   }
 }
 
-function generateTestLastUpdatesData(): MalLastUpdatesResponse {
-  const animeLastUpdates = fakeData.updates.anime
-  const mangaLastUpdates = fakeData.updates.manga
+function generateTestLastUpdatesData(): MalLastUpdates {
   return {
-    anime: animeLastUpdates,
-    manga: mangaLastUpdates,
+    anime: faker.helpers.arrayElements(animeData, { min: 10, max: 20 }).map((anime) => ({
+      title: anime.title,
+      image: anime.image,
+      episodes_seen: faker.number.int({ min: 0, max: anime.episodes ?? 12 }),
+      episodes_total: anime.episodes,
+      score: faker.number.int({ min: 0, max: 10 }),
+      status: faker.helpers.arrayElement(["Watching", "Completed", "On hold", "Dropped", "Plan to Watch"]),
+      entry: anime,
+      date: new Date().toISOString(),
+    })),
+    manga: faker.helpers.arrayElements(mangaData, { min: 10, max: 20 }).map((manga) => ({
+      title: manga.title,
+      image: manga.image,
+      chapters_read: faker.number.int({ min: 0, max: manga.chapters ?? 12 }),
+      chapters_total: manga.chapters,
+      score: faker.number.int({ min: 0, max: 10 }),
+      status: faker.helpers.arrayElement(["Reading", "Completed", "On hold", "Dropped", "Plan to Read"]),
+      entry: manga,
+      date: new Date().toISOString(),
+    })),
   }
 }
 
 function generateTestMyAnimeListData(): MalData {
   logger({ message: `Generating test data for MyAnimeList`, level: "debug", __filename })
   return {
-    last_updated: generateTestLastUpdatesData(),
-    statistics: generateTestStatisticsData(),
     favorites: generateTestFavoritesData(),
     favorites_full: generateTestFavoritesFullData(),
-  }
+    last_updated: generateTestLastUpdatesData(),
+    statistics: generateTestStatisticsData(),
+  } as MalData
 }
 
 export default generateTestMyAnimeListData

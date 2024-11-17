@@ -10,6 +10,7 @@ import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import { GridItemProps } from "templates/types"
 import ENV_VARIABLES from "../ENV_VARIABLES"
 import { RepositoriesData } from "../types/RepositoryData"
+import getPseudoCommands from "core/utils/getPseudoCommands"
 
 interface FavoriteLicenseProps {
   data: RepositoriesData
@@ -69,7 +70,15 @@ const FavoriteLicense = ({ data }: FavoriteLicenseProps) => {
         }
         terminalComponent={
           <>
-            <TerminalCommand command={`$ gh repo list --license "${data.favoriteLicense.name}"`} />
+            <TerminalCommand
+              command={getPseudoCommands({
+                prefix: "gh",
+                plugin: "github",
+                section: "license",
+                username: github.username,
+                command: "list",
+              })}
+            />
             <TerminalFavoriteLicense data={data} />
             <TerminalLineBreak />
           </>

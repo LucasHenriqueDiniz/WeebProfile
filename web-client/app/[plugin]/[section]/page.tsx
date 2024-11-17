@@ -112,6 +112,10 @@ export default function PluginSection({ params }: Props) {
 
   const pluginName = currentPlugin.name
 
+  if (!data || !data.data) {
+    return <ErrorMessage message="No data found" />
+  }
+
   return (
     <>
       <SvgContainer
@@ -120,7 +124,7 @@ export default function PluginSection({ params }: Props) {
         style={searchParams.get("style") || "default"}
         asDiv
       >
-        {config && config[pluginName] && currentPlugin.renderer(config[pluginName], data)}
+        {config && data && config[pluginName] && currentPlugin.renderer(config[pluginName], data.data)}
       </SvgContainer>
     </>
   )

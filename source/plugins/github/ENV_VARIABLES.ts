@@ -2,10 +2,10 @@ import PluginVariables from "../@types/PluginVariables"
 import GithubConfig from "./types/GithubConfig"
 
 export const GithubSections = [
-  "favorite_languages",
-  "favorite_license",
   "profile",
   "repositories",
+  "favorite_languages",
+  "favorite_license",
   "activity",
   "calendar",
   "code_habits",
