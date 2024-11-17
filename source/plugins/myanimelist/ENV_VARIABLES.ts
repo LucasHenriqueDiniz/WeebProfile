@@ -6,6 +6,7 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     required: true,
     type: "boolean",
     description: "Enable MyAnimeList plugin",
+    defaultValue: false,
     sections: ["main"],
   },
   username: {
@@ -20,11 +21,6 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     description: "Sections to display in the profile",
     sections: ["main"],
     options: MyAnimeListSections,
-  },
-  hide_header: {
-    type: "boolean",
-    description: "Hide the header of the profile",
-    sections: ["main"],
   },
   anime_favorites_max: {
     type: "number",
@@ -41,6 +37,11 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "string",
     defaultValue: "Anime Favorites",
     description: "Title of the anime favorites section",
+    sections: ["anime_favorites", "anime_simple_favorites"],
+  },
+  anime_favorites_no_summary: {
+    type: "boolean",
+    description: "Hide the summary of the anime favorites section",
     sections: ["anime_favorites", "anime_simple_favorites"],
   },
   character_favorites_title: {
@@ -87,6 +88,11 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     type: "number",
     defaultValue: "5",
     description: "Number of manga favorites to display",
+    sections: ["manga_favorites", "manga_simple_favorites"],
+  },
+  manga_favorites_no_summary: {
+    type: "boolean",
+    description: "Hide the summary of the manga favorites section",
     sections: ["manga_favorites", "manga_simple_favorites"],
   },
   manga_favorites_hide_title: {

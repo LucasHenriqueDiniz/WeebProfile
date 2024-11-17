@@ -39,6 +39,7 @@ export interface MyAnimeListConfig extends BasePluginConfig {
   anime_favorites_max?: number
   anime_favorites_hide_title?: boolean
   anime_favorites_title?: string
+  anime_favorites_no_summary?: boolean
   //manga favorites
   character_favorites_max?: number
   character_favorites_hide_title?: boolean
@@ -51,6 +52,7 @@ export interface MyAnimeListConfig extends BasePluginConfig {
   manga_favorites_max?: number
   manga_favorites_hide_title?: boolean
   manga_favorites_title?: string
+  manga_favorites_no_summary?: boolean
   //last activity
   last_activity_max?: number
   last_activity_hide_title?: boolean

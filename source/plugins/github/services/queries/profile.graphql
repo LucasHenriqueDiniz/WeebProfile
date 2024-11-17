@@ -1,0 +1,29 @@
+query userProfile($login: String!) {
+  user(login: $login) {
+    name
+    login
+    avatarUrl
+    createdAt
+    followers {
+      totalCount
+    }
+    following {
+      totalCount
+    }
+    contributionsCollection {
+      contributionCalendar {
+        totalContributions
+        weeks {
+          contributionDays {
+            color
+            contributionCount
+            date
+          }
+        }
+      }
+    }
+    repositoriesContributedTo {
+      totalCount
+    }
+  }
+}

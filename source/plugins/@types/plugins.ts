@@ -4,6 +4,7 @@ import PluginVariables from "./PluginVariables"
 import { PluginRegistry } from "../plugins"
 
 // WeebProfile base configuration
+//@TODO rename to WeebProfileConfig because it's not a single plugin config
 export interface PluginsRawConfig {
   dev?: boolean
   gist_id: string
@@ -16,13 +17,15 @@ export interface PluginsRawConfig {
   plugins_order: string[]
   custom_path: string
   hide_terminal_emojis: boolean
+  hide_terminal_header: boolean
+  terminal_theme: string
+  default_theme: string
 }
 
 // Base interface for all plugin configs
 export interface BasePluginConfig {
   plugin_enabled: boolean
   sections: string[]
-  hide_header?: boolean
 }
 
 // Base interface for plugin metadata

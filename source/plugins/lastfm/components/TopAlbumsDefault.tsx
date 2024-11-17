@@ -1,18 +1,18 @@
 import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { MdAlbum } from "react-icons/md"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import ErrorMessage from "source/templates/Error_Style"
-import DefaultGrid from "templates/Default/DefaultGrid"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import TerminalTree from "templates/Terminal/Terminal_Tree"
-import { GridItemProps } from "templates/types"
-import { LastFmAlbum } from "../types/lastFmTypes"
 import { abbreviateNumber } from "source/helpers/number"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import TerminalTree from "source/templates/Terminal/TerminalTree"
+import DefaultGrid from "templates/Default/DefaultGrid"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import { GridItemProps } from "templates/types"
 import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
+import { LastFmAlbum } from "../types/lastFmTypes"
 
 interface Props {
   data: LastFmAlbum[]
@@ -20,7 +20,9 @@ interface Props {
 }
 
 function LastFmTopAlbumsDefault({ data, interval }: Props): JSX.Element {
-  const { lastfm } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const lastfm = env.lastfm
   if (!lastfm) throw new Error("LastFM plugin not found in LastFmTopAlbumsDefault component")
   if (!data || data.length === 0) {
     return <ErrorMessage message="No data found in LastFmTopAlbumsDefault component" />
@@ -49,7 +51,7 @@ function LastFmTopAlbumsDefault({ data, interval }: Props): JSX.Element {
   })) as GridItemProps[]
 
   return (
-    <section id="last-fm" className="top-albums">
+    <section id="lastfm-top-albums">
       <RenderBasedOnStyle
         defaultComponent={
           <>
@@ -64,7 +66,7 @@ function LastFmTopAlbumsDefault({ data, interval }: Props): JSX.Element {
             <TerminalCommand
               command={getPseudoCommands({
                 plugin: "lastfm",
-                section: "top-albums",
+                section: "top_albums",
                 username: lastfm.username,
                 period: interval,
                 limit: maxItems,

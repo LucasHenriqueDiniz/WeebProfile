@@ -5,13 +5,15 @@ import LASTFM_ENV_VARIABLES from "plugins/lastfm/ENV_VARIABLES"
 import { LastFmConfig } from "plugins/lastfm/types/envLastFM"
 import MAL_ENV_VARIABLES from "plugins/myanimelist/ENV_VARIABLES"
 import { toBoolean } from "source/helpers/boolean"
-import { PluginsConfig, PluginsRawConfig } from "source/plugins/@types/plugins"
 import { PluginManager } from "source/plugins/@utils/PluginManager"
 import MAIN_ENV_VARIABLES from "source/plugins/ENV_VARIABLES"
 import GithubConfig from "source/plugins/github/types/GithubConfig"
 import MyAnimeListConfig from "source/plugins/myanimelist/types/MyAnimeListConfig"
 import { splitString } from "../../source/helpers/string"
 import loadPlugin from "../utils/loadPlugin"
+import { PluginsConfig, PluginsRawConfig } from "source/plugins/@types/plugins"
+import { terminalThemes } from "source/plugins/@themes/terminal-themes"
+import { defaultThemes } from "source/plugins/@themes/default-themes"
 
 function loadCoreEnv(): PluginsConfig {
   logger({ message: "Loading environment variables...", level: "info", __filename })
@@ -20,24 +22,6 @@ function loadCoreEnv(): PluginsConfig {
   if (!env) {
     throw new Error("No .env file found")
   }
-
-  // Create a copy of the env for logging, removing sensitive data
-  const sanitizedEnv = { ...env }
-  const sensitiveKeys = ["GH_TOKEN", "API_KEY", "API_SECRET"]
-
-  // Remove sensitive data for logging
-  sensitiveKeys.forEach((key) => {
-    if (sanitizedEnv[key]) {
-      sanitizedEnv[key] = "**** SENSITIVE DATA ****"
-    }
-  })
-
-  // Log environment variables for debugging with sanitized data
-  logger({
-    message: `Environment variables: ${JSON.stringify(sanitizedEnv, null, 2)}`,
-    level: "debug",
-    __filename,
-  })
 
   // Load main configs
   const ghToken = env.GH_TOKEN
@@ -73,11 +57,25 @@ function loadCoreEnv(): PluginsConfig {
   const customCss = env.CUSTOM_CSS as string
   const customPath = env.CUSTOM_PATH as string
   const hideTerminalEmojis = toBoolean(env.HIDE_TERMINAL_EMOJIS)
+  const hideTerminalHeader = toBoolean(env.HIDE_TERMINAL_HEADER)
+  let terminalTheme = env.TERMINAL_THEME ?? (MAIN_ENV_VARIABLES.terminal_theme?.defaultValue as string)
+
+  if (terminalTheme && !Object.keys(terminalThemes).includes(terminalTheme)) {
+    logger({ message: "Invalid TERMINAL_THEME, defaulting to default", level: "warn", __filename })
+    terminalTheme = "default"
+  }
+
+  let defaultTheme = env.DEFAULT_THEME ?? (MAIN_ENV_VARIABLES.default_theme?.defaultValue as string)
+
+  if (defaultTheme && !Object.keys(defaultThemes).includes(defaultTheme)) {
+    logger({ message: "Invalid DEFAULT_THEME, defaulting to default", level: "warn", __filename })
+    defaultTheme = "default"
+  }
 
   const baseEnv: PluginsRawConfig = {
     dev: toBoolean(env.DEV),
     gist_id: gistId,
-    gh_token: "***********", // Ocultar token nos logs
+    gh_token: ghToken,
     filename: filename,
     size: size,
     style: style,
@@ -86,6 +84,9 @@ function loadCoreEnv(): PluginsConfig {
     plugins_order: pluginsOrder,
     custom_path: customPath,
     hide_terminal_emojis: hideTerminalEmojis,
+    hide_terminal_header: hideTerminalHeader,
+    terminal_theme: terminalTheme,
+    default_theme: defaultTheme,
   }
 
   // Load plugin configs

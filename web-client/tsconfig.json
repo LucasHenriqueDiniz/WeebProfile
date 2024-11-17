@@ -47,5 +47,8 @@
     "postcss.config.js",
     "../reset.d.ts"
   ],
+  "preserveSymlinks": true,
+  "allowJs": true,
+  "skipLibCheck": true,
   "exclude": ["node_modules"]
 }

@@ -9,6 +9,7 @@
   border-radius: 6px;
   border: 1px solid var(--borderColor-default);
   height: fit-content;
+  flex-grow: 1;
 }
 
 .readmeHeader {
@@ -88,6 +89,8 @@
 .profileRightSide {
   padding: 0 var(--horizontalPadding);
   min-height: 80vh;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 768px) {

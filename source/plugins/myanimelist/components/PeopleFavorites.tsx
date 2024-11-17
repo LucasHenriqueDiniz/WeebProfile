@@ -1,50 +1,51 @@
-import { FaHeart } from "react-icons/fa"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
-import { treatJapaneseName } from "source/helpers/string"
-import Img64 from "core/src/base/ImageComponent"
-import { PeopleFavorites } from "../types/malFavoritesResponse"
 import React from "react"
-import ErrorMessage from "source/templates/Error_Style"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { FaHeart } from "react-icons/fa"
 import logger from "source/helpers/logger"
+import { treatJapaneseName } from "source/helpers/string"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import ImageComponent from "source/templates/ImageComponent"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { BasicPeopleFavorite } from "../types/malFavorites"
 
-function DefaultPeopleFavorite({ person, index }: { person: PeopleFavorites; index: number }): JSX.Element {
-  const imgSrc = person.images.jpg?.base64
+function DefaultPeopleFavorite({ person, index }: { person: BasicPeopleFavorite; index: number }): JSX.Element {
+  const imgSrc = person.image
   const name = treatJapaneseName(person.name)
 
   return (
-    <div className="h-50 flex radius-16 overflow-hidden border-primary-50">
-      <div className="favorite-index">{index + 1}</div>
-      <div className="fav-character-title">{name}</div>
-      <div className="character-favorite-image-container">
-        <Img64 url64={imgSrc} alt={name} className="image-center" />
+    <div className="h-[50px] flex rounded-2xl overflow-hidden border border-default-highlight border-solid">
+      <div className="w-20 bg-default-highlight text-4xl font-bold flex items-center justify-center text-default-surface">
+        {index + 1}
+      </div>
+      <div className="flex items-center pl-1 text-xl font-semibold truncate w-full text-default-hightlight">{name}</div>
+      <div className="w-36 h-full aspect-character overflow-hidden">
+        <ImageComponent url64={imgSrc} alt={name} className="image-square" width={144} height={144} />
       </div>
     </div>
   )
 }
 
-function TerminalPeopleFavorite({ person, index }: { person: PeopleFavorites; index: number }): JSX.Element {
+function TerminalPeopleFavorite({ person, index }: { person: BasicPeopleFavorite; index: number }): JSX.Element {
   const name = treatJapaneseName(person.name)
-  const url = person.url
 
   return (
-    <div className="flex align-center sm-text gap-4">
+    <div className="flex align-center sm-text gap-1">
       <span className="text-raw">[{index + 1}]</span>
-      <a href={url ?? "#"} target="_blank" rel="noreferrer" className="text-warning md-2-text text-bold">
-        - {name}
-      </a>
+      <span className="text-terminal-warning md-2-text text-bold truncate no-underline">- {name}</span>
     </div>
   )
 }
 
-function MainPeopleFavorites({ data }: { data: PeopleFavorites[] }): JSX.Element {
+function MainPeopleFavorites({ data }: { data: BasicPeopleFavorite[] }): JSX.Element {
   logger({ message: `Fetching MAL favorites for people`, level: "info", __filename })
-  const { myanimelist } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
   if (!myanimelist) throw new Error("MAL plugin not found in DefaultPeopleFavorites component")
   if (!data) return <ErrorMessage message="No data found in MalStatistics component" />
 
@@ -53,18 +54,18 @@ function MainPeopleFavorites({ data }: { data: PeopleFavorites[] }): JSX.Element
   const title = myanimelist.people_favorites_title ?? (MAL_ENV_VARIABLES.people_favorites_title.defaultValue as string)
   const dataLength = data.length
 
-  //limit the data to the maxItems
+  // Limit the data to the maxItems
   if (maxItems && dataLength > maxItems) {
     data = data.slice(0, maxItems)
   }
 
   return (
-    <section id="mal" className="people-favorites">
+    <section id="mal-people-favorites">
       <RenderBasedOnStyle
         defaultComponent={
           <>
-            {!hideTitle && <DefaultTitle title={title ?? "Favorite People"} icon={<FaHeart />} />}
-            <div className="flex-d gap-4">
+            {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
+            <div className="flex flex-col gap-1">
               {data.map((data, index) => (
                 <DefaultPeopleFavorite person={data} index={index} key={data.mal_id} />
               ))}
@@ -76,12 +77,12 @@ function MainPeopleFavorites({ data }: { data: PeopleFavorites[] }): JSX.Element
             <TerminalCommand
               command={getPseudoCommands({
                 plugin: "mal",
-                section: "people_favorites",
+                section: "people_fav",
                 username: myanimelist.username,
                 limit: maxItems,
               })}
             />
-            <div className="flex-d gap-4">
+            <div className="flex flex-col gap-1">
               {data.map((data, index) => (
                 <TerminalPeopleFavorite person={data} index={index} key={data.mal_id} />
               ))}

@@ -1,23 +1,45 @@
-import React from "react"
-import { format } from "date-fns"
-import { FaList, FaStar } from "react-icons/fa"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
 import getPseudoCommands from "core/utils/getPseudoCommands"
-import Img64 from "core/src/base/ImageComponent"
-import { LastUpdatesAnime, LastUpdatesManga, MalLastUpdatesResponse } from "../types/malLastUpdatesResponse"
-import PercentageBar from "./Default_PercentageBar"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import ErrorMessage from "source/templates/Error_Style"
-import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { format } from "date-fns"
+import React from "react"
+import { FaList, FaStar } from "react-icons/fa"
 import { emojiStatus } from "source/helpers/emoji"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import ImageComponent from "source/templates/ImageComponent"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { LastUpdatesAnime, LastUpdatesManga, MalLastUpdates } from "../types/malLastUpdates"
+import PercentageBar from "./Default_PercentageBar"
+
+function getStatusColor(status: string) {
+  // Needed for the tailwind load the color classes
+  switch (status) {
+    case "Completed":
+      return "text-mal-completed"
+    case "Plan to Watch":
+      return "text-mal-plan-to-watch"
+    case "Plan to Read":
+      return "text-mal-plan-to-read"
+    case "Watching":
+      return "text-mal-watching"
+    case "Reading":
+      return "text-mal-reading"
+    case "On Hold":
+      return "text-mal-on-hold"
+    case "Dropped":
+      return "text-mal-dropped"
+    default:
+      return "text-mal-watching"
+  }
+}
 
 function DefaultUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga }): JSX.Element {
   const isAnime = "episodes_total" in update
-  const title = update.entry.title
-  const imgSrc = update.entry.images.jpg?.base64
+  const title = update.title
+  const imgSrc = update.image
   const total = isAnime ? (update.episodes_total ?? 0) : (update.chapters_total ?? 0)
   const current = isAnime ? (update.episodes_seen ?? 0) : (update.chapters_read ?? 0)
   const status = update.status
@@ -25,38 +47,28 @@ function DefaultUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga
   const score = update.score ?? 0
 
   return (
-    <div className="last-update-grid">
-      <div className="default-update-image drop-shadow">
-        <Img64 url64={imgSrc} alt={title} width={74} className="image-center-full" />
+    <div className="grid grid-cols-[75px_1fr] gap-4 h-20 min-h-[75px] max-h-[75px]">
+      <div className="image-square-container-75">
+        <ImageComponent url64={imgSrc} alt={title} className="image-square" width={75} height={75} />
       </div>
-      <div className="flex-d w100 justify-evenly">
-        <div className="title-grid">
-          <h3 className="lg-text-bold text-nowrap text-overflow">{title}</h3>
-          <span className="flex items-baseline xl-text color-primary gap-2">
-            {score === 0 || !score ? "-" : score} <FaStar size={18} className="color-primary" />
+      <div className="flex flex-col justify-evenly w-full">
+        <div className="grid grid-cols-[auto_1fr] items-center justify-end">
+          <h3 className="text-lg font-semibold truncate text-default-muted">{title}</h3>
+          <span className="flex items-baseline justify-end text-xl text-default-highlight gap-2">
+            {score === 0 || !score ? "-" : score} <FaStar size={18} className="text-default-highlight" />
           </span>
         </div>
 
         <PercentageBar current={current} total={total} status={status} />
 
         <div className="flex justify-between">
-          <div className="md-text gap-4 flex items-baseline">
-            <span
-              className={`default-${
-                status === "Reading"
-                  ? "watching"
-                  : status === "Plan to Read"
-                    ? "plan-to-watch"
-                    : status.toLowerCase().split(" ").join("-")
-              }`}
-            >
-              {status}
-            </span>
+          <div className="text-md gap-2 flex items-baseline">
+            <span className={getStatusColor(status)}>{status}</span>
             <span>
               {current === 0 || !current ? "?" : current} / {total === 0 || !total ? "?" : total}
             </span>
           </div>
-          <span className="sm-text text-gray flex align-flexend">{date}</span>
+          <span className="text-sm text-gray-500 flex justify-end">{date}</span>
         </div>
       </div>
     </div>
@@ -65,7 +77,7 @@ function DefaultUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga
 
 function TerminalUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga }): JSX.Element {
   const isAnime = "episodes_total" in update
-  const title = update.entry.title
+  const title = update.title
   const total = isAnime ? (update.episodes_total ?? 0) : update.chapters_total || 0
   const current = isAnime ? (update.episodes_seen ?? 0) : update.chapters_read || 0
   const status = update.status
@@ -73,36 +85,44 @@ function TerminalUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesMang
   const score = update.score ?? 0
 
   // get percentage and create progress bar
-  const percentage = Math.round((current / total) * 100) || 0
-  const progressBarLength = 30
+  const percentage = total === 0 ? 0 : Math.round((current / total) * 100) || 0
+  const progressBarLength = 36
   const filledBlocks = Math.round((percentage / 100) * progressBarLength)
 
   // create progress bar
   const progressBar = "█".repeat(filledBlocks) + "░".repeat(progressBarLength - filledBlocks)
 
-  const statusColor = `default-${status === "Reading" ? "watching" : status === "Plan to Read" ? "plan-to-watch" : status.toLowerCase().split(" ").join("-")}`
-
   return (
-    <div className="sm-text flex-d gap-2">
-      <div className="text-warning text-overflow text-nowrap md-2-text">- {title}</div>
-      <div className="text-raw">
-        {percentage}% [<span className={statusColor}>{progressBar}</span>] ({current}/{total})
+    <div className="flex flex-col gap-1">
+      <div className="text-terminal-warning truncate font-bold text-md">* {title}</div>
+      <div className="flex items-center">
+        <span className="text-terminal-muted font-bold">{percentage}%</span>
+        <span
+          className={`text-mal-${status.toLowerCase().split(" ").join("-")} tracking-tighter text-center w-full overflow-hidden`}
+        >
+          {progressBar}
+        </span>
+        <span className="text-terminal-muted">
+          {current}/{total === 0 || !total ? "?" : total}
+        </span>
       </div>
       <div className="flex justify-between">
-        <span className="text-bold">
-          <span className={statusColor}>
+        <span className="font-bold">
+          <span className={`text-mal-${status.toLowerCase().split(" ").join("-")}`}>
             {emojiStatus(status)} {status}
           </span>{" "}
-          | {score === 0 || !score ? "-" : score} / 10
+          | {score === 0 || !score ? "-" : score}/10
         </span>
-        <span className="text-muted">{date}</span>
+        <span className="text-terminal-muted">{date}</span>
       </div>
     </div>
   )
 }
 
-export default function Default_LastUpdates({ data }: { data: MalLastUpdatesResponse }): JSX.Element {
-  const { myanimelist } = getEnvVariables()
+export default function LastUpdates({ data }: { data: MalLastUpdates }): JSX.Element {
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
   if (!myanimelist) throw new Error("Mal plugin not found in Default_LastUpdates component")
   if (!data) return <ErrorMessage message="No data found in Default_LastUpdates component" />
 
@@ -110,18 +130,22 @@ export default function Default_LastUpdates({ data }: { data: MalLastUpdatesResp
   const media = myanimelist?.statistics_media ?? (MAL_ENV_VARIABLES.statistics_media.defaultValue as string)
 
   const array = media === "both" ? [...data.anime, ...data.manga] : media === "anime" ? data.anime : data.manga
-  const allUpdates = array.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  let allUpdates = array.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   const title = myanimelist?.last_activity_title ?? (MAL_ENV_VARIABLES.last_activity_title.defaultValue as string)
   const maxItems = myanimelist?.last_activity_max ?? (MAL_ENV_VARIABLES.last_activity_max.defaultValue as number)
 
+  if (maxItems && allUpdates.length > maxItems) {
+    allUpdates = allUpdates.slice(0, maxItems)
+  }
+
   return (
-    <section className="default-last-updates">
+    <section id="mal-last-updates">
       <RenderBasedOnStyle
         defaultComponent={
           <>
-            <DefaultTitle title={title ?? "Last Updates"} icon={<FaList />} />
-            <div className="flex-d gap-4">
+            <DefaultTitle title={title} icon={<FaList />} />
+            <div className="flex flex-col gap-1">
               {allUpdates.map((update, index) => (
                 <DefaultUpdate key={index} update={update} />
               ))}
@@ -138,7 +162,7 @@ export default function Default_LastUpdates({ data }: { data: MalLastUpdatesResp
                 limit: maxItems,
               })}
             />
-            <div className="flex-d gap-4">
+            <div className="flex flex-col gap-2">
               {allUpdates.map((update, index) => (
                 <TerminalUpdate key={index} update={update} />
               ))}

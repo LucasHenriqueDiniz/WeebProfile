@@ -2,13 +2,13 @@ import React from "react"
 import PluginVariables from "source/plugins/@types/PluginVariables"
 
 import useStore from "web-client/app/store"
-import { getDefaultValue } from "web-client/app/storeHelpers"
 
 import InputNumber from "./FormComponents/NumberInput"
 import RadioInput from "./FormComponents/RadioInput"
 import SelectorInput from "./FormComponents/SelectorInput"
 import { SwitchInput } from "./FormComponents/SwitchInput"
 import InputText from "./FormComponents/TextInput"
+import { getDefaultValue } from "source/plugins/@utils/PluginManager"
 
 const RenderPluginInput = ({
   name,

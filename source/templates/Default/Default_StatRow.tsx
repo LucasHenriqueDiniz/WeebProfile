@@ -12,7 +12,10 @@ export interface StatProps {
 function Stat({ icon, title, value, strong, className, smallInHalf }: StatProps): JSX.Element {
   return (
     <li
-      className={`default-stat ${strong ? "md-text" : "sm-text"} ${smallInHalf ? "half:md-2-text" : ""} ${className ? className : ""}`}
+      className={`flex justify-start gap-1 items-center truncate
+        ${strong ? "text-base" : "text-sm"} 
+        ${smallInHalf ? "half:text-sm" : ""} 
+        ${className ?? ""}`}
     >
       {icon && icon}
       <span>{value}</span>
@@ -30,7 +33,7 @@ interface StatisticsRowProps {
 
 function StatisticRow({ rows, className }: { rows: StatisticsRowProps[]; className?: string }): JSX.Element {
   return (
-    <ul className={`default-status-vertical ${className ? className : ""}`}>
+    <ul className={`flex flex-col items-start w-full gap-1 ${className ?? ""}`}>
       {rows.map((row, index) => (
         <Stat key={index} title={row.title} value={row.value} icon={row.icon} strong={row.strong} />
       ))}

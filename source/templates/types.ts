@@ -11,3 +11,8 @@ export interface ListItemProps {
   left: string
   image?: string
 }
+
+export interface TerminalLineProps {
+  right: string
+  left: string
+}

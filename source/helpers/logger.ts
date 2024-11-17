@@ -52,7 +52,7 @@ function logger({
     `${formattedPath}${formattedLevel} ${color.message}${time} | ${message}${color.reset}` + (error ? `\n${error}` : "")
 
   if (header) {
-    const border = "=".repeat(formattedMessage.length + 4)
+    const border = "=".repeat(formattedMessage.length)
     console.log(`\n${color[level]}${border}\n| ${formattedMessage} |\n${border}\n${color.reset}`)
   } else {
     console.log(formattedMessage)

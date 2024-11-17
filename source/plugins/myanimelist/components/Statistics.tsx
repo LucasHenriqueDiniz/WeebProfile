@@ -1,25 +1,28 @@
-import { abbreviateNumber } from "helpers/number"
 import getPseudoCommands from "core/utils/getPseudoCommands"
+import { abbreviateNumber } from "helpers/number"
 import React from "react"
 import { FaBookOpen, FaCalendar, FaDatabase, FaQuestionCircle, FaStar, FaVideo } from "react-icons/fa"
 import { FaCircleCheck, FaCirclePause, FaCirclePlay, FaCircleXmark } from "react-icons/fa6"
 import { IoStatsChartOutline } from "react-icons/io5"
-import { MdOutlineRestartAlt } from "react-icons/md"
-import { StatisticRow } from "templates/Default/Default_StatRow"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalGrid from "templates/Terminal/Terminal_Grid"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import { GridItemProps } from "templates/types"
-import { MalStatisticsResponse } from "../types/malStatisticsResponse"
-import ErrorMessage from "source/templates/Error_Style"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { RiRestartFill } from "react-icons/ri"
 import { emojiStatus } from "source/helpers/emoji"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import TerminalGrid from "source/templates/Terminal/TerminalGrid"
+import { StatisticRow } from "templates/Default/Default_StatRow"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import { GridItemProps } from "templates/types"
+import MAL_ENV_VARIABLES from "../ENV_VARIABLES"
+import { MalStatistics } from "../types/malStatistics"
 
-export default function MalStatistics({ data }: { data: MalStatisticsResponse }): JSX.Element {
-  const { myanimelist } = getEnvVariables()
+export default function Statistics({ data }: { data: MalStatistics }): JSX.Element {
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const myanimelist = env.myanimelist
+
   if (!myanimelist) throw new Error("MAL plugin not found in MalStatistics component")
   if (!data) return <ErrorMessage message="No data found in MalStatistics component" />
 
@@ -136,47 +139,45 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
   })
 
   return (
-    <section id="mal" className="statistics">
+    <section id="mal-statistics">
       <RenderBasedOnStyle
         defaultComponent={
           <>
-            <div className="w100 flex half:flex-d gap-4">
+            <div className="w-full flex half-mode:flex-col gap-2">
               {showAnime && (
-                <div className="flex-d w100">
-                  {!hideTitle && (
-                    <DefaultTitle icon={<IoStatsChartOutline />} title={animeTitle || "Anime Statistics"} />
-                  )}
-                  <div className="w100 flex">
+                <div className="flex flex-col w-full">
+                  {!hideTitle && <DefaultTitle icon={<IoStatsChartOutline />} title={animeTitle} />}
+                  <div className="w-full flex">
                     <StatisticRow
                       rows={[
                         {
-                          icon: <FaStar className="color-primary" />,
+                          icon: <FaStar className="fill-default-highlight" />,
                           title: "Mean Score",
                           value: abbreviateNumber(animeStatistics.mean_score),
                           strong: true,
                         },
                         {
-                          icon: <FaCirclePlay className="default-watching" />,
+                          icon: <FaCirclePlay className="fill-mal-watching" />,
                           title: "Watching",
                           value: abbreviateNumber(animeStatistics.watching),
                         },
                         {
-                          icon: <FaCircleCheck className="default-completed" />,
+                          icon: <FaCircleCheck className="fill-mal-completed" />,
                           title: "Completed",
                           value: abbreviateNumber(animeStatistics.completed),
                         },
                         {
-                          icon: <FaCirclePause className="default-on-hold" />,
+                          icon: <FaCirclePause className="fill-mal-on-hold" />,
                           title: "On Hold",
                           value: abbreviateNumber(animeStatistics.on_hold),
                         },
                         {
-                          icon: <FaCircleXmark className="default-dropped" />,
+                          icon: <FaCircleXmark className="fill-mal-dropped" />,
                           title: "Dropped",
                           value: abbreviateNumber(animeStatistics.dropped),
                         },
                         {
-                          icon: <FaQuestionCircle className="default-plan-to-watch" />,
+                          icon: <FaQuestionCircle className="fill-mal-plan-to-watch" />,
                           title: "Plan to Watch",
                           value: abbreviateNumber(animeStatistics.plan_to_watch),
                         },
@@ -185,23 +186,23 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
                     <StatisticRow
                       rows={[
                         {
-                          icon: <FaCalendar className="color-primary" />,
+                          icon: <FaCalendar className="fill-default-highlight" />,
                           title: "Total Days",
                           value: abbreviateNumber(animeStatistics.days_watched),
                           strong: true,
                         },
                         {
-                          icon: <FaDatabase className="color-primary" />,
+                          icon: <FaDatabase className="fill-default-highlight" />,
                           title: "Total Entries",
                           value: abbreviateNumber(animeStatistics.total_entries),
                         },
                         {
-                          icon: <MdOutlineRestartAlt className="color-primary" />,
+                          icon: <RiRestartFill className="fill-default-highlight" size={16} />,
                           title: "Rewatched",
                           value: abbreviateNumber(animeStatistics.rewatched),
                         },
                         {
-                          icon: <FaVideo className="color-primary" />,
+                          icon: <FaVideo className="fill-default-highlight" />,
                           title: "Episodes Watched",
                           value: abbreviateNumber(animeStatistics.episodes_watched),
                         },
@@ -211,42 +212,40 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
                 </div>
               )}
               {showManga && (
-                <div className="flex-d w100">
-                  {!hideTitle && (
-                    <DefaultTitle icon={<IoStatsChartOutline />} title={mangaTitle || "Manga Statistics"} />
-                  )}
-                  <div className="w100 flex">
+                <div className="flex flex-col w-full">
+                  {!hideTitle && <DefaultTitle icon={<IoStatsChartOutline />} title={mangaTitle} />}
+                  <div className="w-full flex">
                     <StatisticRow
                       rows={[
                         {
-                          icon: <FaStar className="color-primary" />,
+                          icon: <FaStar className="fill-default-highlight" />,
                           title: "Mean Score",
                           value: abbreviateNumber(mangaStatistics.mean_score),
                           strong: true,
                         },
                         {
-                          icon: <FaCirclePlay className="default-watching" />,
-                          title: "Watching",
+                          icon: <FaCirclePlay className="fill-mal-watching" />,
+                          title: "Reading",
                           value: abbreviateNumber(mangaStatistics.reading),
                         },
                         {
-                          icon: <FaCircleCheck className="default-completed" />,
+                          icon: <FaCircleCheck className="fill-mal-completed" />,
                           title: "Completed",
                           value: abbreviateNumber(mangaStatistics.completed),
                         },
                         {
-                          icon: <FaCirclePause className="default-on-hold" />,
+                          icon: <FaCirclePause className="fill-mal-on-hold" />,
                           title: "On Hold",
                           value: abbreviateNumber(mangaStatistics.on_hold),
                         },
                         {
-                          icon: <FaCircleXmark className="default-dropped" />,
+                          icon: <FaCircleXmark className="fill-mal-dropped" />,
                           title: "Dropped",
                           value: abbreviateNumber(mangaStatistics.dropped),
                         },
                         {
-                          icon: <FaQuestionCircle className="default-plan-to-watch" />,
-                          title: "Plan to Watch",
+                          icon: <FaQuestionCircle className="fill-mal-plan-to-watch" />,
+                          title: "Plan to Read",
                           value: abbreviateNumber(mangaStatistics.plan_to_read),
                         },
                       ]}
@@ -254,28 +253,28 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
                     <StatisticRow
                       rows={[
                         {
-                          icon: <FaCalendar className="color-primary" />,
+                          icon: <FaCalendar className="fill-default-highlight" />,
                           title: "Total Days",
                           value: abbreviateNumber(mangaStatistics.days_read),
                           strong: true,
                         },
                         {
-                          icon: <FaDatabase className="color-primary" />,
+                          icon: <FaDatabase className="fill-default-highlight" />,
                           title: "Total Entries",
                           value: abbreviateNumber(mangaStatistics.total_entries),
                         },
                         {
-                          icon: <MdOutlineRestartAlt className="color-primary" />,
+                          icon: <RiRestartFill className="fill-default-highlight" size={16} />,
                           title: "Reread",
                           value: abbreviateNumber(mangaStatistics.reread),
                         },
                         {
-                          icon: <FaBookOpen className="color-primary" />,
+                          icon: <FaBookOpen className="fill-default-highlight" />,
                           title: "Chapters Read",
                           value: abbreviateNumber(mangaStatistics.chapters_read),
                         },
                         {
-                          icon: <FaVideo className="color-primary" />,
+                          icon: <FaVideo className="fill-default-highlight" />,
                           title: "Volumes Read",
                           value: abbreviateNumber(mangaStatistics.volumes_read),
                         },
@@ -297,16 +296,16 @@ export default function MalStatistics({ data }: { data: MalStatisticsResponse })
                 type: "all",
               })}
             />
-            <div className="w100 flex half:flex-d gap-4">
+            <div className="w-full flex half-mode:flex-col gap-1">
               {showAnime && (
-                <div className="flex-d w100">
-                  <TerminalGrid data={animeDataAsGridItemProps} rightText="Anime Statistics" centerText="Values" />
+                <div className="flex flex-col w-full">
+                  <TerminalGrid data={animeDataAsGridItemProps} rightText={animeTitle} centerText="Values" />
                 </div>
               )}
               <TerminalLineBreak className="hidden half:block" />
               {showManga && (
-                <div className="flex-d w100">
-                  <TerminalGrid data={mangaDataAsGridItemProps} rightText="Manga Statistics" centerText="Values" />
+                <div className="flex flex-col w-full">
+                  <TerminalGrid data={mangaDataAsGridItemProps} rightText={mangaTitle} centerText="Values" />
                 </div>
               )}
             </div>

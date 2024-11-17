@@ -1,19 +1,19 @@
+import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { MdOutlinePersonOutline } from "react-icons/md"
-import { LastFmArtist } from "../types/lastFmTypes"
-import getPseudoCommands from "core/utils/getPseudoCommands"
-import List from "templates/Default/Default_List"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import TerminalList from "templates/Terminal/Terminal_List"
-import { ListItemProps } from "templates/types"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
-import ErrorMessage from "source/templates/Error_Style"
-import { abbreviateNumber } from "source/helpers/number"
 import logger from "source/helpers/logger"
+import { abbreviateNumber } from "source/helpers/number"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import TerminalList from "source/templates/Terminal/TerminalList"
+import List from "templates/Default/DefaultList"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import { ListItemProps } from "templates/types"
+import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
+import { LastFmArtist } from "../types/lastFmTypes"
 
 interface Props {
   data: LastFmArtist[]
@@ -26,7 +26,9 @@ function TopArtistsList({ data, interval }: Props): JSX.Element {
     level: "debug",
     __filename,
   })
-  const { lastfm } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const lastfm = env.lastfm
   if (!lastfm) throw new Error("LastFM plugin not found in TopArtistsList component")
   if (!data || data.length === 0) {
     return <ErrorMessage message="No data found in TopArtistsList component" />
@@ -75,9 +77,10 @@ function TopArtistsList({ data, interval }: Props): JSX.Element {
             <TerminalCommand
               command={getPseudoCommands({
                 plugin: "lastfm",
-                section: "top_artists_default",
+                section: "top_artists",
                 username: lastfm.username,
                 period: interval,
+                limit: maxItems,
               })}
             />
             <TerminalList data={ListItems} />

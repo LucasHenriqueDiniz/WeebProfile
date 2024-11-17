@@ -1,18 +1,18 @@
+import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { MdOutlineAudiotrack } from "react-icons/md"
-import { LastFmTrack } from "../types/lastFmTypes"
-import getPseudoCommands from "core/utils/getPseudoCommands"
-import List from "templates/Default/Default_List"
-import DefaultTitle from "templates/Default/Default_Title"
-import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
-import TerminalCommand from "templates/Terminal/Terminal_Command"
-import TerminalLineBreak from "templates/Terminal/Terminal_LineBreak"
-import TerminalList from "templates/Terminal/Terminal_List"
-import { ListItemProps } from "templates/types"
-import ErrorMessage from "source/templates/Error_Style"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
-import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
 import logger from "source/helpers/logger"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
+import ErrorMessage from "source/templates/Error_Style"
+import TerminalCommand from "source/templates/Terminal/TerminalCommand"
+import TerminalList from "source/templates/Terminal/TerminalList"
+import DefaultList from "templates/Default/DefaultList"
+import DefaultTitle from "templates/Default/DefaultTitle"
+import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
+import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
+import { ListItemProps } from "templates/types"
+import LASTFM_ENV_VARIABLES from "../ENV_VARIABLES"
+import { LastFmTrack } from "../types/lastFmTypes"
 
 interface Props {
   data: LastFmTrack[]
@@ -25,7 +25,9 @@ function LastFMRecentTracks({ data, interval }: Props): JSX.Element {
     level: "debug",
     __filename,
   })
-  const { lastfm } = getEnvVariables()
+  const envManager = EnvironmentManager.getInstance()
+  const env = envManager.getEnv()
+  const lastfm = env.lastfm
   if (!lastfm) throw new Error("LastFM plugin not found in LastFMRecentTracks component")
   if (!data) return <ErrorMessage message="No data found in LastFMRecentTracks component" />
 
@@ -49,7 +51,7 @@ function LastFMRecentTracks({ data, interval }: Props): JSX.Element {
   })) as ListItemProps[]
 
   return (
-    <section id="last-fm" className="recent-tracks">
+    <section id="lastfm-recent-tracks">
       <RenderBasedOnStyle
         defaultComponent={
           <>
@@ -60,7 +62,7 @@ function LastFMRecentTracks({ data, interval }: Props): JSX.Element {
                 icon={<MdOutlineAudiotrack />}
               />
             )}
-            <List data={listItems} />
+            <DefaultList data={listItems} />
           </>
         }
         terminalComponent={

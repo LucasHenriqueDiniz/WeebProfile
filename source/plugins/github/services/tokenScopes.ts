@@ -1,90 +1,152 @@
 import axios from "axios"
-import logger from "source/helpers/logger"
 
 export interface TokenScopes {
   repo: boolean
-  repo_status: boolean
+  "repo:status": boolean
   repo_deployment: boolean
   public_repo: boolean
-  repo_invite: boolean
-  read_org: boolean
+  "repo:invite": boolean
+  security_events: boolean
+  workflow: boolean
+  "write:packages": boolean
+  "read:packages": boolean
+  "delete:packages": boolean
+  "admin:org": boolean
+  "write:org": boolean
+  "read:org": boolean
+  "manage_runners:org": boolean
+  "admin:public_key": boolean
+  "write:public_key": boolean
+  "read:public_key": boolean
+  "admin:repo_hook": boolean
+  "write:repo_hook": boolean
+  "read:repo_hook": boolean
+  "admin:org_hook": boolean
   gist: boolean
+  notifications: boolean
   user: boolean
-  user_follow: boolean
-  user_email: boolean
-  user_read: boolean
-  write_discussion: boolean
-  read_audit_log: boolean
+  "read:user": boolean
+  "user:email": boolean
+  "user:follow": boolean
+  delete_repo: boolean
+  "write:discussion": boolean
+  "read:discussion": boolean
+  "admin:enterprise": boolean
+  "manage_runners:enterprise": boolean
+  "manage_billing:enterprise": boolean
+  "read:enterprise": boolean
+  "scim:enterprise": boolean
+  audit_log: boolean
+  "read:audit_log": boolean
+  codespace: boolean
+  "codespace:secrets": boolean
+  copilot: boolean
+  "manage:billing:copilot": boolean
+  project: boolean
+  "read:project": boolean
+  "admin:gpg_key": boolean
+  "write:gpg_key": boolean
+  "read:gpg_key": boolean
+  "admin:ssh_signing_key": boolean
+  "write:ssh_signing_key": boolean
+  "read:ssh_signing_key": boolean
 }
 
-async function getTokenScope(token: string) {
+const SECTION_SCOPES: { [key: string]: string[] } = {
+  profile: ["read:user"],
+  repositories: ["public_repo", "read:org"],
+  activity: ["read:user", "read:org"],
+  calendar: ["read:user"],
+  code_habits: ["public_repo"],
+  favorite_languages: ["public_repo"],
+  favorite_license: ["public_repo"],
+}
+
+let cachedTokenScopes: TokenScopes | null = null
+
+export async function getTokenScopes(token: string): Promise<TokenScopes> {
+  if (cachedTokenScopes) return cachedTokenScopes
+
   const response = await axios.get("https://api.github.com", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
-  const scopes = response.headers["x-oauth-scopes"].split(", ")
 
+  if (response.status !== 200) {
+    throw new Error(`GitHub API error: ${response.status} ${response.statusText}`)
+  }
+
+  const scopesHeader = response.headers["x-oauth-scopes"]
+  if (!scopesHeader) {
+    throw new Error("No scopes found in GitHub response")
+  }
+
+  const scopes = scopesHeader.split(",").map((s: string) => s.trim())
   const scopesResponse = {
     repo: false,
-    repo_status: false,
-    repo_deployment: false,
-    public_repo: false,
-    repo_invite: false,
-    read_org: false,
-    gist: false,
-    user: false,
-    user_follow: false,
-    user_email: false,
-    user_read: false,
-    write_discussion: false,
-    read_audit_log: false,
   } as TokenScopes
 
-  // if audit_log -> read_audit_log true
-  // if repo -> public_repo true
-  // if user -> user_follow, read_user, user_email, user_read, user:email true
-
   scopes.forEach((scope: string) => {
-    scopesResponse[scope.replace(":", "_") as keyof TokenScopes] = true
-    if (scope === "audit_log") {
-      scopesResponse.read_audit_log = true
-    }
     if (scope === "repo") {
-      scopesResponse.public_repo = true
-      scopesResponse.repo_status = true
+      scopesResponse.repo = true
+      scopesResponse["repo:status"] = true
       scopesResponse.repo_deployment = true
-      scopesResponse.repo_invite = true
-    }
-    if (scope === "user") {
-      scopesResponse.user_follow = true
-      scopesResponse.user_email = true
-      scopesResponse.user_read = true
+      scopesResponse.public_repo = true
+      scopesResponse["repo:invite"] = true
+      scopesResponse.security_events = true
+    } else if (scope === "user") {
       scopesResponse.user = true
+      scopesResponse["user:follow"] = true
+      scopesResponse["user:email"] = true
+      scopesResponse["read:user"] = true
+    } else if (scope === "admin:org") {
+      scopesResponse["admin:org"] = true
+      scopesResponse["write:org"] = true
+      scopesResponse["read:org"] = true
+      scopesResponse["manage_runners:org"] = true
+    } else if (scope === "admin:public_key") {
+      scopesResponse["admin:public_key"] = true
+      scopesResponse["write:public_key"] = true
+      scopesResponse["read:public_key"] = true
+    } else if (scope === "admin:repo_hook") {
+      scopesResponse["admin:repo_hook"] = true
+      scopesResponse["write:repo_hook"] = true
+      scopesResponse["read:repo_hook"] = true
+    } else if (scope === "admin:enterprise") {
+      scopesResponse["admin:enterprise"] = true
+      scopesResponse["manage_runners:enterprise"] = true
+      scopesResponse["manage_billing:enterprise"] = true
+      scopesResponse["read:enterprise"] = true
+    } else if (scope === "write:packages") {
+      scopesResponse["write:packages"] = true
+      scopesResponse["read:packages"] = true
+    } else if (scope === "admin:gpg_key") {
+      scopesResponse["admin:gpg_key"] = true
+      scopesResponse["write:gpg_key"] = true
+      scopesResponse["read:gpg_key"] = true
+    } else if (scope === "admin:ssh_signing_key") {
+      scopesResponse["admin:ssh_signing_key"] = true
+      scopesResponse["write:ssh_signing_key"] = true
+      scopesResponse["read:ssh_signing_key"] = true
+    } else {
+      scopesResponse[scope as keyof TokenScopes] = true
     }
   })
 
-  //print only the scopes that are true
-  logger({
-    message: `Token scopes: ${JSON.stringify(scopesResponse)}`,
-    level: "debug",
-    __filename,
-  })
+  cachedTokenScopes = scopesResponse
   return scopesResponse
 }
 
-export default getTokenScope
+export function checkSectionScopes(scopes: TokenScopes, section: string): boolean {
+  const sectionScopes = SECTION_SCOPES[section]
+  if (!sectionScopes) return true
 
-let cachedTokenScopes: TokenScopes | null = null
+  return sectionScopes.every((scope) => {
+    if (scope === "public_repo" && (scopes.repo || scopes.public_repo)) return true
+    if (scope === "read:user" && (scopes.user || scopes["read:user"])) return true
+    if (scope === "read:org" && (scopes["admin:org"] || scopes["write:org"] || scopes["read:org"])) return true
 
-export async function checkIfHasScope(token: string, scope: keyof TokenScopes) {
-  if (cachedTokenScopes === null) {
-    cachedTokenScopes = await getTokenScope(token)
-  }
-
-  if (cachedTokenScopes[scope] === undefined) {
-    throw new Error(`Scope ${scope} does not exist`)
-  }
-
-  return cachedTokenScopes[scope]
+    return scopes[scope as keyof TokenScopes]
+  })
 }

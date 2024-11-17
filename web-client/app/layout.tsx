@@ -1,8 +1,6 @@
-import React from "react"
-
-import "./global.css"
-import ToastProvider from "./ToastProvider"
 import { Metadata } from "next"
+import React from "react"
+import ToastProvider from "./ToastProvider"
 
 export const metadata: Metadata = {
   title: "Weeb Profile",
@@ -31,7 +29,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" data-light-theme="light" data-dark-theme="dark">
-      <body>
+      <body className="min-h-screen flex flex-col">
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>

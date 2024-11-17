@@ -1,7 +1,7 @@
 import logger from "source/helpers/logger"
 import React from "react"
 import { PluginDataMap } from "source/plugins/@types/plugins"
-import getEnvVariables from "source/plugins/@utils/getEnvVariables"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 import { PluginManager } from "source/plugins/@utils/PluginManager"
 import { PluginRegistry } from "source/plugins/plugins"
 
@@ -11,8 +11,10 @@ interface RenderActivePluginsProps {
 
 const RenderActivePlugins = ({ pluginsData }: RenderActivePluginsProps): JSX.Element => {
   const pluginManager = PluginManager.getInstance()
+  const envManager = EnvironmentManager.getInstance()
+
   const activePlugins = pluginManager.getActivePlugins()
-  const env = getEnvVariables()
+  const env = envManager.getEnv()
 
   if (activePlugins.length === 0) {
     logger({ message: "No active plugins found", level: "error", __filename })
@@ -30,7 +32,7 @@ const RenderActivePlugins = ({ pluginsData }: RenderActivePluginsProps): JSX.Ele
             level: "error",
             __filename,
           })
-          return null
+          throw new Error(`Missing ${!data ? "data" : "config"} for plugin ${name}`)
         }
 
         try {
