@@ -27,6 +27,8 @@ on:
 jobs:
   weeb_profile:
     runs_on: ${actionCode.jobs.weeb_profile.runs_on}
+    env:
+      GH_TOKEN: \${{ secrets.GH_TOKEN }}
     steps:
       - name: ${actionCode.jobs.weeb_profile.steps.name}
         uses: ${actionCode.jobs.weeb_profile.steps.uses}
