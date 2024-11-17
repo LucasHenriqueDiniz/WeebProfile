@@ -4,7 +4,7 @@ import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalBody from "templates/Terminal/TerminalBody"
 import CheckPluginForRequiredValues from "../@utils/checkPluginForRequiredValues"
 import FavoriteLanguages from "./components/FavoriteLanguages"
-import FavoriteLicense from "./components/FavoriteLicenses"
+import FavoriteLicense from "./components/FavoriteLicense"
 import GithubProfile from "./components/Profile"
 import GithubRepositories from "./components/Repositories"
 import GITHUB_ENV_VARIABLES, { GithubSections } from "./ENV_VARIABLES"
@@ -51,29 +51,13 @@ export default function RenderGithub({ plugin, data }: Props): JSX.Element {
       )
     },
     favorite_license: (githubData) => {
-      return <FavoriteLicense key="favorite_license" data={githubData.repositories} />
+      return <FavoriteLicense key="favorite_license" data={githubData.favoriteLicense} />
     },
     activity: (githubData) => {
       return <GithubActivity key="activity" data={githubData.activity} />
     },
     calendar: (githubData) => {
-      const weeks = githubData.user.contributionCalendar.weeks.map((week) => ({
-        ...week,
-        contributionDays: week.contributionDays.map((day, index) => ({
-          ...day,
-          weekday: index,
-        })),
-      }))
-
-      return (
-        <GithubCalendar
-          key="calendar"
-          data={{
-            totalContributions: githubData.user.contributionCalendar.totalContributions,
-            weeks,
-          }}
-        />
-      )
+      return <GithubCalendar key="calendar" data={githubData.calendar} />
     },
     code_habits: (githubData) => {
       return <GithubCodeHabits key="code_habits" data={githubData.codeHabits} />

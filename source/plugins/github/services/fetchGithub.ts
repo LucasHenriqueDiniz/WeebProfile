@@ -4,15 +4,16 @@ import { Octokit } from "@octokit/rest"
 import logger from "source/helpers/logger"
 import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 import generateTestData from "../test/generateTestData"
+import { CodeHabitsData } from "../types/CodeHabitsData"
 import GithubConfig from "../types/GithubConfig"
 import GithubData from "../types/GithubData"
 import { ProcessedLanguage } from "../types/LanguagesData"
-import { SECTION_QUERIES } from "../utils/getSectionQueries"
-import { checkSectionScopes, getTokenScopes } from "./tokenScopes"
+import LicenseData from "../types/LicenseData"
 import { RepositoriesData } from "../types/RepositoryData"
-import { CodeHabitsData } from "../types/CodeHabitsData"
-import fetchRateLimit from "./rateLimit"
 import { getLanguageFromExtension } from "../utils/fileExtensionToLanguage"
+import { SECTION_QUERIES } from "../utils/getSectionQueries"
+import fetchRateLimit from "./rateLimit"
+import { checkSectionScopes, getTokenScopes } from "./tokenScopes"
 
 interface GraphQLResponse {
   user: {
@@ -32,7 +33,14 @@ interface GraphQLResponse {
       restrictedContributionsCount: number
       contributionCalendar?: {
         totalContributions: number
-        weeks: any[]
+        weeks: {
+          contributionDays: {
+            color: string
+            contributionCount: number
+            date: string
+            weekday: number
+          }[]
+        }[]
       }
     }
     repositoriesContributedTo?: {
@@ -72,6 +80,7 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean | undefined): 
     level: "debug",
     __filename,
   })
+
   if (rateLimit.rate.remaining < 1000) {
     // @ TODO: Add a way to handle this
     logger({
@@ -121,7 +130,6 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean | undefined): 
         includePrivate: section === "repositories" && tokenScopes.repo,
       })
 
-      // Process result based on section
       switch (section) {
         case "profile":
           if (!result.user.name || !result.user.login || !result.user.avatarUrl || !result.user.createdAt) {
@@ -141,15 +149,35 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean | undefined): 
             repositoriesContributedTo: result.user.repositoriesContributedTo?.totalCount || 0,
           }
           break
-        case "languages":
+        case "favorite_languages":
           data.languages = processLanguagesData(result)
           break
         case "activity":
           data.activity = processActivityData(result)
           break
-        case "calendar":
-          data.calendar = result.user.contributionsCollection?.contributionCalendar
+        case "calendar": {
+          logger({
+            message: `Processing calendar data`,
+            level: "debug",
+            __filename,
+          })
+
+          // Extrair os dados diretamente do caminho correto
+          const calendar = result.user.contributionsCollection?.contributionCalendar
+
+          // Criar o objeto calendar exatamente como está no result.json
+          data.calendar = {
+            totalContributions: calendar?.totalContributions || 0,
+            weeks: calendar?.weeks || [],
+          }
+
+          logger({
+            message: `Successfully processed calendar data with ${data.calendar.totalContributions} contributions`,
+            level: "debug",
+            __filename,
+          })
           break
+        }
         case "repositories":
           data.repositories = processRepositoriesData(result)
           break
@@ -178,13 +206,44 @@ async function fetchGithubData(plugin: GithubConfig, dev: boolean | undefined): 
 export default fetchGithubData
 
 function processLanguagesData(result: GraphQLResponse): ProcessedLanguage[] {
-  return (
-    result.user.languages?.nodes.map((language: any) => ({
-      name: language.name,
-      color: language.color,
-      size: language.size,
-    })) || []
-  )
+  logger({
+    message: "Processing languages data",
+    level: "warn",
+  })
+
+  const languagesMap = new Map<string, { color: string; size: number }>()
+
+  // Process all repositories
+  result.user.repositories?.nodes.forEach((repo: any) => {
+    if (repo.languages?.edges) {
+      repo.languages.edges.forEach((edge: any) => {
+        const current = languagesMap.get(edge.node.name) || {
+          color: edge.node.color,
+          size: 0,
+        }
+        languagesMap.set(edge.node.name, {
+          color: edge.node.color,
+          size: current.size + edge.size,
+        })
+      })
+    }
+  })
+
+  // Convert map to array and sort by size
+  const processedLanguages = Array.from(languagesMap.entries())
+    .map(([name, data]) => ({
+      name,
+      color: data.color,
+      size: data.size,
+    }))
+    .sort((a, b) => b.size - a.size)
+
+  logger({
+    message: `Processed languages result: ${processedLanguages.length}`,
+    level: "debug",
+  })
+
+  return processedLanguages
 }
 
 async function processCodeHabitsData(rest: any, login: string, days = 90): Promise<CodeHabitsData> {
@@ -402,12 +461,35 @@ function processActivityData(result: GraphQLResponse) {
   }
 }
 
-function processFavoriteLicenseData(result: GraphQLResponse) {
-  const licenses = result.user.repositories?.nodes
-    .filter((repo: any) => repo.licenseInfo)
-    .map((repo: any) => repo.licenseInfo.name)
+function processFavoriteLicenseData(result: GraphQLResponse): LicenseData {
+  logger({
+    message: "Processing license data",
+    level: "warn",
+  })
+
+  const repositories = result.user.repositories?.nodes || []
+  const licenses = repositories.filter((repo: any) => repo.licenseInfo).map((repo: any) => repo.licenseInfo.name)
+  const total = repositories.length || 0
+
+  const licenseCount = new Map<string, number>()
+  licenses.forEach((license) => {
+    licenseCount.set(license, (licenseCount.get(license) || 0) + 1)
+  })
+
+  // Get the most used license
+  let favoriteLicense = "No License"
+  let maxCount = 0
+
+  licenseCount.forEach((count, license) => {
+    if (count > maxCount) {
+      maxCount = count
+      favoriteLicense = license
+    }
+  })
+
   return {
-    name: licenses?.[0] || "No License",
-    count: licenses?.length || 0,
+    name: favoriteLicense,
+    count: maxCount,
+    total,
   }
 }

@@ -187,7 +187,8 @@ export default function generateTestData(): GithubData {
     codeHabits: generateTestCodeHabitsData(),
     favoriteLicense: {
       name: faker.helpers.arrayElement(["MIT", "Apache-2.0", "GPL-3.0"]),
-      count: faker.number.int({ min: 1, max: 50 }),
+      count: faker.number.int({ min: 1, max: 100 }),
+      total: faker.number.int({ min: 100, max: 999 }),
     },
   }
 }

@@ -22,7 +22,7 @@
     "format": "yarn check:prettier-fix && yarn check:lint-fix",
     "check:plugins": "tsx core/src/setup/checkPlugins/validatePlugins.ts",
     "generate:readme": "tsx core/src/setup/readme/generateReadme.ts",
-    "generate:action": "tsx core/src/setup/action/generateAction.ts"
+    "generate:actions": "tsx core/src/setup/action/generateAction.ts"
   },
   "dependencies": {
     "@octokit/graphql": "^8.1.1",

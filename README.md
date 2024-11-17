@@ -25,7 +25,7 @@ A simple and customizable way to display code, anime, and music stats on your Gi
 ## 🖼️ Supported sections
 
 
-<h4>Right now we support 26 sections with 2 styles each</h4>
+<h4>Right now we support 31 sections with 2 styles each</h4>
 
 
 <details close>
@@ -39,12 +39,32 @@ A simple and customizable way to display code, anime, and music stats on your Gi
       <td align="center" width="600px">Default Image Showcase</td>
     </tr>
     <tr>
+      <td><code>profile</code></td>
+      <td><img src="source\plugins\github\assets\default\profile.svg"></td>
+    </tr>
+    <tr>
+      <td><code>repositories</code></td>
+      <td><img src="source\plugins\github\assets\default\repositories.svg"></td>
+    </tr>
+    <tr>
       <td><code>favorite_languages</code></td>
       <td><img src="source\plugins\github\assets\default\favorite_languages.svg"></td>
     </tr>
     <tr>
       <td><code>favorite_license</code></td>
       <td><img src="source\plugins\github\assets\default\favorite_license.svg"></td>
+    </tr>
+    <tr>
+      <td><code>activity</code></td>
+      <td><img src="Image not found"></td>
+    </tr>
+    <tr>
+      <td><code>calendar</code></td>
+      <td><img src="source\plugins\github\assets\default\calendar.svg"></td>
+    </tr>
+    <tr>
+      <td><code>code_habits</code></td>
+      <td><img src="source\plugins\github\assets\default\code_habits.svg"></td>
     </tr>
   </table>
 
@@ -56,12 +76,32 @@ A simple and customizable way to display code, anime, and music stats on your Gi
       <td align="center" width="600px">Terminal Image Showcase</td>
     </tr>
     <tr>
+      <td><code>profile</code></td>
+      <td><img src="source\plugins\github\assets\terminal\profile.svg"></td>
+    </tr>
+    <tr>
+      <td><code>repositories</code></td>
+      <td><img src="source\plugins\github\assets\terminal\repositories.svg"></td>
+    </tr>
+    <tr>
       <td><code>favorite_languages</code></td>
       <td><img src="source\plugins\github\assets\terminal\favorite_languages.svg"></td>
     </tr>
     <tr>
       <td><code>favorite_license</code></td>
       <td><img src="source\plugins\github\assets\terminal\favorite_license.svg"></td>
+    </tr>
+    <tr>
+      <td><code>activity</code></td>
+      <td><img src="source\plugins\github\assets\terminal\activity.svg"></td>
+    </tr>
+    <tr>
+      <td><code>calendar</code></td>
+      <td><img src="source\plugins\github\assets\terminal\calendar.svg"></td>
+    </tr>
+    <tr>
+      <td><code>code_habits</code></td>
+      <td><img src="source\plugins\github\assets\terminal\code_habits.svg"></td>
     </tr>
   </table>
 </details>
@@ -255,11 +295,11 @@ A simple and customizable way to display code, anime, and music stats on your Gi
     </tr>
     <tr>
       <td><code>anime_bar</code></td>
-      <td><img src="Image not found"></td>
+      <td><img src="source\plugins\myanimelist\assets\terminal\anime_bar.svg"></td>
     </tr>
     <tr>
       <td><code>manga_bar</code></td>
-      <td><img src="Image not found"></td>
+      <td><img src="source\plugins\myanimelist\assets\terminal\manga_bar.svg"></td>
     </tr>
     <tr>
       <td><code>statistics_simple</code></td>

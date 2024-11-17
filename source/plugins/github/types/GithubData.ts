@@ -2,6 +2,7 @@ import { ActivityData } from "./ActivityData"
 import { CalendarData } from "./CalendarData"
 import { CodeHabitsData } from "./CodeHabitsData"
 import { ProcessedLanguage } from "./LanguagesData"
+import LicenseData from "./LicenseData"
 import { RepositoriesData } from "./RepositoryData"
 import { UserResponse } from "./UserResponse"
 
@@ -11,10 +12,7 @@ interface GithubData {
   calendar: CalendarData
   languages: ProcessedLanguage[]
   repositories: RepositoriesData
-  favoriteLicense: {
-    name: string
-    count: number
-  }
+  favoriteLicense: LicenseData
   codeHabits: CodeHabitsData
 }
 

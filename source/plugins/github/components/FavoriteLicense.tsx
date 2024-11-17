@@ -1,3 +1,4 @@
+import getPseudoCommands from "core/utils/getPseudoCommands"
 import React from "react"
 import { FaCode } from "react-icons/fa"
 import { TbLicense } from "react-icons/tb"
@@ -9,26 +10,22 @@ import RenderBasedOnStyle from "templates/RenderBasedOnStyle"
 import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import { GridItemProps } from "templates/types"
 import ENV_VARIABLES from "../ENV_VARIABLES"
-import { RepositoriesData } from "../types/RepositoryData"
-import getPseudoCommands from "core/utils/getPseudoCommands"
+import LicenseData from "../types/LicenseData"
 
 interface FavoriteLicenseProps {
-  data: RepositoriesData
+  data: LicenseData
 }
 
 const DefaultFavoriteLicense = ({ data }: FavoriteLicenseProps) => {
-  const { favoriteLicense, repositories } = data
-  const total = repositories.length
-
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center justify-center h-full">
         <TbLicense size={45} />
       </div>
       <div className="flex flex-col w-full">
-        <span className="text-semibold text-default-muted text-lg">{favoriteLicense.name}</span>
+        <span className="text-semibold text-default-muted text-lg">{data.name}</span>
         <span className="text-sm">
-          Used in {favoriteLicense.count} out of {total} repositories
+          Used in {data.count} out of {data.total} repositories
         </span>
       </div>
     </div>
@@ -36,14 +33,13 @@ const DefaultFavoriteLicense = ({ data }: FavoriteLicenseProps) => {
 }
 
 const TerminalFavoriteLicense = ({ data }: FavoriteLicenseProps) => {
-  const { favoriteLicense } = data
-  const total = data.repositories.length
-  const percentage = ((favoriteLicense.count / total) * 100).toFixed(2)
+  const total = data.total
+  const percentage = ((data.count / total) * 100).toFixed(2)
   const TreeItems = [
     {
-      title: favoriteLicense.name,
+      title: data.name,
       subtitle: `${percentage}% of ${total} repositories`,
-      value: `Used ${favoriteLicense.count} times`,
+      value: `Used ${data.count} times`,
     },
   ] as GridItemProps[]
 
