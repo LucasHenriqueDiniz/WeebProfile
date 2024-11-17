@@ -22,11 +22,6 @@ const MAL_ENV_VARIABLES: Record<keyof MyAnimeListPlugin, PluginVariables> = {
     sections: ["main"],
     options: MyAnimeListSections,
   },
-  hide_header: {
-    type: "boolean",
-    description: "Hide the header of the profile",
-    sections: ["main"],
-  },
   anime_favorites_max: {
     type: "number",
     defaultValue: "5",

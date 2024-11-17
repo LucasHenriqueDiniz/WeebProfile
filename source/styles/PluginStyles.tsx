@@ -2,22 +2,26 @@ import React from "react"
 import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 import { getDefaultThemeVariables, getTerminalThemeVariables } from "../plugins/@themes/theme-utils"
 import TerminalHeader from "../templates/Terminal/TerminalHeader"
+import { DefaultTheme } from "source/plugins/@themes/default-themes"
+import { TerminalTheme } from "source/plugins/@themes/terminal-themes"
 
 const TerminalStyles = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const envManager = EnvironmentManager.getInstance()
   const env = envManager.getEnv()
-  const terminalTheme = env.terminalTheme
-  const hideTerminalHeader = env.hideTerminalHeader
+
+  const terminalTheme = env.terminal_theme ?? "default"
+  const hideTerminalHeader = env.hide_terminal_header
 
   const baseStyles = {
     fontFamily: "ui-monospace, monospace",
     WebkitFontSmoothing: "antialiased",
     MozOsxFontSmoothing: "grayscale",
+    ...getTerminalThemeVariables(terminalTheme as TerminalTheme),
   }
 
   const themeStyles = {
     ...baseStyles,
-    ...getTerminalThemeVariables(terminalTheme ?? "default"),
+    ...getTerminalThemeVariables(terminalTheme as TerminalTheme),
   }
 
   return (
@@ -31,17 +35,18 @@ const TerminalStyles = ({ children }: { children: React.ReactNode }): JSX.Elemen
 const DefaultStyles = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const envManager = EnvironmentManager.getInstance()
   const env = envManager.getEnv()
-  const defaultTheme = env.defaultTheme
+  const defaultTheme = env.default_theme ?? "default"
 
   const baseStyles = {
     fontFamily: "'Poppins', sans-serif",
     WebkitFontSmoothing: "antialiased",
     MozOsxFontSmoothing: "grayscale",
+    ...getDefaultThemeVariables(defaultTheme as DefaultTheme),
   }
 
   const themeStyles = {
     ...baseStyles,
-    ...getDefaultThemeVariables(defaultTheme ?? "default"),
+    ...getDefaultThemeVariables(defaultTheme as DefaultTheme),
   }
 
   return (

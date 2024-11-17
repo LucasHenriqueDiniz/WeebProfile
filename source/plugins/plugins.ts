@@ -1,7 +1,7 @@
 import { Plugin, PluginName } from "./@types/plugins"
 import GithubPlugin from "./github"
-import { githubResponse } from "./github/types"
 import GithubConfig from "./github/types/GithubConfig"
+import GithubData from "./github/types/GithubData"
 import LastFmPlugin from "./lastfm"
 import LastFmConfig from "./lastfm/types/envLastFM"
 import { LastFmData } from "./lastfm/types/lastFmTypes"
@@ -12,7 +12,7 @@ import MyAnimeListConfig from "./myanimelist/types/MyAnimeListConfig"
 export interface PluginRegistry {
   github: {
     config: GithubConfig
-    data: githubResponse
+    data: GithubData
   }
   lastfm: {
     config: LastFmConfig

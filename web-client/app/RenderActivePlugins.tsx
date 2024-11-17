@@ -7,23 +7,46 @@ import ErrorMessage from "source/templates/Error_Style"
 import SvgContainer from "templates/Main/SvgContainer"
 import useStore from "./store"
 import "./globals.css"
+import { EnvironmentManager } from "source/plugins/@utils/EnvManager"
 
 const RenderActivePlugins = (): JSX.Element => {
+  // const [envVersion, setEnvVersion] = useState(0)
   const [pluginsComponents, setPluginsComponents] = useState<ReactNode[]>([])
   const { pluginsConfig, pluginsData, initPluginsData } = useStore()
   const svgWidth = pluginsConfig.size
   const style = pluginsConfig.style
-  const pluginManager = PluginManager.getInstance()
 
-  // Initialize the plugins data when necessary
+  const defaultTheme = pluginsConfig.defaultTheme
+  const terminalTheme = pluginsConfig.terminalTheme
+
+  const pluginManager = PluginManager.getInstance()
+  const envManager = EnvironmentManager.getInstance()
+
+  // useEffect(() => {
+  //   setEnvVersion((v) => v + 1)
+  //   envManager.refreshEnv()
+  // }, [pluginsConfig, envManager])
+
+  // useEffect(() => {
+  //   const unsubscribe = envManager.subscribe((newVersion) => {
+  //     setEnvVersion(newVersion)
+  //   })
+  //   return () => unsubscribe()
+  // }, [envManager])
+
   useEffect(() => {
+    const env = envManager.getEnv()
     const activePlugins = pluginManager.getActivePlugins()
     const hasNullData = activePlugins.some(([name]) => !pluginsData?.[name])
 
-    if (hasNullData) {
+    if (hasNullData || !pluginsData) {
       initPluginsData()
     }
-  }, [pluginsConfig, initPluginsData, pluginsData, pluginManager])
+
+    pluginManager.initializeActivePlugins({
+      ...env,
+    })
+  }, [pluginsConfig, initPluginsData, pluginsData, pluginManager, envManager])
 
   useEffect(() => {
     const newComponents = pluginManager
@@ -32,7 +55,6 @@ const RenderActivePlugins = (): JSX.Element => {
         const pluginData = pluginsData?.[pluginName]
         const specificConfigs = pluginsConfig[pluginName]
 
-        // Early returns for invalid plugin states
         if (!specificConfigs || !specificConfigs.plugin_enabled) {
           return null
         }
@@ -51,7 +73,6 @@ const RenderActivePlugins = (): JSX.Element => {
           return <React.Fragment key={pluginName}>{error}</React.Fragment>
         }
 
-        // If we don't have data, we show a loading message
         if (!pluginData) {
           return <div key={pluginName}>Loading {pluginName} data...</div>
         }
@@ -64,7 +85,14 @@ const RenderActivePlugins = (): JSX.Element => {
   }, [pluginsConfig, pluginsData, pluginManager])
 
   return (
-    <SvgContainer size={svgWidth} height={0} style={style} asDiv>
+    <SvgContainer
+      size={svgWidth}
+      height={0}
+      style={style}
+      asDiv
+      data-terminal-theme={terminalTheme}
+      data-default-theme={defaultTheme}
+    >
       {pluginsComponents}
     </SvgContainer>
   )

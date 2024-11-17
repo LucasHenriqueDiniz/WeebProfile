@@ -9,6 +9,7 @@ import TerminalCommand from "templates/Terminal/TerminalCommand"
 import TerminalLineBreak from "templates/Terminal/TerminalLineBreak"
 import TerminalLineWithDots from "templates/Terminal/TerminalLineWithDots"
 import { UserResponse } from "../types/UserResponse"
+import getPseudoCommands from "core/utils/getPseudoCommands"
 
 const DefaultProfile = ({ data }: { data: UserResponse }) => {
   const years = new Date().getFullYear() - new Date(data.createdAt).getFullYear()
@@ -98,7 +99,14 @@ export default function GithubProfile({ data }: { data: UserResponse }): JSX.Ele
         defaultComponent={<DefaultProfile data={data} />}
         terminalComponent={
           <>
-            <TerminalCommand command={`gh profile view ${github.username}`} />
+            <TerminalCommand
+              command={getPseudoCommands({
+                prefix: "gh",
+                plugin: "github",
+                section: "profile",
+                username: github.username,
+              })}
+            />
             <TerminalProfile data={data} />
             <TerminalLineBreak />
           </>

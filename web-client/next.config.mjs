@@ -6,12 +6,6 @@ const config = {
   reactStrictMode: true,
   transpilePackages: ["@core", "@source"],
   webpack: (config, { isServer }) => {
-    config.watchOptions = {
-      poll: 1000,
-      aggregateTimeout: 300,
-    }
-    config.cache = false
-
     if (!isServer) {
       config.resolve = {
         ...config.resolve,
@@ -43,6 +37,7 @@ const config = {
       { hostname: "cdn.myanimelist.net" },
       { hostname: "lastfm.freetls.fastly.net" },
       { hostname: "placecats" },
+      { hostname: "loremflickr.com" },
     ],
   },
   headers:
