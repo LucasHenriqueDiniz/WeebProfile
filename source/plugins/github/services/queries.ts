@@ -14,4 +14,5 @@ export const Queries = {
   LANGUAGES_QUERY: loadGraphQLQuery("languages"),
   PROFILE_QUERY: loadGraphQLQuery("profile"),
   REPOSITORIES_QUERY: loadGraphQLQuery("repositories"),
+  FAVORITE_LICENSE_QUERY: loadGraphQLQuery("license"),
 }

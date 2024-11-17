@@ -112,11 +112,11 @@ sub>This is the default style for all sections. If you want to use a different s
     </tr>
     <tr>
       <td align="center" nowrap="nowrap"><code>anime_bar</code></td>
-      <td align="center" nowrap="nowrap"><img src="Image not found"></img></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\myanimelist\assets\terminal\anime_bar.svg"></img></td>
     </tr>
     <tr>
       <td align="center" nowrap="nowrap"><code>manga_bar</code></td>
-      <td align="center" nowrap="nowrap"><img src="Image not found"></img></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\myanimelist\assets\terminal\manga_bar.svg"></img></td>
     </tr>
     <tr>
       <td align="center" nowrap="nowrap"><code>statistics_simple</code></td>

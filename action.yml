@@ -1,246 +1,337 @@
 inputs:
+  DEV:
+    description: "If the plugin is running in dev mode"
+    required: false
+  FILENAME:
+    description: "The name of the SVG file that will be generated"
+    required: false
+    default: "WeeboProfile.svg"
   GIST_ID:
-    description: "Github Gist ID to store the svg"
+    description: "The Gist ID where the SVG will be saved"
     required: true
   GH_TOKEN:
-    description: "Github Access Token"
-    required: true
-  FILENAME:
-    description: "Filename of the svg"
-    default: "WeebProfile.svg"
-    required: false
-  STORAGE_METHOD:
-    description: "Method to store the svg"
-    default: "gist"
+    description: "The GitHub Token used to save the SVG"
     required: true
   SIZE:
-    description: "Size of the svg | half [415px] or full [830px]"
-    default: "half"
+    description: "The size of the SVG"
     required: false
+    default: "half"
   STYLE:
-    description: "Style of the svg | default, terminal"
+    description: "The style of the SVG (default or terminal)"
+    required: false
     default: "default"
+  STORAGE_METHOD:
+    description: "The storage method of the SVG"
+    required: false
+    default: "gist"
+  CUSTOM_CSS:
+    description: "The custom CSS that will be applied to the SVG"
     required: false
   PLUGINS_ORDER:
-    description: "Order of the plugins | github, mal, lastfm"
-    default: "github, mal, lastfm"
+    description: "The order of the plugins that will be generated"
     required: false
+    default: "github,lastfm,myanimelist"
+  HIDE_TERMINAL_EMOJIS:
+    description: "Hide the terminal emojis"
+    required: false
+  HIDE_TERMINAL_HEADER:
+    description: "Hide the terminal header"
+    required: false
+  CUSTOM_PATH:
+    description: "The custom path of the SVG"
+    required: false
+  TERMINAL_THEME:
+    description: "The theme of the terminal"
+    required: false
+    default: "default"
+  DEFAULT_THEME:
+    description: "The default theme of the SVG"
+    required: false
+    default: "default"
   # ====================================================================================
-  # 🌸 MyAnimeList Plugin
-  PLUGIN_MAL:
-    description: "Enable MAL Plugin"
-    default: "false"
-    required: false
-  PLUGIN_MAL_USERNAME:
-    description: "MAL Username | Required to enable MAL Plugin"
-    required: false
-  PLUGIN_MAL_HIDE_TERMINAL_EMOJIS:
-    description: "Hide Emojis in the terminal style"
-    default: "false"
-    required: false
-  PLUGIN_MAL_SECTIONS:
-    description: "MAL Sections | statistics, anime_bar, manga_bar, statistics_simple, anime_simple_favorites, manga_simple_favorites, people_simple_favorites, character_simple_favorites, anime_favorites, manga_favorites, people_favorites, character_favorites, last_activity"
-    default: "stats_simple, anime_simple_favorites, character_simple_favorites"
-    required: false
-  PLUGIN_MAL_HIDE_HEADER:
-    description: "Hide Header with Mal logo and MyAnimeList text"
-    default: "true"
-    required: false
-  PLUGIN_MAL_STATISTICS_ANIME_TITLE:
-    description: "Title of the anime statistics section"
-    default: "Anime Statistics"
-    required: false
-  PLUGIN_MAL_STATISTICS_MANGA_TITLE:
-    description: "Title of the manga statistics section"
-    default: "Manga Statistics"
-    required: false
-  PLUGIN_MAL_STATISTICS_MEDIA:
-    description: "Media to show in the statistics section"
-    default: "anime, manga"
-    required: false
-  PLUGIN_MAL_STATISTICS_HIDE_TITLE:
-    description: "Hide Title of the statistics section"
-    default: "false"
-    required: false
-  PLUGIN_MAL_LAST_ACTIVITY_TITLE:
-    description: "Title of the last activity section"
-    default: "Last Activity"
-    required: false
-  PLUGIN_MAL_LAST_ACTIVITY_MAX:
-    description: "Max number of last updates"
-    default: "6"
-    required: false
-  PLUGIN_MAL_LAST_ACTIVITY_HIDE_TITLE:
-    description: "Hide Title of the last activity section"
-    default: "false"
-    required: false
-  PLUGIN_MAL_ANIME_FAVORITES_MAX:
-    description: "Max number of anime favorites"
-    default: "10"
-    required: false
-  PLUGIN_MAL_ANIME_FAVORITES_TITLE:
-    description: "Title of the anime favorites section"
-    default: "Anime Favorites"
-    required: false
-  PLUGIN_MAL_ANIME_FAVORITES_HIDE_TITLE:
-    description: "Hide Title of the anime favorites section"
-    default: "false"
-    required: false
-  PLUGIN_MAL_MANGA_FAVORITES_MAX:
-    description: "Max number of manga favorites"
-    default: "10"
-    required: false
-  PLUGIN_MAL_MANGA_FAVORITES_TITLE:
-    description: "Title of the manga favorites section"
-    default: "Manga Favorites"
-    required: false
-  PLUGIN_MAL_MANGA_FAVORITES_HIDE_TITLE:
-    description: "Hide Title of the manga favorites section"
-    default: "false"
-    required: false
-  PLUGIN_MAL_CHARACTER_FAVORITES_MAX:
-    description: "Max number of character favorites"
-    default: "10"
-    required: false
-  PLUGIN_MAL_CHARACTER_FAVORITES_TITLE:
-    description: "Title of the character favorites section"
-    default: "Character Favorites"
-    required: false
-  PLUGIN_MAL_CHARACTER_FAVORITES_HIDE_TITLE:
-    description: "Hide Title of the character favorites section"
-    default: "false"
-    required: false
-  PLUGIN_MAL_PEOPLE_FAVORITES_MAX:
-    description: "Max number of people favorites"
-    default: "10"
-    required: false
-  PLUGIN_MAL_PEOPLE_FAVORITES_TITLE:
-    description: "Title of the people favorites section"
-    default: "People Favorites"
-    required: false
-  PLUGIN_MAL_PEOPLE_FAVORITES_HIDE_TITLE:
-    description: "Hide Title of the people favorites section"
-    default: "false"
-    required: false
-  PLUGIN_MAL_STATISTICS_SIMPLE_HIDE_TITLE:
-    description: "Hide Title of the simple statistics section"
-    default: "false"
-    required: false
-  PLUGIN_MAL_STATISTICS_SIMPLE_TITLE:
-    description: "Title of the simple statistics section"
-    default: "Simple Statistics"
-    required: false
-  # ====================================================================================
-  # 🎵 Last.fm Plugin
-  PLUGIN_LASTFM:
-    description: "Enable Last.fm Plugin"
-    default: "false"
-    required: false
-  PLUGIN_LASTFM_USERNAME:
-    description: "Last.fm Username | Required to enable Last.fm Plugin"
-    required: false
-  PLUGIN_LASTFM_HIDE_HEADER:
-    description: "Hide Header with Last.fm logo and Last.fm text"
-    default: "true"
-    required: false
-  PLUGIN_LASTFM_SECTIONS:
-    description: "Last.fm Sections | recent_tracks, statistics, top_albums_grid, top_albums_list, top_albums_default, top_artists_grid, top_artists_list, top_artists_default, top_tracks_grid, top_tracks_list, top_tracks_default"
-    default: "statistics, recent_tracks, top_artists_default, top_albums_grid"
-    required: false
-  PLUGIN_LASTFM_RECENTTRACKS_MAX:
-    description: "Max number of recent tracks"
-    default: "5"
-    required: false
-  PLUGIN_LASTFM_RECENTTRACKS_TITLE:
-    description: "Title of the recent tracks section"
-    default: "Recent Tracks"
-    required: false
-  PLUGIN_LASTFM_RECENTTRACKS_HIDE_TITLE:
-    description: "Hide Title of the recent tracks section"
-    default: "false"
-    required: false
-  PLUGIN_LASTFM_TOPARTISTS_MAX:
-    description: "Max number of top artists"
-    default: "5"
-    required: false
-  PLUGIN_LASTFM_TOPARTISTS_TITLE:
-    description: "Title of the top artists section"
-    default: "Top Artists"
-    required: false
-  PLUGIN_LASTFM_TOPARTISTS_HIDE_TITLE:
-    description: "Hide Title of the top artists section"
-    default: "false"
-    required: false
-  PLUGIN_LASTFM_TOPALBUMS_MAX:
-    description: "Max number of top albums"
-    default: "5"
-    required: false
-  PLUGIN_LASTFM_TOPALBUMS_TITLE:
-    description: "Title of the top albums section"
-    default: "Top Albums"
-    required: false
-  PLUGIN_LASTFM_TOPALBUMS_HIDE_TITLE:
-    description: "Hide Title of the top albums section"
-    default: "false"
-    required: false
-  PLUGIN_LASTFM_TOPTRACKS_MAX:
-    description: "Max number of top tracks"
-    default: "5"
-    required: false
-  PLUGIN_LASTFM_TOPTRACKS_TITLE:
-    description: "Title of the top tracks section"
-    default: "Top Tracks"
-    required: false
-  PLUGIN_LASTFM_TOPTRACKS_HIDE_TITLE:
-    description: "Hide Title of the top tracks section"
-    default: "false"
-    required: false
-  # ====================================================================================
-  # 💻 Github Plugin
+  # github Plugin
   PLUGIN_GITHUB:
-    description: "Enable Github Plugin"
+    description: "Enable github Plugin"
     default: "false"
     required: false
   PLUGIN_GITHUB_USERNAME:
-    description: "Github Username | Required to enable Github Plugin!"
-    required: false
-  PLUGIN_GITHUB_HIDE_HEADER:
-    description: "Hide Header with Github logo and Github text"
-    default: "false"
+    description: "GitHub username | Needed for plugin to work"
     required: false
   PLUGIN_GITHUB_SECTIONS:
-    description: "Github Sections | profile, repositories, favorite_languages, favorite_license"
-    default: "profile, repositories, favorite_languages, favorite_license"
+    description: "Sections to display in the profile"
     required: false
-  PLUGIN_GITHUB_REPOSITORIES_HIDE_TITLE:
-    description: "Hide Title of the repositories section"
-    default: "false"
+    default: ""
+  PLUGIN_GITHUB_PROFILE_HIDE_TITLE:
+    description: "Hide the title of the profile section"
     required: false
-  PLUGIN_GITHUB_REPOSITORIES_TITLE:
-    description: "Title of the repositories section"
-    default: "<qnt> Repositories"
+  PLUGIN_GITHUB_PROFILE_HIDE_AVATAR:
+    description: "Hide the avatar of the profile section"
     required: false
-  PLUGIN_GITHUB_FAVORITE_LANGUAGES_HIDE_TITLE:
-    description: "Hide Title of the favorite languages section"
-    default: "false"
+  PLUGIN_GITHUB_PROFILE_TITLE:
+    description: "Title of the profile section (use <username> to display the username)"
     required: false
+    default: "<username>"
   PLUGIN_GITHUB_FAVORITE_LANGUAGES_TITLE:
     description: "Title of the favorite languages section"
-    default: "<qnt> Languages"
     required: false
-  PLUGIN_GITHUB_FAVORITE_LICENSE_HIDE_TITLE:
-    description: "Hide Title of the favorite license section"
-    default: "false"
+    default: "<qnt> Languages"
+  PLUGIN_GITHUB_FAVORITE_LANGUAGES_MAX_LANGUAGES:
+    description: "Maximum number of languages to display in the favorite languages section"
+    required: false
+    default: "4"
+  PLUGIN_GITHUB_FAVORITE_LANGUAGES_IGNORE_LANGUAGES:
+    description: "Comma separated list of languages to ignore in the favorite languages section"
+    required: false
+  PLUGIN_GITHUB_FAVORITE_LANGUAGES_HIDE_TITLE:
+    description: "Hide the title of the favorite languages section"
     required: false
   PLUGIN_GITHUB_FAVORITE_LICENSE_TITLE:
     description: "Title of the favorite license section"
+    required: false
     default: "Favorite License"
+  PLUGIN_GITHUB_FAVORITE_LICENSE_HIDE_TITLE:
+    description: "Hide the title of the favorite license section"
+    required: false
+  PLUGIN_GITHUB_REPOSITORIES_TITLE:
+    description: "Title of the repositories section"
+    required: false
+  PLUGIN_GITHUB_REPOSITORIES_HIDE_TITLE:
+    description: "Hide the title of the repositories section"
+    required: false
+  PLUGIN_GITHUB_REPOSITORIES_USE_PRIVATE:
+    description: "Show private repositories in the repositories section"
+    required: false
+  PLUGIN_GITHUB_ACTIVITY_TITLE:
+    description: "Title of the activity section"
+    required: false
+    default: "Github Activity"
+  PLUGIN_GITHUB_ACTIVITY_HIDE_TITLE:
+    description: "Hide the title of the activity section"
+    required: false
+  PLUGIN_GITHUB_CALENDAR_TITLE:
+    description: "Title of the calendar section"
+    required: false
+    default: "Contribution Calendar"
+  PLUGIN_GITHUB_CALENDAR_HIDE_TITLE:
+    description: "Hide the title of the calendar section"
+    required: false
+  PLUGIN_GITHUB_CODE_HABITS_TITLE:
+    description: "Title of the code habits section"
+    required: false
+    default: "Code Habits"
+  PLUGIN_GITHUB_CODE_HABITS_HIDE_TITLE:
+    description: "Hide the title of the code habits section"
+    required: false
+  PLUGIN_GITHUB_CODE_HABITS_HIDE_LANGUAGES:
+    description: "Hide the languages of the code habits section"
+    required: false
+  PLUGIN_GITHUB_CODE_HABITS_HIDE_STATS:
+    description: "Hide the stats of the code habits section"
+    required: false
+  PLUGIN_GITHUB_CODE_HABITS_HIDE_WEEKDAYS:
+    description: "Hide the title of the code habits section"
+    required: false
+  PLUGIN_GITHUB_CODE_HABITS_HIDE_HOURS:
+    description: "Hide the hours of the code habits section"
+    required: false
+  PLUGIN_GITHUB_CODE_HABITS_HIDE_FOOTER:
+    description: "Hide the footer of the code habits section"
+    required: false
+  # ====================================================================================
+  # lastfm Plugin
+  PLUGIN_LASTFM:
+    description: "Enable lastfm Plugin"
+    default: "false"
+    required: false
+  PLUGIN_LASTFM_USERNAME:
+    description: "LastFM username | Needed for plugin to work"
+    required: false
+  PLUGIN_LASTFM_SECTIONS:
+    description: "Sections to display in the profile"
+    required: false
+    default: ""
+  PLUGIN_LASTFM_HIDE_INTERVALS:
+    description: "Hide the intervals of the profile"
+    required: false
+  PLUGIN_LASTFM_RECENT_TRACKS_HIDE_TITLE:
+    description: "Hide the title of the recent tracks section"
+    required: false
+  PLUGIN_LASTFM_RECENT_TRACKS_MAX:
+    description: "Number of recent tracks to display"
+    required: false
+    default: "5"
+  PLUGIN_LASTFM_TOP_ARTISTS_HIDE_TITLE:
+    description: "Hide the title of the top artists section"
+    required: false
+  PLUGIN_LASTFM_TOP_ARTISTS_MAX:
+    description: "Number of top artists to display"
+    required: false
+    default: "5"
+  PLUGIN_LASTFM_TOP_ALBUMS_HIDE_TITLE:
+    description: "Hide the title of the top albums section"
+    required: false
+  PLUGIN_LASTFM_TOP_ALBUMS_MAX:
+    description: "Number of top albums to display"
+    required: false
+    default: "5"
+  PLUGIN_LASTFM_TOP_TRACKS_HIDE_TITLE:
+    description: "Hide the title of the top tracks section"
+    required: false
+  PLUGIN_LASTFM_TOP_TRACKS_MAX:
+    description: "Number of top tracks to display"
+    required: false
+    default: "5"
+  PLUGIN_LASTFM_STATISTICS_HIDE_TITLE:
+    description: "Hide the title of the statistics section"
+    required: false
+  PLUGIN_LASTFM_TOP_TRACKS_TITLE:
+    description: "Title of the top tracks section"
+    required: false
+    default: "Top Tracks"
+  PLUGIN_LASTFM_TOP_ARTISTS_TITLE:
+    description: "Title of the top artists section"
+    required: false
+    default: "Top Artists"
+  PLUGIN_LASTFM_TOP_ALBUMS_TITLE:
+    description: "Title of the top albums section"
+    required: false
+    default: "Top Albums"
+  PLUGIN_LASTFM_RECENT_TRACKS_TITLE:
+    description: "Title of the recent tracks section"
+    required: false
+    default: "Recent Tracks"
+  PLUGIN_LASTFM_STATISTICS_TITLE:
+    description: "Title of the statistics section"
+    required: false
+    default: "Statistics"
+  PLUGIN_LASTFM_TOP_ARTISTS_INTERVAL_TEXT:
+    description: "Interval text for the top artists section"
+    required: false
+  PLUGIN_LASTFM_TOP_ALBUMS_INTERVAL_TEXT:
+    description: "Interval text for the top albums section"
+    required: false
+  PLUGIN_LASTFM_TOP_TRACKS_INTERVAL_TEXT:
+    description: "Interval text for the top tracks section"
+    required: false
+  # ====================================================================================
+  # myanimelist Plugin
+  PLUGIN_MYANIMELIST:
+    description: "Enable myanimelist Plugin"
+    default: "false"
+    required: false
+  PLUGIN_MYANIMELIST_USERNAME:
+    description: "MyAnimeList username | Needed for plugin to work"
+    required: false
+  PLUGIN_MYANIMELIST_SECTIONS:
+    description: "Sections to display in the profile"
+    required: false
+    default: ""
+  PLUGIN_MYANIMELIST_ANIME_FAVORITES_MAX:
+    description: "Number of anime favorites to display"
+    required: false
+    default: "5"
+  PLUGIN_MYANIMELIST_ANIME_FAVORITES_HIDE_TITLE:
+    description: "Hide the title of the anime favorites section"
+    required: false
+  PLUGIN_MYANIMELIST_ANIME_FAVORITES_TITLE:
+    description: "Title of the anime favorites section"
+    required: false
+    default: "Anime Favorites"
+  PLUGIN_MYANIMELIST_ANIME_FAVORITES_NO_SUMMARY:
+    description: "Hide the summary of the anime favorites section"
+    required: false
+  PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_TITLE:
+    description: "Title of the character favorites section"
+    required: false
+    default: "Character Favorites"
+  PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_MAX:
+    description: "Number of character favorites to display"
+    required: false
+    default: "5"
+  PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_HIDE_TITLE:
+    description: "Hide the title of the character favorites section"
+    required: false
+  PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_HIDE_TITLE:
+    description: "Hide the title of the people favorites section"
+    required: false
+  PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_TITLE:
+    description: "Title of the people favorites section"
+    required: false
+    default: "People Favorites"
+  PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_MAX:
+    description: "Number of people favorites to display"
+    required: false
+    default: "5"
+  PLUGIN_MYANIMELIST_MANGA_FAVORITES_TITLE:
+    description: "Title of the manga favorites section"
+    required: false
+    default: "Manga Favorites"
+  PLUGIN_MYANIMELIST_MANGA_FAVORITES_MAX:
+    description: "Number of manga favorites to display"
+    required: false
+    default: "5"
+  PLUGIN_MYANIMELIST_MANGA_FAVORITES_NO_SUMMARY:
+    description: "Hide the summary of the manga favorites section"
+    required: false
+  PLUGIN_MYANIMELIST_MANGA_FAVORITES_HIDE_TITLE:
+    description: "Hide the title of the manga favorites section"
+    required: false
+  PLUGIN_MYANIMELIST_STATISTICS_ANIME_TITLE:
+    description: "Title of the anime statistics section"
+    required: false
+    default: "Anime Statistics"
+  PLUGIN_MYANIMELIST_STATISTICS_MANGA_TITLE:
+    description: "Title of the manga statistics section"
+    required: false
+    default: "Manga Statistics"
+  PLUGIN_MYANIMELIST_STATISTICS_MEDIA:
+    description: "Media to display statistics for"
+    required: false
+    default: "both"
+  PLUGIN_MYANIMELIST_STATISTICS_HIDE_TITLE:
+    description: "Hide the title of the statistics section"
+    required: false
+  PLUGIN_MYANIMELIST_ANIME_BAR_TITLE:
+    description: "Title of the anime statistics section"
+    required: false
+    default: "Anime Statistics"
+  PLUGIN_MYANIMELIST_ANIME_BAR_HIDE_TITLE:
+    description: "Hide the title of the anime statistics section"
+    required: false
+  PLUGIN_MYANIMELIST_MANGA_BAR_TITLE:
+    description: "Title of the manga statistics section"
+    required: false
+    default: "Manga Statistics"
+  PLUGIN_MYANIMELIST_MANGA_BAR_HIDE_TITLE:
+    description: "Hide the title of the manga statistics section"
+    required: false
+  PLUGIN_MYANIMELIST_STATISTICS_SIMPLE_TITLE:
+    description: "Title of the simple statistics section"
+    required: false
+    default: "Simple Statistics"
+  PLUGIN_MYANIMELIST_STATISTICS_SIMPLE_HIDE_TITLE:
+    description: "Hide the title of the simple statistics section"
+    required: false
+  PLUGIN_MYANIMELIST_LAST_ACTIVITY_TITLE:
+    description: "Title of the last activity section"
+    required: false
+    default: "Last Activity"
+  PLUGIN_MYANIMELIST_LAST_ACTIVITY_MAX:
+    description: "Number of activities to display"
+    required: false
+    default: "6"
+  PLUGIN_MYANIMELIST_LAST_ACTIVITY_HIDE_TITLE:
+    description: "Hide the title of the last activity section"
+    required: false
+  PLUGIN_MYANIMELIST_LAST_ACTIVITY_MEDIA:
+    description: "Media to display last activity for"
+    required: false
+    default: "both"
+  PLUGIN_MYANIMELIST_FAVORITES_HIDE_OVERLAY:
+    description: "Hide the overlay in the image with the name or title of the favorites section"
     required: false
 # ====================================================================================
 # 🦀 Action metadata
-name: "WeebProfile Action"
-author: "LucasHenriqueDiniz"
-description: "Puts your newest activity from MyAnimeList/LastFM/etc into your readme"
 runs:
   using: composite
   steps:
@@ -268,65 +359,100 @@ runs:
       shell: bash
       env:
         DISPLAY: :99
+        DEV: ${{ inputs.DEV }}
+        FILENAME: ${{ inputs.FILENAME }}
         GIST_ID: ${{ inputs.GIST_ID }}
         GH_TOKEN: ${{ inputs.GH_TOKEN }}
-        FILENAME: ${{ inputs.FILENAME }}
-        STORAGE_METHOD: ${{ inputs.STORAGE_METHOD }}
         SIZE: ${{ inputs.SIZE }}
         STYLE: ${{ inputs.STYLE }}
+        STORAGE_METHOD: ${{ inputs.STORAGE_METHOD }}
+        CUSTOM_CSS: ${{ inputs.CUSTOM_CSS }}
         PLUGINS_ORDER: ${{ inputs.PLUGINS_ORDER }}
-        # ====================================================================================
-        PLUGIN_MAL: ${{ inputs.PLUGIN_MAL }}
-        PLUGIN_MAL_USERNAME: ${{ inputs.PLUGIN_MAL_USERNAME }}
-        PLUGIN_MAL_HIDE_TERMINAL_EMOJIS: ${{ inputs.PLUGIN_MAL_HIDE_TERMINAL_EMOJIS }}
-        PLUGIN_MAL_SECTIONS: ${{ inputs.PLUGIN_MAL_SECTIONS }}
-        PLUGIN_MAL_HIDE_HEADER: ${{ inputs.PLUGIN_MAL_HIDE_HEADER }}
-        PLUGIN_MAL_LAST_ACTIVITY_TITLE: ${{ inputs.PLUGIN_MAL_LAST_ACTIVITY_TITLE }}
-        PLUGIN_MAL_LAST_ACTIVITY_MAX: ${{ inputs.PLUGIN_MAL_LAST_ACTIVITY_MAX }}
-        PLUGIN_MAL_LAST_ACTIVITY_HIDE_TITLE: ${{ inputs.PLUGIN_MAL_LAST_ACTIVITY_HIDE_TITLE }}
-        PLUGIN_MAL_ANIME_FAVORITES_MAX: ${{ inputs.PLUGIN_MAL_ANIME_FAVORITES_MAX }}
-        PLUGIN_MAL_ANIME_FAVORITES_TITLE: ${{ inputs.PLUGIN_MAL_ANIME_FAVORITES_TITLE }}
-        PLUGIN_MAL_ANIME_FAVORITES_HIDE_TITLE: ${{ inputs.PLUGIN_MAL_ANIME_FAVORITES_HIDE_TITLE }}
-        PLUGIN_MAL_MANGA_FAVORITES_MAX: ${{ inputs.PLUGIN_MAL_MANGA_FAVORITES_MAX }}
-        PLUGIN_MAL_MANGA_FAVORITES_TITLE: ${{ inputs.PLUGIN_MAL_MANGA_FAVORITES_TITLE }}
-        PLUGIN_MAL_MANGA_FAVORITES_HIDE_TITLE: ${{ inputs.PLUGIN_MAL_MANGA_FAVORITES_HIDE_TITLE }}
-        PLUGIN_MAL_CHARACTER_FAVORITES_MAX: ${{ inputs.PLUGIN_MAL_CHARACTER_FAVORITES_MAX }}
-        PLUGIN_MAL_CHARACTER_FAVORITES_TITLE: ${{ inputs.PLUGIN_MAL_CHARACTER_FAVORITES_TITLE }}
-        PLUGIN_MAL_CHARACTER_FAVORITES_HIDE_TITLE: ${{ inputs.PLUGIN_MAL_CHARACTER_FAVORITES_HIDE_TITLE }}
-        PLUGIN_MAL_PEOPLE_FAVORITES_MAX: ${{ inputs.PLUGIN_MAL_PEOPLE_FAVORITES_MAX }}
-        PLUGIN_MAL_PEOPLE_FAVORITES_TITLE: ${{ inputs.PLUGIN_MAL_PEOPLE_FAVORITES_TITLE }}
-        PLUGIN_MAL_PEOPLE_FAVORITES_HIDE_TITLE: ${{ inputs.PLUGIN_MAL_PEOPLE_FAVORITES_HIDE_TITLE }}
-        PLUGIN_MAL_STATISTICS_ANIME_TITLE: ${{ inputs.PLUGIN_MAL_STATISTICS_ANIME_TITLE }}
-        PLUGIN_MAL_STATISTICS_MANGA_TITLE: ${{ inputs.PLUGIN_MAL_STATISTICS_MANGA_TITLE }}
-        PLUGIN_MAL_STATISTICS_MEDIA: ${{ inputs.PLUGIN_MAL_STATISTICS_MEDIA }}
-        PLUGIN_MAL_STATISTICS_HIDE_TITLE: ${{ inputs.PLUGIN_MAL_STATISTICS_HIDE_TITLE }}
-        PLUGIN_MAL_STATISTICS_SIMPLE_HIDE_TITLE: ${{ inputs.PLUGIN_MAL_STATISTICS_SIMPLE_HIDE_TITLE }}
-        PLUGIN_MAL_STATISTICS_SIMPLE_TITLE: ${{ inputs.PLUGIN_MAL_STATISTICS_SIMPLE_TITLE }}
-        # ====================================================================================
-        PLUGIN_LASTFM: ${{ inputs.PLUGIN_LASTFM }}
-        PLUGIN_LASTFM_USERNAME: ${{ inputs.PLUGIN_LASTFM_USERNAME }}
-        PLUGIN_LASTFM_HIDE_HEADER: ${{ inputs.PLUGIN_LASTFM_HIDE_HEADER }}
-        PLUGIN_LASTFM_SECTIONS: ${{ inputs.PLUGIN_LASTFM_SECTIONS }}
-        PLUGIN_LASTFM_RECENTTRACKS_MAX: ${{ inputs.PLUGIN_LASTFM_RECENTTRACKS_MAX }}
-        PLUGIN_LASTFM_RECENTTRACKS_TITLE: ${{ inputs.PLUGIN_LASTFM_RECENTTRACKS_TITLE }}
-        PLUGIN_LASTFM_RECENTTRACKS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_RECENTTRACKS_HIDE_TITLE }}
-        PLUGIN_LASTFM_TOPARTISTS_MAX: ${{ inputs.PLUGIN_LASTFM_TOPARTISTS_MAX }}
-        PLUGIN_LASTFM_TOPARTISTS_TITLE: ${{ inputs.PLUGIN_LASTFM_TOPARTISTS_TITLE }}
-        PLUGIN_LASTFM_TOPARTISTS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_TOPARTISTS_HIDE_TITLE }}
-        PLUGIN_LASTFM_TOPALBUMS_MAX: ${{ inputs.PLUGIN_LASTFM_TOPALBUMS_MAX }}
-        PLUGIN_LASTFM_TOPALBUMS_TITLE: ${{ inputs.PLUGIN_LASTFM_TOPALBUMS_TITLE }}
-        PLUGIN_LASTFM_TOPALBUMS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_TOPALBUMS_HIDE_TITLE }}
-        PLUGIN_LASTFM_TOPTRACKS_MAX: ${{ inputs.PLUGIN_LASTFM_TOPTRACKS_MAX }}
-        PLUGIN_LASTFM_TOPTRACKS_TITLE: ${{ inputs.PLUGIN_LASTFM_TOPTRACKS_TITLE }}
-        PLUGIN_LASTFM_TOPTRACKS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_TOPTRACKS_HIDE_TITLE }}
+        HIDE_TERMINAL_EMOJIS: ${{ inputs.HIDE_TERMINAL_EMOJIS }}
+        HIDE_TERMINAL_HEADER: ${{ inputs.HIDE_TERMINAL_HEADER }}
+        CUSTOM_PATH: ${{ inputs.CUSTOM_PATH }}
+        TERMINAL_THEME: ${{ inputs.TERMINAL_THEME }}
+        DEFAULT_THEME: ${{ inputs.DEFAULT_THEME }}
         # ====================================================================================
         PLUGIN_GITHUB: ${{ inputs.PLUGIN_GITHUB }}
+        PLUGIN_GITHUB_PLUGIN_ENABLED: ${{ inputs.PLUGIN_GITHUB_PLUGIN_ENABLED }}
         PLUGIN_GITHUB_USERNAME: ${{ inputs.PLUGIN_GITHUB_USERNAME }}
-        PLUGIN_GITHUB_HIDE_HEADER: ${{ inputs.PLUGIN_GITHUB_HIDE_HEADER }}
         PLUGIN_GITHUB_SECTIONS: ${{ inputs.PLUGIN_GITHUB_SECTIONS }}
-        PLUGIN_GITHUB_REPOSITORIES_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_REPOSITORIES_HIDE_TITLE }}
-        PLUGIN_GITHUB_REPOSITORIES_TITLE: ${{ inputs.PLUGIN_GITHUB_REPOSITORIES_TITLE }}
-        PLUGIN_GITHUB_FAVORITE_LANGUAGES_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_FAVORITE_LANGUAGES_HIDE_TITLE }}
+        PLUGIN_GITHUB_PROFILE_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_PROFILE_HIDE_TITLE }}
+        PLUGIN_GITHUB_PROFILE_HIDE_AVATAR: ${{ inputs.PLUGIN_GITHUB_PROFILE_HIDE_AVATAR }}
+        PLUGIN_GITHUB_PROFILE_TITLE: ${{ inputs.PLUGIN_GITHUB_PROFILE_TITLE }}
         PLUGIN_GITHUB_FAVORITE_LANGUAGES_TITLE: ${{ inputs.PLUGIN_GITHUB_FAVORITE_LANGUAGES_TITLE }}
-        PLUGIN_GITHUB_FAVORITE_LICENSE_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_FAVORITE_LICENSE_HIDE_TITLE }}
+        PLUGIN_GITHUB_FAVORITE_LANGUAGES_MAX_LANGUAGES: ${{ inputs.PLUGIN_GITHUB_FAVORITE_LANGUAGES_MAX_LANGUAGES }}
+        PLUGIN_GITHUB_FAVORITE_LANGUAGES_IGNORE_LANGUAGES: ${{ inputs.PLUGIN_GITHUB_FAVORITE_LANGUAGES_IGNORE_LANGUAGES }}
+        PLUGIN_GITHUB_FAVORITE_LANGUAGES_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_FAVORITE_LANGUAGES_HIDE_TITLE }}
         PLUGIN_GITHUB_FAVORITE_LICENSE_TITLE: ${{ inputs.PLUGIN_GITHUB_FAVORITE_LICENSE_TITLE }}
+        PLUGIN_GITHUB_FAVORITE_LICENSE_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_FAVORITE_LICENSE_HIDE_TITLE }}
+        PLUGIN_GITHUB_REPOSITORIES_TITLE: ${{ inputs.PLUGIN_GITHUB_REPOSITORIES_TITLE }}
+        PLUGIN_GITHUB_REPOSITORIES_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_REPOSITORIES_HIDE_TITLE }}
+        PLUGIN_GITHUB_REPOSITORIES_USE_PRIVATE: ${{ inputs.PLUGIN_GITHUB_REPOSITORIES_USE_PRIVATE }}
+        PLUGIN_GITHUB_ACTIVITY_TITLE: ${{ inputs.PLUGIN_GITHUB_ACTIVITY_TITLE }}
+        PLUGIN_GITHUB_ACTIVITY_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_ACTIVITY_HIDE_TITLE }}
+        PLUGIN_GITHUB_CALENDAR_TITLE: ${{ inputs.PLUGIN_GITHUB_CALENDAR_TITLE }}
+        PLUGIN_GITHUB_CALENDAR_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_CALENDAR_HIDE_TITLE }}
+        PLUGIN_GITHUB_CODE_HABITS_TITLE: ${{ inputs.PLUGIN_GITHUB_CODE_HABITS_TITLE }}
+        PLUGIN_GITHUB_CODE_HABITS_HIDE_TITLE: ${{ inputs.PLUGIN_GITHUB_CODE_HABITS_HIDE_TITLE }}
+        PLUGIN_GITHUB_CODE_HABITS_HIDE_LANGUAGES: ${{ inputs.PLUGIN_GITHUB_CODE_HABITS_HIDE_LANGUAGES }}
+        PLUGIN_GITHUB_CODE_HABITS_HIDE_STATS: ${{ inputs.PLUGIN_GITHUB_CODE_HABITS_HIDE_STATS }}
+        PLUGIN_GITHUB_CODE_HABITS_HIDE_WEEKDAYS: ${{ inputs.PLUGIN_GITHUB_CODE_HABITS_HIDE_WEEKDAYS }}
+        PLUGIN_GITHUB_CODE_HABITS_HIDE_HOURS: ${{ inputs.PLUGIN_GITHUB_CODE_HABITS_HIDE_HOURS }}
+        PLUGIN_GITHUB_CODE_HABITS_HIDE_FOOTER: ${{ inputs.PLUGIN_GITHUB_CODE_HABITS_HIDE_FOOTER }}
+        PLUGIN_LASTFM: ${{ inputs.PLUGIN_LASTFM }}
+        PLUGIN_LASTFM_PLUGIN_ENABLED: ${{ inputs.PLUGIN_LASTFM_PLUGIN_ENABLED }}
+        PLUGIN_LASTFM_USERNAME: ${{ inputs.PLUGIN_LASTFM_USERNAME }}
+        PLUGIN_LASTFM_SECTIONS: ${{ inputs.PLUGIN_LASTFM_SECTIONS }}
+        PLUGIN_LASTFM_HIDE_INTERVALS: ${{ inputs.PLUGIN_LASTFM_HIDE_INTERVALS }}
+        PLUGIN_LASTFM_RECENT_TRACKS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_RECENT_TRACKS_HIDE_TITLE }}
+        PLUGIN_LASTFM_RECENT_TRACKS_MAX: ${{ inputs.PLUGIN_LASTFM_RECENT_TRACKS_MAX }}
+        PLUGIN_LASTFM_TOP_ARTISTS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_TOP_ARTISTS_HIDE_TITLE }}
+        PLUGIN_LASTFM_TOP_ARTISTS_MAX: ${{ inputs.PLUGIN_LASTFM_TOP_ARTISTS_MAX }}
+        PLUGIN_LASTFM_TOP_ALBUMS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_TOP_ALBUMS_HIDE_TITLE }}
+        PLUGIN_LASTFM_TOP_ALBUMS_MAX: ${{ inputs.PLUGIN_LASTFM_TOP_ALBUMS_MAX }}
+        PLUGIN_LASTFM_TOP_TRACKS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_TOP_TRACKS_HIDE_TITLE }}
+        PLUGIN_LASTFM_TOP_TRACKS_MAX: ${{ inputs.PLUGIN_LASTFM_TOP_TRACKS_MAX }}
+        PLUGIN_LASTFM_STATISTICS_HIDE_TITLE: ${{ inputs.PLUGIN_LASTFM_STATISTICS_HIDE_TITLE }}
+        PLUGIN_LASTFM_TOP_TRACKS_TITLE: ${{ inputs.PLUGIN_LASTFM_TOP_TRACKS_TITLE }}
+        PLUGIN_LASTFM_TOP_ARTISTS_TITLE: ${{ inputs.PLUGIN_LASTFM_TOP_ARTISTS_TITLE }}
+        PLUGIN_LASTFM_TOP_ALBUMS_TITLE: ${{ inputs.PLUGIN_LASTFM_TOP_ALBUMS_TITLE }}
+        PLUGIN_LASTFM_RECENT_TRACKS_TITLE: ${{ inputs.PLUGIN_LASTFM_RECENT_TRACKS_TITLE }}
+        PLUGIN_LASTFM_STATISTICS_TITLE: ${{ inputs.PLUGIN_LASTFM_STATISTICS_TITLE }}
+        PLUGIN_LASTFM_TOP_ARTISTS_INTERVAL_TEXT: ${{ inputs.PLUGIN_LASTFM_TOP_ARTISTS_INTERVAL_TEXT }}
+        PLUGIN_LASTFM_TOP_ALBUMS_INTERVAL_TEXT: ${{ inputs.PLUGIN_LASTFM_TOP_ALBUMS_INTERVAL_TEXT }}
+        PLUGIN_LASTFM_TOP_TRACKS_INTERVAL_TEXT: ${{ inputs.PLUGIN_LASTFM_TOP_TRACKS_INTERVAL_TEXT }}
+        PLUGIN_MYANIMELIST: ${{ inputs.PLUGIN_MYANIMELIST }}
+        PLUGIN_MYANIMELIST_PLUGIN_ENABLED: ${{ inputs.PLUGIN_MYANIMELIST_PLUGIN_ENABLED }}
+        PLUGIN_MYANIMELIST_USERNAME: ${{ inputs.PLUGIN_MYANIMELIST_USERNAME }}
+        PLUGIN_MYANIMELIST_SECTIONS: ${{ inputs.PLUGIN_MYANIMELIST_SECTIONS }}
+        PLUGIN_MYANIMELIST_ANIME_FAVORITES_MAX: ${{ inputs.PLUGIN_MYANIMELIST_ANIME_FAVORITES_MAX }}
+        PLUGIN_MYANIMELIST_ANIME_FAVORITES_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_ANIME_FAVORITES_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_ANIME_FAVORITES_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_ANIME_FAVORITES_TITLE }}
+        PLUGIN_MYANIMELIST_ANIME_FAVORITES_NO_SUMMARY: ${{ inputs.PLUGIN_MYANIMELIST_ANIME_FAVORITES_NO_SUMMARY }}
+        PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_TITLE }}
+        PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_MAX: ${{ inputs.PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_MAX }}
+        PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_CHARACTER_FAVORITES_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_TITLE }}
+        PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_MAX: ${{ inputs.PLUGIN_MYANIMELIST_PEOPLE_FAVORITES_MAX }}
+        PLUGIN_MYANIMELIST_MANGA_FAVORITES_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_MANGA_FAVORITES_TITLE }}
+        PLUGIN_MYANIMELIST_MANGA_FAVORITES_MAX: ${{ inputs.PLUGIN_MYANIMELIST_MANGA_FAVORITES_MAX }}
+        PLUGIN_MYANIMELIST_MANGA_FAVORITES_NO_SUMMARY: ${{ inputs.PLUGIN_MYANIMELIST_MANGA_FAVORITES_NO_SUMMARY }}
+        PLUGIN_MYANIMELIST_MANGA_FAVORITES_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_MANGA_FAVORITES_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_STATISTICS_ANIME_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_STATISTICS_ANIME_TITLE }}
+        PLUGIN_MYANIMELIST_STATISTICS_MANGA_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_STATISTICS_MANGA_TITLE }}
+        PLUGIN_MYANIMELIST_STATISTICS_MEDIA: ${{ inputs.PLUGIN_MYANIMELIST_STATISTICS_MEDIA }}
+        PLUGIN_MYANIMELIST_STATISTICS_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_STATISTICS_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_ANIME_BAR_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_ANIME_BAR_TITLE }}
+        PLUGIN_MYANIMELIST_ANIME_BAR_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_ANIME_BAR_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_MANGA_BAR_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_MANGA_BAR_TITLE }}
+        PLUGIN_MYANIMELIST_MANGA_BAR_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_MANGA_BAR_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_STATISTICS_SIMPLE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_STATISTICS_SIMPLE_TITLE }}
+        PLUGIN_MYANIMELIST_STATISTICS_SIMPLE_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_STATISTICS_SIMPLE_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_LAST_ACTIVITY_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_LAST_ACTIVITY_TITLE }}
+        PLUGIN_MYANIMELIST_LAST_ACTIVITY_MAX: ${{ inputs.PLUGIN_MYANIMELIST_LAST_ACTIVITY_MAX }}
+        PLUGIN_MYANIMELIST_LAST_ACTIVITY_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_LAST_ACTIVITY_HIDE_TITLE }}
+        PLUGIN_MYANIMELIST_LAST_ACTIVITY_MEDIA: ${{ inputs.PLUGIN_MYANIMELIST_LAST_ACTIVITY_MEDIA }}
+        PLUGIN_MYANIMELIST_FAVORITES_HIDE_OVERLAY: ${{ inputs.PLUGIN_MYANIMELIST_FAVORITES_HIDE_OVERLAY }}

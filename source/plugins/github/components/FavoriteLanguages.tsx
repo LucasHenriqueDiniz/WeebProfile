@@ -84,32 +84,54 @@ const FavoriteLanguages = ({ languageData, repositoriesData }: FavoriteLanguages
   const github = env.github
   if (!github) throw new Error("GitHub plugin not found")
 
+  logger({
+    message: `FavoriteLanguages data: ${languageData ? "yes" : "no"} ${repositoriesData ? "yes" : "no"}`,
+    level: "debug",
+  })
+
   let processedLanguages = languageData
 
-  // Se não tiver languageData mas tiver repositoriesData, processa as linguagens dos repositórios
   if (!processedLanguages && repositoriesData) {
+    logger({ message: "Processing languages from repositories data", level: "debug" })
     const languagesMap = new Map<string, { color: string; size: number }>()
 
-    repositoriesData.repositories.forEach((repo) => {
-      if (repo.languages?.edges) {
-        repo.languages.edges.forEach((edge: any) => {
-          const current = languagesMap.get(edge.node.name) || {
-            color: edge.node.color,
-            size: 0,
-          }
-          languagesMap.set(edge.node.name, {
-            color: edge.node.color,
-            size: current.size + edge.size,
-          })
+    try {
+      repositoriesData.repositories.forEach((repo) => {
+        logger({
+          message: `Processing repo: ${repo.name}`,
+          level: "debug",
         })
-      }
-    })
 
-    processedLanguages = Array.from(languagesMap.entries()).map(([name, data]) => ({
-      name,
-      color: data.color,
-      size: data.size,
-    }))
+        if (repo.languages?.edges) {
+          repo.languages.edges.forEach((edge: any) => {
+            const current = languagesMap.get(edge.node.name) || {
+              color: edge.node.color,
+              size: 0,
+            }
+            languagesMap.set(edge.node.name, {
+              color: edge.node.color,
+              size: current.size + edge.size,
+            })
+          })
+        }
+      })
+
+      processedLanguages = Array.from(languagesMap.entries()).map(([name, data]) => ({
+        name,
+        color: data.color,
+        size: data.size,
+      }))
+
+      logger({
+        message: `Processed languages result: ${processedLanguages.length}`,
+        level: "debug",
+      })
+    } catch (error) {
+      logger({
+        message: `Error processing languages: ${error}`,
+        level: "error",
+      })
+    }
   }
 
   if (!processedLanguages || processedLanguages.length === 0) {

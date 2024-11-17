@@ -30,7 +30,7 @@
 ## 🖼️ Plugin Sections
 
 
-<h4><b>github</b> has 2 sections with 2 styles each.</h4>
+<h4><b>github</b> has 7 sections with 2 styles each.</h4>
 
 <p>Here are the available sections and their respective images:</p>
 
@@ -44,12 +44,32 @@ sub>This is the default style for all sections. If you want to use a different s
       <td align="center" nowrap="nowrap" width="600px">Default Image Showcase</td>
     </tr>
     <tr>
+      <td align="center" nowrap="nowrap"><code>profile</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\default\profile.svg"></img></td>
+    </tr>
+    <tr>
+      <td align="center" nowrap="nowrap"><code>repositories</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\default\repositories.svg"></img></td>
+    </tr>
+    <tr>
       <td align="center" nowrap="nowrap"><code>favorite_languages</code></td>
       <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\default\favorite_languages.svg"></img></td>
     </tr>
     <tr>
       <td align="center" nowrap="nowrap"><code>favorite_license</code></td>
       <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\default\favorite_license.svg"></img></td>
+    </tr>
+    <tr>
+      <td align="center" nowrap="nowrap"><code>activity</code></td>
+      <td align="center" nowrap="nowrap"><img src="Image not found"></img></td>
+    </tr>
+    <tr>
+      <td align="center" nowrap="nowrap"><code>calendar</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\default\calendar.svg"></img></td>
+    </tr>
+    <tr>
+      <td align="center" nowrap="nowrap"><code>code_habits</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\default\code_habits.svg"></img></td>
     </tr>
   </table>
 
@@ -63,12 +83,32 @@ sub>This is the default style for all sections. If you want to use a different s
       <td align="center" nowrap="nowrap" width="600px">Terminal Image Showcase</td>
     </tr>
     <tr>
+      <td align="center" nowrap="nowrap"><code>profile</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\terminal\profile.svg"></img></td>
+    </tr>
+    <tr>
+      <td align="center" nowrap="nowrap"><code>repositories</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\terminal\repositories.svg"></img></td>
+    </tr>
+    <tr>
       <td align="center" nowrap="nowrap"><code>favorite_languages</code></td>
       <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\terminal\favorite_languages.svg"></img></td>
     </tr>
     <tr>
       <td align="center" nowrap="nowrap"><code>favorite_license</code></td>
       <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\terminal\favorite_license.svg"></img></td>
+    </tr>
+    <tr>
+      <td align="center" nowrap="nowrap"><code>activity</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\terminal\activity.svg"></img></td>
+    </tr>
+    <tr>
+      <td align="center" nowrap="nowrap"><code>calendar</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\terminal\calendar.svg"></img></td>
+    </tr>
+    <tr>
+      <td align="center" nowrap="nowrap"><code>code_habits</code></td>
+      <td align="center" nowrap="nowrap"><img src="source\plugins\github\assets\terminal\code_habits.svg"></img></td>
     </tr>
   </table>
   

@@ -63,6 +63,13 @@
       "command": "yarn generate:readme",
       "group": "build",
       "problemMatcher": []
+    },
+    {
+      "label": "Generate Actions",
+      "type": "shell",
+      "command": "yarn generate:actions",
+      "group": "build",
+      "problemMatcher": []
     }
   ]
 }

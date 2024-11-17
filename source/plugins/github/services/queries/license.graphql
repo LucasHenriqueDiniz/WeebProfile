@@ -1,0 +1,19 @@
+query userLicenses($login: String!) {
+  user(login: $login) {
+    repositories(
+      first: 100
+      ownerAffiliations: [OWNER]
+      isFork: false
+      orderBy: { field: UPDATED_AT, direction: DESC }
+    ) {
+      nodes {
+        name
+        licenseInfo {
+          name
+          spdxId
+        }
+      }
+      totalCount
+    }
+  }
+}
