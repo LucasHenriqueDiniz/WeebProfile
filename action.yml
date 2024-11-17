@@ -357,16 +357,13 @@ runs:
       run: Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
     - name: Run the script
       working-directory: ./WeebProfile
-      run: |
-        echo "GH_TOKEN=${{ inputs.GH_TOKEN }}" >> $GITHUB_ENV
-        yarn run action:start
       shell: bash
       env:
         DISPLAY: :99
+        GH_TOKEN: ${{ inputs.GH_TOKEN }}
         DEV: ${{ inputs.DEV }}
         FILENAME: ${{ inputs.FILENAME }}
         GIST_ID: ${{ inputs.GIST_ID }}
-        GH_TOKEN: ${{ inputs.GH_TOKEN }}
         SIZE: ${{ inputs.SIZE }}
         STYLE: ${{ inputs.STYLE }}
         STORAGE_METHOD: ${{ inputs.STORAGE_METHOD }}
@@ -460,3 +457,13 @@ runs:
         PLUGIN_MYANIMELIST_LAST_ACTIVITY_HIDE_TITLE: ${{ inputs.PLUGIN_MYANIMELIST_LAST_ACTIVITY_HIDE_TITLE }}
         PLUGIN_MYANIMELIST_LAST_ACTIVITY_MEDIA: ${{ inputs.PLUGIN_MYANIMELIST_LAST_ACTIVITY_MEDIA }}
         PLUGIN_MYANIMELIST_FAVORITES_HIDE_OVERLAY: ${{ inputs.PLUGIN_MYANIMELIST_FAVORITES_HIDE_OVERLAY }}
+      run: |
+        export GH_TOKEN="${{ inputs.GH_TOKEN }}"
+        yarn run action:start
+    - name: Debug Environment
+      shell: bash
+      run: |
+        echo "GH_TOKEN exists: ${{ inputs.GH_TOKEN != '' }}"
+        echo "GIST_ID exists: ${{ inputs.GIST_ID != '' }}"
+      env:
+        GH_TOKEN: ${{ inputs.GH_TOKEN }}
