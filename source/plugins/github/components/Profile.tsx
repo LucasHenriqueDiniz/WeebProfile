@@ -29,6 +29,7 @@ const DefaultProfile = ({ data }: { data: UserResponse }) => {
           width={50}
           height={50}
           className="rounded-full"
+          dontUseUrl64
         />
         <div>
           <h2 className="text-lg font-semibold">{data.name}</h2>
