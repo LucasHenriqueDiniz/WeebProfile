@@ -2,6 +2,5 @@
   "version": 2,
   "buildCommand": "pnpm build",
   "outputDirectory": "web-client/.next",
-  "framework": "nextjs",
-  "installCommand": "pnpm install"
+  "framework": "nextjs"
 }
