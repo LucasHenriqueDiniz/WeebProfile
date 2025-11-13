@@ -4,10 +4,10 @@ export const revalidate = 86400 // Revalidar a cada 24 horas
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
-    const { username } = params
+    const { username } = await params
     const filename = request.nextUrl.searchParams.get("file") || "Profile.svg"
 
     // Por enquanto, servimos os SVGs de teste do public/test

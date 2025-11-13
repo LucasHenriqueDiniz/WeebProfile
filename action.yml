@@ -341,13 +341,18 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.GH_TOKEN }}
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: latest
     - name: Set Node.js 22
-      uses: actions/setup-node@v2.4.1
+      uses: actions/setup-node@v4
       with:
         node-version: 22
+        cache: "pnpm"
     - name: Install dependencies
       working-directory: ./WeebProfile
-      run: yarn install
+      run: pnpm install
       shell: bash
     - name: Install Xvfb
       shell: bash
@@ -358,7 +363,7 @@ runs:
     - name: Run the script
       working-directory: ./WeebProfile
       shell: bash
-      run: yarn run action:start
+      run: pnpm run action:start
       env:
         DISPLAY: :99
         GITHUB_TOKEN: ${{ inputs.GH_TOKEN }}
