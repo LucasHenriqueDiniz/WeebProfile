@@ -1,3 +1,5 @@
+import { readFile } from "fs/promises"
+import { join } from "path"
 import { NextRequest, NextResponse } from "next/server"
 
 export const revalidate = 86400 // Revalidar a cada 24 horas
@@ -22,26 +24,11 @@ export async function GET(
     // Mapeia username para arquivo de teste
     const testFile = testFiles[username.toLowerCase()] || testFiles.profile
 
-    // No Vercel, arquivos em public/ são servidos diretamente
-    // Mas para API routes, precisamos fazer fetch do próprio domínio
-    const baseUrl = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-
-    // Tenta buscar o SVG do public/test
-    const svgUrl = `${baseUrl}/test/${testFile}`
-
     try {
-      const response = await fetch(svgUrl, { cache: "force-cache" })
-      
-      if (!response.ok) {
-        return NextResponse.json(
-          { error: "SVG not found. It may still be generating. Please try again later." },
-          { status: 404 }
-        )
-      }
-
-      const svgContent = await response.text()
+      // Lê o arquivo diretamente do sistema de arquivos
+      // No Vercel, o diretório public/ está disponível em runtime
+      const publicPath = join(process.cwd(), "public", "test", testFile)
+      const svgContent = await readFile(publicPath, "utf-8")
 
       // Retorna com headers corretos para SVG
       return new NextResponse(svgContent, {
@@ -52,8 +39,8 @@ export async function GET(
           "CDN-Cache-Control": "public, max-age=86400",
         },
       })
-    } catch (fetchError) {
-      // Fallback: retorna erro amigável
+    } catch (fileError) {
+      console.error("Error reading SVG file:", fileError)
       return NextResponse.json(
         { error: "SVG not found. Please ensure the file exists in public/test/" },
         { status: 404 }
