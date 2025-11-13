@@ -36,3 +36,5 @@ yarn-error.log*
 # Vercel
 .vercel
 source/styles/generated-tailwind.css
+/.cursor
+.cursorrules
