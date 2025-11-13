@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@weeb/source": "*",
+    "@weeb/source": "workspace:*",
     "image-to-base64": "^2.2.0",
     "puppeteer": "^23.3.0",
     "string-width": "4.2.3"

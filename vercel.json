@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "yarn build",
+  "buildCommand": "pnpm build",
   "outputDirectory": "web-client/.next",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "installCommand": "pnpm install"
 }

@@ -50,7 +50,7 @@ module.exports = [
       ...typescript.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      "prettier/prettier": ["error", {}, { usePrettierrc: true }],
+      "prettier/prettier": ["error"],
       "react/react-in-jsx-scope": "off",
       "no-undef": "error",
       "@typescript-eslint/no-explicit-any": "warn",
