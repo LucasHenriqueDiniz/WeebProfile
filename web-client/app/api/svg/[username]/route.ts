@@ -22,7 +22,7 @@ export async function GET(
     }
 
     // Mapeia username para arquivo de teste
-    const testFile = testFiles[username.toLowerCase()] || testFiles.profile
+    const testFile: string = testFiles[username.toLowerCase()] || testFiles.profile || "Github.svg"
 
     try {
       // Lê o arquivo diretamente do sistema de arquivos
