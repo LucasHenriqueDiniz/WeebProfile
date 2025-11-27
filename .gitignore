@@ -3,34 +3,21 @@ node_modules
 .pnp
 .pnp.js
 
-# Core (legacy v1)
-/core/node_modules
-/core/.env
-/core/dist
 
-# Source (legacy v1)
-/source/node_modules
-/source/dist
 
-# Web Client (legacy v1)
-/web-client/node_modules
-/web-client/.next/
-/web-client/out/
-/web-client/build
-/web-client/dist
-
-# Weeb Dashboard (v2)
+# Weeb Dashboard 
 /weeb-dashboard/node_modules
 /weeb-dashboard/.next/
 /weeb-dashboard/out/
 /weeb-dashboard/.vercel
 /weeb-dashboard/lib/weeb-plugins
+/weeb-dashboard/lib/plugins*
 
-# SVG Generator (v2)
+# SVG Generator 
 /svg-generator/node_modules
 /svg-generator/dist
 
-# Weeb Plugins (v2)
+# Weeb Plugins 
 /weeb-plugins/node_modules
 /weeb-plugins/dist
 /weeb-plugins/src/**/*.js
@@ -39,7 +26,6 @@ node_modules
 # Weeb Debug Tool (v2)
 /weeb-debug-tool/node_modules
 /weeb-debug-tool/dist
-/weeb-debug-tool/lib/weeb-plugins
 
 # Misc
 .DS_Store

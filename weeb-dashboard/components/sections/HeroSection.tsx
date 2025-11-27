@@ -10,22 +10,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { templateApi } from "@/lib/api"
 import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
 import { getPluginIcon } from "@/lib/plugins-data"
-import { templateApi } from "@/lib/api"
-import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
 import {
   Check,
   Github,
-  Sparkles,
-  Settings,
   Loader2,
-  Terminal,
   Monitor,
+  Settings,
+  Sparkles,
+  Terminal,
 } from "lucide-react"
 import Link from "next/link"
-import { useMemo, useState, useEffect } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { SectionSelector } from "./SectionSelector"
 
 interface HeroSectionProps {

@@ -5,5 +5,5 @@ node_modules/
 dist/
 build/
 coverage/
-weeb-dashboard/lib/plugins/
-weeb-dashboard/lib/weeb-plugins/
+weeb-dashboard/lib/plugins* 
+weeb-dashboard/lib/weeb-plugins*
