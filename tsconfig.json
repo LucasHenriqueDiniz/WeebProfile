@@ -1,17 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "web-client/*": ["web-client/*"],
-      "core/*": ["core/*"],
-      "source/*": ["source/*"],
-      "plugins/*": ["source/plugins/*"],
-      "templates/*": ["source/templates/*"],
-      "helpers/*": ["source/helpers/*"],
-      "styles/*": ["source/styles/*"]
-    },
+    "paths": {},
     "incremental": true
   },
-  "include": ["web-client/**/*", "core/**/*", "source/**/*", "reset.d.ts"],
+  "include": ["reset.d.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,0 +1,49 @@
+name: Validate Plugins
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "weeb-plugins/**"
+      - ".github/workflows/validate-plugins.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "weeb-plugins/**"
+      - ".github/workflows/validate-plugins.yml"
+
+jobs:
+  validate:
+    name: Validate Plugin Metadata
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".github/nodejs.version"
+          cache: "pnpm"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate plugins
+        working-directory: weeb-plugins
+        run: pnpm validate
+
+      - name: Generate types
+        working-directory: weeb-plugins
+        run: pnpm generate-types
+
+      - name: Type check
+        working-directory: weeb-plugins
+        run: pnpm typecheck
+

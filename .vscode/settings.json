@@ -1,13 +1,42 @@
 {
-  "tailwindCSS.experimental.classRegex": [
-    ["cva(?:<[^>]*>)?(([^)]*))", "[\"'`]([^\"'`]*).*?[\"'`]", "(?:twMerge|twJoin)\\(([^\\);]*)[\\);]"]
-  ],
   "search.exclude": {
-    "**/node_modules": true,
-    "**/bower_components": true,
-    "**/*.code-search": true,
-    "**/web-client/.next": true,
-    "**/assets": true,
-    "**/yarn.lock": true
+    // Pastas geradas/copiadas do weeb-plugins para o dashboard
+    "weeb-dashboard/lib/plugins/**": true,
+    "weeb-dashboard/lib/weeb-plugins/**": true,
+
+    // Dependências e builds
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.next/**": true,
+    "**/.vercel/**": true,
+    "**/.turbo/**": true,
+
+    // Outras pastas comuns
+    "**/.git/**": true,
+    "**/.DS_Store": true,
+    "**/coverage/**": true,
+    "**/.nyc_output/**": true,
+    "**/build/**": true,
+    "**/out/**": true,
+
+    // Arquivos de lock e cache
+    "**/pnpm-lock.yaml": true,
+    "**/package-lock.json": true,
+    "**/yarn.lock": true,
+    "**/.cache/**": true
+  },
+
+  "files.exclude": {
+    "**/weeb-dashboard/lib/plugins/**": true,
+    "**/weeb-dashboard/lib/weeb-plugins/**": true
+  },
+
+  "files.watcherExclude": {
+    // Excluir do file watcher para melhor performance
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.next/**": true,
+    "**/weeb-dashboard/lib/plugins/**": true,
+    "**/weeb-dashboard/lib/weeb-plugins/**": true
   }
 }

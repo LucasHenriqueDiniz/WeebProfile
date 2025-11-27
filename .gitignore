@@ -1,21 +1,45 @@
-# Core
-/core/node_modules
-/core/.env
-
-# Source
-/source/node_modules
-
 # Dependencies
 node_modules
 .pnp
 .pnp.js
 
-# Next.js
+# Core (legacy v1)
+/core/node_modules
+/core/.env
+/core/dist
+
+# Source (legacy v1)
+/source/node_modules
+/source/dist
+
+# Web Client (legacy v1)
 /web-client/node_modules
 /web-client/.next/
 /web-client/out/
 /web-client/build
 /web-client/dist
+
+# Weeb Dashboard (v2)
+/weeb-dashboard/node_modules
+/weeb-dashboard/.next/
+/weeb-dashboard/out/
+/weeb-dashboard/.vercel
+/weeb-dashboard/lib/weeb-plugins
+
+# SVG Generator (v2)
+/svg-generator/node_modules
+/svg-generator/dist
+
+# Weeb Plugins (v2)
+/weeb-plugins/node_modules
+/weeb-plugins/dist
+/weeb-plugins/src/**/*.js
+/weeb-plugins/src/**/*.d.ts
+
+# Weeb Debug Tool (v2)
+/weeb-debug-tool/node_modules
+/weeb-debug-tool/dist
+/weeb-debug-tool/lib/weeb-plugins
 
 # Misc
 .DS_Store
@@ -25,6 +49,7 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 # Local env files
 .env
@@ -36,5 +61,7 @@ yarn-error.log*
 # Vercel
 .vercel
 source/styles/generated-tailwind.css
+
+# Cursor
 /.cursor
 .cursorrules

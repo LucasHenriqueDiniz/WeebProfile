@@ -4,26 +4,33 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "workspaces": [
-    "core",
-    "source",
-    "web-client"
+    "svg-generator",
+    "weeb-plugins",
+    "weeb-dashboard",
+    "weeb-debug-tool"
   ],
   "scripts": {
-    "action:start": "pnpm --filter @weeb/core start",
-    "vercel:dev": "pnpm --filter @weeb/web-client dev",
-    "vercel:start": "pnpm --filter @weeb/web-client start",
-    "vercel:build": "pnpm --filter @weeb/web-client build",
-    "build": "pnpm --filter @weeb/web-client build",
-    "dev": "pnpm --filter @weeb/web-client dev",
-    "start": "pnpm --filter @weeb/web-client start",
-    "check:lint": "eslint \"./core/src/**/*.{ts,tsx}\" \"./source/**/*.{ts,tsx}\" \"./web-client/**/*.{ts,tsx}\" --max-warnings=0",
+    "vercel:dev": "pnpm --filter weeb-dashboard dev",
+    "vercel:start": "pnpm --filter weeb-dashboard start",
+    "vercel:build": "pnpm --filter weeb-dashboard build",
+    "build": "pnpm --filter weeb-dashboard build",
+    "dev": "pnpm --filter weeb-dashboard dev:all",
+    "start": "pnpm --filter weeb-dashboard start",
+    "check:lint": "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings=0",
     "check:lint-fix": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
     "check:prettier": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
     "check:prettier-fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
     "format": "pnpm check:prettier-fix && pnpm check:lint-fix",
-    "check:plugins": "tsx core/src/setup/checkPlugins/validatePlugins.ts",
-    "generate:readme": "tsx core/src/setup/readme/generateReadme.ts",
-    "generate:actions": "tsx core/src/setup/action/generateAction.ts"
+    "build:deps": "pnpm --filter @weeb/weeb-plugins build && pnpm --filter @weeb/svg-generator build",
+    "dev:deps": "concurrently \"pnpm --filter @weeb/weeb-plugins dev\" \"pnpm --filter @weeb/svg-generator dev\"",
+    "dev:svg-generator": "pnpm --filter svg-generator dev:server",
+    "dev:watch": "pnpm --filter weeb-dashboard dev:watch",
+    "dev:all": "concurrently \"pnpm --filter svg-generator dev:server\" \"pnpm --filter weeb-dashboard dev\"",
+    "dev:preview": "concurrently -n \"watch,debug\" -c \"cyan,magenta\" \"pnpm --filter svg-generator watch:previews --plugin=myanimelist\" \"pnpm --filter svg-generator dev:debug --plugin=myanimelist --section=statistics\"",
+    "dev:preview:all": "concurrently -n \"watch,debug\" -c \"cyan,magenta\" \"pnpm --filter svg-generator watch:previews:all\" \"pnpm --filter svg-generator dev:debug\"",
+    "dev:debug": "concurrently -n \"debug-tool\" -c \"magenta\" --kill-others-on-fail \"pnpm --filter @weeb/debug-tool dev\"",
+    "dev:debug-tool": "pnpm --filter @weeb/debug-tool dev",
+    "build:debug-tool": "pnpm --filter weeb-debug-tool build"
   },
   "dependencies": {
     "@octokit/graphql": "^8.1.1",
@@ -40,13 +47,21 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0"
   },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^18.3.1",
+      "@types/react-dom": "^18.3.1"
+    }
+  },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@types/mustache": "^4.2.5",
     "@types/node": "^20.11.18",
+    "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.13.0",
     "@typescript-eslint/parser": "^8.13.0",
+    "concurrently": "^9.1.0",
     "css-loader": "^7.1.2",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.2",

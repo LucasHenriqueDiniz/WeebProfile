@@ -1,6 +1,6 @@
 {
   "version": 2,
   "buildCommand": "pnpm build",
-  "outputDirectory": "web-client/.next",
+  "outputDirectory": "weeb-dashboard/.next",
   "framework": "nextjs"
 }

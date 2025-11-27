@@ -1,0 +1,1183 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="230" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><style>
+    #svg-main {
+  --default-color-default: #24292f;
+  --default-color-surface: #ffffff;
+  --default-color-background: #ffffff;
+  --default-color-success: #2da44e;
+  --default-color-muted: #6e7781;
+  --default-color-muted-light: #8c959f;
+  --default-color-raw: #24292f;
+  --default-color-highlight: #FF7A3D;
+    }
+  </style><style>/* Default Style CSS */
+
+/* Load Poppins font from Google Fonts */
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiEyp8kv8JHgFVrJJfecg.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container */
+#svg-main .default-container {
+  --font-family: Poppins, sans-serif;
+  font-family: Poppins, sans-serif;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure foreignObject content doesn&#x27;t overflow */
+#svg-main foreignObject {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#svg-main foreignObject &gt; div {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Section styles for plugins */
+#svg-main section {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Plugin CSS Classes - Using CSS theme variables */
+#svg-main .text-default-muted {
+  color: var(--default-color-muted) !important;
+}
+
+#svg-main .text-default-muted-light {
+  color: var(--default-color-muted-light) !important;
+}
+
+#svg-main .text-default-highlight {
+  color: var(--default-color-highlight) !important;
+}
+
+#svg-main .text-default-raw {
+  color: var(--default-color-raw) !important;
+}
+
+#svg-main .text-default-success {
+  color: var(--default-color-success) !important;
+}
+
+#svg-main .text-default-fg {
+  color: var(--default-color-default) !important;
+}
+
+#svg-main .text-default-text {
+  color: var(--default-color-default) !important;
+}
+
+#svg-main .text-default-link {
+  color: var(--default-color-highlight) !important;
+}
+
+#svg-main .bg-default-highlight {
+  background-color: var(--default-color-highlight) !important;
+}
+
+#svg-main .bg-default-surface {
+  background-color: var(--default-color-surface) !important;
+}
+
+#svg-main .bg-default-muted {
+  background-color: var(--default-color-muted) !important;
+}
+
+#svg-main .bg-default-muted\/20 {
+  background-color: color-mix(in srgb, var(--default-color-muted) 20%, transparent) !important;
+}
+
+#svg-main .bg-default-15 {
+  background-color: color-mix(in srgb, var(--default-color-highlight) 15%, transparent) !important;
+}
+
+#svg-main .border-default-highlight {
+  border-color: var(--default-color-highlight) !important;
+}
+
+#svg-main .fill-default-highlight {
+  fill: var(--default-color-highlight) !important;
+}
+
+#svg-main .text-default {
+  color: var(--default-color-default) !important;
+}
+
+/* Image Square Container Classes */
+#svg-main .image-square-container-50 {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-60 {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-75 {
+  width: 75px;
+  height: 75px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-100 {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-200 {
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* When inside col-span-2, container should take full width/height including gap */
+#svg-main .col-span-2 .image-square-container-200 {
+  width: 100%;
+  height: 100%;
+}
+
+#svg-main .image-square-container-50 img,
+#svg-main .image-square-container-60 img,
+#svg-main .image-square-container-75 img,
+#svg-main .image-square-container-100 img,
+#svg-main .image-square-container-200 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Favorite Container */
+#svg-main .favorite-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Favorite Overlay */
+#svg-main .favorite-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 40px;
+  font-weight: 500;
+}
+
+#svg-main .favorite-overlay * {
+  color: white !important;
+}
+
+/* Additional plugin utilities */
+#svg-main .items-baseline {
+  align-items: baseline;
+}
+
+#svg-main .shrink-0 {
+  flex-shrink: 0;
+}
+
+#svg-main .grid-cols-\[auto_auto_min-content\] {
+  grid-template-columns: auto auto min-content;
+}
+
+#svg-main .grid-cols-\[75px_1fr\] {
+  grid-template-columns: 75px 1fr;
+}
+
+#svg-main .h-\[50px\] {
+  height: 50px;
+}
+
+#svg-main .rounded-2xl {
+  border-radius: 1rem;
+}
+
+#svg-main .shadow-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+#svg-main .h-\[15px\] {
+  height: 15px;
+}
+
+#svg-main .leading-none {
+  line-height: 1;
+}
+
+#svg-main .text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#svg-main .sm-text {
+  font-size: 0.875rem;
+}
+
+#svg-main .md-2-text {
+  font-size: 0.875rem;
+}
+
+#svg-main .text-md {
+  font-size: 1rem;
+}
+
+#svg-main .no-underline {
+  text-decoration: none;
+}
+
+#svg-main .align-center {
+  align-items: center;
+}
+
+#svg-main .text-bold {
+  font-weight: 700;
+}
+
+#svg-main .genre-tag {
+  display: inline-block;
+}
+
+/* Line clamp utilities */
+#svg-main .line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Synopsis text */
+#svg-main .synopsis-text {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  color: var(--default-color-muted);
+}
+
+#svg-main .bg-black\/25 {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Grid utilities */
+#svg-main .grid {
+  display: grid;
+}
+
+#svg-main .grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-8 {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-10 {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+}
+
+#svg-main .grid-rows-2 {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main .gap-1 {
+  gap: 0.25rem;
+}
+
+#svg-main .gap-2 {
+  gap: 0.5rem;
+}
+
+#svg-main .gap-4 {
+  gap: 1rem;
+}
+
+/* Half mode utilities - when #svg-main has class &quot;half&quot; */
+#svg-main.half .grid-cols-8 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#svg-main.half .grid-cols-10 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#svg-main.half .grid-cols-5 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main.half .gap-4 {
+  gap: 0.5rem;
+}
+
+/* Half-mode variant classes - applied when #svg-main has class &quot;half&quot; */
+/* These classes are used in components like &quot;half-mode:flex-col&quot; */
+#svg-main.half .half-mode\:flex-col {
+  flex-direction: column;
+}
+
+#svg-main.half .half-mode\:grid {
+  display: grid;
+}
+
+#svg-main.half .half-mode\:grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:gap-2 {
+  gap: 0.5rem;
+}
+
+#svg-main.half .half-mode\:text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+#svg-main.half .half-mode\:text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+#svg-main.half .half-mode\:hidden {
+  display: none;
+}
+
+/* Ensure all content respects half mode width */
+#svg-main.half * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#svg-main.half .default-container {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+#svg-main.half section {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Half-mode variant classes - applied when #svg-main has class &quot;half&quot; */
+/* These classes are used in components like &quot;half-mode:flex-col&quot; */
+#svg-main.half .half-mode\:flex-col {
+  flex-direction: column;
+}
+
+#svg-main.half .half-mode\:grid {
+  display: grid;
+}
+
+#svg-main.half .half-mode\:grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:gap-2 {
+  gap: 0.5rem;
+}
+
+#svg-main.half .half-mode\:text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+#svg-main.half .half-mode\:text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+#svg-main.half .half-mode\:hidden {
+  display: none;
+}
+
+/* Min height utilities */
+#svg-main .min-h-100 {
+  min-height: 100px;
+}
+
+/* Grid span utilities */
+#svg-main .col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+#svg-main .row-span-2 {
+  grid-row: span 2 / span 2;
+}
+
+/* Width utilities */
+#svg-main .w-auto {
+  width: auto;
+}
+
+#svg-main .min-w-0 {
+  min-width: 0;
+}
+
+/* Ensure grid items with span take full space */
+#svg-main .col-span-2.row-span-2 {
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure image containers inside spanned items take full space */
+#svg-main .col-span-2 .image-square-container-200,
+#svg-main .col-span-2.row-span-2 .image-square-container-200 {
+  width: 100%;
+  height: 100%;
+}
+
+/* Tailwind utility classes - embedded for standalone SVG */
+/* Flexbox utilities */
+#svg-main .flex {
+  display: flex;
+}
+
+#svg-main .inline-flex {
+  display: inline-flex;
+}
+
+#svg-main .flex-col {
+  flex-direction: column;
+}
+
+#svg-main .items-center {
+  align-items: center;
+}
+
+#svg-main .items-end {
+  align-items: flex-end;
+}
+
+#svg-main .justify-between {
+  justify-content: space-between;
+}
+
+/* Gap utilities */
+#svg-main .gap-1\.5 {
+  gap: 0.375rem;
+}
+
+#svg-main .gap-3 {
+  gap: 0.75rem;
+}
+
+/* Width utilities */
+#svg-main .w-full {
+  width: 100%;
+}
+
+#svg-main .w-4 {
+  width: 1rem;
+}
+
+#svg-main .w-8 {
+  width: 2rem;
+}
+
+/* Height utilities */
+#svg-main .h-4 {
+  height: 1rem;
+}
+
+#svg-main .h-8 {
+  height: 2rem;
+}
+
+/* Padding utilities */
+#svg-main .p-2 {
+  padding: 0.5rem;
+}
+
+#svg-main .pb-0\.5 {
+  padding-bottom: 0.125rem;
+}
+
+/* Margin utilities */
+#svg-main .my-1\.5 {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+/* Text utilities */
+#svg-main .text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+#svg-main .text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+#svg-main .font-semibold {
+  font-weight: 600;
+}
+
+#svg-main .leading-relaxed {
+  line-height: 1.625;
+}
+
+/* Border utilities */
+#svg-main .border-0 {
+  border-width: 0;
+}
+
+#svg-main .border-b {
+  border-bottom-width: 1px;
+}
+
+#svg-main .border-solid {
+  border-style: solid;
+}
+
+/* Border radius utilities */
+#svg-main .rounded-lg {
+  border-radius: 0.5rem;
+}
+
+/* Overflow utilities */
+#svg-main .overflow-hidden {
+  overflow: hidden;
+}
+
+/* Position utilities */
+#svg-main .relative {
+  position: relative;
+}
+
+/* Transition utilities */
+#svg-main .transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Hover utilities */
+#svg-main .hover\:text-default-link-hover:hover {
+  color: var(--default-color-highlight) !important;
+}
+
+
+/* Plugin: myanimelist */
+
+    /* MyAnimeList specific styles */
+    #svg-main {
+      --color-watching: #2196f3;
+      --color-completed: #2ecc71;
+      --color-onhold: #f1c40f;
+      --color-dropped: #ff5252;
+      --color-plan-to-watch: #95a5a6;
+      --color-plan-to-read: #95a5a6;
+      --color-reading: #2196f3;
+    }
+
+    /* Fill classes for icons */
+    #svg-main .fill-mal-watching {
+      fill: #2196f3;
+    }
+
+    #svg-main .fill-mal-completed {
+      fill: #2ecc71;
+    }
+
+    #svg-main .fill-mal-on-hold {
+      fill: #f1c40f;
+    }
+
+    #svg-main .fill-mal-dropped {
+      fill: #ff5252;
+    }
+
+    #svg-main .fill-mal-plan-to-watch {
+      fill: #95a5a6;
+    }
+
+    #svg-main .fill-mal-plan-to-read {
+      fill: #95a5a6;
+    }
+
+    #svg-main .fill-mal-reading {
+      fill: #2196f3;
+    }
+
+    /* Text classes for status labels */
+    #svg-main .text-mal-watching {
+      color: #2196f3 !important;
+    }
+
+    #svg-main .text-mal-completed {
+      color: #2ecc71 !important;
+    }
+
+    #svg-main .text-mal-on-hold {
+      color: #f1c40f !important;
+    }
+
+    #svg-main .text-mal-dropped {
+      color: #ff5252 !important;
+    }
+
+    #svg-main .text-mal-plan-to-watch {
+      color: #95a5a6 !important;
+    }
+
+    #svg-main .text-mal-plan-to-read {
+      color: #95a5a6 !important;
+    }
+
+    #svg-main .text-mal-reading {
+      color: #2196f3 !important;
+    }
+
+    /* Background classes for horizontal bars */
+    #svg-main .bg-mal-watching {
+      background-color: #2196f3 !important;
+    }
+
+    #svg-main .bg-mal-completed {
+      background-color: #2ecc71 !important;
+    }
+
+    #svg-main .bg-mal-on-hold {
+      background-color: #f1c40f !important;
+    }
+
+    #svg-main .bg-mal-dropped {
+      background-color: #ff5252 !important;
+    }
+
+    #svg-main .bg-mal-plan-to-watch {
+      background-color: #95a5a6 !important;
+    }
+
+    #svg-main .bg-mal-plan-to-read {
+      background-color: #95a5a6 !important;
+    }
+
+    #svg-main .bg-mal-reading {
+      background-color: #2196f3 !important;
+    }
+  
+/* Shared CSS - Tailwind utility classes used by all plugins */
+/* ⚠️ AUTO-GENERATED - DO NOT EDIT MANUALLY ⚠️ */
+/* Run: pnpm generate:tailwind-css */
+/* These classes are embedded in the SVG so it works standalone */
+
+/* Flexbox utilities */
+#svg-main .flex {
+  display: flex;
+}
+#svg-main .items-center {
+  align-items: center;
+}
+#svg-main .justify-end {
+  justify-content: flex-end;
+}
+#svg-main .justify-between {
+  justify-content: space-between;
+}
+#svg-main .items-end {
+  align-items: flex-end;
+}
+#svg-main .flex-col {
+  flex-direction: column;
+}
+#svg-main .items-baseline {
+  align-items: baseline;
+}
+#svg-main .flex-row {
+  flex-direction: row;
+}
+#svg-main .justify-center {
+  justify-content: center;
+}
+#svg-main .items-start {
+  align-items: flex-start;
+}
+#svg-main .flex-wrap {
+  flex-wrap: wrap;
+}
+#svg-main .flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+/* Gap utilities */
+#svg-main .gap-0\.5 {
+  gap: 0.125rem;
+}
+#svg-main .gap-1\.5 {
+  gap: 0.375rem;
+}
+#svg-main .gap-2 {
+  gap: 0.5rem;
+}
+#svg-main .gap-1 {
+  gap: 0.25rem;
+}
+#svg-main .gap-4 {
+  gap: 1rem;
+}
+#svg-main .gap-3 {
+  gap: 0.75rem;
+}
+#svg-main .gap-\[1px\] {
+  gap: 1px;
+}
+
+/* Width utilities */
+#svg-main .w-full {
+  width: 100%;
+}
+#svg-main .w-fit {
+  width: fit-content;
+}
+#svg-main .w-auto {
+  width: auto;
+}
+#svg-main .w-20 {
+  width: 5rem;
+}
+#svg-main .w-36 {
+  width: 9rem;
+}
+#svg-main .w-4 {
+  width: 1rem;
+}
+#svg-main .w-10 {
+  width: 2.5rem;
+}
+#svg-main .w-8 {
+  width: 2rem;
+}
+#svg-main .w-3 {
+  width: 0.75rem;
+}
+#svg-main .w-2 {
+  width: 0.5rem;
+}
+#svg-main .w-12 {
+  width: 3rem;
+}
+#svg-main .w-\[0\.7rem\] {
+  width: 0.7rem;
+}
+#svg-main .w-\[0\.60rem\] {
+  width: 0.60rem;
+}
+
+/* Height utilities */
+#svg-main .h-\[15px\] {
+  height: 15px;
+}
+#svg-main .h-full {
+  height: 100%;
+}
+#svg-main .h-2\.5 {
+  height: 0.625rem;
+}
+#svg-main .h-\[50px\] {
+  height: 50px;
+}
+#svg-main .h-20 {
+  height: 5rem;
+}
+#svg-main .h-4 {
+  height: 1rem;
+}
+#svg-main .h-10 {
+  height: 2.5rem;
+}
+#svg-main .h-8 {
+  height: 2rem;
+}
+#svg-main .h-3 {
+  height: 0.75rem;
+}
+#svg-main .h-32 {
+  height: 8rem;
+}
+#svg-main .h-2 {
+  height: 0.5rem;
+}
+#svg-main .h-\[0\.7rem\] {
+  height: 0.7rem;
+}
+
+#svg-main .min-h-\[75px\] {
+  min-height: 75px;
+}
+
+#svg-main .max-h-\[75px\] {
+  max-height: 75px;
+}
+
+/* Padding utilities */
+#svg-main .px-2 {
+  padding-left: 0.5rem; padding-right: 0.5rem;
+}
+#svg-main .py-0\.5 {
+  padding-top: 0.125rem; padding-bottom: 0.125rem;
+}
+#svg-main .px-1 {
+  padding-left: 0.25rem; padding-right: 0.25rem;
+}
+#svg-main .pr-2 {
+  padding-right: 0.5rem;
+}
+#svg-main .pb-0\.5 {
+  padding-bottom: 0.125rem;
+}
+#svg-main .pl-1 {
+  padding-left: 0.25rem;
+}
+#svg-main .pl-2 {
+  padding-left: 0.5rem;
+}
+#svg-main .p-3 {
+  padding: 0.75rem;
+}
+#svg-main .p-4 {
+  padding: 1rem;
+}
+#svg-main .py-4 {
+  padding-top: 1rem; padding-bottom: 1rem;
+}
+#svg-main .p-2 {
+  padding: 0.5rem;
+}
+#svg-main .px-4 {
+  padding-left: 1rem; padding-right: 1rem;
+}
+
+/* Margin utilities */
+#svg-main .my-1\.5 {
+  margin-top: 0.375rem; margin-bottom: 0.375rem;
+}
+#svg-main .mx-1 {
+  margin-left: 0.25rem; margin-right: 0.25rem;
+}
+#svg-main .mt-2 {
+  margin-top: 0.5rem;
+}
+#svg-main .mt-1 {
+  margin-top: 0.25rem;
+}
+#svg-main .mt-0\.5 {
+  margin-top: 0.125rem;
+}
+#svg-main .mt-4 {
+  margin-top: 1rem;
+}
+#svg-main .mb-1 {
+  margin-bottom: 0.25rem;
+}
+#svg-main .ml-4 {
+  margin-left: 1rem;
+}
+#svg-main .mb-2 {
+  margin-bottom: 0.5rem;
+}
+#svg-main .mb-3 {
+  margin-bottom: 0.75rem;
+}
+#svg-main .mb-4 {
+  margin-bottom: 1rem;
+}
+#svg-main .mt-0\.5 {
+  margin-top: 0.125rem;
+}
+#svg-main .ml-2 {
+  margin-left: 0.5rem;
+}
+#svg-main .mr-2 {
+  margin-right: 0.5rem;
+}
+#svg-main .my-1 {
+  margin-top: 0.25rem; margin-bottom: 0.25rem;
+}
+
+/* Text utilities */
+#svg-main .font-bold {
+  font-weight: 700;
+}
+#svg-main .text-sm {
+  font-size: 0.875rem; line-height: 1.25rem;
+}
+#svg-main .text-xs {
+  font-size: 0.75rem; line-height: 1rem;
+}
+#svg-main .text-center {
+  text-align: center;
+}
+#svg-main .text-lg {
+  font-size: 1.125rem; line-height: 1.75rem;
+}
+#svg-main .text-xl {
+  font-size: 1.25rem; line-height: 1.75rem;
+}
+#svg-main .font-semibold {
+  font-weight: 600;
+}
+#svg-main .leading-none {
+  line-height: 1;
+}
+#svg-main .font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;
+}
+#svg-main .text-end {
+  text-align: end;
+}
+#svg-main .text-nowrap {
+  white-space: nowrap;
+}
+#svg-main .text-2xl {
+  font-size: 1.5rem; line-height: 2rem;
+}
+#svg-main .font-medium {
+  font-weight: 500;
+}
+#svg-main .text-right {
+  text-align: right;
+}
+#svg-main .text-\[0\.75rem\] {
+  font-size: 0.75rem;
+}
+#svg-main .leading-relaxed {
+  line-height: 1.625;
+}
+
+/* Border utilities */
+#svg-main .rounded {
+  border-radius: 0.25rem;
+}
+#svg-main .border {
+  border-width: 1px;
+}
+#svg-main .rounded-lg {
+  border-radius: 0.5rem;
+}
+#svg-main .rounded-2xl {
+  border-radius: 1rem;
+}
+#svg-main .border-0 {
+  border-width: 0;
+}
+#svg-main .border-b {
+  border-bottom-width: 1px;
+}
+#svg-main .border-solid {
+  border-style: solid;
+}
+#svg-main .rounded-lg {
+  border-radius: 0.5rem;
+}
+#svg-main .rounded-full {
+  border-radius: 9999px;
+}
+#svg-main .rounded-sm {
+  border-radius: 0.125rem;
+}
+#svg-main .rounded-t-md {
+  border-top-left-radius: 0.375rem; border-top-right-radius: 0.375rem;
+}
+
+/* Other utilities */
+#svg-main .relative {
+  position: relative;
+}
+#svg-main .overflow-hidden {
+  overflow: hidden;
+}
+#svg-main .mx-\[3px\] {
+  margin-left: 3px; margin-right: 3px;
+}
+#svg-main .mt-\[0\.5rem\] {
+  margin-top: 0.5rem;
+}
+#svg-main .transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;
+}
+#svg-main .transition-opacity {
+  transition-property: opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;
+}
+#svg-main .transition-all {
+  transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;
+}
+#svg-main .inline-flex {
+  display: inline-flex;
+}</style><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-default:#24292f;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#24292f;--default-color-highlight:#FF7A3D"><div><div><section id="mal-statistics"><div class="w-full flex half-mode:flex-col gap-2"><div>TESTdEEe</div><div class="flex flex-col w-full"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="160" x="64" y="320" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" rx="8" ry="8"></rect><rect width="48" height="256" x="288" y="224" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" rx="8" ry="8"></rect><rect width="48" height="368" x="400" y="112" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" rx="8" ry="8"></rect><rect width="48" height="448" x="176" y="32" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" rx="8" ry="8"></rect></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Anime Statistics</h2></div></div><div class="w-full flex gap-2 p-0 m-0"><ul class="flex flex-col items-start w-full gap-1 "><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-base 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg><span>6.43</span><span>Mean Score</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-watching" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zM188.3 147.1c-7.6 4.2-12.3 12.3-12.3 20.9l0 176c0 8.7 4.7 16.7 12.3 20.9s16.8 4.1 24.3-.5l144-88c7.1-4.4 11.5-12.1 11.5-20.5s-4.4-16.1-11.5-20.5l-144-88c-7.4-4.5-16.7-4.7-24.3-.5z"></path></svg><span>2</span><span>Watching</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-completed" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path></svg><span>273</span><span>Completed</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-on-hold" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM224 192l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128c0-17.7 14.3-32 32-32s32 14.3 32 32zm128 0l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128c0-17.7 14.3-32 32-32s32 14.3 32 32z"></path></svg><span>8</span><span>On Hold</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-dropped" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"></path></svg><span>39</span><span>Dropped</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-plan-to-watch" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"></path></svg><span>38</span><span>Plan to Watch</span></li></ul><ul class="flex flex-col items-start w-full gap-1 "><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-base 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 192h424c6.6 0 12 5.4 12 12v260c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V204c0-6.6 5.4-12 12-12zm436-44v-36c0-26.5-21.5-48-48-48h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v36c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12z"></path></svg><span>65.8</span><span>Total Days</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M448 73.143v45.714C448 159.143 347.667 192 224 192S0 159.143 0 118.857V73.143C0 32.857 100.333 0 224 0s224 32.857 224 73.143zM448 176v102.857C448 319.143 347.667 352 224 352S0 319.143 0 278.857V176c48.125 33.143 136.208 48.572 224 48.572S399.874 209.143 448 176zm0 160v102.857C448 479.143 347.667 512 224 512S0 479.143 0 438.857V336c48.125 33.143 136.208 48.572 224 48.572S399.874 369.143 448 336z"></path></svg><span>360</span><span>Total Entries</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="fill-default-highlight" height="16" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM16.8201 17.0761C18.1628 15.8007 19 13.9981 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19C13.0609 19 14.0666 18.764 14.9676 18.3417L13.9928 16.5871C13.3823 16.8527 12.7083 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12H14L16.8201 17.0761Z"></path></svg><span>20</span><span>Rewatched</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M336.2 64H47.8C21.4 64 0 85.4 0 111.8v288.4C0 426.6 21.4 448 47.8 448h288.4c26.4 0 47.8-21.4 47.8-47.8V111.8c0-26.4-21.4-47.8-47.8-47.8zm189.4 37.7L416 177.3v157.4l109.6 75.5c21.2 14.6 50.4-.3 50.4-25.8V127.5c0-25.4-29.1-40.4-50.4-25.8z"></path></svg><span>4.1K</span><span>Episodes Watched</span></li></ul></div></div><div class="flex flex-col w-full"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="160" x="64" y="320" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" rx="8" ry="8"></rect><rect width="48" height="256" x="288" y="224" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" rx="8" ry="8"></rect><rect width="48" height="368" x="400" y="112" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" rx="8" ry="8"></rect><rect width="48" height="448" x="176" y="32" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" rx="8" ry="8"></rect></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Manga Statistics</h2></div></div><div class="w-full flex gap-2"><ul class="flex flex-col items-start w-full gap-1 "><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-base 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg><span>6.54</span><span>Mean Score</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-watching" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zM188.3 147.1c-7.6 4.2-12.3 12.3-12.3 20.9l0 176c0 8.7 4.7 16.7 12.3 20.9s16.8 4.1 24.3-.5l144-88c7.1-4.4 11.5-12.1 11.5-20.5s-4.4-16.1-11.5-20.5l-144-88c-7.4-4.5-16.7-4.7-24.3-.5z"></path></svg><span>48</span><span>Reading</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-completed" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path></svg><span>56</span><span>Completed</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-on-hold" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM224 192l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128c0-17.7 14.3-32 32-32s32 14.3 32 32zm128 0l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128c0-17.7 14.3-32 32-32s32 14.3 32 32z"></path></svg><span>28</span><span>On Hold</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-dropped" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"></path></svg><span>60</span><span>Dropped</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="fill-mal-plan-to-watch" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"></path></svg><span>21</span><span>Plan to Read</span></li></ul><ul class="flex flex-col items-start w-full gap-1 "><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-base 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 192h424c6.6 0 12 5.4 12 12v260c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V204c0-6.6 5.4-12 12-12zm436-44v-36c0-26.5-21.5-48-48-48h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v36c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12z"></path></svg><span>93.7</span><span>Total Days</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M448 73.143v45.714C448 159.143 347.667 192 224 192S0 159.143 0 118.857V73.143C0 32.857 100.333 0 224 0s224 32.857 224 73.143zM448 176v102.857C448 319.143 347.667 352 224 352S0 319.143 0 278.857V176c48.125 33.143 136.208 48.572 224 48.572S399.874 209.143 448 176zm0 160v102.857C448 479.143 347.667 512 224 512S0 479.143 0 438.857V336c48.125 33.143 136.208 48.572 224 48.572S399.874 369.143 448 336z"></path></svg><span>213</span><span>Total Entries</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="fill-default-highlight" height="16" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM16.8201 17.0761C18.1628 15.8007 19 13.9981 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19C13.0609 19 14.0666 18.764 14.9676 18.3417L13.9928 16.5871C13.3823 16.8527 12.7083 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12H14L16.8201 17.0761Z"></path></svg><span>4</span><span>Reread</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M542.22 32.05c-54.8 3.11-163.72 14.43-230.96 55.59-4.64 2.84-7.27 7.89-7.27 13.17v363.87c0 11.55 12.63 18.85 23.28 13.49 69.18-34.82 169.23-44.32 218.7-46.92 16.89-.89 30.02-14.43 30.02-30.66V62.75c.01-17.71-15.35-31.74-33.77-30.7zM264.73 87.64C197.5 46.48 88.58 35.17 33.78 32.05 15.36 31.01 0 45.04 0 62.75V400.6c0 16.24 13.13 29.78 30.02 30.66 49.49 2.6 149.59 12.11 218.77 46.95 10.62 5.35 23.21-1.94 23.21-13.46V100.63c0-5.29-2.62-10.14-7.27-12.99z"></path></svg><span>13.1K</span><span>Chapters Read</span></li><li class="flex justify-start gap-1 items-center truncate text-default-text
+        text-sm 
+         
+        "><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" class="fill-default-highlight" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M336.2 64H47.8C21.4 64 0 85.4 0 111.8v288.4C0 426.6 21.4 448 47.8 448h288.4c26.4 0 47.8-21.4 47.8-47.8V111.8c0-26.4-21.4-47.8-47.8-47.8zm189.4 37.7L416 177.3v157.4l109.6 75.5c21.2 14.6 50.4-.3 50.4-25.8V127.5c0-25.4-29.1-40.4-50.4-25.8z"></path></svg><span>517</span><span>Volumes Read</span></li></ul></div></div></div></section></div></div></div></div></foreignObject></svg>
