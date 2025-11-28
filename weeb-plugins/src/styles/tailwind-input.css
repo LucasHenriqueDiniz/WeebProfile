@@ -1,0 +1,5 @@
+/* Tailwind CSS Input File */
+/* This file is used as input for Tailwind CLI to generate utility classes */
+/* We only need utilities, not base or components */
+@tailwind utilities;
+

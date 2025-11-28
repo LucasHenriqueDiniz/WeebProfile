@@ -1,5 +1,6 @@
 packages:
-  - "core"
-  - "source"
-  - "web-client"
+  - "svg-generator"
+  - "weeb-plugins"
+  - "weeb-dashboard"
+  - "weeb-debug-tool"
 

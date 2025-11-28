@@ -1,0 +1,14 @@
+node_modules
+dist
+*.log
+.env
+.env.local
+*.test.ts
+*.test.tsx
+test
+.git
+.gitignore
+README.md
+RAILWAY_DEPLOY.md
+
+

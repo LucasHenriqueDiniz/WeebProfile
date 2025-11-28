@@ -1,0 +1,7 @@
+{
+  "watch": ["server", "../weeb-plugins/src"],
+  "ext": "ts,tsx,js,jsx",
+  "exec": "tsx server/index.ts"
+}
+
+

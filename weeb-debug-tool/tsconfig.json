@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@weeb-plugins/*": ["../weeb-plugins/src/*"],
+      "@weeb/weeb-plugins/*": ["../weeb-plugins/src/*"]
+    }
+  },
+  "include": ["src/**/*", "server/**/*"],
+  "exclude": ["node_modules", "dist", "lib"]
+}
+
+
+

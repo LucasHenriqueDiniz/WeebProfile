@@ -1,0 +1,39 @@
+/**
+ * Plugin registry
+ */
+
+export { PluginManager } from './manager'
+export type { Plugin } from './types'
+export type { PluginRegistry as PluginRegistryType } from './types'
+export { githubPlugin } from './github/index'
+export { lastFmPlugin } from './lastfm/index'
+export { myAnimeListPlugin } from './myanimelist/index'
+export { personality16Plugin } from './16personalities/index'
+
+// Export centralized metadata
+export {
+  PLUGINS_METADATA,
+  getPluginMetadata,
+  getAllPluginsMetadata,
+  getSectionConfigOptions,
+  getPluginCategory,
+  getPluginsByCategory,
+  getPluginsGroupedByCategory,
+  isValidPluginName,
+  isValidCategory,
+  isValidPluginMetadata,
+  type PluginMetadata,
+  type PluginSection,
+  type SectionConfigOption,
+  type PluginCategory,
+  type EssentialConfigKeyMetadata,
+} from './metadata'
+
+// Export Plugin Registry (class)
+export {
+  PluginRegistry,
+  pluginRegistry,
+  getPluginMetadata as getPluginMetadataFromRegistry,
+  getPlugin as getPluginFromRegistry,
+  pluginExists,
+} from './registry'

@@ -1,0 +1,56 @@
+{
+  "name": "@weeb/svg-generator",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build-ignore-errors.js",
+    "build:tsc": "tsc --skipLibCheck",
+    "build:check": "tsc",
+    "dev": "tsc --watch",
+    "dev:server": "tsx src/server.ts",
+    "start": "node dist/server.js",
+    "start:dev": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "echo \"Tests coming soon\"",
+    "test:generate": "tsx test/generate-test.ts",
+    "generate:previews": "tsx scripts/generate-section-previews.ts",
+    "generate:previews:force": "tsx scripts/generate-section-previews.ts --force",
+    "generate:previews:png": "tsx scripts/generate-section-previews.ts --png",
+    "watch:previews": "tsx scripts/watch-previews.ts",
+    "watch:previews:all": "tsx scripts/watch-previews.ts --all",
+    "serve:previews": "tsx scripts/serve-previews.ts"
+  },
+  "dependencies": {
+    "@weeb/weeb-plugins": "workspace:*",
+    "dotenv": "^16.4.5",
+    "postgres": "^3.4.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "server-only": "^0.0.1"
+  },
+  "peerDependencies": {
+    "@weeb/weeb-plugins": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.18",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
