@@ -87,19 +87,19 @@ export function RenderLastFm({
           displayStyle = 'default'
         }
         
-        return (
+            return (
           <TopArtists
-            key="top_artists"
-            data={data.topArtists}
-            interval={data.topArtistsInterval}
+                key="top_artists"
+                data={data.topArtists}
+                interval={data.topArtistsInterval}
             config={{
               ...sectionConfig,
               top_artists_style: displayStyle as 'grid' | 'list' | 'default',
             }}
-            style={style}
-            size={size}
-          />
-        )
+                style={style}
+                size={size}
+              />
+            )
       }
       case 'top_albums':
       case 'top_albums_default':
@@ -115,19 +115,19 @@ export function RenderLastFm({
           displayStyle = 'default'
         }
         
-        return (
+            return (
           <TopAlbums
-            key="top_albums"
-            data={data.topAlbums}
-            interval={data.topAlbumsInterval}
+                key="top_albums"
+                data={data.topAlbums}
+                interval={data.topAlbumsInterval}
             config={{
               ...sectionConfig,
               top_albums_style: displayStyle as 'grid' | 'list' | 'default',
             }}
-            style={style}
-            size={size}
-          />
-        )
+                style={style}
+                size={size}
+              />
+            )
       }
       case 'top_tracks':
       case 'top_tracks_default':
@@ -143,19 +143,19 @@ export function RenderLastFm({
           displayStyle = 'default'
         }
         
-        return (
+            return (
           <TopTracks
-            key="top_tracks"
-            data={data.topTracks}
-            interval={data.topTracksInterval}
+                key="top_tracks"
+                data={data.topTracks}
+                interval={data.topTracksInterval}
             config={{
               ...sectionConfig,
               top_tracks_style: displayStyle as 'grid' | 'list' | 'default',
             }}
-            style={style}
-            size={size}
-          />
-        )
+                style={style}
+                size={size}
+              />
+            )
       }
       default:
         return (

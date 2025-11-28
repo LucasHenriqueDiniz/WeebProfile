@@ -54,7 +54,7 @@ export function PluginStyles({
   
   // Get background color for terminal style
   const terminalBackground = style === 'terminal' 
-    ? (themeVariables as Record<string, string>)['--terminal-color-background']
+    ? themeVariables['--terminal-color-background']
     : undefined
   
   // Build style object

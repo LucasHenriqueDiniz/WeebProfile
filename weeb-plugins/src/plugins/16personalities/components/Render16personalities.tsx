@@ -92,14 +92,14 @@ export function RenderPersonality16({
         }
         terminalComponent={
           <>
-            <TerminalCommand
+      <TerminalCommand
               command={getPseudoCommands({
                 plugin: '16personalities',
                 section: 'personality',
                 type: data.type,
                 size,
               })}
-            />
+      />
             <TerminalLineWithDots
               title={`${data.emoji} ${data.type} - ${data.name}`}
               value={`${data.traits.E} • ${data.traits.N} • ${data.traits.F} • ${data.traits.J}`}
@@ -116,7 +116,7 @@ export function RenderPersonality16({
                 value={data.url}
               />
             )}
-            <TerminalLineBreak />
+      <TerminalLineBreak />
           </>
         }
       />

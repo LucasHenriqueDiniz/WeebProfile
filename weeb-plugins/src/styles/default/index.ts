@@ -7,8 +7,9 @@
 import { readFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { defaultThemes } from '../../themes/themes'
+import { defaultThemes, type ThemeVariables } from '../../themes/themes'
 import type { DefaultTheme } from '../../themes/types'
+import { getDefaultThemeVariables as getDefaultThemeVariablesFromUtils } from '../../themes/theme-utils'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -485,30 +486,10 @@ function loadCSS(): string {
 
 /**
  * Get theme variables for default style
+ * Delegates to theme-utils for consistency
  */
-export function getDefaultThemeVariables(theme: DefaultTheme | string) {
-  // Mapear valores de cor para temas válidos
-  const themeMap: Record<string, DefaultTheme> = {
-    purple: 'defaultPurple',
-    pink: 'defaultPink',
-    cyan: 'defaultCyan',
-    orange: 'defaultOrange',
-  }
-  
-  // Se o tema não existe, tentar mapear ou usar default
-  const validTheme = themeMap[theme] || (theme in defaultThemes ? theme as DefaultTheme : 'default')
-  const selectedTheme = defaultThemes[validTheme]
-
-  if (!selectedTheme) {
-    console.warn(`Theme "${theme}" not found, using default theme`)
-    const fallbackTheme = defaultThemes.default
-    if (!fallbackTheme) {
-      throw new Error('Default theme not found')
-    }
-    return fallbackTheme
-  }
-
-  return selectedTheme
+export function getDefaultThemeVariables(theme: DefaultTheme | string): Record<string, string> {
+  return getDefaultThemeVariablesFromUtils(theme) as Record<string, string>
 }
 
 /**

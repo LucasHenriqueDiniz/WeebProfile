@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import type { Plugin } from './types'
+import type { Plugin } from '../../weeb-plugins/plugins/shared/types/plugin'
 import type { PluginConfig, PluginData } from '../../weeb-plugins/types/index'
 import type { EssentialPluginConfig } from '../../weeb-plugins/plugins/shared/types/base'
 import type { GithubConfig, GithubData } from './types'

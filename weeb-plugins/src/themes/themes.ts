@@ -5,7 +5,7 @@
  * The default theme is the base, and other themes override specific variables.
  */
 
-export interface ThemeVariables {
+export interface ThemeVariables extends Record<string, string> {
   // Default style variables
   '--default-color-surface': string
   '--default-color-background': string
@@ -17,7 +17,7 @@ export interface ThemeVariables {
   '--default-color-highlight': string
 }
 
-export interface TerminalThemeVariables {
+export interface TerminalThemeVariables extends Record<string, string> {
   // Terminal style variables
   '--terminal-color-surface': string
   '--terminal-color-background': string

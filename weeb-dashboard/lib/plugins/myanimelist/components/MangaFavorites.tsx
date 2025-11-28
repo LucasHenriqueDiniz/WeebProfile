@@ -160,7 +160,7 @@ export function MangaFavorites({ data, config, style, size }: MangaFavoritesProp
   const maxItems = config.manga_favorites_max ?? 10
   const hideTitle = config.manga_favorites_hide_title ?? false
   const isHalf = size === 'half'
-  const noSummary = config.manga_favorites_no_summary ?? false
+  const noSummary = (config as any).manga_favorites_no_summary ?? false
 
   let displayData = data
   if (maxItems && data.length > maxItems) {

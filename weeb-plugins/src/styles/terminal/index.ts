@@ -1180,21 +1180,15 @@ function loadCSS(): string {
 
 /**
  * Get theme variables for terminal style
+ * Returns Record<string, string> for compatibility with StyleDefinition
  */
-export function getTerminalThemeVariables(theme: TerminalTheme | string) {
+export function getTerminalThemeVariables(theme: TerminalTheme | string): Record<string, string> {
   const validTheme = (theme in terminalThemes ? theme : 'default') as TerminalTheme
-  const selectedTheme = terminalThemes[validTheme] || terminalThemes.default
+  const selectedTheme = terminalThemes[validTheme]
 
-  return {
-    '--terminal-color-surface': selectedTheme.surface,
-    '--terminal-color-background': selectedTheme.background,
-    '--terminal-color-highlight': selectedTheme.highlight,
-    '--terminal-color-default': selectedTheme.default,
-    '--terminal-color-success': selectedTheme.success,
-    '--terminal-color-muted': selectedTheme.muted,
-    '--terminal-color-muted-light': selectedTheme.mutedLight,
-    '--terminal-color-raw': selectedTheme.raw,
-  }
+  // Always return a valid theme - default theme is guaranteed to exist
+  // Using non-null assertion because 'default' theme is always defined in terminalThemes
+  return (selectedTheme ?? terminalThemes['default']) as Record<string, string>
 }
 
 /**

@@ -5,7 +5,7 @@
  * Returns the height in pixels.
  */
 
-import type { LastFmConfig } from '../types'
+import type { LastFmConfig } from './types'
 import { SECTION_TITLE_HEIGHT } from '../../weeb-plugins/plugins/shared/types/heights'
 
 /**

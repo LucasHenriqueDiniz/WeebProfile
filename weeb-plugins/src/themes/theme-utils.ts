@@ -13,14 +13,11 @@ import type { DefaultTheme, TerminalTheme } from './types'
  */
 export const getTerminalThemeVariables = (theme: TerminalTheme | string): TerminalThemeVariables => {
   const validTheme = (theme in terminalThemes ? theme : 'default') as TerminalTheme
-  const selectedTheme = terminalThemes[validTheme] || terminalThemes.default
+  const selectedTheme = terminalThemes[validTheme]
 
-  if (!selectedTheme) {
-    console.warn(`Terminal theme "${theme}" not found, using default theme`)
-    return terminalThemes.default
-  }
-
-  return selectedTheme
+  // Always return a valid theme - default theme is guaranteed to exist in terminalThemes
+  // Using non-null assertion because 'default' theme is always defined in terminalThemes
+  return selectedTheme ?? (terminalThemes['default'] as TerminalThemeVariables)
 }
 
 /**
@@ -58,20 +55,28 @@ export const getDefaultThemeVariables = (
   
   const mappedTheme = themeMap[theme] || 'default'
   
-  // Get base theme variables
-  const baseTheme = defaultThemes[mappedTheme] || defaultThemes.default
+  // Get base theme variables - default theme is guaranteed to exist
+  // Using non-null assertion because 'default' theme is always defined in defaultThemes
+  const baseTheme = defaultThemes[mappedTheme] ?? (defaultThemes['default'] as ThemeVariables)
   let themeVariables: ThemeVariables = { ...baseTheme }
 
   // If custom theme, apply custom colors
   if (mappedTheme === 'custom' && customColors) {
+    // Filter out undefined values from customColors
+    const validCustomColors: Record<string, string> = {}
+    for (const [key, value] of Object.entries(customColors)) {
+      if (value && typeof value === 'string') {
+        validCustomColors[key] = value
+      }
+    }
     themeVariables = {
       ...themeVariables,
-      ...customColors,
+      ...validCustomColors,
     }
   }
 
   // Legacy: primaryColor overrides --default-color-highlight
-  if (primaryColor) {
+  if (primaryColor && typeof primaryColor === 'string') {
     themeVariables['--default-color-highlight'] = primaryColor
   }
 

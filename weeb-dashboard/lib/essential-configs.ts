@@ -182,3 +182,13 @@ export async function deleteEssentialConfig(
     )
 }
 
+/**
+ * Helper: Obtém o GitHub Classic Token do usuário
+ * 
+ * @param userId - ID do usuário
+ * @returns Classic Token do GitHub ou null se não disponível
+ */
+export async function getGitHubToken(userId: string): Promise<string | null> {
+  return getEssentialConfig(userId, 'github', 'pat')
+}
+

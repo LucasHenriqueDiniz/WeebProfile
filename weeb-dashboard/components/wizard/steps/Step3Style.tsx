@@ -11,8 +11,8 @@ import {
   DEFAULT_THEME_VARIABLES,
   DEFAULT_THEME_VARIABLE_DESCRIPTIONS,
   DEFAULT_THEME_VARIABLE_LABELS
-} from "@/lib/theme-variables"
-import { defaultThemes } from "@/lib/theme-variables/default-themes"
+} from "@/lib/weeb-plugins/themes"
+import { defaultThemes as themesFromPlugins } from "@/lib/weeb-plugins/themes/themes"
 import { useWizardStore } from "@/stores/wizard-store"
 import { Code2, Maximize2, Minimize2, Monitor, Paintbrush, RotateCcw, Terminal } from "lucide-react"
 import React, { useCallback, useEffect, useState } from "react"
@@ -54,10 +54,8 @@ export function Step3Style() {
 
   // Get default value for a theme variable
   const getDefaultColor = (variable: string): string => {
-    const theme = defaultThemes.defaultCustom || defaultThemes.default
-    const varName = variable.replace('--default-color-', '')
-    const key = varName === 'muted-light' ? 'mutedLight' : varName
-    return (theme as any)[key] || '#000000'
+    const theme = themesFromPlugins.custom || themesFromPlugins.default
+    return theme[variable as keyof typeof theme] || '#000000'
   }
 
   // Debounce to update theme color

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { usePluginValidationStatus } from "@/hooks/usePluginValidationStatus"
-import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
 import { PLUGINS_DATA, getPluginIcon } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
 import { AlertCircle, AlertTriangle, CheckCircle2, List, Settings2, XCircle } from "lucide-react"
@@ -19,7 +19,7 @@ import { SectionOrderList } from "./SectionOrderList"
 
 interface PluginAccordionItemProps {
   pluginName: string
-  style: string
+  style: "default" | "terminal"
   essentialConfigs?: Record<string, boolean | undefined>
 }
 
@@ -110,7 +110,7 @@ export function PluginAccordionItem({ pluginName, style, essentialConfigs = {} }
 
           {/* Username - Only show if plugin requires it */}
           {(() => {
-            const requiredFields = pluginMetadata?.requiredFields || []
+            const requiredFields = (pluginMetadata?.requiredFields || []) as string[]
             const requiresUsername = Array.isArray(requiredFields) && requiredFields.includes('username')
             
             if (!requiresUsername) return null

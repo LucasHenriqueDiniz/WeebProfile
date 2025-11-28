@@ -5,7 +5,7 @@
  * Returns the height in pixels.
  */
 
-import type { Personality16Config } from '../types'
+import type { Personality16Config } from './types'
 import { SECTION_TITLE_HEIGHT } from '../../weeb-plugins/plugins/shared/types/heights'
 
 /**

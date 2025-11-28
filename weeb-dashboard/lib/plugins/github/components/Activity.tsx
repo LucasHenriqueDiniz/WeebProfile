@@ -58,7 +58,7 @@ const DefaultActivity = ({ data }: { data: GithubData['activity'] }) => {
 
   const rightColumnRows = [
     {
-      icon: <RiGitRepositoryLine className="text-default-muted fill-default-highlight" />,
+      icon: <RiGitRepositoryLine className="text-default-text" />,
       title: 'Organizations',
       value: abbreviateNumber(data.organizations),
     },

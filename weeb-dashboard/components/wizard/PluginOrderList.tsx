@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
 import { getPluginIcon } from "@/lib/plugins-data"
 import { cn } from "@/lib/utils"
 import {

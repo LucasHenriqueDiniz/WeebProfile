@@ -126,15 +126,27 @@ function fixImportsInFile(filePath) {
         return match
       },
     },
-    // ../types -> ./types (quando está no index.tsx do plugin)
+    // ../types -> ./types (quando está no mesmo diretório do plugin, como heights.ts)
     {
-      pattern: /from ['"]\.\.\/types['"]/g,
-      replacement: (match) => {
+      pattern: /from (['"])\.\.\/types\1/g,
+      replacement: (match, quote) => {
         if (isInPlugins) {
+          const fileDepth = relativePath.split(path.sep).length - 1
+          // Se estiver no diretório raiz do plugin (depth = 0), ../types deve ser ./types
+          // Exemplo: lib/plugins/16personalities/heights.ts -> ./types
+          // Verificar se types.ts existe no mesmo diretório
+          const pluginDir = path.dirname(filePath)
+          const typesPath = path.join(pluginDir, 'types.ts')
+          if (fs.existsSync(typesPath) && fileDepth === 0) {
+            return `from ${quote}./types${quote}`
+          }
+          // Se estiver no index.tsx do plugin, também deve ser ./types
           const isIndexFile = filePath.endsWith('index.tsx') || filePath.endsWith('index.ts')
           if (isIndexFile) {
-            return "from './types'"
+            return `from ${quote}./types${quote}`
           }
+          // Se estiver em um subdiretório (ex: components/, services/), ../types deve ser ../types (correto)
+          // Mas se types.ts não existe no diretório pai, pode ser que precise ser ajustado
         }
         return match
       },

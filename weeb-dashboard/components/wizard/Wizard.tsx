@@ -99,7 +99,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
           Object.keys(plugin).forEach((key) => {
             if (key !== "enabled" && key !== "username" && key !== "sections") {
               const envKey = `PLUGIN_${pluginName.toUpperCase()}_${key.toUpperCase()}`
-              pluginsConfig[envKey] = plugin[key]
+              pluginsConfig[envKey] = (plugin as any)[key]
             }
           })
         } else {

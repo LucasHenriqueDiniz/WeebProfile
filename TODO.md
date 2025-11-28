@@ -38,3 +38,4 @@ Este arquivo lista todos os TODOs, FIXMEs e melhorias pendentes no projeto.
 
 **Nota**: Este arquivo é compatível com a extensão todo-tree do VSCode. Use `// TODO:`, `// FIXME:`, `// XXX:`, `// HACK:`, ou `// BUG:` nos comentários para que apareçam aqui.
 
+

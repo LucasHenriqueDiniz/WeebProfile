@@ -3,7 +3,7 @@
  */
 
 import { useMemo } from "react"
-import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
 import type { PluginConfig } from "@/stores/wizard-store"
 
 interface ValidationResult {
@@ -49,7 +49,8 @@ export function usePluginValidation(
 
     // Validar requiredFields
     for (const field of metadata.requiredFields) {
-      if (!pluginConfig[field] || (typeof pluginConfig[field] === "string" && pluginConfig[field].trim() === "")) {
+      const fieldValue = (pluginConfig as any)[field]
+      if (!fieldValue || (typeof fieldValue === "string" && fieldValue.trim() === "")) {
         errors.push({
           field,
           message: `Field "${field}" is required`,
@@ -66,7 +67,7 @@ export function usePluginValidation(
     } else {
       const validSectionIds = new Set(metadata.sections.map((s) => s.id))
       for (const sectionId of pluginConfig.sections) {
-        if (!validSectionIds.has(sectionId)) {
+        if (!validSectionIds.has(sectionId as any)) {
           errors.push({
             field: "sections",
             message: `Section "${sectionId}" is not valid`,

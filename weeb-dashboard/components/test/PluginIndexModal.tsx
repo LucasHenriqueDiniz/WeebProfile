@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { PLUGINS_METADATA, getPluginsGroupedByCategory } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA, getPluginsGroupedByCategory } from "@/lib/weeb-plugins/plugins/metadata"
 
 // Plugin category type
 type PluginCategory = "coding" | "music" | "anime" | "gaming"
@@ -52,7 +52,7 @@ export function PluginIndexModal({
   const allPlugins: PluginMetadata[] = Object.values(PLUGINS_METADATA)
 
   // Get plugins grouped by category
-  const pluginsByCategory = getPluginsGroupedByCategory() as Record<PluginCategory, string[]>
+  const pluginsByCategory = getPluginsGroupedByCategory()
   const categories = Object.keys(pluginsByCategory) as PluginCategory[]
 
   const CATEGORY_LABELS: Record<PluginCategory, string> = {
@@ -68,7 +68,8 @@ export function PluginIndexModal({
 
     // Filter by category first
     if (selectedCategory !== "all") {
-      const categoryPluginNames = pluginsByCategory[selectedCategory]
+      const categoryPlugins = pluginsByCategory[selectedCategory] || []
+      const categoryPluginNames = categoryPlugins.map((p) => p.name)
       plugins = plugins.filter((plugin) => categoryPluginNames.includes(plugin.name))
     }
 

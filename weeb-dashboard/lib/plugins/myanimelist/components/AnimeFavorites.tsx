@@ -165,7 +165,7 @@ export function AnimeFavorites({ data, config, style, size }: AnimeFavoritesProp
   const maxItems = config.anime_favorites_max ?? 10
   const hideTitle = config.anime_favorites_hide_title ?? false
   const isHalf = size === 'half'
-  const noSummary = config.anime_favorites_no_summary ?? false
+  const noSummary = (config as any).anime_favorites_no_summary ?? false
 
   let displayData = data
   if (maxItems && data.length > maxItems) {

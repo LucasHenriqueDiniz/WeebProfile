@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef, useMemo, useState } from "react"
 import { PluginStyles } from "@/lib/weeb-plugins/templates/PluginStyles"
-import { getStyleCSS } from "@/lib/styles"
-import { getPluginsCSS } from "@/lib/styles/plugins"
+import { getStyleCSS } from "@/lib/weeb-plugins/styles/registry"
+import { getActivePluginsCSS as getPluginsCSS } from "@/lib/weeb-plugins/styles/plugins"
 import { getDefaultThemeVariables, getTerminalThemeVariables } from "@/lib/weeb-plugins/themes/theme-utils"
 
 interface PreviewSvgContainerProps {
@@ -103,7 +103,7 @@ ${cssVariables}
       styleRef.current = styleElement
       containerRef.current.insertBefore(styleElement, containerRef.current.firstChild)
     }
-        styleRef.current.textContent = combinedCss
+    styleRef.current.textContent = combinedCss
 
     return () => {
       if (styleRef.current && styleRef.current.parentNode) {

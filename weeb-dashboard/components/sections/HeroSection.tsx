@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { templateApi } from "@/lib/api"
-import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
 import { getPluginIcon } from "@/lib/plugins-data"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"

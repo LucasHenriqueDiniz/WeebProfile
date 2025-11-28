@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { templates } from "@/lib/db/schema"
-import { eq, and } from "drizzle-orm"
+import { eq, and, or } from "drizzle-orm"
 
 /**
  * GET /api/templates/[id]
@@ -10,7 +10,7 @@ import { eq, and } from "drizzle-orm"
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -23,14 +23,15 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const [template] = await db
       .select()
       .from(templates)
       .where(
         and(
-          eq(templates.id, params.id),
+          eq(templates.id, id),
           // User can only access their own templates or public templates
-          eq(templates.userId, user.id).or(eq(templates.isPublic, true))
+          or(eq(templates.userId, user.id), eq(templates.isPublic, true))
         )
       )
       .limit(1)

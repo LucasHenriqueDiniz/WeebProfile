@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { PLUGINS_METADATA, getPluginMetadata } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA, getPluginMetadata } from "@/lib/weeb-plugins/plugins/metadata"
 import { applyPluginDefaults } from "@/lib/plugin-defaults"
 
 export interface PluginConfig {
