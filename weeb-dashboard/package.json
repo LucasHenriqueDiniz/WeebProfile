@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:deps": "pnpm --filter @weeb/weeb-plugins build && pnpm --filter @weeb/svg-generator build",
+    "build:deps": "pnpm --filter @weeb/weeb-plugins build",
     "dev": "next dev",
     "build": "pnpm build:deps && next build",
     "build:only": "next build",

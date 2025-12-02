@@ -116,6 +116,7 @@ const initialState = {
     step1: true, // Style sempre válido
     step2: false,
     step3: false,
+    step4: false,
   },
 }
 
