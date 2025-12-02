@@ -85,6 +85,30 @@
     "./styles": {
       "import": "./dist/styles/index.js",
       "types": "./dist/styles/index.d.ts"
+    },
+    "./styles/server": {
+      "import": "./dist/styles/server.js",
+      "types": "./dist/styles/server.d.ts"
+    },
+    "./templates/PluginStyles": {
+      "import": "./dist/templates/PluginStyles.js",
+      "types": "./dist/templates/PluginStyles.d.ts"
+    },
+    "./styles/registry": {
+      "import": "./dist/styles/registry.js",
+      "types": "./dist/styles/registry.d.ts"
+    },
+    "./styles/plugins": {
+      "import": "./dist/styles/plugins.js",
+      "types": "./dist/styles/plugins.d.ts"
+    },
+    "./themes/theme-utils": {
+      "import": "./dist/themes/theme-utils.js",
+      "types": "./dist/themes/theme-utils.d.ts"
+    },
+    "./plugins/manager": {
+      "import": "./dist/plugins/manager.js",
+      "types": "./dist/plugins/manager.d.ts"
     }
   },
   "scripts": {

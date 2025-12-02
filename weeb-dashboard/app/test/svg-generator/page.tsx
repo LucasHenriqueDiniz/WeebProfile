@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, CheckCircle2, XCircle, Copy, Download, FileJson, Image as ImageIcon, Code, Bug, Ruler, List, ExternalLink, Trash2, BookOpen } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { PluginIndexModal } from "@/components/test/PluginIndexModal"
-import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 const DEFAULT_JSON = `{
   "style": "default",

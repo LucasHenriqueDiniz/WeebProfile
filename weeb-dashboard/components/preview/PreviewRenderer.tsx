@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState, useEffect } from "react"
+import React, { useMemo, useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import { useMockPluginData } from "@/hooks/useMockPluginData"
 import { PreviewSvgContainer } from "./PreviewSvgContainer"
@@ -26,6 +26,35 @@ interface PreviewRendererProps {
 }
 
 /**
+ * Achatamento de sectionConfigs para o formato esperado pelos plugins
+ * Transforma sectionConfigs[sectionId][optionKey] em optionKey no nível raiz
+ */
+function flattenSectionConfigs(pluginConfig: any): any {
+  if (!pluginConfig?.sectionConfigs) {
+    return pluginConfig
+  }
+
+  const { sectionConfigs, fields, ...rest } = pluginConfig
+  const flattened: any = { ...rest }
+
+  // Achatamento de sectionConfigs: sectionConfigs[sectionId][optionKey] -> optionKey
+  if (sectionConfigs && typeof sectionConfigs === 'object') {
+    Object.values(sectionConfigs).forEach((sectionConfig: any) => {
+      if (sectionConfig && typeof sectionConfig === 'object') {
+        Object.assign(flattened, sectionConfig)
+      }
+    })
+  }
+
+  // Adicionar fields também no nível raiz
+  if (fields && typeof fields === 'object') {
+    Object.assign(flattened, fields)
+  }
+
+  return flattened
+}
+
+/**
  * Componente que renderiza plugins usando componentes React locais
  */
 export function PreviewRenderer({
@@ -47,56 +76,46 @@ export function PreviewRenderer({
   // Estado para armazenar plugins carregados
   const [activePluginsMap, setActivePluginsMap] = useState<Map<string, any>>(new Map())
 
+  // Memoizar preparação de configs de plugins
+  const preparedPluginsConfig = useMemo(() => {
+    const configs: Record<string, any> = {}
+    for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
+      if (pluginConfig?.enabled) {
+        // Achatamento de sectionConfigs para o formato esperado pelos plugins
+        const flattenedConfig = flattenSectionConfigs(pluginConfig)
+        configs[pluginName] = {
+          style,
+          size,
+          theme,
+          hideTerminalEmojis,
+          ...flattenedConfig,
+          enabled: pluginConfig.enabled,
+        }
+      }
+    }
+    return configs
+  }, [plugins, style, size, theme, hideTerminalEmojis])
+
   // Carregar plugins ativos
   useEffect(() => {
     async function loadPlugins() {
-      // Preparar configuração de plugins
-      const pluginsConfig: Record<string, any> = {}
-      for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
-        if (pluginConfig?.enabled) {
-          pluginsConfig[pluginName] = {
-            style,
-            size,
-            theme,
-            hideTerminalEmojis,
-            ...pluginConfig,
-            enabled: pluginConfig.enabled,
-          }
-        }
-      }
-
       // Obter plugins ativos
-      const activePlugins = await getActivePlugins(pluginsConfig)
+      const activePlugins = await getActivePlugins(preparedPluginsConfig)
       const map = new Map(activePlugins)
       setActivePluginsMap(map)
     }
 
     loadPlugins()
-  }, [plugins, style, size, theme, hideTerminalEmojis])
+  }, [preparedPluginsConfig])
 
   // Renderizar plugins dinamicamente
   const renderedPlugins = useMemo(() => {
-    // Preparar configuração de plugins
-    const pluginsConfig: Record<string, any> = {}
-    for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
-      if (pluginConfig?.enabled) {
-        pluginsConfig[pluginName] = {
-          style,
-          size,
-          theme,
-          hideTerminalEmojis,
-          ...pluginConfig,
-          enabled: pluginConfig.enabled,
-        }
-      }
-    }
-
     // Renderizar plugins na ordem especificada
     const components: React.ReactElement[] = []
 
     for (const pluginName of pluginsOrder) {
       const plugin = activePluginsMap.get(pluginName)
-      const pluginConfig = pluginsConfig[pluginName]
+      const pluginConfig = preparedPluginsConfig[pluginName]
       const pluginData = (data as Record<string, any>)[pluginName]
 
       if (!plugin || !pluginConfig || !pluginConfig.enabled || !pluginData) {
@@ -105,15 +124,16 @@ export function PreviewRenderer({
 
       try {
         const rendered = (plugin as any).render(pluginConfig, pluginData)
-        const index = components.length
+        // Usar key única baseada em pluginName + índice estável
+        const stableKey = `${pluginName}-${components.length}`
         components.push(
-          <React.Fragment key={pluginName}>
+          <React.Fragment key={stableKey}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.4,
-                delay: index * 0.15,
+                delay: components.length * 0.15,
                 ease: [0.16, 1, 0.3, 1],
               }}
             >
@@ -127,20 +147,12 @@ export function PreviewRenderer({
     }
 
     return components
-  }, [
-    plugins,
-    pluginsOrder,
-    data,
-    style,
-    size,
-    theme,
-    hideTerminalEmojis,
-    activePluginsMap,
-  ])
+  }, [pluginsOrder, data, activePluginsMap, preparedPluginsConfig])
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center" style={{ width: `${width}px`, minHeight: "200px" }}>
+      <div className="flex flex-col items-center justify-center gap-3" style={{ width: `${width}px`, minHeight: "200px" }}>
+        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         <div className="text-sm text-muted-foreground">Carregando preview...</div>
       </div>
     )
@@ -148,8 +160,9 @@ export function PreviewRenderer({
 
   if (renderedPlugins.length === 0) {
     return (
-      <div className="flex items-center justify-center" style={{ width: `${width}px`, minHeight: "200px" }}>
-        <div className="text-sm text-muted-foreground">Nenhum plugin habilitado</div>
+      <div className="flex flex-col items-center justify-center gap-2" style={{ width: `${width}px`, minHeight: "200px" }}>
+        <div className="text-sm font-medium text-muted-foreground">Nenhum plugin habilitado</div>
+        <div className="text-xs text-muted-foreground/70">Habilite pelo menos um plugin para ver o preview</div>
       </div>
     )
   }

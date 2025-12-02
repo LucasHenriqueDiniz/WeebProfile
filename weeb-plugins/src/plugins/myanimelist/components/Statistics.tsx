@@ -211,33 +211,33 @@ export function Statistics({ data, config, style, size, hideTerminalEmojis = fal
             <StatisticRow
               rows={[
                 {
-                  icon: <FaStar className="fill-default-highlight" />,
+                  icon: <FaStar />,
                   title: 'Mean Score',
                   value: abbreviateNumber(mangaStatistics.mean_score),
                   strong: true,
                 },
                 {
-                  icon: <LuCirclePlay className="fill-mal-watching" />,
+                  icon: <FaCirclePlay className="fill-mal-watching" />,
                   title: 'Reading',
                   value: abbreviateNumber(mangaStatistics.reading),
                 },
                 {
-                  icon: <LuCircleCheckBig  className="fill-mal-completed" />,
+                  icon: <FaCircleCheck className="fill-mal-completed" />,
                   title: 'Completed',
                   value: abbreviateNumber(mangaStatistics.completed),
                 },
                 {
-                  icon: <LuCirclePause  className="fill-mal-on-hold" />,
+                  icon: <FaCirclePause className="fill-mal-on-hold" />,
                   title: 'On Hold',
                   value: abbreviateNumber(mangaStatistics.on_hold),
                 },
                 {
-                  icon: <LuCircleX className="fill-mal-dropped" />,
+                  icon: <FaCircleXmark className="fill-mal-dropped" />,
                   title: 'Dropped',
                   value: abbreviateNumber(mangaStatistics.dropped),
                 },
                 {
-                  icon: <LuCircleHelp  className="fill-mal-plan-to-watch" />,
+                  icon: <FaQuestionCircle className="fill-mal-plan-to-watch" />,
                   title: 'Plan to Read',
                   value: abbreviateNumber(mangaStatistics.plan_to_read),
                 },

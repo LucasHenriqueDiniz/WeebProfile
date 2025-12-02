@@ -6,7 +6,7 @@
 
 import React from 'react'
 import type { SvgConfig } from '../types/index.js'
-import { getCompleteCSS } from '@weeb/weeb-plugins/styles'
+import { getCompleteCSS } from '@weeb/weeb-plugins/styles/server'
 
 /**
  * Carrega todos os arquivos CSS e retorna como JSX

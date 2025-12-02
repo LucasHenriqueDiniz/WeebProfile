@@ -28,13 +28,13 @@ export function Step4Preview() {
     validateStep,
   } = useWizardStore()
 
-  // Validate step 4 when component mounts
+  // Validate step 3 when component mounts (Preview is now step 3)
   useEffect(() => {
-    validateStep(4)
+    validateStep(3)
   }, [validateStep])
 
   // URL será gerada após criar a imagem (usando ID)
-  const markdownCode = `![${name}](URL_SERA_GERADA_APOS_CRIAR)`
+  const markdownCode = `![Profile Stats](URL_SERA_GERADA_APOS_CRIAR)`
   const imageUrl = ""
 
   const enabledPlugins = pluginsOrder.filter(
@@ -65,12 +65,8 @@ export function Step4Preview() {
 
   const validations = [
     {
-      label: "Name filled",
-      valid: isValid.step1 && name.length > 0,
-    },
-    {
-      label: "Valid slug",
-      valid: isValid.step1 && slug.length > 0,
+      label: "Style configured",
+      valid: isValid.step1,
     },
     {
       label: "At least 1 plugin enabled",
@@ -79,6 +75,10 @@ export function Step4Preview() {
     {
       label: "At least 1 section selected",
       valid: totalSections > 0,
+    },
+    {
+      label: "Plugins configured",
+      valid: isValid.step2,
     },
   ]
 
@@ -142,9 +142,9 @@ export function Step4Preview() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {validations.map((validation, index) => (
+              {validations.map((validation) => (
                 <div
-                  key={index}
+                  key={validation.label}
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-lg border transition-colors",
                     validation.valid 

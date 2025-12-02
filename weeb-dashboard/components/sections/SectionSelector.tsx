@@ -13,7 +13,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
-import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { SectionConfigDialog } from "@/components/wizard/SectionConfigDialog"
 
 interface SectionSelectorProps {

@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { PLUGINS_METADATA, getPluginsGroupedByCategory } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA, getPluginsGroupedByCategory } from "@weeb/weeb-plugins/plugins/metadata"
 
 // Plugin category type
 type PluginCategory = "coding" | "music" | "anime" | "gaming"

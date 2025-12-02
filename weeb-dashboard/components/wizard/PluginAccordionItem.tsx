@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { usePluginValidationStatus } from "@/hooks/usePluginValidationStatus"
-import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { PLUGINS_DATA, getPluginIcon } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
 import { AlertCircle, AlertTriangle, CheckCircle2, List, Settings2, XCircle } from "lucide-react"
@@ -26,7 +26,7 @@ interface PluginAccordionItemProps {
 export function PluginAccordionItem({ pluginName, style, essentialConfigs = {} }: PluginAccordionItemProps) {
   const {
     plugins,
-    setPluginUsername,
+    setPluginRequiredField,
     setPluginSections,
     setSectionConfig,
   } = useWizardStore()
@@ -76,57 +76,64 @@ export function PluginAccordionItem({ pluginName, style, essentialConfigs = {} }
         </div>
       </AccordionTrigger>
       <AccordionContent>
-        <div className="space-y-4 pt-4">
+        <div className="space-y-6 pt-4">
           {/* Missing Essential Configs Alert */}
           {missingEssentialConfigs.length > 0 && (
-            <div className="p-3 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5 shrink-0" />
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                    Essential configuration required
+            <div className="p-4 bg-yellow-50 dark:bg-yellow-950/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-xl">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">
+                    Configuração sensível necessária
                   </p>
-                  <p className="text-xs text-yellow-700 dark:text-yellow-300">
-                    {missingEssentialConfigs.map((keyMeta) => keyMeta.label).join(", ")} {missingEssentialConfigs.length === 1 ? "is" : "are"} not configured
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                    {missingEssentialConfigs.map((keyMeta) => keyMeta.label).join(", ")} {missingEssentialConfigs.length === 1 ? "não está" : "não estão"} configurado{missingEssentialConfigs.length > 1 ? "s" : ""}
                   </p>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mt-2"
+                    className="mt-2 border-yellow-300 text-yellow-800 hover:bg-yellow-100 dark:border-yellow-700 dark:text-yellow-200 dark:hover:bg-yellow-900/20"
                     onClick={(e) => {
                       e.stopPropagation()
-                      // Open profile config modal - this will be handled by parent
                       const event = new CustomEvent("openProfileConfig")
                       window.dispatchEvent(event)
                     }}
                   >
-                    <Settings2 className="w-3 h-3 mr-2" />
-                    Configure Now
+                    <Settings2 className="w-4 h-4 mr-2" />
+                    Configurar Agora
                   </Button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Username - Only show if plugin requires it */}
+          {/* Required Fields Section */}
           {(() => {
             const requiredFields = (pluginMetadata?.requiredFields || []) as string[]
-            const requiresUsername = Array.isArray(requiredFields) && requiredFields.includes('username')
-            
-            if (!requiresUsername) return null
+            if (requiredFields.length === 0) return null
             
             return (
-              <div className="space-y-2">
-                <Label htmlFor={`${pluginName}-username`}>
-                  {pluginData.name} Username <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id={`${pluginName}-username`}
-                  value={pluginConfig.username || ""}
-                  onChange={(e) => setPluginUsername(pluginName as any, e.target.value)}
-                  placeholder={`Your ${pluginData.name} username`}
-                  className="font-mono"
-                />
+              <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
+                <Label className="text-base font-semibold">Campos Obrigatórios</Label>
+                <div className="space-y-3">
+                  {requiredFields.map((field) => {
+                    const fieldValue = (pluginConfig as any)[field] || ""
+                    return (
+                      <div key={field} className="space-y-2">
+                        <Label htmlFor={`${pluginName}-${field}`} className="text-sm">
+                          {field === 'username' ? `${pluginData.name} Username` : field.charAt(0).toUpperCase() + field.slice(1)} <span className="text-destructive">*</span>
+                        </Label>
+                        <Input
+                          id={`${pluginName}-${field}`}
+                          value={fieldValue}
+                          onChange={(e) => setPluginRequiredField(pluginName as any, field, e.target.value)}
+                          placeholder={`Seu ${field === 'username' ? 'username' : field} do ${pluginData.name}`}
+                          className="font-mono"
+                        />
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             )
           })()}
@@ -141,7 +148,12 @@ export function PluginAccordionItem({ pluginName, style, essentialConfigs = {} }
           {/* Sections */}
           <div className="space-y-4">
             <div className="space-y-3">
-              <Label>Available Sections</Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-semibold">Seções Disponíveis</ Label>
+                <Badge variant="secondary" className="text-xs">
+                  {pluginConfig.sections?.length || 0} selecionada{pluginConfig.sections?.length !== 1 ? 's' : ''}
+                </Badge>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {pluginData.sections.map((section) => {
                   const isSelected = pluginConfig.sections?.includes(section.id) || false
@@ -172,17 +184,19 @@ export function PluginAccordionItem({ pluginName, style, essentialConfigs = {} }
             {/* Section Order */}
             {pluginConfig.sections && pluginConfig.sections.length > 0 && (
               <>
-                <Separator className="my-4" />
-                <div className="space-y-3">
-                  <div>
-                    <Label className="text-base font-semibold flex items-center gap-2">
+                <Separator className="my-6" />
+                <div className="space-y-4">
+                  <div className="p-4 border rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2 mb-2">
                       <List className="w-4 h-4" />
-                      Selected Sections
-                    </Label>
-                    <p className="text-sm text-muted-foreground mt-1 mb-4">
+                      <Label className="text-base font-semibold">Seções Selecionadas</Label>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4">
                       {pluginConfig.sections.length > 1
-                        ? "Drag the blocks below to reorganize the order in which sections will appear in the generated image"
-                        : "Configure your selected sections"}
+                        ? "Arraste os blocos abaixo para reorganizar a ordem em que as seções aparecerão na imagem gerada"
+                        : pluginConfig.sections.length === 1
+                        ? "Configure sua seção selecionada abaixo"
+                        : "Nenhuma seção selecionada. Selecione seções acima para configurá-las."}
                     </p>
                     {pluginConfig.sections.length > 1 ? (
                       <SectionOrderList
@@ -198,7 +212,7 @@ export function PluginAccordionItem({ pluginName, style, essentialConfigs = {} }
                         }}
                       />
                     ) : (
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {pluginConfig.sections.map((sectionId: string) => {
                           const section = pluginData.sections.find((s) => s.id === sectionId)
                           if (!section) return null
@@ -208,10 +222,13 @@ export function PluginAccordionItem({ pluginName, style, essentialConfigs = {} }
                           return (
                             <div
                               key={sectionId}
-                              className="flex items-center justify-between p-3 border rounded-lg"
+                              className="flex items-center justify-between p-4 border rounded-lg bg-background hover:bg-muted/50 transition-colors"
                             >
-                              <div className="flex items-center gap-2">
-                                <Badge variant="secondary">{section.name}</Badge>
+                              <div className="flex items-center gap-3">
+                                <Badge variant="default" className="text-sm">{section.name}</Badge>
+                                {section.description && (
+                                  <p className="text-sm text-muted-foreground">{section.description}</p>
+                                )}
                               </div>
                               <SectionConfigDialog
                                 plugin={pluginName}

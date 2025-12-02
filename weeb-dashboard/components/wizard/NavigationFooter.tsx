@@ -39,7 +39,7 @@ export function NavigationFooter({
         {currentStep === totalSteps ? (
           <Button
             onClick={onSave}
-            disabled={!isValid.step4 || isSaving}
+            disabled={!isValid.step3 || isSaving}
             size="lg"
             className="flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 hover:from-purple-600 hover:via-pink-600 hover:to-cyan-600"
           >

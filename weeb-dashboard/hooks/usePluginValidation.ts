@@ -3,7 +3,7 @@
  */
 
 import { useMemo } from "react"
-import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import type { PluginConfig } from "@/stores/wizard-store"
 
 interface ValidationResult {

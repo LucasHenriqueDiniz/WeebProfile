@@ -2,11 +2,12 @@ import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // Turbopack: marcar pacotes como externos para evitar análise
+  // Transpilar weeb-plugins para permitir hot reload e uso direto
+  transpilePackages: ['@weeb/weeb-plugins'],
+  // Turbopack: marcar apenas pacotes que realmente precisam ser externos
   serverExternalPackages: [
     "image-to-base64",
-    "@weeb/svg-generator",
-    "@weeb/weeb-plugins",
+    "@weeb/svg-generator", // Mantém externo (usa dist/ compilado)
     "react-dom/server",
   ],
   typescript: {

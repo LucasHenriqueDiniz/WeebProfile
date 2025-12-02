@@ -23,7 +23,7 @@ import { Switch } from "@/components/ui/switch"
 import {
   PLUGINS_METADATA,
   getSectionConfigOptions as getSectionConfigOptionsFromMetadata
-} from "@/lib/weeb-plugins/plugins/metadata"
+} from "@weeb/weeb-plugins/plugins/metadata"
 import { Settings } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 

@@ -1,6 +1,6 @@
 import { Github, Music, BookOpen, Brain } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
-import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 /**
  * Registry estático de ícones do lucide-react

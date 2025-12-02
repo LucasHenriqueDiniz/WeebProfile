@@ -106,9 +106,15 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
           ? error.data.message || error.data.error || error.message
           : "Não foi possível salvar o perfil"
       
+      const isNetworkError = errorMessage.toLowerCase().includes("network") || 
+                            errorMessage.toLowerCase().includes("fetch") ||
+                            errorMessage.toLowerCase().includes("failed")
+      
       toast({
-        title: "Erro",
-        description: errorMessage,
+        title: "Erro ao salvar",
+        description: isNetworkError 
+          ? `${errorMessage}. Verifique sua conexão e tente novamente.`
+          : errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -152,7 +158,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
         <DialogHeader>
           <DialogTitle>Configurar Perfil</DialogTitle>
           <DialogDescription>
-            Configure as credenciais essenciais dos plugins habilitados. Estas serão usadas em todas as suas imagens SVG.
+            Configure as credenciais sensíveis dos plugins habilitados (API keys, tokens, etc.). Estas serão usadas em todas as suas imagens SVG.
           </DialogDescription>
         </DialogHeader>
 
@@ -181,7 +187,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
               <>
                 <Separator />
                 <div className="space-y-4">
-                  <h3 className="text-sm font-semibold">Configurações Essenciais dos Plugins</h3>
+                  <h3 className="text-sm font-semibold">Configurações Sensíveis dos Plugins</h3>
                   
                   {enabledPlugins.map((pluginName) => {
                     const keys = getPluginEssentialConfigKeys(pluginName)

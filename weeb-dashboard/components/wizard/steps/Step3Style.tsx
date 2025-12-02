@@ -10,13 +10,15 @@ import { Textarea } from "@/components/ui/textarea"
 import {
   DEFAULT_THEME_VARIABLES,
   DEFAULT_THEME_VARIABLE_DESCRIPTIONS,
-  DEFAULT_THEME_VARIABLE_LABELS
-} from "@/lib/weeb-plugins/themes"
-import { defaultThemes as themesFromPlugins } from "@/lib/weeb-plugins/themes/themes"
+  DEFAULT_THEME_VARIABLE_LABELS,
+  defaultThemes as themesFromPlugins
+} from "@weeb/weeb-plugins/themes"
 import { useWizardStore } from "@/stores/wizard-store"
-import { Code2, Maximize2, Minimize2, Monitor, Paintbrush, RotateCcw, Terminal } from "lucide-react"
+import { CheckCircle2, Code2, FileText, Maximize2, Minimize2, Monitor, Paintbrush, RotateCcw, Terminal } from "lucide-react"
 import React, { useCallback, useEffect, useState } from "react"
 import { StyleSelector } from "../StyleSelector"
+import { LivePreview } from "../LivePreview"
+import { cn } from "@/lib/utils"
 
 export function Step3Style() {
   const {
@@ -42,9 +44,9 @@ export function Step3Style() {
   const [localColors, setLocalColors] = useState<Record<string, string>>(customThemeColors)
   const debounceTimersRef = React.useRef<Record<string, NodeJS.Timeout>>({})
 
-  // Validate step 2 when component mounts
+  // Validate step 1 when component mounts (Style is now step 1)
   useEffect(() => {
-    validateStep(2)
+    validateStep(1)
   }, [validateStep])
 
   // Sync with store when changed externally
@@ -86,6 +88,26 @@ export function Step3Style() {
 
   return (
     <div className="space-y-6">
+      {/* Preview Section */}
+      <Card className="border-2">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Monitor className="w-4 h-4 text-primary" />
+            </div>
+            Preview
+          </CardTitle>
+          <CardDescription>See how your image will look with the current style settings</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="border-2 border-dashed rounded-xl p-6 bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 overflow-auto max-h-[500px]">
+            <div className="flex justify-center items-start min-h-[300px]">
+              <LivePreview compact={true} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Style Selection */}
       <Card className="border-2">
         <CardHeader className="pb-4">

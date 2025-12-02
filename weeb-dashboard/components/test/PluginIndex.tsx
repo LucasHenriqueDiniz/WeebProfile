@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, ChevronDown, ChevronUp } from "lucide-react"
-import { PLUGINS_METADATA } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 // Tipo inferido do PLUGINS_METADATA
 type PluginMetadata = typeof PLUGINS_METADATA[keyof typeof PLUGINS_METADATA]

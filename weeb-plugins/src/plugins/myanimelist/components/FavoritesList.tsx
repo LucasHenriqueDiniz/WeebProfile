@@ -136,8 +136,8 @@ function RenderSimpleFavorites({
 }): React.ReactElement {
   return (
     <div className="grid grid-cols-10 half:grid-cols-5 gap-2">
-      {data.map((item) => (
-        <SimpleFavoriteImage favorite={item} key={item.mal_id} hideOverlay={hideOverlay} />
+      {data.map((item, index) => (
+        <SimpleFavoriteImage favorite={item} key={`simple-${item.mal_id}-${index}`} hideOverlay={hideOverlay} />
       ))}
     </div>
   )
@@ -207,13 +207,11 @@ function DefaultDetailedFavorite({
   const mean_score = favorite.score
   const release_year = type === 'anime' ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
   const synopsis = favorite.synopsis
-  const genres = favorite.genres?.map((genre) => genre.name) ?? []
+  const allGenres = favorite.genres?.map((genre) => genre.name) ?? []
+  // Não mutar diretamente - criar novo array
+  const genres = isHalf ? allGenres.slice(0, 4) : allGenres
   const status = favorite.status
   const popularity = favorite.popularity
-
-  if (isHalf) {
-    genres.splice(4)
-  }
 
   return (
     <div className="flex h-[120px] overflow-hidden gap-4">
@@ -348,13 +346,11 @@ function DefaultMinimalFavorite({
   const title = favorite.title
   const mean_score = favorite.score
   const release_year = type === 'anime' ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
-  const genres = favorite.genres?.map((genre) => genre.name) ?? []
+  const allGenres = favorite.genres?.map((genre) => genre.name) ?? []
+  // Não mutar diretamente - criar novo array
+  const genres = isHalf ? allGenres.slice(0, 4) : allGenres
   const status = favorite.status
   const popularity = favorite.popularity
-
-  if (isHalf) {
-    genres.splice(4)
-  }
 
   return (
     <div className="flex h-[75px] overflow-hidden gap-2">
@@ -549,7 +545,7 @@ export function FavoritesList({
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
             <div className="flex flex-col gap-1">
               {displayData.map((item, index) => (
-                <DefaultCompactFavorite favorite={item} index={index} key={item.mal_id} />
+                <DefaultCompactFavorite favorite={item} index={index} key={`${type}-${item.mal_id}-${index}`} />
               ))}
             </div>
           </>
@@ -563,7 +559,7 @@ export function FavoritesList({
               {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
               <div className="flex flex-col gap-2">
                 {displayData.map((item, index) => (
-                  <DefaultCompactFavorite favorite={item} index={index} key={item.mal_id} />
+                  <DefaultCompactFavorite favorite={item} index={index} key={`${type}-compact-fallback-${item.mal_id}-${index}`} />
                 ))}
               </div>
             </>
@@ -573,8 +569,13 @@ export function FavoritesList({
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
             <div className="flex flex-col gap-1">
-              {displayData.map((item) => (
-                <DefaultDetailedFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={item.mal_id} />
+              {displayData.map((item, index) => (
+                <DefaultDetailedFavorite 
+                  favorite={item as FullAnimeFavorite | FullMangaFavorite} 
+                  isHalf={isHalf} 
+                  type={type} 
+                  key={`${type}-detailed-${item.mal_id}-${index}`}
+                />
               ))}
             </div>
           </>
@@ -588,7 +589,7 @@ export function FavoritesList({
               {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
               <div className="flex flex-col gap-2">
                 {displayData.map((item, index) => (
-                  <DefaultCompactFavorite favorite={item} index={index} key={item.mal_id} />
+                  <DefaultCompactFavorite favorite={item} index={index} key={`${type}-compact-${item.mal_id}-${index}`} />
                 ))}
               </div>
             </>
@@ -598,8 +599,8 @@ export function FavoritesList({
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
             <div className="flex flex-col gap-2">
-              {displayData.map((item) => (
-                <DefaultMinimalFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={item.mal_id} />
+              {displayData.map((item, index) => (
+                <DefaultMinimalFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={`${type}-minimal-${item.mal_id}-${index}`} />
               ))}
             </div>
           </>
@@ -623,8 +624,8 @@ export function FavoritesList({
                 })}
               />
             )}
-            {displayData.map((item) => (
-              <div className="truncate" key={item.mal_id}>
+            {displayData.map((item, index) => (
+              <div className="truncate" key={`${type}-simple-${item.mal_id}-${index}`}>
                 <p className="sm-text font-semibold text-terminal-warning">
                   * {'name' in item ? treatJapaneseName(item.name) : item.title}
                 </p>
@@ -652,7 +653,7 @@ export function FavoritesList({
             />
             <div className="flex flex-col gap-1">
               {displayData.map((item, index) => (
-                <TerminalCompactFavorite favorite={item} index={index} key={item.mal_id} />
+                <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
               ))}
             </div>
             <TerminalLineBreak />
@@ -674,7 +675,7 @@ export function FavoritesList({
               />
               <div className="flex flex-col gap-1">
                 {displayData.map((item, index) => (
-                  <TerminalCompactFavorite favorite={item} index={index} key={item.mal_id} />
+                  <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
                 ))}
               </div>
               <TerminalLineBreak />
@@ -691,8 +692,8 @@ export function FavoritesList({
                 limit: MAX_ITEMS,
               })}
             />
-            {displayData.map((item) => (
-              <TerminalDetailedFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={item.mal_id} />
+            {displayData.map((item, index) => (
+              <TerminalDetailedFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={`${type}-terminal-detailed-${item.mal_id}-${index}`} />
             ))}
             <TerminalLineBreak />
           </>
@@ -713,7 +714,7 @@ export function FavoritesList({
               />
               <div className="flex flex-col gap-1">
                 {displayData.map((item, index) => (
-                  <TerminalCompactFavorite favorite={item} index={index} key={item.mal_id} />
+                  <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
                 ))}
               </div>
               <TerminalLineBreak />
@@ -730,8 +731,8 @@ export function FavoritesList({
                 limit: MAX_ITEMS,
               })}
             />
-            {displayData.map((item) => (
-              <TerminalMinimalFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={item.mal_id} />
+            {displayData.map((item, index) => (
+              <TerminalMinimalFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={`${type}-terminal-minimal-${item.mal_id}-${index}`} />
             ))}
             <TerminalLineBreak />
           </>

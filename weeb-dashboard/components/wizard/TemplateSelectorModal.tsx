@@ -13,7 +13,7 @@ import { templateApi, ApiException } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"
 import { getPluginIcon } from "@/lib/plugins-data"
-import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { cn } from "@/lib/utils"
 
 interface Template {

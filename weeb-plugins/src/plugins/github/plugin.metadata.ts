@@ -25,7 +25,7 @@ export const githubPluginMetadata = {
       label: "GitHub Classic Token",
       type: "password",
       placeholder: "ghp_...",
-      description: "Classic Token recommended for cron jobs",
+      description: "Classic token is used to fetch data from GitHub API",
       helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
       docKey: "github.pat",
     },

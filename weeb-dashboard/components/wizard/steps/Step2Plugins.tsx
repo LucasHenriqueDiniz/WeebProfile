@@ -12,11 +12,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAuth } from "@/hooks/useAuth"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
-import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { PLUGINS_DATA } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
-import { AlertCircle, List, Palette, Search, Settings2 } from "lucide-react"
-import { useMemo, useState, useEffect } from "react"
+import { AlertCircle, List, Palette, Search, Settings2, CheckSquare, ArrowUpDown } from "lucide-react"
+import { useMemo, useState, useEffect, useCallback } from "react"
 import { PluginCard } from "../PluginCard"
 import { PluginOrderList } from "../PluginOrderList"
 import { PluginAccordionItem } from "../PluginAccordionItem"
@@ -28,7 +28,7 @@ export function Step2Plugins() {
     plugins,
     pluginsOrder,
     style,
-    setPluginUsername,
+    setPluginRequiredField,
     togglePlugin,
     reorderPlugins,
     setPluginsHaveMissingEssentialConfigs,
@@ -46,7 +46,7 @@ export function Step2Plugins() {
 
   // Use new hook for profile config
   const { profile, essentialConfigs, missingConfigs, loading: profileLoading } = useProfileConfig(enabledPlugins)
-
+  
   // Update store with missing configs status
   useEffect(() => {
     setPluginsHaveMissingEssentialConfigs(missingConfigs.length > 0)
@@ -73,7 +73,7 @@ export function Step2Plugins() {
     
     // Only update if username is different and not already set
     if (profileUsername && currentUsername !== profileUsername) {
-      setPluginUsername('github', profileUsername)
+      setPluginRequiredField('github', 'username', profileUsername)
     } else if (!currentUsername && !profileUsername && user?.user_metadata) {
       const usernameFromAuth =
         user.user_metadata.user_name ||
@@ -81,7 +81,7 @@ export function Step2Plugins() {
         user.user_metadata.login
       
       if (usernameFromAuth) {
-        setPluginUsername('github', usernameFromAuth)
+        setPluginRequiredField('github', 'username', usernameFromAuth)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,6 +113,22 @@ export function Step2Plugins() {
     })
   }, [category, query, onlyEnabled, plugins, groupedPlugins])
 
+  // Show loading state while profile config is loading (after all hooks)
+  if (profileLoading && enabledPlugins.length > 0) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="py-12">
+            <div className="flex flex-col items-center justify-center gap-3">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm text-muted-foreground">Loading plugin configurations...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -124,7 +140,25 @@ export function Step2Plugins() {
             Configure which plugins and sections you want to display in your image
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent>
+          <Tabs defaultValue="select" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="select" className="flex items-center gap-2">
+                <CheckSquare className="w-4 h-4" />
+                Selecionar
+              </TabsTrigger>
+              <TabsTrigger value="configure" className="flex items-center gap-2">
+                <Settings2 className="w-4 h-4" />
+                Configurar
+              </TabsTrigger>
+              <TabsTrigger value="reorder" className="flex items-center gap-2">
+                <ArrowUpDown className="w-4 h-4" />
+                Reordenar
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Tab 1: Selecionar Plugins */}
+            <TabsContent value="select" className="space-y-6 mt-6">
 
           {/* Search and Filters */}
           <div className="space-y-3">
@@ -150,18 +184,18 @@ export function Step2Plugins() {
               </div>
             </div>
 
-            {/* Category Tabs */}
-            <Tabs value={category} onValueChange={(v) => setCategory(v as PluginCategory | "all")}>
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="coding">Coding</TabsTrigger>
-                <TabsTrigger value="music">Music</TabsTrigger>
-                <TabsTrigger value="anime">Anime</TabsTrigger>
-                <TabsTrigger value="gaming">Gaming</TabsTrigger>
-              </TabsList>
-              <TabsContent value={category} className="mt-0" />
-            </Tabs>
-          </div>
+              {/* Category Tabs */}
+              <Tabs value={category} onValueChange={(v) => setCategory(v as PluginCategory | "all")}>
+                <TabsList className="grid w-full grid-cols-5">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="coding">Coding</TabsTrigger>
+                  <TabsTrigger value="music">Music</TabsTrigger>
+                  <TabsTrigger value="anime">Anime</TabsTrigger>
+                  <TabsTrigger value="gaming">Gaming</TabsTrigger>
+                </TabsList>
+                <TabsContent value={category} className="mt-0" />
+              </Tabs>
+            </div>
 
           {/* Plugin Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -176,20 +210,31 @@ export function Step2Plugins() {
                   name={pluginName}
                   data={pluginData}
                   enabled={isEnabled}
-                  username={pluginConfig?.username || ""}
                   sectionsCount={pluginConfig?.sections?.length || 0}
                   pluginConfig={pluginConfig}
-                  essentialConfigs={essentialConfigs[pluginName]}
+                  essentialConfigs={essentialConfigs[pluginName] as Record<string, string | boolean | undefined> | undefined}
                   onToggle={() => togglePlugin(pluginName)}
-                  onUsernameChange={(username) => setPluginUsername(pluginName, username)}
+                  onRequiredFieldChange={(field, value) => {
+                    setPluginRequiredField(pluginName, field, value)
+                  }}
                 />
               )
             })}
           </div>
 
           {visiblePluginNames.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              No plugins found with the applied filters
+            <div className="text-center py-12">
+              <div className="flex flex-col items-center gap-3">
+                <Search className="w-12 h-12 text-muted-foreground/50" />
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground mb-1">
+                    No plugins found
+                  </p>
+                  <p className="text-xs text-muted-foreground/80">
+                    {query ? "Try adjusting your search query" : "Try changing the category filter"}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -199,10 +244,10 @@ export function Step2Plugins() {
               <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 shrink-0" />
               <div className="flex-1">
                 <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200 mb-2">
-                  Essential configuration required
+                  Configuração sensível necessária
                 </p>
                 <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-3">
-                  Some enabled plugins need additional configuration (API keys, tokens, etc.) before continuing.
+                  Alguns plugins habilitados precisam de configurações sensíveis (API keys, tokens, etc.) antes de continuar.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-3">
                   {missingConfigs.map(({ pluginName, missingKeys }) => (
@@ -239,81 +284,128 @@ export function Step2Plugins() {
             </div>
           )}
 
-          {enabledPlugins.length > 0 && !hasAtLeastOneSection && (
-            <div className="p-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-md flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                  No sections selected
-                </p>
-                <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                  Select at least one section in the enabled plugins
-                </p>
-              </div>
-            </div>
-          )}
+            </TabsContent>
 
-          <Separator />
+            {/* Tab 2: Configurar Plugins */}
+            <TabsContent value="configure" className="space-y-6 mt-6">
+              {enabledPlugins.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="flex flex-col items-center gap-3">
+                    <Settings2 className="w-12 h-12 text-muted-foreground/50" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">
+                        No plugins enabled
+                      </p>
+                      <p className="text-xs text-muted-foreground/80">
+                        Enable at least one plugin in the "Selecionar" tab to configure it
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {enabledPlugins.length > 0 && !hasAtLeastOneSection && (
+                    <div className="p-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-md flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200 mb-1">
+                          No sections selected
+                        </p>
+                        <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-2">
+                          Select at least one section in the enabled plugins to continue.
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {enabledPlugins.map((name) => (
+                            <Badge key={name} variant="outline" className="border-yellow-300 dark:border-yellow-700 text-xs">
+                              {name}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-          {/* Reorganize plugin order */}
-          {enabledPlugins.length > 1 && (
-            <>
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="plugin-order" className="border-none">
-                  <AccordionTrigger className="py-2 hover:no-underline">
+                  <div className="space-y-4">
                     <div className="flex items-center gap-2">
-                      <List className="w-4 h-4" />
-                      <Label className="text-base font-semibold cursor-pointer">Plugin Order</Label>
+                      <h3 className="text-base font-semibold">Configured Plugins</h3>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <AlertCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              Configure each enabled plugin: select sections, adjust options, and organize the display order.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-3 pt-2">
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Drag the blocks below to reorganize the order in which plugins will appear in the generated image
-                      </p>
-                      <PluginOrderList
-                        plugins={plugins}
-                        pluginsOrder={pluginsOrder}
-                        onReorder={reorderPlugins}
-                      />
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-              <Separator className="my-6" />
-            </>
-          )}
+                    <Accordion type="single" collapsible className="w-full">
+                      {enabledPlugins.map((pluginName) => (
+                        <PluginAccordionItem
+                          key={pluginName}
+                          pluginName={pluginName}
+                          style={style}
+                          essentialConfigs={essentialConfigs[pluginName] as Record<string, boolean | undefined>}
+                        />
+                      ))}
+                    </Accordion>
+                  </div>
+                </>
+              )}
+            </TabsContent>
 
-          {/* Configured Plugins Section */}
-          {enabledPlugins.length > 0 && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold">Configured Plugins</h3>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <AlertCircle className="w-4 h-4 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="max-w-xs">
-                        Configure each enabled plugin: select sections, adjust options, and organize the display order.
+            {/* Tab 3: Reordenar Plugins */}
+            <TabsContent value="reorder" className="space-y-6 mt-6">
+              {enabledPlugins.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="flex flex-col items-center gap-3">
+                    <ArrowUpDown className="w-12 h-12 text-muted-foreground/50" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">
+                        No plugins enabled
                       </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <Accordion type="single" collapsible className="w-full">
-                {enabledPlugins.map((pluginName) => (
-                  <PluginAccordionItem
-                    key={pluginName}
-                    pluginName={pluginName}
-                    style={style}
-                    essentialConfigs={essentialConfigs[pluginName]}
+                      <p className="text-xs text-muted-foreground/80">
+                        Enable at least one plugin in the "Selecionar" tab to reorder them
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : enabledPlugins.length === 1 ? (
+                <div className="text-center py-12">
+                  <div className="flex flex-col items-center gap-3">
+                    <ArrowUpDown className="w-12 h-12 text-muted-foreground/50" />
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">
+                        Only one plugin enabled
+                      </p>
+                      <p className="text-xs text-muted-foreground/80">
+                        Enable at least two plugins to reorder them
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-base font-semibold flex items-center gap-2 mb-2">
+                      <List className="w-4 h-4" />
+                      Plugin Order
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Drag the blocks below to reorganize the order in which plugins will appear in the generated image
+                    </p>
+                  </div>
+                  <PluginOrderList
+                    plugins={plugins}
+                    pluginsOrder={pluginsOrder}
+                    onReorder={reorderPlugins}
                   />
-                ))}
-              </Accordion>
-            </div>
-          )}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 

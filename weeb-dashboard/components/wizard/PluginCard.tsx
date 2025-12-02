@@ -3,13 +3,17 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Edit2, CheckCircle2, AlertTriangle, XCircle } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { CheckCircle2, AlertTriangle, XCircle, Settings2 } from "lucide-react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { getPluginIcon } from "@/lib/plugins-data"
 import { usePluginValidationStatus } from "@/hooks/usePluginValidationStatus"
+import { getPluginEssentialConfigKeys } from "@/lib/plugin-essential-configs"
+import { PluginEssentialConfigsModal } from "./PluginEssentialConfigsModal"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import type { PluginConfig } from "@/stores/wizard-store"
 
 interface PluginCardProps {
@@ -20,42 +24,49 @@ interface PluginCardProps {
     description: string
   }
   enabled: boolean
-  username: string
   sectionsCount: number
   pluginConfig?: PluginConfig
   essentialConfigs?: Record<string, string | boolean | undefined>
   onToggle: () => void
-  onUsernameChange: (username: string) => void
+  onRequiredFieldChange?: (field: string, value: string) => void
 }
 
 export function PluginCard({
   name,
   data,
   enabled,
-  username,
   sectionsCount,
   pluginConfig,
   essentialConfigs,
   onToggle,
-  onUsernameChange,
+  onRequiredFieldChange,
 }: PluginCardProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [localUsername, setLocalUsername] = useState(username)
+  const [showConfigModal, setShowConfigModal] = useState(false)
   const validationStatus = usePluginValidationStatus(name, pluginConfig, essentialConfigs)
 
-  // Sincronizar localUsername quando username prop mudar (mas não quando estiver editando)
-  useEffect(() => {
-    if (!isEditing) {
-      setLocalUsername(username)
+  // Obter essential configs do plugin
+  const essentialKeys = getPluginEssentialConfigKeys(name)
+  // essentialConfigs vem como Record<string, boolean> onde true = configurado
+  // Se essentialConfigs é undefined, usar objeto vazio
+  const essentialConfigsForPlugin = essentialConfigs || {}
+  
+  // Contar quantas configs estão configuradas
+  const configuredCount = essentialKeys.filter((keyDef) => {
+    const value = essentialConfigsForPlugin[keyDef.key]
+    // Se for boolean, verifica se é true. Se for string (legado), verifica se não está vazio
+    if (typeof value === 'boolean') {
+      return value === true
     }
-  }, [username, isEditing])
+    return value && typeof value === 'string' && value.trim().length > 0
+  }).length
+  
+  const totalCount = essentialKeys.length
+  const hasEssentialConfigs = totalCount > 0
 
-  const handleSave = () => {
-    if (localUsername !== username) {
-      onUsernameChange(localUsername)
-    }
-    setIsEditing(false)
-  }
+  // Obter requiredFields do plugin
+  const pluginMetadata = PLUGINS_METADATA[name as keyof typeof PLUGINS_METADATA]
+  const requiredFields = (pluginMetadata?.requiredFields || []) as string[]
+  const hasRequiredFields = requiredFields.length > 0
 
   // Status visual colors
   const statusColors = {
@@ -77,79 +88,147 @@ export function PluginCard({
   }
 
   return (
-    <Card
-      className={cn(
-        "transition-all",
-        enabled && "ring-2 ring-primary",
-        enabled && validationStatus !== "ok" && statusColors[validationStatus]
-      )}
-    >
-      <CardHeader className="pb-2 pt-3 px-3">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 min-w-0 flex-1">
-            {(() => {
-              const IconComponent = getPluginIcon(name)
-              return IconComponent ? (
-                <IconComponent className="w-4 h-4 shrink-0" />
-              ) : (
-                <span className="text-lg shrink-0">{data.icon}</span>
-              )
-            })()}
-            <CardTitle className="text-sm font-medium truncate">{data.name}</CardTitle>
-            {enabled && (
-              <StatusIcon className={cn("w-3.5 h-3.5 shrink-0", statusIconColors[validationStatus])} />
-            )}
-          </div>
-          <Switch checked={enabled} onCheckedChange={onToggle} className="shrink-0" />
-        </div>
-        <CardDescription className="text-xs mt-1 line-clamp-2">{data.description}</CardDescription>
-      </CardHeader>
-      {enabled && (
-        <CardContent className="space-y-2 pt-0 px-3 pb-3">
-          {isEditing ? (
-            <Input
-              value={localUsername}
-              onChange={(e) => setLocalUsername(e.target.value)}
-              placeholder={`${data.name} username`}
-              className="font-mono text-xs h-7"
-              onBlur={handleSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSave()
-                }
-                if (e.key === "Escape") {
-                  setLocalUsername(username)
-                  setIsEditing(false)
-                }
-              }}
-              autoFocus
-            />
-          ) : (
-            <div className="flex items-center justify-between gap-1">
-              <div className="flex-1 min-w-0">
-                {username ? (
-                  <p className="text-xs font-mono truncate">@{username}</p>
+    <>
+      <Card
+        className={cn(
+          "transition-all hover:shadow-md cursor-pointer",
+          enabled && "ring-2 ring-primary shadow-md",
+          enabled && validationStatus !== "ok" && statusColors[validationStatus]
+        )}
+        onClick={() => !enabled && onToggle()}
+      >
+        <CardHeader className="pb-3 pt-4 px-4">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-2.5 flex-1 min-w-0">
+              {(() => {
+                const IconComponent = getPluginIcon(name)
+                return IconComponent ? (
+                  <div className={cn(
+                    "p-2 rounded-lg shrink-0 transition-colors",
+                    enabled ? "bg-primary/20" : "bg-muted"
+                  )}>
+                    <IconComponent className={cn(
+                      "w-4 h-4",
+                      enabled ? "text-primary" : "text-muted-foreground"
+                    )} />
+                  </div>
                 ) : (
-                  <p className="text-xs text-muted-foreground">Clique para editar</p>
-                )}
+                  <div className={cn(
+                    "p-2 rounded-lg shrink-0 transition-colors",
+                    enabled ? "bg-primary/20" : "bg-muted"
+                  )}>
+                    <span className={cn(
+                      "text-base",
+                      enabled ? "text-primary" : "text-muted-foreground"
+                    )}>{data.icon}</span>
+                  </div>
+                )
+              })()}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <CardTitle className="text-sm font-semibold truncate">{data.name}</CardTitle>
+                  {enabled && (
+                    <StatusIcon className={cn("w-4 h-4 shrink-0", statusIconColors[validationStatus])} />
+                  )}
+                </div>
+                <CardDescription className="text-xs line-clamp-2 leading-relaxed">
+                  {data.description}
+                </CardDescription>
               </div>
-              <button
-                onClick={() => setIsEditing(true)}
-                className="ml-1 p-0.5 hover:bg-muted rounded shrink-0"
-                type="button"
-              >
-                <Edit2 className="w-3 h-3 text-muted-foreground" />
-              </button>
             </div>
-          )}
-          <div className="flex items-center">
-            <Badge variant={sectionsCount > 0 ? "default" : "secondary"} className="text-xs py-0 px-1.5">
-              {sectionsCount} seções
-            </Badge>
+            <Switch 
+              checked={enabled} 
+              onCheckedChange={onToggle} 
+              className="shrink-0"
+              onClick={(e) => e.stopPropagation()}
+            />
           </div>
-        </CardContent>
-      )}
-    </Card>
+        </CardHeader>
+        {enabled && (
+          <CardContent className="space-y-3 pt-0 px-4 pb-4">
+            {/* Required Fields */}
+            {hasRequiredFields && (
+              <div className="space-y-2 p-3 rounded-lg border bg-muted/30">
+                <Label className="text-xs font-medium text-muted-foreground mb-2 block">Campos Obrigatórios</Label>
+                <div className="space-y-2">
+                  {requiredFields.map((field) => {
+                    const fieldValue = (pluginConfig as any)?.[field] || ""
+                    return (
+                      <div key={field} className="space-y-1">
+                        <Label htmlFor={`${name}-${field}-card`} className="text-xs">
+                          {field === 'username' ? 'Username' : field.charAt(0).toUpperCase() + field.slice(1)} <span className="text-destructive">*</span>
+                        </Label>
+                        <Input
+                          id={`${name}-${field}-card`}
+                          value={fieldValue}
+                          onChange={(e) => {
+                            e.stopPropagation()
+                            onRequiredFieldChange?.(field, e.target.value)
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder={`Seu ${field === 'username' ? 'username' : field}`}
+                          className="font-mono text-xs h-8"
+                        />
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Essential Configs Status */}
+            {hasEssentialConfigs && (
+              <div className="space-y-2 p-3 rounded-lg border bg-muted/30">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-muted-foreground">Configurações Sensíveis</span>
+                  <Badge
+                    variant={
+                      configuredCount === totalCount
+                        ? "default"
+                        : configuredCount > 0
+                        ? "secondary"
+                        : "destructive"
+                    }
+                    className="text-xs"
+                  >
+                    {configuredCount}/{totalCount}
+                  </Badge>
+                </div>
+                <Button
+                  variant={configuredCount === totalCount ? "outline" : "default"}
+                  size="sm"
+                  className="w-full"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowConfigModal(true)
+                  }}
+                >
+                  <Settings2 className="w-3 h-3 mr-2" />
+                  {configuredCount === totalCount ? "Alterar" : "Configurar"}
+                </Button>
+              </div>
+            )}
+            
+            {/* Sections Count */}
+            <div className="flex items-center gap-2">
+              <Badge 
+                variant={sectionsCount > 0 ? "default" : "secondary"} 
+                className="text-xs py-1 px-2"
+              >
+                {sectionsCount > 0 ? `${sectionsCount} seção${sectionsCount > 1 ? 'ões' : ''}` : "Nenhuma seção"}
+              </Badge>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+
+      {/* Config Modal */}
+      <PluginEssentialConfigsModal
+        open={showConfigModal}
+        onOpenChange={setShowConfigModal}
+        pluginName={name}
+      />
+    </>
   )
 }
 

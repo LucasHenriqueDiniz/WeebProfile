@@ -60,7 +60,7 @@ router.post('/', async (req: Request, res: Response) => {
     // Get CSS - import directly from weeb-plugins/src
     let stylesModule, themeUtilsModule
     try {
-      stylesModule = await import('@weeb-plugins/styles/index')
+      stylesModule = await import('@weeb-plugins/styles/server')
       themeUtilsModule = await import('@weeb-plugins/themes/theme-utils')
       console.log('✅ CSS modules imported successfully')
     } catch (error) {

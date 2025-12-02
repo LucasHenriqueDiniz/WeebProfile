@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { PLUGINS_METADATA, getPluginMetadata } from "@/lib/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA, getPluginMetadata } from "@weeb/weeb-plugins/plugins/metadata"
 import { applyPluginDefaults } from "@/lib/plugin-defaults"
 
 export interface PluginConfig {
@@ -12,16 +12,12 @@ export interface PluginConfig {
 }
 
 export interface WizardState {
-  // Step 1: Basic
+  // Basic info (auto-generated, não é mais um step)
   name: string
   slug: string
   useProfileConfig: boolean
 
-  // Step 3: Plugins (moved after Style)
-  plugins: Record<string, PluginConfig> // Fully dynamic
-  pluginsOrder: string[]
-
-  // Step 2: Style (moved before Plugins)
+  // Step 1: Style
   style: "default" | "terminal"
   size: "half" | "full"
   theme: string // Unified theme field (replaces terminalTheme and defaultTheme)
@@ -30,8 +26,11 @@ export interface WizardState {
   customCss: string
   customThemeColors: Record<string, string> // Custom theme colors (only used when theme === 'custom')
 
-  // Step 3: Plugins (moved after Style)
-  // Stored preview
+  // Step 2: Plugins
+  plugins: Record<string, PluginConfig> // Fully dynamic
+  pluginsOrder: string[]
+
+  // Step 3: Preview
   previewUrl: string | null
 
   // Essential configs validation
@@ -52,7 +51,7 @@ export interface WizardState {
   setPluginConfig: (plugin: string, config: Partial<PluginConfig>) => void
   togglePlugin: (plugin: string) => void
   setPluginSections: (plugin: string, sections: string[]) => void
-  setPluginUsername: (plugin: string, username: string) => void
+  setPluginRequiredField: (plugin: string, field: string, value: string) => void
   setSectionConfig: (plugin: string, sectionId: string, config: Record<string, unknown>) => void
   setPluginsHaveMissingEssentialConfigs: (value: boolean) => void
   setStyle: (style: "default" | "terminal") => void
@@ -72,11 +71,20 @@ export interface WizardState {
 /**
  * Gera plugins inicial dinamicamente de PLUGINS_METADATA
  * Usa defaults da metadata de cada plugin
+ * GitHub é ativado por padrão com profile + activity
  */
 function generateInitialPlugins(userDefaults?: Record<string, any>): Record<string, PluginConfig> {
   const plugins: Record<string, PluginConfig> = {}
   Object.keys(PLUGINS_METADATA).forEach((pluginName) => {
-    plugins[pluginName] = applyPluginDefaults(pluginName, {}, userDefaults)
+    if (pluginName === 'github') {
+      // GitHub ativado por padrão com profile + activity
+      plugins[pluginName] = applyPluginDefaults(pluginName, {
+        enabled: true,
+        sections: ['profile', 'activity'],
+      }, userDefaults)
+    } else {
+      plugins[pluginName] = applyPluginDefaults(pluginName, {}, userDefaults)
+    }
   })
   return plugins
 }
@@ -103,12 +111,11 @@ const initialState = {
   customThemeColors: {},
   previewUrl: null,
   pluginsHaveMissingEssentialConfigs: false,
-  currentStep: 1,
+          currentStep: 1,
   isValid: {
-    step1: false,
+    step1: true, // Style sempre válido
     step2: false,
     step3: false,
-    step4: false,
   },
 }
 
@@ -246,12 +253,12 @@ export const useWizardStore = create<WizardState>()(
 
       setPluginSections: (plugin, sections) => {
         get().setPluginConfig(plugin, { sections })
-        get().validateStep(2)
+        get().validateStep(2) // Step 2 é Plugins agora
       },
 
-      setPluginUsername: (plugin, username) => {
-        get().setPluginConfig(plugin, { username })
-        get().validateStep(2)
+      setPluginRequiredField: (plugin, field, value) => {
+        get().setPluginConfig(plugin, { [field]: value })
+        get().validateStep(2) // Step 2 é Plugins agora
       },
 
       setSectionConfig: (plugin, sectionId, config) => {
@@ -316,7 +323,7 @@ export const useWizardStore = create<WizardState>()(
           set({ pluginsHaveMissingEssentialConfigs: value })
           // Validate step asynchronously to avoid infinite loops
           setTimeout(() => {
-            get().validateStep(3)
+            get().validateStep(2) // Step 2 é Plugins agora
           }, 0)
         }
       },
@@ -335,12 +342,11 @@ export const useWizardStore = create<WizardState>()(
 
         switch (step) {
           case 1:
-            isValid = state.name.length > 0 && state.slug.length > 0 && /^[a-z0-9-_]+$/.test(state.slug)
+            // Step 1: Style - sempre válido, opções têm defaults
+            isValid = true
             break
-          case 2:
-            isValid = true // Style always valid, options have defaults
-            break
-          case 3: {
+          case 2: {
+            // Step 2: Plugins
             const entries = Object.entries(state.plugins).filter(([, p]) => p.enabled) as [string, PluginConfig][]
             if (entries.length === 0) {
               isValid = false
@@ -354,28 +360,29 @@ export const useWizardStore = create<WizardState>()(
               // precisa pelo menos 1 seção
               if (cfg.sections.length === 0) return false
 
-              // requiredFields (ex: "username")
+              // requiredFields (ex: "username", "personality_url", etc)
               const requiredOk = meta.requiredFields.every((field) => {
-                if (field === "username") return !!cfg.username?.trim()
-                // se no futuro tiver outro requiredField, trata aqui
-                return true
+                const value = cfg[field as keyof PluginConfig]
+                if (typeof value === 'string') return !!value.trim()
+                return !!value
               })
 
               return requiredOk
             }) && !state.pluginsHaveMissingEssentialConfigs
             break
           }
-          case 4:
-            isValid = state.isValid.step1 && state.isValid.step2 && state.isValid.step3
+          case 3:
+            // Step 3: Preview - válido se step1 e step2 válidos
+            isValid = state.isValid.step1 && state.isValid.step2
             break
         }
 
-        set({
-          isValid: {
-            ...state.isValid,
-            [`step${step}`]: isValid,
-          },
-        })
+        // Atualizar isValid baseado no step
+        const newIsValid = { ...state.isValid }
+        if (step === 1) newIsValid.step1 = isValid
+        if (step === 2) newIsValid.step2 = isValid
+        if (step === 3) newIsValid.step3 = isValid
+        set({ isValid: newIsValid })
 
         return isValid
       },

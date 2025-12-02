@@ -29,10 +29,9 @@ export function TopNavBar({ showPreview, onTogglePreview }: TopNavBarProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   const stepNames: Record<number, string> = {
-    1: "Básico",
-    2: "Estilo",
-    3: "Plugins",
-    4: "Preview",
+    1: "Estilo",
+    2: "Plugins",
+    3: "Preview",
   }
 
   const handleSignOut = async () => {
@@ -55,7 +54,7 @@ export function TopNavBar({ showPreview, onTogglePreview }: TopNavBarProps) {
 
         {/* Step Indicator */}
         <div className="flex items-center gap-2">
-          {[1, 2, 3, 4].map((step) => (
+          {[1, 2, 3].map((step) => (
             <div key={step} className="flex items-center gap-2">
               <div
                 className={cn(
@@ -74,7 +73,7 @@ export function TopNavBar({ showPreview, onTogglePreview }: TopNavBarProps) {
                 )}
                 <span className="text-xs font-medium hidden sm:inline">{stepNames[step]}</span>
               </div>
-              {step < 4 && (
+              {step < 3 && (
                 <ChevronRight className="w-3 h-3 text-muted-foreground/50" />
               )}
             </div>

@@ -1,10 +1,10 @@
 /**
  * Local plugin registry for weeb-dashboard
- * 
- * Uses local copies of plugins from lib/plugins
+ *
+ * Uses PluginManager from @weeb/weeb-plugins
  */
 
-import { loadPlugin } from './plugins'
+import { PluginManager } from '@weeb/weeb-plugins/plugins/manager'
 
 let pluginsCache: Map<string, any> | null = null
 
@@ -17,8 +17,9 @@ export async function getPlugin(name: string): Promise<any> {
     return pluginsCache.get(name)
   }
 
-  // Load plugin using local wrapper
-  const plugin = await loadPlugin(name)
+  // Load plugin using PluginManager
+  const pluginManager = PluginManager.getInstance()
+  const plugin = pluginManager.get(name)
 
   if (plugin) {
     pluginsCache.set(name, plugin)
@@ -42,17 +43,3 @@ export async function getActivePlugins(
 
   return activePlugins
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

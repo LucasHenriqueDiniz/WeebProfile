@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Sparkles } from "lucide-react"
 import { useWizardStore } from "@/stores/wizard-store"
-import { Step1Basic } from "./steps/Step1Basic"
 import { Step2Plugins } from "./steps/Step2Plugins"
 import { Step3Style } from "./steps/Step3Style"
 import { Step4Preview } from "./steps/Step4Preview"
@@ -16,6 +15,7 @@ import { TemplateSelectorModal } from "./TemplateSelectorModal"
 import { useToast } from "@/hooks/use-toast"
 import { svgApi, ApiException } from "@/lib/api"
 import { Button } from "@/components/ui/button"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 interface WizardProps {
   isEditMode?: boolean
@@ -43,12 +43,13 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     customThemeColors,
     isValid,
     setStep,
+    setBasicInfo,
     validateStep,
   } = useWizardStore()
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      if (currentStep < 4) {
+      if (currentStep < 3) {
         setStep(currentStep + 1)
       }
     } else {
@@ -69,7 +70,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
   }
 
   const handleFinish = async () => {
-    if (!validateStep(4)) {
+    if (!validateStep(3)) {
       toast({
         title: "Validação",
         description: "Por favor, complete todos os passos",
@@ -92,14 +93,29 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
         const plugin = plugins[pluginName]
         if (plugin.enabled) {
           pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}`] = true
-          pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}_USERNAME`] = plugin.username
+          
+          // Adicionar requiredFields dinamicamente
+          const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
+          if (metadata?.requiredFields) {
+            metadata.requiredFields.forEach((field: string) => {
+              const value = (plugin as any)[field]
+              if (value) {
+                pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}_${field.toUpperCase()}`] = value
+              }
+            })
+          }
+          
           pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}_SECTIONS`] = plugin.sections.join(",")
           
-          // Adicionar outras configurações específicas do plugin
+          // Adicionar outras configurações específicas do plugin (não requiredFields)
           Object.keys(plugin).forEach((key) => {
-            if (key !== "enabled" && key !== "username" && key !== "sections") {
-              const envKey = `PLUGIN_${pluginName.toUpperCase()}_${key.toUpperCase()}`
-              pluginsConfig[envKey] = (plugin as any)[key]
+            if (key !== "enabled" && key !== "sections" && key !== "sectionConfigs" && key !== "fields") {
+              // Pular requiredFields que já foram adicionados
+              const isRequiredField = metadata?.requiredFields?.includes(key)
+              if (!isRequiredField) {
+                const envKey = `PLUGIN_${pluginName.toUpperCase()}_${key.toUpperCase()}`
+                pluginsConfig[envKey] = (plugin as any)[key]
+              }
             }
           })
         } else {
@@ -107,9 +123,24 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
         }
       })
 
+      // Gerar name e slug automaticamente baseado nos plugins habilitados
+      const enabledPluginNames = pluginsOrder.filter((name) => plugins[name]?.enabled)
+      const autoName = enabledPluginNames.length > 0 
+        ? `${enabledPluginNames.map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(' ')} Stats`
+        : 'My Profile Stats'
+      const autoSlug = autoName
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+      
+      // Atualizar store com name/slug gerados
+      setBasicInfo(autoName, autoSlug, true)
+
       // 1. Criar/Atualizar SVG
       const svgData = {
-        name,
+        name: autoName,
         style,
         size,
         theme,
@@ -186,24 +217,21 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
   }
 
   const steps = [
-    { number: 1, title: "Básico" },
-    { number: 2, title: "Estilo" },
-    { number: 3, title: "Plugins" },
-    { number: 4, title: "Preview" },
+    { number: 1, title: "Estilo" },
+    { number: 2, title: "Plugins" },
+    { number: 3, title: "Preview" },
   ]
 
   const renderStepComponent = () => {
     switch (currentStep) {
       case 1:
-        return <Step1Basic />
-      case 2:
         return <Step3Style />
-      case 3:
+      case 2:
         return <Step2Plugins />
-      case 4:
+      case 3:
         return <Step4Preview />
       default:
-        return <Step1Basic />
+        return <Step3Style />
     }
   }
 
@@ -293,7 +321,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
         </main>
 
         {/* Preview Panel - Hidden on final preview step */}
-        {currentStep > 1 && currentStep < 4 && (
+        {currentStep > 1 && currentStep < 3 && (
           <PreviewPanel isVisible={showPreview} />
         )}
       </div>
@@ -301,7 +329,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
       {/* Navigation Footer */}
       <NavigationFooter
         currentStep={currentStep}
-        totalSteps={4}
+        totalSteps={3}
         onPrevious={handleBack}
         onNext={handleNext}
         onSave={handleFinish}

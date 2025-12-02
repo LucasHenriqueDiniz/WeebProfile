@@ -63,7 +63,12 @@ export function Step1Basic() {
               value={localName}
               onChange={(e) => setLocalName(e.target.value)}
               placeholder="Ex: My GitHub Stats"
-              className={cn(localName && "border-green-500")}
+              className={cn(
+                "transition-colors",
+                localName && localName.length > 0 
+                  ? "border-green-500 focus-visible:ring-green-500" 
+                  : "border-border"
+              )}
             />
             <p className="text-sm text-muted-foreground">
               This name will appear in your dashboard
