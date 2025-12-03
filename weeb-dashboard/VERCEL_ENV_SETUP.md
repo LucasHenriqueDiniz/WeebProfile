@@ -5,12 +5,14 @@
 Configure as seguintes variáveis de ambiente no painel do Vercel:
 
 ### Variáveis Públicas (acessíveis no browser)
+
 Estas variáveis precisam do prefixo `NEXT_PUBLIC_`:
 
 - `NEXT_PUBLIC_SUPABASE_URL` - URL do seu projeto Supabase
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Chave anônima do Supabase
 
 ### Variáveis Privadas (apenas servidor)
+
 Estas variáveis NÃO devem ter o prefixo `NEXT_PUBLIC_`:
 
 - `SUPABASE_SERVICE_ROLE_KEY` - Chave de service role do Supabase
@@ -40,6 +42,7 @@ Estas variáveis NÃO devem ter o prefixo `NEXT_PUBLIC_`:
 Após configurar, faça um novo deploy. As variáveis serão carregadas automaticamente.
 
 Se ainda houver problemas, verifique:
+
 1. Se os nomes das variáveis estão exatamente corretos (case-sensitive)
 2. Se as variáveis estão habilitadas para o ambiente correto (Production/Preview/Development)
 3. Se você fez um novo deploy após adicionar as variáveis
@@ -54,4 +57,3 @@ DATABASE_URL=postgresql://postgres:[password]@db.xxxxx.supabase.co:5432/postgres
 SVG_GENERATOR_URL=https://your-svg-generator.railway.app
 CRON_SECRET=your-random-secret-key-here
 ```
-

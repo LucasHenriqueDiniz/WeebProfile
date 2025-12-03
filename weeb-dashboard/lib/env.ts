@@ -3,6 +3,9 @@
  * 
  * Este arquivo centraliza o acesso às variáveis de ambiente e fornece
  * mensagens de erro claras quando variáveis estão faltando.
+ * 
+ * IMPORTANTE: A validação é lazy (só acontece quando a variável é acessada),
+ * para não quebrar o build do Next.js que analisa todas as rotas.
  */
 
 function getEnv(key: string, required = true): string {
@@ -15,7 +18,7 @@ function getEnv(key: string, required = true): string {
       `1. Acesse Settings → Environment Variables\n` +
       `2. Adicione a variável ${key}\n` +
       `3. Faça um novo deploy\n\n` +
-      `Veja VERCELL_ENV_SETUP.md para mais detalhes.`
+      `Veja VERCEL_ENV_SETUP.md para mais detalhes.`
     )
   }
   
@@ -25,24 +28,38 @@ function getEnv(key: string, required = true): string {
 /**
  * Variáveis públicas (acessíveis no browser)
  * Precisam do prefixo NEXT_PUBLIC_ no Vercel
+ * 
+ * Usa getters para validação lazy - só valida quando acessado
  */
 export const env = {
   // Supabase (público)
-  supabaseUrl: getEnv("NEXT_PUBLIC_SUPABASE_URL"),
-  supabaseAnonKey: getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+  get supabaseUrl() {
+    return getEnv("NEXT_PUBLIC_SUPABASE_URL")
+  },
+  get supabaseAnonKey() {
+    return getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+  },
   
   // Supabase (privado - servidor apenas)
-  supabaseServiceRoleKey: getEnv("SUPABASE_SERVICE_ROLE_KEY"),
+  get supabaseServiceRoleKey() {
+    return getEnv("SUPABASE_SERVICE_ROLE_KEY")
+  },
   
   // Database
-  databaseUrl: getEnv("DATABASE_URL"),
+  get databaseUrl() {
+    return getEnv("DATABASE_URL")
+  },
   
   // SVG Generator
-  svgGeneratorUrl: getEnv("SVG_GENERATOR_URL", false) || "http://localhost:3001",
+  get svgGeneratorUrl() {
+    return getEnv("SVG_GENERATOR_URL", false) || "http://localhost:3001"
+  },
   
   // Cron Secret (opcional)
-  cronSecret: getEnv("CRON_SECRET", false),
-} as const
+  get cronSecret() {
+    return getEnv("CRON_SECRET", false) || undefined
+  },
+}
 
 /**
  * Valida todas as variáveis de ambiente necessárias
