@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { env } from "@/lib/env"
 
 /**
  * POST /api/preview/generate - Gerar preview de SVG usando core-v2
@@ -26,8 +27,7 @@ export async function POST(request: NextRequest) {
     // URL do serviço SVG Generator
     // Em desenvolvimento: localhost:3001
     // Em produção: pode ser um serviço separado ou mesma instância
-    const svgGeneratorUrl =
-      process.env.SVG_GENERATOR_URL || "http://localhost:3001"
+    const svgGeneratorUrl = env.svgGeneratorUrl
 
     // Chamar serviço separado para gerar SVG
     const response = await fetch(svgGeneratorUrl, {

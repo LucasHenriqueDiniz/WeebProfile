@@ -19,16 +19,18 @@ import { eq, or, lte } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { convertSvgToPluginsConfig, generateDataHash, saveSvgToStorage } from "@/lib/svg-generator"
 import { generateSvgViaHttpService } from "@/lib/svg-generator-client"
+import { env } from "@/lib/env"
 
 /**
  * GET /api/cron/generate-svgs - Executar cron job
  * 
  * Busca SVGs que precisam ser gerados/atualizados e processa em lote.
  */
+
 export async function GET(request: Request) {
   // Verificar se é uma requisição autorizada (Vercel Cron ou secret)
   const authHeader = request.headers.get("authorization")
-  const cronSecret = process.env.CRON_SECRET
+  const cronSecret = env.cronSecret
   
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

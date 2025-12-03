@@ -40,10 +40,12 @@ interface GenerateSvgResponse {
  * @param config - Configuração do SVG
  * @returns Resultado da geração
  */
+import { env } from "./env"
+
 export async function generateSvgViaHttpService(
   config: GenerateSvgRequest
 ): Promise<GenerateSvgResponse> {
-  const svgGeneratorUrl = process.env.SVG_GENERATOR_URL || "http://localhost:3001"
+  const svgGeneratorUrl = env.svgGeneratorUrl
 
   console.log(`📤 [CLIENT] Sending request to ${svgGeneratorUrl}`)
   console.log(`📤 [CLIENT] Request config:`, JSON.stringify(config, null, 2))

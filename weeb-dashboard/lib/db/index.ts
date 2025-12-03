@@ -1,12 +1,9 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 import * as schema from "./schema"
+import { env } from "../env"
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is not set")
-}
-
-const connectionString = process.env.DATABASE_URL
+const connectionString = env.databaseUrl
 
 // Configurar cliente postgres com opções adequadas para Supabase
 const client = postgres(connectionString, {
