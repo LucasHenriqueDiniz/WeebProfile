@@ -10,8 +10,8 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
-import { getUserEssentialConfigs } from "@/lib/essential-configs"
-import { getMissingEssentialConfigs } from "@/lib/plugin-essential-configs"
+import { getUserEssentialConfigs } from "@/lib/config/essential-configs"
+import { getMissingEssentialConfigs } from "@/lib/config/plugin-essential-configs"
 import type { EssentialConfigs } from "@/lib/db/types"
 
 /**

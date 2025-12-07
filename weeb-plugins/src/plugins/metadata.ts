@@ -15,7 +15,18 @@
 /**
  * Plugin category
  */
-export type PluginCategory = "coding" | "music" | "anime" | "gaming"
+export type PluginCategory = "coding" | "music" | "anime" | "gaming" | "health"
+
+/**
+ * Metadata for a required field (non-sensitive, stored with plugin config)
+ */
+export interface RequiredFieldMetadata {
+  key: string
+  label?: string // Optional custom label (defaults to capitalized key)
+  placeholder?: string
+  description?: string
+  helpUrl?: string // Direct link to help/documentation
+}
 
 /**
  * Metadata for an essential configuration key (API key, token, etc)
@@ -67,6 +78,7 @@ export interface PluginMetadata {
   category: PluginCategory
   icon: string // Name of lucide-react icon (e.g., "Github", "Music", "BookOpen")
   requiredFields: string[]
+  requiredFieldsMetadata?: RequiredFieldMetadata[] // Optional metadata for required fields (label, helpUrl, etc.)
   essentialConfigKeys: string[] // Kept for compatibility, but use essentialConfigKeysMetadata
   essentialConfigKeysMetadata: EssentialConfigKeyMetadata[] // Complete metadata of essential keys
   sections: PluginSection[]
@@ -100,7 +112,7 @@ export const PLUGINS_METADATA = {
     name: "16personalities",
     displayName: "16Personalities",
     description: "Display your 16Personalities type with emoji and link",
-    category: "coding",
+    category: "health",
     icon: "UserCircle",
     requiredFields: ["personality_url"],
     essentialConfigKeys: [],
@@ -799,7 +811,7 @@ export const PLUGINS_METADATA = {
     description: "Show your LastFM music statistics",
     category: "music",
     icon: "Music",
-    requiredFields: ["username"],
+    requiredFields: [],
     essentialConfigKeys: ["apiKey","username"],
     essentialConfigKeysMetadata: [
         {
@@ -1057,6 +1069,91 @@ export const PLUGINS_METADATA = {
     fieldDefaults: {
       "username": "exemplo"
     },
+  },
+
+  lyfta: {
+    name: "lyfta",
+    displayName: "Lyfta",
+    description: "Show your workout statistics from Lyfta",
+    category: "health",
+    icon: "Dumbbell",
+    requiredFields: [],
+    essentialConfigKeys: ["apiKey"],
+    essentialConfigKeysMetadata: [
+        {
+          key: "apiKey",
+          label: "Lyfta API Key",
+          type: "password",
+          placeholder: "your-api-key",
+          description: "API Key from Lyfta (generate at https://my.lyfta.app/community/api)",
+          helpUrl: "https://my.lyfta.app/community/api",
+          docKey: "lyfta.apiKey"
+        }
+    ],
+    sections: [
+      {
+        id: "statistics",
+        name: "Statistics",
+        description: "General workout statistics",
+        configOptions: [
+        {
+          key: "statistics_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "statistics_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Statistics"
+        }
+        ]
+      },
+      {
+        id: "recent_workouts",
+        name: "Recent Workouts",
+        description: "Recently performed workouts",
+        configOptions: [
+        {
+          key: "recent_workouts_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "recent_workouts_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Recent Workouts"
+        },
+        {
+          key: "workouts_max",
+          label: "Maximum workouts",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 workouts"
+        }
+        ]
+      }
+    ],
+    exampleConfig: {
+      "enabled": true,
+      "sections": [
+        "statistics",
+        "recent_workouts"
+      ]
+    },
+    defaultConfig: {
+      "enabled": false,
+      "sections": [
+        "statistics"
+      ]
+    },
+    fieldDefaults: {},
   },
 
   myanimelist: {
@@ -1415,6 +1512,155 @@ export const PLUGINS_METADATA = {
       "username": "example"
     },
   },
+
+  steam: {
+    name: "steam",
+    displayName: "Steam",
+    description: "Show your Steam gaming statistics",
+    category: "gaming",
+    icon: "Gamepad2",
+    requiredFields: [],
+    essentialConfigKeys: ["apiKey","steamId"],
+    essentialConfigKeysMetadata: [
+        {
+          key: "apiKey",
+          label: "Steam Web API Key",
+          type: "password",
+          placeholder: "your-api-key",
+          description: "API Key from Steam Web API",
+          helpUrl: "https://steamcommunity.com/dev/apikey",
+          docKey: "steam.apiKey"
+        },
+        {
+          key: "steamId",
+          label: "Steam ID64",
+          type: "text",
+          placeholder: "76561198000000000",
+          description: "Your Steam ID64 (17 digits)",
+          helpUrl: "https://steamid.io/",
+          docKey: "steam.steamId"
+        }
+    ],
+    sections: [
+      {
+        id: "statistics",
+        name: "Statistics",
+        description: "General statistics from Steam",
+        configOptions: [
+        {
+          key: "statistics_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "statistics_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Statistics"
+        }
+        ]
+      },
+      {
+        id: "recent_games",
+        name: "Recent Games",
+        description: "Games played in the last 2 weeks",
+        configOptions: [
+        {
+          key: "recent_games_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "recent_games_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Recent Games"
+        },
+        {
+          key: "recent_games_max",
+          label: "Maximum games",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 games"
+        },
+        {
+          key: "recent_games_style",
+          label: "Display style",
+          type: "select",
+          defaultValue: "list",
+          description: "Choose how games are displayed",
+          options: [
+            { value: "list", label: "List" },
+            { value: "compact", label: "Compact Grid (5 per row)" }
+          ]
+        }
+        ]
+      },
+      {
+        id: "top_games",
+        name: "Top Games",
+        description: "Most played games by total playtime",
+        configOptions: [
+        {
+          key: "top_games_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "top_games_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Top Games"
+        },
+        {
+          key: "top_games_max",
+          label: "Maximum games",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 games"
+        },
+        {
+          key: "top_games_style",
+          label: "Display style",
+          type: "select",
+          defaultValue: "list",
+          description: "Choose how games are displayed",
+          options: [
+            { value: "list", label: "List" },
+            { value: "compact", label: "Compact Grid (5 per row)" }
+          ]
+        }
+        ]
+      }
+    ],
+    exampleConfig: {
+      "enabled": true,
+      "sections": [
+        "statistics",
+        "recent_games",
+        "top_games"
+      ]
+    },
+    defaultConfig: {
+      "enabled": false,
+      "sections": [
+        "statistics"
+      ],
+      "steamId": ""
+    },
+    fieldDefaults: {
+      "steamId": "76561198000000000"
+    },
+  },
 } as const satisfies Record<string, PluginMetadata>
 
 /**
@@ -1451,6 +1697,7 @@ export function getPluginsGroupedByCategory(): Record<PluginCategory, PluginMeta
     music: [],
     anime: [],
     gaming: [],
+    health: [],
   }
   
   Object.values(PLUGINS_METADATA).forEach((plugin) => {

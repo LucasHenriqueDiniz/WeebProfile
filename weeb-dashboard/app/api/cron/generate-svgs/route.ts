@@ -19,7 +19,7 @@ import { eq, or, lte } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { convertSvgToPluginsConfig, generateDataHash, saveSvgToStorage } from "@/lib/svg-generator"
 import { generateSvgViaHttpService } from "@/lib/svg-generator-client"
-import { env } from "@/lib/env"
+import { env } from "@/lib/config/env"
 
 /**
  * GET /api/cron/generate-svgs - Executar cron job

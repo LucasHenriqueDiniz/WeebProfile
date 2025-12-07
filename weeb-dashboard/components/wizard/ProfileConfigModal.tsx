@@ -11,7 +11,7 @@ import { Loader2, AlertCircle, CheckCircle2, XCircle } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { profileApi, ApiException } from "@/lib/api"
-import { getMissingEssentialConfigs, getPluginEssentialConfigKeys } from "@/lib/plugin-essential-configs"
+import { getMissingEssentialConfigs, getPluginEssentialConfigKeys } from "@/lib/config/plugin-essential-configs"
 import type { EssentialConfigs } from "@/lib/db/types"
 
 interface ProfileConfigModalProps {

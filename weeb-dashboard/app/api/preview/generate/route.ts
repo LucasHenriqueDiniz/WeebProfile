@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { env } from "@/lib/env"
+import { env } from "@/lib/config/env"
 
 /**
  * POST /api/preview/generate - Gerar preview de SVG usando core-v2

@@ -88,26 +88,6 @@ export function Step3Style() {
 
   return (
     <div className="space-y-6">
-      {/* Preview Section */}
-      <Card className="border-2">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Monitor className="w-4 h-4 text-primary" />
-            </div>
-            Preview
-          </CardTitle>
-          <CardDescription>See how your image will look with the current style settings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="border-2 border-dashed rounded-xl p-6 bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 overflow-auto max-h-[500px]">
-            <div className="flex justify-center items-start min-h-[300px]">
-              <LivePreview compact={true} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Style Selection */}
       <Card className="border-2">
         <CardHeader className="pb-4">

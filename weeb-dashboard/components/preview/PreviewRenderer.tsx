@@ -23,6 +23,8 @@ interface PreviewRendererProps {
   hideTerminalHeader?: boolean
   customCss?: string
   customThemeColors?: Record<string, string>
+  width?: number // Largura fixa opcional (sobrescreve size)
+  height?: number // Altura fixa opcional
 }
 
 /**
@@ -67,11 +69,13 @@ export function PreviewRenderer({
   hideTerminalHeader,
   customCss,
   customThemeColors,
+  width: propWidth,
+  height: propHeight,
 }: PreviewRendererProps) {
   const { data, loading } = useMockPluginData({ plugins })
 
-  // Calcular largura baseada no size (430px para half, 800px para full - tamanhos do hero)
-  const width = size === "half" ? 415 : 830
+  // Calcular largura: usar propWidth se fornecido, senão baseado no size
+  const width = propWidth ?? (size === "half" ? 415 : 830)
   
   // Estado para armazenar plugins carregados
   const [activePluginsMap, setActivePluginsMap] = useState<Map<string, any>>(new Map())
@@ -167,14 +171,14 @@ export function PreviewRenderer({
     )
   }
 
-  // Calcular altura estimada (pode ser melhorado depois)
-  const estimatedHeight = Math.max(400, renderedPlugins.length * 200)
+  // Calcular altura: usar propHeight se fornecido, senão estimar
+  const height = propHeight ?? Math.max(400, renderedPlugins.length * 200)
 
   return (
     <div className="w-full" style={{ width: `${width}px` }}>
       <PreviewSvgContainer
         width={width}
-        height={estimatedHeight}
+        height={height}
         size={size}
         style={style}
         theme={theme}

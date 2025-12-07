@@ -34,10 +34,9 @@ const DefaultFeaturedTrack = ({
   track,
 }: { track: { track: string; artist: string; image?: string } }): React.ReactElement => {
   return (
-    <div className="relative flex flex-col px-4 py-3 half:px-3 half:py-2.5 flex-1 min-w-0 border border-default-muted/10 shadow-sm">      
+    <div className="relative flex flex-col px-4 py-3 half:px-3 half:py-2.5 flex-1 min-w-0">      
       {/* Título TOP TRACK */}
-      <p className="relative text-[10px] font-bold uppercase tracking-wider text-default-muted mb-2.5 half:mb-2 flex items-center gap-1.5 w-full  ">
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500" />
+      <p className="relative text-[10px] font-bold uppercase tracking-wider text-default-muted mb-2.5 half:mb-2 flex items-center w-full">
         Top Track
       </p>
       
@@ -80,7 +79,7 @@ const DefaultFeaturedTrack = ({
 }
 
 const DefaultStatistic = ({ title, value }: { title: string; value: string }): React.ReactElement => (
-  <div className="relative flex flex-col items-center px-4 py-3 half:px-3 half:py-2.5 w-auto flex-shrink-0 border border-default-muted/10 shadow-sm overflow-hidden">
+  <div className="relative flex flex-col items-center px-4 py-3 half:px-3 half:py-2.5 w-auto flex-shrink-0 overflow-hidden">
     
     <p className="relative text-[10px] font-bold uppercase tracking-wider text-default-muted mb-2 half:mb-1.5 whitespace-nowrap">
       {title}

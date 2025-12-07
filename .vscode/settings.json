@@ -1,9 +1,5 @@
 {
   "search.exclude": {
-    // Pastas geradas/copiadas do weeb-plugins para o dashboard
-    "weeb-dashboard/lib/plugins/**": true,
-    "weeb-dashboard/lib/weeb-plugins/**": true,
-
     // Dependências e builds
     "**/node_modules/**": true,
     "**/dist/**": true,
@@ -27,16 +23,30 @@
   },
 
   "files.exclude": {
-    "**/weeb-dashboard/lib/plugins/**": true,
-    "**/weeb-dashboard/lib/weeb-plugins/**": true
-  },
-
-  "files.watcherExclude": {
-    // Excluir do file watcher para melhor performance
     "**/node_modules/**": true,
     "**/dist/**": true,
     "**/.next/**": true,
-    "**/weeb-dashboard/lib/plugins/**": true,
-    "**/weeb-dashboard/lib/weeb-plugins/**": true
-  }
+    "**/.vercel/**": true,
+    "**/.turbo/**": true,
+    "**/.git/**": true,
+    "**/.DS_Store": true,
+    "**/coverage/**": true,
+    "**/.nyc_output/**": true,
+    "**/build/**": true,
+    "**/out/**": true,
+    "**/pnpm-lock.yaml": true,
+    "**/package-lock.json": true,
+    "**/yarn.lock": true,
+    "**/.cache/**": true
+  },
+
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.next/**": true
+  },
+
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.useAliasesForRenames": false
 }

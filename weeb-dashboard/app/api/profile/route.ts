@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { profiles } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { NextResponse } from "next/server"
-import { getUserEssentialConfigs, setEssentialConfigs } from "@/lib/essential-configs"
+import { getUserEssentialConfigs, setEssentialConfigs } from "@/lib/config/essential-configs"
 import type { EssentialConfigs } from "@/lib/db/types"
 
 /**

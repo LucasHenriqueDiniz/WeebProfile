@@ -34,13 +34,14 @@ interface GenerateSvgResponse {
   }
 }
 
+import { env } from "./config/env"
+
 /**
  * Gera SVG usando o svg-generator HTTP service
  * 
  * @param config - Configuração do SVG
  * @returns Resultado da geração
  */
-import { env } from "./env"
 
 export async function generateSvgViaHttpService(
   config: GenerateSvgRequest

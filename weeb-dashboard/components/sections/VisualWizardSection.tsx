@@ -1,7 +1,16 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Plug, Layout, Palette, Eye, LucideIcon } from "lucide-react"
+import { 
+  Plug, 
+  Layout, 
+  Palette, 
+  Eye, 
+  LucideIcon,
+  ArrowRight,
+  X,
+  Check
+} from "lucide-react"
 
 interface Feature {
   id: string
@@ -24,6 +33,7 @@ interface FeatureStepProps {
   description: string
   icon: LucideIcon
   index: number
+  isLast?: boolean
 }
 
 const stepIcons: Record<number, LucideIcon> = {
@@ -39,38 +49,85 @@ function FeatureStep({
   description,
   icon: Icon,
   index,
+  isLast = false,
 }: FeatureStepProps) {
   return (
     <motion.div
       custom={index}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: "-100px" }}
       variants={{
-        hidden: { opacity: 0, x: 20 },
+        hidden: { opacity: 0, x: -50, scale: 0.9 },
         visible: (i: number) => ({
           opacity: 1,
           x: 0,
-          transition: { delay: i * 0.15 },
+          scale: 1,
+          transition: { 
+            delay: i * 0.15, 
+            duration: 0.6,
+            type: "spring",
+            stiffness: 80,
+            damping: 15
+          },
         }),
       }}
-      className="flex gap-4"
+      className="relative group"
     >
-      <div className="flex-shrink-0">
-        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary">
-          {number}
-        </div>
-      </div>
-      <div className="flex-1">
+      {/* Timeline line */}
+      {!isLast && (
         <motion.div
-          whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-          transition={{ duration: 0.5 }}
-          className="mb-2"
-        >
-          <Icon className="w-6 h-6 text-primary" />
-        </motion.div>
-        <h3 className="font-semibold text-lg mb-1">{title}</h3>
-        <p className="text-muted-foreground">{description}</p>
+          className="absolute left-8 top-24 w-full h-0.5 bg-gradient-to-r from-primary/40 via-primary/20 to-transparent hidden lg:block"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.15 + 0.3, duration: 0.6 }}
+        />
+      )}
+      
+      <div className="flex gap-6 items-start">
+        {/* Icon circle with animation */}
+        <div className="relative flex-shrink-0">
+          <motion.div
+            className="w-16 h-16 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/80 flex items-center justify-center shadow-lg shadow-primary/30 relative z-10"
+            whileHover={{ scale: 1.15, rotate: [0, -10, 10, 0] }}
+            transition={{ duration: 0.6, type: "spring" }}
+          >
+            <Icon className="w-8 h-8 text-primary-foreground" />
+          </motion.div>
+          
+          {/* Pulsing ring */}
+          <motion.div
+            className="absolute inset-0 rounded-full border-2 border-primary/40"
+            animate={{
+              scale: [1, 1.3, 1.3],
+              opacity: [0.6, 0, 0],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeOut",
+            }}
+          />
+        </div>
+        
+        {/* Content */}
+        <div className="flex-1 pt-2 pb-12 lg:pb-16">
+          <motion.div
+            className="space-y-2"
+            whileHover={{ x: 8 }}
+            transition={{ type: "spring", stiffness: 400 }}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+                {title}
+              </span>
+            </div>
+            <p className="text-muted-foreground text-base leading-relaxed max-w-md">
+              {description}
+            </p>
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   )
@@ -80,58 +137,85 @@ export function VisualWizardSection({
   feature,
 }: VisualWizardSectionProps) {
   return (
-    <section className="container mx-auto px-4 py-16 md:py-24">
-      <div className="grid lg:grid-cols-2 gap-12 items-center">
-        {/* Left: Screenshot Placeholder */}
+    <section className="relative py-16 md:py-24 overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="relative"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16 max-w-4xl mx-auto"
         >
-          <div className="rounded-xl overflow-hidden shadow-2xl border border-border bg-gradient-to-br from-primary/20 to-accent/20 aspect-video flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/30 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                <Eye className="w-8 h-8 text-primary" />
-              </div>
-              <p className="text-muted-foreground">Dashboard Preview</p>
-            </div>
-          </div>
+          <motion.div
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 mb-6"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400 }}
+          >
+            <Check className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold text-primary">Visual builder</span>
+            <span className="text-sm font-semibold text-muted-foreground">•</span>
+            <span className="text-sm font-semibold text-foreground">Real-time preview</span>
+            <span className="text-sm font-semibold text-muted-foreground">•</span>
+            <span className="text-sm font-semibold text-foreground">No code required</span>
+          </motion.div>
+          
+          <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
+            <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
+              {feature.title}
+            </span>
+          </h2>
+          <p className="text-xl text-muted-foreground leading-relaxed">
+            {feature.description}
+          </p>
         </motion.div>
 
-        {/* Right: Steps */}
-        <div className="space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="space-y-2"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold">
-              {feature.title}
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              {feature.description}
-            </p>
-          </motion.div>
-
-          <div className="space-y-6">
+        {/* Horizontal Timeline Flow */}
+        <div className="max-w-5xl mx-auto">
+          <div className="space-y-0">
             {feature.steps.map((step, index) => {
               const Icon = stepIcons[step.number]
+              const isLast = index === feature.steps.length - 1
+              
               return (
-                <FeatureStep
-                  key={step.number}
-                  number={step.number}
-                  title={step.title}
-                  description={step.description}
-                  icon={Icon}
-                  index={index}
-                />
+                <div key={step.number} className="relative">
+                  <FeatureStep
+                    number={step.number}
+                    title={step.title}
+                    description={step.description}
+                    icon={Icon}
+                    index={index}
+                    isLast={isLast}
+                  />
+                  
+                  {/* Arrow connector */}
+                  {!isLast && (
+                    <motion.div
+                      className="absolute left-8 top-24 w-8 h-8 hidden lg:flex items-center justify-center"
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.15 + 0.3 }}
+                    >
+                      <ArrowRight className="w-5 h-5 text-primary/60" />
+                    </motion.div>
+                  )}
+                </div>
               )
             })}
           </div>
         </div>
+
+        {/* Bottom accent */}
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          whileInView={{ opacity: 1, scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="mt-16 max-w-2xl mx-auto h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
+        />
       </div>
     </section>
   )

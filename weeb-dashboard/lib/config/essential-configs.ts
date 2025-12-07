@@ -5,10 +5,10 @@
  * da tabela essential_configs.
  */
 
-import { db } from './db'
-import { essentialConfigs } from './db/schema'
+import { db } from '../db'
+import { essentialConfigs } from '../db/schema'
 import { eq, and } from 'drizzle-orm'
-import type { EssentialConfigs } from './db/types'
+import type { EssentialConfigs } from '../db/types'
 
 /**
  * Obtém todas as configurações essenciais de um usuário
@@ -191,4 +191,9 @@ export async function deleteEssentialConfig(
 export async function getGitHubToken(userId: string): Promise<string | null> {
   return getEssentialConfig(userId, 'github', 'pat')
 }
+
+
+
+
+
 
