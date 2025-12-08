@@ -11,6 +11,8 @@ import { githubPlugin } from './github/index'
 import { lastFmPlugin } from './lastfm/index'
 import { myAnimeListPlugin } from './myanimelist/index'
 import { personality16Plugin } from './16personalities/index'
+import { lyftaPlugin } from './lyfta/index'
+import { steamPlugin } from './steam/index'
 import type { PluginConfig, PluginData } from '../types/index'
 
 export class PluginManager {
@@ -24,6 +26,8 @@ export class PluginManager {
     this.register(lastFmPlugin)
     this.register(myAnimeListPlugin)
     this.register(personality16Plugin)
+    this.register(lyftaPlugin)
+    this.register(steamPlugin)
   }
 
   public static getInstance(): PluginManager {

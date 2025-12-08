@@ -9,6 +9,8 @@ export { githubPlugin } from './github/index'
 export { lastFmPlugin } from './lastfm/index'
 export { myAnimeListPlugin } from './myanimelist/index'
 export { personality16Plugin } from './16personalities/index'
+export { lyftaPlugin } from './lyfta/index'
+export { steamPlugin } from './steam/index'
 
 // Export centralized metadata
 export {

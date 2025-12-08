@@ -39,7 +39,7 @@ export default function Home() {
       <Header />
       <HeroSection {...homepageData.hero} />
       <SectionDivider variant="gradient" />
-      <PlatformsSection platforms={[...platforms, ...platforms, ...platforms]} />
+      <PlatformsSection platforms={platforms} />
       <SectionDivider />
       <HowItWorksSection items={homepageData.howItWorks} />
       <SectionDivider />

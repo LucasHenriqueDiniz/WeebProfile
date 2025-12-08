@@ -1,35 +1,32 @@
-import { Github, Music, BookOpen, Brain } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
+import { FaGithub, FaSteam, FaLastfmSquare } from "react-icons/fa"
+import { TbNumber16Small } from "react-icons/tb"
+import { SiMyanimelist } from "react-icons/si"
+import { GiWeightLiftingUp } from "react-icons/gi"
+import type { ComponentType } from "react"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 /**
- * Registry estático de ícones do lucide-react
- * Mapeia nome do ícone (string) para componente React
+ * Icon mapping for plugins using react-icons
+ * Maps plugin ID to the appropriate icon component
+ * 
+ * IMPORTANT: This mapping must match the plugin IDs exactly from metadata
  */
-const ICON_REGISTRY: Record<string, LucideIcon> = {
-  Github,
-  Music,
-  BookOpen,
-  Brain,
-  UserCircle: BookOpen, // Fallback para UserCircle
-  // Adicionar novos ícones aqui quando novos plugins forem criados
+const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
+  github: FaGithub,
+  lastfm: FaLastfmSquare,
+  myanimelist: SiMyanimelist,
+  "16personalities": TbNumber16Small,
+  lyfta: GiWeightLiftingUp,
+  steam: FaSteam,
 }
 
 /**
- * Helper para obter ícone do plugin dinamicamente
- * Busca o nome do ícone da metadata e retorna o componente correspondente
- * Funciona automaticamente com qualquer plugin novo adicionado
+ * Returns the appropriate icon component for a plugin
+ * @param pluginId - The plugin identifier (must match plugin name in metadata)
+ * @returns The icon component or null if not found
  */
-export const getPluginIcon = (pluginName: string): LucideIcon | null => {
-  // Acessa o metadata de forma genérica para funcionar com qualquer plugin
-  // Usa Record<string, any> para ser compatível com qualquer plugin novo
-  const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
-  if (!metadata?.icon) {
-    return null
-  }
-  
-  const IconComponent = ICON_REGISTRY[metadata.icon]
-  return IconComponent || null
+export function getPluginIcon(pluginId: string): ComponentType<{ className?: string }> | null {
+  return PLUGIN_ICON_MAP[pluginId] || null
 }
 
 // Converter metadata centralizada para formato usado pelo frontend
@@ -57,5 +54,3 @@ export const PLUGINS_DATA = Object.fromEntries(
 }>
 
 export type PluginName = keyof typeof PLUGINS_DATA
-
-

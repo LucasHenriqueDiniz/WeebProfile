@@ -10,11 +10,7 @@
 
 /* We only need utilities, not base or components */
 
-.pointer-events-none {
-  pointer-events: none
-}
-
-#svg-main .static {
+.static {
   position: static
 }
 
@@ -32,14 +28,6 @@
 
 #svg-main .right-0 {
   right: 0px
-}
-
-#svg-main .right-1 {
-  right: 0.25rem
-}
-
-#svg-main .top-1 {
-  top: 0.25rem
 }
 
 #svg-main .col-span-2 {
@@ -72,6 +60,10 @@
 #svg-main .my-1\.5 {
   margin-top: 0.375rem;
   margin-bottom: 0.375rem
+}
+
+#svg-main .mb-0\.5 {
+  margin-bottom: 0.125rem
 }
 
 #svg-main .mb-1 {
@@ -156,10 +148,6 @@
   -webkit-line-clamp: 2
 }
 
-#svg-main .block {
-  display: block
-}
-
 #svg-main .inline-block {
   display: inline-block
 }
@@ -188,12 +176,24 @@
   display: none
 }
 
+#svg-main .aspect-video {
+  aspect-ratio: 16 / 9
+}
+
 #svg-main .h-1\.5 {
   height: 0.375rem
 }
 
 #svg-main .h-10 {
   height: 2.5rem
+}
+
+#svg-main .h-12 {
+  height: 3rem
+}
+
+#svg-main .h-14 {
+  height: 3.5rem
 }
 
 #svg-main .h-2 {
@@ -214,14 +214,6 @@
 
 #svg-main .h-4 {
   height: 1rem
-}
-
-#svg-main .h-5 {
-  height: 1.25rem
-}
-
-#svg-main .h-6 {
-  height: 1.5rem
 }
 
 #svg-main .h-8 {
@@ -264,12 +256,20 @@
   max-height: 50px
 }
 
+#svg-main .min-h-\[100px\] {
+  min-height: 100px
+}
+
 #svg-main .min-h-\[50px\] {
   min-height: 50px
 }
 
 #svg-main .min-h-\[75px\] {
   min-height: 75px
+}
+
+#svg-main .min-h-\[80px\] {
+  min-height: 80px
 }
 
 #svg-main .w-1\.5 {
@@ -282,6 +282,10 @@
 
 #svg-main .w-12 {
   width: 3rem
+}
+
+#svg-main .w-14 {
+  width: 3.5rem
 }
 
 #svg-main .w-16 {
@@ -300,14 +304,6 @@
   width: 1rem
 }
 
-#svg-main .w-5 {
-  width: 1.25rem
-}
-
-#svg-main .w-6 {
-  width: 1.5rem
-}
-
 #svg-main .w-8 {
   width: 2rem
 }
@@ -318,10 +314,6 @@
 
 #svg-main .w-\[0\.7rem\] {
   width: 0.7rem
-}
-
-#svg-main .w-\[50px\] {
-  width: 50px
 }
 
 #svg-main .w-\[60px\] {
@@ -481,6 +473,10 @@
   gap: 0.5rem
 }
 
+#svg-main .gap-2\.5 {
+  gap: 0.625rem
+}
+
 #svg-main .gap-3 {
   gap: 0.75rem
 }
@@ -578,6 +574,10 @@
   border-width: 0px
 }
 
+#svg-main .border-2 {
+  border-width: 2px
+}
+
 #svg-main .border-b {
   border-bottom-width: 1px
 }
@@ -586,17 +586,25 @@
   border-style: solid
 }
 
+#svg-main .border-white\/30 {
+  border-color: rgb(255 255 255 / 0.3)
+}
+
 #svg-main .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1))
+}
+
+#svg-main .bg-black\/20 {
+  background-color: rgb(0 0 0 / 0.2)
 }
 
 #svg-main .bg-black\/25 {
   background-color: rgb(0 0 0 / 0.25)
 }
 
-#svg-main .bg-gradient-to-br {
-  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops))
+#svg-main .bg-black\/70 {
+  background-color: rgb(0 0 0 / 0.7)
 }
 
 #svg-main .bg-gradient-to-r {
@@ -611,10 +619,6 @@
 
 #svg-main .to-pink-500 {
   --tw-gradient-to: #ec4899 var(--tw-gradient-to-position)
-}
-
-#svg-main .to-transparent {
-  --tw-gradient-to: transparent var(--tw-gradient-to-position)
 }
 
 #svg-main .fill-yellow-500 {
@@ -742,6 +746,10 @@
   font-size: 8px
 }
 
+#svg-main .text-\[9px\] {
+  font-size: 9px
+}
+
 #svg-main .text-base {
   font-size: 1rem;
   line-height: 1.5rem
@@ -844,6 +852,14 @@
   color: rgb(255 255 255 / 0.5)
 }
 
+#svg-main .text-white\/80 {
+  color: rgb(255 255 255 / 0.8)
+}
+
+#svg-main .text-white\/90 {
+  color: rgb(255 255 255 / 0.9)
+}
+
 #svg-main .text-yellow-500 {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity, 1))
@@ -856,14 +872,6 @@
 #svg-main .antialiased {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale
-}
-
-#svg-main .opacity-15 {
-  opacity: 0.15
-}
-
-#svg-main .opacity-20 {
-  opacity: 0.2
 }
 
 #svg-main .shadow-lg {
@@ -884,6 +892,21 @@
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
 }
 
+#svg-main .blur {
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .drop-shadow {
+  --tw-drop-shadow: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .drop-shadow-lg {
+  --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
 #svg-main .grayscale {
   --tw-grayscale: grayscale(100%);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
@@ -891,11 +914,6 @@
 
 #svg-main .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
-}
-
-#svg-main .backdrop-blur-sm {
-  --tw-backdrop-blur: blur(4px);
-  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)
 }
 
 #svg-main .transition-all {
@@ -916,6 +934,12 @@
   transition-duration: 150ms
 }
 
+#svg-main .transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms
+}
+
 #svg-main .duration-200 {
   transition-duration: 200ms
 }
@@ -928,16 +952,20 @@
   opacity: 0.8
 }
 
-#svg-main .group:hover .group-hover\:opacity-25 {
-  opacity: 0.25
+#svg-main .group:hover .group-hover\:scale-105 {
+  --tw-scale-x: 1.05;
+  --tw-scale-y: 1.05;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
 }
 
-#svg-main .group:hover .group-hover\:opacity-30 {
-  opacity: 0.3
+#svg-main .group:hover .group-hover\:shadow-md {
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
 }
 
-#svg-main.half .half\:mb-1 {
-  margin-bottom: 0.25rem
+#svg-main.half .half\:mb-0\.5 {
+  margin-bottom: 0.125rem
 }
 
 #svg-main.half .half\:mb-1\.5 {
@@ -963,40 +991,32 @@
   display: none
 }
 
-#svg-main.half .half\:h-4 {
-  height: 1rem
+#svg-main.half .half\:h-10 {
+  height: 2.5rem
 }
 
-#svg-main.half .half\:h-5 {
-  height: 1.25rem
-}
-
-#svg-main.half .half\:h-6 {
-  height: 1.5rem
-}
-
-#svg-main.half .half\:h-\[40px\] {
-  height: 40px
+#svg-main.half .half\:h-12 {
+  height: 3rem
 }
 
 #svg-main.half .half\:h-\[50px\] {
   height: 50px
 }
 
-#svg-main.half .half\:w-4 {
-  width: 1rem
+#svg-main.half .half\:min-h-\[70px\] {
+  min-height: 70px
 }
 
-#svg-main.half .half\:w-5 {
-  width: 1.25rem
+#svg-main.half .half\:min-h-\[90px\] {
+  min-height: 90px
 }
 
-#svg-main.half .half\:w-6 {
-  width: 1.5rem
+#svg-main.half .half\:w-10 {
+  width: 2.5rem
 }
 
-#svg-main.half .half\:w-\[40px\] {
-  width: 40px
+#svg-main.half .half\:w-12 {
+  width: 3rem
 }
 
 #svg-main.half .half\:w-\[50px\] {
@@ -1019,6 +1039,10 @@
   flex-direction: column
 }
 
+#svg-main.half .half\:gap-1 {
+  gap: 0.25rem
+}
+
 #svg-main.half .half\:gap-1\.5 {
   gap: 0.375rem
 }
@@ -1035,14 +1059,6 @@
   gap: 0.75rem
 }
 
-#svg-main.half .half\:p-1\.5 {
-  padding: 0.375rem
-}
-
-#svg-main.half .half\:p-2\.5 {
-  padding: 0.625rem
-}
-
 #svg-main.half .half\:px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem
@@ -1055,19 +1071,6 @@
 
 #svg-main.half .half\:text-\[10px\] {
   font-size: 10px
-}
-
-#svg-main.half .half\:text-\[8px\] {
-  font-size: 8px
-}
-
-#svg-main.half .half\:text-\[9px\] {
-  font-size: 9px
-}
-
-#svg-main.half .half\:text-base {
-  font-size: 1rem;
-  line-height: 1.5rem
 }
 
 #svg-main.half .half\:text-lg {

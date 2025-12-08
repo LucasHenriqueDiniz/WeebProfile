@@ -8,17 +8,10 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
-import {
-  Github,
-  Music,
-  BookOpen,
-  UserCircle,
-  Gamepad2,
-  Tv,
-  type LucideIcon,
-} from "lucide-react"
 import { useRef } from "react"
 import Link from "next/link"
+import { getPluginIcon } from "@/lib/plugins-data"
+import type { ComponentType } from "react"
 
 interface Platform {
   id: string
@@ -32,19 +25,9 @@ interface PlatformsSectionProps {
   platforms: Platform[]
 }
 
-// Icon mapping - add icons as they are used in plugins
-const iconMap: Record<string, LucideIcon> = {
-  Github,
-  Music,
-  BookOpen,
-  UserCircle,
-  Gamepad2, // For backwards compatibility
-  Tv, // For backwards compatibility
-}
-
 interface PlatformCardProps {
   name: string
-  icon: LucideIcon
+  icon: ComponentType<{ className?: string; style?: { color: string } }> | null
   description: string
   color: string
 }
@@ -55,6 +38,10 @@ function PlatformCard({
   description,
   color,
 }: PlatformCardProps) {
+  if (!Icon) {
+    return null
+  }
+
   return (
     <motion.div
       whileHover={{ scale: 1.08, y: -10 }}
@@ -153,9 +140,10 @@ export function PlatformsSection({ platforms }: PlatformsSectionProps) {
         >
           <CarouselContent className="-ml-2 md:-ml-4 py-4">
             {platforms.map((platform, index) => {
-              const Icon = iconMap[platform.icon]
+              // Use getPluginIcon to get the correct react-icons component
+              const Icon = getPluginIcon(platform.id)
               if (!Icon) {
-                console.warn(`Icon "${platform.icon}" not found for plugin "${platform.id}"`)
+                console.warn(`Icon not found for plugin "${platform.id}"`)
                 return null
               }
 

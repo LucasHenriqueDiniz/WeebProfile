@@ -15,18 +15,7 @@
 /**
  * Plugin category
  */
-export type PluginCategory = "coding" | "music" | "anime" | "gaming" | "health"
-
-/**
- * Metadata for a required field (non-sensitive, stored with plugin config)
- */
-export interface RequiredFieldMetadata {
-  key: string
-  label?: string // Optional custom label (defaults to capitalized key)
-  placeholder?: string
-  description?: string
-  helpUrl?: string // Direct link to help/documentation
-}
+export type PluginCategory = "coding" | "music" | "anime" | "gaming"
 
 /**
  * Metadata for an essential configuration key (API key, token, etc)
@@ -78,7 +67,6 @@ export interface PluginMetadata {
   category: PluginCategory
   icon: string // Name of lucide-react icon (e.g., "Github", "Music", "BookOpen")
   requiredFields: string[]
-  requiredFieldsMetadata?: RequiredFieldMetadata[] // Optional metadata for required fields (label, helpUrl, etc.)
   essentialConfigKeys: string[] // Kept for compatibility, but use essentialConfigKeysMetadata
   essentialConfigKeysMetadata: EssentialConfigKeyMetadata[] // Complete metadata of essential keys
   sections: PluginSection[]
@@ -112,7 +100,7 @@ export const PLUGINS_METADATA = {
     name: "16personalities",
     displayName: "16Personalities",
     description: "Display your 16Personalities type with emoji and link",
-    category: "health",
+    category: "coding",
     icon: "UserCircle",
     requiredFields: ["personality_url"],
     essentialConfigKeys: [],
@@ -811,7 +799,7 @@ export const PLUGINS_METADATA = {
     description: "Show your LastFM music statistics",
     category: "music",
     icon: "Music",
-    requiredFields: [],
+    requiredFields: ["username"],
     essentialConfigKeys: ["apiKey","username"],
     essentialConfigKeysMetadata: [
         {
@@ -1075,7 +1063,7 @@ export const PLUGINS_METADATA = {
     name: "lyfta",
     displayName: "Lyfta",
     description: "Show your workout statistics from Lyfta",
-    category: "health",
+    category: "gaming",
     icon: "Dumbbell",
     requiredFields: [],
     essentialConfigKeys: ["apiKey"],
@@ -1697,7 +1685,6 @@ export function getPluginsGroupedByCategory(): Record<PluginCategory, PluginMeta
     music: [],
     anime: [],
     gaming: [],
-    health: [],
   }
   
   Object.values(PLUGINS_METADATA).forEach((plugin) => {

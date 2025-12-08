@@ -4,16 +4,16 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { motion } from "framer-motion"
-import { Settings, Sparkles, Zap } from "lucide-react"
+import { Sparkles, Zap, Plus } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { HeroBackgroundPattern } from "./HeroBackgroundPattern"
-import { HeroCustomWizardModal } from "./HeroCustomWizardModal"
 import { HeroGlassPanels } from "./HeroGlassPanels"
 import { HeroParticles } from "./HeroParticles"
 import { HeroPluginConfigDialog } from "./HeroPluginConfigDialog"
 import { HeroPreviewShowcase } from "./HeroPreviewShowcase"
 import { HeroTemplateCard, type Template } from "./HeroTemplateCard"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface HeroSectionProps {
   title: string
@@ -110,7 +110,7 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
 	const { toast } = useToast()
   const [activeTemplate, setActiveTemplate] = useState<Template>(DEFAULT_TEMPLATES[0])
   const [isBuilding, setIsBuilding] = useState(false)
-  const [advancedWizardOpen, setAdvancedWizardOpen] = useState(false)
+  const [templatesModalOpen, setTemplatesModalOpen] = useState(false)
   const [configDialogOpen, setConfigDialogOpen] = useState<string | null>(null)
   const [templates] = useState<Template[]>(DEFAULT_TEMPLATES)
 	const [autoPlayIndex, setAutoPlayIndex] = useState(0)
@@ -177,7 +177,7 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
 
 	// Auto-play preview: cycle through templates automatically
 	useEffect(() => {
-		if (isUserInteracting || advancedWizardOpen || templates.length === 0) return
+		if (isUserInteracting || templatesModalOpen || templates.length === 0) return
 
 		const interval = setInterval(() => {
 			setAutoPlayIndex((prev) => {
@@ -191,7 +191,7 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
 		}, 4000) // Change template every 4 seconds
 
 		return () => clearInterval(interval)
-	}, [templates, isUserInteracting, advancedWizardOpen, activeTemplate.id, applyTemplate])
+	}, [templates, isUserInteracting, templatesModalOpen, activeTemplate.id, applyTemplate])
 
 	// Track user interaction to pause auto-play
 	useEffect(() => {
@@ -472,7 +472,7 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
                     variant="outline"
                     size="sm"
                     className="flex-1 text-xs h-8 backdrop-blur-sm"
-                    onClick={() => (window.location.href = "/templates")}
+                    onClick={() => setTemplatesModalOpen(true)}
 										aria-label={`View all ${templates.length} templates`}
                   >
                     View All ({templates.length})
@@ -482,11 +482,12 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
                   variant="ghost"
                   size="sm"
                   className="flex-1 text-xs h-8 group"
-                  onClick={() => setAdvancedWizardOpen(true)}
-									aria-label="Open customization wizard"
+                  asChild
                 >
-									<Settings className="w-3 h-3 mr-1.5 group-hover:rotate-90 transition-transform" aria-hidden="true" />
-                  Custom
+                  <Link href="/new">
+                    <Plus className="w-3 h-3 mr-1.5" aria-hidden="true" />
+                    Create Your Own
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -504,17 +505,55 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Advanced Wizard Modal */}
-			<HeroCustomWizardModal
-				open={advancedWizardOpen}
-				onOpenChange={setAdvancedWizardOpen}
-				selectedSources={selectedSources}
-				selectedStyle={selectedStyle}
-				selectedTheme={selectedTheme}
-				activeTemplate={activeTemplate}
-				onTemplateChange={setActiveTemplate}
-				onConfigDialogOpen={setConfigDialogOpen}
-                  />
+      {/* Templates Modal */}
+      <Dialog open={templatesModalOpen} onOpenChange={setTemplatesModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-2xl flex items-center gap-2">
+              <Sparkles className="w-6 h-6" />
+              Choose a Template
+            </DialogTitle>
+            <DialogDescription>
+              Select a template to preview or create your own custom profile
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-y-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
+              {templates.map((template) => (
+                <HeroTemplateCard
+                  key={template.id}
+                  template={template}
+                  isActive={activeTemplate.id === template.id}
+                  onClick={() => {
+                    handleTemplateClick(template)
+                    setTemplatesModalOpen(false)
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Create Your Own CTA */}
+            <div className="mt-6 pt-6 border-t border-border/50">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Don't see what you're looking for?
+                </p>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Link href="/new">
+                    <Plus className="w-4 h-4" />
+                    Create Your Own Profile
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Config dialogs for each plugin */}
 			{selectedSources.map((pluginId) => (

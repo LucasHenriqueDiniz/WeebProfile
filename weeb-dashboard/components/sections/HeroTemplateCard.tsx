@@ -3,7 +3,8 @@
 import { getPluginIcon } from "@/lib/plugins-data"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-import { Check, Github, Monitor, Terminal } from "lucide-react"
+import { Check, Monitor, Terminal } from "lucide-react"
+import { FaGithub } from "react-icons/fa"
 import { memo } from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -98,8 +99,8 @@ export const HeroTemplateCard = memo(function HeroTemplateCard({
 							{/* Plugin Icons - Smaller */}
 							<div className="flex items-center gap-1" aria-label={`Plugins: ${template.plugins.join(", ")}`}>
 								{template.plugins.slice(0, 3).map((pluginId) => {
-									const Icon = getPluginIcon(pluginId) || Github
-									return (
+									const Icon = getPluginIcon(pluginId) || FaGithub
+									return Icon ? (
 										<div
 											key={pluginId}
 											className="w-5 h-5 rounded bg-muted/50 border border-border/50 flex items-center justify-center"
@@ -107,7 +108,7 @@ export const HeroTemplateCard = memo(function HeroTemplateCard({
 										>
 											<Icon className="w-3 h-3 text-muted-foreground" />
 										</div>
-									)
+									) : null
 								})}
 								{template.plugins.length > 3 && (
 									<div className="w-5 h-5 rounded bg-muted/50 border border-border/50 flex items-center justify-center">
