@@ -1,16 +1,12 @@
-/**
- * Statistics component for Lyfta plugin
- */
-
 import React from 'react'
-import { Dumbbell } from 'lucide-react'
-import type { LyftaData, LyftaNonEssentialConfig } from '../types'
+import { GiWeightLiftingUp } from 'react-icons/gi'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { LyftaData, LyftaNonEssentialConfig } from '../types'
+import { formatWeight } from '../utils/weight'
 
 interface StatisticsProps {
   data: LyftaData
@@ -26,6 +22,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
 
   const hideTitle = config.statistics_hide_title || false
   const title = config.statistics_title || 'Statistics'
+  const weightUnit = config.weight_unit || 'kg'
   const stats = data.statistics
 
   return (
@@ -34,7 +31,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
         style={style}
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
-            {!hideTitle && <DefaultTitle title={title} icon={<Dumbbell />} />}
+            {!hideTitle && <DefaultTitle title={title} icon={<GiWeightLiftingUp />} />}
 
             <div className="grid grid-cols-2 gap-3 half:gap-2.5">
               <div className="flex flex-col px-4 py-3 half:px-3 half:py-2.5 rounded-xl border border-default-border/50 bg-default-card/40">
@@ -51,7 +48,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
                   Total Weight
                 </p>
                 <p className="text-xl half:text-lg font-black text-default-foreground tabular-nums">
-                  {Math.round(stats.totalLiftedWeight / 1000)}kg
+                  {formatWeight(stats.totalLiftedWeight, weightUnit)}
                 </p>
               </div>
 
@@ -60,7 +57,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
                   Current Streak
                 </p>
                 <p className="text-xl half:text-lg font-black text-default-foreground tabular-nums">
-                  {stats.currentStreak} days
+                  {Math.floor(stats.currentStreak / 7)} weeks
                 </p>
               </div>
 
@@ -69,7 +66,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
                   Longest Streak
                 </p>
                 <p className="text-xl half:text-lg font-black text-default-foreground tabular-nums">
-                  {stats.longestStreak} days
+                  {Math.floor(stats.longestStreak / 7)} weeks
                 </p>
               </div>
             </div>
@@ -96,13 +93,15 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
               })}
             />
             <TerminalLineWithDots title="Total Workouts" value={String(stats.totalWorkouts)} />
-            <TerminalLineWithDots title="Total Weight" value={`${Math.round(stats.totalLiftedWeight / 1000)}kg`} />
-            <TerminalLineWithDots title="Current Streak" value={`${stats.currentStreak} days`} />
-            <TerminalLineWithDots title="Longest Streak" value={`${stats.longestStreak} days`} />
+            <TerminalLineWithDots 
+              title="Total Weight" 
+              value={formatWeight(stats.totalLiftedWeight, weightUnit)}
+            />
+            <TerminalLineWithDots title="Current Streak" value={`${Math.floor(stats.currentStreak / 7)} weeks`} />
+            <TerminalLineWithDots title="Longest Streak" value={`${Math.floor(stats.longestStreak / 7)} weeks`} />
             {stats.favoriteExercise && (
               <TerminalLineWithDots title="Favorite Exercise" value={stats.favoriteExercise} />
             )}
-            <TerminalLineBreak />
           </>
         }
       />

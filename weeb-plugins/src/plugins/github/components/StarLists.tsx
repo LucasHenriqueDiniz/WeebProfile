@@ -1,20 +1,13 @@
-/**
- * Componente Star Lists do GitHub
- * 
- * Mostra listas de repositórios favoritados organizados
- */
-
 import React from 'react'
 import { FaList } from 'react-icons/fa'
-import { abbreviateNumber } from '../../../utils/number'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
+import { abbreviateNumber } from '../../../utils/number'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 
 interface StarListsProps {
   data: GithubData['starLists']
@@ -102,7 +95,6 @@ export function GithubStarLists({ data, config, style, size }: StarListsProps): 
               })}
             />
             <TerminalGrid data={gridData} rightText="List" centerText="Description" leftText="Repos" />
-            <TerminalLineBreak />
           </>
         }
       />

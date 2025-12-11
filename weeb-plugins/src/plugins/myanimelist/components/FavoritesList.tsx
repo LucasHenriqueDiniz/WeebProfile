@@ -1,30 +1,19 @@
-/**
- * FavoritesList - Componente unificado para exibir favoritos do MyAnimeList
- * 
- * Suporta 4 estilos diferentes:
- * - simple: Grid de imagens (estilo antigo SimpleFavorites)
- * - compact: Lista compacta sem summary (estilo antigo CharactersFavorites/PeopleFavorites)
- * - detailed: Lista completa com summary (estilo antigo AnimeFavorites/MangaFavorites com summary)
- * - minimal: Lista sem summary (estilo antigo AnimeFavorites/MangaFavorites sem summary)
- */
-
 import React from 'react'
-import { FaBook, FaCalendar, FaHashtag, FaHeart, FaStar, FaVideo, FaDumbbell, FaMap, FaLaugh, FaMask, FaKiss, FaHatCowboy, FaGhost, FaMagic, FaRobot, FaMusic, FaSearch, FaBrain, FaHeart as FaHeartTag, FaRocket, FaLeaf, FaFutbol, FaGem, FaExclamationTriangle, FaTrophy, FaUtensilSpoon, FaFire, FaBan } from 'react-icons/fa'
+import { FaBan, FaBook, FaBrain, FaCalendar, FaDumbbell, FaExclamationTriangle, FaFire, FaFutbol, FaGem, FaGhost, FaHashtag, FaHatCowboy, FaHeart, FaHeart as FaHeartTag, FaKiss, FaLaugh, FaLeaf, FaMagic, FaMap, FaMask, FaMusic, FaRobot, FaRocket, FaSearch, FaStar, FaTrophy, FaUtensilSpoon, FaVideo } from 'react-icons/fa'
 import { GoDotFill } from 'react-icons/go'
-import { treatJapaneseName } from '../../../utils/string'
-import { ImageComponent } from '../../../utils/image'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { DefaultTag, TerminalTag } from '../../../templates/GenreTags'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
+import { TerminalTag } from '../../../templates/GenreTags'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { ImageComponent } from '../../../utils/image'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import { treatJapaneseName } from '../../../utils/string'
 import type {
-  MyAnimeListConfig,
-  FullAnimeFavorite,
-  FullMangaFavorite,
   BasicCharacterFavorite,
   BasicPeopleFavorite,
+  FullAnimeFavorite,
+  FullMangaFavorite,
+  MyAnimeListConfig,
 } from '../types'
 
 type FavoriteType = 'anime' | 'manga' | 'people' | 'characters'
@@ -636,7 +625,7 @@ export function FavoritesList({
                 )}
               </div>
             ))}
-            <TerminalLineBreak />
+            
           </>
         )
 
@@ -656,7 +645,7 @@ export function FavoritesList({
                 <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
               ))}
             </div>
-            <TerminalLineBreak />
+            
           </>
         )
 
@@ -678,7 +667,7 @@ export function FavoritesList({
                   <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
                 ))}
               </div>
-              <TerminalLineBreak />
+              
             </>
           )
         }
@@ -695,7 +684,7 @@ export function FavoritesList({
             {displayData.map((item, index) => (
               <TerminalDetailedFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={`${type}-terminal-detailed-${item.mal_id}-${index}`} />
             ))}
-            <TerminalLineBreak />
+            
           </>
         )
 
@@ -717,7 +706,7 @@ export function FavoritesList({
                   <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
                 ))}
               </div>
-              <TerminalLineBreak />
+              
             </>
           )
         }
@@ -734,7 +723,7 @@ export function FavoritesList({
             {displayData.map((item, index) => (
               <TerminalMinimalFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={`${type}-terminal-minimal-${item.mal_id}-${index}`} />
             ))}
-            <TerminalLineBreak />
+            
           </>
         )
     }

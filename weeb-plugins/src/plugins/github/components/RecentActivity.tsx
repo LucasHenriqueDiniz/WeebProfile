@@ -1,21 +1,13 @@
-/**
- * Componente Recent Activity do GitHub
- * 
- * Mostra atividades recentes do usuário
- */
-
 import React from 'react'
-import { FaClock, FaCode, FaExclamationCircle, FaComment, FaCodeBranch } from 'react-icons/fa'
-import { RiGitPullRequestLine, RiGitMergeLine } from 'react-icons/ri'
-import { abbreviateNumber } from '../../../utils/number'
+import { FaClock, FaCode, FaCodeBranch, FaComment, FaExclamationCircle } from 'react-icons/fa'
+import { RiGitMergeLine, RiGitPullRequestLine } from 'react-icons/ri'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 
 interface RecentActivityProps {
   data: GithubData['recentActivity']
@@ -157,7 +149,6 @@ export function GithubRecentActivity({ data, config, style, size }: RecentActivi
               })}
             />
             <TerminalGrid data={gridData} rightText="Activity" centerText="Repository" leftText="Date" />
-            <TerminalLineBreak />
           </>
         }
       />

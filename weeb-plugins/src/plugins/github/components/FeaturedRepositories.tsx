@@ -1,21 +1,14 @@
-/**
- * Componente Featured Repositories do GitHub
- * 
- * Mostra repositórios em destaque (requer URLs dos repositórios)
- */
-
 import React from 'react'
-import { FaStar, FaCodeBranch, FaExclamationCircle, FaGitAlt } from 'react-icons/fa'
+import { FaCodeBranch, FaExclamationCircle, FaStar } from 'react-icons/fa'
 import { RiGitPullRequestLine } from 'react-icons/ri'
-import { abbreviateNumber } from '../../../utils/number'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
+import { abbreviateNumber } from '../../../utils/number'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 
 interface FeaturedRepositoriesProps {
   data: GithubData['featuredRepositories']
@@ -138,7 +131,6 @@ export function GithubFeaturedRepositories({ data, config, style, size }: Featur
               })}
             />
             <TerminalGrid data={gridData} rightText="Repository" centerText="Description" leftText="Stats" />
-            <TerminalLineBreak />
           </>
         }
       />

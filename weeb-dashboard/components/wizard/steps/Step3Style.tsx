@@ -1,9 +1,5 @@
 "use client"
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
@@ -14,11 +10,11 @@ import {
   defaultThemes as themesFromPlugins
 } from "@weeb/weeb-plugins/themes"
 import { useWizardStore } from "@/stores/wizard-store"
-import { CheckCircle2, Code2, FileText, Maximize2, Minimize2, Monitor, Paintbrush, RotateCcw, Terminal } from "lucide-react"
 import React, { useCallback, useEffect, useState } from "react"
-import { StyleSelector } from "../StyleSelector"
-import { LivePreview } from "../LivePreview"
 import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { RotateCcw } from "lucide-react"
 
 export function Step3Style() {
   const {
@@ -44,9 +40,9 @@ export function Step3Style() {
   const [localColors, setLocalColors] = useState<Record<string, string>>(customThemeColors)
   const debounceTimersRef = React.useRef<Record<string, NodeJS.Timeout>>({})
 
-  // Validate step 1 when component mounts (Style is now step 1)
+  // Validate step 2 when component mounts (Style is step 2)
   useEffect(() => {
-    validateStep(1)
+    validateStep(2)
   }, [validateStep])
 
   // Sync with store when changed externally
@@ -86,249 +82,176 @@ export function Step3Style() {
     }
   }, [])
 
+  const themes = style === "default" 
+    ? ["default", "purple", "pink", "cyan", "orange", "blue", "green", "red", "custom"]
+    : ["default", "dracula", "monokai"]
+
   return (
-    <div className="space-y-6">
-      {/* Style Selection */}
-      <Card className="border-2">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Monitor className="w-4 h-4 text-primary" />
-            </div>
-            Style
-          </CardTitle>
-          <CardDescription>Choose the visual style for your SVG image</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <StyleSelector
-            options={[
-              { value: "default", label: "Default", description: "Clean and modern default style" },
-              { value: "terminal", label: "Terminal", description: "Retro terminal style with command-line aesthetic" },
-            ]}
-            value={style}
-            onChange={(value) => setStyle(value as "default" | "terminal")}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Size Selection */}
-      <Card className="border-2">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              {size === "half" ? (
-                <Minimize2 className="w-4 h-4 text-primary" />
-              ) : (
-                <Maximize2 className="w-4 h-4 text-primary" />
-              )}
-            </div>
-            Size
-          </CardTitle>
-          <CardDescription>Select the width of your SVG image</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <StyleSelector
-            options={[
-              { value: "half", label: "Half Width", description: "415px width - Recommended for GitHub profiles" },
-              { value: "full", label: "Full Width", description: "830px width - For wider displays" },
-            ]}
-            value={size}
-            onChange={(value) => setSize(value as "half" | "full")}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Theme Selection */}
-      <Card className="border-2">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Paintbrush className="w-4 h-4 text-primary" />
-            </div>
-            Theme
-          </CardTitle>
-          <CardDescription>
-            {style === "default" 
-              ? "Choose a color theme or customize your own" 
-              : "Select a terminal color scheme"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {style === "default" ? (
-            <>
-              <StyleSelector
-                options={[
-                  { value: "default", label: "Default", description: "Warm orange theme" },
-                  { value: "purple", label: "Purple", description: "Rich purple tones" },
-                  { value: "pink", label: "Pink", description: "Soft pink palette" },
-                  { value: "cyan", label: "Cyan", description: "Cool cyan shades" },
-                  { value: "orange", label: "Orange", description: "Vibrant orange" },
-                  { value: "blue", label: "Blue", description: "Calm blue hues" },
-                  { value: "green", label: "Green", description: "Fresh green tones" },
-                  { value: "red", label: "Red", description: "Bold red accents" },
-                  { value: "custom", label: "Custom", description: "Create your own color palette" },
-                ]}
-                value={theme}
-                onChange={setTheme}
+    <div className="space-y-3">
+      {/* Style selector */}
+      <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+        <p className="text-sm font-semibold text-foreground">Style</p>
+        <div className="flex gap-3">
+          {["default", "terminal"].map((s) => (
+            <label key={s} className="flex-1 cursor-pointer">
+              <input
+                type="radio"
+                name="style"
+                className="sr-only peer"
+                checked={style === s}
+                onChange={() => setStyle(s as "default" | "terminal")}
               />
-              
-              {/* Custom Theme Colors */}
-              {theme === "custom" && (
-                <div className="mt-6 p-6 border-2 border-dashed rounded-xl bg-gradient-to-br from-muted/50 to-muted/30">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <Label className="text-base font-semibold">Custom Color Palette</Label>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Customize each color to match your brand or preference
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={resetCustomThemeColors}
-                      className="shrink-0"
-                    >
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      Reset to Defaults
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {DEFAULT_THEME_VARIABLES.filter(v => v !== '--default-color-raw').map((variable) => {
-                      const defaultValue = getDefaultColor(variable)
-                      const currentValue = localColors[variable] || defaultValue
-                      return (
-                        <div key={variable} className="space-y-2 p-3 rounded-lg bg-background/50 border border-border/50">
-                          <Label htmlFor={variable} className="text-sm font-medium">
-                            {DEFAULT_THEME_VARIABLE_LABELS[variable]}
-                          </Label>
-                          <div className="flex items-center gap-2">
-                            <Input
-                              id={variable}
-                              type="color"
-                              value={currentValue}
-                              onChange={(e) => handleColorChange(variable, e.target.value)}
-                              className="w-16 h-12 cursor-pointer border-2 border-border bg-background shrink-0 rounded-lg"
-                            />
-                            <Input
-                              type="text"
-                              value={currentValue}
-                              onChange={(e) => handleColorChange(variable, e.target.value)}
-                              placeholder={defaultValue}
-                              className="flex-1 font-mono text-sm"
-                            />
-                          </div>
-                          {DEFAULT_THEME_VARIABLE_DESCRIPTIONS[variable] && (
-                            <p className="text-xs text-muted-foreground">
-                              {DEFAULT_THEME_VARIABLE_DESCRIPTIONS[variable]}
-                            </p>
-                          )}
-                        </div>
-                      )
-                    })}
+              <div className="rounded-lg border-2 border-border bg-muted/50 px-4 py-3 text-center peer-checked:border-primary peer-checked:bg-primary/10 transition-all">
+                <span className="text-sm font-medium capitalize">{s}</span>
+              </div>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Size selector */}
+      <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+        <p className="text-sm font-semibold text-foreground">Size</p>
+        <div className="flex gap-3">
+          {[
+            { value: "half", label: "Half Width", desc: "415px" },
+            { value: "full", label: "Full Width", desc: "830px" },
+          ].map((s) => (
+            <label key={s.value} className="flex-1 cursor-pointer">
+              <input
+                type="radio"
+                name="size"
+                className="sr-only peer"
+                checked={size === s.value}
+                onChange={() => setSize(s.value as "half" | "full")}
+              />
+              <div className="rounded-lg border-2 border-border bg-muted/50 px-4 py-3 text-center peer-checked:border-primary peer-checked:bg-primary/10 transition-all">
+                <span className="text-sm font-medium">{s.label}</span>
+                <p className="text-xs text-muted-foreground mt-1">{s.desc}</p>
+              </div>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Theme selector */}
+      <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+        <p className="text-sm font-semibold text-foreground">Theme</p>
+        <div className="flex flex-wrap gap-2">
+          {themes.map((t) => (
+            <button
+              key={t}
+              onClick={() => setTheme(t)}
+              className={cn(
+                "px-3 py-1.5 rounded-full text-xs font-medium transition-all capitalize",
+                theme === t
+                  ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/30"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              )}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Custom Theme Colors */}
+      {theme === "custom" && style === "default" && (
+        <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground">Custom Colors</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={resetCustomThemeColors}
+              className="h-7 text-xs"
+            >
+              <RotateCcw className="w-3 h-3 mr-1" />
+              Reset
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {DEFAULT_THEME_VARIABLES.filter(v => v !== '--default-color-raw').map((variable) => {
+              const defaultValue = getDefaultColor(variable)
+              const currentValue = localColors[variable] || defaultValue
+              return (
+                <div key={variable} className="space-y-1.5">
+                  <Label className="text-xs font-medium">
+                    {DEFAULT_THEME_VARIABLE_LABELS[variable]}
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="color"
+                      value={currentValue}
+                      onChange={(e) => handleColorChange(variable, e.target.value)}
+                      className="w-12 h-8 cursor-pointer border-2 border-border bg-background shrink-0 rounded"
+                    />
+                    <Input
+                      type="text"
+                      value={currentValue}
+                      onChange={(e) => handleColorChange(variable, e.target.value)}
+                      placeholder={defaultValue}
+                      className="flex-1 h-8 text-xs font-mono"
+                    />
                   </div>
                 </div>
-              )}
-            </>
-          ) : (
-            <StyleSelector
-              options={[
-                { value: "default", label: "Default", description: "Classic green terminal theme" },
-                { value: "dracula", label: "Dracula", description: "Dark purple Dracula theme" },
-                { value: "monokai", label: "Monokai", description: "Vibrant Monokai color scheme" },
-              ]}
-              value={theme}
-              onChange={setTheme}
-            />
-          )}
-        </CardContent>
-      </Card>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Terminal Options */}
       {style === "terminal" && (
-        <Card className="border-2">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Terminal className="w-4 h-4 text-primary" />
-              </div>
-              Terminal Options
-            </CardTitle>
-            <CardDescription>Customize terminal-specific display options</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-muted/30">
-              <div className="space-y-0.5 flex-1">
-                <Label htmlFor="hide-emojis" className="text-base font-medium cursor-pointer">
-                  Hide Emojis
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  Remove emoji icons from terminal output
-                </p>
-              </div>
-              <Switch
-                id="hide-emojis"
-                checked={hideTerminalEmojis}
-                onCheckedChange={setHideTerminalEmojis}
-              />
+        <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+          <p className="text-sm font-semibold text-foreground">Terminal Options</p>
+          <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30">
+            <div className="space-y-0.5 flex-1">
+              <Label htmlFor="hide-emojis" className="text-sm font-medium cursor-pointer">
+                Hide Emojis
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Remove emoji icons from terminal output
+              </p>
             </div>
-            <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-muted/30">
-              <div className="space-y-0.5 flex-1">
-                <Label htmlFor="hide-header" className="text-base font-medium cursor-pointer">
-                  Hide Header
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  Remove the terminal header bar
-                </p>
-              </div>
-              <Switch
-                id="hide-header"
-                checked={hideTerminalHeader}
-                onCheckedChange={setHideTerminalHeader}
-              />
+            <Switch
+              id="hide-emojis"
+              checked={hideTerminalEmojis}
+              onCheckedChange={setHideTerminalEmojis}
+            />
+          </div>
+          <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30">
+            <div className="space-y-0.5 flex-1">
+              <Label htmlFor="hide-header" className="text-sm font-medium cursor-pointer">
+                Hide Header
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Remove the terminal header bar
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <Switch
+              id="hide-header"
+              checked={hideTerminalHeader}
+              onCheckedChange={setHideTerminalHeader}
+            />
+          </div>
+        </div>
       )}
 
       {/* Custom CSS */}
-      <Card className="border-2">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-xl flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Code2 className="w-4 h-4 text-primary" />
-            </div>
-            Advanced Customization
-          </CardTitle>
-          <CardDescription>Add custom CSS for fine-grained styling control</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="custom-css" className="border-none">
-              <AccordionTrigger className="py-2 hover:no-underline">
-                <div className="flex items-center gap-2">
-                  <Code2 className="w-4 h-4" />
-                  <Label className="text-base font-normal cursor-pointer">Custom CSS (Optional)</Label>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-3 pt-2">
-                  <Textarea
-                    id="custom-css"
-                    value={customCss}
-                    onChange={(e) => setCustomCss(e.target.value)}
-                    placeholder="/* Your custom CSS here */"
-                    className="font-mono text-sm min-h-[200px] resize-none"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Add custom CSS rules to further customize your image appearance
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardContent>
-      </Card>
+      <div className="rounded-lg border border-border bg-card p-4 space-y-2">
+        <p className="text-sm font-semibold text-foreground">Custom CSS</p>
+        <p className="text-xs text-muted-foreground">
+          Additional CSS applied on top of the selected theme.
+        </p>
+        <Textarea
+          value={customCss}
+          onChange={(e) => setCustomCss(e.target.value)}
+          placeholder="/* custom CSS here */"
+          className="w-full min-h-[160px] rounded-md border border-border bg-muted/50 px-3 py-2 text-xs font-mono focus:border-primary focus:ring-1 focus:ring-primary"
+        />
+      </div>
     </div>
   )
 }

@@ -2,20 +2,19 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles } from "lucide-react"
+import { motion } from "framer-motion"
+import { Check } from "lucide-react"
 import { useWizardStore } from "@/stores/wizard-store"
 import { Step2Plugins } from "./steps/Step2Plugins"
 import { Step3Style } from "./steps/Step3Style"
-import { Step4Preview } from "./steps/Step4Preview"
-import { TopNavBar } from "./TopNavBar"
-import { PreviewPanel } from "./PreviewPanel"
-import { NavigationFooter } from "./NavigationFooter"
-import { TemplateSelectorModal } from "./TemplateSelectorModal"
+import { Header } from "@/components/layout/Header"
+import { LivePreview } from "./LivePreview"
 import { useToast } from "@/hooks/use-toast"
 import { svgApi, ApiException } from "@/lib/api"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { Badge } from "@/components/ui/badge"
 
 interface WizardProps {
   isEditMode?: boolean
@@ -26,10 +25,8 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
   const router = useRouter()
   const { toast } = useToast()
   const [isSaving, setIsSaving] = useState(false)
-  const [showPreview, setShowPreview] = useState(true)
-  const [showTemplateModal, setShowTemplateModal] = useState(false)
+  const [activeTab, setActiveTab] = useState<"plugins" | "style">("plugins")
   const {
-    currentStep,
     name,
     slug,
     plugins,
@@ -42,38 +39,24 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     customCss,
     customThemeColors,
     isValid,
-    setStep,
     setBasicInfo,
     validateStep,
   } = useWizardStore()
 
-  const handleNext = () => {
-    if (validateStep(currentStep)) {
-      if (currentStep < 3) {
-        setStep(currentStep + 1)
-      }
-    } else {
-      toast({
-        title: "Validação",
-        description: "Por favor, preencha todos os campos obrigatórios",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setStep(currentStep - 1)
-    } else {
-      router.push("/dashboard")
-    }
-  }
+  const enabledPlugins = pluginsOrder.filter((name) => plugins[name]?.enabled)
+  const totalSections = enabledPlugins.reduce((sum, name) => {
+    return sum + (plugins[name]?.sections?.length || 0)
+  }, 0)
 
   const handleFinish = async () => {
-    if (!validateStep(3)) {
+    // Validate both steps
+    const pluginsValid = validateStep(1)
+    const styleValid = validateStep(2)
+    
+    if (!pluginsValid || !styleValid) {
       toast({
         title: "Validação",
-        description: "Por favor, complete todos os passos",
+        description: "Por favor, complete todos os campos obrigatórios",
         variant: "destructive",
       })
       return
@@ -216,24 +199,17 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     }
   }
 
-  const steps = [
-    { number: 1, title: "Estilo" },
-    { number: 2, title: "Plugins" },
-    { number: 3, title: "Preview" },
-  ]
-
-  const renderStepComponent = () => {
-    switch (currentStep) {
-      case 1:
-        return <Step3Style />
-      case 2:
-        return <Step2Plugins />
-      case 3:
-        return <Step4Preview />
-      default:
-        return <Step3Style />
-    }
-  }
+  const hasMissingEssential = enabledPlugins.some((name) => {
+    const plugin = plugins[name]
+    if (!plugin?.enabled) return false
+    const metadata = PLUGINS_METADATA[name as keyof typeof PLUGINS_METADATA]
+    if (!metadata) return false
+    return metadata.requiredFields.some((field) => {
+      const value = (plugin as any)[field]
+      if (typeof value === 'string') return !value.trim()
+      return !value
+    })
+  })
 
   return (
     <div className="flex flex-col h-screen bg-background relative overflow-hidden">
@@ -267,77 +243,115 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
       </div>
 
       {/* Top Navigation */}
-      <TopNavBar 
-        showPreview={showPreview} 
-        onTogglePreview={() => setShowPreview(!showPreview)}
+      <Header
+        variant="wizard"
+        stats={
+          enabledPlugins.length > 0
+            ? {
+                style,
+                theme,
+                plugins: enabledPlugins.length,
+                sections: totalSections,
+              }
+            : undefined
+        }
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-8 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            {/* Header */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mb-8 flex items-start justify-between"
-            >
-              <div>
-                <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2">
-                  <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 bg-clip-text text-transparent">
-                    Criar Nova Imagem
-                  </span>
-                </h1>
-                <p className="text-muted-foreground text-lg">
-                  Configure sua imagem SVG para o perfil do GitHub
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowTemplateModal(true)}
-                className="gap-2"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span className="hidden sm:inline">Templates</span>
-              </Button>
-            </motion.div>
+      {/* Main Content - Split Layout */}
+      <div className="flex-1 flex overflow-hidden pt-[65px]">
+        {/* LEFT: Configuration */}
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-6 max-w-6xl mx-auto">
+            {/* Tabs */}
+            <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "plugins" | "style")}>
+                <div className="flex border-b border-border">
+                  <TabsList className="w-full h-auto p-0 bg-transparent">
+                    <TabsTrigger
+                      value="plugins"
+                      className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
+                    >
+                      Plugins
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="style"
+                      className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
+                    >
+                      Style
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
 
-            {/* Step Content */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                {renderStepComponent()}
-              </motion.div>
-            </AnimatePresence>
+                <TabsContent value="plugins" className="p-4 m-0">
+                  <Step2Plugins />
+                </TabsContent>
+
+                <TabsContent value="style" className="p-4 m-0">
+                  <Step3Style />
+                </TabsContent>
+              </Tabs>
+            </div>
+            </div>
           </div>
-        </main>
+        </div>
 
-        {/* Preview Panel - Hidden on final preview step */}
-        {currentStep > 1 && currentStep < 3 && (
-          <PreviewPanel isVisible={showPreview} />
-        )}
+        {/* RIGHT: Preview (fixed width 415px) */}
+        <div className="w-[415px] border-l border-border bg-card/50 backdrop-blur-sm overflow-hidden flex flex-col flex-shrink-0">
+          <div className="p-4 flex flex-col h-full">
+            {/* SVG Preview - Exatamente 415px de largura */}
+            <div className="flex-1 rounded-xl border-2 border-dashed border-border bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 p-0 flex items-start justify-center overflow-hidden min-h-0 mb-4" style={{ width: "415px", marginLeft: "-16px", marginRight: "-16px" }}>
+              {enabledPlugins.length > 0 ? (
+                <div className="w-full flex justify-center" style={{ width: "415px" }}>
+                  <LivePreview compact />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full" style={{ width: "415px" }}>
+                  <div className="text-center space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      Habilite plugins para ver o preview
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Warning e Botão - Sempre no final */}
+            <div className="flex-shrink-0 space-y-3 pt-3 border-t border-border">
+              {/* Warning badge se necessário */}
+              {hasMissingEssential && (
+                <Badge variant="destructive" className="w-full justify-center text-xs">
+                  Missing essential configuration
+                </Badge>
+              )}
+
+              {/* Finalize Button */}
+              <Button
+                onClick={handleFinish}
+                disabled={isSaving || !isValid.step1 || !isValid.step2 || hasMissingEssential}
+                className="w-full gap-2 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 hover:from-purple-600 hover:via-pink-600 hover:to-cyan-600 shadow-lg shadow-pink-500/20"
+                size="lg"
+              >
+                {isSaving ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                    />
+                    Gerando...
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Finalize
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Navigation Footer */}
-      <NavigationFooter
-        currentStep={currentStep}
-        totalSteps={3}
-        onPrevious={handleBack}
-        onNext={handleNext}
-        onSave={handleFinish}
-        isSaving={isSaving}
-      />
-
-      {/* Template Selector Modal */}
-      <TemplateSelectorModal open={showTemplateModal} onOpenChange={setShowTemplateModal} />
     </div>
   )
 }

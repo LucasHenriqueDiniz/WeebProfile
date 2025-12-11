@@ -1,22 +1,15 @@
-/**
- * Componente CodeHabits do GitHub
- * 
- * Versão simplificada migrada do source original
- */
-
 import React from 'react'
 import { FaCode } from 'react-icons/fa'
-import { abbreviateNumber } from '../../../utils/number'
-import { randomColorWithString } from '../../../utils/string'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalHorizontalMultipleItemsBar } from '../../../templates/Terminal/TerminalHorizontalMultipleItems'
 import { TerminalLine } from '../../../templates/Terminal/TerminalLine'
 import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
+import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { randomColorWithString } from '../../../utils/string'
+import type { GithubConfig, GithubData } from '../types'
 
 interface CodeHabitsProps {
   data: GithubData['codeHabits']
@@ -341,7 +334,6 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
               hideHours={hideHours}
               hideFooter={hideFooter}
             />
-            <TerminalLineBreak />
           </>
         }
       />

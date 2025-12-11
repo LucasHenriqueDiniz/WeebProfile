@@ -1,7 +1,3 @@
-/**
- * Statistics - Componente para exibir estatísticas do MyAnimeList
- */
-
 import React from 'react'
 import { FaBookOpen, FaCalendar, FaDatabase, FaQuestionCircle, FaStar, FaVideo } from 'react-icons/fa'
 import { FaCircleCheck, FaCirclePause, FaCirclePlay, FaCircleXmark } from 'react-icons/fa6'
@@ -12,13 +8,11 @@ import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import type { GridItemProps } from '../../../templates/types'
 import { emojiStatus } from '../../../utils/emoji'
 import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import type { AnimeStatistics, MangaStatistics, MyAnimeListConfig, MyAnimeListData } from '../types'
-import { LuCircleCheckBig, LuCircleHelp, LuCirclePause, LuCirclePlay, LuCircleX } from 'react-icons/lu'
 
 interface StatisticsProps {
   data: MyAnimeListData['statistics']
@@ -286,7 +280,6 @@ export function Statistics({ data, config, style, size, hideTerminalEmojis = fal
           <TerminalGrid data={animeDataAsGridItemProps} rightText={animeTitle} centerText="Values" />
         </div>
       )}
-      <TerminalLineBreak className="hidden half:block" />
       {showManga && (
         <div className="flex flex-col w-full">
           <TerminalGrid data={mangaDataAsGridItemProps} rightText={mangaTitle} centerText="Values" />
@@ -312,7 +305,6 @@ export function Statistics({ data, config, style, size, hideTerminalEmojis = fal
               })}
             />
             <TerminalStatistics />
-            <TerminalLineBreak />
           </>
         }
       />

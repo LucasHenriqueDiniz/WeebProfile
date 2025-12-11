@@ -32,31 +32,23 @@ export function LivePreview({ compact = false }: LivePreviewProps = {}) {
     )
   }
 
-  // Calcular largura baseada no size (430px para half, 800px para full)
-  const previewWidth = size === "half" ? 430 : 800
+  // Calcular largura baseada no size (415px para half, 830px para full - tamanho exato do SVG)
+  const previewWidth = size === "half" ? 415 : 830
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start">
-      <div 
-        className="flex items-start justify-center transition-all duration-200"
-        style={{
-          width: `${previewWidth}px`,
-          maxWidth: "100%",
-        }}
-      >
-        <div className="flex-shrink-0 w-full">
-          <PreviewRenderer
-            plugins={plugins}
-            pluginsOrder={pluginsOrder}
-            style={style}
-            size={size}
-            theme={theme}
-            hideTerminalEmojis={hideTerminalEmojis}
-            hideTerminalHeader={hideTerminalHeader}
-            customCss={customCss}
-            customThemeColors={theme === 'custom' ? customThemeColors : undefined}
-          />
-        </div>
+    <div className="flex flex-col items-center justify-start" style={{ width: `${previewWidth}px` }}>
+      <div className="flex-shrink-0 w-full" style={{ width: `${previewWidth}px` }}>
+        <PreviewRenderer
+          plugins={plugins}
+          pluginsOrder={pluginsOrder}
+          style={style}
+          size={size}
+          theme={theme}
+          hideTerminalEmojis={hideTerminalEmojis}
+          hideTerminalHeader={hideTerminalHeader}
+          customCss={customCss}
+          customThemeColors={theme === 'custom' ? customThemeColors : undefined}
+        />
       </div>
       <style jsx global>{`
         /* Custom scrollbar styles for container */

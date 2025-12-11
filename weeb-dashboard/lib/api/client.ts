@@ -120,6 +120,19 @@ export const profileApi = {
       missingConfigs: Array<{ pluginName: string; missingKeys: any[] }>
     }>(`/api/profile/essential-configs${params}`)
   },
+
+  /**
+   * Atualizar uma essential config específica
+   */
+  async updateEssentialConfig(plugin: string, key: string, value: string) {
+    return apiPut<{ success: boolean }>("/api/profile", {
+      essentialConfigs: {
+        [plugin]: {
+          [key]: value
+        }
+      }
+    })
+  },
 }
 
 /**
@@ -192,6 +205,11 @@ export const templateApi = {
     method: "DELETE",
   }),
 }
+
+
+
+
+
 
 
 

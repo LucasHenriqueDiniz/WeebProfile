@@ -1095,6 +1095,17 @@ export const PLUGINS_METADATA = {
           label: "Title",
           type: "string",
           defaultValue: "Statistics"
+        },
+        {
+          key: "weight_unit",
+          label: "Weight unit",
+          type: "select",
+          defaultValue: "kg",
+          description: "Unit to display weight values",
+          options: [
+            { value: "kg", label: "Kilograms (kg)" },
+            { value: "lbs", label: "Pounds (lbs)" }
+          ]
         }
         ]
       },

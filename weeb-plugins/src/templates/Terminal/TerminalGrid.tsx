@@ -1,7 +1,3 @@
-/**
- * TerminalGrid - Grid para estilo terminal
- */
-
 import React from 'react'
 import type { GridItemProps } from '../types'
 

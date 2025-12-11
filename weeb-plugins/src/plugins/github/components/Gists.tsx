@@ -1,17 +1,12 @@
-/**
- * Componente Gists do GitHub
- */
-
 import React from 'react'
 import { FaCode, FaFileCode } from 'react-icons/fa'
-import { abbreviateNumber } from '../../../utils/number'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
+import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import type { GithubConfig, GithubData } from '../types'
 
 const DefaultGists = ({ 
   data,
@@ -160,7 +155,6 @@ export function GithubGists({
               })}
             />
             <TerminalGists data={data} maxGists={maxGists} />
-            <TerminalLineBreak />
           </>
         }
       />

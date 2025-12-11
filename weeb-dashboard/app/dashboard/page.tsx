@@ -1,12 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
-import { Plus, Edit2, Trash2, Copy, Loader2, ExternalLink, Zap, RefreshCw } from "lucide-react"
+import { Plus, Edit2, Trash2, Copy, Loader2, ExternalLink, Zap, RefreshCw, Search, Filter, ArrowUpDown, Image as ImageIcon } from "lucide-react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import Link from "next/link"
 import type { Svg } from "@/lib/db/schema"
 import { svgApi, ApiException } from "@/lib/api"
@@ -17,12 +26,18 @@ const styleColors: Record<string, string> = {
   terminal: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
 }
 
+type SortOption = "newest" | "oldest" | "name" | "status"
+type FilterStatus = "all" | "completed" | "generating" | "pending"
+
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [generatingId, setGeneratingId] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>("all")
+  const [sortBy, setSortBy] = useState<SortOption>("newest")
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -99,6 +114,45 @@ export default function DashboardPage() {
     return remaining > 0 ? Math.ceil(remaining) : 0
   }
 
+  // Filtrar e ordenar SVGs
+  const filteredAndSortedSvgs = useMemo(() => {
+    let filtered = [...svgs]
+
+    // Filtrar por busca
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (svg) =>
+          svg.name.toLowerCase().includes(query) ||
+          svg.slug?.toLowerCase().includes(query) ||
+          svg.id.toLowerCase().includes(query)
+      )
+    }
+
+    // Filtrar por status
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((svg) => svg.status === statusFilter)
+    }
+
+    // Ordenar
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+        case "oldest":
+          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+        case "name":
+          return a.name.localeCompare(b.name)
+        case "status":
+          return a.status.localeCompare(b.status)
+        default:
+          return 0
+      }
+    })
+
+    return filtered
+  }, [svgs, searchQuery, statusFilter, sortBy])
+
 
   // Só mostrar loading se não tiver dados e estiver carregando
   if (authLoading || (svgsLoading && svgs.length === 0)) {
@@ -127,8 +181,8 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">My SVGs</h1>
           <p className="text-muted-foreground mt-2">
-            {svgs.length} SVG
-            {svgs.length !== 1 ? "s" : ""} created
+            {filteredAndSortedSvgs.length} of {svgs.length} SVG
+            {svgs.length !== 1 ? "s" : ""}
           </p>
         </div>
         <Button asChild size="lg" className="gap-2">
@@ -137,6 +191,52 @@ export default function DashboardPage() {
             Create New
           </Link>
         </Button>
+      </motion.div>
+
+      {/* Filters and Search */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+        className="flex flex-col sm:flex-row gap-4"
+      >
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name, slug, or ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <div className="relative w-full sm:w-[180px]">
+          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
+            <SelectTrigger className="w-full pl-9">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="generating">Generating</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="relative w-full sm:w-[180px]">
+          <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+            <SelectTrigger className="w-full pl-9">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+              <SelectItem value="name">Name (A-Z)</SelectItem>
+              <SelectItem value="status">Status</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </motion.div>
 
       {/* Stats Grid */}
@@ -179,164 +279,209 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* SVGs List */}
-      {svgs.length > 0 ? (
+      {filteredAndSortedSvgs.length > 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.3 }}
-          className="space-y-4"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {svgs.map((svg, index) => (
+          {filteredAndSortedSvgs.map((svg, index) => (
             <motion.div
               key={svg.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.3 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
             >
-              <Card className="hover:shadow-lg hover:border-primary/50 transition-all group">
-                <CardContent className="p-6">
-                  <div className="grid md:grid-cols-4 gap-4 items-center">
-                    {/* Info */}
-                    <div className="space-y-2">
-                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">
+              <Card className="hover:shadow-lg hover:border-primary/50 transition-all group h-full flex flex-col">
+                <CardContent className="p-6 flex flex-col flex-1">
+                  {/* Preview Image */}
+                  {svg.storageUrl && svg.status === "completed" ? (
+                    <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/50">
+                      <img
+                        src={svg.storageUrl}
+                        alt={svg.name}
+                        className="w-full h-auto object-contain"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none"
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="mb-4 rounded-lg border border-border bg-muted/50 aspect-video flex items-center justify-center">
+                      {svg.status === "generating" ? (
+                        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                      ) : (
+                        <ImageIcon className="w-8 h-8 text-muted-foreground" />
+                      )}
+                    </div>
+                  )}
+
+                  {/* Info */}
+                  <div className="space-y-3 flex-1">
+                    <div>
+                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors mb-1">
                         {svg.name}
                       </h3>
-                      <code className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded block w-fit">
+                      <code className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
                         /{svg.slug || svg.id.slice(0, 8)}
                       </code>
                     </div>
 
-                    {/* Details */}
-                    <div className="hidden md:grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Style</p>
-                        <div
-                          className={`inline-block px-3 py-1 rounded-full text-sm font-medium capitalize ${
-                            styleColors[svg.style] || styleColors.default
-                          }`}
-                        >
-                          {svg.style}
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Size</p>
-                        <p className="text-sm font-medium">
-                          {svg.size === "half" ? "415px" : "830px"}
-                        </p>
-                      </div>
+                    {/* Status Badge */}
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant={
+                          svg.status === "completed"
+                            ? "default"
+                            : svg.status === "generating"
+                            ? "secondary"
+                            : "outline"
+                        }
+                        className="gap-1"
+                      >
+                        {svg.status === "generating" && <Loader2 className="w-3 h-3 animate-spin" />}
+                        {svg.status === "completed" ? "Ready" : svg.status}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={`${styleColors[svg.style] || styleColors.default} border-0`}
+                      >
+                        {svg.style}
+                      </Badge>
                     </div>
 
                     {/* Plugins */}
-                    <div className="hidden lg:block space-y-1">
-                      <p className="text-xs text-muted-foreground">
-                        Plugins
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {svg.pluginsOrder?.split(",").slice(0, 3).map((plugin) => (
-                          <span
-                            key={plugin}
-                            className="text-xs px-2 py-1 rounded-full bg-muted/50 capitalize"
-                          >
-                            {plugin}
-                          </span>
-                        ))}
-                        {svg.pluginsOrder && svg.pluginsOrder.split(",").length > 3 && (
-                          <span className="text-xs px-2 py-1 rounded-full bg-muted/50">
-                            +{svg.pluginsOrder.split(",").length - 3}
-                          </span>
-                        )}
+                    {svg.pluginsOrder && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Plugins</p>
+                        <div className="flex flex-wrap gap-1">
+                          {svg.pluginsOrder.split(",").slice(0, 4).map((plugin) => (
+                            <Badge key={plugin} variant="outline" className="text-xs">
+                              {plugin}
+                            </Badge>
+                          ))}
+                          {svg.pluginsOrder.split(",").length > 4 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{svg.pluginsOrder.split(",").length - 4}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
-                    {/* Stats & Actions */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1 text-sm">
-                        <Zap className="w-4 h-4 text-yellow-500" />
-                        {svg.status === "completed" ? "Ready" : svg.status}
-                      </div>
-                      <div className="flex gap-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-2 hover:bg-muted rounded-lg transition-colors disabled:opacity-50"
-                          title="Forçar Geração"
-                          onClick={() => handleForceGenerate(svg)}
-                          disabled={generatingId === svg.id || svg.status === "generating"}
-                        >
-                          {generatingId === svg.id ? (
-                            <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
-                          ) : (
-                            <RefreshCw className="w-4 h-4 text-muted-foreground" />
-                          )}
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-2 hover:bg-muted rounded-lg transition-colors"
-                          title="Copy URL"
-                          onClick={() => handleCopyUrl(svg)}
-                        >
-                          <Copy className="w-4 h-4 text-muted-foreground" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-2 hover:bg-muted rounded-lg transition-colors"
-                          title="View"
-                          onClick={() => router.push(`/dashboard/${svg.id}`)}
-                        >
-                          <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-2 hover:bg-muted rounded-lg transition-colors"
-                          title="Edit"
-                          onClick={() => router.push(`/dashboard/${svg.id}/edit`)}
-                        >
-                          <Edit2 className="w-4 h-4 text-muted-foreground" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-2 hover:bg-red-500/10 rounded-lg transition-colors"
-                          title="Delete"
-                          onClick={() => handleDelete(svg.id)}
-                          disabled={deletingId === svg.id}
-                        >
-                          {deletingId === svg.id ? (
-                            <Loader2 className="w-4 h-4 text-red-500 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          )}
-                        </motion.button>
-                      </div>
-                    </div>
+                    {/* Last Updated */}
+                    {svg.lastGeneratedAt && (
+                      <p className="text-xs text-muted-foreground">
+                        Updated {new Date(svg.lastGeneratedAt).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 mt-4 pt-4 border-t">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => router.push(`/dashboard/${svg.id}`)}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      View
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCopyUrl(svg)}
+                      title="Copy URL"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => router.push(`/dashboard/${svg.id}/edit`)}
+                      title="Edit"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleForceGenerate(svg)}
+                      disabled={generatingId === svg.id || svg.status === "generating"}
+                      title="Force Generate"
+                    >
+                      {generatingId === svg.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(svg.id)}
+                      disabled={deletingId === svg.id}
+                      className="text-destructive hover:text-destructive"
+                      title="Delete"
+                    >
+                      {deletingId === svg.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </motion.div>
+      ) : svgs.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          className="text-center py-20"
+        >
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6">
+            <ImageIcon className="w-12 h-12 text-primary" />
+          </div>
+          <h3 className="text-2xl font-bold mb-2">No SVGs yet</h3>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
+            Create your first WeebProfile SVG to showcase your stats on GitHub
+          </p>
+          <Button asChild size="lg" className="gap-2">
+            <Link href="/dashboard/new">
+              <Plus className="w-5 h-5" />
+              Create Your First SVG
+            </Link>
+          </Button>
+        </motion.div>
       ) : (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.3 }}
-          className="text-center py-12"
+          className="text-center py-20"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted/50 mb-4">
-            <Plus className="w-8 h-8 text-muted-foreground" />
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-muted/50 mb-6">
+            <Search className="w-12 h-12 text-muted-foreground" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">No SVGs yet</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Create your first WeebProfile SVG to get started
+          <h3 className="text-2xl font-bold mb-2">No results found</h3>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
+            Try adjusting your search or filter criteria
           </p>
-          <Button asChild className="gap-2">
-            <Link href="/dashboard/new">
-              <Plus className="w-4 h-4" />
-              Create Your First SVG
-            </Link>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => {
+              setSearchQuery("")
+              setStatusFilter("all")
+            }}
+          >
+            Clear Filters
           </Button>
         </motion.div>
       )}

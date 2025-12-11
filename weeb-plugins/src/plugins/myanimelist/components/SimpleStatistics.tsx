@@ -1,20 +1,13 @@
-/**
- * SimpleStatistics - Componente para exibir estatísticas simplificadas do MyAnimeList
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
 import React from 'react'
 import { FaBookOpen, FaCalendar, FaStar, FaVideo } from 'react-icons/fa'
 import { IoStatsChartOutline } from 'react-icons/io5'
-import { abbreviateNumber } from '../../../utils/number'
-import { emojiStatus } from '../../../utils/emoji'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { Stat } from '../../../templates/Default/DefaultStatRow'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { emojiStatus } from '../../../utils/emoji'
+import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import type { MyAnimeListConfig, MyAnimeListData } from '../types'
 
@@ -113,7 +106,6 @@ export function SimpleStatistics({
               title={`${emojiStatus('episodes_watched', hideTerminalEmojis)} Episodes Watched`}
               value={abbreviateNumber(EpisodesWatched)}
             />
-            <TerminalLineBreak />
           </>
         }
         style={style}

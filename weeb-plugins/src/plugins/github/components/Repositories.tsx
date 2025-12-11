@@ -1,22 +1,15 @@
-/**
- * Componente Repositories do GitHub
- * 
- * Versão simplificada migrada do source original
- */
-
 import React from 'react'
 import { FaBox, FaCodeBranch, FaDatabase, FaEye, FaHeart, FaStar } from 'react-icons/fa'
 import { RiGitRepositoryLine } from 'react-icons/ri'
 import { TbLicense } from 'react-icons/tb'
-import { abbreviateNumber, formatDiskUsage } from '../../../utils/number'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { StatisticRow } from '../../../templates/Default/DefaultStatRow'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
+import { abbreviateNumber, formatDiskUsage } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import type { GithubConfig, GithubData } from '../types'
 
 
 const DefaultRepositories = ({ data, totalDiskUsage, sponsoringCount, favoriteLicense }: { 
@@ -176,7 +169,6 @@ export function GithubRepositories({
               sponsoringCount={sponsoringCount}
               favoriteLicense={favoriteLicense}
             />
-            <TerminalLineBreak />
           </>
         }
       />

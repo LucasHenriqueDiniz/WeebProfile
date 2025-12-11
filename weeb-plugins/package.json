@@ -18,6 +18,10 @@
       "import": "./dist/plugins/metadata.js",
       "types": "./dist/plugins/metadata.d.ts"
     },
+    "./plugins/tags": {
+      "import": "./dist/plugins/tags.js",
+      "types": "./dist/plugins/tags.d.ts"
+    },
     "./plugins/github/components/RenderGithub": {
       "import": "./dist/plugins/github/components/RenderGithub.js",
       "types": "./dist/plugins/github/components/RenderGithub.d.ts"

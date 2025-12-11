@@ -1,19 +1,12 @@
-/**
- * Componente Sponsors do GitHub
- * 
- * Mostra sponsors do usuário (quem está patrocinando o usuário)
- */
-
 import React from 'react'
-import { FaHeart, FaFrown } from 'react-icons/fa'
+import { FaFrown, FaHeart } from 'react-icons/fa'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 
 interface SponsorsProps {
   data: GithubData['sponsors']
@@ -108,7 +101,6 @@ export function GithubSponsors({ data, config, style, size }: SponsorsProps): Re
             ) : (
               <TerminalGrid data={gridData} rightText="Sponsor" centerText="Tier" leftText="Amount" />
             )}
-            <TerminalLineBreak />
           </>
         }
       />

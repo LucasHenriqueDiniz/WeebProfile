@@ -100,8 +100,14 @@ export function SectionConfigDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-          <Settings className="w-4 h-4" />
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-6 w-6 p-0 rounded-full hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-colors" 
+          onClick={(e) => e.stopPropagation()}
+          title="Configurar seção"
+        >
+          <Settings className="w-3 h-3" />
         </Button>
       </DialogTrigger>
       <DialogContent>

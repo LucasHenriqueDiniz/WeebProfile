@@ -1,20 +1,13 @@
-/**
- * Componente FavoriteLicense do GitHub
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
 import React from 'react'
 import { FaCode } from 'react-icons/fa'
 import { TbLicense } from 'react-icons/tb'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import TerminalTree from '../../../templates/Terminal/TerminalTree'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import type { GridItemProps } from '../../../templates/types'
-import type { GithubData, GithubConfig } from '../types'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 
 interface FavoriteLicenseProps {
   data: GithubData['favoriteLicense']
@@ -89,7 +82,6 @@ export function FavoriteLicense({
               })}
             />
             <TerminalFavoriteLicense data={data} total={total} />
-            <TerminalLineBreak />
           </>
         }
         style={style}

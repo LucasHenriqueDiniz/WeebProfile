@@ -1,18 +1,12 @@
-/**
- * RecentTracks - Componente para exibir faixas recentes do LastFM
- */
-
 import React from 'react'
 import { MdOutlineAudiotrack } from 'react-icons/md'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { abbreviateNumber } from '../../../utils/number'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalList } from '../../../templates/Terminal/TerminalList'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { DefaultList } from '../../../templates/Default/DefaultList'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { TerminalList } from '../../../templates/Terminal/TerminalList'
 import type { ListItemProps } from '../../../templates/types'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import type { LastFmTrack } from '../types'
 
 interface RecentTracksProps {
@@ -89,7 +83,6 @@ export function RecentTracks({ data, interval, config, style = 'default', size =
               })}
             />
             <TerminalList data={terminalListItems} />
-            <TerminalLineBreak />
           </>
         }
       />

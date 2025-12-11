@@ -31,6 +31,16 @@ export {
   type EssentialConfigKeyMetadata,
 } from './metadata'
 
+// Export plugin tags system
+export {
+  PLUGIN_TAGS,
+  getAllTags,
+  getPluginTags,
+  hasPluginTag,
+  getPluginsByTag,
+  type PluginTag,
+} from './tags'
+
 // Export Plugin Registry (class)
 export {
   PluginRegistry,

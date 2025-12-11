@@ -1,17 +1,11 @@
-/**
- * Statistics component for Steam plugin
- */
-
 import React from 'react'
 import { FaSteam } from 'react-icons/fa'
-import { ImageComponent } from '../../../utils/image'
-import type { SteamData, SteamNonEssentialConfig } from '../types'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { SteamData, SteamNonEssentialConfig } from '../types'
 
 interface StatisticsProps {
   data: SteamData
@@ -155,13 +149,15 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
                 size,
               })}
             />
+            {data.playerSummary && (
+              <TerminalLineWithDots title="Profile" value={data.playerSummary.personaname} />
+            )}
             <TerminalLineWithDots title="Total Games" value={String(stats.totalGames)} />
             <TerminalLineWithDots title="Total Playtime" value={formatPlaytime(stats.totalPlaytime)} />
             <TerminalLineWithDots title="Recent Playtime" value={formatPlaytime(stats.recentPlaytime)} />
             {stats.favoriteGame && (
               <TerminalLineWithDots title="Favorite Game" value={stats.favoriteGame} />
             )}
-            <TerminalLineBreak />
           </>
         }
       />

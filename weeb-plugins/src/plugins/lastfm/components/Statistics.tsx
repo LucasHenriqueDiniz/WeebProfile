@@ -1,17 +1,12 @@
-/**
- * Statistics - Shared component for LastFM statistics
- */
-
 import React from 'react'
 import { IoStatsChartOutline } from 'react-icons/io5'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { abbreviateNumber } from '../../../utils/number'
-import { ImageComponent } from '../../../utils/image'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
+import { ImageComponent } from '../../../utils/image'
+import { abbreviateNumber } from '../../../utils/number'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import type { LastFmData } from '../types'
 
 interface StatisticsProps {
@@ -149,7 +144,6 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
               />
             ))}
             {!hideFeaturedTrack && data.featuredTrack && <TerminalFeaturedTrack track={data.featuredTrack} />}
-            <TerminalLineBreak />
           </>
         }
       />

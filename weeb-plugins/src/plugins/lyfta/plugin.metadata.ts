@@ -43,6 +43,17 @@ export const lyftaPluginMetadata = {
           type: "string" as const,
           defaultValue: "Statistics",
         },
+        {
+          key: "weight_unit",
+          label: "Weight unit",
+          type: "select" as const,
+          defaultValue: "kg",
+          options: [
+            { value: "kg", label: "Kilograms (kg)" },
+            { value: "lbs", label: "Pounds (lbs)" },
+          ],
+          description: "Unit to display weight values",
+        },
       ],
     },
     {

@@ -1,19 +1,12 @@
-/**
- * Componente Repository Contributors do GitHub
- * 
- * Mostra contribuidores de um repositório específico
- */
-
 import React from 'react'
 import { FaCodeBranch } from 'react-icons/fa'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 
 interface RepositoryContributorsProps {
   data: GithubData['repositoryContributors']
@@ -94,7 +87,6 @@ export function GithubRepositoryContributors({ data, config, style, size }: Repo
               })}
             />
             <TerminalGrid data={gridData} rightText="Contributor" centerText="Contributions" leftText="" />
-            <TerminalLineBreak />
           </>
         }
       />

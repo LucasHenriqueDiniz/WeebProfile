@@ -1,21 +1,14 @@
-/**
- * Componente Notable Contributions do GitHub
- * 
- * Mostra contribuições notáveis em repositórios
- */
-
 import React from 'react'
-import { FaCodeBranch, FaCode, FaExclamationCircle } from 'react-icons/fa'
+import { FaCode, FaCodeBranch, FaExclamationCircle } from 'react-icons/fa'
 import { RiGitPullRequestLine } from 'react-icons/ri'
-import { abbreviateNumber } from '../../../utils/number'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
+import { abbreviateNumber } from '../../../utils/number'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 
 interface NotableContributionsProps {
   data: GithubData['notableContributions']
@@ -131,7 +124,6 @@ export function GithubNotableContributions({ data, config, style, size }: Notabl
               })}
             />
             <TerminalGrid data={gridData} rightText="Repository" centerText="Type" leftText="Contributions" />
-            <TerminalLineBreak />
           </>
         }
       />

@@ -80,6 +80,7 @@ export interface LyftaNonEssentialConfig extends NonEssentialPluginConfig {
   recent_workouts_hide_title?: boolean
   recent_workouts_title?: string
   workouts_max?: number
+  weight_unit?: 'kg' | 'lbs' // Unidade de peso: kg ou libras
 }
 
 /**

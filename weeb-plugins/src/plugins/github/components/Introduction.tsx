@@ -1,17 +1,10 @@
-/**
- * Componente Introduction do GitHub
- * 
- * Mostra informações de introdução do perfil (bio, location, company, etc)
- */
-
 import React from 'react'
-import { FaUser, FaMapMarkerAlt, FaBuilding, FaLink, FaTwitter, FaUsers } from 'react-icons/fa'
+import { FaBuilding, FaLink, FaMapMarkerAlt, FaTwitter, FaUser, FaUsers } from 'react-icons/fa'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import type { GithubConfig, GithubData } from '../types'
 
 interface IntroductionProps {
   data: GithubData['introduction']
@@ -141,7 +134,6 @@ export function GithubIntroduction({ data, config, style, size, activity }: Intr
               })}
             />
             <TerminalIntroduction data={data} activity={activity} customText={customText} />
-            <TerminalLineBreak />
           </>
         }
       />

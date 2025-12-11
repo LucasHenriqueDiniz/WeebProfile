@@ -1,18 +1,11 @@
-/**
- * Componente Calendar do GitHub
- * 
- * Versão simplificada migrada do source original
- */
-
 import React from 'react'
 import { FaCalendar } from 'react-icons/fa'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 import { getCalendarColor } from '../utils'
-import type { GithubData, GithubConfig } from '../types'
 
 interface CalendarProps {
   data: GithubData['calendar']
@@ -210,7 +203,6 @@ export function GithubCalendar({ data, config, style, size }: CalendarProps): Re
               })}
             />
             <TerminalCalendar data={data} size={size} />
-            <TerminalLineBreak />
           </>
         }
       />

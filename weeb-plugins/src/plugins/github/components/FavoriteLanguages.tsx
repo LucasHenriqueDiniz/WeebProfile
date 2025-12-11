@@ -1,23 +1,16 @@
-/**
- * Componente FavoriteLanguages do GitHub
- * 
- * Versão simplificada migrada do source original
- */
-
 import React from 'react'
 import { FaCode } from 'react-icons/fa'
 import { GoDotFill } from 'react-icons/go'
-import { abbreviateNumber } from '../../../utils/number'
-import { randomColorWithString } from '../../../utils/string'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { HorizontalMultipleItemsBar } from '../../../templates/Default/HorizontalMultipleItemsBar'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalHorizontalMultipleItemsBar } from '../../../templates/Terminal/TerminalHorizontalMultipleItems'
 import { TerminalLine } from '../../../templates/Terminal/TerminalLine'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
+import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { randomColorWithString } from '../../../utils/string'
+import type { GithubConfig, GithubData } from '../types'
 
 interface FavoriteLanguagesProps {
   languageData: GithubData['languages']
@@ -146,7 +139,6 @@ export function FavoriteLanguages({ languageData, config, style, size }: Favorit
               })}
             />
             <TerminalFavoriteLanguages data={sortedLanguages} totalSize={totalSize} maxItems={maxItems} size={size} />
-            <TerminalLineBreak />
           </>
         }
       />

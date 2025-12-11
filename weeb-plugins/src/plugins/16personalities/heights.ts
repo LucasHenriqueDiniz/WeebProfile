@@ -28,7 +28,6 @@ export function calculatePersonality16Height(
       // 2. Type and name line (1 line = 20px)
       // 3. Description line (if shown, 1 line = 20px)
       // 4. Link line (if shown, 1 line = 20px)
-      // 5. TerminalLineBreak (1 line = 20px)
       
       const showDescription = config.personality_show_description !== false
       const showLink = config.personality_show_link !== false
@@ -37,7 +36,6 @@ export function calculatePersonality16Height(
       lines += 1 // Type and name
       if (showDescription) lines += 1
       if (showLink) lines += 1
-      lines += 1 // TerminalLineBreak
       
       return titleSpace + (lines * 20)
     }

@@ -33,6 +33,12 @@ export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
     character_favorites: "/section-previews/myanimelist/default/character_favorites.svg",
     last_activity: "/section-previews/myanimelist/default/last_activity.svg",
   },
+  "16personalities": {
+    personality: "/section-previews/16personalities/default/personality.svg",
+  },
+  lyfta: {
+    exercises: "/section-previews/lyfta/default/exercises.svg",
+  },
 }
 
 export function getSectionPreview(plugin: string, section: string, style: "default" | "terminal" = "default"): string | null {
@@ -51,6 +57,11 @@ export function getSectionPreview(plugin: string, section: string, style: "defau
   // Usar rota API para servir as imagens
   return `/api/section-preview${previewPath}`
 }
+
+
+
+
+
 
 
 

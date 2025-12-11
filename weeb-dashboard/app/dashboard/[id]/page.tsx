@@ -11,7 +11,6 @@ import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { svgApi, ApiException } from "@/lib/api"
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
 import { useSvgStore } from "@/stores/svg-store"
 
 export default function SvgViewPage() {
@@ -237,19 +236,6 @@ export default function SvgViewPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <DashboardHeader
-        title={svg?.name || "Imagem SVG"}
-        description={svg?.status === "completed" ? "Gerada com sucesso" : "Gerando..."}
-        action={
-          svg
-            ? {
-                label: "Editar",
-                onClick: () => router.push(`/dashboard/${svgId}/edit`),
-                icon: <Edit className="w-4 h-4 mr-2" />,
-              }
-            : undefined
-        }
-      />
       <div className="flex-1 container px-6 py-8">
         <div className="max-w-6xl mx-auto space-y-6">
 

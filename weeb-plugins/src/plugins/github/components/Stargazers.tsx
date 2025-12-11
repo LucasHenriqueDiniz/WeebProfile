@@ -1,19 +1,13 @@
-/**
- * Componente Stargazers do GitHub
- * Mostra o total de stars recebidos nos repositórios
- */
-
 import React from 'react'
 import { FaStar } from 'react-icons/fa'
 import { RiStarFill } from 'react-icons/ri'
-import { abbreviateNumber } from '../../../utils/number'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
+import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import type { GithubConfig, GithubData } from '../types'
 
 const DefaultStargazers = ({ 
   data 
@@ -141,7 +135,6 @@ export function GithubStargazers({
               })}
             />
             <TerminalStargazers data={data} />
-            <TerminalLineBreak />
           </>
         }
       />

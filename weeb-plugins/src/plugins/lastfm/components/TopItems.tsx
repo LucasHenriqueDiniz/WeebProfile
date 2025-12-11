@@ -1,33 +1,23 @@
-/**
- * TopItems - Componente genérico para exibir top items do LastFM (Artists, Albums, Tracks)
- * Renderiza Grid, List ou Default baseado no displayStyle
- */
-
 import React from 'react'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { abbreviateNumber } from '../../../utils/number'
+import type { IconType } from 'react-icons'
+import { DefaultGrid } from '../../../templates/Default/DefaultGrid'
+import { DefaultImageGrid } from '../../../templates/Default/DefaultImageGrid'
+import { DefaultList } from '../../../templates/Default/DefaultList'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { TerminalList } from '../../../templates/Terminal/TerminalList'
 import TerminalTree from '../../../templates/Terminal/TerminalTree'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { DefaultImageGrid } from '../../../templates/Default/DefaultImageGrid'
-import { DefaultList } from '../../../templates/Default/DefaultList'
-import { DefaultGrid } from '../../../templates/Default/DefaultGrid'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import type { GridItemProps, ListItemProps, TerminalLineProps } from '../../../templates/types'
-import type { IconType } from 'react-icons'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
 
 interface TopItem {
   image?: string
-  // Para Artists
   artist?: string
   totalPlays?: string
-  // Para Albums
   album?: string
   plays?: string
-  // Para Tracks
   track?: string
 }
 
@@ -122,7 +112,6 @@ export function TopItems({
                 })}
               />
               <TerminalList data={terminalListItems} />
-              <TerminalLineBreak />
             </>
           }
         />
@@ -164,7 +153,6 @@ export function TopItems({
                 centerText={terminalLabels.centerText}
                 leftText={terminalLabels.leftText}
               />
-              <TerminalLineBreak />
             </>
           }
         />
@@ -201,7 +189,6 @@ export function TopItems({
               })}
             />
             <TerminalTree data={gridItems} title={title} />
-            <TerminalLineBreak />
           </>
         }
       />

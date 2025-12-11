@@ -17,7 +17,11 @@ export interface WizardState {
   slug: string
   useProfileConfig: boolean
 
-  // Step 1: Style
+  // Step 1: Plugins
+  plugins: Record<string, PluginConfig> // Fully dynamic
+  pluginsOrder: string[]
+
+  // Step 2: Style
   style: "default" | "terminal"
   size: "half" | "full"
   theme: string // Unified theme field (replaces terminalTheme and defaultTheme)
@@ -25,10 +29,6 @@ export interface WizardState {
   hideTerminalHeader: boolean
   customCss: string
   customThemeColors: Record<string, string> // Custom theme colors (only used when theme === 'custom')
-
-  // Step 2: Plugins
-  plugins: Record<string, PluginConfig> // Fully dynamic
-  pluginsOrder: string[]
 
   // Step 3: Preview
   previewUrl: string | null
@@ -113,7 +113,7 @@ const initialState = {
   pluginsHaveMissingEssentialConfigs: false,
           currentStep: 1,
   isValid: {
-    step1: true, // Style sempre válido
+    step1: false, // Plugins - precisa ter pelo menos um plugin habilitado
     step2: false,
     step3: false,
     step4: false,
@@ -236,7 +236,7 @@ export const useWizardStore = create<WizardState>()(
             },
           },
         })
-        get().validateStep(2)
+        get().validateStep(1) // Step 1: Plugins
       },
 
       togglePlugin: (plugin) => {
@@ -254,12 +254,12 @@ export const useWizardStore = create<WizardState>()(
 
       setPluginSections: (plugin, sections) => {
         get().setPluginConfig(plugin, { sections })
-        get().validateStep(2) // Step 2 é Plugins agora
+        get().validateStep(1) // Step 1: Plugins
       },
 
       setPluginRequiredField: (plugin, field, value) => {
         get().setPluginConfig(plugin, { [field]: value })
-        get().validateStep(2) // Step 2 é Plugins agora
+        get().validateStep(1) // Step 1: Plugins
       },
 
       setSectionConfig: (plugin, sectionId, config) => {
@@ -324,7 +324,7 @@ export const useWizardStore = create<WizardState>()(
           set({ pluginsHaveMissingEssentialConfigs: value })
           // Validate step asynchronously to avoid infinite loops
           setTimeout(() => {
-            get().validateStep(2) // Step 2 é Plugins agora
+            get().validateStep(1) // Step 1: Plugins // Step 2 é Plugins agora
           }, 0)
         }
       },
@@ -342,12 +342,8 @@ export const useWizardStore = create<WizardState>()(
         let isValid = false
 
         switch (step) {
-          case 1:
-            // Step 1: Style - sempre válido, opções têm defaults
-            isValid = true
-            break
-          case 2: {
-            // Step 2: Plugins
+          case 1: {
+            // Step 1: Plugins
             const entries = Object.entries(state.plugins).filter(([, p]) => p.enabled) as [string, PluginConfig][]
             if (entries.length === 0) {
               isValid = false
@@ -372,6 +368,10 @@ export const useWizardStore = create<WizardState>()(
             }) && !state.pluginsHaveMissingEssentialConfigs
             break
           }
+          case 2:
+            // Step 2: Style - sempre válido, opções têm defaults
+            isValid = true
+            break
           case 3:
             // Step 3: Preview - válido se step1 e step2 válidos
             isValid = state.isValid.step1 && state.isValid.step2

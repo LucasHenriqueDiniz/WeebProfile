@@ -1,24 +1,17 @@
-/**
- * StatisticsHorizontalBar - Componente para exibir barra horizontal de estatísticas do MyAnimeList
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
 import React from 'react'
 import { FaQuestionCircle } from 'react-icons/fa'
 import { FaCircleCheck, FaCirclePause, FaCirclePlay, FaCircleXmark } from 'react-icons/fa6'
 import { IoStatsChartOutline } from 'react-icons/io5'
-import { abbreviateNumber } from '../../../utils/number'
+import { Stat } from '../../../templates/Default/DefaultStatRow'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { HorizontalMultipleItemsBar } from '../../../templates/Default/HorizontalMultipleItemsBar'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalHorizontalMultipleItemsBar } from '../../../templates/Terminal/TerminalHorizontalMultipleItemsBar'
 import { TerminalLine } from '../../../templates/Terminal/TerminalLine'
-import { Stat } from '../../../templates/Default/DefaultStatRow'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { MyAnimeListConfig, MyAnimeListData, AnimeStatistics, MangaStatistics } from '../types'
+import type { AnimeStatistics, MangaStatistics, MyAnimeListConfig } from '../types'
 
 interface StatisticsHorizontalBarProps {
   data: AnimeStatistics | MangaStatistics
@@ -157,7 +150,6 @@ export function StatisticsHorizontalBar({
               dropped={dropped}
               planToWatch={planToWatch}
             />
-            <TerminalLineBreak />
           </>
         }
         style={style}

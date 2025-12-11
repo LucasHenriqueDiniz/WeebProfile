@@ -1,19 +1,12 @@
-/**
- * Componente People do GitHub
- * 
- * Mostra pessoas relacionadas (followers ou contributors/stargazers/watchers de um repositório)
- */
-
 import React from 'react'
 import { FaUsers } from 'react-icons/fa'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubData, GithubConfig } from '../types'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 
 interface PeopleProps {
   data: GithubData['people']
@@ -114,7 +107,6 @@ export function GithubPeople({ data, config, style, size }: PeopleProps): React.
               })}
             />
             <TerminalGrid data={gridData} rightText="Person" centerText="Contributions" leftText="" />
-            <TerminalLineBreak />
           </>
         }
       />

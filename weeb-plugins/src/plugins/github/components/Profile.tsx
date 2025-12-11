@@ -1,21 +1,14 @@
-/**
- * Componente Profile do GitHub
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
 import React from 'react'
 import { FaGithub, FaUserFriends } from 'react-icons/fa'
 import { RiGitRepositoryLine } from 'react-icons/ri'
-import { abbreviateNumber } from '../../../utils/number'
-import { ImageComponent } from '../../../utils/image'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
+import { ImageComponent } from '../../../utils/image'
+import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
 import { getCalendarColor } from '../utils'
-import type { GithubData, GithubConfig } from '../types'
 
 interface ProfileProps {
   data: GithubData['user']
@@ -117,7 +110,6 @@ export function GithubProfile({ data, config, style, size }: ProfileProps): Reac
               })}
             />
             <TerminalProfile data={data} />
-            <TerminalLineBreak />
           </>
         }
       />

@@ -1,16 +1,11 @@
-/**
- * Recent Games component for Steam plugin
- */
-
 import React from 'react'
 import { FaClock } from 'react-icons/fa'
-import type { SteamData, SteamNonEssentialConfig } from '../types'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { SteamData, SteamNonEssentialConfig } from '../types'
 
 interface RecentGamesProps {
   data: SteamData
@@ -153,10 +148,9 @@ export function RecentGames({
               <TerminalLineWithDots
                 key={game.appid}
                 title={game.name}
-                value={`${formatPlaytime(game.playtime_2weeks || 0)} (last 2 weeks)`}
+                value={`${formatPlaytime(game.playtime_2weeks || 0)}`}
               />
             ))}
-            <TerminalLineBreak />
           </>
         }
       />

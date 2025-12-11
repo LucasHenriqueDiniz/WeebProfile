@@ -2,8 +2,8 @@
 
 /* Container */
 #svg-main .terminal-container {
-  --font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
-  font-family: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+  --font-family: ui-monospace, 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+  font-family: ui-monospace, 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
   width: 100%;
   background-color: var(--terminal-color-background);
   color: var(--terminal-color-default);
@@ -15,6 +15,18 @@
   padding: 0 8px;
   display: flex;
   flex-direction: column;
+}
+
+/* Terminal sections - background estilo terminal */
+#svg-main .terminal-container section {
+  background-color: var(--terminal-color-background);
+}
+
+/* Terminal body - espaçamento entre seções */
+#svg-main .terminal-body {
+  font-family: var(--font-family);
+  color: var(--terminal-color-default);
+  background-color: var(--terminal-color-background);
 }
 
 /* Terminal CSS Classes - Using CSS theme variables */
@@ -70,6 +82,14 @@
 #svg-main .terminal-header-dots {
   display: flex;
   gap: 0.5rem;
+  margin-right: 0.75rem;
+}
+
+#svg-main .terminal-header-title {
+  color: var(--terminal-color-default);
+  font-size: 0.875rem;
+  font-weight: 500;
+  user-select: none;
 }
 
 #svg-main .terminal-dot {

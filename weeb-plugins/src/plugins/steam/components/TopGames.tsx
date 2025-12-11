@@ -1,16 +1,11 @@
-/**
- * Top Games component for Steam plugin
- */
-
 import React from 'react'
 import { FaTrophy } from 'react-icons/fa'
-import type { SteamData, SteamNonEssentialConfig } from '../types'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { SteamData, SteamNonEssentialConfig } from '../types'
 
 interface TopGamesProps {
   data: SteamData
@@ -157,7 +152,6 @@ export function TopGames({
                 value={formatPlaytime(game.playtime_forever)}
               />
             ))}
-            <TerminalLineBreak />
           </>
         }
       />

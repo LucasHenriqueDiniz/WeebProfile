@@ -1,21 +1,14 @@
-/**
- * LastUpdates - Componente para exibir últimas atualizações do MyAnimeList
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
 import { format } from 'date-fns'
 import React from 'react'
 import { FaList, FaStar } from 'react-icons/fa'
-import { ImageComponent } from '../../../utils/image'
-import { emojiStatus } from '../../../utils/emoji'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { PercentageBar } from '../../../templates/Default/PercentageBar'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineBreak } from '../../../templates/Terminal/TerminalLineBreak'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { emojiStatus } from '../../../utils/emoji'
+import { ImageComponent } from '../../../utils/image'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { MyAnimeListConfig, MyAnimeListData, LastUpdatesAnime, LastUpdatesManga } from '../types'
+import type { LastUpdatesAnime, LastUpdatesManga, MyAnimeListConfig, MyAnimeListData } from '../types'
 
 function getStatusColor(status: string) {
   switch (status) {
@@ -193,7 +186,6 @@ export function LastUpdates({
                 <TerminalUpdate key={index} update={update} hideTerminalEmojis={hideTerminalEmojis} />
               ))}
             </div>
-            <TerminalLineBreak />
           </>
         }
         style={style}
