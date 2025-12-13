@@ -1,8 +1,5 @@
-/**
- * Main rendering component for the Steam plugin
- */
-
 import React from 'react'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import type { SteamConfig, SteamData } from '../types'
 import { Statistics } from './Statistics'
 import { RecentGames } from './RecentGames'
@@ -50,33 +47,54 @@ export function RenderSteam({
     }, {} as Record<string, any>),
   }
 
+  const renderedSections = sections.map((section) => {
+    switch (section) {
+      case 'statistics':
+        return (
+          <Statistics
+            key={section}
+            data={data}
+            config={sectionConfig}
+            style={style}
+            size={size}
+          />
+        )
+      case 'recent_games':
+        return (
+          <RecentGames
+            key={section}
+            data={data}
+            config={sectionConfig}
+            style={style}
+            size={size}
+          />
+        )
+      case 'top_games':
+        return (
+          <TopGames
+            key={section}
+            data={data}
+            config={sectionConfig}
+            style={style}
+            size={size}
+          />
+        )
+      default:
+        return (
+          <div key={section} className="text-muted">
+            Section &quot;{section}&quot; not yet implemented
+          </div>
+        )
+    }
+  })
+
   return (
-    <section id="steam-plugin">
-      {sections.includes('statistics') && (
-        <Statistics
-          data={data}
-          config={sectionConfig}
-          style={style}
-          size={size}
-        />
-      )}
-      {sections.includes('recent_games') && (
-        <RecentGames
-          data={data}
-          config={sectionConfig}
-          style={style}
-          size={size}
-        />
-      )}
-      {sections.includes('top_games') && (
-        <TopGames
-          data={data}
-          config={sectionConfig}
-          style={style}
-          size={size}
-        />
-      )}
-    </section>
+    <RenderBasedOnStyle
+      style={style}
+      defaultComponent={<>{renderedSections}</>}
+      terminalComponent={<>{renderedSections}</>}
+      wrapTerminalBody={true}
+    />
   )
 }
 

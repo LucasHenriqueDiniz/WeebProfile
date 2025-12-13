@@ -607,7 +607,6 @@ export function FavoritesList({
                 command={getPseudoCommands({
                   plugin: 'mal',
                   section: 'favorites',
-                  username: config.username,
                   type,
                   limit: MAX_ITEMS,
                 })}
@@ -636,7 +635,6 @@ export function FavoritesList({
               command={getPseudoCommands({
                 plugin: 'mal',
                 section: section,
-                username: config.username,
                 limit: MAX_ITEMS,
               })}
             />
@@ -658,7 +656,6 @@ export function FavoritesList({
                 command={getPseudoCommands({
                   plugin: 'mal',
                   section: section,
-                  username: config.username,
                   limit: MAX_ITEMS,
                 })}
               />
@@ -677,7 +674,6 @@ export function FavoritesList({
               command={getPseudoCommands({
                 plugin: 'mal',
                 section: section,
-                username: config.username,
                 limit: MAX_ITEMS,
               })}
             />
@@ -697,7 +693,6 @@ export function FavoritesList({
                 command={getPseudoCommands({
                   plugin: 'mal',
                   section: section,
-                  username: config.username,
                   limit: MAX_ITEMS,
                 })}
               />
@@ -716,7 +711,6 @@ export function FavoritesList({
               command={getPseudoCommands({
                 plugin: 'mal',
                 section: section,
-                username: config.username,
                 limit: MAX_ITEMS,
               })}
             />

@@ -89,10 +89,8 @@ export function GithubSponsorships({ data, config, style, size }: SponsorshipsPr
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'sponsorships',
-                username: config.username,
                 size,
               })}
             />

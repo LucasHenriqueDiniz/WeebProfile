@@ -44,3 +44,11 @@ jobs:
       - name: Type check
         working-directory: weeb-plugins
         run: pnpm typecheck
+
+      # Validate that section previews exist (SVG files in src/plugins/{plugin}/previews/)
+      # This only checks if previews exist - it does NOT generate them.
+      # To generate previews manually, use the svg-generator service (separate script).
+      - name: Validate section previews
+        working-directory: weeb-plugins
+        run: pnpm validate-previews
+        continue-on-error: true

@@ -177,7 +177,6 @@ export function LastUpdates({
               command={getPseudoCommands({
                 plugin: 'mal',
                 section: 'last_updates',
-                username: config.username,
                 limit: maxItems,
               })}
             />

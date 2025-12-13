@@ -10,6 +10,6 @@ interface TerminalBodyProps {
 }
 
 export function TerminalBody({ children, className = '' }: TerminalBodyProps): React.ReactElement {
-  return <div className={`font-mono terminal-container terminal-body ${className}`}>{children}</div>
+  return <div className={`font-mono terminal-container terminal-body px-2 ${className}`}>{children}</div>
 }
 

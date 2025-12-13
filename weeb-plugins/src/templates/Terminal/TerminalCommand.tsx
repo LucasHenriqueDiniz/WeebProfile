@@ -1,5 +1,6 @@
 /**
  * TerminalCommand - Exibe comando no estilo terminal Linux
+ * Estilo autêntico de terminal com prompt destacado e comando em monospace
  */
 
 import React from 'react'
@@ -16,9 +17,34 @@ export function TerminalCommand({
   className = ''
 }: TerminalCommandProps): React.ReactElement {
   return (
-    <div className={`flex gap-2 px-1 ${className}`}>
-      <span className="text-terminal-highlight font-bold text-sm">{prompt}</span>
-      <span className="text-sm font-medium">{command}</span>
+    <div 
+      className={`flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden ${className}`} 
+      style={{
+        fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+        fontSize: "0.875rem",
+        lineHeight: "1.25rem"
+      }}
+    >
+      <span 
+        className="text-terminal-highlight font-bold select-none"
+        style={{
+          fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+          fontSize: "0.875rem",
+          fontWeight: 700
+        }}
+      >
+        {prompt}
+      </span>
+      <span 
+        className="font-medium"
+        style={{
+          fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+          fontSize: "0.875rem",
+          color: "var(--terminal-color-default)"
+        }}
+      >
+        {command}
+      </span>
     </div>
   )
 }

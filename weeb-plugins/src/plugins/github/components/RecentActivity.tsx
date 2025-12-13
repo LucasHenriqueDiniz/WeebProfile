@@ -141,10 +141,8 @@ export function GithubRecentActivity({ data, config, style, size }: RecentActivi
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'recent_activity',
-                username: config.username,
                 size,
               })}
             />

@@ -18,6 +18,7 @@ export { TerminalHorizontalMultipleItemsBar } from './Terminal/TerminalHorizonta
 export { TerminalLine } from './Terminal/TerminalLine'
 export { TerminalLineWithDots } from './Terminal/TerminalLineWithDots'
 export { TerminalList } from './Terminal/TerminalList'
+export { TerminalStatisticRow, type TerminalStatisticRowProps } from './Terminal/TerminalStatisticRow'
 export { default as TerminalTree } from './Terminal/TerminalTree'
 
 // Types

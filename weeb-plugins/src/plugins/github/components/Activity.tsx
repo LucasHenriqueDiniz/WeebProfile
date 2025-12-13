@@ -141,10 +141,8 @@ export function GithubActivity({ data, config, style, size }: ActivityProps): Re
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'activity',
-                username: config.username,
                 size,
               })}
             />

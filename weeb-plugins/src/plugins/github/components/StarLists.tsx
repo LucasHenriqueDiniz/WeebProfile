@@ -87,10 +87,8 @@ export function GithubStarLists({ data, config, style, size }: StarListsProps): 
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'star_lists',
-                username: config.username,
                 size,
               })}
             />

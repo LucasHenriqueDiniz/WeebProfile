@@ -43,6 +43,7 @@ export interface SteamStatistics {
 export interface SteamNonEssentialConfig extends NonEssentialPluginConfig {
   statistics_hide_title?: boolean
   statistics_title?: string
+  statistics_show_featured?: boolean
   recent_games_hide_title?: boolean
   recent_games_title?: string
   recent_games_max?: number

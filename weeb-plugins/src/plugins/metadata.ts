@@ -1097,6 +1097,16 @@ export const PLUGINS_METADATA = {
           defaultValue: "Statistics"
         },
         {
+          key: "statistics_period_days",
+          label: "Period (days)",
+          type: "number",
+          defaultValue: 30,
+          min: 7,
+          max: 365,
+          step: 1,
+          description: "Number of days for period stats"
+        },
+        {
           key: "weight_unit",
           label: "Weight unit",
           type: "select",
@@ -1137,12 +1147,153 @@ export const PLUGINS_METADATA = {
           description: "Maximum 20 workouts"
         }
         ]
+      },
+      {
+        id: "exercises",
+        name: "Exercises",
+        description: "Most performed exercises",
+        configOptions: [
+        {
+          key: "exercises_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "exercises_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Top Exercises"
+        },
+        {
+          key: "exercises_max",
+          label: "Maximum exercises",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 exercises"
+        },
+        {
+          key: "exercises_show_1rm",
+          label: "Show estimated 1RM",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display estimated one-rep max for each exercise"
+        },
+        {
+          key: "exercises_compact",
+          label: "Compact mode",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide avg/1RM, show only sessions count"
+        },
+        {
+          key: "exercises_hide_images",
+          label: "Hide exercise images",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide exercise images in the exercises list"
+        }
+        ]
+      },
+      {
+        id: "overview",
+        name: "Overview",
+        description: "General workout summary for a period",
+        configOptions: [
+        {
+          key: "overview_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "overview_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Overview"
+        },
+        {
+          key: "overview_period_days",
+          label: "Period (days)",
+          type: "number",
+          defaultValue: 30,
+          min: 7,
+          max: 365,
+          step: 1,
+          description: "Number of days to include in overview"
+        },
+        {
+          key: "overview_show_volume",
+          label: "Show total volume",
+          type: "boolean",
+          defaultValue: true
+        },
+        {
+          key: "overview_show_duration",
+          label: "Show total duration",
+          type: "boolean",
+          defaultValue: true
+        },
+        {
+          key: "overview_show_weekly_avg",
+          label: "Show weekly average",
+          type: "boolean",
+          defaultValue: true
+        }
+        ]
+      },
+      {
+        id: "last_workout",
+        name: "Last Workout",
+        description: "Detailed view of the most recent workout",
+        configOptions: [
+        {
+          key: "last_workout_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "last_workout_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Last Workout"
+        },
+        {
+          key: "last_workout_show_body_weight",
+          label: "Show body weight",
+          type: "boolean",
+          defaultValue: true
+        },
+        {
+          key: "last_workout_max_exercises",
+          label: "Maximum exercises",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          step: 1,
+          description: "Maximum exercises to display"
+        },
+        {
+          key: "last_workout_compact",
+          label: "Compact mode",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide set details, show only volume"
+        }
+        ]
       }
     ],
     exampleConfig: {
       "enabled": true,
       "sections": [
-        "statistics",
+        "overview",
+        "last_workout",
+        "exercises",
         "recent_workouts"
       ]
     },
@@ -1557,6 +1708,13 @@ export const PLUGINS_METADATA = {
           label: "Title",
           type: "string",
           defaultValue: "Statistics"
+        },
+        {
+          key: "statistics_show_featured",
+          label: "Show featured game",
+          type: "boolean",
+          defaultValue: true,
+          description: "Show the 'Destaque recente' card with the most played game in the last 2 weeks"
         }
         ]
       },

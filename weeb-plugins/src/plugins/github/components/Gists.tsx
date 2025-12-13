@@ -147,10 +147,8 @@ export function GithubGists({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'gists',
-                username: config.username,
                 size,
               })}
             />

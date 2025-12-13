@@ -6,11 +6,12 @@
 import React from 'react'
 
 interface TerminalLineWithDotsProps {
-  title: string
+  title: string | React.ReactNode
   value: string | number
   className?: string
   titleClassName?: string
   valueClassName?: string
+  titleStyle?: React.CSSProperties
 }
 
 export function TerminalLineWithDots({ 
@@ -18,11 +19,27 @@ export function TerminalLineWithDots({
   value,
   className = '',
   titleClassName = '',
-  valueClassName = ''
+  valueClassName = '',
+  titleStyle
 }: TerminalLineWithDotsProps): React.ReactElement {
   return (
-    <div className={`flex items-baseline gap-1 w-full overflow-hidden px-1 ${className}`}>
-      <span className={`text-terminal-warning text-sm font-semibold whitespace-nowrap truncate flex-shrink-0 ${titleClassName}`}>
+    <div 
+      className={`flex items-baseline gap-1 w-full overflow-hidden px-1 ${className}`}
+      style={{
+        fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+        fontSize: "0.875rem",
+        lineHeight: "1.25rem"
+      }}
+    >
+      <span 
+        className={`font-semibold whitespace-nowrap truncate flex-shrink-0 ${titleClassName}`}
+        style={{
+          fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+          fontSize: "0.875rem",
+          color: "var(--terminal-color-warning, #ffaa00)",
+          ...(titleStyle || {})
+        }}
+      >
         {title}
       </span>
       <span 
@@ -37,7 +54,13 @@ export function TerminalLineWithDots({
           )`
         }}
       ></span>
-      <span className={`text-terminal-muted text-sm whitespace-nowrap pr-1 flex-shrink-0 ${valueClassName}`}>
+      <span 
+        className={`text-terminal-muted whitespace-nowrap pr-1 flex-shrink-0 ${valueClassName}`}
+        style={{
+          fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+          fontSize: "0.875rem"
+        }}
+      >
         {String(value)}
       </span>
     </div>

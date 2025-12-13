@@ -30,3 +30,24 @@ export function formatWeight(grams: number, unit: 'kg' | 'lbs' = 'kg'): string {
   return `${grams}g`
 }
 
+/**
+ * Converte gramas para a unidade desejada (formato inteiro)
+ * @param grams - Peso em gramas
+ * @param unit - Unidade desejada ('kg' ou 'lbs')
+ * @returns Peso formatado na unidade desejada (sem decimais)
+ */
+export function formatWeightInt(grams: number, unit: 'kg' | 'lbs' = 'kg'): string {
+  if (unit === 'lbs') {
+    // Converter gramas para libras (1 kg = 2.20462 lbs, 1 kg = 1000g)
+    const pounds = (grams / 1000) * 2.20462
+    return `${Math.round(pounds)}lbs`
+  }
+  
+  // Unidade padrão: kg
+  if (grams >= 1000) {
+    const kg = grams / 1000
+    return `${Math.round(kg)}kg`
+  }
+  return `${Math.round(grams)}g`
+}
+

@@ -299,7 +299,6 @@ export function Statistics({ data, config, style, size, hideTerminalEmojis = fal
               command={getPseudoCommands({
                 plugin: 'mal',
                 section: 'statistics',
-                username: config.username,
                 type: 'all',
                 size,
               })}

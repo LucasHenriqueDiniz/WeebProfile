@@ -86,7 +86,6 @@ export function SimpleStatistics({
               command={getPseudoCommands({
                 plugin: 'mal',
                 section: 'simple-statistics',
-                username: config.username,
                 type: 'all',
               })}
             />

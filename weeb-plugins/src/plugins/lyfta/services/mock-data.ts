@@ -28,13 +28,13 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "212962192",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962193",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -49,13 +49,13 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "212962194",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962195",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -70,7 +70,7 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "212962196",
             "weight": "20.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -85,25 +85,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "212962197",
             "weight": "20.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962198",
             "weight": "20.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962199",
             "weight": "20.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962200",
             "weight": "20.000",
             "reps": "13",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -118,19 +118,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "212962201",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962202",
             "weight": "12.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962203",
             "weight": "12.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -145,13 +145,13 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "212962204",
             "weight": "12.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962205",
             "weight": "16.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -176,19 +176,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "211713924",
             "weight": "60.000",
             "reps": "13",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713925",
             "weight": "64.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713926",
             "weight": "64.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -203,19 +203,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "211713927",
             "weight": "24.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713928",
             "weight": "24.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713929",
             "weight": "24.000",
             "reps": "7",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -230,25 +230,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "211713930",
             "weight": "14.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713931",
             "weight": "16.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713932",
             "weight": "16.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713933",
             "weight": "16.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -263,19 +263,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "211713934",
             "weight": "16.000",
             "reps": "20",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713935",
             "weight": "16.000",
             "reps": "16",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "211713936",
             "weight": "16.000",
             "reps": "7",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -300,25 +300,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "206322358",
             "weight": "60.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322359",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322360",
             "weight": "60.000",
             "reps": "7",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322361",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -333,19 +333,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "206322362",
             "weight": "20.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322363",
             "weight": "20.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322364",
             "weight": "20.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -360,25 +360,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "206322365",
             "weight": "14.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322366",
             "weight": "14.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322367",
             "weight": "14.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322368",
             "weight": "14.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -393,19 +393,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "206322369",
             "weight": "14.000",
             "reps": "20",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322370",
             "weight": "14.000",
             "reps": "14",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322371",
             "weight": "14.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -420,19 +420,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "206322372",
             "weight": "10.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322373",
             "weight": "10.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322374",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -447,37 +447,37 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "206322375",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322376",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322377",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322378",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322379",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "206322380",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -502,25 +502,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "201862903",
             "weight": "60.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862904",
             "weight": "60.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862905",
             "weight": "60.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862906",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -535,13 +535,13 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "201862907",
             "weight": "14.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862908",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -556,25 +556,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "201862909",
             "weight": "14.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862910",
             "weight": "14.000",
             "reps": "13",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862911",
             "weight": "14.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862912",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -589,19 +589,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "201862913",
             "weight": "14.000",
             "reps": "16",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862914",
             "weight": "14.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862915",
             "weight": "14.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -616,19 +616,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "201862916",
             "weight": "10.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862917",
             "weight": "10.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862918",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -643,13 +643,13 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "201862919",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "201862920",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -798,25 +798,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "185794799",
             "weight": "60.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794800",
             "weight": "70.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794801",
             "weight": "70.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794802",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -831,19 +831,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "185794803",
             "weight": "10.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794804",
             "weight": "10.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794805",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -858,25 +858,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "185794806",
             "weight": "40.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794807",
             "weight": "40.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794808",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794809",
             "weight": "40.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -891,19 +891,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "185794810",
             "weight": "10.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794811",
             "weight": "10.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794812",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -918,13 +918,13 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "185794813",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "185794814",
             "weight": "40.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -949,25 +949,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "178792031",
             "weight": "60.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792032",
             "weight": "60.000",
             "reps": "5",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792033",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792034",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -982,19 +982,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "178792035",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792036",
             "weight": "10.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792037",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1009,19 +1009,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "178792038",
             "weight": "10.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792039",
             "weight": "10.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792040",
             "weight": "10.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1036,49 +1036,49 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "178792041",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792042",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792043",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792044",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792045",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792046",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792047",
             "weight": "10.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792048",
             "weight": "10.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1093,19 +1093,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "178792049",
             "weight": "10.000",
             "reps": "20",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792050",
             "weight": "10.000",
             "reps": "20",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "178792051",
             "weight": "12.000",
             "reps": "18",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -1130,19 +1130,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "173120703",
             "weight": "60.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "173120704",
             "weight": "60.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "173120705",
             "weight": "60.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1157,19 +1157,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "173120706",
             "weight": "20.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "173120707",
             "weight": "20.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "173120708",
             "weight": "20.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1184,19 +1184,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "173120709",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "173120710",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "173120711",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -1221,31 +1221,31 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "168694045",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694046",
             "weight": "50.000",
             "reps": "11",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694047",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694048",
             "weight": "50.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694049",
             "weight": "30.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1260,25 +1260,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "168694050",
             "weight": "50.000",
             "reps": "13",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694051",
             "weight": "52.500",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694052",
             "weight": "50.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694053",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1293,19 +1293,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "168694054",
             "weight": "14.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694055",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694056",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1320,31 +1320,31 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "168694057",
             "weight": "25.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694058",
             "weight": "25.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694059",
             "weight": "25.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694060",
             "weight": "20.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694061",
             "weight": "20.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1359,25 +1359,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "168694062",
             "weight": "60.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694063",
             "weight": "60.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694064",
             "weight": "60.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "168694065",
             "weight": "70.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -1402,19 +1402,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "165488588",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "165488589",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "165488590",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1429,13 +1429,13 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "165488591",
             "weight": "20.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "165488592",
             "weight": "20.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -1460,25 +1460,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "160421974",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421975",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421976",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421977",
             "weight": "60.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1493,19 +1493,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "160421978",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421979",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421980",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1520,19 +1520,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "160421981",
             "weight": "99.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421982",
             "weight": "99.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421983",
             "weight": "99.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1547,19 +1547,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "160421984",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421985",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421986",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1574,19 +1574,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "160421987",
             "weight": "25.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421988",
             "weight": "25.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421989",
             "weight": "25.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1601,19 +1601,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "160421990",
             "weight": "12.000",
             "reps": "7",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421991",
             "weight": "12.000",
             "reps": "7",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421992",
             "weight": "10.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1628,25 +1628,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "160421993",
             "weight": "60.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421994",
             "weight": "60.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421995",
             "weight": "60.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "160421996",
             "weight": "60.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1661,7 +1661,7 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "160421997",
             "weight": null,
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -1686,19 +1686,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159901751",
             "weight": "70.000",
             "reps": "7",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901752",
             "weight": "70.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901753",
             "weight": "70.000",
             "reps": "4",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1713,19 +1713,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159901754",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901755",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901756",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1740,19 +1740,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159901757",
             "weight": "143.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901758",
             "weight": "143.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901759",
             "weight": "143.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1767,19 +1767,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159901760",
             "weight": "77.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901761",
             "weight": "77.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901762",
             "weight": "77.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1794,19 +1794,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159901763",
             "weight": "54.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901764",
             "weight": "54.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901765",
             "weight": "54.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1821,19 +1821,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159901766",
             "weight": "154.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901767",
             "weight": "154.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901768",
             "weight": "154.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1848,19 +1848,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159901769",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901770",
             "weight": "50.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159901771",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1875,7 +1875,7 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159901772",
             "weight": "30.000",
             "reps": "20",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -1900,19 +1900,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159213204",
             "weight": "120.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213205",
             "weight": "120.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213206",
             "weight": "140.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1927,19 +1927,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159213207",
             "weight": "89.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213208",
             "weight": "89.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213209",
             "weight": "89.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1954,19 +1954,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159213210",
             "weight": "65.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213211",
             "weight": "70.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213212",
             "weight": "70.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -1981,19 +1981,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159213213",
             "weight": "99.210",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213214",
             "weight": "110.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213215",
             "weight": "110.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2008,19 +2008,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159213216",
             "weight": "40.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213217",
             "weight": "40.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159213218",
             "weight": "40.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -2045,25 +2045,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159186700",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186701",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186702",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186703",
             "weight": "55.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2078,19 +2078,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159186704",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186705",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186706",
             "weight": "50.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2105,19 +2105,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159186707",
             "weight": "99.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186708",
             "weight": "99.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186709",
             "weight": "99.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2132,19 +2132,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159186710",
             "weight": "14.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186711",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186712",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2159,19 +2159,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159186713",
             "weight": "20.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186714",
             "weight": "25.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186715",
             "weight": "25.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2186,19 +2186,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159186716",
             "weight": "9.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186717",
             "weight": "10.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186718",
             "weight": "12.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2213,25 +2213,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "159186719",
             "weight": "50.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186720",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186721",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "159186722",
             "weight": "70.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -2256,19 +2256,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515669",
             "weight": "144.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515670",
             "weight": "144.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515671",
             "weight": "144.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2283,19 +2283,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515672",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515673",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515674",
             "weight": "60.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2310,19 +2310,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515675",
             "weight": "132.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515676",
             "weight": "143.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515677",
             "weight": "143.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2337,19 +2337,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515678",
             "weight": "77.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515679",
             "weight": "77.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515680",
             "weight": "77.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2364,19 +2364,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515681",
             "weight": "51.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515682",
             "weight": "36.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515683",
             "weight": "63.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2391,19 +2391,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515684",
             "weight": "154.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515685",
             "weight": "154.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515686",
             "weight": "154.000",
             "reps": "7",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2418,19 +2418,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515687",
             "weight": "40.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515688",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515689",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2445,19 +2445,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515690",
             "weight": "25.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515691",
             "weight": "30.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "158515692",
             "weight": "30.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2472,7 +2472,7 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "158515693",
             "weight": "30.000",
             "reps": "20",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -2497,19 +2497,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155819865",
             "weight": "80.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819866",
             "weight": "100.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819867",
             "weight": "120.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2524,19 +2524,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155819868",
             "weight": "64.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819869",
             "weight": "79.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819870",
             "weight": "89.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2551,19 +2551,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155819871",
             "weight": "65.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819872",
             "weight": "65.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819873",
             "weight": "65.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2578,19 +2578,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155819874",
             "weight": "121.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819875",
             "weight": "121.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819876",
             "weight": "121.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2605,19 +2605,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155819877",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819878",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155819879",
             "weight": "30.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -2642,25 +2642,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155740319",
             "weight": "55.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740320",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740321",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740322",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2675,19 +2675,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155740323",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740324",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740325",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2702,19 +2702,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155740326",
             "weight": "110.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740327",
             "weight": "99.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740328",
             "weight": "99.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2729,19 +2729,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155740329",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740330",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740331",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2756,19 +2756,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155740332",
             "weight": "20.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740333",
             "weight": "20.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740334",
             "weight": "25.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2783,19 +2783,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155740335",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740336",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740337",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2810,25 +2810,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155740338",
             "weight": "30.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740339",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740340",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740341",
             "weight": "60.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2843,25 +2843,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "155740342",
             "weight": null,
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740343",
             "weight": null,
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740344",
             "weight": null,
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "155740345",
             "weight": null,
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -2886,19 +2886,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "153832053",
             "weight": "144.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832054",
             "weight": "144.000",
             "reps": "9",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832055",
             "weight": "140.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2913,19 +2913,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "153832056",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832057",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832058",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2940,19 +2940,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "153832059",
             "weight": "110.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832060",
             "weight": "110.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832061",
             "weight": "110.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2967,19 +2967,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "153832062",
             "weight": "77.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832063",
             "weight": "77.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832064",
             "weight": "66.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -2994,19 +2994,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "153832065",
             "weight": "18.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832066",
             "weight": "18.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832067",
             "weight": "18.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3021,19 +3021,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "153832068",
             "weight": "20.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832069",
             "weight": "25.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832070",
             "weight": "30.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3048,19 +3048,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "153832071",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832072",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832073",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3075,19 +3075,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "153832074",
             "weight": "14.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832075",
             "weight": "14.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "153832076",
             "weight": "14.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -3112,25 +3112,25 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152789292",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789293",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789294",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789295",
             "weight": "45.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3145,19 +3145,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152789296",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789297",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789298",
             "weight": "55.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3172,19 +3172,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152789299",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789300",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789301",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3199,19 +3199,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152789302",
             "weight": "40.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789303",
             "weight": "35.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789304",
             "weight": "35.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3226,19 +3226,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152789305",
             "weight": "77.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789306",
             "weight": "77.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789307",
             "weight": "66.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3253,19 +3253,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152789308",
             "weight": "18.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789309",
             "weight": "18.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152789310",
             "weight": "18.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -3290,19 +3290,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152445323",
             "weight": "140.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445324",
             "weight": "140.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445325",
             "weight": "140.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3317,19 +3317,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152445326",
             "weight": "132.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445327",
             "weight": "132.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445328",
             "weight": "132.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3344,19 +3344,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152445329",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445330",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445331",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3371,19 +3371,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152445332",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445333",
             "weight": "60.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445334",
             "weight": "60.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3398,19 +3398,19 @@ const baseWorkouts: LyftaWorkout[] = [
             "id": "152445335",
             "weight": "25.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445336",
             "weight": "25.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "152445337",
             "weight": "25.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }
@@ -3683,13 +3683,13 @@ const baseStatistics: LyftaStatistics = {
             "id": "212962192",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962193",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3704,13 +3704,13 @@ const baseStatistics: LyftaStatistics = {
             "id": "212962194",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962195",
             "weight": "50.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3725,7 +3725,7 @@ const baseStatistics: LyftaStatistics = {
             "id": "212962196",
             "weight": "20.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3740,25 +3740,25 @@ const baseStatistics: LyftaStatistics = {
             "id": "212962197",
             "weight": "20.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962198",
             "weight": "20.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962199",
             "weight": "20.000",
             "reps": "15",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962200",
             "weight": "20.000",
             "reps": "13",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3773,19 +3773,19 @@ const baseStatistics: LyftaStatistics = {
             "id": "212962201",
             "weight": "12.000",
             "reps": "10",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962202",
             "weight": "12.000",
             "reps": "6",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962203",
             "weight": "12.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       },
@@ -3800,13 +3800,13 @@ const baseStatistics: LyftaStatistics = {
             "id": "212962204",
             "weight": "12.000",
             "reps": "12",
-            "is_completed": false
+            "is_completed": true
           },
           {
             "id": "212962205",
             "weight": "16.000",
             "reps": "8",
-            "is_completed": false
+            "is_completed": true
           }
         ]
       }

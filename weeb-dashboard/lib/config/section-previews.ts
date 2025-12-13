@@ -1,43 +1,51 @@
 // Mapeamento de seções para previews de imagem
-// Baseado em: source/plugins/{plugin}/assets/{style}/{section}.svg
+// AUTO-GENERATED - DO NOT EDIT MANUALLY
+// Execute: pnpm generate-section-previews (in weeb-plugins)
+// 
+// Este arquivo é gerado automaticamente a partir dos plugins em weeb-plugins
+// e verifica quais previews existem na pasta previews/ de cada plugin
 
 export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
   github: {
-    profile: "/section-previews/github/default/profile.svg",
-    repositories: "/section-previews/github/default/repositories.svg",
-    favorite_languages: "/section-previews/github/default/favorite_languages.svg",
-    favorite_license: "/section-previews/github/default/favorite_license.svg",
-    activity: "/section-previews/github/default/activity.svg",
-    calendar: "/section-previews/github/default/calendar.svg",
-    code_habits: "/section-previews/github/default/code_habits.svg",
+    profile: "github/default/profile.svg",
+    activity: "github/default/activity.svg",
+    repositories: "github/default/repositories.svg",
+    favorite_languages: "github/default/favorite_languages.svg",
+    favorite_license: "github/default/favorite_license.svg",
+    calendar: "github/default/calendar.svg",
+    code_habits: "github/default/code_habits.svg",
+    starred_repositories: "github/default/starred_repositories.svg",
+    gists: "github/default/gists.svg",
+    stargazers: "github/default/stargazers.svg",
+    top_repositories: "github/default/top_repositories.svg",
+    star_lists: "github/default/star_lists.svg",
+    notable_contributions: "github/default/notable_contributions.svg",
+    recent_activity: "github/default/recent_activity.svg",
+    introduction: "github/default/introduction.svg",
+    featured_repositories: "github/default/featured_repositories.svg",
+    sponsorships: "github/default/sponsorships.svg",
+    sponsors: "github/default/sponsors.svg",
+    people: "github/default/people.svg",
+    repository_contributors: "github/default/repository_contributors.svg",
   },
+
   lastfm: {
-    recent_tracks: "/section-previews/lastfm/default/recent_tracks.svg",
-    statistics: "/section-previews/lastfm/default/statistics.svg",
-    top_artists: "/section-previews/lastfm/default/top_artists_default.svg", // Usa preview padrão, style é configurável
-    top_albums: "/section-previews/lastfm/default/top_albums_default.svg", // Usa preview padrão, style é configurável
-    top_tracks: "/section-previews/lastfm/default/top_tracks_default.svg", // Usa preview padrão, style é configurável
+    recent_tracks: "lastfm/default/recent_tracks.svg",
+    statistics: "lastfm/default/statistics.svg",
+    top_artists: "lastfm/default/top_artists.svg",
+    top_albums: "lastfm/default/top_albums.svg",
+    top_tracks: "lastfm/default/top_tracks.svg",
   },
+
   myanimelist: {
-    statistics: "/section-previews/myanimelist/default/statistics.svg",
-    anime_bar: "/section-previews/myanimelist/default/anime_bar.svg",
-    manga_bar: "/section-previews/myanimelist/default/manga_bar.svg",
-    statistics_simple: "/section-previews/myanimelist/default/statistics_simple.svg",
-    anime_simple_favorites: "/section-previews/myanimelist/default/anime_simple_favorites.svg",
-    manga_simple_favorites: "/section-previews/myanimelist/default/manga_simple_favorites.svg",
-    people_simple_favorites: "/section-previews/myanimelist/default/people_simple_favorites.svg",
-    character_simple_favorites: "/section-previews/myanimelist/default/character_simple_favorites.svg",
-    anime_favorites: "/section-previews/myanimelist/default/anime_favorites.svg",
-    manga_favorites: "/section-previews/myanimelist/default/manga_favorites.svg",
-    people_favorites: "/section-previews/myanimelist/default/people_favorites.svg",
-    character_favorites: "/section-previews/myanimelist/default/character_favorites.svg",
-    last_activity: "/section-previews/myanimelist/default/last_activity.svg",
-  },
-  "16personalities": {
-    personality: "/section-previews/16personalities/default/personality.svg",
-  },
-  lyfta: {
-    exercises: "/section-previews/lyfta/default/exercises.svg",
+    statistics: "myanimelist/default/statistics.svg",
+    last_activity: "myanimelist/default/last_activity.svg",
+    statistics_simple: "myanimelist/default/statistics_simple.svg",
+    anime_bar: "myanimelist/default/anime_bar.svg",
+    manga_bar: "myanimelist/default/manga_bar.svg",
+    anime_favorites: "myanimelist/default/anime_favorites.svg",
+    manga_favorites: "myanimelist/default/manga_favorites.svg",
+    people_favorites: "myanimelist/default/people_favorites.svg",
   },
 }
 
@@ -45,27 +53,10 @@ export function getSectionPreview(plugin: string, section: string, style: "defau
   const pluginPreviews = SECTION_PREVIEWS[plugin]
   if (!pluginPreviews) return null
 
-  // Por enquanto, usar apenas default. Depois pode adicionar terminal
-  let previewPath = pluginPreviews[section]
+  // Sempre usar default, não importa o style
+  const previewPath = pluginPreviews[section]
   if (!previewPath) return null
 
-  // Se for terminal, trocar o caminho
-  if (style === "terminal") {
-    previewPath = previewPath.replace("/default/", "/terminal/")
-  }
-
   // Usar rota API para servir as imagens
-  return `/api/section-preview${previewPath}`
+  return `/api/section-preview/${previewPath}`
 }
-
-
-
-
-
-
-
-
-
-
-
-

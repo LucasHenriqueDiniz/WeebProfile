@@ -9,15 +9,20 @@ interface TerminalHeaderProps {
   className?: string
 }
 
-export function TerminalHeader({ title = 'Terminal', className = '' }: TerminalHeaderProps): React.ReactElement {
+export function TerminalHeader({
+  title = 'weeb@profile:~',
+  className = '',
+}: TerminalHeaderProps): React.ReactElement {
   return (
     <div className={`terminal-header ${className}`}>
       <div className="terminal-header-dots">
-        <span className="terminal-dot terminal-dot-red"></span>
-        <span className="terminal-dot terminal-dot-yellow"></span>
-        <span className="terminal-dot terminal-dot-green"></span>
+        <span className="terminal-dot terminal-dot-red" />
+        <span className="terminal-dot terminal-dot-yellow" />
+        <span className="terminal-dot terminal-dot-green" />
       </div>
-      <div className="terminal-header-title">{title}</div>
+      <div className="terminal-header-title text-overflow">
+        {title}
+      </div>
     </div>
   )
 }

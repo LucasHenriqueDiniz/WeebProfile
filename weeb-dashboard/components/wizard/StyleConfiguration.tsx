@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { RotateCcw } from "lucide-react"
 
-export function Step3Style() {
+export function StyleConfiguration() {
   const {
     style,
     size,
@@ -33,17 +33,11 @@ export function Step3Style() {
     setCustomCss,
     setCustomThemeColor,
     resetCustomThemeColors,
-    validateStep,
   } = useWizardStore()
 
   // Local state for debounce of color pickers
   const [localColors, setLocalColors] = useState<Record<string, string>>(customThemeColors)
   const debounceTimersRef = React.useRef<Record<string, NodeJS.Timeout>>({})
-
-  // Validate step 2 when component mounts (Style is step 2)
-  useEffect(() => {
-    validateStep(2)
-  }, [validateStep])
 
   // Sync with store when changed externally
   useEffect(() => {
@@ -255,3 +249,5 @@ export function Step3Style() {
     </div>
   )
 }
+
+

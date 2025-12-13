@@ -21,15 +21,17 @@ export async function GET(
 
     // Tentar encontrar a imagem em múltiplos locais
     // Formato esperado: github/default/repositories.svg
+    // Mas os arquivos estão em: weeb-plugins/src/plugins/github/previews/github_repositories.svg
     const [plugin, style, ...sectionParts] = filePath.split("/")
     const sectionFile = sectionParts.join("/")
     
+    // Converter formato: github/default/repositories.svg -> github_repositories.svg
+    const previewFileName = `${plugin}_${sectionFile.replace(".svg", "")}.svg`
+    
     const possiblePaths = [
-      // No projeto atual (public)
-      join(process.cwd(), "public", "section-previews", filePath),
-      // No source antigo: source/plugins/{plugin}/assets/{style}/{section}
-      join(process.cwd(), "..", "source", "plugins", plugin, "assets", style, sectionFile),
-      // No weeb-plugins
+      // Previews estão em: weeb-plugins/src/plugins/{plugin}/previews/{plugin}_{section}.svg
+      join(process.cwd(), "..", "weeb-plugins", "src", "plugins", plugin, "previews", previewFileName),
+      // Fallback: tentar o caminho antigo (assets)
       join(process.cwd(), "..", "weeb-plugins", "src", "plugins", plugin, "assets", style, sectionFile),
     ]
 

@@ -116,10 +116,8 @@ export function GithubNotableContributions({ data, config, style, size }: Notabl
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'notable_contributions',
-                username: config.username,
                 size,
               })}
             />

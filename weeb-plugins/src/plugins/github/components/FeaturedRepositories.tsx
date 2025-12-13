@@ -123,10 +123,8 @@ export function GithubFeaturedRepositories({ data, config, style, size }: Featur
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'featured_repositories',
-                username: config.username,
                 size,
               })}
             />

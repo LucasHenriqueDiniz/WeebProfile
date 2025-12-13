@@ -3,8 +3,9 @@ import { FaTrophy } from 'react-icons/fa'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import { FaGamepad } from 'react-icons/fa'
 import type { SteamData, SteamNonEssentialConfig } from '../types'
 
 interface TopGamesProps {
@@ -21,6 +22,12 @@ function formatPlaytime(minutes: number): string {
     return `${days}d ${hours % 24}h`
   }
   return `${hours}h`
+}
+
+// Note: img_logo_url and img_icon_url from Steam API are often invalid
+// We'll use header_image instead when available
+function getSteamImageUrl(game: { appid: number; header_image?: string }): string | null {
+  return game.header_image || null
 }
 
 export function TopGames({
@@ -86,9 +93,7 @@ export function TopGames({
             ) : (
               <div className="flex flex-col gap-2.5 half:gap-2">
                 {topGames.map((game) => {
-                  const gameIconUrl = game.img_icon_url 
-                    ? `https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`
-                    : null
+                  const gameIconUrl = getSteamImageUrl(game)
                   
                   return (
                     <div
@@ -145,13 +150,14 @@ export function TopGames({
                 size,
               })}
             />
-            {topGames.map((game) => (
-              <TerminalLineWithDots
-                key={game.appid}
-                title={game.name}
-                value={formatPlaytime(game.playtime_forever)}
-              />
-            ))}
+            <TerminalGrid
+              data={topGames.map((game) => ({
+                title: game.name,
+                value: formatPlaytime(game.playtime_forever),
+              }))}
+              leftText="Playtime"
+              rightText="Game"
+            />
           </>
         }
       />

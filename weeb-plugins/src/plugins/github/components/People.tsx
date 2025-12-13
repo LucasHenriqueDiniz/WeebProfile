@@ -99,10 +99,8 @@ export function GithubPeople({ data, config, style, size }: PeopleProps): React.
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'people',
-                username: config.username,
                 size,
               })}
             />

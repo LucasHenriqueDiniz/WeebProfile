@@ -90,24 +90,51 @@ export function RenderPersonality16({
           </>
         }
         terminalComponent={
-          <>
-      <TerminalCommand
+          <div className="flex flex-col gap-1">
+            <TerminalCommand
               command={getPseudoCommands({
                 plugin: '16personalities',
                 section: 'personality',
                 type: data.type,
                 size,
               })}
-      />
-            <TerminalLineWithDots
-              title={`${data.emoji} ${data.type} - ${data.name}`}
-              value={`${data.traits.E} • ${data.traits.N} • ${data.traits.F} • ${data.traits.J}`}
             />
+            <div 
+              className="px-1 py-0.5"
+              style={{
+                fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+                fontSize: "0.875rem",
+                lineHeight: "1.25rem"
+              }}
+            >
+              <div className="text-terminal-warning font-semibold">
+                {data.emoji} {data.type} - {data.name}
+              </div>
+              <div className="text-terminal-muted">
+                {data.traits.E} • {data.traits.N} • {data.traits.F} • {data.traits.J}
+              </div>
+            </div>
             {showDescription && (
-              <TerminalLineWithDots
-                title="📝 Description"
-                value={data.description}
-              />
+              <div 
+                className="px-1 py-0.5"
+                style={{
+                  fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+                  fontSize: "0.875rem",
+                  lineHeight: "1.25rem"
+                }}
+              >
+                <div className="text-terminal-warning font-semibold mb-0.5">📝 Description</div>
+                <div 
+                  className="text-terminal-muted whitespace-pre-wrap break-words"
+                  style={{
+                    fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
+                    fontSize: "0.875rem",
+                    lineHeight: "1.25rem"
+                  }}
+                >
+                  {data.description}
+                </div>
+              </div>
             )}
             {showLink && (
               <TerminalLineWithDots
@@ -115,8 +142,9 @@ export function RenderPersonality16({
                 value={data.url}
               />
             )}
-          </>
+          </div>
         }
+        wrapTerminalBody={true}
       />
     </section>
   )

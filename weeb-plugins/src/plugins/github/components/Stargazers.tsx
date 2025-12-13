@@ -127,10 +127,8 @@ export function GithubStargazers({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'stargazers',
-                username: config.username,
                 size,
               })}
             />

@@ -3,11 +3,8 @@
 import { useWizardStore } from "@/stores/wizard-store"
 import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
 
-interface LivePreviewProps {
-  compact?: boolean
-}
 
-export function LivePreview({ compact = false }: LivePreviewProps = {}) {
+export function LivePreview() {
   const {
     plugins,
     pluginsOrder,

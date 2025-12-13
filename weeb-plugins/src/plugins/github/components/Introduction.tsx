@@ -126,10 +126,8 @@ export function GithubIntroduction({ data, config, style, size, activity }: Intr
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'introduction',
-                username: config.username,
                 size,
               })}
             />

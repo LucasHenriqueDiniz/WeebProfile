@@ -140,10 +140,8 @@ export function GithubTopRepositories({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'top_repositories',
-                username: config.username,
                 size,
               })}
             />

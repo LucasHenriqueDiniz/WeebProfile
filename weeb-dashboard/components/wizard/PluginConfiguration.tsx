@@ -26,15 +26,15 @@ import { PLUGINS_DATA } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
 import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2 } from "lucide-react"
 import { useMemo, useState, useEffect, useCallback, useRef } from "react"
-import { ProfileConfigModal } from "../ProfileConfigModal"
-import { SectionConfigDialog } from "../SectionConfigDialog"
+import { ProfileConfigModal } from "./ProfileConfigModal"
+import { SectionConfigDialog } from "./SectionConfigDialog"
 import { profileApi } from "@/lib/api/client"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { getSectionPreview } from "@/lib/config/section-previews"
 import { getPluginTags, getAllTags, type PluginTag } from "@/lib/config/plugin-tags"
 
-export function Step2Plugins() {
+export function PluginConfiguration() {
   const { user } = useAuth()
   const { toast } = useToast()
   const {
@@ -482,13 +482,22 @@ export function Step2Plugins() {
                             const isLocked = essentialConfigs[plugin.name]?.[configKey.key] === true && !isUnlocked
                             const isSaving = savingConfigs.has(configKeyId)
                             const isSaved = savedConfigs.has(configKeyId)
+                            const isConfigured = isLocked && !isUnlocked
 
                             return (
                               <div key={configKey.key} className="space-y-1">
                                 <div className="flex items-center justify-between">
-                                  <Label className="text-xs font-medium">
-                                    {configKey.label}
-                                  </Label>
+                                  <div className="flex items-center gap-2">
+                                    <Label className="text-xs font-medium">
+                                      {configKey.label}
+                                    </Label>
+                                    {isConfigured && (
+                                      <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
+                                        <CheckCircle2 className="h-2.5 w-2.5 mr-0.5" />
+                                        OK
+                                      </Badge>
+                                    )}
+                                  </div>
                                   {configKey.helpUrl && (
                                     <a
                                       href={configKey.helpUrl}
@@ -611,7 +620,7 @@ export function Step2Plugins() {
                                         {isSelected && <Check className="h-3 w-3" />}
                                         <span>{section.name}</span>
                                         {hasConfigs && isSelected && (
-                                          <span className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                          <span className="ml-1">
                                             <SectionConfigDialog
                                               plugin={plugin.name}
                                               section={section}
@@ -707,3 +716,4 @@ export function Step2Plugins() {
     </div>
   )
 }
+

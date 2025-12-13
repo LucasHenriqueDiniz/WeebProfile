@@ -6,7 +6,7 @@ import { HorizontalMultipleItemsBar } from '../../../templates/Default/Horizonta
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalHorizontalMultipleItemsBar } from '../../../templates/Terminal/TerminalHorizontalMultipleItems'
-import { TerminalLine } from '../../../templates/Terminal/TerminalLine'
+import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
 import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import { randomColorWithString } from '../../../utils/string'
@@ -64,7 +64,7 @@ const TerminalFavoriteLanguages = ({
   size: 'half' | 'full'
 }) => {
   return (
-    <>
+    <div className="flex flex-col gap-1">
       <TerminalHorizontalMultipleItemsBar
         items={data.map((lang) => ({
           value: lang.size,
@@ -73,17 +73,20 @@ const TerminalFavoriteLanguages = ({
         total={totalSize}
         size={size}
       />
-      {data.slice(0, maxItems).map((lang) => (
-        <span className="flex flex-col" key={lang.name}>
-          <TerminalLine
-            className={{ right: 'mt-[0.25rem]' }}
-            style={{ right: { color: lang.color ?? randomColorWithString(lang.name) } }}
-            right={`██ ${lang.name}`}
-            left={abbreviateNumber(lang.size)}
+      {data.slice(0, maxItems).map((lang) => {
+        const percentage = ((lang.size / totalSize) * 100).toFixed(1)
+        const langColor = lang.color ?? randomColorWithString(lang.name)
+        return (
+          <TerminalLineWithDots
+            key={lang.name}
+            title={`██ ${lang.name}`}
+            value={`${percentage}% • ${abbreviateNumber(lang.size)} lines`}
+            titleClassName="font-semibold"
+            titleStyle={{ color: langColor }}
           />
-        </span>
-      ))}
-    </>
+        )
+      })}
+    </div>
   )
 }
 
@@ -131,10 +134,8 @@ export function FavoriteLanguages({ languageData, config, style, size }: Favorit
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'favorite_languages',
-                username: config.username,
                 size,
               })}
             />

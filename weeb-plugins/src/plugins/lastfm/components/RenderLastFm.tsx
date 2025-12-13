@@ -11,7 +11,6 @@ import { Statistics } from './Statistics'
 import { TopArtists } from './TopArtists'
 import { TopAlbums } from './TopAlbums'
 import { TopTracks } from './TopTracks'
-import { TerminalBody } from '../../../templates/Terminal/TerminalBody'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 
 interface RenderLastFmProps {
@@ -166,11 +165,13 @@ export function RenderLastFm({
     }
   })
 
-  // Envolver em TerminalBody se for estilo terminal
-  if (style === 'terminal') {
-    return <TerminalBody>{renderedSections}</TerminalBody>
-  }
-
-  return <>{renderedSections}</>
+  return (
+    <RenderBasedOnStyle
+      style={style}
+      defaultComponent={<>{renderedSections}</>}
+      terminalComponent={<>{renderedSections}</>}
+      wrapTerminalBody={true}
+    />
+  )
 }
 

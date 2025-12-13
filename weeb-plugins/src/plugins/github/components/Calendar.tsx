@@ -195,10 +195,8 @@ export function GithubCalendar({ data, config, style, size }: CalendarProps): Re
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'calendar',
-                username: config.username,
                 size,
               })}
             />

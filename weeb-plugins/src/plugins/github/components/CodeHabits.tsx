@@ -319,10 +319,8 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'code-habits',
-                username: config.username,
                 size,
               })}
             />

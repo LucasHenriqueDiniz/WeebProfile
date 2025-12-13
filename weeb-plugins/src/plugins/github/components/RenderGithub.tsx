@@ -1,9 +1,3 @@
-/**
- * Renderizador principal do Plugin GitHub
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
 import React from 'react'
 import type { GithubConfig, GithubData } from '../types'
 import { GithubProfile } from './Profile'
@@ -26,7 +20,6 @@ import { GithubNotableContributions } from './NotableContributions'
 import { GithubFeaturedRepositories } from './FeaturedRepositories'
 import { GithubPeople } from './People'
 import { GithubRepositoryContributors } from './RepositoryContributors'
-import { TerminalBody } from '../../../templates/Terminal/TerminalBody'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 
 interface RenderGithubProps {
@@ -246,11 +239,13 @@ export function RenderGithub({
     }
   })
 
-  // Envolver em TerminalBody se for estilo terminal
-  if (style === 'terminal') {
-    return <TerminalBody>{renderedSections}</TerminalBody>
-  }
-
-  return <>{renderedSections}</>
+  return (
+    <RenderBasedOnStyle
+      style={style}
+      defaultComponent={<>{renderedSections}</>}
+      terminalComponent={<>{renderedSections}</>}
+      wrapTerminalBody={true}
+    />
+  )
 }
 

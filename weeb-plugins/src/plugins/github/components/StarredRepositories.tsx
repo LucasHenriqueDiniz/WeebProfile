@@ -140,10 +140,8 @@ export function GithubStarredRepositories({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'starred_repositories',
-                username: config.username,
                 size,
               })}
             />

@@ -102,6 +102,10 @@
   margin-left: 0.5rem
 }
 
+#svg-main .mr-1 {
+  margin-right: 0.25rem
+}
+
 #svg-main .mr-2 {
   margin-right: 0.5rem
 }
@@ -196,12 +200,20 @@
   height: 3.5rem
 }
 
+#svg-main .h-16 {
+  height: 4rem
+}
+
 #svg-main .h-2 {
   height: 0.5rem
 }
 
 #svg-main .h-2\.5 {
   height: 0.625rem
+}
+
+#svg-main .h-20 {
+  height: 5rem
 }
 
 #svg-main .h-3 {
@@ -214,6 +226,14 @@
 
 #svg-main .h-4 {
   height: 1rem
+}
+
+#svg-main .h-6 {
+  height: 1.5rem
+}
+
+#svg-main .h-7 {
+  height: 1.75rem
 }
 
 #svg-main .h-8 {
@@ -260,8 +280,8 @@
   max-height: 50px
 }
 
-#svg-main .min-h-\[100px\] {
-  min-height: 100px
+#svg-main .min-h-\[120px\] {
+  min-height: 120px
 }
 
 #svg-main .min-h-\[50px\] {
@@ -296,12 +316,24 @@
   width: 0.5rem
 }
 
+#svg-main .w-20 {
+  width: 5rem
+}
+
 #svg-main .w-3 {
   width: 0.75rem
 }
 
 #svg-main .w-4 {
   width: 1rem
+}
+
+#svg-main .w-6 {
+  width: 1.5rem
+}
+
+#svg-main .w-7 {
+  width: 1.75rem
 }
 
 #svg-main .w-8 {
@@ -333,12 +365,20 @@
   width: 100%
 }
 
+#svg-main .w-px {
+  width: 1px
+}
+
 #svg-main .min-w-0 {
   min-width: 0px
 }
 
 #svg-main .max-w-\[60\%\] {
   max-width: 60%
+}
+
+#svg-main .max-w-full {
+  max-width: 100%
 }
 
 #svg-main .flex-1 {
@@ -355,6 +395,12 @@
 
 #svg-main .shrink-0 {
   flex-shrink: 0
+}
+
+#svg-main .select-none {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none
 }
 
 #svg-main .grid-flow-col {
@@ -502,6 +548,24 @@
   row-gap: 0.5rem
 }
 
+#svg-main .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse))
+}
+
+#svg-main .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.625rem * var(--tw-space-y-reverse))
+}
+
+#svg-main .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse))
+}
+
 #svg-main .self-end {
   align-self: flex-end
 }
@@ -524,6 +588,10 @@
   white-space: nowrap
 }
 
+#svg-main .overflow-ellipsis {
+  text-overflow: ellipsis
+}
+
 #svg-main .whitespace-nowrap {
   white-space: nowrap
 }
@@ -532,8 +600,16 @@
   white-space: pre-line
 }
 
+#svg-main .whitespace-pre-wrap {
+  white-space: pre-wrap
+}
+
 #svg-main .text-nowrap {
   text-wrap: nowrap
+}
+
+#svg-main .break-words {
+  overflow-wrap: break-word
 }
 
 #svg-main .rounded {
@@ -619,6 +695,11 @@
   fill: #eab308
 }
 
+#svg-main .object-contain {
+  -o-object-fit: contain;
+     object-fit: contain
+}
+
 #svg-main .object-cover {
   -o-object-fit: cover;
      object-fit: cover
@@ -659,6 +740,11 @@
   padding-right: 0.5rem
 }
 
+#svg-main .px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem
+}
+
 #svg-main .px-4 {
   padding-left: 1rem;
   padding-right: 1rem
@@ -667,6 +753,11 @@
 #svg-main .py-0\.5 {
   padding-top: 0.125rem;
   padding-bottom: 0.125rem
+}
+
+#svg-main .py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem
 }
 
 #svg-main .py-3 {
@@ -697,6 +788,18 @@
 
 #svg-main .pr-2 {
   padding-right: 0.5rem
+}
+
+#svg-main .pt-0\.5 {
+  padding-top: 0.125rem
+}
+
+#svg-main .pt-1 {
+  padding-top: 0.25rem
+}
+
+#svg-main .pt-2 {
+  padding-top: 0.5rem
 }
 
 #svg-main .text-center {
@@ -846,6 +949,10 @@
   color: rgb(255 255 255 / 0.5)
 }
 
+#svg-main .text-white\/60 {
+  color: rgb(255 255 255 / 0.6)
+}
+
 #svg-main .text-white\/80 {
   color: rgb(255 255 255 / 0.8)
 }
@@ -962,10 +1069,6 @@
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
 }
 
-#svg-main.half .half\:mb-0\.5 {
-  margin-bottom: 0.125rem
-}
-
 #svg-main.half .half\:mb-1\.5 {
   margin-bottom: 0.375rem
 }
@@ -993,16 +1096,32 @@
   height: 3rem
 }
 
+#svg-main.half .half\:h-14 {
+  height: 3.5rem
+}
+
+#svg-main.half .half\:h-16 {
+  height: 4rem
+}
+
+#svg-main.half .half\:h-5 {
+  height: 1.25rem
+}
+
+#svg-main.half .half\:h-6 {
+  height: 1.5rem
+}
+
 #svg-main.half .half\:h-\[50px\] {
   height: 50px
 }
 
-#svg-main.half .half\:min-h-\[70px\] {
-  min-height: 70px
+#svg-main.half .half\:min-h-\[100px\] {
+  min-height: 100px
 }
 
-#svg-main.half .half\:min-h-\[90px\] {
-  min-height: 90px
+#svg-main.half .half\:min-h-\[70px\] {
+  min-height: 70px
 }
 
 #svg-main.half .half\:w-10 {
@@ -1011,6 +1130,22 @@
 
 #svg-main.half .half\:w-12 {
   width: 3rem
+}
+
+#svg-main.half .half\:w-14 {
+  width: 3.5rem
+}
+
+#svg-main.half .half\:w-16 {
+  width: 4rem
+}
+
+#svg-main.half .half\:w-5 {
+  width: 1.25rem
+}
+
+#svg-main.half .half\:w-6 {
+  width: 1.5rem
 }
 
 #svg-main.half .half\:w-\[50px\] {
@@ -1037,10 +1172,6 @@
   gap: 0.25rem
 }
 
-#svg-main.half .half\:gap-1\.5 {
-  gap: 0.375rem
-}
-
 #svg-main.half .half\:gap-2 {
   gap: 0.5rem
 }
@@ -1063,8 +1194,26 @@
   padding-bottom: 0.625rem
 }
 
+#svg-main.half .half\:py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem
+}
+
 #svg-main.half .half\:text-\[10px\] {
   font-size: 10px
+}
+
+#svg-main.half .half\:text-\[11px\] {
+  font-size: 11px
+}
+
+#svg-main.half .half\:text-\[9px\] {
+  font-size: 9px
+}
+
+#svg-main.half .half\:text-base {
+  font-size: 1rem;
+  line-height: 1.5rem
 }
 
 #svg-main.half .half\:text-lg {

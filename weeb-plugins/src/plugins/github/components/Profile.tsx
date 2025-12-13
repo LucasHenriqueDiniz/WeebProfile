@@ -102,10 +102,8 @@ export function GithubProfile({ data, config, style, size }: ProfileProps): Reac
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'profile',
-                username: config.username,
                 size,
               })}
             />

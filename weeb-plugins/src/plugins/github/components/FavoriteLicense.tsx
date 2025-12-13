@@ -74,10 +74,8 @@ export function FavoriteLicense({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'license',
-                username: config.username,
                 command: 'list',
               })}
             />

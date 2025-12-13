@@ -1,12 +1,6 @@
-/**
- * Renderizador principal do Plugin MyAnimeList
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
 import React from 'react'
 import type { MyAnimeListConfig, MyAnimeListData } from '../types'
-import { TerminalBody } from '../../../templates/Terminal/TerminalBody'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { Statistics } from './Statistics'
 import { LastUpdates } from './LastUpdates'
 import { SimpleStatistics } from './SimpleStatistics'
@@ -149,11 +143,13 @@ export function RenderMyAnimeList({
     }
   })
 
-  // Envolver em TerminalBody se for estilo terminal
-  if (style === 'terminal') {
-    return <TerminalBody>{renderedSections}</TerminalBody>
-  }
-
-  return <>{renderedSections}</>
+  return (
+    <RenderBasedOnStyle
+      style={style}
+      defaultComponent={<>{renderedSections}</>}
+      terminalComponent={<>{renderedSections}</>}
+      wrapTerminalBody={true}
+    />
+  )
 }
 

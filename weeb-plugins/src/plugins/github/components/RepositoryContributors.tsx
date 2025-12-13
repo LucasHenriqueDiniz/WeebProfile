@@ -79,10 +79,8 @@ export function GithubRepositoryContributors({ data, config, style, size }: Repo
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                prefix: 'gh',
                 plugin: 'github',
                 section: 'repository_contributors',
-                username: config.username,
                 size,
               })}
             />

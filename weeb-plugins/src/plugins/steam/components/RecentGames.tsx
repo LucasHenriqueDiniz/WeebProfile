@@ -3,7 +3,7 @@ import { FaClock } from 'react-icons/fa'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import type { SteamData, SteamNonEssentialConfig } from '../types'
 
@@ -20,6 +20,12 @@ function formatPlaytime(minutes: number): string {
     return `${hours}h`
   }
   return `${minutes}m`
+}
+
+// Note: img_logo_url and img_icon_url from Steam API are often invalid
+// We'll use header_image instead when available
+function getSteamImageUrl(game: { appid: number; header_image?: string }): string | null {
+  return game.header_image || null
 }
 
 export function RecentGames({
@@ -85,9 +91,7 @@ export function RecentGames({
             ) : (
               <div className="flex flex-col gap-2.5 half:gap-2">
                 {recentGames.map((game) => {
-                  const gameIconUrl = game.img_icon_url 
-                    ? `https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`
-                    : null
+                  const gameIconUrl = getSteamImageUrl(game)
                   
                   return (
                     <div
@@ -144,13 +148,16 @@ export function RecentGames({
                 size,
               })}
             />
-            {recentGames.map((game) => (
-              <TerminalLineWithDots
-                key={game.appid}
-                title={game.name}
-                value={`${formatPlaytime(game.playtime_2weeks || 0)}`}
-              />
-            ))}
+            <TerminalGrid
+              data={recentGames.map((game) => ({
+                title: game.name,
+                subtitle: formatPlaytime(game.playtime_2weeks || 0),
+                value: formatPlaytime(game.playtime_forever),
+              }))}
+              leftText="Total"
+              centerText="Recent"
+              rightText="Game"
+            />
           </>
         }
       />

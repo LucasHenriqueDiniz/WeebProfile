@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { memo } from "react"
+import { memo, useState, useEffect } from "react"
 
 interface Particle {
 	id: number
@@ -10,6 +10,7 @@ interface Particle {
 	size: number
 	duration: number
 	delay: number
+	xOffset: number
 }
 
 const generateParticles = (count: number): Particle[] => {
@@ -20,11 +21,22 @@ const generateParticles = (count: number): Particle[] => {
 		size: Math.random() * 4 + 2,
 		duration: Math.random() * 20 + 15,
 		delay: Math.random() * 5,
+		xOffset: Math.random() * 20 - 10,
 	}))
 }
 
 export const HeroParticles = memo(function HeroParticles() {
-	const particles = generateParticles(15)
+	const [particles, setParticles] = useState<Particle[]>([])
+	const [mounted, setMounted] = useState(false)
+
+	useEffect(() => {
+		setMounted(true)
+		setParticles(generateParticles(15))
+	}, [])
+
+	if (!mounted) {
+		return null
+	}
 
 	return (
 		<div className="absolute inset-0 -z-[4] overflow-hidden pointer-events-none" aria-hidden="true">
@@ -42,7 +54,7 @@ export const HeroParticles = memo(function HeroParticles() {
 					}}
 					animate={{
 						y: [0, -30, 0],
-						x: [0, Math.random() * 20 - 10, 0],
+						x: [0, particle.xOffset, 0],
 						opacity: [0.3, 0.6, 0.3],
 						scale: [1, 1.2, 1],
 					}}

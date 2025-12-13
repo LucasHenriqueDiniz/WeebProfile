@@ -139,7 +139,6 @@ export function StatisticsHorizontalBar({
               command={getPseudoCommands({
                 plugin: 'mal',
                 section: isAnime ? 'anime-bar' : 'manga-bar',
-                username: config.username,
                 type: isAnime ? 'anime' : 'manga',
               })}
             />

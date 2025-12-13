@@ -77,9 +77,27 @@ export interface LyftaStatistics {
 export interface LyftaNonEssentialConfig extends NonEssentialPluginConfig {
   statistics_hide_title?: boolean
   statistics_title?: string
+  statistics_period_days?: number
   recent_workouts_hide_title?: boolean
   recent_workouts_title?: string
   workouts_max?: number
+  exercises_hide_title?: boolean
+  exercises_title?: string
+  exercises_max?: number
+  exercises_show_1rm?: boolean
+  exercises_compact?: boolean
+  exercises_hide_images?: boolean
+  overview_hide_title?: boolean
+  overview_title?: string
+  overview_period_days?: number
+  overview_show_volume?: boolean
+  overview_show_duration?: boolean
+  overview_show_weekly_avg?: boolean
+  last_workout_hide_title?: boolean
+  last_workout_title?: string
+  last_workout_show_body_weight?: boolean
+  last_workout_max_exercises?: number
+  last_workout_compact?: boolean
   weight_unit?: 'kg' | 'lbs' // Unidade de peso: kg ou libras
 }
 

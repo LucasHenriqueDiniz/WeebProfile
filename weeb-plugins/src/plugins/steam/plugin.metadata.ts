@@ -52,6 +52,13 @@ export const steamPluginMetadata = {
           type: "string" as const,
           defaultValue: "Statistics",
         },
+        {
+          key: "statistics_show_featured",
+          label: "Show featured game",
+          type: "boolean" as const,
+          defaultValue: true,
+          description: "Show the 'Destaque recente' card with the most played game in the last 2 weeks",
+        },
       ],
     },
     {
