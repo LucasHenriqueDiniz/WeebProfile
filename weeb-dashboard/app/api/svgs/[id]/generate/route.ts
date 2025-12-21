@@ -96,11 +96,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
       // Preparar request para o svg-generator HTTP service
       // O svg-generator vai buscar essential configs do Supabase usando userId
+      // pluginsOrder já vem convertido com ordem alfabética se null/empty
       const requestConfig = {
         style: svg.style || 'default',
         size: svg.size || 'half',
         plugins,
-        pluginsOrder: pluginsOrder.length > 0 ? pluginsOrder : (svg.pluginsOrder?.split(',') || []),
+        pluginsOrder, // Already converted by convertSvgToPluginsConfig (alphabetical if null/empty)
         customCss: svg.customCss || undefined,
         theme: svg.theme || undefined,
         hideTerminalEmojis: svg.hideTerminalEmojis || undefined,

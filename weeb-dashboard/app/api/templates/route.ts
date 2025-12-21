@@ -128,7 +128,7 @@ export async function POST(request: Request) {
         hideTerminalEmojis: hideTerminalEmojis || false,
         hideTerminalHeader: hideTerminalHeader || false,
         customCss: customCss || null,
-        pluginsOrder: pluginsOrder || "",
+        pluginsOrder: pluginsOrder || null, // null means use alphabetical order
         pluginsConfig: pluginsConfig || {},
         isPublic: isPublic || false,
       })

@@ -45,6 +45,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     customCss,
     customThemeColors,
     setBasicInfo,
+    reset,
   } = useWizardStore()
 
   // Verificar TODOS os plugins, não apenas os que estão no pluginsOrder
@@ -98,9 +99,10 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
           : {}),
       }
       
+      // Only include enabled plugins in config
       pluginsOrder.forEach((pluginName) => {
         const plugin = plugins[pluginName]
-        if (plugin.enabled) {
+        if (plugin?.enabled && plugin.sections && plugin.sections.length > 0) {
           pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}`] = true
           
           // Adicionar requiredFields dinamicamente
@@ -127,13 +129,23 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
               }
             }
           })
-        } else {
-          pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}`] = false
         }
+        // Don't include inactive plugins in config (if not in config, plugin is inactive)
       })
 
+      // Validate that at least one plugin is enabled before creating
+      if (enabledPlugins.length === 0) {
+        toast({
+          title: "Configuração inválida",
+          description: "Pelo menos um plugin deve estar habilitado com pelo menos uma seção",
+          variant: "destructive",
+        })
+        setIsSaving(false)
+        return
+      }
+
       // Gerar name e slug automaticamente baseado nos plugins habilitados
-      const enabledPluginNames = pluginsOrder.filter((name) => plugins[name]?.enabled)
+      const enabledPluginNames = enabledPlugins // Use enabledPlugins already computed above
       const autoName = enabledPluginNames.length > 0 
         ? `${enabledPluginNames.map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(' ')} Stats`
         : 'My Profile Stats'
@@ -147,8 +159,14 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
       // Atualizar store com name/slug gerados
       setBasicInfo(autoName, autoSlug, true)
 
+      // Check if pluginsOrder is customized (different from alphabetical order)
+      // Only consider enabled plugins in the order comparison
+      const enabledPluginsOrdered = [...enabledPluginNames].sort()
+      const currentOrderFiltered = pluginsOrder.filter(name => enabledPluginNames.includes(name))
+      const isOrderCustomized = JSON.stringify(enabledPluginsOrdered) !== JSON.stringify(currentOrderFiltered)
+
       // 1. Criar/Atualizar SVG
-      const svgData = {
+      const svgData: any = {
         name: autoName,
         style,
         size,
@@ -157,8 +175,12 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
         hideTerminalHeader,
         customCss: customCss || null,
         customThemeColors: theme === 'custom' ? customThemeColors : undefined,
-        pluginsOrder: pluginsOrder.join(","),
         pluginsConfig,
+      }
+
+      // Only include pluginsOrder if customized (not alphabetical default)
+      if (isOrderCustomized) {
+        svgData.pluginsOrder = pluginsOrder.filter(name => enabledPluginNames.includes(name)).join(",")
       }
 
       const data = isEditMode && editSvgId
@@ -186,9 +208,19 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
             description: `Imagem SVG ${isEditMode ? "atualizada" : "criada"} e gerada com sucesso!`,
           })
 
+          // Reset wizard store após criar com sucesso (só em modo criação)
+          if (!isEditMode) {
+            reset()
+          }
+
           // Redirecionar para página de visualização com a URL
           router.push(`/dashboard/${svgId}?url=${encodeURIComponent(svgUrl)}`)
         } else {
+          // Reset wizard store após criar (só em modo criação)
+          if (!isEditMode) {
+            reset()
+          }
+
           // Se não tem URL ainda, redirecionar mesmo assim (a página vai fazer polling)
           toast({
             title: "Imagem criada",
@@ -197,6 +229,11 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
           router.push(`/dashboard/${svgId}`)
         }
       } catch (generateError) {
+        // Reset wizard store mesmo com erro (só em modo criação)
+        if (!isEditMode) {
+          reset()
+        }
+
         // Se der erro na geração, ainda redirecionar (a página vai mostrar o erro)
         console.error("Error generating SVG:", generateError)
         toast({

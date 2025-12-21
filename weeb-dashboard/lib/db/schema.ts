@@ -61,7 +61,7 @@ export const svgs = pgTable(
     hideTerminalEmojis: boolean("hide_terminal_emojis").default(false).notNull(),
     hideTerminalHeader: boolean("hide_terminal_header").default(false).notNull(),
     customCss: text("custom_css"),
-    pluginsOrder: text("plugins_order").default(""), // Order will be generated dynamically from PLUGINS_METADATA
+    pluginsOrder: text("plugins_order"), // Order will be generated dynamically from PLUGINS_METADATA (null = alphabetical order)
     pluginsConfig: jsonb("plugins_config").notNull().default({}),
     storagePath: text("storage_path"),
     storageUrl: text("storage_url"),
@@ -103,7 +103,7 @@ export const templates = pgTable(
     hideTerminalEmojis: boolean("hide_terminal_emojis").default(false).notNull(),
     hideTerminalHeader: boolean("hide_terminal_header").default(false).notNull(),
     customCss: text("custom_css"),
-    pluginsOrder: text("plugins_order").default(""),
+    pluginsOrder: text("plugins_order"), // Order will be generated dynamically (null = alphabetical order)
     pluginsConfig: jsonb("plugins_config").notNull().default({}),
     isPublic: boolean("is_public").default(false).notNull(), // Whether template is publicly available
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

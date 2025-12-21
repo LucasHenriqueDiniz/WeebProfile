@@ -147,8 +147,10 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
 
     console.log("🔧 [SERVER] Final plugins object:", JSON.stringify(plugins, null, 2))
 
-    // Generate pluginsOrder dynamically if not provided
-    const pluginsOrder = requestDataTyped.pluginsOrder || Object.keys(plugins)
+    // Generate pluginsOrder dynamically if not provided or empty (alphabetical order)
+    const pluginsOrder = (requestDataTyped.pluginsOrder && requestDataTyped.pluginsOrder.length > 0) 
+      ? requestDataTyped.pluginsOrder 
+      : Object.keys(plugins).sort() // Alphabetical order when null/empty
     console.log("🔧 [SERVER] Plugins order:", pluginsOrder)
 
     // Map theme to defaultTheme or terminalTheme based on style

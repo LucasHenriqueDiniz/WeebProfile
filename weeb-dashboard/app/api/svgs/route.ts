@@ -56,7 +56,7 @@ export async function POST(request: Request) {
           hideTerminalHeader = false,
           customCss,
           customThemeColors,
-          pluginsOrder = "",
+          pluginsOrder,
         } = body
 
         if (!name) {
@@ -103,7 +103,7 @@ export async function POST(request: Request) {
             hideTerminalEmojis,
             hideTerminalHeader,
             customCss: customCss || null,
-            pluginsOrder,
+            pluginsOrder: pluginsOrder || null, // null means use alphabetical order
             status: "pending",
             forceRegenerate: true,
           })

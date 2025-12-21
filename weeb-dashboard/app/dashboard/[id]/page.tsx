@@ -208,7 +208,7 @@ export default function SvgViewPage() {
 
   if (!svg && !urlFromQuery) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Imagem não encontrada</CardTitle>
@@ -232,9 +232,8 @@ export default function SvgViewPage() {
   const markdownCode = `![${svg?.name || "Profile"}](${baseImageUrl || imageUrl})`
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-1 container px-6 py-8">
-        <div className="max-w-6xl mx-auto space-y-6">
+    <div className="p-6 md:p-8 lg:p-10">
+      <div className="max-w-6xl mx-auto space-y-6">
 
         {/* Status Badge e Botão de Forçar Geração */}
         {svg && (
@@ -460,7 +459,6 @@ export default function SvgViewPage() {
           </Card>
         )}
         </div>
-      </div>
     </div>
   )
 }

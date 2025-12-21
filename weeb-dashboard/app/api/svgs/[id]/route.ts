@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { svgs } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { NextResponse } from "next/server"
+import { deleteSvgFromStorage } from "@/lib/svg-generator"
 
 /**
  * GET /api/svgs/[id] - Buscar SVG específico
@@ -78,7 +79,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         hideTerminalEmojis: body.hideTerminalEmojis !== undefined ? body.hideTerminalEmojis : existingSvg.hideTerminalEmojis,
         hideTerminalHeader: body.hideTerminalHeader !== undefined ? body.hideTerminalHeader : existingSvg.hideTerminalHeader,
         customCss: body.customCss !== undefined ? body.customCss : existingSvg.customCss,
-        pluginsOrder: body.pluginsOrder || existingSvg.pluginsOrder,
+        pluginsOrder: body.pluginsOrder !== undefined ? (body.pluginsOrder || null) : existingSvg.pluginsOrder, // null means use alphabetical order
         pluginsConfig: body.pluginsConfig || existingSvg.pluginsConfig,
         updatedAt: new Date(),
       })
@@ -120,7 +121,17 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       return NextResponse.json({ error: "SVG not found" }, { status: 404 })
     }
 
-    // Deletar SVG
+    // Deletar arquivo do storage se existir
+    if (existingSvg.storagePath || existingSvg.storageUrl) {
+      try {
+        await deleteSvgFromStorage(id)
+      } catch (error) {
+        console.error("Error deleting SVG from storage:", error)
+        // Continue with database deletion even if storage deletion fails
+      }
+    }
+
+    // Deletar SVG do banco
     await db.delete(svgs).where(eq(svgs.id, id))
 
     return NextResponse.json({ success: true })

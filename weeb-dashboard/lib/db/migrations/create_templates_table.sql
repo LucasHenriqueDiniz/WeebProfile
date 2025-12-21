@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS templates (
   hide_terminal_emojis BOOLEAN DEFAULT false NOT NULL,
   hide_terminal_header BOOLEAN DEFAULT false NOT NULL,
   custom_css TEXT,
-  plugins_order TEXT DEFAULT '',
+  plugins_order TEXT, -- NULL means use alphabetical order of enabled plugins
   plugins_config JSONB NOT NULL DEFAULT '{}',
   is_public BOOLEAN DEFAULT false NOT NULL, -- Whether template is publicly available
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,

@@ -76,10 +76,20 @@ export function convertSvgToPluginsConfig(svg: Svg): Record<string, any> {
 
   console.log(`🔄 [CONVERT] Final enabled plugins:`, JSON.stringify(enabledPlugins, null, 2))
 
+  // Use alphabetical order if pluginsOrder is null or empty
+  let finalPluginsOrder: string[] = []
+  if (svg.pluginsOrder && svg.pluginsOrder.trim()) {
+    finalPluginsOrder = svg.pluginsOrder.split(",").filter(Boolean)
+  } else {
+    // Use alphabetical order of enabled plugins
+    finalPluginsOrder = Object.keys(enabledPlugins).sort()
+    console.log(`🔄 [CONVERT] Using alphabetical order:`, finalPluginsOrder)
+  }
+
   // Retornar no formato esperado pelo svg-generator
   const result = {
     plugins: enabledPlugins,
-    pluginsOrder: svg.pluginsOrder?.split(",").filter(Boolean) || [],
+    pluginsOrder: finalPluginsOrder,
   }
   
   console.log(`🔄 [CONVERT] Final result:`, JSON.stringify(result, null, 2))
@@ -136,5 +146,23 @@ export async function saveSvgToStorage(svgId: string, svgContent: string): Promi
   }
 }
 
+/**
+ * Deleta o SVG gerado do Supabase Storage
+ */
+export async function deleteSvgFromStorage(svgId: string): Promise<void> {
+  const supabase = createAdminClient()
+  const bucket = "svgs"
+  const fileName = `${svgId}.svg`
 
+  const { error } = await supabase.storage.from(bucket).remove([fileName])
+
+  if (error) {
+    // Don't throw if file doesn't exist (might have been deleted already)
+    if (error.message.includes("not found") || error.message.includes("does not exist")) {
+      console.log(`⚠️ [DELETE] SVG file ${fileName} not found in storage, continuing...`)
+      return
+    }
+    throw new Error(`Failed to delete SVG from storage: ${error.message}`)
+  }
+}
 

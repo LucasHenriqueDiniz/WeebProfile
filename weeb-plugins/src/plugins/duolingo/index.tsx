@@ -41,3 +41,5 @@ export const duolingoPlugin: Plugin<DuolingoConfig, PluginData & DuolingoData> =
 export default duolingoPlugin
 
 
+
+
