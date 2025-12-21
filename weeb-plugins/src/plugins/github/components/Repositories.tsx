@@ -1,61 +1,64 @@
-import React from 'react'
-import { FaBox, FaCodeBranch, FaDatabase, FaEye, FaHeart, FaStar } from 'react-icons/fa'
-import { RiGitRepositoryLine } from 'react-icons/ri'
-import { TbLicense } from 'react-icons/tb'
-import { StatisticRow } from '../../../templates/Default/DefaultStatRow'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { abbreviateNumber, formatDiskUsage } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaBox, FaCodeBranch, FaDatabase, FaEye, FaHeart, FaStar } from "react-icons/fa"
+import { RiGitRepositoryLine } from "react-icons/ri"
+import { TbLicense } from "react-icons/tb"
+import { StatisticRow } from "../../../templates/Default/DefaultStatRow"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { abbreviateNumber, formatDiskUsage } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
-
-const DefaultRepositories = ({ data, totalDiskUsage, sponsoringCount, favoriteLicense }: { 
-  data: GithubData['repositories']
+const DefaultRepositories = ({
+  data,
+  totalDiskUsage,
+  sponsoringCount,
+  favoriteLicense,
+}: {
+  data: GithubData["repositories"]
   totalDiskUsage: number
   sponsoringCount: number
-  favoriteLicense: GithubData['favoriteLicense']
+  favoriteLicense: GithubData["favoriteLicense"]
 }) => {
   const leftColumnRows = [
     {
       icon: <FaStar className="text-default-muted" />,
-      title: 'Total Stars',
+      title: "Total Stars",
       value: abbreviateNumber(data.nodes.reduce((acc, repo) => acc + (repo.stargazerCount || 0), 0)),
     },
     {
       icon: <FaCodeBranch className="text-default-muted" />,
-      title: 'Total Forks',
+      title: "Total Forks",
       value: abbreviateNumber(data.nodes.reduce((acc, repo) => acc + (repo.forkCount || 0), 0)),
     },
     {
       icon: <FaEye className="text-default-muted" />,
-      title: 'Total Watchers',
+      title: "Total Watchers",
       value: abbreviateNumber(data.nodes.reduce((acc, repo) => acc + (repo.watchers?.totalCount || 0), 0)),
     },
     {
       icon: <FaBox className="text-default-muted" />,
-      title: 'Total Packages',
+      title: "Total Packages",
       value: abbreviateNumber(data.nodes.reduce((acc, repo) => acc + (repo.packages?.totalCount || 0), 0)),
     },
-    
   ]
 
   const rightColumnRows = [
     {
       icon: <FaHeart className="text-default-muted" />,
-      title: 'Sponsoring',
+      title: "Sponsoring",
       value: abbreviateNumber(sponsoringCount),
     },
     {
       icon: <FaDatabase className="text-default-muted" />,
-      title: 'Disk Usage',
+      title: "Disk Usage",
       value: formatDiskUsage(totalDiskUsage),
     },
     {
       icon: <TbLicense className="text-default-muted" />,
-      title: '',
+      title: "",
       value: `${favoriteLicense.name} (${favoriteLicense.count})`,
     },
   ]
@@ -68,43 +71,48 @@ const DefaultRepositories = ({ data, totalDiskUsage, sponsoringCount, favoriteLi
   )
 }
 
-const TerminalRepositories = ({ data, totalDiskUsage, sponsoringCount, favoriteLicense }: { 
-  data: GithubData['repositories']
+const TerminalRepositories = ({
+  data,
+  totalDiskUsage,
+  sponsoringCount,
+  favoriteLicense,
+}: {
+  data: GithubData["repositories"]
   totalDiskUsage: number
   sponsoringCount: number
-  favoriteLicense: GithubData['favoriteLicense']
+  favoriteLicense: GithubData["favoriteLicense"]
 }) => {
   const gridData = [
     {
-      title: 'Repositories',
+      title: "Repositories",
       value: `${data.nodes.length} repos`,
     },
     {
-      title: 'Stars',
+      title: "Stars",
       value: abbreviateNumber(data.nodes.reduce((acc, repo) => acc + repo.stargazerCount, 0)),
     },
     {
-      title: 'Forks',
+      title: "Forks",
       value: abbreviateNumber(data.nodes.reduce((acc, repo) => acc + repo.forkCount, 0)),
     },
     {
-      title: 'Watchers',
+      title: "Watchers",
       value: abbreviateNumber(data.nodes.reduce((acc, repo) => acc + (repo.watchers?.totalCount || 0), 0)),
     },
     {
-      title: 'Packages',
+      title: "Packages",
       value: abbreviateNumber(data.nodes.reduce((acc, repo) => acc + (repo.packages?.totalCount || 0), 0)),
     },
     {
-      title: 'Sponsoring',
+      title: "Sponsoring",
       value: abbreviateNumber(sponsoringCount || 0),
     },
     {
-      title: 'Disk Usage',
+      title: "Disk Usage",
       value: formatDiskUsage(totalDiskUsage),
     },
     {
-      title: 'License',
+      title: "License",
       value: `${favoriteLicense.name} (${favoriteLicense.count})`,
     },
   ]
@@ -113,26 +121,26 @@ const TerminalRepositories = ({ data, totalDiskUsage, sponsoringCount, favoriteL
 }
 
 interface RepositoriesProps {
-  data: GithubData['repositories']
+  data: GithubData["repositories"]
   totalDiskUsage: number
   sponsoringCount: number
-  favoriteLicense: GithubData['favoriteLicense']
+  favoriteLicense: GithubData["favoriteLicense"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-export function GithubRepositories({ 
-  data, 
-  totalDiskUsage, 
-  sponsoringCount, 
+export function GithubRepositories({
+  data,
+  totalDiskUsage,
+  sponsoringCount,
   favoriteLicense,
-  config, 
-  style, 
-  size 
+  config,
+  style,
+  size,
 }: RepositoriesProps): React.ReactElement {
-  const title = (config.repositories_title ?? '<qnt> Repositories').replace(
-    '<qnt>',
+  const title = (config.repositories_title ?? "<qnt> Repositories").replace(
+    "<qnt>",
     abbreviateNumber(data.nodes.length)
   )
   const hideTitle = config.repositories_hide_title ?? false
@@ -144,8 +152,8 @@ export function GithubRepositories({
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<RiGitRepositoryLine />} />}
-            <DefaultRepositories 
-              data={data} 
+            <DefaultRepositories
+              data={data}
               totalDiskUsage={totalDiskUsage}
               sponsoringCount={sponsoringCount}
               favoriteLicense={favoriteLicense}
@@ -156,13 +164,13 @@ export function GithubRepositories({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'repositories',
+                plugin: "github",
+                section: "repositories",
                 size,
               })}
             />
-            <TerminalRepositories 
-              data={data} 
+            <TerminalRepositories
+              data={data}
               totalDiskUsage={totalDiskUsage}
               sponsoringCount={sponsoringCount}
               favoriteLicense={favoriteLicense}
@@ -173,4 +181,3 @@ export function GithubRepositories({
     </section>
   )
 }
-

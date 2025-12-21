@@ -1,48 +1,22 @@
-# Documentação - source-v2
+# Weeb Plugins — Documentation
 
-## Estrutura Modular de Plugins
+This folder documents how to author **plugins**, **styles**, and related metadata in the `weeb-plugins` repository.
 
-O `source-v2` foi completamente refatorado para uma arquitetura modular que facilita a criação e manutenção de plugins.
+## Contents
 
-### Documentos Disponíveis
+### Plugins
 
-1. **[Estrutura de Plugins](./PLUGIN_STRUCTURE.md)** - Documentação completa da estrutura modular
-2. **[Script create-plugin](./CREATE_PLUGIN.md)** - Como usar o script para criar novos plugins
-3. **[Migração JS → TS](./MIGRATION_JS_TO_TS.md)** - Guia de migração de arquivos JavaScript para TypeScript
-4. **[Status da Migração](./MIGRATION_STATUS.md)** - Status atual da migração JS → TS
+- `plugins/creating-plugins.md` — end-to-end guide to create and implement a plugin
+- `plugins/create-plugin-script.md` — how to use the `pnpm create-plugin` scaffolder
+- `plugins/plugin-metadata.md` — how `src/plugins/metadata.ts` works and how to keep it in sync
 
-### Quick Start
+### Styles
 
-#### Criar um Novo Plugin
+- `styles/creating-styles.md` — how to create a style pack (CSS + themes + registry)
 
-```bash
-cd source-v2
-pnpm create-plugin meu-plugin
-```
+## Rules of thumb
 
-#### Estrutura de um Plugin
-
-```
-src/plugins/meu-plugin/
-├── index.tsx              # Definição principal
-├── types.ts               # Tipos específicos
-├── services/
-│   ├── fetchData.ts       # Lógica de fetch
-│   └── mock-data.ts       # Dados mock
-└── components/
-    └── RenderMeuPlugin.tsx # Renderização
-```
-
-### Infraestrutura Compartilhada
-
-- **Types**: `shared/types/` - Tipos base (BasePluginConfig, Plugin, etc)
-- **Utils**: `shared/utils/` - Utilitários (api, validation, formatting, errors)
-- **Constants**: `shared/constants/` - Constantes compartilhadas
-
-### Configurações
-
-- **Essenciais**: API keys, tokens (em `essentialConfigs` no banco)
-- **Não-Essenciais**: Preferências do usuário (em `pluginsConfig` no banco)
-
-Veja a [documentação completa](./PLUGIN_STRUCTURE.md) para mais detalhes.
-
+- `docs/` is for humans.
+- `.cursor/` is for the LLM rules (short, strict, checklist-y).
+- Plugins must be deterministic: **fetch in `fetchData()`**, render in components, no side effects during render.
+- CSS must be **scoped under `#svg-main`** (SVG embed safety).

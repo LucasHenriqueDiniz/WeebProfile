@@ -10,36 +10,14 @@ import { ComparisonSection } from "@/components/sections/ComparisonSection"
 import { CTASection } from "@/components/sections/CTASection"
 import { SectionDivider } from "@/components/sections/SectionDivider"
 import { homepageData } from "@/lib/data/homepage"
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
-import { useMemo } from "react"
-
-// Map category to color
-const categoryColors: Record<string, string> = {
-  coding: "#181717",
-  music: "#d51007",
-  anime: "#2e51a2",
-  gaming: "#1b2838",
-  reading: "#382110",
-}
 
 export default function Home() {
-  // Convert PLUGINS_METADATA to platforms format
-  const platforms = useMemo(() => {
-    return Object.entries(PLUGINS_METADATA).map(([id, metadata]) => ({
-      id,
-      name: metadata.displayName,
-      icon: metadata.icon,
-      description: metadata.description,
-      color: categoryColors[metadata.category] || "#8957E5",
-    }))
-  }, [])
-
   return (
     <div className="bg-background">
       <Header />
       <HeroSection {...homepageData.hero} />
       <SectionDivider variant="gradient" />
-      <PlatformsSection platforms={platforms} />
+      <PlatformsSection />
       <SectionDivider />
       <HowItWorksSection items={homepageData.howItWorks} />
       <SectionDivider />

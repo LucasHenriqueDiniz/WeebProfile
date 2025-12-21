@@ -1,0 +1,34 @@
+---
+description: How to create/update styles in src/styles (CSS + themes + registry)
+globs:
+  - "src/styles/**"
+  - "src/templates/PluginStyles.tsx"
+---
+
+# Styles authoring rules
+
+## Style pack layout
+`src/styles/<style>/`
+- `index.ts`: exports style definition + helpers
+- `styles.css`: style CSS (scoped)
+- `themes.ts`: theme tokens (typed)
+`src/styles/registry.ts`: registers styles
+
+## CSS rules (mandatory)
+- Always scope with `#svg-main` (avoid leaking into host page).
+- Prefer CSS variables for colors (theme-driven).
+- Provide small utility classes (`text-<style>-highlight`, etc.) as needed.
+
+## Theme variables
+- Expose a `getThemeVariables(themeName)` function returning CSS variables:
+  - `--<style>-color-surface`
+  - `--<style>-color-background`
+  - `--<style>-color-highlight`
+  - `--<style>-color-default`
+  - `--<style>-color-success`
+  - `--<style>-color-muted`
+  - `--<style>-color-raw`
+
+## Registration
+- Add to `src/styles/registry.ts` and ensure `StyleName` includes the new key.
+- If `PluginStyles` needs changes, keep backwards compatibility.

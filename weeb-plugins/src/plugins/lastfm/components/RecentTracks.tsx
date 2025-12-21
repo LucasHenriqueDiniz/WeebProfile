@@ -5,7 +5,7 @@ import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalList } from '../../../templates/Terminal/TerminalList'
-import type { ListItemProps } from '../../../templates/types'
+import type { ListItemProps, TerminalLineProps } from '../../../templates/types'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import type { LastFmTrack } from '../types'
 
@@ -50,9 +50,9 @@ export function RecentTracks({ data, interval, config, style = 'default', size =
     image: track.image,
   }))
 
-  const terminalListItems = listItems.map((item) => ({
-    right: item.right,
-    left: item.left || '',
+  const terminalListItems: TerminalLineProps[] = listItems.map((item) => ({
+    right: typeof item.right === 'string' ? item.right : String(item.right || ''),
+    left: typeof item.left === 'string' ? item.left : String(item.left || ''),
   }))
 
   return (

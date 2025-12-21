@@ -7,6 +7,7 @@ import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
 import { useMemo, useState } from "react"
 import { ArrowRight, Sparkles } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface Template {
   id: string
@@ -37,30 +38,21 @@ interface TemplateCardProps {
 
 // Mapear platforms para plugin IDs
 const platformToPlugin: Record<string, string> = {
-  "GitHub": "github",
-  "Steam": "steam",
-  "LastFM": "lastfm",
-  "MyAnimeList": "myanimelist",
-  "Goodreads": "goodreads",
+  GitHub: "github",
+  Steam: "steam",
+  LastFM: "lastfm",
+  MyAnimeList: "myanimelist",
 }
 
-function TemplateCard({
-  name,
-  description,
-  preview,
-  platforms,
-  style,
-  theme,
-  index,
-}: TemplateCardProps) {
+function TemplateCard({ name, description, preview, platforms, style, theme, index }: TemplateCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const hasImage = preview && preview !== "/placeholder.svg"
-  
+
   // Preparar plugins config para PreviewRenderer
   const pluginsConfig = useMemo(() => {
     const plugins: Record<string, any> = {}
     const pluginsOrder: string[] = []
-    
+
     platforms.forEach((platform) => {
       const pluginId = platformToPlugin[platform]
       if (pluginId) {
@@ -71,7 +63,7 @@ function TemplateCard({
         pluginsOrder.push(pluginId)
       }
     })
-    
+
     return { plugins, pluginsOrder }
   }, [platforms])
 
@@ -97,7 +89,7 @@ function TemplateCard({
         <div className="relative aspect-video bg-muted flex items-center justify-center overflow-hidden rounded-t-lg">
           {hasImage ? (
             <>
-              <img
+              <Image
                 src={preview}
                 alt={name}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -176,9 +168,7 @@ export function TemplatesGallery({ templates, title, subtitle, totalTemplatesCou
         <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
           {displayTitle}
         </h2>
-        <p className="text-lg text-muted-foreground">
-          {displaySubtitle}
-        </p>
+        <p className="text-lg text-muted-foreground">{displaySubtitle}</p>
       </motion.div>
 
       <motion.div
@@ -221,7 +211,7 @@ export function TemplatesGallery({ templates, title, subtitle, totalTemplatesCou
                   background: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 70%)",
                 }}
               />
-              
+
               <div className="relative aspect-video flex items-center justify-center p-8">
                 <div className="text-center space-y-4 z-10">
                   <motion.div

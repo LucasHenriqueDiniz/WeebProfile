@@ -1,11 +1,11 @@
 /**
  * Plugin Registry with Validation
- * 
+ *
  * Centralized plugin registration and validation system with clear errors and type safety.
  */
 
-import { PLUGINS_METADATA, type PluginMetadata } from './metadata'
-import type { Plugin } from './shared/types/plugin'
+import { PLUGINS_METADATA, type PluginMetadata } from "./metadata"
+import type { Plugin } from "./shared/types/plugin"
 
 /**
  * Centralized plugin registry with validation
@@ -37,7 +37,7 @@ export class PluginRegistry {
     if (!this.metadata.has(plugin.name)) {
       throw new Error(
         `Plugin "${plugin.name}" does not have metadata in PLUGINS_METADATA. ` +
-        `Add an entry in weeb-plugins/src/plugins/metadata.ts`
+          `Add an entry in weeb-plugins/src/plugins/metadata.ts`
       )
     }
 
@@ -45,18 +45,18 @@ export class PluginRegistry {
 
     // Validate essentialConfigKeys (optional - may be deprecated)
     const pluginKeys = plugin.essentialConfigKeys || []
-    const metadataKeys = metadata.essentialConfigKeysMetadata.map(m => m.key)
+    const metadataKeys = metadata.essentialConfigKeysMetadata.map((m) => m.key)
 
-    const missingInMetadata = pluginKeys.filter(k => !metadataKeys.includes(k))
+    const missingInMetadata = pluginKeys.filter((k) => !metadataKeys.includes(k))
     if (missingInMetadata.length > 0) {
       console.warn(
-        `⚠️  Plugin "${plugin.name}": essentialConfigKeys [${missingInMetadata.join(', ')}] ` +
-        `are not in essentialConfigKeysMetadata`
+        `⚠️  Plugin "${plugin.name}": essentialConfigKeys [${missingInMetadata.join(", ")}] ` +
+          `are not in essentialConfigKeysMetadata`
       )
     }
 
     // Validate that plugin has all sections from metadata
-    const metadataSectionIds = new Set(metadata.sections.map(s => s.id))
+    const metadataSectionIds = new Set(metadata.sections.map((s) => s.id))
     // (more complex validation can be done here)
 
     this.plugins.set(plugin.name, plugin)
@@ -68,11 +68,8 @@ export class PluginRegistry {
   public getMetadata(name: string): PluginMetadata {
     const metadata = this.metadata.get(name)
     if (!metadata) {
-      const availablePlugins = Array.from(this.metadata.keys()).join(', ')
-      throw new Error(
-        `Plugin "${name}" not found in metadata. ` +
-        `Available plugins: ${availablePlugins}`
-      )
+      const availablePlugins = Array.from(this.metadata.keys()).join(", ")
+      throw new Error(`Plugin "${name}" not found in metadata. ` + `Available plugins: ${availablePlugins}`)
     }
     return metadata
   }
@@ -83,11 +80,11 @@ export class PluginRegistry {
   public getPlugin(name: string): Plugin {
     const plugin = this.plugins.get(name)
     if (!plugin) {
-      const availablePlugins = Array.from(this.plugins.keys()).join(', ')
+      const availablePlugins = Array.from(this.plugins.keys()).join(", ")
       throw new Error(
         `Plugin "${name}" is not registered. ` +
-        `Registered plugins: ${availablePlugins}. ` +
-        `Make sure to register the plugin in PluginManager.`
+          `Registered plugins: ${availablePlugins}. ` +
+          `Make sure to register the plugin in PluginManager.`
       )
     }
     return plugin
@@ -110,7 +107,10 @@ export class PluginRegistry {
   /**
    * Validates plugin configuration
    */
-  public validatePluginConfig(name: string, config: any): {
+  public validatePluginConfig(
+    name: string,
+    config: any
+  ): {
     valid: boolean
     errors: string[]
   } {
@@ -119,14 +119,14 @@ export class PluginRegistry {
 
     // Validate requiredFields
     for (const field of metadata.requiredFields) {
-      if (!config[field] || (typeof config[field] === 'string' && config[field].trim() === '')) {
+      if (!config[field] || (typeof config[field] === "string" && config[field].trim() === "")) {
         errors.push(`Required field "${field}" is missing or empty`)
       }
     }
 
     // Validate sections
     if (config.sections && Array.isArray(config.sections)) {
-      const validSectionIds = new Set(metadata.sections.map(s => s.id))
+      const validSectionIds = new Set(metadata.sections.map((s) => s.id))
       for (const sectionId of config.sections) {
         if (!validSectionIds.has(sectionId)) {
           errors.push(`Section "${sectionId}" is not valid for plugin "${name}"`)
@@ -168,4 +168,3 @@ export function getPlugin(name: string): Plugin {
 export function pluginExists(name: string): boolean {
   return pluginRegistry.hasPlugin(name)
 }
-

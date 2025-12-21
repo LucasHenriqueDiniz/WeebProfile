@@ -1,0 +1,47 @@
+---
+description: How to create/update plugins in src/plugins (checklist + patterns)
+globs:
+  - "src/plugins/**"
+  - "src/types/**"
+---
+
+# Plugin authoring rules (Weeb Plugins)
+
+## Plugin contract (must follow)
+A plugin folder: `src/plugins/<plugin>/`
+- `index.tsx`: Plugin definition (name/config/fetchData/render)
+- `types.ts`: plugin-specific TS types
+- `services/fetchData.ts`: real fetch + mapping
+- `services/mock-data.ts`: realistic dev data
+- `components/Render<Plugin>.tsx`: render entrypoint
+- `README.md`: short usage/config notes
+- `styles.css` (optional): plugin-specific CSS (scoped!)
+
+## Dev mode rules
+- `fetchData(..., dev=true, ...)` MUST return mock data (no network).
+- Mock data should cover edge cases (empty arrays, long strings, nullables).
+
+## Essential vs non-essential config
+- Essential keys (tokens/apiKey) come via `essentialConfig` + `essentialConfigKeys`.
+- User preferences belong in `config.nonEssential`.
+- If an essential key is missing in prod: throw a clear error (no silent fallback).
+
+## Render rules
+- If `!config.enabled` OR `sections` empty => render `null`/empty fragment.
+- Use `RenderBasedOnStyle` and keep styles limited to:
+  - `default` / `terminal` (unless style system expanded)
+- Keep rendering pure: no fetching in React components.
+
+## Adding a new plugin (minimum checklist)
+- [ ] `pnpm create-plugin <name>` OR copy `_template`
+- [ ] Implement `types.ts`
+- [ ] Implement `services/fetchData.ts` (prod) + `mock-data.ts` (dev)
+- [ ] Implement `components/Render*.tsx`
+- [ ] Add metadata entry in `src/plugins/metadata.ts`
+- [ ] Export in `src/plugins/index.ts`
+- [ ] Register in `src/plugins/manager.ts` (if required by current architecture)
+- [ ] If CSS added: ensure `#svg-main` scoping
+
+## Safe edits
+If you rename a plugin or section id:
+- update: plugin `name`, folder name, exports, manager registration, metadata keys, docs references.

@@ -1,12 +1,12 @@
 /**
  * Serviço Node.js HTTP para Geração de SVG
- * 
+ *
  * Este serviço roda em um processo separado e pode importar
  * o svg-generator sem problemas de análise estática do Turbopack.
- * 
+ *
  * Uso:
  *   pnpm tsx src/server.ts
- * 
+ *
  * Ou via script:
  *   pnpm dev:server
  */
@@ -112,26 +112,29 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     // Prepare configuration in svg-generator format
     // Fully dynamic - iterates over all available plugins
     const plugins: Record<string, any> = {}
-    
+
     console.log("🔧 [SERVER] Processing plugins from request...")
     if (requestDataTyped.plugins) {
       for (const [pluginName, pluginConfig] of Object.entries(requestDataTyped.plugins)) {
         console.log(`🔧 [SERVER] Processing plugin: ${pluginName}`, JSON.stringify(pluginConfig, null, 2))
-        if (pluginConfig && typeof pluginConfig === 'object' && 'enabled' in pluginConfig) {
+        if (pluginConfig && typeof pluginConfig === "object" && "enabled" in pluginConfig) {
           const typedPluginConfig = pluginConfig as any
           plugins[pluginName] = {
             enabled: typedPluginConfig.enabled === true,
             sections: typedPluginConfig.sections || [],
-            ...Object.keys(typedPluginConfig).reduce((acc, key) => {
-              // Include all properties except enabled and sections (already handled above)
-              if (key !== "enabled" && key !== "sections") {
-                acc[key] = typedPluginConfig[key]
-              }
-              return acc
-            }, {} as Record<string, any>),
+            ...Object.keys(typedPluginConfig).reduce(
+              (acc, key) => {
+                // Include all properties except enabled and sections (already handled above)
+                if (key !== "enabled" && key !== "sections") {
+                  acc[key] = typedPluginConfig[key]
+                }
+                return acc
+              },
+              {} as Record<string, any>
+            ),
           }
           console.log(`🔧 [SERVER] ✅ Plugin ${pluginName} added:`, JSON.stringify(plugins[pluginName], null, 2))
-          
+
           // Username can come from plugin config or be optional depending on plugin
           // Don't add hardcoded defaults - let plugin decide
         } else {
@@ -141,32 +144,38 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     } else {
       console.log("🔧 [SERVER] ⚠️ No plugins in request!")
     }
-    
+
     console.log("🔧 [SERVER] Final plugins object:", JSON.stringify(plugins, null, 2))
-    
+
     // Generate pluginsOrder dynamically if not provided
     const pluginsOrder = requestDataTyped.pluginsOrder || Object.keys(plugins)
     console.log("🔧 [SERVER] Plugins order:", pluginsOrder)
-    
+
     // Map theme to defaultTheme or terminalTheme based on style
     const style = requestDataTyped.style as "default" | "terminal"
     const theme = requestDataTyped.theme || requestDataTyped.defaultTheme || requestDataTyped.terminalTheme
-    
+
     const config: any = {
       style,
       size: requestDataTyped.size as "half" | "full",
       pluginsOrder,
       plugins,
       customCss: requestDataTyped.customCss || undefined,
-      terminalTheme: style === 'terminal' ? (theme || requestDataTyped.terminalTheme || 'default') : (requestDataTyped.terminalTheme || undefined),
-      defaultTheme: style === 'default' ? (theme || requestDataTyped.defaultTheme || 'default') : (requestDataTyped.defaultTheme || undefined),
+      terminalTheme:
+        style === "terminal"
+          ? theme || requestDataTyped.terminalTheme || "default"
+          : requestDataTyped.terminalTheme || undefined,
+      defaultTheme:
+        style === "default"
+          ? theme || requestDataTyped.defaultTheme || "default"
+          : requestDataTyped.defaultTheme || undefined,
       hideTerminalEmojis: requestDataTyped.hideTerminalEmojis || undefined,
       hideTerminalHeader: requestDataTyped.hideTerminalHeader || undefined,
-      primaryColor: requestDataTyped.primaryColor || '#ff7a00', // Use default color if not defined
+      primaryColor: requestDataTyped.primaryColor || "#ff7a00", // Use default color if not defined
       essentialConfigs, // Use configs fetched from Supabase (production) or provided directly (tests)
       dev: requestDataTyped.dev === true || requestDataTyped.mock === true, // Use mock data if dev=true or mock=true
     }
-    
+
     console.log("🔧 [SERVER] Theme mapping:", {
       receivedTheme: requestDataTyped.theme,
       receivedDefaultTheme: requestDataTyped.defaultTheme,
@@ -179,34 +188,35 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     // Validate and normalize
     console.log("✅ [SERVER] Validating config...")
     console.log("✅ [SERVER] Config plugins:", JSON.stringify(config.plugins, null, 2))
-    
+
     if (!validateConfig(config)) {
       // Specifically check if there are enabled plugins
       const hasEnabledPlugin = Object.values(config.plugins || {}).some(
-        (plugin: any) => plugin?.enabled === true && 
-                        plugin.sections && 
-                        Array.isArray(plugin.sections) && 
-                        plugin.sections.length > 0
+        (plugin: any) =>
+          plugin?.enabled === true && plugin.sections && Array.isArray(plugin.sections) && plugin.sections.length > 0
       )
-      
+
       console.error("❌ [SERVER] Config validation failed!")
       console.error("❌ [SERVER] Has enabled plugin:", hasEnabledPlugin)
-      console.error("❌ [SERVER] Plugins details:", Object.entries(config.plugins || {}).map(([name, plugin]: [string, any]) => ({
-        name,
-        enabled: plugin?.enabled,
-        sections: plugin?.sections,
-        sectionsCount: Array.isArray(plugin?.sections) ? plugin.sections.length : 0,
-      })))
-      
+      console.error(
+        "❌ [SERVER] Plugins details:",
+        Object.entries(config.plugins || {}).map(([name, plugin]: [string, any]) => ({
+          name,
+          enabled: plugin?.enabled,
+          sections: plugin?.sections,
+          sectionsCount: Array.isArray(plugin?.sections) ? plugin.sections.length : 0,
+        }))
+      )
+
       const errorMessage = !hasEnabledPlugin
         ? "At least one plugin must be enabled with at least one section"
         : "Invalid configuration"
-      
+
       res.writeHead(400, { "Content-Type": "application/json" })
       res.end(JSON.stringify({ error: errorMessage }))
       return
     }
-    
+
     console.log("✅ [SERVER] Config validated successfully")
 
     const normalizedConfig = normalizeConfig(config)
@@ -258,13 +268,13 @@ const server = createServer(handleRequest)
 
 // Railway needs to listen on 0.0.0.0, local uses localhost
 // Railway always defines PORT, so if PORT exists and is not the local default, use 0.0.0.0
-const isRailway = process.env.RAILWAY_ENVIRONMENT || (process.env.PORT && process.env.PORT !== '3001')
-const host = isRailway ? '0.0.0.0' : 'localhost'
+const isRailway = process.env.RAILWAY_ENVIRONMENT || (process.env.PORT && process.env.PORT !== "3001")
+const host = isRailway ? "0.0.0.0" : "localhost"
 
 server.listen(PORT, host as any, () => {
   console.log(`🚀 SVG Generator service running on http://${host}:${PORT}`)
   console.log(`📦 Ready to generate SVGs`)
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`)
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`)
   if (isRailway) {
     console.log(`🚂 Running on Railway`)
   }
@@ -278,4 +288,3 @@ process.on("SIGTERM", () => {
     process.exit(0)
   })
 })
-

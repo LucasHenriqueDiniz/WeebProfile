@@ -1,7 +1,3 @@
-/**
- * Tipos do Plugin GitHub
- */
-
 export interface ContributionDay {
   color: string
   contributionCount: number
@@ -77,7 +73,7 @@ export interface GithubConfig {
   sponsors_max?: number
   people_hide_title?: boolean
   people_title?: string
-  people_type?: 'profile' | 'repository'
+  people_type?: "profile" | "repository"
   people_repository?: string
   people_max?: number
   repository_contributors_hide_title?: boolean
@@ -252,7 +248,7 @@ export interface GithubData {
     twitterUsername?: string
   }
   recentActivity?: Array<{
-    type: 'commit' | 'pr' | 'issue' | 'comment' | 'branch' | 'merged'
+    type: "commit" | "pr" | "issue" | "comment" | "branch" | "merged"
     title: string
     repository: string
     url: string
@@ -277,7 +273,7 @@ export interface GithubData {
     repository: string
     repositoryUrl: string
     contributions: number
-    type: 'commits' | 'prs' | 'issues'
+    type: "commits" | "prs" | "issues"
   }>
   featuredRepositories?: Array<{
     name: string
@@ -325,7 +321,7 @@ export interface GithubData {
     }>
   }
   people?: {
-    type: 'profile' | 'repository'
+    type: "profile" | "repository"
     totalCount: number
     nodes: Array<{
       login: string

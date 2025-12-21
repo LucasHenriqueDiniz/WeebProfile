@@ -14,11 +14,12 @@ import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 export interface EssentialConfigKey {
   key: string
   label: string
-  type: "text" | "password"
+  type: "text" | "password" | "oauth"
   placeholder?: string
   description?: string
   helpUrl?: string
   docKey?: string
+  oauthProvider?: "spotify" // Provider OAuth quando type === "oauth"
 }
 
 export interface PluginEssentialConfig {
@@ -121,6 +122,15 @@ export function hasAllEssentialConfigs(
     }
   )
 }
+
+
+
+
+
+
+
+
+
 
 
 

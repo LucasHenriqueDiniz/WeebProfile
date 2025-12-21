@@ -1,0 +1,31 @@
+---
+description: SVG Generator (workspace): core guardrails, server-only, correctness > cleverness
+alwaysApply: true
+---
+
+# svg-generator core rules
+
+## What this workspace is
+- A **Node.js HTTP service** that receives a config payload and returns `{ svg, width, height }`.
+- Rendering is **server-side** using `react-dom/server` (`renderToString`) and an `<svg>` with `<foreignObject>`.
+
+## Non-negotiables
+- **Server-only:** do not add browser-only APIs, `window`, `document`, `localStorage`, `fetch` assumptions, Next.js client hooks, etc.
+- **Do not leak secrets:** essential configs (tokens / api keys) must never be returned, logged, or embedded in the SVG.
+- **No silent assumptions:** if the codebase doesn’t show a convention/field, don’t invent it. Prefer to locate existing types and patterns.
+
+## Output contract stability
+- Keep API responses stable and backward compatible where possible.
+- If changing request/response shape, also update:
+  - `svg-generator/docs/RENDERING_LOGIC.md`
+  - `svg-generator/README.md`
+  - any test scripts under `svg-generator/test/**` (if present)
+
+## Style
+- TypeScript strict: prefer `unknown` + refinement over `any`.
+- Prefer small pure helpers over complex logic in `server.ts`.
+- Keep logging behind `debug` / `dev` flags (avoid noisy logs in production).
+
+## Rendering invariants
+- `#svg-main` must exist (CSS is scoped to it).
+- `<foreignObject>` must include `xmlns="http://www.w3.org/1999/xhtml"` on the inner root element (HTML-in-SVG).

@@ -1,10 +1,3 @@
-/**
- * Mock data for Steam plugin development
- *
- * ⚠️  THIS FILE IS AUTO-GENERATED - DO NOT EDIT MANUALLY ⚠️
- *
- */
-
 import type { SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from '../types'
 
 const baseGames: SteamGame[] = [

@@ -65,10 +65,15 @@ export function useMockPluginData({ plugins }: UseMockPluginDataProps): {
             .then((pluginData) => {
               if (pluginData) {
                 setData((prev) => ({ ...prev, [pluginName]: pluginData }))
+                console.log(`[useMockPluginData] ✅ Loaded mock data for ${pluginName}`, Object.keys(pluginData))
+              } else {
+                console.warn(`[useMockPluginData] ⚠️ No data returned for ${pluginName}`)
               }
             })
             .catch((error) => {
-              console.error(`Error loading ${pluginName} mock data:`, error)
+              console.error(`[useMockPluginData] ❌ Error loading ${pluginName} mock data:`, error)
+              // Adicionar ao data mesmo em erro para debug
+              setData((prev) => ({ ...prev, [pluginName]: { _error: String(error) } }))
             })
         )
       }

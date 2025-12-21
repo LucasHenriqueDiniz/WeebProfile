@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../types'
+import type { Plugin } from '../shared/types/plugin'
 import type { PluginConfig, PluginData } from '../../types/index'
 import type { EssentialPluginConfig } from '../shared/types/base'
 import type { GithubConfig, GithubData } from './types'

@@ -8,21 +8,19 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
-import { useRef } from "react"
+import { useRef, useMemo } from "react"
 import Link from "next/link"
 import { getPluginIcon } from "@/lib/plugins-data"
+import { getEnabledPluginsMetadata, type PluginMetadata } from "@weeb/weeb-plugins/plugins/metadata"
 import type { ComponentType } from "react"
 
-interface Platform {
-  id: string
-  name: string
-  icon: string
-  description: string
-  color: string
-}
-
-interface PlatformsSectionProps {
-  platforms: Platform[]
+// Map category to color
+const categoryColors: Record<string, string> = {
+  coding: "#181717",
+  music: "#d51007",
+  anime: "#2e51a2",
+  gaming: "#1b2838",
+  reading: "#382110",
 }
 
 interface PlatformCardProps {
@@ -83,7 +81,7 @@ function PlatformCard({
             />
           </motion.div>
           
-          <div className="space-y-1">
+          <div className="space-y-1 flex-1">
             <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300">
               {name}
             </h3>
@@ -94,13 +92,24 @@ function PlatformCard({
   )
 }
 
-export function PlatformsSection({ platforms }: PlatformsSectionProps) {
+export function PlatformsSection() {
   const plugin = useRef(
     Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })
   )
 
+  // Convert PLUGINS_METADATA to platforms format (apenas plugins habilitados)
+  const platforms = useMemo(() => {
+    return getEnabledPluginsMetadata().map((metadata: PluginMetadata) => ({
+      id: metadata.name,
+      name: metadata.displayName,
+      icon: metadata.icon,
+      description: metadata.description,
+      color: categoryColors[metadata.category] || "#8957E5",
+    }))
+  }, [])
+
   return (
-    <section className="container mx-auto px-4 py-16 md:py-24">
+    <section className="container mx-auto px-4 py-16 md:py-24 overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -121,7 +130,7 @@ export function PlatformsSection({ platforms }: PlatformsSectionProps) {
         </p>
       </motion.div>
 
-      <div className="relative">
+      <div className="relative overflow-hidden">
         {/* Gradient fade on edges */}
         <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
@@ -150,7 +159,7 @@ export function PlatformsSection({ platforms }: PlatformsSectionProps) {
               return (
                 <CarouselItem
                   key={`${platform.id}-${index}`}
-                  className="pl-2 md:pl-4 basis-auto md:basis-[200px] lg:basis-[200px]"
+                  className="pl-2 md:pl-6 basis-auto md:basis-[220px] lg:basis-[220px]"
                 >
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}

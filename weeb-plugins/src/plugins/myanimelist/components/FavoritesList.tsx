@@ -1,62 +1,85 @@
-import React from 'react'
-import { FaBan, FaBook, FaBrain, FaCalendar, FaDumbbell, FaExclamationTriangle, FaFire, FaFutbol, FaGem, FaGhost, FaHashtag, FaHatCowboy, FaHeart, FaHeart as FaHeartTag, FaKiss, FaLaugh, FaLeaf, FaMagic, FaMap, FaMask, FaMusic, FaRobot, FaRocket, FaSearch, FaStar, FaTrophy, FaUtensilSpoon, FaVideo } from 'react-icons/fa'
-import { GoDotFill } from 'react-icons/go'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalTag } from '../../../templates/GenreTags'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { ImageComponent } from '../../../utils/image'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { treatJapaneseName } from '../../../utils/string'
+import React from "react"
+import {
+  FaBan,
+  FaBook,
+  FaBrain,
+  FaCalendar,
+  FaDumbbell,
+  FaExclamationTriangle,
+  FaFire,
+  FaFutbol,
+  FaGem,
+  FaGhost,
+  FaHashtag,
+  FaHatCowboy,
+  FaHeart,
+  FaHeart as FaHeartTag,
+  FaKiss,
+  FaLaugh,
+  FaLeaf,
+  FaMagic,
+  FaMap,
+  FaMask,
+  FaMusic,
+  FaRobot,
+  FaRocket,
+  FaSearch,
+  FaStar,
+  FaTrophy,
+  FaUtensilSpoon,
+  FaVideo,
+} from "react-icons/fa"
+import { GoDotFill } from "react-icons/go"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { ImageComponent } from "../../../utils/image"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { treatJapaneseName } from "../../../utils/string"
 import type {
   BasicCharacterFavorite,
   BasicPeopleFavorite,
   FullAnimeFavorite,
   FullMangaFavorite,
   MyAnimeListConfig,
-} from '../types'
+} from "../types"
 
-type FavoriteType = 'anime' | 'manga' | 'people' | 'characters'
-type ListStyle = 'simple' | 'compact' | 'detailed' | 'minimal'
-
-type FavoriteData =
-  | FullAnimeFavorite[]
-  | FullMangaFavorite[]
-  | BasicCharacterFavorite[]
-  | BasicPeopleFavorite[]
+type FavoriteType = "anime" | "manga" | "people" | "characters"
+type ListStyle = "simple" | "compact" | "detailed" | "minimal"
+type FavoriteData = FullAnimeFavorite[] | FullMangaFavorite[] | BasicCharacterFavorite[] | BasicPeopleFavorite[]
 
 // Genre icon and color mapping
 const GENRE_STYLES: Record<string, { icon: React.ReactElement; color: string }> = {
-  'Action': { icon: <FaDumbbell size={10} />, color: '#ef4444' },
-  'Adventure': { icon: <FaMap size={10} />, color: '#f59e0b' },
-  'Comedy': { icon: <FaLaugh size={10} />, color: '#eab308' },
-  'Drama': { icon: <FaMask size={10} />, color: '#8b5cf6' },
-  'Ecchi': { icon: <FaKiss size={10} />, color: '#ec4899' },
-  'Fantasy': { icon: <FaHatCowboy size={10} />, color: '#06b6d4' },
-  'Horror': { icon: <FaGhost size={10} />, color: '#7c3aed' },
-  'Mahou Shoujo': { icon: <FaMagic size={10} />, color: '#a855f7' },
-  'Mecha': { icon: <FaRobot size={10} />, color: '#64748b' },
-  'Music': { icon: <FaMusic size={10} />, color: '#3b82f6' },
-  'Mystery': { icon: <FaSearch size={10} />, color: '#6366f1' },
-  'Psychological': { icon: <FaBrain size={10} />, color: '#8b5cf6' },
-  'Romance': { icon: <FaHeartTag size={10} />, color: '#f472b6' },
-  'Sci-Fi': { icon: <FaRocket size={10} />, color: '#0ea5e9' },
-  'Slice of Life': { icon: <FaLeaf size={10} />, color: '#10b981' },
-  'Sports': { icon: <FaFutbol size={10} />, color: '#22c55e' },
-  'Supernatural': { icon: <FaGem size={10} />, color: '#a855f7' },
-  'Thriller': { icon: <FaExclamationTriangle size={10} />, color: '#dc2626' },
-  'Award Winning': { icon: <FaTrophy size={10} />, color: '#fbbf24' },
-  'Gourmet': { icon: <FaUtensilSpoon size={10} />, color: '#f97316' },
-  'Boys Love': { icon: <FaHeartTag size={10} />, color: '#3b82f6' },
-  'Girls Love': { icon: <FaHeartTag size={10} />, color: '#a855f7' },
-  'Erotica': { icon: <FaFire size={10} />, color: '#dc2626' },
-  'Hentai': { icon: <FaBan size={10} />, color: '#991b1b' },
-  'Suspense': { icon: <FaGhost size={10} />, color: '#7c2d12' },
+  Action: { icon: <FaDumbbell size={10} />, color: "#ef4444" },
+  Adventure: { icon: <FaMap size={10} />, color: "#f59e0b" },
+  Comedy: { icon: <FaLaugh size={10} />, color: "#eab308" },
+  Drama: { icon: <FaMask size={10} />, color: "#8b5cf6" },
+  Ecchi: { icon: <FaKiss size={10} />, color: "#ec4899" },
+  Fantasy: { icon: <FaHatCowboy size={10} />, color: "#06b6d4" },
+  Horror: { icon: <FaGhost size={10} />, color: "#7c3aed" },
+  "Mahou Shoujo": { icon: <FaMagic size={10} />, color: "#a855f7" },
+  Mecha: { icon: <FaRobot size={10} />, color: "#64748b" },
+  Music: { icon: <FaMusic size={10} />, color: "#3b82f6" },
+  Mystery: { icon: <FaSearch size={10} />, color: "#6366f1" },
+  Psychological: { icon: <FaBrain size={10} />, color: "#8b5cf6" },
+  Romance: { icon: <FaHeartTag size={10} />, color: "#f472b6" },
+  "Sci-Fi": { icon: <FaRocket size={10} />, color: "#0ea5e9" },
+  "Slice of Life": { icon: <FaLeaf size={10} />, color: "#10b981" },
+  Sports: { icon: <FaFutbol size={10} />, color: "#22c55e" },
+  Supernatural: { icon: <FaGem size={10} />, color: "#a855f7" },
+  Thriller: { icon: <FaExclamationTriangle size={10} />, color: "#dc2626" },
+  "Award Winning": { icon: <FaTrophy size={10} />, color: "#fbbf24" },
+  Gourmet: { icon: <FaUtensilSpoon size={10} />, color: "#f97316" },
+  "Boys Love": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
+  "Girls Love": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
+  Erotica: { icon: <FaFire size={10} />, color: "#dc2626" },
+  Hentai: { icon: <FaBan size={10} />, color: "#991b1b" },
+  Suspense: { icon: <FaGhost size={10} />, color: "#7c2d12" },
 }
 
 // Helper function to get genre style
 function getGenreStyle(genreName: string): { icon: React.ReactElement; color: string } {
-  return GENRE_STYLES[genreName] || { icon: <FaStar size={10} />, color: 'var(--default-color-muted)' }
+  return GENRE_STYLES[genreName] || { icon: <FaStar size={10} />, color: "var(--default-color-muted)" }
 }
 
 // Enhanced genre tag component with icon and color
@@ -67,8 +90,18 @@ function EnhancedGenreTag({ genre }: { genre: string }): React.ReactElement {
       className="genre-tag text-[10px] px-1.5 py-0.5 rounded border flex items-center gap-1 border-default-highlight/30 border-solid"
       style={{ backgroundColor: `${style.color}15`, color: style.color }}
     >
-      <span className='flex' style={{ color: style.color }}>{style.icon}</span>
+      <span className="flex" style={{ color: style.color }}>
+        {style.icon}
+      </span>
       <span className="truncate">{genre}</span>
+    </span>
+  )
+}
+
+function TerminalTag({ genre }: { genre: string }): React.ReactElement {
+  return (
+    <span className="genre-tag text-xs px-1 py-0.5 rounded bg-terminal-muted-light text-terminal-muted border border-terminal-muted truncate">
+      {genre}
     </span>
   )
 }
@@ -77,8 +110,8 @@ interface FavoritesListProps {
   data: FavoriteData
   type: FavoriteType
   config: MyAnimeListConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
   listStyle?: ListStyle
 }
 
@@ -94,13 +127,13 @@ function SimpleFavoriteImage({
   hideOverlay: boolean
 }): React.ReactElement {
   const imageUrl = favorite.image
-  const title = 'name' in favorite ? treatJapaneseName(favorite.name) : favorite.title
+  const title = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
     <div className="favorite-container relative">
       <ImageComponent
         url64={imageUrl}
-        alt={title ?? 'Name not found'}
+        alt={title ?? "Name not found"}
         className="image-portrait"
         width={75}
         height={120}
@@ -121,7 +154,7 @@ function RenderSimpleFavorites({
 }: {
   data: FavoriteData
   hideOverlay: boolean
-  size: 'half' | 'full'
+  size: "half" | "full"
 }): React.ReactElement {
   return (
     <div className="grid grid-cols-10 half:grid-cols-5 gap-2">
@@ -144,7 +177,7 @@ function DefaultCompactFavorite({
   index: number
 }): React.ReactElement {
   const img = favorite.image
-  const name = 'name' in favorite ? treatJapaneseName(favorite.name) : favorite.title
+  const name = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
     <div className="h-[50px] flex rounded-lg overflow-hidden border border-default-highlight/30 border-solid bg-default-surface/50 hover:bg-default-surface/80 transition-colors">
@@ -168,7 +201,7 @@ function TerminalCompactFavorite({
   favorite: FullAnimeFavorite | FullMangaFavorite | BasicCharacterFavorite | BasicPeopleFavorite
   index: number
 }): React.ReactElement {
-  const name = 'name' in favorite ? treatJapaneseName(favorite.name) : favorite.title
+  const name = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
     <div className="flex align-center sm-text gap-1">
@@ -189,15 +222,16 @@ function DefaultDetailedFavorite({
 }: {
   favorite: FullAnimeFavorite | FullMangaFavorite
   isHalf: boolean
-  type: 'anime' | 'manga'
+  type: "anime" | "manga"
 }): React.ReactElement {
   const imageUrl = favorite.image
   const title = favorite.title
   const mean_score = favorite.score
-  const release_year = type === 'anime' ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
+  const release_year =
+    type === "anime" ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
   const synopsis = favorite.synopsis
   const allGenres = favorite.genres?.map((genre) => genre.name) ?? []
-  // Não mutar diretamente - criar novo array
+
   const genres = isHalf ? allGenres.slice(0, 4) : allGenres
   const status = favorite.status
   const popularity = favorite.popularity
@@ -205,13 +239,7 @@ function DefaultDetailedFavorite({
   return (
     <div className="flex h-[120px] overflow-hidden gap-4">
       <div className="favorite-container">
-        <ImageComponent
-          url64={imageUrl}
-          alt={title}
-          className="image-portrait"
-          width={75}
-          height={120}
-        />
+        <ImageComponent url64={imageUrl} alt={title} className="image-portrait" width={75} height={120} />
       </div>
       <div className="w-full flex flex-col justify-between overflow-hidden">
         <span className="text-lg font-semibold truncate text-default-muted leading-tight">{title}</span>
@@ -227,13 +255,13 @@ function DefaultDetailedFavorite({
               {popularity}
             </span>
           )}
-          {type === 'anime' && (favorite as FullAnimeFavorite).episodes && (
+          {type === "anime" && (favorite as FullAnimeFavorite).episodes && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaVideo size={14} className="text-default-highlight" />
               {(favorite as FullAnimeFavorite).episodes}
             </span>
           )}
-          {type === 'manga' && (favorite as FullMangaFavorite).chapters && (
+          {type === "manga" && (favorite as FullMangaFavorite).chapters && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaBook size={14} className="text-default-highlight" />
               {(favorite as FullMangaFavorite).chapters}
@@ -249,7 +277,7 @@ function DefaultDetailedFavorite({
             <span className={`font-semibold flex items-center gap-1 text-[12px] half:hidden`}>
               <GoDotFill
                 size={14}
-                className={`text-mal-${status === 'Finished Airing' || status === 'Finished' ? 'completed' : 'watching'}`}
+                className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "completed" : "watching"}`}
               />
               {status}
             </span>
@@ -275,11 +303,12 @@ function TerminalDetailedFavorite({
 }: {
   favorite: FullAnimeFavorite | FullMangaFavorite
   isHalf: boolean
-  type: 'anime' | 'manga'
+  type: "anime" | "manga"
 }): React.ReactElement {
   const title = favorite.title
   const mean_score = favorite.score
-  const release_year = type === 'anime' ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
+  const release_year =
+    type === "anime" ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
   const synopsis = favorite.synopsis
   const genres = favorite.genres?.map((genre) => genre.name) || []
   const status = favorite.status
@@ -291,16 +320,20 @@ function TerminalDetailedFavorite({
       <div className="flex gap-4 items-baseline">
         {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
         {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
-        {type === 'anime' && (favorite as FullAnimeFavorite).episodes && (
-          <span className="text-default-muted font-bold truncate">🎞️ {(favorite as FullAnimeFavorite).episodes} EP&apos;s</span>
+        {type === "anime" && (favorite as FullAnimeFavorite).episodes && (
+          <span className="text-default-muted font-bold truncate">
+            🎞️ {(favorite as FullAnimeFavorite).episodes} EP&apos;s
+          </span>
         )}
-        {type === 'manga' && (favorite as FullMangaFavorite).chapters && (
-          <span className="text-default-muted font-bold truncate">📚 {(favorite as FullMangaFavorite).chapters} ch&apos;s</span>
+        {type === "manga" && (favorite as FullMangaFavorite).chapters && (
+          <span className="text-default-muted font-bold truncate">
+            📚 {(favorite as FullMangaFavorite).chapters} ch&apos;s
+          </span>
         )}
         {release_year && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
           <span
-            className={`text-mal-${status === 'Finished Airing' || status === 'Finished' ? 'completed' : 'watching'} font-bold half:hidden truncate`}
+            className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "completed" : "watching"} font-bold half:hidden truncate`}
           >
             ● {status}
           </span>
@@ -308,7 +341,7 @@ function TerminalDetailedFavorite({
       </div>
       <div className="flex mt-1 gap-1">
         {genres.map((genre) => (
-          <TerminalTag text={genre} key={genre} />
+          <TerminalTag genre={genre} key={genre} />
         ))}
       </div>
       <div className="w-full overflow-hidden mt-2">
@@ -329,12 +362,13 @@ function DefaultMinimalFavorite({
 }: {
   favorite: FullAnimeFavorite | FullMangaFavorite
   isHalf: boolean
-  type: 'anime' | 'manga'
+  type: "anime" | "manga"
 }): React.ReactElement {
   const imageUrl = favorite.image
   const title = favorite.title
   const mean_score = favorite.score
-  const release_year = type === 'anime' ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
+  const release_year =
+    type === "anime" ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
   const allGenres = favorite.genres?.map((genre) => genre.name) ?? []
   // Não mutar diretamente - criar novo array
   const genres = isHalf ? allGenres.slice(0, 4) : allGenres
@@ -344,13 +378,7 @@ function DefaultMinimalFavorite({
   return (
     <div className="flex h-[75px] overflow-hidden gap-2">
       <div className="image-square-container-75 h-full flex-shrink-0">
-        <ImageComponent
-          url64={imageUrl}
-          alt={title}
-          className="image-square"
-          width={75}
-          height={75}
-        />
+        <ImageComponent url64={imageUrl} alt={title} className="image-square" width={75} height={75} />
       </div>
       <div className="w-full flex flex-col justify-between overflow-hidden min-w-0">
         <span className="text-base font-semibold truncate text-default-muted leading-tight">{title}</span>
@@ -366,13 +394,13 @@ function DefaultMinimalFavorite({
               {popularity}
             </span>
           )}
-          {type === 'anime' && (favorite as FullAnimeFavorite).episodes && (
+          {type === "anime" && (favorite as FullAnimeFavorite).episodes && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaVideo size={10} className="text-default-highlight" />
               {(favorite as FullAnimeFavorite).episodes}
             </span>
           )}
-          {type === 'manga' && (favorite as FullMangaFavorite).chapters && (
+          {type === "manga" && (favorite as FullMangaFavorite).chapters && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaBook size={10} className="text-default-highlight" />
               {(favorite as FullMangaFavorite).chapters}
@@ -388,7 +416,7 @@ function DefaultMinimalFavorite({
             <span className={`font-semibold flex items-center gap-1 text-[12px] half:hidden`}>
               <GoDotFill
                 size={10}
-                className={`text-mal-${status === 'Finished Airing' || status === 'Finished' ? 'completed' : 'watching'}`}
+                className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "completed" : "watching"}`}
               />
               {status}
             </span>
@@ -411,11 +439,12 @@ function TerminalMinimalFavorite({
 }: {
   favorite: FullAnimeFavorite | FullMangaFavorite
   isHalf: boolean
-  type: 'anime' | 'manga'
+  type: "anime" | "manga"
 }): React.ReactElement {
   const title = favorite.title
   const mean_score = favorite.score
-  const release_year = type === 'anime' ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
+  const release_year =
+    type === "anime" ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
   const genres = favorite.genres?.map((genre) => genre.name) || []
   const status = favorite.status
   const popularity = favorite.popularity
@@ -426,16 +455,20 @@ function TerminalMinimalFavorite({
       <div className="flex gap-4 items-baseline">
         {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
         {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
-        {type === 'anime' && (favorite as FullAnimeFavorite).episodes && (
-          <span className="text-default-muted font-bold truncate">🎞️ {(favorite as FullAnimeFavorite).episodes} EP&apos;s</span>
+        {type === "anime" && (favorite as FullAnimeFavorite).episodes && (
+          <span className="text-default-muted font-bold truncate">
+            🎞️ {(favorite as FullAnimeFavorite).episodes} EP&apos;s
+          </span>
         )}
-        {type === 'manga' && (favorite as FullMangaFavorite).chapters && (
-          <span className="text-default-muted font-bold truncate">📚 {(favorite as FullMangaFavorite).chapters} ch&apos;s</span>
+        {type === "manga" && (favorite as FullMangaFavorite).chapters && (
+          <span className="text-default-muted font-bold truncate">
+            📚 {(favorite as FullMangaFavorite).chapters} ch&apos;s
+          </span>
         )}
         {release_year && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
           <span
-            className={`text-mal-${status === 'Finished Airing' || status === 'Finished' ? 'completed' : 'watching'} font-bold half:hidden truncate`}
+            className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "completed" : "watching"} font-bold half:hidden truncate`}
           >
             ● {status}
           </span>
@@ -443,7 +476,7 @@ function TerminalMinimalFavorite({
       </div>
       <div className="flex mt-1 gap-1">
         {genres.map((genre) => (
-          <TerminalTag text={genre} key={genre} />
+          <TerminalTag genre={genre} key={genre} />
         ))}
       </div>
     </div>
@@ -460,7 +493,7 @@ export function FavoritesList({
   config,
   style,
   size,
-  listStyle = 'detailed',
+  listStyle = "detailed",
 }: FavoritesListProps): React.ReactElement {
   // Tratamento seguro de dados vazios
   if (!data || !Array.isArray(data) || data.length === 0) {
@@ -470,13 +503,13 @@ export function FavoritesList({
   // Limitar baseado na configuração (padrão 20)
   // Usar max específico da seção ou fallback para favorites_max global ou padrão 20
   let MAX_ITEMS = 20
-  if (type === 'anime' && config.anime_favorites_max !== undefined) {
+  if (type === "anime" && config.anime_favorites_max !== undefined) {
     MAX_ITEMS = config.anime_favorites_max
-  } else if (type === 'manga' && config.manga_favorites_max !== undefined) {
+  } else if (type === "manga" && config.manga_favorites_max !== undefined) {
     MAX_ITEMS = config.manga_favorites_max
-  } else if (type === 'people' && config.people_favorites_max !== undefined) {
+  } else if (type === "people" && config.people_favorites_max !== undefined) {
     MAX_ITEMS = config.people_favorites_max
-  } else if (type === 'characters' && config.character_favorites_max !== undefined) {
+  } else if (type === "characters" && config.character_favorites_max !== undefined) {
     MAX_ITEMS = config.character_favorites_max
   } else {
     MAX_ITEMS = config.favorites_max ?? 20
@@ -486,41 +519,41 @@ export function FavoritesList({
   // Obter configurações baseadas no tipo
   const getConfig = () => {
     switch (type) {
-      case 'anime':
+      case "anime":
         return {
-          title: config.anime_favorites_title || 'Anime Favorites',
+          title: config.anime_favorites_title || "Anime Favorites",
           hideTitle: config.anime_favorites_hide_title ?? false,
-          section: 'anime_favorites',
+          section: "anime_favorites",
         }
-      case 'manga':
+      case "manga":
         return {
-          title: config.manga_favorites_title || 'Manga Favorites',
+          title: config.manga_favorites_title || "Manga Favorites",
           hideTitle: config.manga_favorites_hide_title ?? false,
-          section: 'manga_favorites',
+          section: "manga_favorites",
         }
-      case 'people':
+      case "people":
         return {
-          title: config.people_favorites_title || 'People Favorites',
+          title: config.people_favorites_title || "People Favorites",
           hideTitle: config.people_favorites_hide_title ?? false,
-          section: 'people_favorites',
+          section: "people_favorites",
         }
-      case 'characters':
+      case "characters":
         return {
-          title: config.character_favorites_title || 'Character Favorites',
+          title: config.character_favorites_title || "Character Favorites",
           hideTitle: config.character_favorites_hide_title ?? false,
-          section: 'character_favorites',
+          section: "character_favorites",
         }
     }
   }
 
   const { title, hideTitle, section } = getConfig()
-  const isHalf = size === 'half'
+  const isHalf = size === "half"
   const hideOverlay = config.favorites_hide_overlay ?? false
 
   // Renderizar baseado no estilo de lista
   const renderContent = () => {
     switch (listStyle) {
-      case 'simple':
+      case "simple":
         return (
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
@@ -528,7 +561,7 @@ export function FavoritesList({
           </>
         )
 
-      case 'compact':
+      case "compact":
         return (
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
@@ -540,15 +573,19 @@ export function FavoritesList({
           </>
         )
 
-      case 'detailed':
+      case "detailed":
         // Apenas anime e manga suportam detailed
-        if (type !== 'anime' && type !== 'manga') {
+        if (type !== "anime" && type !== "manga") {
           return (
             <>
               {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
               <div className="flex flex-col gap-2">
                 {displayData.map((item, index) => (
-                  <DefaultCompactFavorite favorite={item} index={index} key={`${type}-compact-fallback-${item.mal_id}-${index}`} />
+                  <DefaultCompactFavorite
+                    favorite={item}
+                    index={index}
+                    key={`${type}-compact-fallback-${item.mal_id}-${index}`}
+                  />
                 ))}
               </div>
             </>
@@ -559,10 +596,10 @@ export function FavoritesList({
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
             <div className="flex flex-col gap-1">
               {displayData.map((item, index) => (
-                <DefaultDetailedFavorite 
-                  favorite={item as FullAnimeFavorite | FullMangaFavorite} 
-                  isHalf={isHalf} 
-                  type={type} 
+                <DefaultDetailedFavorite
+                  favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                  isHalf={isHalf}
+                  type={type}
                   key={`${type}-detailed-${item.mal_id}-${index}`}
                 />
               ))}
@@ -570,15 +607,19 @@ export function FavoritesList({
           </>
         )
 
-      case 'minimal':
+      case "minimal":
         // Apenas anime e manga suportam minimal
-        if (type !== 'anime' && type !== 'manga') {
+        if (type !== "anime" && type !== "manga") {
           return (
             <>
               {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
               <div className="flex flex-col gap-2">
                 {displayData.map((item, index) => (
-                  <DefaultCompactFavorite favorite={item} index={index} key={`${type}-compact-${item.mal_id}-${index}`} />
+                  <DefaultCompactFavorite
+                    favorite={item}
+                    index={index}
+                    key={`${type}-compact-${item.mal_id}-${index}`}
+                  />
                 ))}
               </div>
             </>
@@ -589,7 +630,12 @@ export function FavoritesList({
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
             <div className="flex flex-col gap-2">
               {displayData.map((item, index) => (
-                <DefaultMinimalFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={`${type}-minimal-${item.mal_id}-${index}`} />
+                <DefaultMinimalFavorite
+                  favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                  isHalf={isHalf}
+                  type={type}
+                  key={`${type}-minimal-${item.mal_id}-${index}`}
+                />
               ))}
             </div>
           </>
@@ -599,14 +645,14 @@ export function FavoritesList({
 
   const renderTerminalContent = () => {
     switch (listStyle) {
-      case 'simple':
+      case "simple":
         return (
           <>
             {!hideTitle && (
               <TerminalCommand
                 command={getPseudoCommands({
-                  plugin: 'mal',
-                  section: 'favorites',
+                  plugin: "mal",
+                  section: "favorites",
                   type,
                   limit: MAX_ITEMS,
                 })}
@@ -615,56 +661,61 @@ export function FavoritesList({
             {displayData.map((item, index) => (
               <div className="truncate" key={`${type}-simple-${item.mal_id}-${index}`}>
                 <p className="sm-text font-semibold text-terminal-warning">
-                  * {'name' in item ? treatJapaneseName(item.name) : item.title}
+                  * {"name" in item ? treatJapaneseName(item.name) : item.title}
                 </p>
-                {'type' in item && 'start_year' in item && (
+                {"type" in item && "start_year" in item && (
                   <p className="sm-text font-semibold text-overflow text-terminal-muted">
                     ({item.type}, {item.start_year})
                   </p>
                 )}
               </div>
             ))}
-            
           </>
         )
 
-      case 'compact':
+      case "compact":
         return (
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'mal',
+                plugin: "mal",
                 section: section,
                 limit: MAX_ITEMS,
               })}
             />
             <div className="flex flex-col gap-1">
               {displayData.map((item, index) => (
-                <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
+                <TerminalCompactFavorite
+                  favorite={item}
+                  index={index}
+                  key={`${type}-terminal-compact-${item.mal_id}-${index}`}
+                />
               ))}
             </div>
-            
           </>
         )
 
-      case 'detailed':
+      case "detailed":
         // Apenas anime e manga suportam detailed
-        if (type !== 'anime' && type !== 'manga') {
+        if (type !== "anime" && type !== "manga") {
           return (
             <>
               <TerminalCommand
                 command={getPseudoCommands({
-                  plugin: 'mal',
+                  plugin: "mal",
                   section: section,
                   limit: MAX_ITEMS,
                 })}
               />
               <div className="flex flex-col gap-1">
                 {displayData.map((item, index) => (
-                  <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
+                  <TerminalCompactFavorite
+                    favorite={item}
+                    index={index}
+                    key={`${type}-terminal-compact-${item.mal_id}-${index}`}
+                  />
                 ))}
               </div>
-              
             </>
           )
         }
@@ -672,36 +723,43 @@ export function FavoritesList({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'mal',
+                plugin: "mal",
                 section: section,
                 limit: MAX_ITEMS,
               })}
             />
             {displayData.map((item, index) => (
-              <TerminalDetailedFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={`${type}-terminal-detailed-${item.mal_id}-${index}`} />
+              <TerminalDetailedFavorite
+                favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                isHalf={isHalf}
+                type={type}
+                key={`${type}-terminal-detailed-${item.mal_id}-${index}`}
+              />
             ))}
-            
           </>
         )
 
-      case 'minimal':
+      case "minimal":
         // Apenas anime e manga suportam minimal
-        if (type !== 'anime' && type !== 'manga') {
+        if (type !== "anime" && type !== "manga") {
           return (
             <>
               <TerminalCommand
                 command={getPseudoCommands({
-                  plugin: 'mal',
+                  plugin: "mal",
                   section: section,
                   limit: MAX_ITEMS,
                 })}
               />
               <div className="flex flex-col gap-1">
                 {displayData.map((item, index) => (
-                  <TerminalCompactFavorite favorite={item} index={index} key={`${type}-terminal-compact-${item.mal_id}-${index}`} />
+                  <TerminalCompactFavorite
+                    favorite={item}
+                    index={index}
+                    key={`${type}-terminal-compact-${item.mal_id}-${index}`}
+                  />
                 ))}
               </div>
-              
             </>
           )
         }
@@ -709,22 +767,28 @@ export function FavoritesList({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'mal',
+                plugin: "mal",
                 section: section,
                 limit: MAX_ITEMS,
               })}
             />
             {displayData.map((item, index) => (
-              <TerminalMinimalFavorite favorite={item as FullAnimeFavorite | FullMangaFavorite} isHalf={isHalf} type={type} key={`${type}-terminal-minimal-${item.mal_id}-${index}`} />
+              <TerminalMinimalFavorite
+                favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                isHalf={isHalf}
+                type={type}
+                key={`${type}-terminal-minimal-${item.mal_id}-${index}`}
+              />
             ))}
-            
           </>
         )
     }
   }
 
   return (
-    <section id={`mal-${type === 'anime' ? 'default-favorites-anime' : type === 'manga' ? 'default-favorites-manga' : type === 'people' ? 'people-favorites' : 'characters-favorites'}`}>
+    <section
+      id={`mal-${type === "anime" ? "default-favorites-anime" : type === "manga" ? "default-favorites-manga" : type === "people" ? "people-favorites" : "characters-favorites"}`}
+    >
       <RenderBasedOnStyle
         defaultComponent={renderContent()}
         terminalComponent={renderTerminalContent()}
@@ -733,4 +797,3 @@ export function FavoritesList({
     </section>
   )
 }
-

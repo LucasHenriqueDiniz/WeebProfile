@@ -3,8 +3,8 @@
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { Loader2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import LoadingScreen from "@/components/loading/LoadingScreen"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -23,11 +23,7 @@ export default function SettingsPage() {
   }, [user, authLoading, router])
 
   if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin text-4xl text-primary" />
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!user) {

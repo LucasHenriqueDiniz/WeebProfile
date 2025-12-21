@@ -3,7 +3,20 @@
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { Github, Menu, Sparkles, X, Eye, EyeOff, Home, Settings, LogOut, User, Image as ImageIcon, ChevronRight } from "lucide-react"
+import {
+  Github,
+  Menu,
+  Sparkles,
+  X,
+  Eye,
+  EyeOff,
+  Home,
+  Settings,
+  LogOut,
+  User,
+  Image as ImageIcon,
+  ChevronRight,
+} from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
@@ -17,6 +30,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 
 interface HeaderProps {
   className?: string
@@ -37,9 +51,7 @@ interface HeaderProps {
 
 // Avatar component - simple implementation
 const Avatar = ({ className, children }: { className?: string; children: React.ReactNode }) => (
-  <div className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full", className)}>
-    {children}
-  </div>
+  <div className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full", className)}>{children}</div>
 )
 const AvatarImage = ({ src, alt, className }: { src?: string; alt?: string; className?: string }) =>
   src ? <img src={src} alt={alt} className={cn("aspect-square h-full w-full", className)} /> : null
@@ -49,7 +61,7 @@ const AvatarFallback = ({ className, children }: { className?: string; children:
   </div>
 )
 
-export function Header({ 
+export function Header({
   className,
   variant,
   title,
@@ -65,33 +77,26 @@ export function Header({
   const { user, signOut } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  
+
   // Auto-detect variant from pathname if not provided
-  const detectedVariant = variant || (() => {
-    if (pathname === "/") return "home"
-    if (pathname === "/dashboard/new" || pathname?.match(/^\/dashboard\/[^/]+\/edit$/)) return "wizard"
-    if (pathname?.startsWith("/dashboard")) return "dashboard"
-    return "home"
-  })()
+  const detectedVariant =
+    variant ||
+    (() => {
+      if (pathname === "/") return "home"
+      if (pathname === "/dashboard/new" || pathname?.match(/^\/dashboard\/[^/]+\/edit$/)) return "wizard"
+      if (pathname?.startsWith("/dashboard")) return "dashboard"
+      return "home"
+    })()
 
   const { scrollY } = useScroll()
-  
-  const headerBg = useTransform(
-    scrollY,
-    [0, 100],
-    ["rgba(2, 6, 23, 0)", "rgba(2, 6, 23, 0.8)"]
-  )
-  
-  const headerBorder = useTransform(
-    scrollY,
-    [0, 100],
-    ["rgba(148, 163, 184, 0)", "rgba(148, 163, 184, 0.1)"]
-  )
+
+  const headerBg = useTransform(scrollY, [0, 100], ["rgba(2, 6, 23, 0)", "rgba(2, 6, 23, 0.8)"])
+
+  const headerBorder = useTransform(scrollY, [0, 100], ["rgba(148, 163, 184, 0)", "rgba(148, 163, 184, 0.1)"])
 
   const navigation = [
-    { name: "Features", href: "#features" },
-    { name: "Templates", href: "#templates" },
-    { name: "Pricing", href: "#pricing" },
+    { name: "Plugins", href: "/plugins" },
+    { name: "Templates", href: "/templates" },
     { name: "Docs", href: "/docs" },
   ]
 
@@ -108,19 +113,12 @@ export function Header({
           backgroundColor: headerBg,
           borderBottomColor: headerBorder,
         }}
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl transition-all",
-          className
-        )}
+        className={cn("fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl transition-all", className)}
       >
         <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <motion.div
-              className="relative"
-              whileHover={{ rotate: 180 }}
-              transition={{ duration: 0.3 }}
-            >
+            <motion.div className="relative" whileHover={{ rotate: 180 }} transition={{ duration: 0.3 }}>
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-pink-500/30">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
@@ -148,30 +146,20 @@ export function Header({
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
-              className="hidden sm:inline-flex"
-            >
-              <Link
-                href="https://github.com/LucasHenriqueDiniz/WeebProfile"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Github className="w-4 h-4 mr-2" />
-                GitHub
+            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+              <Link href="https://github.com/LucasHenriqueDiniz/WeebProfile" target="_blank" rel="noopener noreferrer">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Github />
+                  </TooltipTrigger>
+                  <TooltipContent>Github</TooltipContent>
+                </Tooltip>
               </Link>
             </Button>
-            
+
             {user ? (
               <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="hidden sm:inline-flex"
-                >
+                <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
                   <Link href="/dashboard">Dashboard</Link>
                 </Button>
                 <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
@@ -204,15 +192,10 @@ export function Header({
               </>
             ) : (
               <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="hidden sm:inline-flex"
-                >
+                <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
                   <Link href="/login">Sign in</Link>
                 </Button>
-                
+
                 <Button
                   size="sm"
                   asChild
@@ -233,11 +216,7 @@ export function Header({
               className="md:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </nav>
@@ -264,12 +243,7 @@ export function Header({
                 </Link>
               ))}
               <div className="pt-2 border-t border-border/50">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className="w-full justify-start sm:hidden"
-                >
+                <Button variant="ghost" size="sm" asChild className="w-full justify-start sm:hidden">
                   <Link
                     href="https://github.com/LucasHenriqueDiniz/WeebProfile"
                     target="_blank"
@@ -295,12 +269,7 @@ export function Header({
           {/* Left */}
           <div className="flex items-center gap-6">
             {showSidebarToggle && onSidebarToggle && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
-                onClick={onSidebarToggle}
-              >
+              <Button variant="ghost" size="icon" className="lg:hidden" onClick={onSidebarToggle}>
                 <Menu className="w-5 h-5" />
               </Button>
             )}
@@ -414,9 +383,7 @@ export function Header({
               variant="ghost"
               size="icon"
               onClick={onTogglePreview}
-              className={cn(
-                showPreview && "bg-primary/10 text-primary"
-              )}
+              className={cn(showPreview && "bg-primary/10 text-primary")}
               title={showPreview ? "Ocultar Preview" : "Mostrar Preview"}
             >
               {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -485,22 +452,3 @@ export function Header({
 
   return null
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

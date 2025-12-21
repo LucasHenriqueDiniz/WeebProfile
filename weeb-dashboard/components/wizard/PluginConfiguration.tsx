@@ -24,7 +24,7 @@ import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { PLUGINS_DATA } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
-import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2 } from "lucide-react"
+import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music } from "lucide-react"
 import { useMemo, useState, useEffect, useCallback, useRef } from "react"
 import { ProfileConfigModal } from "./ProfileConfigModal"
 import { SectionConfigDialog } from "./SectionConfigDialog"
@@ -441,6 +441,25 @@ export function PluginConfiguration() {
                               enabled
                             </Badge>
                           )}
+                          {(() => {
+                            const hasOAuth = metadata.essentialConfigKeysMetadata?.some(
+                              (keyMeta) => keyMeta.type === "oauth"
+                            )
+                            return hasOAuth ? (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Badge variant="outline" className="text-[10px] font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                                      OAuth
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="text-xs">Este plugin requer conexão OAuth</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            ) : null
+                          })()}
                           {missingEssential && (
                             <Badge variant="destructive" className="text-[10px] font-medium">
                               config required
@@ -475,7 +494,7 @@ export function PluginConfiguration() {
                             Required for data fetching
                           </p>
                           {metadata.essentialConfigKeysMetadata.map((configKeyMeta) => {
-                            const configKey = configKeyMeta as { key: string; label: string; type: "text" | "password"; placeholder?: string; description?: string; helpUrl?: string }
+                            const configKey = configKeyMeta as { key: string; label: string; type: "text" | "password" | "oauth"; placeholder?: string; description?: string; helpUrl?: string; oauthProvider?: string }
                             const value = (state as any)[configKey.key] || ""
                             const configKeyId = `${plugin.name}.${configKey.key}`
                             const isUnlocked = unlockedConfigs.has(configKeyId)
@@ -483,6 +502,13 @@ export function PluginConfiguration() {
                             const isSaving = savingConfigs.has(configKeyId)
                             const isSaved = savedConfigs.has(configKeyId)
                             const isConfigured = isLocked && !isUnlocked
+                            const isOAuth = configKey.type === "oauth"
+
+                            // Handler para iniciar OAuth
+                            const handleOAuthConnect = () => {
+                              const currentPath = window.location.pathname + window.location.search
+                              window.location.href = `/api/auth/${configKey.oauthProvider || "spotify"}/authorize?returnTo=${encodeURIComponent(currentPath)}`
+                            }
 
                             return (
                               <div key={configKey.key} className="space-y-1">
@@ -498,7 +524,7 @@ export function PluginConfiguration() {
                                       </Badge>
                                     )}
                                   </div>
-                                  {configKey.helpUrl && (
+                                  {!isOAuth && configKey.helpUrl && (
                                     <a
                                       href={configKey.helpUrl}
                                       target="_blank"
@@ -509,41 +535,67 @@ export function PluginConfiguration() {
                                     </a>
                                   )}
                                 </div>
-                                <div className="flex gap-2">
-                                  <div className="relative flex-1">
-                                    <Input
-                                      type={configKey.type}
-                                      className={cn(
-                                        "h-8 text-xs pr-8",
-                                        isLocked && "bg-muted/50 text-muted-foreground italic cursor-not-allowed"
+                                
+                                {isOAuth ? (
+                                  // Botão OAuth
+                                  <Button
+                                    type="button"
+                                    onClick={handleOAuthConnect}
+                                    variant={isConfigured ? "outline" : "default"}
+                                    size="sm"
+                                    className="w-full h-8 text-xs"
+                                  >
+                                    {isConfigured ? (
+                                      <>
+                                        <Music className="w-3 h-3 mr-1" />
+                                        Reconectar
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Music className="w-3 h-3 mr-1" />
+                                        Conectar com {configKey.oauthProvider === "spotify" ? "Spotify" : configKey.oauthProvider}
+                                      </>
+                                    )}
+                                  </Button>
+                                ) : (
+                                  // Input tradicional
+                                  <div className="flex gap-2">
+                                    <div className="relative flex-1">
+                                      <Input
+                                        type={configKey.type}
+                                        className={cn(
+                                          "h-8 text-xs pr-8",
+                                          isLocked && "bg-muted/50 text-muted-foreground italic cursor-not-allowed"
+                                        )}
+                                        placeholder={configKey.placeholder || `Enter ${configKey.key}...`}
+                                        value={isLocked ? "**** locked" : value}
+                                        disabled={isLocked || isSaving}
+                                        onChange={(e) => handleEssentialConfigChange(plugin.name, configKey.key, e.target.value)}
+                                      />
+                                      {isLocked && (
+                                        <Lock className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
                                       )}
-                                      placeholder={configKey.placeholder || `Enter ${configKey.key}...`}
-                                      value={isLocked ? "**** locked" : value}
-                                      disabled={isLocked || isSaving}
-                                      onChange={(e) => handleEssentialConfigChange(plugin.name, configKey.key, e.target.value)}
-                                    />
+                                      {isSaving && (
+                                        <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-primary animate-spin" />
+                                      )}
+                                      {isSaved && !isSaving && (
+                                        <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-green-600" />
+                                      )}
+                                    </div>
                                     {isLocked && (
-                                      <Lock className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                                    )}
-                                    {isSaving && (
-                                      <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-primary animate-spin" />
-                                    )}
-                                    {isSaved && !isSaving && (
-                                      <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-green-600" />
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleUnlockConfig(plugin.name, configKey.key)}
+                                        className="h-8 text-xs"
+                                      >
+                                        <Unlock className="h-3 w-3 mr-1" />
+                                        Unlock
+                                      </Button>
                                     )}
                                   </div>
-                                  {isLocked && (
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => handleUnlockConfig(plugin.name, configKey.key)}
-                                      className="h-8 text-xs"
-                                    >
-                                      <Unlock className="h-3 w-3 mr-1" />
-                                      Unlock
-                                    </Button>
-                                  )}
-                                </div>
+                                )}
+                                
                                 {configKey.description && (
                                   <p className="text-xs text-muted-foreground">{configKey.description}</p>
                                 )}

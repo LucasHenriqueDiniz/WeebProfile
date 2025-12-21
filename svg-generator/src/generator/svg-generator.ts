@@ -1,26 +1,26 @@
 /**
  * Gerador principal de SVG
- * 
+ *
  * Coordena a geração completa do SVG:
- * 1. Calcula dimensões usando cálculo manual (sem Puppeteer)
+ * 1. Calcula dimensões usando cálculo manual
  * 2. Carrega CSS
  * 3. Renderiza componentes React
  * 4. Retorna SVG final
- * 
+ *
  * IMPORTANTE: Este módulo é server-only e usa renderToString do react-dom/server
  * que só funciona no ambiente Node.js. Nunca deve ser importado no cliente.
  */
 
-import { renderToString } from 'react-dom/server'
-import type { SvgConfig, SvgGenerationResult } from '../types/index.js'
-import { calculateEstimatedHeight, calculateSvgWidth } from './height-calculator.js'
-import { loadCss } from './css-loader.js'
-import { renderPlugins } from '../renderer/react-renderer.js'
-import { createSvgContainer } from '../renderer/template-renderer.js'
+import { renderToString } from "react-dom/server"
+import type { SvgConfig, SvgGenerationResult } from "../types/index.js"
+import { calculateEstimatedHeight, calculateSvgWidth } from "./height-calculator.js"
+import { loadCss } from "./css-loader.js"
+import { renderPlugins } from "../renderer/react-renderer.js"
+import { createSvgContainer } from "../renderer/template-renderer.js"
 
 /**
  * Gera SVG a partir da configuração
- * 
+ *
  * @param config - Configuração do SVG
  * @returns SVG string e dimensões
  */
@@ -62,10 +62,7 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
   result._debug = {
     pluginsData,
     pluginsErrors: Object.fromEntries(
-      Object.entries(pluginsErrors).map(([key, error]) => [
-        key,
-        error.message || String(error),
-      ])
+      Object.entries(pluginsErrors).map(([key, error]) => [key, error.message || String(error)])
     ),
   }
 

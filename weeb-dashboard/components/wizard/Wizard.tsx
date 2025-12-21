@@ -47,7 +47,32 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     setBasicInfo,
   } = useWizardStore()
 
-  const enabledPlugins = pluginsOrder.filter((name) => plugins[name]?.enabled)
+  // Verificar TODOS os plugins, não apenas os que estão no pluginsOrder
+  // Porque plugins podem ser habilitados mas não estar no pluginsOrder ainda
+  const enabledPlugins = Object.keys(plugins).filter((name) => {
+    const plugin = plugins[name]
+    const isEnabled = plugin?.enabled && plugin.sections && plugin.sections.length > 0
+    
+    console.log(`[Wizard] Plugin ${name}:`, {
+      exists: !!plugin,
+      enabled: plugin?.enabled,
+      sections: plugin?.sections,
+      sectionsLength: plugin?.sections?.length,
+      isEnabled,
+    })
+    
+    return isEnabled
+  })
+  
+  console.log('[Wizard] Enabled plugins:', enabledPlugins)
+  console.log('[Wizard] All plugins state:', Object.entries(plugins).map(([name, config]) => ({
+    name,
+    enabled: config?.enabled,
+    sections: config?.sections,
+    sectionsLength: config?.sections?.length,
+  })))
+  console.log('[Wizard] Plugins order:', pluginsOrder)
+  
   const totalSections = enabledPlugins.reduce((sum, name) => {
     return sum + (plugins[name]?.sections?.length || 0)
   }, 0)
@@ -335,22 +360,42 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
 
         {/* RIGHT: Preview */}
         <div className="relative w-[450px] border-l border-border bg-card/50 backdrop-blur-sm overflow-y-auto overflow-x-hidden flex flex-col flex-shrink-0">
-          <div className="scrollbar-hide pt-2 flex flex-col">
+          <div className="scrollbar-hide pt-2 flex flex-col h-full max-h-[calc(100vh-100px)]">
             {/* SVG Preview - Exatamente 415px de largura */}
             <div className="bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 p-0 flex items-start justify-center mb-4" style={{ width: "450px" }}>
-              {enabledPlugins.length > 0 ? (
-                <div className="w-full flex justify-center" style={{ width: "415px" }}>
-                  <LivePreview />
-                </div>
-              ) : (
-                <div className="flex items-center justify-center min-h-[200px]" style={{ width: "415px" }}>
-                  <div className="text-center space-y-2">
-                    <p className="text-sm text-muted-foreground">
-                      Habilite plugins para ver o preview
-                    </p>
-                  </div>
-                </div>
-              )}
+              {(() => {
+                console.log('[Wizard] Render check:', {
+                  enabledPluginsLength: enabledPlugins.length,
+                  enabledPlugins: enabledPlugins,
+                  allPluginsState: Object.entries(plugins).map(([name, config]) => ({
+                    name,
+                    enabled: config?.enabled,
+                    sections: config?.sections,
+                    sectionsLength: config?.sections?.length,
+                  })),
+                })
+                
+                if (enabledPlugins.length > 0) {
+                  console.log('[Wizard] ✅ Showing LivePreview')
+                  return (
+                    <div className="w-full flex justify-center h-full" style={{ width: "415px" }}>
+                      <LivePreview />
+                    </div>
+                  )
+                } else {
+                  console.log('[Wizard] ❌ Showing "enable plugin" message')
+                  return (
+                    <div className="flex items-center justify-center h-full" style={{ width: "415px" }}>
+                      <div className="text-center space-y-2">
+                        <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                          <Package className="h-4 w-4 mr-2" />
+                          Habilite pelo menos um plugin para ver o preview
+                        </p>
+                      </div>
+                    </div>
+                  )
+                }
+              })()}
             </div>
 
             {/* Warning e Botão - Sempre no final */}
@@ -361,7 +406,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
                     <div className="w-full">
                       <Button
                         onClick={handleFinish}
-                        disabled={isSaving || hasMissingEssential}
+                        disabled={isSaving || hasMissingEssential || enabledPlugins.length === 0}
                         className={cn(
                           "w-full gap-2 shadow-lg",
                           hasMissingEssential

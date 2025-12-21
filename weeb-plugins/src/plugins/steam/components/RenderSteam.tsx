@@ -22,11 +22,11 @@ export function RenderSteam({
   size = 'half',
 }: RenderSteamProps): React.ReactElement {
   // If not enabled or no data, return empty
-  if (!config.enabled || !data) {
+  if (!config.enabled || !data ||  config.sections.length === 0) {
     return <></>
   }
 
-  const sections = config.sections || []
+  const sections = config.sections
 
   // Combinar nonEssential com propriedades do nível raiz do config
   // Isso permite que configurações como recent_games_style funcionem mesmo quando
@@ -89,12 +89,12 @@ export function RenderSteam({
   })
 
   return (
-    <RenderBasedOnStyle
-      style={style}
-      defaultComponent={<>{renderedSections}</>}
-      terminalComponent={<>{renderedSections}</>}
-      wrapTerminalBody={true}
-    />
+      <RenderBasedOnStyle
+        style={style}
+        defaultComponent={<>{renderedSections}</>}
+        terminalComponent={<>{renderedSections}</>}
+        wrapTerminalBody={true}
+      />
   )
 }
 

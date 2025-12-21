@@ -77,7 +77,7 @@ interface PluginMetadataPartial {
     configOptions?: Array<{
       key: string
       label: string
-      type: 'number' | 'boolean' | 'string' | 'select'
+      type: 'number' | 'boolean' | 'string' | 'select' | 'array'
       defaultValue?: any
       min?: number
       max?: number
@@ -91,7 +91,7 @@ interface PluginMetadataPartial {
   globalConfigOptions?: Array<{
     key: string
     label: string
-    type: 'number' | 'boolean' | 'string' | 'select'
+    type: 'number' | 'boolean' | 'string' | 'select' | 'array'
     defaultValue?: any
     min?: number
     max?: number
@@ -149,8 +149,8 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
       if (!meta.label) {
         errors.push(`essentialConfigKeysMetadata[${index}]: missing label`)
       }
-      if (!meta.type || !['text', 'password'].includes(meta.type)) {
-        errors.push(`essentialConfigKeysMetadata[${index}]: invalid type. Must be 'text' or 'password'`)
+      if (!meta.type || !['text', 'password', 'oauth'].includes(meta.type)) {
+        errors.push(`essentialConfigKeysMetadata[${index}]: invalid type. Must be 'text', 'password', or 'oauth'`)
       }
     })
   }
@@ -174,8 +174,8 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
           if (!opt.label) {
             errors.push(`sections[${index}].configOptions[${optIndex}]: missing label`)
           }
-          if (!opt.type || !['number', 'boolean', 'string', 'select'].includes(opt.type)) {
-            errors.push(`sections[${index}].configOptions[${optIndex}]: invalid type. Must be 'number', 'boolean', 'string', or 'select'`)
+          if (!opt.type || !['number', 'boolean', 'string', 'select', 'array'].includes(opt.type)) {
+            errors.push(`sections[${index}].configOptions[${optIndex}]: invalid type. Must be 'number', 'boolean', 'string', 'select', or 'array'`)
           }
           
           // Validar opções para select
@@ -309,11 +309,12 @@ export type PluginCategory = "coding" | "music" | "anime" | "gaming"
 export interface EssentialConfigKeyMetadata {
   key: string
   label: string
-  type: "text" | "password"
+  type: "text" | "password" | "oauth"
   placeholder?: string
   description?: string
   helpUrl?: string // Direct link to create/get token (e.g., https://github.com/settings/personal-access-tokens/new)
   docKey?: string // Key for future documentation (e.g., "github.pat")
+  oauthProvider?: "spotify" // OAuth provider when type === "oauth"
 }
 
 /**
@@ -322,7 +323,7 @@ export interface EssentialConfigKeyMetadata {
 export interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select"
+  type: "number" | "boolean" | "string" | "select" | "array"
   defaultValue?: any
   min?: number
   max?: number
@@ -461,6 +462,9 @@ export const PLUGINS_METADATA = {
         if (meta.docKey) {
           metaStr += `,\n          docKey: ${JSON.stringify(meta.docKey)}`
         }
+        if (meta.oauthProvider) {
+          metaStr += `,\n          oauthProvider: ${JSON.stringify(meta.oauthProvider)}`
+        }
         
         metaStr += '\n        }'
         return metaStr
@@ -541,6 +545,44 @@ ${sectionsStr}
   const footer = `} as const satisfies Record<string, PluginMetadata>
 
 /**
+ * Lista de plugins desabilitados
+ * 
+ * Plugins listados aqui não aparecerão na UI e serão filtrados
+ * de todas as listas de plugins disponíveis.
+ * 
+ * Motivos comuns para desabilitar:
+ * - Limitações da API (ex: Spotify tem limite de 25 usuários)
+ * - APIs deprecadas ou não funcionais
+ * - Plugins em desenvolvimento que não devem ser expostos ainda
+ */
+export const DISABLED_PLUGINS: string[] = [
+  'spotify', // Desabilitado devido a limitações da API do Spotify (limite de 25 usuários pré-aprovados)
+] as const
+
+/**
+ * Verifica se um plugin está desabilitado
+ */
+export function isPluginDisabled(pluginName: string): boolean {
+  return DISABLED_PLUGINS.includes(pluginName)
+}
+
+/**
+ * Retorna apenas os plugins habilitados (filtra os desabilitados)
+ */
+export function getEnabledPlugins(): string[] {
+  return Object.keys(PLUGINS_METADATA).filter(name => !isPluginDisabled(name))
+}
+
+/**
+ * Retorna apenas os metadados de plugins habilitados
+ */
+export function getEnabledPluginsMetadata(): PluginMetadata[] {
+  return Object.values(PLUGINS_METADATA).filter(
+    (plugin) => !isPluginDisabled(plugin.name)
+  )
+}
+
+/**
  * Helper functions para trabalhar com metadata
  */
 
@@ -549,6 +591,8 @@ export function getPluginMetadata(pluginName: string): PluginMetadata | undefine
 }
 
 export function getAllPluginsMetadata(): PluginMetadata[] {
+  // Nota: Esta função retorna TODOS os plugins, incluindo desabilitados
+  // Use getEnabledPluginsMetadata() se precisar apenas dos habilitados
   return Object.values(PLUGINS_METADATA)
 }
 

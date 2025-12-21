@@ -1,9 +1,6 @@
-# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
 web-client/
 node_modules/
 .next/
 dist/
 build/
 coverage/
-weeb-dashboard/lib/plugins* 
-weeb-dashboard/lib/weeb-plugins*

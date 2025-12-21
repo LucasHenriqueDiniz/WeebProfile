@@ -24,14 +24,15 @@ import {
   PLUGINS_METADATA,
   getSectionConfigOptions as getSectionConfigOptionsFromMetadata
 } from "@weeb/weeb-plugins/plugins/metadata"
-import { Settings } from "lucide-react"
+import { Settings, X, Plus } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
+import { Badge } from "@/components/ui/badge"
 
 // Define SectionConfigOption locally since it's not exported from metadata path
 interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select"
+  type: "number" | "boolean" | "string" | "select" | "array"
   defaultValue?: any
   min?: number
   max?: number
@@ -204,6 +205,18 @@ export function SectionConfigDialog({
                     </SelectContent>
                   </Select>
                 )}
+                {option.type === "array" && (
+                  <ArrayInput
+                    value={Array.isArray(value) ? value : []}
+                    onChange={(newArray) =>
+                      setLocalConfig({
+                        ...localConfig,
+                        [option.key]: newArray,
+                      })
+                    }
+                    placeholder={option.description || "Digite um valor e pressione Enter"}
+                  />
+                )}
               </div>
             )
           })}
@@ -216,6 +229,87 @@ export function SectionConfigDialog({
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+/**
+ * Array Input Component - Allows adding/removing items from an array
+ */
+interface ArrayInputProps {
+  value: string[]
+  onChange: (value: string[]) => void
+  placeholder?: string
+}
+
+function ArrayInput({ value, onChange, placeholder }: ArrayInputProps) {
+  const [inputValue, setInputValue] = useState("")
+
+  const handleAdd = () => {
+    const trimmed = inputValue.trim()
+    if (trimmed && !value.includes(trimmed)) {
+      onChange([...value, trimmed])
+      setInputValue("")
+    }
+  }
+
+  const handleRemove = (itemToRemove: string) => {
+    onChange(value.filter(item => item !== itemToRemove))
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      handleAdd()
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <Input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder || "Digite um valor e pressione Enter"}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleAdd}
+          disabled={!inputValue.trim() || value.includes(inputValue.trim())}
+        >
+          <Plus className="w-4 h-4" />
+        </Button>
+      </div>
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {value.map((item, index) => (
+            <Badge
+              key={index}
+              variant="secondary"
+              className="flex items-center gap-1.5 px-2 py-1"
+            >
+              <span>{item}</span>
+              <button
+                type="button"
+                onClick={() => handleRemove(item)}
+                className="ml-1 rounded-full hover:bg-destructive/20 p-0.5 transition-colors"
+                aria-label={`Remover ${item}`}
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+      {value.length === 0 && (
+        <p className="text-xs text-muted-foreground">
+          Nenhum item adicionado. Digite um valor e pressione Enter ou clique no botão +.
+        </p>
+      )}
+    </div>
   )
 }
 

@@ -1,13 +1,9 @@
-/**
- * Container SVG como div (para Puppeteer medir altura)
- */
-
-import * as React from 'react'
-import { PluginStyles } from '@weeb/weeb-plugins/templates'
+import * as React from "react"
+import { PluginStyles } from "@weeb/weeb-plugins/templates"
 
 interface SvgContainerDivProps {
-  size: 'half' | 'full'
-  style: 'default' | 'terminal'
+  size: "half" | "full"
+  style: "default" | "terminal"
   cssDefs: React.ReactElement
   children: React.ReactElement
   terminalTheme?: string
@@ -16,21 +12,10 @@ interface SvgContainerDivProps {
   hideTerminalHeader?: boolean
 }
 
-/**
- * Cria o container como div (para Puppeteer medir altura)
- */
 export function createSvgContainerDiv(props: SvgContainerDivProps): React.ReactElement {
-  const {
-    size,
-    style,
-    cssDefs,
-    children,
-    terminalTheme,
-    defaultTheme,
-    hideTerminalHeader,
-  } = props
+  const { size, style, cssDefs, children, terminalTheme, defaultTheme, hideTerminalHeader } = props
 
-  const svgWidth = size === 'half' ? 415 : 830
+  const svgWidth = size === "half" ? 415 : 830
   const containerClass = `${size} ${style} flex flex-col relative`
 
   return (
@@ -53,4 +38,3 @@ export function createSvgContainerDiv(props: SvgContainerDivProps): React.ReactE
     </div>
   )
 }
-

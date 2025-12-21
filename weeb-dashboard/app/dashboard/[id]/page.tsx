@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { svgApi, ApiException } from "@/lib/api"
 import { useSvgStore } from "@/stores/svg-store"
+import LoadingScreen from "@/components/loading/LoadingScreen"
 
 export default function SvgViewPage() {
   const params = useParams()
@@ -202,11 +203,7 @@ export default function SvgViewPage() {
 
   // Só mostrar loading se não tiver dados e estiver carregando
   if (authLoading || (loading && !svg && !urlFromQuery)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!svg && !urlFromQuery) {

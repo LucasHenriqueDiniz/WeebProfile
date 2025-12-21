@@ -1,0 +1,22 @@
+---
+description: Template editing rules (src/templates) + consumer compatibility constraints
+globs:
+  - "src/templates/**"
+  - "src/plugins/**/components/**"
+---
+
+# Templates + compatibility rules
+
+## Consumers
+This package is consumed by multiple apps. Assume:
+- Node build step
+- React rendering in different environments
+
+## Rules
+- Keep templates framework-agnostic (no Next.js-only APIs).
+- Keep components pure and deterministic (no data fetching here).
+- Do not change exported component names/paths without updating all imports.
+
+## Rendering
+- Prefer small presentational components used by plugins.
+- Keep prop types explicit and exported where reused.

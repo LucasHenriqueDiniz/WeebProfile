@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { PLUGINS_METADATA, getPluginMetadata } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA, getPluginMetadata, getEnabledPlugins } from "@weeb/weeb-plugins/plugins/metadata"
 import { applyPluginDefaults } from "@/lib/config/plugin-defaults"
 
 export interface PluginConfig {
@@ -75,7 +75,7 @@ export interface WizardState {
  */
 function generateInitialPlugins(userDefaults?: Record<string, any>): Record<string, PluginConfig> {
   const plugins: Record<string, PluginConfig> = {}
-  Object.keys(PLUGINS_METADATA).forEach((pluginName) => {
+  getEnabledPlugins().forEach((pluginName) => {
     if (pluginName === 'github') {
       // GitHub ativado por padrão com profile + activity
       plugins[pluginName] = applyPluginDefaults(pluginName, {
@@ -93,7 +93,7 @@ function generateInitialPlugins(userDefaults?: Record<string, any>): Record<stri
  * Generates initial pluginsOrder dynamically from PLUGINS_METADATA
  */
 function generateInitialPluginsOrder(): string[] {
-  return Object.keys(PLUGINS_METADATA)
+  return getEnabledPlugins()
 }
 
 const initialState = {
@@ -184,8 +184,8 @@ function ensureAllPlugins(plugins: Record<string, any>): Record<string, PluginCo
     allPlugins[pluginName] = migratePluginConfig(plugins[pluginName])
   })
   
-  // Add any missing plugins from metadata
-  Object.keys(PLUGINS_METADATA).forEach((pluginName) => {
+  // Add any missing plugins from metadata (apenas habilitados)
+  getEnabledPlugins().forEach((pluginName) => {
     if (!allPlugins[pluginName]) {
       allPlugins[pluginName] = applyPluginDefaults(pluginName, {})
     }
@@ -439,9 +439,8 @@ export const useWizardStore = create<WizardState>()(
           const allPluginsOrder = generateInitialPluginsOrder()
           
           // Only update if plugins are missing
-          const hasMissingPlugins = Object.keys(PLUGINS_METADATA).some(
-            pluginName => !state.plugins[pluginName]
-          )
+          const hasMissingPlugins = getEnabledPlugins()
+            .some(pluginName => !state.plugins[pluginName])
           
           if (hasMissingPlugins) {
             state.plugins = allPlugins

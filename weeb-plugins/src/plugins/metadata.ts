@@ -23,11 +23,12 @@ export type PluginCategory = "coding" | "music" | "anime" | "gaming"
 export interface EssentialConfigKeyMetadata {
   key: string
   label: string
-  type: "text" | "password"
+  type: "text" | "password" | "oauth"
   placeholder?: string
   description?: string
   helpUrl?: string // Direct link to create/get token (e.g., https://github.com/settings/personal-access-tokens/new)
   docKey?: string // Key for future documentation (e.g., "github.pat")
+  oauthProvider?: "spotify" // OAuth provider when type === "oauth"
 }
 
 /**
@@ -36,7 +37,7 @@ export interface EssentialConfigKeyMetadata {
 export interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select"
+  type: "number" | "boolean" | "string" | "select" | "array"
   defaultValue?: any
   min?: number
   max?: number
@@ -168,6 +169,366 @@ export const PLUGINS_METADATA = {
     fieldDefaults: {},
   },
 
+  codeforces: {
+    name: "codeforces",
+    displayName: "Codeforces",
+    description: "Show your Codeforces competitive programming statistics",
+    category: "coding",
+    icon: "Code",
+    requiredFields: ["username"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "rating_rank",
+        name: "Rating & Rank",
+        description: "Display your current rating and rank",
+        configOptions: [
+        {
+          key: "rating_rank_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "rating_rank_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Rating & Rank"
+        }
+        ]
+      },
+      {
+        id: "contests_participated",
+        name: "Contests Participated",
+        description: "Display number of contests participated",
+        configOptions: [
+        {
+          key: "contests_participated_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "contests_participated_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Contests Participated"
+        }
+        ]
+      },
+      {
+        id: "problems_solved",
+        name: "Problems Solved",
+        description: "Display problems solved by difficulty",
+        configOptions: [
+        {
+          key: "problems_solved_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "problems_solved_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Problems Solved"
+        }
+        ]
+      },
+      {
+        id: "recent_submissions",
+        name: "Recent Submissions",
+        description: "Display recent submissions",
+        configOptions: [
+        {
+          key: "recent_submissions_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "recent_submissions_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Recent Submissions"
+        },
+        {
+          key: "recent_submissions_max",
+          label: "Maximum submissions",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 50,
+          step: 1,
+          description: "Maximum 50 submissions"
+        }
+        ]
+      }
+    ],
+    exampleConfig: {
+      "enabled": true,
+      "username": "example",
+      "sections": [
+        "rating_rank",
+        "contests_participated",
+        "problems_solved",
+        "recent_submissions"
+      ]
+    },
+    defaultConfig: {
+      "enabled": false,
+      "sections": [
+        "rating_rank"
+      ],
+      "username": ""
+    },
+    fieldDefaults: {
+      "username": "example"
+    },
+  },
+
+  codewars: {
+    name: "codewars",
+    displayName: "Codewars",
+    description: "Show your Codewars coding statistics",
+    category: "coding",
+    icon: "Code",
+    requiredFields: ["username"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "rank_honor",
+        name: "Rank & Honor",
+        description: "Display your current rank (kyu/dan) and honor points",
+        configOptions: [
+        {
+          key: "rank_honor_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "rank_honor_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Rank & Honor"
+        }
+        ]
+      },
+      {
+        id: "completed_kata",
+        name: "Completed Kata",
+        description: "Display completed kata with difficulty",
+        configOptions: [
+        {
+          key: "completed_kata_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "completed_kata_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Completed Kata"
+        },
+        {
+          key: "completed_kata_max",
+          label: "Maximum kata",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 50,
+          step: 1,
+          description: "Maximum 50 kata"
+        }
+        ]
+      },
+      {
+        id: "languages_proficiency",
+        name: "Languages Proficiency",
+        description: "Display proficiency by programming language",
+        configOptions: [
+        {
+          key: "languages_proficiency_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "languages_proficiency_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Languages Proficiency"
+        },
+        {
+          key: "languages_proficiency_max",
+          label: "Maximum languages",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 languages"
+        }
+        ]
+      },
+      {
+        id: "leaderboard_position",
+        name: "Leaderboard Position",
+        description: "Display your position in the leaderboard",
+        configOptions: [
+        {
+          key: "leaderboard_position_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "leaderboard_position_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Leaderboard Position"
+        }
+        ]
+      }
+    ],
+    exampleConfig: {
+      "enabled": true,
+      "username": "example",
+      "sections": [
+        "rank_honor",
+        "completed_kata",
+        "languages_proficiency",
+        "leaderboard_position"
+      ]
+    },
+    defaultConfig: {
+      "enabled": false,
+      "sections": [
+        "rank_honor"
+      ],
+      "username": ""
+    },
+    fieldDefaults: {
+      "username": "example"
+    },
+  },
+
+  duolingo: {
+    name: "duolingo",
+    displayName: "Duolingo",
+    description: "Show your Duolingo learning statistics",
+    category: "coding",
+    icon: "BookOpen",
+    requiredFields: ["username"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "current_streak",
+        name: "Duolingo Streak",
+        description: "Display your current streak in days",
+        configOptions: [
+        {
+          key: "current_streak_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: true
+        },
+        {
+          key: "current_streak_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Current Streak"
+        }
+        ]
+      },
+      {
+        id: "total_xp",
+        name: "Total XP",
+        description: "Display your total XP accumulated",
+        configOptions: [
+        {
+          key: "total_xp_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "total_xp_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Total XP"
+        }
+        ]
+      },
+      {
+        id: "languages_learning",
+        name: "Languages Learning",
+        description: "Display languages you're learning with XP per language",
+        configOptions: [
+        {
+          key: "languages_learning_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "languages_learning_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Languages Learning"
+        },
+        {
+          key: "languages_learning_max",
+          label: "Maximum languages",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 languages"
+        },
+        {
+          key: "languages_learning_hide_languages",
+          label: "Hide languages",
+          type: "array",
+          defaultValue: [],
+          description: "List of language names to hide (e.g., Japanese, French)"
+        }
+        ]
+      }
+    ],
+    exampleConfig: {
+      "enabled": true,
+      "username": "example",
+      "sections": [
+        "current_streak",
+        "total_xp",
+        "languages_learning"
+      ]
+    },
+    defaultConfig: {
+      "enabled": false,
+      "sections": [
+        "current_streak"
+      ],
+      "username": ""
+    },
+    fieldDefaults: {
+      "username": "example"
+    },
+  },
+
   github: {
     name: "github",
     displayName: "GitHub",
@@ -195,19 +556,19 @@ export const PLUGINS_METADATA = {
         configOptions: [
         {
           key: "profile_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "profile_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Profile"
         },
         {
           key: "profile_hide_avatar",
-          label: "Ocultar avatar",
+          label: "Hide avatar",
           type: "boolean",
           defaultValue: false
         }
@@ -1663,6 +2024,360 @@ export const PLUGINS_METADATA = {
     },
   },
 
+  spotify: {
+    name: "spotify",
+    displayName: "Spotify",
+    description: "Show your Spotify music statistics",
+    category: "music",
+    icon: "Music",
+    requiredFields: [],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "recent_tracks",
+        name: "Recent Tracks",
+        description: "Recently played tracks",
+        configOptions: [
+        {
+          key: "recent_tracks_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "recent_tracks_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Recent Tracks"
+        },
+        {
+          key: "recent_tracks_max",
+          label: "Maximum tracks",
+          type: "number",
+          defaultValue: 10,
+          min: 1,
+          max: 50,
+          step: 1,
+          description: "Maximum 50 tracks"
+        }
+        ]
+      },
+      {
+        id: "top_artists",
+        name: "Top Artists",
+        description: "Most listened artists",
+        configOptions: [
+        {
+          key: "top_artists_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "top_artists_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Top Artists"
+        },
+        {
+          key: "top_artists_max",
+          label: "Maximum artists",
+          type: "number",
+          defaultValue: 10,
+          min: 1,
+          max: 50,
+          step: 1,
+          description: "Maximum 50 artists"
+        },
+        {
+          key: "top_artists_style",
+          label: "Display style",
+          type: "select",
+          defaultValue: "default",
+          options: [
+            { value: "grid", label: "Grid" },
+            { value: "list", label: "List" },
+            { value: "default", label: "Default" }
+          ]
+        },
+        {
+          key: "top_artists_period",
+          label: "Period",
+          type: "select",
+          defaultValue: "medium_term",
+          options: [
+            { value: "short_term", label: "Last 4 weeks" },
+            { value: "medium_term", label: "Last 6 months" },
+            { value: "long_term", label: "All time" }
+          ]
+        }
+        ]
+      },
+      {
+        id: "top_tracks",
+        name: "Top Tracks",
+        description: "Most listened tracks",
+        configOptions: [
+        {
+          key: "top_tracks_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "top_tracks_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Top Tracks"
+        },
+        {
+          key: "top_tracks_max",
+          label: "Maximum tracks",
+          type: "number",
+          defaultValue: 10,
+          min: 1,
+          max: 50,
+          step: 1,
+          description: "Maximum 50 tracks"
+        },
+        {
+          key: "top_tracks_style",
+          label: "Display style",
+          type: "select",
+          defaultValue: "default",
+          options: [
+            { value: "grid", label: "Grid" },
+            { value: "list", label: "List" },
+            { value: "default", label: "Default" }
+          ]
+        },
+        {
+          key: "top_tracks_period",
+          label: "Period",
+          type: "select",
+          defaultValue: "medium_term",
+          options: [
+            { value: "short_term", label: "Last 4 weeks" },
+            { value: "medium_term", label: "Last 6 months" },
+            { value: "long_term", label: "All time" }
+          ]
+        }
+        ]
+      },
+      {
+        id: "currently_playing",
+        name: "Currently Playing",
+        description: "Track currently playing",
+        configOptions: [
+        {
+          key: "currently_playing_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "currently_playing_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Now Playing"
+        }
+        ]
+      },
+      {
+        id: "playlists",
+        name: "Playlists",
+        description: "User playlists",
+        configOptions: [
+        {
+          key: "playlists_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "playlists_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Playlists"
+        },
+        {
+          key: "playlists_max",
+          label: "Maximum playlists",
+          type: "number",
+          defaultValue: 10,
+          min: 1,
+          max: 50,
+          step: 1,
+          description: "Maximum 50 playlists"
+        }
+        ]
+      },
+      {
+        id: "profile",
+        name: "Profile",
+        description: "User profile information",
+        configOptions: [
+        {
+          key: "profile_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "profile_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Profile"
+        }
+        ]
+      }
+    ],
+    exampleConfig: {
+      "enabled": true,
+      "sections": [
+        "recent_tracks",
+        "top_artists"
+      ]
+    },
+    defaultConfig: {
+      "enabled": false,
+      "sections": [
+        "recent_tracks"
+      ]
+    },
+    fieldDefaults: {},
+  },
+
+  stackoverflow: {
+    name: "stackoverflow",
+    displayName: "Stack Overflow",
+    description: "Show your Stack Overflow statistics and expertise",
+    category: "coding",
+    icon: "Code",
+    requiredFields: ["userId"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "reputation",
+        name: "Reputation",
+        description: "Display your reputation and recent change",
+        configOptions: [
+        {
+          key: "reputation_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "reputation_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Reputation"
+        }
+        ]
+      },
+      {
+        id: "badges",
+        name: "Badges",
+        description: "Display your badges (gold, silver, bronze)",
+        configOptions: [
+        {
+          key: "badges_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "badges_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Badges"
+        }
+        ]
+      },
+      {
+        id: "answers_questions",
+        name: "Answers & Questions",
+        description: "Display total answers and questions",
+        configOptions: [
+        {
+          key: "answers_questions_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "answers_questions_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Stack Overflow Activity"
+        },
+        {
+          key: "answers_questions_hide_questions",
+          label: "Hide questions",
+          type: "boolean",
+          defaultValue: false
+        }
+        ]
+      },
+      {
+        id: "tags_expertise",
+        name: "Tags Expertise",
+        description: "Display top tags by score",
+        configOptions: [
+        {
+          key: "tags_expertise_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false
+        },
+        {
+          key: "tags_expertise_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Tags Expertise"
+        },
+        {
+          key: "tags_expertise_max",
+          label: "Maximum tags",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 tags"
+        }
+        ]
+      }
+    ],
+    exampleConfig: {
+      "enabled": true,
+      "userId": "123456",
+      "sections": [
+        "reputation",
+        "badges",
+        "answers_questions",
+        "tags_expertise"
+      ]
+    },
+    defaultConfig: {
+      "enabled": false,
+      "sections": [
+        "reputation"
+      ],
+      "userId": ""
+    },
+    fieldDefaults: {
+      "userId": "123456"
+    },
+  },
+
   steam: {
     name: "steam",
     displayName: "Steam",
@@ -1821,6 +2536,44 @@ export const PLUGINS_METADATA = {
 } as const satisfies Record<string, PluginMetadata>
 
 /**
+ * Lista de plugins desabilitados
+ * 
+ * Plugins listados aqui não aparecerão na UI e serão filtrados
+ * de todas as listas de plugins disponíveis.
+ * 
+ * Motivos comuns para desabilitar:
+ * - Limitações da API (ex: Spotify tem limite de 25 usuários)
+ * - APIs deprecadas ou não funcionais
+ * - Plugins em desenvolvimento que não devem ser expostos ainda
+ */
+export const DISABLED_PLUGINS: string[] = [
+  'spotify', // Desabilitado devido a limitações da API do Spotify (limite de 25 usuários pré-aprovados)
+] as const
+
+/**
+ * Verifica se um plugin está desabilitado
+ */
+export function isPluginDisabled(pluginName: string): boolean {
+  return DISABLED_PLUGINS.includes(pluginName)
+}
+
+/**
+ * Retorna apenas os plugins habilitados (filtra os desabilitados)
+ */
+export function getEnabledPlugins(): string[] {
+  return Object.keys(PLUGINS_METADATA).filter(name => !isPluginDisabled(name))
+}
+
+/**
+ * Retorna apenas os metadados de plugins habilitados
+ */
+export function getEnabledPluginsMetadata(): PluginMetadata[] {
+  return Object.values(PLUGINS_METADATA).filter(
+    (plugin) => !isPluginDisabled(plugin.name)
+  )
+}
+
+/**
  * Helper functions para trabalhar com metadata
  */
 
@@ -1829,6 +2582,8 @@ export function getPluginMetadata(pluginName: string): PluginMetadata | undefine
 }
 
 export function getAllPluginsMetadata(): PluginMetadata[] {
+  // Nota: Esta função retorna TODOS os plugins, incluindo desabilitados
+  // Use getEnabledPluginsMetadata() se precisar apenas dos habilitados
   return Object.values(PLUGINS_METADATA)
 }
 

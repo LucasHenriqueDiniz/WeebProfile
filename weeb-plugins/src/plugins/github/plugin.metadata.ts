@@ -1,11 +1,11 @@
 /**
  * Metadata do Plugin GitHub
- * 
+ *
  * Este arquivo define todas as seções, configurações e opções do plugin GitHub.
  * É usado para gerar automaticamente o metadata.ts centralizado.
- * 
+ *
  * NÃO edite metadata.ts manualmente - ele é gerado automaticamente a partir deste arquivo.
- * 
+ *
  * Para adicionar novas seções:
  * 1. Adicione a seção aqui em sections[]
  * 2. Execute: pnpm generate-metadata
@@ -26,7 +26,8 @@ export const githubPluginMetadata = {
       type: "password",
       placeholder: "ghp_...",
       description: "Classic token is used to fetch data from GitHub API",
-      helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
+      helpUrl:
+        "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
       docKey: "github.pat",
     },
   ],
@@ -38,19 +39,19 @@ export const githubPluginMetadata = {
       configOptions: [
         {
           key: "profile_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false,
         },
         {
           key: "profile_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Profile",
         },
         {
           key: "profile_hide_avatar",
-          label: "Ocultar avatar",
+          label: "Hide avatar",
           type: "boolean",
           defaultValue: false,
         },
@@ -630,4 +631,3 @@ export const githubPluginMetadata = {
     username: "octocat", // Para exemplos/testes
   },
 }
-

@@ -28,11 +28,18 @@ export async function GET(request: Request) {
     if (!exchangeError && data.user) {
       try {
         const user = data.user
-        const username =
+        // Extrair username baseado no provedor
+        let username =
           user.user_metadata?.user_name ||
           user.user_metadata?.preferred_username ||
           user.user_metadata?.login ||
+          user.user_metadata?.name ||
           null
+
+        // Se não houver username e houver email, usar parte antes do @
+        if (!username && user.email) {
+          username = user.email.split("@")[0]
+        }
 
         const [existingProfile] = await db
           .select()
@@ -68,7 +75,7 @@ export async function GET(request: Request) {
         console.error("Error creating/updating profile:", profileError)
       }
 
-      return NextResponse.redirect(new URL("/login", request.url))
+      return NextResponse.redirect(new URL("/dashboard", request.url))
     } else {
       console.error("Error exchanging code:", exchangeError)
       return NextResponse.redirect(

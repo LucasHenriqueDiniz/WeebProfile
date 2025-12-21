@@ -17,17 +17,15 @@ export function LivePreview() {
     customThemeColors,
   } = useWizardStore()
 
-  const enabledPlugins = pluginsOrder.filter(
-    (name) => plugins[name]?.enabled
-  )
-
-  if (enabledPlugins.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-64 bg-muted/30 rounded-lg border border-border/50">
-        <p className="text-sm text-muted-foreground">Habilite pelo menos um plugin para ver o preview</p>
-      </div>
-    )
-  }
+  console.log('[LivePreview] Received props:', {
+    pluginsOrder,
+    pluginsCount: Object.keys(plugins).length,
+    enabledPlugins: Object.entries(plugins).filter(([_, p]) => p?.enabled).map(([name]) => name),
+    pluginsWithSections: Object.entries(plugins).filter(([_, p]) => p?.enabled && p.sections?.length > 0).map(([name, p]) => ({
+      name,
+      sections: p.sections,
+    })),
+  })
 
   // Calcular largura baseada no size (415px para half, 830px para full - tamanho exato do SVG)
   const previewWidth = size === "half" ? 415 : 830

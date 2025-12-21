@@ -77,4 +77,3 @@ export function emojiNumber(number: number): string {
       return "▶️"
   }
 }
-

@@ -1,0 +1,25 @@
+---
+description: CSS loading + scoping + theme variables (critical for SVG consistency)
+globs:
+  - src/generator/css-loader.tsx
+  - src/renderer/template-renderer.tsx
+  - src/generator/svg-container-div.tsx
+alwaysApply: true
+---
+
+# CSS system rules
+
+## Sources of CSS
+- Style CSS (default/terminal)
+- Aggregated plugin CSS (active plugins)
+- Primary color override CSS (only if a primaryColor is provided / different)
+- Custom CSS (user-supplied)
+
+## Scoping
+- CSS must be scoped under `#svg-main` to avoid global leakage.
+- Do not rely on external stylesheets at runtime (SVG must be self-contained).
+
+## foreignObject quirks
+- Many SVG viewers are picky:
+  - keep the XHTML namespace on the HTML root
+  - avoid unsupported CSS features when possible

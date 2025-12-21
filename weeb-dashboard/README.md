@@ -5,22 +5,26 @@ Projeto Next.js 16 limpo e configurado do zero.
 ## 🚀 Setup
 
 1. **Instalar dependências:**
+
 ```bash
 pnpm install
 ```
 
 2. **Configurar variáveis de ambiente:**
+
 ```bash
 cp .env.local.example .env.local
 ```
 
 Preencha as variáveis no `.env.local`:
+
 - `NEXT_PUBLIC_SUPABASE_URL` - URL do seu projeto Supabase
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Chave anônima do Supabase
 - `SUPABASE_SERVICE_ROLE_KEY` - Chave de service role (para operações admin)
 - `DATABASE_URL` - URL de conexão do PostgreSQL (do Supabase)
 
 3. **Configurar banco de dados:**
+
 ```bash
 # Gerar migrations
 pnpm db:generate
@@ -30,6 +34,7 @@ pnpm db:push
 ```
 
 4. **Rodar em desenvolvimento:**
+
 ```bash
 pnpm dev
 ```

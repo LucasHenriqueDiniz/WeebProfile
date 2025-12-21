@@ -1,6 +1,6 @@
-import { FaGithub, FaSteam, FaLastfmSquare } from "react-icons/fa"
+import { FaGithub, FaSteam, FaLastfmSquare, FaCode, FaSpotify, FaBookOpen } from "react-icons/fa"
 import { TbNumber16Small } from "react-icons/tb"
-import { SiMyanimelist } from "react-icons/si"
+import { SiMyanimelist, SiStackoverflow } from "react-icons/si"
 import { GiWeightLiftingUp } from "react-icons/gi"
 import type { ComponentType } from "react"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
@@ -18,6 +18,11 @@ const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   "16personalities": TbNumber16Small,
   lyfta: GiWeightLiftingUp,
   steam: FaSteam,
+  codewars: FaCode,
+  codeforces: FaCode,
+  stackoverflow: SiStackoverflow,
+  duolingo: FaBookOpen,
+  spotify: FaSpotify,
 }
 
 /**

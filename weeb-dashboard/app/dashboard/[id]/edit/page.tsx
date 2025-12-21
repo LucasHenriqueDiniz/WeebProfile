@@ -9,6 +9,7 @@ import { useWizardStore } from "@/stores/wizard-store"
 import { useSvgStore } from "@/stores/svg-store"
 import type { Svg } from "@/lib/db/schema"
 import { ApiException } from "@/lib/api"
+import LoadingScreen from "@/components/loading/LoadingScreen"
 
 export default function EditSvgPage() {
   const { user, loading: authLoading } = useAuth()
@@ -125,11 +126,7 @@ export default function EditSvgPage() {
 
   // Só mostrar loading se não tiver dados e estiver carregando
   if (authLoading || (loading && !cachedSvg)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin text-4xl text-primary" />
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!user) {

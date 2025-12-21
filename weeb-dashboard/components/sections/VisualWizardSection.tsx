@@ -1,15 +1,13 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { 
-  Plug, 
-  Layout, 
-  Palette, 
-  Eye, 
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Plug,
+  Layout,
+  Palette,
+  Eye,
   LucideIcon,
-  ArrowRight,
-  X,
-  Check
 } from "lucide-react"
 
 interface Feature {
@@ -27,15 +25,6 @@ interface VisualWizardSectionProps {
   feature: Feature
 }
 
-interface FeatureStepProps {
-  number: number
-  title: string
-  description: string
-  icon: LucideIcon
-  index: number
-  isLast?: boolean
-}
-
 const stepIcons: Record<number, LucideIcon> = {
   1: Plug,
   2: Layout,
@@ -43,196 +32,182 @@ const stepIcons: Record<number, LucideIcon> = {
   4: Eye,
 }
 
-function FeatureStep({
-  number,
-  title,
-  description,
-  icon: Icon,
-  index,
-  isLast = false,
-}: FeatureStepProps) {
-  return (
-    <motion.div
-      custom={index}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={{
-        hidden: { opacity: 0, x: -50, scale: 0.9 },
-        visible: (i: number) => ({
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          transition: { 
-            delay: i * 0.15, 
-            duration: 0.6,
-            type: "spring",
-            stiffness: 80,
-            damping: 15
-          },
-        }),
-      }}
-      className="relative group"
-    >
-      {/* Timeline line */}
-      {!isLast && (
-        <motion.div
-          className="absolute left-8 top-24 w-full h-0.5 bg-gradient-to-r from-primary/40 via-primary/20 to-transparent hidden lg:block"
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: index * 0.15 + 0.3, duration: 0.6 }}
-        />
-      )}
-      
-      <div className="flex gap-6 items-start">
-        {/* Icon circle with animation */}
-        <div className="relative flex-shrink-0">
-          <motion.div
-            className="w-16 h-16 rounded-full bg-gradient-to-br from-primary via-primary/90 to-primary/80 flex items-center justify-center shadow-lg shadow-primary/30 relative z-10"
-            whileHover={{ scale: 1.15, rotate: [0, -10, 10, 0] }}
-            transition={{ duration: 0.6, type: "spring" }}
-          >
-            <Icon className="w-8 h-8 text-primary-foreground" />
-          </motion.div>
-          
-          {/* Pulsing ring */}
-          <motion.div
-            className="absolute inset-0 rounded-full border-2 border-primary/40"
-            animate={{
-              scale: [1, 1.3, 1.3],
-              opacity: [0.6, 0, 0],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeOut",
-            }}
-          />
-        </div>
-        
-        {/* Content */}
-        <div className="flex-1 pt-2 pb-12 lg:pb-16">
-          <motion.div
-            className="space-y-2"
-            whileHover={{ x: 8 }}
-            transition={{ type: "spring", stiffness: 400 }}
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
-                {title}
-              </span>
-            </div>
-            <p className="text-muted-foreground text-base leading-relaxed max-w-md">
-              {description}
-            </p>
-          </motion.div>
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
-export function VisualWizardSection({
-  feature,
-}: VisualWizardSectionProps) {
+export function VisualWizardSection({ feature }: VisualWizardSectionProps) {
   return (
     <section className="relative py-16 md:py-24 overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
-      
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16 max-w-4xl mx-auto"
-        >
+      {/* fundo sutil */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-24 right-[-120px] h-80 w-80 rounded-full bg-primary/15 blur-3xl" />
+        <div className="absolute bottom-[-120px] left-[-80px] h-80 w-80 rounded-full bg-sky-500/10 blur-3xl" />
+      </div>
+
+      <div className="container relative">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+          {/* texto + timeline */}
           <motion.div
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 mb-6"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 400 }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.4 }}
+            className="space-y-6"
           >
-            <Check className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-primary">Visual builder</span>
-            <span className="text-sm font-semibold text-muted-foreground">•</span>
-            <span className="text-sm font-semibold text-foreground">Real-time preview</span>
-            <span className="text-sm font-semibold text-muted-foreground">•</span>
-            <span className="text-sm font-semibold text-foreground">No code required</span>
-          </motion.div>
-          
-          <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-              {feature.title}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            {feature.description}
-          </p>
-        </motion.div>
+            <div className="space-y-3">
+              <p className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+                Visual wizard
+              </p>
+              <h2 className="text-3xl md:text-4xl font-black leading-tight">
+                {feature.title}
+              </h2>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                {feature.description}
+              </p>
+            </div>
 
-        {/* Horizontal Timeline Flow */}
-        <div className="max-w-5xl mx-auto">
-          <div className="space-y-0">
-            {feature.steps.map((step, index) => {
-              const Icon = stepIcons[step.number]
-              const isLast = index === feature.steps.length - 1
-              
-              return (
-                <div key={step.number} className="relative">
-                  <FeatureStep
-                    number={step.number}
-                    title={step.title}
-                    description={step.description}
-                    icon={Icon}
+            <ol className="mt-4 space-y-5">
+              {feature.steps.map((step, index) => {
+                const Icon = stepIcons[step.number] ?? Eye
+
+                return (
+                  <FeatureStepRow
+                    key={step.number}
+                    step={step}
+                    Icon={Icon}
                     index={index}
-                    isLast={isLast}
+                    isLast={index === feature.steps.length - 1}
                   />
-                  
-                  {/* Arrow connector */}
-                  {!isLast && (
-                    <motion.div
-                      className="absolute left-8 top-24 w-8 h-8 hidden lg:flex items-center justify-center"
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.15 + 0.3 }}
-                    >
-                      <ArrowRight className="w-5 h-5 text-primary/60" />
-                    </motion.div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
+                )
+              })}
+            </ol>
+          </motion.div>
 
-        {/* Bottom accent */}
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          whileInView={{ opacity: 1, scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="mt-16 max-w-2xl mx-auto h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent"
-        />
+          {/* preview do builder */}
+          <motion.div
+            initial={{ opacity: 0, x: 32 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5 }}
+          >
+            <BuilderPreview />
+          </motion.div>
+        </div>
       </div>
     </section>
   )
 }
 
+interface FeatureStepRowProps {
+  step: Feature["steps"][number]
+  Icon: LucideIcon
+  index: number
+  isLast: boolean
+}
 
+function FeatureStepRow({ step, Icon, index, isLast }: FeatureStepRowProps) {
+  return (
+    <motion.li
+      initial={{ opacity: 0, x: -12 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.4, delay: index * 0.12 }}
+      className="relative flex gap-4"
+    >
+      {/* linha vertical */}
+      {!isLast && (
+        <span className="pointer-events-none absolute left-5 top-8 h-full w-[2px] bg-gradient-to-b from-primary/40 via-primary/20 to-transparent" />
+      )}
 
+      {/* ícone + número */}
+      <div className="relative z-10 flex flex-col items-center">
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-sky-500 to-primary shadow-lg">
+          <Icon className="h-5 w-5 text-primary-foreground" />
+        </div>
+        <span className="mt-1 text-[11px] font-semibold text-muted-foreground">
+          {step.number}
+        </span>
+      </div>
 
+      {/* conteúdo */}
+      <div className="flex-1 rounded-2xl border border-border/70 bg-card/80 px-4 py-3 shadow-[0_10px_30px_rgba(15,23,42,0.6)]">
+        <h3 className="text-sm font-semibold">{step.title}</h3>
+        <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+          {step.description}
+        </p>
+      </div>
+    </motion.li>
+  )
+}
 
+function BuilderPreview() {
+  return (
+    <Card className="relative border border-border/80 bg-slate-950/90 backdrop-blur-sm shadow-[0_22px_60px_rgba(15,23,42,0.95)] overflow-hidden rounded-3xl">
+      {/* glow */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-sky-500/20 opacity-80 blur-2xl" />
+      <CardContent className="relative z-10 p-5 md:p-6 space-y-4">
+        {/* barra superior */}
+        <div className="flex items-center justify-between rounded-2xl bg-slate-900/80 px-4 py-2">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-300/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-rose-400/80" />
+          </div>
+          <p className="text-xs font-medium text-slate-300">
+            Preview do perfil
+          </p>
+        </div>
 
+        {/* conteúdo fake: painel + preview */}
+        <div className="grid gap-4 md:grid-cols-[0.9fr_1.1fr] items-stretch">
+          {/* painel esquerdo */}
+          <div className="space-y-3 rounded-2xl bg-slate-900/80 p-3">
+            <div className="h-8 rounded-lg bg-gradient-to-r from-primary/40 to-sky-500/40" />
+            <div className="space-y-2 pt-1">
+              <div className="h-2.5 w-3/4 rounded-full bg-slate-700/80" />
+              <div className="h-2.5 w-1/2 rounded-full bg-slate-700/60" />
+            </div>
+            <div className="mt-3 space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between rounded-lg bg-slate-800/70 px-2.5 py-2"
+                >
+                  <div className="h-2.5 w-20 rounded-full bg-slate-600/80" />
+                  <div className="h-6 w-10 rounded-md bg-primary/60" />
+                </div>
+              ))}
+            </div>
+          </div>
 
+          {/* preview direito */}
+          <motion.div
+            initial={{ y: 6 }}
+            animate={{ y: [6, 0, 6] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="relative rounded-2xl bg-slate-900/80 p-3 overflow-hidden"
+          >
+            <div className="mb-3 h-10 w-24 rounded-full bg-slate-800/80" />
+            <div className="flex gap-3">
+              <div className="h-32 w-28 rounded-2xl bg-gradient-to-b from-cyan-500 via-sky-500 to-emerald-400" />
+              <div className="flex-1 space-y-2">
+                <div className="h-2.5 w-3/4 rounded-full bg-slate-700/80" />
+                <div className="h-2.5 w-1/2 rounded-full bg-slate-700/70" />
+                <div className="mt-3 space-y-1.5">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="h-2 w-full rounded-full bg-slate-800/80"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
 
-
-
-
-
-
-
-
-
+        <p className="pt-1 text-[11px] text-muted-foreground">
+          Tudo o que você muda no builder aparece aqui em tempo real — cores,
+          plugins, layout e muito mais.
+        </p>
+      </CardContent>
+    </Card>
+  )
+}

@@ -436,5 +436,12 @@ input[type="color"]::-moz-color-swatch {
   border-color: hsl(var(--ring));
 }
 
+/* Pixel rendering for loading animation */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
 /* Plugin CSS is now imported from plugins.css */
 /* Run: pnpm generate:plugins-css to regenerate */

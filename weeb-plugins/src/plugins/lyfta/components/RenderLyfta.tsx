@@ -24,12 +24,11 @@ export function RenderLyfta({
   size = 'half',
 }: RenderLyftaProps): React.ReactElement {
   // If not enabled or no data, return empty
-  if (!config.enabled || !data) {
+  if (!config.enabled || !data ||  config.sections.length === 0) {
     return <></>
   }
 
-  const sections = config.sections || []
-
+  const sections = config.sections
   const renderedSections = sections.map((section) => {
     switch (section) {
       case 'statistics':
@@ -92,12 +91,12 @@ export function RenderLyfta({
   })
 
   return (
-    <RenderBasedOnStyle
-      style={style}
-      defaultComponent={<>{renderedSections}</>}
-      terminalComponent={<>{renderedSections}</>}
-      wrapTerminalBody={true}
-    />
+      <RenderBasedOnStyle
+        style={style}
+        defaultComponent={<>{renderedSections}</>}
+        terminalComponent={<>{renderedSections}</>}
+        wrapTerminalBody={true}
+      />
   )
 }
 

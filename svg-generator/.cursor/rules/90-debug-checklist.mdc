@@ -1,0 +1,24 @@
+---
+description: Debug checklist for generation failures (ask for this when debugging)
+alwaysApply: false
+---
+
+# Debug checklist (use when troubleshooting)
+
+1) Confirm request payload:
+   - `style`, `size`
+   - at least one plugin `enabled: true` with non-empty `sections`
+   - `pluginsOrder` matches plugin ids
+2) Confirm theme mapping:
+   - if `style=default`, `defaultTheme` set
+   - if `style=terminal`, `terminalTheme` set
+3) Confirm essential configs:
+   - production: `userId` present and DB returns configs
+   - dev/test: `essentialConfigs` only in explicit test mode
+4) Confirm rendering:
+   - plugin fetch returns data
+   - plugin render returns valid React element
+5) Confirm SVG output:
+   - contains `id="svg-main"`
+   - contains `<foreignObject>`
+   - inner HTML root has XHTML namespace

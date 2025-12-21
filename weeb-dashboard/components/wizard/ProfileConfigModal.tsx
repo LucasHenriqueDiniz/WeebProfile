@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { useAuth } from "@/hooks/useAuth"
+import { useSearchParams, usePathname, useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, AlertCircle, CheckCircle2, XCircle } from "lucide-react"
+import { Loader2, AlertCircle, CheckCircle2, XCircle, Music } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { profileApi, ApiException } from "@/lib/api"
@@ -24,6 +25,9 @@ interface ProfileConfigModalProps {
 export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave }: ProfileConfigModalProps) {
   const { user } = useAuth()
   const { toast } = useToast()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<{
@@ -37,6 +41,37 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
       fetchProfile()
     }
   }, [open])
+
+  // Verificar callback OAuth separadamente (não depende de open)
+  useEffect(() => {
+    const oauthSuccess = searchParams.get("oauth_success")
+    const oauthError = searchParams.get("oauth_error")
+    
+    if (oauthSuccess === "spotify") {
+      toast({
+        title: "Conectado com sucesso!",
+        description: "Sua conta Spotify foi conectada com sucesso.",
+      })
+      // Recarregar configs para atualizar status
+      fetchProfile()
+      // Limpar query params
+      const newSearchParams = new URLSearchParams(searchParams.toString())
+      newSearchParams.delete("oauth_success")
+      router.replace(`${pathname}?${newSearchParams.toString()}`)
+    } else if (oauthError) {
+      const errorDescription = searchParams.get("error_description")
+      toast({
+        title: "Erro ao conectar",
+        description: errorDescription || "Não foi possível conectar sua conta Spotify.",
+        variant: "destructive",
+      })
+      // Limpar query params
+      const newSearchParams = new URLSearchParams(searchParams.toString())
+      newSearchParams.delete("oauth_error")
+      newSearchParams.delete("error_description")
+      router.replace(`${pathname}?${newSearchParams.toString()}`)
+    }
+  }, [searchParams, pathname, router, toast])
 
   const fetchProfile = async () => {
     try {
@@ -200,6 +235,13 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                           const isSet = isConfigSet(pluginName, keyDef.key)
                           const localValue = getLocalValue(pluginName, keyDef.key)
                           const showValue = localValue.length > 0 // Mostrar apenas se usuário digitou algo
+                          const isOAuth = keyDef.type === "oauth"
+                          
+                          // Handler para iniciar OAuth
+                          const handleOAuthConnect = () => {
+                            const returnTo = encodeURIComponent(pathname + (searchParams.toString() ? `?${searchParams.toString()}` : ""))
+                            window.location.href = `/api/auth/spotify/authorize?returnTo=${returnTo}`
+                          }
                           
                           return (
                             <div key={keyDef.key} className="space-y-2">
@@ -211,17 +253,17 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                   {isSet && (
                                     <Badge variant="outline" className="text-xs gap-1">
                                       <CheckCircle2 className="w-3 h-3 text-green-600" />
-                                      Configurado
+                                      Conectado
                                     </Badge>
                                   )}
                                   {!isSet && (
                                     <Badge variant="outline" className="text-xs gap-1 border-yellow-300">
                                       <XCircle className="w-3 h-3 text-yellow-600" />
-                                      Não configurado
+                                      Não conectado
                                     </Badge>
                                   )}
                                 </div>
-                                {keyDef.helpUrl && (
+                                {!isOAuth && keyDef.helpUrl && (
                                   <a
                                     href={keyDef.helpUrl}
                                     target="_blank"
@@ -232,23 +274,50 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                   </a>
                                 )}
                               </div>
-                              <Input
-                                id={`${pluginName}-${keyDef.key}`}
-                                type={keyDef.type}
-                                value={showValue ? localValue : ''}
-                                onChange={(e) => updateEssentialConfig(pluginName, keyDef.key, e.target.value)}
-                                placeholder={
-                                  isSet 
-                                    ? "Digite para alterar (valor atual não é exibido por segurança)"
-                                    : (keyDef.placeholder || `seu-${keyDef.key}`)
-                                }
-                                className="font-mono"
-                              />
-                              {isSet && !showValue && (
-                                <p className="text-xs text-muted-foreground">
-                                  ⚠️ Valor já configurado. Digite um novo valor para alterar.
-                                </p>
+                              
+                              {isOAuth ? (
+                                // Botão OAuth
+                                <Button
+                                  type="button"
+                                  onClick={handleOAuthConnect}
+                                  variant={isSet ? "outline" : "default"}
+                                  className="w-full"
+                                >
+                                  {isSet ? (
+                                    <>
+                                      <Music className="w-4 h-4 mr-2" />
+                                      Reconectar com Spotify
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Music className="w-4 h-4 mr-2" />
+                                      Conectar com Spotify
+                                    </>
+                                  )}
+                                </Button>
+                              ) : (
+                                // Input tradicional
+                                <>
+                                  <Input
+                                    id={`${pluginName}-${keyDef.key}`}
+                                    type={keyDef.type}
+                                    value={showValue ? localValue : ''}
+                                    onChange={(e) => updateEssentialConfig(pluginName, keyDef.key, e.target.value)}
+                                    placeholder={
+                                      isSet 
+                                        ? "Digite para alterar (valor atual não é exibido por segurança)"
+                                        : (keyDef.placeholder || `seu-${keyDef.key}`)
+                                    }
+                                    className="font-mono"
+                                  />
+                                  {isSet && !showValue && (
+                                    <p className="text-xs text-muted-foreground">
+                                      ⚠️ Valor já configurado. Digite um novo valor para alterar.
+                                    </p>
+                                  )}
+                                </>
                               )}
+                              
                               {keyDef.description && (
                                 <p className="text-xs text-muted-foreground">{keyDef.description}</p>
                               )}

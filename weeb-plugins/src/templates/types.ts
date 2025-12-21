@@ -2,6 +2,8 @@
  * Tipos compartilhados para templates
  */
 
+import type React from 'react'
+
 export interface GridItemProps {
   image?: string
   title: string
@@ -10,9 +12,9 @@ export interface GridItemProps {
 }
 
 export interface ListItemProps {
-  right: string
-  center?: string
-  left: string
+  right: string | React.ReactNode
+  center?: string | React.ReactNode
+  left: string | React.ReactNode
   image?: string
 }
 

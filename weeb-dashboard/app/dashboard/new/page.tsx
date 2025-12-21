@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
-import { Loader2 } from "lucide-react"
+import LoadingScreen from "@/components/loading/LoadingScreen"
 import { Wizard } from "@/components/wizard/Wizard"
 
 export default function NewSvgPage() {
@@ -17,11 +17,7 @@ export default function NewSvgPage() {
   }, [user, authLoading, router])
 
   if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin text-4xl text-primary" />
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!user) {

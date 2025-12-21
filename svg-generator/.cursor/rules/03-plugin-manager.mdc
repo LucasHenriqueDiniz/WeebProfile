@@ -1,0 +1,28 @@
+---
+description: PluginManager usage, data fetching, error rendering, ordering
+globs:
+  - src/renderer/react-renderer.tsx
+alwaysApply: true
+---
+
+# PluginManager & plugin rendering rules
+
+## Initialization
+- Build `pluginsConfig` dynamically from `config.plugins`:
+  - include `style`, `size`, `hideTerminalEmojis`, etc.
+- Call `pluginManager.initializeActivePlugins(pluginsConfig)` once per request.
+
+## Data fetching
+- Fetch data in parallel (`Promise.all`) but render in `pluginsOrder`.
+- Pass:
+  - `useDev = config.dev === true`
+  - `essentialConfig = config.essentialConfigs?.[pluginName]`
+- Keep `pluginsData` and `pluginsErrors` for debug and for rendering errors.
+
+## Rendering
+- Render in `config.pluginsOrder` if present; otherwise fallback to object key order.
+- If data fetching failed: render `<PluginError />` (visual failure) instead of crashing the whole SVG.
+- If `plugin.render()` returns invalid element: treat as error and render `<PluginError />`.
+
+## Never crash the whole SVG for one plugin
+- A single plugin should not take down the response.

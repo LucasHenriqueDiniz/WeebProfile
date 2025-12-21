@@ -1,19 +1,17 @@
-/**
- * PluginManager V2
- * 
- * Gerenciador melhorado de plugins
- */
-
-import type { Plugin } from './shared/types/plugin'
-import type { PluginRegistry } from './types'
-import type { EssentialPluginConfig } from './shared/types/base'
-import { githubPlugin } from './github/index'
-import { lastFmPlugin } from './lastfm/index'
-import { myAnimeListPlugin } from './myanimelist/index'
-import { personality16Plugin } from './16personalities/index'
-import { lyftaPlugin } from './lyfta/index'
-import { steamPlugin } from './steam/index'
-import type { PluginConfig, PluginData } from '../types/index'
+import type { PluginConfig, PluginData } from "../types/index"
+import { personality16Plugin } from "./16personalities/index"
+import { githubPlugin } from "./github/index"
+import { lastFmPlugin } from "./lastfm/index"
+import { lyftaPlugin } from "./lyfta/index"
+import { myAnimeListPlugin } from "./myanimelist/index"
+import type { EssentialPluginConfig } from "./shared/types/base"
+import type { Plugin } from "./shared/types/plugin"
+import { steamPlugin } from "./steam/index"
+import { spotifyPlugin } from './spotify/index'
+import { duolingoPlugin } from './duolingo/index'
+import { codewarsPlugin } from './codewars/index'
+import { codeforcesPlugin } from './codeforces/index'
+import { stackoverflowPlugin } from './stackoverflow/index'
 
 export class PluginManager {
   private static instance: PluginManager
@@ -28,6 +26,11 @@ export class PluginManager {
     this.register(personality16Plugin)
     this.register(lyftaPlugin)
     this.register(steamPlugin)
+    this.register(spotifyPlugin)
+    this.register(duolingoPlugin)
+    this.register(codewarsPlugin)
+    this.register(codeforcesPlugin)
+    this.register(stackoverflowPlugin)
   }
 
   public static getInstance(): PluginManager {
@@ -83,7 +86,7 @@ export class PluginManager {
    */
   public async fetchPluginData(
     name: string,
-    config: Plugin['config'],
+    config: Plugin["config"],
     dev = false,
     essentialConfig?: EssentialPluginConfig
   ): Promise<PluginData> {
@@ -98,7 +101,7 @@ export class PluginManager {
    * Busca dados de todos os plugins ativos
    */
   public async fetchAllPluginsData(
-    pluginsConfig: Record<string, Plugin['config']>,
+    pluginsConfig: Record<string, Plugin["config"]>,
     dev = false,
     essentialConfigs?: Record<string, EssentialPluginConfig>
   ): Promise<Record<string, PluginData>> {
@@ -125,4 +128,3 @@ export class PluginManager {
     return results
   }
 }
-

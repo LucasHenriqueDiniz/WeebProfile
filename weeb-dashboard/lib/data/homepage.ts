@@ -84,7 +84,8 @@ export interface HomepageData {
 export const homepageData: HomepageData = {
   hero: {
     title: "One SVG to flex your entire nerd life",
-    subtitle: "Visual builder for your GitHub, anime, games, books and music stats. No YAML, no Actions — just click, preview, embed.",
+    subtitle:
+      "Visual builder for your GitHub, anime, games, books and music stats. No YAML, no Actions — just click, preview, embed.",
     ctaPrimary: {
       text: "Start for free",
       href: "/login",
@@ -123,20 +124,13 @@ export const homepageData: HomepageData = {
       color: "#2e51a2",
       category: "anime",
     },
-    {
-      id: "goodreads",
-      name: "Goodreads",
-      icon: "BookOpen",
-      description: "Books & reading",
-      color: "#382110",
-      category: "reading",
-    },
   ],
   features: [
     {
       id: "visual-wizard",
-      title: "Build visually, no code required",
-      description: "Our visual builder lets you create stunning profile cards without writing a single line of code. Pick plugins, customize layouts, and see changes in real-time.",
+      title: "Have your dream README in seconds",
+      description:
+        "Our visual builder lets you create stunning profile cards without writing a single line of code. Pick plugins, customize layouts, and see changes in real-time.",
       steps: [
         {
           number: 1,
@@ -303,7 +297,8 @@ export const homepageData: HomepageData = {
     {
       id: "secure",
       title: "Secure & Private",
-      description: "Only our backend accesses your data. Your API keys and tokens are stored securely and never exposed.",
+      description:
+        "Only our backend accesses your data. Your API keys and tokens are stored securely and never exposed.",
       icon: "Shield",
       highlight: "Your data safe",
     },
@@ -315,4 +310,3 @@ export const homepageData: HomepageData = {
     buttonHref: "/login",
   },
 }
-

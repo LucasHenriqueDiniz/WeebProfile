@@ -1,25 +1,25 @@
-import React from 'react'
-import type { MyAnimeListConfig, MyAnimeListData } from '../types'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { Statistics } from './Statistics'
-import { LastUpdates } from './LastUpdates'
-import { SimpleStatistics } from './SimpleStatistics'
-import { StatisticsHorizontalBar } from './StatisticsHorizontalBar'
-import { FavoritesList } from './FavoritesList'
+import React from "react"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import type { MyAnimeListConfig, MyAnimeListData } from "../types"
+import { FavoritesList } from "./FavoritesList"
+import { LastUpdates } from "./LastUpdates"
+import { SimpleStatistics } from "./SimpleStatistics"
+import { Statistics } from "./Statistics"
+import { StatisticsHorizontalBar } from "./StatisticsHorizontalBar"
 
 interface RenderMyAnimeListProps {
   config: MyAnimeListConfig
   data: MyAnimeListData
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
   hideTerminalEmojis?: boolean
 }
 
 export function RenderMyAnimeList({
   config,
   data,
-  style = 'default',
-  size = 'half',
+  style = "default",
+  size = "half",
   hideTerminalEmojis = false,
 }: RenderMyAnimeListProps): React.ReactElement {
   if (!config.enabled || config.sections.length === 0) {
@@ -31,7 +31,7 @@ export function RenderMyAnimeList({
   // Renderizar cada seção solicitada
   const renderedSections = sections.map((section) => {
     switch (section) {
-      case 'statistics':
+      case "statistics":
         return (
           <Statistics
             key="statistics"
@@ -42,7 +42,7 @@ export function RenderMyAnimeList({
             hideTerminalEmojis={hideTerminalEmojis}
           />
         )
-      case 'last_activity':
+      case "last_activity":
         return (
           <LastUpdates
             key="last_activity"
@@ -53,7 +53,7 @@ export function RenderMyAnimeList({
             hideTerminalEmojis={hideTerminalEmojis}
           />
         )
-      case 'statistics_simple':
+      case "statistics_simple":
         return (
           <SimpleStatistics
             key="statistics_simple"
@@ -64,7 +64,7 @@ export function RenderMyAnimeList({
             hideTerminalEmojis={hideTerminalEmojis}
           />
         )
-      case 'anime_bar':
+      case "anime_bar":
         return (
           <StatisticsHorizontalBar
             key="anime_bar"
@@ -75,7 +75,7 @@ export function RenderMyAnimeList({
             isAnime={true}
           />
         )
-      case 'manga_bar':
+      case "manga_bar":
         return (
           <StatisticsHorizontalBar
             key="manga_bar"
@@ -86,7 +86,7 @@ export function RenderMyAnimeList({
             isAnime={false}
           />
         )
-      case 'anime_favorites':
+      case "anime_favorites":
         return (
           <FavoritesList
             key="anime_favorites"
@@ -95,10 +95,10 @@ export function RenderMyAnimeList({
             config={config}
             style={style}
             size={size}
-            listStyle={config.anime_favorites_list_style || 'detailed'}
+            listStyle={config.anime_favorites_list_style || "detailed"}
           />
         )
-      case 'manga_favorites':
+      case "manga_favorites":
         return (
           <FavoritesList
             key="manga_favorites"
@@ -107,10 +107,10 @@ export function RenderMyAnimeList({
             config={config}
             style={style}
             size={size}
-            listStyle={config.manga_favorites_list_style || 'detailed'}
+            listStyle={config.manga_favorites_list_style || "detailed"}
           />
         )
-      case 'people_favorites':
+      case "people_favorites":
         return (
           <FavoritesList
             key="people_favorites"
@@ -119,10 +119,10 @@ export function RenderMyAnimeList({
             config={config}
             style={style}
             size={size}
-            listStyle={config.people_favorites_list_style || 'compact'}
+            listStyle={config.people_favorites_list_style || "compact"}
           />
         )
-      case 'character_favorites':
+      case "character_favorites":
         return (
           <FavoritesList
             key="character_favorites"
@@ -131,7 +131,7 @@ export function RenderMyAnimeList({
             config={config}
             style={style}
             size={size}
-            listStyle={config.character_favorites_list_style || 'compact'}
+            listStyle={config.character_favorites_list_style || "compact"}
           />
         )
       default:
@@ -152,4 +152,3 @@ export function RenderMyAnimeList({
     />
   )
 }
-

@@ -1,20 +1,20 @@
 /**
  * Carregador de Configuração
- * 
+ *
  * Converte configuração do Supabase/weeb-dashboard para formato interno
  */
 
-import type { SvgConfig } from '../types/index.js'
+import type { SvgConfig } from "../types/index.js"
 
 /**
  * Validates basic configuration
  */
 export function validateConfig(config: Partial<SvgConfig>): config is SvgConfig {
-  if (!config.style || !['default', 'terminal'].includes(config.style)) {
+  if (!config.style || !["default", "terminal"].includes(config.style)) {
     return false
   }
 
-  if (!config.size || !['half', 'full'].includes(config.size)) {
+  if (!config.size || !["half", "full"].includes(config.size)) {
     return false
   }
 
@@ -24,10 +24,8 @@ export function validateConfig(config: Partial<SvgConfig>): config is SvgConfig 
 
   // Check if there's at least one enabled plugin with sections
   const hasEnabledPlugin = Object.values(config.plugins).some(
-    (plugin) => plugin?.enabled === true && 
-                plugin.sections && 
-                Array.isArray(plugin.sections) && 
-                plugin.sections.length > 0
+    (plugin) =>
+      plugin?.enabled === true && plugin.sections && Array.isArray(plugin.sections) && plugin.sections.length > 0
   )
 
   if (!hasEnabledPlugin) {
@@ -42,17 +40,16 @@ export function validateConfig(config: Partial<SvgConfig>): config is SvgConfig 
  */
 export function normalizeConfig(config: Partial<SvgConfig>): SvgConfig {
   return {
-    style: config.style || 'default',
-    size: config.size || 'half',
+    style: config.style || "default",
+    size: config.size || "half",
     plugins: config.plugins || {},
-    pluginsOrder: config.pluginsOrder, // Preserve plugin order
+    pluginsOrder: config.pluginsOrder,
     customCss: config.customCss,
-    terminalTheme: config.terminalTheme || 'default',
-    defaultTheme: config.defaultTheme || 'default',
+    terminalTheme: config.terminalTheme || "default",
+    defaultTheme: config.defaultTheme || "default",
     hideTerminalEmojis: config.hideTerminalEmojis || false,
     hideTerminalHeader: config.hideTerminalHeader || false,
-    primaryColor: config.primaryColor || '#ff7a00', // Use default color if not defined
-    dev: config.dev ?? false, // Preserve boolean value (don't override false)
+    primaryColor: config.primaryColor || "#ff7a00",
+    dev: config.dev ?? false,
   }
 }
-

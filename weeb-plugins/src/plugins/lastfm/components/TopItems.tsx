@@ -78,8 +78,8 @@ export function TopItems({
   const gridItems: GridItemProps[] = limitedData.map(mapToGridItem)
   const listItems: ListItemProps[] = limitedData.map(mapToListItem)
   const terminalListItems: TerminalLineProps[] = listItems.map((item) => ({
-    right: item.right,
-    left: item.left || '',
+    right: typeof item.right === 'string' ? item.right : String(item.right || ''),
+    left: typeof item.left === 'string' ? item.left : String(item.left || ''),
   }))
 
   // Renderizar baseado no displayStyle

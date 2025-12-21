@@ -20,6 +20,7 @@ import Link from "next/link"
 import type { Svg } from "@/lib/db/schema"
 import { svgApi, ApiException } from "@/lib/api"
 import { useSvgStore } from "@/stores/svg-store"
+import LoadingScreen from "@/components/loading/LoadingScreen"
 
 const styleColors: Record<string, string> = {
   default: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
@@ -156,11 +157,7 @@ export default function DashboardPage() {
 
   // Só mostrar loading se não tiver dados e estiver carregando
   if (authLoading || (svgsLoading && svgs.length === 0)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin text-4xl text-primary" />
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!user) {

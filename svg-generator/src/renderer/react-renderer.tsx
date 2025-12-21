@@ -1,13 +1,13 @@
 /**
  * Renderizador React
- * 
+ *
  * Renderiza plugins ativos usando React e source-v2
  */
 
-import React from 'react'
-import { PluginManager } from '@weeb/weeb-plugins/plugins'
-import type { SvgConfig } from '../types/index.js'
-import { PluginError } from '../components/PluginError.js'
+import React from "react"
+import { PluginManager } from "@weeb/weeb-plugins/plugins"
+import type { SvgConfig } from "../types/index.js"
+import { PluginError } from "../components/PluginError.js"
 
 /**
  * Resultado da renderização de plugins
@@ -20,9 +20,9 @@ export interface RenderPluginsResult {
 
 /**
  * Renderiza plugins ativos
- * 
+ *
  * Usa PluginManager do source-v2 para buscar dados e renderizar plugins
- * 
+ *
  * @returns Elemento React e dados dos plugins para debug
  */
 export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsResult> {
@@ -32,7 +32,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   // Incluir style e size para os plugins usarem
   // Totalmente dinâmico - itera sobre todos os plugins disponíveis
   const pluginsConfig: Record<string, any> = {}
-  
+
   for (const [pluginName, pluginConfig] of Object.entries(config.plugins)) {
     if (pluginConfig) {
       pluginsConfig[pluginName] = {
@@ -51,11 +51,11 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   // Buscar dados de todos os plugins ativos
   // Passar essentialConfigs se disponíveis
   const essentialConfigs = config.essentialConfigs || {}
-  
+
   // Buscar dados e capturar erros
   const pluginsData: Record<string, any> = {}
   const pluginsErrors: Record<string, Error> = {}
-  
+
   const activePlugins = pluginManager.getActivePlugins()
   await Promise.all(
     activePlugins.map(async ([name, plugin]) => {
@@ -114,11 +114,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
       const rendered = plugin.render(pluginConfig, pluginData)
       // Ensure rendered is a valid React element
       if (React.isValidElement(rendered)) {
-        renderedPlugins.push(
-          <div key={pluginName}>
-            {rendered}
-          </div>
-        )
+        renderedPlugins.push(<div key={pluginName}>{rendered}</div>)
       } else {
         console.error(`Plugin ${pluginName} returned invalid React element:`, rendered)
         renderedPlugins.push(
@@ -149,13 +145,8 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   // Return array wrapped in a div to ensure proper rendering
   // renderToString can handle arrays, but wrapping in a container is safer
   return {
-    element: (
-      <div>
-        {renderedPlugins}
-      </div>
-    ),
+    element: <div>{renderedPlugins}</div>,
     pluginsData,
     pluginsErrors,
   }
 }
-

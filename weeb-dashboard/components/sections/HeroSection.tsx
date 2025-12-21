@@ -1,19 +1,15 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { motion } from "framer-motion"
-import { Sparkles, Zap, Plus } from "lucide-react"
+import { Plus, Sparkles, Zap } from "lucide-react"
 import Link from "next/link"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { HeroBackgroundPattern } from "./HeroBackgroundPattern"
-import { HeroGlassPanels } from "./HeroGlassPanels"
-import { HeroParticles } from "./HeroParticles"
-import { HeroPluginConfigDialog } from "./HeroPluginConfigDialog"
 import { HeroPreviewShowcase } from "./HeroPreviewShowcase"
 import { HeroTemplateCard, type Template } from "./HeroTemplateCard"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface HeroSectionProps {
   title: string
@@ -32,8 +28,11 @@ const DEFAULT_TEMPLATES: Template[] = [
     theme: "purple",
     plugins: ["github", "myanimelist"],
     pluginConfigs: {
-      github: { sections: ["profile", "activity", "repositories"] },
-      myanimelist: { sections: ["statistics", "favorites_anime"] },
+      github: {
+        sections: ["profile", "favorite_languages", "repositories"],
+        sectionConfigs: { favorite_languages_max_languages: "3" },
+      },
+      myanimelist: { sections: ["statistics_simple", "anime_favorites", "character_favorites"] },
     },
   },
   {
@@ -56,10 +55,10 @@ const DEFAULT_TEMPLATES: Template[] = [
     accent: "#10b981",
     style: "terminal",
     theme: "green",
-		plugins: ["github", "16personalities"],
+    plugins: ["github", "16personalities"],
     pluginConfigs: {
-			github: { sections: ["profile", "activity", "repositories", "favorite_languages", "code_habits"] },
-			"16personalities": { sections: ["personality"] },
+      github: { sections: ["profile", "activity", "repositories", "favorite_languages", "code_habits"] },
+      "16personalities": { sections: ["personality"] },
     },
   },
   {
@@ -104,17 +103,16 @@ const DEFAULT_TEMPLATES: Template[] = [
   },
 ]
 
-const SUPPORTED_PLATFORMS = ["GitHub", "Steam", "LastFM", "MyAnimeList", "Goodreads"]
+const SUPPORTED_PLATFORMS = ["GitHub", "Steam", "LastFM", "MyAnimeList", "Lyfta"]
 
-export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
-	const { toast } = useToast()
+export function HeroSection({ title, ctaPrimary }: HeroSectionProps) {
   const [activeTemplate, setActiveTemplate] = useState<Template>(DEFAULT_TEMPLATES[0])
   const [isBuilding, setIsBuilding] = useState(false)
   const [templatesModalOpen, setTemplatesModalOpen] = useState(false)
   const [configDialogOpen, setConfigDialogOpen] = useState<string | null>(null)
   const [templates] = useState<Template[]>(DEFAULT_TEMPLATES)
-	const [autoPlayIndex, setAutoPlayIndex] = useState(0)
-	const [isUserInteracting, setIsUserInteracting] = useState(false)
+  const [autoPlayIndex, setAutoPlayIndex] = useState(0)
+  const [isUserInteracting, setIsUserInteracting] = useState(false)
 
   // Estados derivados do template ativo
   const selectedSources = activeTemplate.plugins
@@ -122,8 +120,8 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
   const selectedTheme = activeTemplate.theme
 
   // Initialize plugin configs
-	const initializePluginConfigs = useCallback(() => {
-		const configs: Record<string, { sections: string[]; sectionConfigs?: Record<string, any> }> = {}
+  const initializePluginConfigs = useCallback(() => {
+    const configs: Record<string, { sections: string[]; sectionConfigs?: Record<string, any> }> = {}
     Object.keys(PLUGINS_METADATA).forEach((pluginId) => {
       const metadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
       const defaultSections = metadata?.defaultConfig?.sections || []
@@ -133,9 +131,11 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
       }
     })
     return configs
-	}, [])
+  }, [])
 
-	const [pluginConfigs, setPluginConfigs] = useState<Record<string, { sections: string[]; sectionConfigs?: Record<string, any> }>>(() => {
+  const [pluginConfigs, setPluginConfigs] = useState<
+    Record<string, { sections: string[]; sectionConfigs?: Record<string, any> }>
+  >(() => {
     const configs = initializePluginConfigs()
     // Aplicar configs do template inicial
     Object.entries(activeTemplate.pluginConfigs).forEach(([pluginId, config]) => {
@@ -146,79 +146,81 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
     return configs
   })
 
-
   // Aplicar template
-	const applyTemplate = useCallback(
-		(template: Template) => {
-    setIsBuilding(true)
-    setActiveTemplate(template)
+  const applyTemplate = useCallback(
+    (template: Template) => {
+      setIsBuilding(true)
+      setActiveTemplate(template)
 
-    // Atualizar plugin configs
-    const newConfigs = initializePluginConfigs()
-    Object.entries(template.pluginConfigs).forEach(([pluginId, config]) => {
-      if (newConfigs[pluginId]) {
-        newConfigs[pluginId] = { ...newConfigs[pluginId], ...config }
-      }
-    })
-    setPluginConfigs(newConfigs)
+      // Atualizar plugin configs
+      const newConfigs = initializePluginConfigs()
+      Object.entries(template.pluginConfigs).forEach(([pluginId, config]) => {
+        if (newConfigs[pluginId]) {
+          newConfigs[pluginId] = { ...newConfigs[pluginId], ...config }
+        }
+      })
+      setPluginConfigs(newConfigs)
 
-    // Animação de "montagem"
-    setTimeout(() => setIsBuilding(false), 400)
-		},
-		[initializePluginConfigs]
-	)
+      // Animação de "montagem"
+      setTimeout(() => setIsBuilding(false), 400)
+    },
+    [initializePluginConfigs]
+  )
 
-	// Handle manual template selection (pause auto-play)
-	const handleTemplateClick = useCallback((template: Template) => {
-		setIsUserInteracting(true)
-		applyTemplate(template)
-		setTimeout(() => setIsUserInteracting(false), 10000)
-	}, [applyTemplate])
+  // Handle manual template selection (pause auto-play)
+  const handleTemplateClick = useCallback(
+    (template: Template) => {
+      setIsUserInteracting(true)
+      applyTemplate(template)
+      setTimeout(() => setIsUserInteracting(false), 10000)
+    },
+    [applyTemplate]
+  )
 
-	// Auto-play preview: cycle through templates automatically
-	useEffect(() => {
-		if (isUserInteracting || templatesModalOpen || templates.length === 0) return
+  // Auto-play preview: cycle through templates automatically
+  useEffect(() => {
+    if (isUserInteracting || templatesModalOpen || templates.length === 0) return
 
-		const interval = setInterval(() => {
-			setAutoPlayIndex((prev) => {
-				const nextIndex = (prev + 1) % Math.min(templates.length, 4)
-				const nextTemplate = templates[nextIndex]
-				if (nextTemplate && nextTemplate.id !== activeTemplate.id) {
-					applyTemplate(nextTemplate)
-				}
-				return nextIndex
-			})
-		}, 4000) // Change template every 4 seconds
+    const interval = setInterval(() => {
+      setAutoPlayIndex((prev) => {
+        const nextIndex = (prev + 1) % Math.min(templates.length, 4)
+        const nextTemplate = templates[nextIndex]
+        if (nextTemplate && nextTemplate.id !== activeTemplate.id) {
+          applyTemplate(nextTemplate)
+        }
+        return nextIndex
+      })
+    }, 4000) // Change template every 4 seconds
 
-		return () => clearInterval(interval)
-	}, [templates, isUserInteracting, templatesModalOpen, activeTemplate.id, applyTemplate])
+    return () => clearInterval(interval)
+  }, [templates, isUserInteracting, templatesModalOpen, activeTemplate.id, applyTemplate])
 
-	// Track user interaction to pause auto-play
-	useEffect(() => {
-		const handleInteraction = () => {
-			setIsUserInteracting(true)
-			setTimeout(() => setIsUserInteracting(false), 10000) // Resume after 10s of inactivity
-		}
+  // Track user interaction to pause auto-play
+  useEffect(() => {
+    const handleInteraction = () => {
+      setIsUserInteracting(true)
+      setTimeout(() => setIsUserInteracting(false), 10000) // Resume after 10s of inactivity
+    }
 
-		window.addEventListener("mousemove", handleInteraction, { passive: true })
-		window.addEventListener("click", handleInteraction, { passive: true })
-		window.addEventListener("scroll", handleInteraction, { passive: true })
+    window.addEventListener("mousemove", handleInteraction, { passive: true })
+    window.addEventListener("click", handleInteraction, { passive: true })
+    window.addEventListener("scroll", handleInteraction, { passive: true })
 
-		return () => {
-			window.removeEventListener("mousemove", handleInteraction)
-			window.removeEventListener("click", handleInteraction)
-			window.removeEventListener("scroll", handleInteraction)
-		}
-	}, [])
+    return () => {
+      window.removeEventListener("mousemove", handleInteraction)
+      window.removeEventListener("click", handleInteraction)
+      window.removeEventListener("scroll", handleInteraction)
+    }
+  }, [])
 
-	const updatePluginSections = useCallback((pluginId: string, sections: string[]) => {
+  const updatePluginSections = useCallback((pluginId: string, sections: string[]) => {
     setPluginConfigs((prev) => ({
       ...prev,
       [pluginId]: { ...prev[pluginId], sections },
     }))
-	}, [])
+  }, [])
 
-	const updateSectionConfig = useCallback((pluginId: string, sectionId: string, config: Record<string, any>) => {
+  const updateSectionConfig = useCallback((pluginId: string, sectionId: string, config: Record<string, any>) => {
     setPluginConfigs((prev) => ({
       ...prev,
       [pluginId]: {
@@ -229,7 +231,7 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
         },
       },
     }))
-	}, [])
+  }, [])
 
   const validTheme = useMemo(() => {
     return selectedTheme || "default"
@@ -244,15 +246,16 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
       const pluginConfig = pluginConfigs[pluginId] || {}
       const pluginMetadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
       const defaultSections = pluginMetadata?.defaultConfig?.sections || []
-			const sections = pluginConfig.sections && pluginConfig.sections.length > 0 ? pluginConfig.sections : defaultSections
+      const sections =
+        pluginConfig.sections && pluginConfig.sections.length > 0 ? pluginConfig.sections : defaultSections
 
-			// Separar sections e sectionConfigs para evitar duplicação
-			const { sections: _, sectionConfigs, ...restPluginConfig } = pluginConfig
+      // Separar sections e sectionConfigs para evitar duplicação
+      const { sections: _, sectionConfigs, ...restPluginConfig } = pluginConfig
 
       config[pluginId] = {
         enabled: true,
         sections: sections,
-				...(sectionConfigs || {}),
+        ...(sectionConfigs || {}),
         ...(pluginId === "lastfm" && {
           recent_tracks_max: 5,
           top_artists_max: 5,
@@ -261,7 +264,7 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
           anime_favorites_max: 5,
           manga_favorites_max: 5,
         }),
-				...restPluginConfig,
+        ...restPluginConfig,
       }
       order.push(pluginId)
     })
@@ -269,39 +272,18 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
     return { plugins: config, pluginsOrder: order }
   }, [selectedSources, pluginConfigs])
 
-	// Templates visíveis (primeiros 4)
-	const visibleTemplates = useMemo(() => templates.slice(0, 4), [templates])
+  // Templates visíveis (primeiros 4)
+  const visibleTemplates = useMemo(() => templates.slice(0, 4), [templates])
 
   return (
-		<section
-			className="relative min-h-screen max-h-screen flex flex-col justify-center overflow-hidden pt-16"
-			aria-label="Hero section"
-		>
-			{/* Grid pattern - PRIMEIRO, mais atrás de tudo mas visível (tem o fundo dentro) */}
-			<HeroBackgroundPattern />
-			
-      {/* Animated background blobs */}
-			<div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
-        <motion.div
-          animate={{ scale: [1, 1.18, 1], opacity: [0.08, 0.14, 0.08] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-44 -right-40 w-96 h-96 bg-purple-500 rounded-full blur-3xl opacity-60"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.18, 1], opacity: [0.08, 0.14, 0.08] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute -bottom-44 -left-40 w-96 h-96 bg-pink-500 rounded-full blur-3xl opacity-60"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.06, 0.12, 0.06] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500 rounded-full blur-3xl opacity-40"
-        />
-      </div>
+    <section
+      className="relative min-h-screen max-h-screen flex flex-col justify-center overflow-hidden pt-16"
+      aria-label="Hero section"
+    >
+      {/* Grid pattern  */}
+      <HeroBackgroundPattern />
 
-			{/* Enhanced visual layers */}
-			<HeroParticles />
-			<HeroGlassPanels />
+      {/* Enhanced visual layers */}
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-12">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
@@ -312,28 +294,24 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
             transition={{ duration: 0.6 }}
             className="flex flex-col gap-5 lg:gap-6"
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary w-fit backdrop-blur-sm">
-							<Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Create your nerd card in minutes</span>
-            </div>
-
             {/* Hero Title & Subtitle - Enhanced */}
             <div className="space-y-4 relative">
               {/* Radial neon glow behind title */}
-              <div 
+              <div
                 className="absolute -top-8 -left-8 w-64 h-64 blur-3xl opacity-20 pointer-events-none -z-10"
                 style={{
-                  background: "radial-gradient(circle, rgba(139,92,246,0.4) 0%, rgba(236,72,153,0.2) 50%, transparent 70%)",
+                  background:
+                    "radial-gradient(circle, rgba(139,92,246,0.4) 0%, rgba(236,72,153,0.2) 50%, transparent 70%)",
                 }}
                 aria-hidden="true"
               />
-              
+
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-[1.1] relative z-10">
-                <span 
+                <span
                   className="block"
                   style={{
-                    background: "radial-gradient(ellipse 100% 100% at 50% 0%, rgba(139,92,246,1) 0%, rgba(236,72,153,1) 40%, rgba(6,182,212,1) 100%)",
+                    background:
+                      "radial-gradient(ellipse 100% 100% at 50% 0%, rgba(139,92,246,1) 0%, rgba(236,72,153,1) 40%, rgba(6,182,212,1) 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -345,8 +323,8 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
                       {part}
                       {i < arr.length - 1 && (
                         <span className="inline-block relative mx-1">
-                          {/* SVG text with vibrant gradient - more saturated and brighter */}
-                          <span 
+                          {/* SVG text with vibrant gradient */}
+                          <span
                             className="relative inline-block"
                             style={{
                               background: "linear-gradient(135deg, #a855f7 0%, #ec4899 30%, #06b6d4 60%, #a855f7 100%)",
@@ -366,37 +344,49 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
                   ))}
                 </span>
               </h1>
-              
+
               <div className="space-y-2">
                 <p className="text-sm sm:text-base text-muted-foreground max-w-xl leading-relaxed">
                   Generate stunning stat cards from your nerd life — GitHub, Anime, Steam, Books, Music and more.
                 </p>
                 <ul className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground/80">
                   <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500" aria-hidden="true" />
-                    <span>No YAML</span>
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"
+                      aria-hidden="true"
+                    />
+                    <span>Simple & Easy</span>
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-pink-500 to-cyan-500" aria-hidden="true" />
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-pink-500 to-cyan-500"
+                      aria-hidden="true"
+                    />
                     <span>No Actions</span>
                   </li>
                   <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500" aria-hidden="true" />
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500"
+                      aria-hidden="true"
+                    />
                     <span>Just click & embed</span>
                   </li>
                 </ul>
               </div>
 
               {/* Supported Platforms */}
-							<div className="flex flex-wrap items-center gap-1.5 pt-1" role="list" aria-label="Supported platforms">
-								{SUPPORTED_PLATFORMS.map((name) => (
+              <div className="flex flex-wrap items-center gap-1.5 pt-1" role="list" aria-label="Supported platforms">
+                {SUPPORTED_PLATFORMS.map((name) => (
                   <motion.span
                     key={name}
                     whileHover={{ scale: 1.05 }}
                     className="inline-flex items-center gap-1 rounded-full bg-muted/60 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/60 backdrop-blur-sm"
-										role="listitem"
+                    role="listitem"
                   >
-										<span className="w-1 h-1 rounded-full bg-gradient-to-r from-pink-500 to-cyan-400" aria-hidden="true" />
+                    <span
+                      className="w-1 h-1 rounded-full bg-gradient-to-r from-pink-500 to-cyan-400"
+                      aria-hidden="true"
+                    />
                     {name}
                   </motion.span>
                 ))}
@@ -405,11 +395,7 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
 
               {/* CTA Buttons - Enhanced */}
               <div className="flex flex-wrap gap-3 pt-4">
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="relative"
-                >
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="relative">
                   <Button
                     asChild
                     size="lg"
@@ -435,10 +421,10 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
                     aria-hidden="true"
                   />
                 </motion.div>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="backdrop-blur-sm border-border/60 hover:border-primary/50 px-6 py-6 text-base" 
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="backdrop-blur-sm border-border/60 hover:border-primary/50 px-6 py-6 text-base"
                   asChild
                 >
                   <Link href="/templates">View Examples</Link>
@@ -453,16 +439,16 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
                 <p className="text-xs text-muted-foreground">Choose a style that matches your vibe</p>
               </div>
 
-							{/* Templates Grid - Responsive */}
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-								{visibleTemplates.map((template) => (
-									<HeroTemplateCard
+              {/* Templates Grid - Responsive */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {visibleTemplates.map((template) => (
+                  <HeroTemplateCard
                     key={template.id}
-										template={template}
-										isActive={activeTemplate.id === template.id}
+                    template={template}
+                    isActive={activeTemplate.id === template.id}
                     onClick={() => handleTemplateClick(template)}
-									/>
-								))}
+                  />
+                ))}
               </div>
 
               {/* View More / Custom - Compact */}
@@ -473,17 +459,12 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
                     size="sm"
                     className="flex-1 text-xs h-8 backdrop-blur-sm"
                     onClick={() => setTemplatesModalOpen(true)}
-										aria-label={`View all ${templates.length} templates`}
+                    aria-label={`View all ${templates.length} templates`}
                   >
                     View All ({templates.length})
                   </Button>
                 )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex-1 text-xs h-8 group"
-                  asChild
-                >
+                <Button variant="ghost" size="sm" className="flex-1 text-xs h-8 group" asChild>
                   <Link href="/new">
                     <Plus className="w-3 h-3 mr-1.5" aria-hidden="true" />
                     Create Your Own
@@ -493,15 +474,15 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
             </div>
           </motion.div>
 
-					{/* Right Column: Premium Showcase Preview */}
-					<HeroPreviewShowcase
-						isBuilding={isBuilding}
-						selectedSources={selectedSources}
-						pluginsConfig={pluginsConfig}
-						selectedStyle={selectedStyle}
-						validTheme={validTheme}
-						activeTemplateId={activeTemplate.id}
-					/>
+          {/* Right Column: Premium Showcase Preview */}
+          <HeroPreviewShowcase
+            isBuilding={isBuilding}
+            selectedSources={selectedSources}
+            pluginsConfig={pluginsConfig}
+            selectedStyle={selectedStyle}
+            validTheme={validTheme}
+            activeTemplateId={activeTemplate.id}
+          />
         </div>
       </div>
 
@@ -513,9 +494,7 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
               <Sparkles className="w-6 h-6" />
               Choose a Template
             </DialogTitle>
-            <DialogDescription>
-              Select a template to preview or create your own custom profile
-            </DialogDescription>
+            <DialogDescription>Select a template to preview or create your own custom profile</DialogDescription>
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto">
@@ -536,14 +515,8 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
             {/* Create Your Own CTA */}
             <div className="mt-6 pt-6 border-t border-border/50">
               <div className="flex flex-col items-center gap-3 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Don't see what you're looking for?
-                </p>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="gap-2"
-                >
+                <p className="text-sm text-muted-foreground">Don&apos;t see what you&apos;re looking for?</p>
+                <Button asChild variant="outline" className="gap-2">
                   <Link href="/new">
                     <Plus className="w-4 h-4" />
                     Create Your Own Profile
@@ -554,20 +527,6 @@ export function HeroSection({ title, subtitle, ctaPrimary }: HeroSectionProps) {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Config dialogs for each plugin */}
-			{selectedSources.map((pluginId) => (
-				<HeroPluginConfigDialog
-					key={pluginId}
-                    pluginId={pluginId}
-					open={configDialogOpen === pluginId}
-					onOpenChange={(open) => setConfigDialogOpen(open ? pluginId : null)}
-                    selectedSections={pluginConfigs[pluginId]?.sections || []}
-					sectionConfigs={pluginConfigs[pluginId]?.sectionConfigs || {}}
-                    onSectionsChange={(sections) => updatePluginSections(pluginId, sections)}
-                    onSectionConfigChange={(sectionId, config) => updateSectionConfig(pluginId, sectionId, config)}
-                  />
-			))}
     </section>
   )
 }

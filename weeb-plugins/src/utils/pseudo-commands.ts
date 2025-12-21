@@ -12,7 +12,7 @@ interface PseudoCommandProps {
   type?: string
   prefix?: string
   command?: string
-  size?: 'half' | 'full'
+  size?: "half" | "full"
 }
 
 export function getPseudoCommands({
@@ -23,15 +23,15 @@ export function getPseudoCommands({
   limit,
   min,
   type,
-  prefix = 'run',
-  command = 'view',
-  size = 'full',
+  prefix = "run",
+  command = "view",
+  size = "full",
 }: PseudoCommandProps): string {
   let cmd = `${prefix} ${plugin}`
 
-  if (size === 'half') {
+  if (size === "half") {
     // Versão curta para 400px
-    return `${cmd} ${username ? username.trim() + ' ' : ''}${section}`
+    return `${cmd} ${username ? username.trim() + " " : ""}${section}`
   }
 
   // Versão completa (800px)
@@ -40,7 +40,7 @@ export function getPseudoCommands({
   // Adicionar parâmetros
   if (username) cmd += ` --user=${username.trim()}`
   if (period) {
-    const formattedPeriod = period.toLowerCase().replace('last ', '').replace(' days', 'd')
+    const formattedPeriod = period.toLowerCase().replace("last ", "").replace(" days", "d")
     cmd += ` --period=${formattedPeriod}`
   }
   if (limit) cmd += ` --max=${limit}`
@@ -49,4 +49,3 @@ export function getPseudoCommands({
 
   return cmd
 }
-

@@ -1,22 +1,22 @@
-import React from 'react'
-import { FaCode } from 'react-icons/fa'
-import { GoDotFill } from 'react-icons/go'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { HorizontalMultipleItemsBar } from '../../../templates/Default/HorizontalMultipleItemsBar'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalHorizontalMultipleItemsBar } from '../../../templates/Terminal/TerminalHorizontalMultipleItems'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { randomColorWithString } from '../../../utils/string'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCode } from "react-icons/fa"
+import { GoDotFill } from "react-icons/go"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { HorizontalMultipleItemsBar } from "../../../templates/Default/HorizontalMultipleItemsBar"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalHorizontalMultipleItemsBar } from "../../../templates/Terminal/TerminalHorizontalMultipleItems"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { randomColorWithString } from "../../../utils/string"
+import type { GithubConfig, GithubData } from "../types"
 
 interface FavoriteLanguagesProps {
-  languageData: GithubData['languages']
+  languageData: GithubData["languages"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
 const DefaultFavoriteLanguages = ({
@@ -24,7 +24,7 @@ const DefaultFavoriteLanguages = ({
   totalSize,
   maxItems,
 }: {
-  data: GithubData['languages']
+  data: GithubData["languages"]
   totalSize: number
   maxItems: number
 }) => {
@@ -58,10 +58,10 @@ const TerminalFavoriteLanguages = ({
   maxItems,
   size,
 }: {
-  data: GithubData['languages']
+  data: GithubData["languages"]
   totalSize: number
   maxItems: number
-  size: 'half' | 'full'
+  size: "half" | "full"
 }) => {
   return (
     <div className="flex flex-col gap-1">
@@ -99,11 +99,9 @@ export function FavoriteLanguages({ languageData, config, style, size }: Favorit
   let filteredLanguages = [...languageData]
   if (config.favorite_languages_ignore_languages) {
     const ignoreLanguagesArray = config.favorite_languages_ignore_languages
-      .split(',')
+      .split(",")
       .map((lang) => lang.trim().toLowerCase())
-    filteredLanguages = filteredLanguages.filter(
-      (lang) => !ignoreLanguagesArray.includes(lang.name.toLowerCase())
-    )
+    filteredLanguages = filteredLanguages.filter((lang) => !ignoreLanguagesArray.includes(lang.name.toLowerCase()))
   }
 
   if (filteredLanguages.length === 0) {
@@ -114,8 +112,8 @@ export function FavoriteLanguages({ languageData, config, style, size }: Favorit
   const maxItems = config.favorite_languages_max_languages ?? 10
   const sortedLanguages = filteredLanguages.sort((a, b) => b.size - a.size)
 
-  const title = (config.favorite_languages_title ?? '<qnt> Languages').replace(
-    '<qnt>',
+  const title = (config.favorite_languages_title ?? "<qnt> Languages").replace(
+    "<qnt>",
     sortedLanguages.length.toString()
   )
   const hideTitle = config.favorite_languages_hide_title ?? false
@@ -134,8 +132,8 @@ export function FavoriteLanguages({ languageData, config, style, size }: Favorit
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'favorite_languages',
+                plugin: "github",
+                section: "favorite_languages",
                 size,
               })}
             />
@@ -146,4 +144,3 @@ export function FavoriteLanguages({ languageData, config, style, size }: Favorit
     </section>
   )
 }
-

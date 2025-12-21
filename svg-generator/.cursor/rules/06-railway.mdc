@@ -1,0 +1,21 @@
+---
+description: Railway deploy + env expectations + operational constraints
+globs:
+  - RAILWAY_DEPLOY.md
+  - railway.json
+  - src/server.ts
+alwaysApply: false
+---
+
+# Railway deploy notes (workspace)
+
+## Ports
+- Prefer `PORT` (Railway) and allow `SVG_GENERATOR_PORT` locally.
+- Bind to `0.0.0.0` on Railway; `localhost` locally.
+
+## Environment
+- `DATABASE_URL` must be provided in Railway variables.
+- Avoid assumptions about filesystem persistence.
+
+## Startup
+- Keep startup logs concise; avoid dumping full request payloads by default.
