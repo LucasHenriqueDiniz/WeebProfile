@@ -1,0 +1,15 @@
+# Railway ignore file
+# Ignore workspaces that should not be deployed
+
+# Ignore weeb-dashboard (deployed on Vercel)
+weeb-dashboard/
+
+# Ignore weeb-debug-tool (local development only)
+weeb-debug-tool/
+
+# Ignore weeb-plugins (library, not a service)
+weeb-plugins/
+
+# Only deploy svg-generator
+# svg-generator/ is allowed
+
