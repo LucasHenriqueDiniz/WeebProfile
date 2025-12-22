@@ -1,0 +1,21 @@
+# Nixpacks configuration for Railway
+# Railway uses Nixpacks by default, but this file provides explicit configuration
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm"]
+
+[phases.install]
+cmds = [
+  "pnpm install --frozen-lockfile"
+]
+
+[phases.build]
+cmds = [
+  "pnpm --filter @weeb/weeb-plugins build",
+  "cd svg-generator",
+  "pnpm install", # Garante que Playwright browsers sejam instalados
+  "pnpm build"
+]
+
+[start]
+cmd = "cd svg-generator && pnpm start"

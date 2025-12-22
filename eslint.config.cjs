@@ -16,8 +16,6 @@ module.exports = [
       "**/build/**",
       "**/coverage/**",
       "**/.next/**",
-      "**/plugins/@!plugin_example/**",
-      "**/source/styles/generated-tailwind.css",
     ],
     languageOptions: {
       parser,

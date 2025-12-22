@@ -1,0 +1,30 @@
+---
+description: Secrets/essential-config handling, sanitization, logging policy
+globs:
+  - src/server.ts
+  - src/db/**
+  - src/utils/sanitize.*
+alwaysApply: true
+---
+
+# Security rules
+
+## Essential configs
+- In production, use `userId` to fetch essential configs server-side.
+- Never return `essentialConfigs` in the API response.
+- Never embed secrets in the SVG (including data attributes, CSS variables, comments).
+
+## Logging
+- Do **not** log:
+  - `DATABASE_URL`
+  - tokens / api keys
+  - the raw essential configs object
+- If logging is needed:
+  - log only plugin ids and high-level flags (hasUserId, enabled plugin count)
+  - hide userId in production logs if possible (or truncate)
+
+## Debug response
+- Only include debug payload when `debug === true` (or explicit dev/mock).
+- Debug payload must use sanitizers:
+  - `sanitizeConfig`
+  - `sanitizeEssentialConfigs`

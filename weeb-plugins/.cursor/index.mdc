@@ -1,0 +1,40 @@
+---
+description: Weeb Plugins repo overview + invariants (always apply)
+alwaysApply: true
+---
+
+# Weeb Plugins (weeb-plugins)
+
+This repo provides the plugin/style/template library consumed by:
+- weeb-dashboard
+- svg-generator
+(Keep it framework-agnostic: pure React + TS library.)
+
+## High-level architecture
+- `src/plugins/*`: plugin implementations (fetch + render)
+- `src/templates/*`: reusable render components used by plugins
+- `src/styles/*`: style packs (CSS + theme vars) used by templates/plugins
+- `src/themes/*`: theme utilities/definitions (if present)
+- `src/types/*`: shared cross-plugin types
+
+## Non-negotiables (do not break)
+- Plugins must remain **side-effect light** and **deterministic** given (config, data).
+- `fetchData(config, dev, essentialConfig)`:
+  - MUST use mock data when `dev === true`
+  - MUST validate required essential keys when `dev === false`
+- CSS MUST be scoped under `#svg-main` (SVG embedding safety).
+- Avoid framework-specific APIs (no Next.js server/client assumptions inside this package).
+
+## When adding/changing a plugin
+- Prefer `pnpm create-plugin <kebab-case-name>`
+- Ensure exports/registration stay consistent:
+  - export from `src/plugins/index.ts`
+  - registered in `src/plugins/manager.ts` (if that is the current pattern)
+  - metadata entry in `src/plugins/metadata.ts`
+- Keep `essentialConfigKeys` in sync with metadata `essentialConfigKeysMetadata`
+- Provide realistic mock data for dev mode
+
+## When adding/changing a style
+- Create `src/styles/<style>/` with `index.ts`, `styles.css`, `themes.ts`
+- Register style in `src/styles/registry.ts`
+- Theme variables must follow the style prefix pattern (`--<style>-color-*`)

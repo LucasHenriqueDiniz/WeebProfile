@@ -1,0 +1,32 @@
+---
+description: Plugin metadata rules (src/plugins/metadata.ts) and dashboard compatibility
+globs:
+  - "src/plugins/metadata.ts"
+  - "src/plugins/**/types.ts"
+---
+
+# Plugin metadata rules
+
+## Purpose
+`src/plugins/metadata.ts` is the single source of truth for:
+- display name/description/category/icon
+- required fields (e.g. username)
+- essential keys + UI rendering metadata for secrets
+- sections + per-section config options defaults
+
+## Must keep in sync
+- `plugin.essentialConfigKeys` must match `metadata.essentialConfigKeys`.
+- For each essential key, provide an entry in `essentialConfigKeysMetadata`:
+  - `key`, `label`, `type`, `placeholder`, `description`, `helpUrl`, `docKey`
+
+## Section rules
+- Section `id` is stable API (used by configs). Avoid renames.
+- Each `configOptions[]` entry MUST have:
+  - `key`, `label`, `type`, `defaultValue`
+- Numeric options should define min/max when sensible.
+
+## Icons
+- `icon` should be a valid Lucide React icon name used by the consumers.
+
+## Docs keys
+- `docKey` should be stable and namespaced: `<plugin>.<topic>` (e.g. `spotify.api-key`).

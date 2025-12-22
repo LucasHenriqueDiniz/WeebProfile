@@ -1,0 +1,54 @@
+name: Validate Plugins
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "weeb-plugins/**"
+      - ".github/workflows/validate-plugins.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "weeb-plugins/**"
+      - ".github/workflows/validate-plugins.yml"
+
+jobs:
+  validate:
+    name: Validate Plugin Metadata
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate plugins
+        working-directory: weeb-plugins
+        run: pnpm validate
+
+      - name: Generate types
+        working-directory: weeb-plugins
+        run: pnpm generate-types
+
+      - name: Type check
+        working-directory: weeb-plugins
+        run: pnpm typecheck
+
+      # Validate that section previews exist (SVG files in src/plugins/{plugin}/previews/)
+      # This only checks if previews exist - it does NOT generate them.
+      # To generate previews manually, use the svg-generator service (separate script).
+      - name: Validate section previews
+        working-directory: weeb-plugins
+        run: pnpm validate-previews
+        continue-on-error: true

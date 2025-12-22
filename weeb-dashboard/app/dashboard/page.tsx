@@ -1,0 +1,493 @@
+"use client"
+
+import { useEffect, useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/hooks/useAuth"
+import { Plus, Edit2, Trash2, Copy, Loader2, ExternalLink, Zap, RefreshCw, Search, Filter, ArrowUpDown, Image as ImageIcon } from "lucide-react"
+import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import Link from "next/link"
+import type { Svg } from "@/lib/db/schema"
+import { svgApi, ApiException } from "@/lib/api"
+import { useSvgStore } from "@/stores/svg-store"
+import LoadingScreen from "@/components/loading/LoadingScreen"
+
+const styleColors: Record<string, string> = {
+  default: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
+  terminal: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
+}
+
+type SortOption = "newest" | "oldest" | "name" | "status"
+type FilterStatus = "all" | "completed" | "generating" | "pending"
+
+export default function DashboardPage() {
+  const { user, loading: authLoading } = useAuth()
+  const router = useRouter()
+  const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [generatingId, setGeneratingId] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>("all")
+  const [sortBy, setSortBy] = useState<SortOption>("newest")
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login")
+      return
+    }
+
+    // Buscar SVGs apenas se o usuário estiver disponível e não tiver dados em cache
+    // O store já gerencia cache, então só buscar se realmente necessário
+    if (user && svgs.length === 0 && !svgsLoading) {
+      fetchSvgs()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, authLoading])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Tem certeza que deseja deletar esta imagem?")) {
+      return
+    }
+
+    try {
+      setDeletingId(id)
+      await svgApi.delete(id)
+      // Remover do store
+      removeSvg(id)
+    } catch (error) {
+      console.error("Error deleting SVG:", error)
+      const errorMessage =
+        error instanceof ApiException
+          ? error.data.message || error.data.error || error.message
+          : "Erro ao deletar imagem"
+      alert(errorMessage)
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const handleCopyUrl = async (svg: Svg) => {
+    const url = `${window.location.origin}/api/svg/${svg.id}`
+    const markdown = `![${svg.name}](${url})`
+    await navigator.clipboard.writeText(markdown)
+    alert("Markdown copiado para a área de transferência!\n\nCole no seu README.md do GitHub.")
+  }
+
+  const handleForceGenerate = async (svg: Svg) => {
+    try {
+      setGeneratingId(svg.id)
+      await svgApi.generate(svg.id, true) // force = true
+      // Atualizar status no store
+      updateSvg(svg.id, { status: "generating" })
+      // Recarregar após um delay para pegar o status atualizado
+      setTimeout(() => {
+        fetchSvgs(true) // force refresh
+      }, 2000)
+    } catch (error) {
+      const errorMessage =
+        error instanceof ApiException
+          ? error.data.message || error.data.error || error.message
+          : "Não foi possível iniciar a geração"
+      alert(errorMessage)
+    } finally {
+      setGeneratingId(null)
+    }
+  }
+
+  // Calcular cooldown restante para um SVG
+  const getCooldownRemaining = (svg: Svg) => {
+    if (!svg.lastGeneratedAt) return null
+    const lastGenerated = new Date(svg.lastGeneratedAt)
+    const now = new Date()
+    const minutesSinceLastGeneration = (now.getTime() - lastGenerated.getTime()) / (1000 * 60)
+    const COOLDOWN_MINUTES = 20
+    const remaining = COOLDOWN_MINUTES - minutesSinceLastGeneration
+    return remaining > 0 ? Math.ceil(remaining) : 0
+  }
+
+  // Filtrar e ordenar SVGs
+  const filteredAndSortedSvgs = useMemo(() => {
+    let filtered = [...svgs]
+
+    // Filtrar por busca
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (svg) =>
+          svg.name.toLowerCase().includes(query) ||
+          svg.slug?.toLowerCase().includes(query) ||
+          svg.id.toLowerCase().includes(query)
+      )
+    }
+
+    // Filtrar por status
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((svg) => svg.status === statusFilter)
+    }
+
+    // Ordenar
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+        case "oldest":
+          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+        case "name":
+          return a.name.localeCompare(b.name)
+        case "status":
+          return a.status.localeCompare(b.status)
+        default:
+          return 0
+      }
+    })
+
+    return filtered
+  }, [svgs, searchQuery, statusFilter, sortBy])
+
+
+  // Só mostrar loading se não tiver dados e estiver carregando
+  if (authLoading || (svgsLoading && svgs.length === 0)) {
+    return <LoadingScreen />
+  }
+
+  if (!user) {
+    return null
+  }
+
+
+  return (
+    <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            My SVGs
+          </h1>
+          <p className="text-muted-foreground mt-1.5 text-sm">
+            {filteredAndSortedSvgs.length} of {svgs.length} SVG
+            {svgs.length !== 1 ? "s" : ""}
+          </p>
+        </div>
+        <Button asChild size="lg" className="gap-2 shadow-sm">
+          <Link href="/dashboard/new">
+            <Plus className="w-4 h-4" />
+            Create New
+          </Link>
+        </Button>
+      </motion.div>
+
+      {/* Filters and Search */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05, duration: 0.2 }}
+        className="flex flex-col sm:flex-row gap-3"
+      >
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name, slug, or ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <div className="relative w-full sm:w-[180px]">
+          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
+            <SelectTrigger className="w-full pl-9">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="generating">Generating</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="relative w-full sm:w-[180px]">
+          <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+            <SelectTrigger className="w-full pl-9">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+              <SelectItem value="name">Name (A-Z)</SelectItem>
+              <SelectItem value="status">Status</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </motion.div>
+
+      {/* Stats Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.2 }}
+        className="grid md:grid-cols-3 gap-4"
+      >
+        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground font-medium">Total SVGs</p>
+              <p className="text-2xl md:text-3xl font-bold">{svgs.length}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20 hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground font-medium">Active</p>
+              <p className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400">
+                {svgs.filter(s => s.status === "completed").length}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border-yellow-500/20 hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground font-medium">Generating</p>
+              <p className="text-2xl md:text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+                {svgs.filter(s => s.status === "generating").length}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* SVGs List */}
+      {filteredAndSortedSvgs.length > 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+        >
+          {filteredAndSortedSvgs.map((svg, index) => (
+            <motion.div
+              key={svg.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.03, duration: 0.2 }}
+            >
+              <Card className="hover:shadow-lg hover:shadow-primary/5 hover:border-primary/50 transition-all group h-full flex flex-col border-border/50">
+                <CardContent className="p-5 flex flex-col flex-1">
+                  {/* Preview Image */}
+                  {svg.storageUrl && svg.status === "completed" ? (
+                    <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/30 shadow-sm">
+                      <img
+                        src={svg.storageUrl}
+                        alt={svg.name}
+                        className="w-full h-auto object-contain"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none"
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="mb-4 rounded-lg border border-border bg-muted/30 aspect-video flex items-center justify-center shadow-sm">
+                      {svg.status === "generating" ? (
+                        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                      ) : (
+                        <ImageIcon className="w-8 h-8 text-muted-foreground" />
+                      )}
+                    </div>
+                  )}
+
+                  {/* Info */}
+                  <div className="space-y-3 flex-1">
+                    <div>
+                      <h3 className="font-semibold text-base group-hover:text-primary transition-colors mb-1.5 line-clamp-1">
+                        {svg.name}
+                      </h3>
+                      <code className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded font-mono">
+                        /{svg.slug || svg.id.slice(0, 8)}
+                      </code>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant={
+                          svg.status === "completed"
+                            ? "default"
+                            : svg.status === "generating"
+                            ? "secondary"
+                            : "outline"
+                        }
+                        className="gap-1"
+                      >
+                        {svg.status === "generating" && <Loader2 className="w-3 h-3 animate-spin" />}
+                        {svg.status === "completed" ? "Ready" : svg.status}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={`${styleColors[svg.style] || styleColors.default} border-0`}
+                      >
+                        {svg.style}
+                      </Badge>
+                    </div>
+
+                    {/* Plugins */}
+                    {svg.pluginsOrder && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Plugins</p>
+                        <div className="flex flex-wrap gap-1">
+                          {svg.pluginsOrder.split(",").slice(0, 4).map((plugin) => (
+                            <Badge key={plugin} variant="outline" className="text-xs">
+                              {plugin}
+                            </Badge>
+                          ))}
+                          {svg.pluginsOrder.split(",").length > 4 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{svg.pluginsOrder.split(",").length - 4}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Last Updated */}
+                    {svg.lastGeneratedAt && (
+                      <p className="text-xs text-muted-foreground">
+                        Updated {new Date(svg.lastGeneratedAt).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1.5 mt-4 pt-4 border-t border-border/50">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 text-xs"
+                      onClick={() => router.push(`/dashboard/${svg.id}`)}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+                      View
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={() => handleCopyUrl(svg)}
+                      title="Copy URL"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={() => router.push(`/dashboard/${svg.id}/edit`)}
+                      title="Edit"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={() => handleForceGenerate(svg)}
+                      disabled={generatingId === svg.id || svg.status === "generating"}
+                      title="Force Generate"
+                    >
+                      {generatingId === svg.id ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-3.5 h-3.5" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => handleDelete(svg.id)}
+                      disabled={deletingId === svg.id}
+                      title="Delete"
+                    >
+                      {deletingId === svg.id ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-3.5 h-3.5" />
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : svgs.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15, duration: 0.2 }}
+          className="text-center py-16 md:py-20"
+        >
+          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
+            <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-primary" />
+          </div>
+          <h3 className="text-xl md:text-2xl font-bold mb-2">No SVGs yet</h3>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
+            Create your first WeebProfile SVG to showcase your stats on GitHub
+          </p>
+          <Button asChild size="lg" className="gap-2 shadow-sm">
+            <Link href="/dashboard/new">
+              <Plus className="w-4 h-4" />
+              Create Your First SVG
+            </Link>
+          </Button>
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15, duration: 0.2 }}
+          className="text-center py-16 md:py-20"
+        >
+          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-muted/50 mb-6">
+            <Search className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
+          </div>
+          <h3 className="text-xl md:text-2xl font-bold mb-2">No results found</h3>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
+            Try adjusting your search or filter criteria
+          </p>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => {
+              setSearchQuery("")
+              setStatusFilter("all")
+            }}
+          >
+            Clear Filters
+          </Button>
+        </motion.div>
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,1020 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="260" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><style>
+    #svg-main {
+  --default-color-default: #24292f;
+  --default-color-surface: #ffffff;
+  --default-color-background: #ffffff;
+  --default-color-success: #2da44e;
+  --default-color-muted: #6e7781;
+  --default-color-muted-light: #8c959f;
+  --default-color-raw: #24292f;
+  --default-color-highlight: #FF7A3D;
+    }
+  </style><style>/* Default Style CSS */
+
+/* Load Poppins font from Google Fonts */
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiEyp8kv8JHgFVrJJfecg.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container */
+#svg-main .default-container {
+  --font-family: Poppins, sans-serif;
+  font-family: Poppins, sans-serif;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure foreignObject content doesn&#x27;t overflow */
+#svg-main foreignObject {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#svg-main foreignObject &gt; div {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Section styles for plugins */
+#svg-main section {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Plugin CSS Classes - Using CSS theme variables */
+#svg-main .text-default-muted {
+  color: var(--default-color-muted) !important;
+}
+
+#svg-main .text-default-muted-light {
+  color: var(--default-color-muted-light) !important;
+}
+
+#svg-main .text-default-highlight {
+  color: var(--default-color-highlight) !important;
+}
+
+#svg-main .text-default-raw {
+  color: var(--default-color-raw) !important;
+}
+
+#svg-main .text-default-success {
+  color: var(--default-color-success) !important;
+}
+
+#svg-main .text-default-fg {
+  color: var(--default-color-default) !important;
+}
+
+#svg-main .text-default-text {
+  color: var(--default-color-default) !important;
+}
+
+#svg-main .text-default-link {
+  color: var(--default-color-highlight) !important;
+}
+
+#svg-main .bg-default-highlight {
+  background-color: var(--default-color-highlight) !important;
+}
+
+#svg-main .bg-default-surface {
+  background-color: var(--default-color-surface) !important;
+}
+
+#svg-main .bg-default-muted {
+  background-color: var(--default-color-muted) !important;
+}
+
+#svg-main .bg-default-muted\/20 {
+  background-color: color-mix(in srgb, var(--default-color-muted) 20%, transparent) !important;
+}
+
+#svg-main .bg-default-15 {
+  background-color: color-mix(in srgb, var(--default-color-highlight) 15%, transparent) !important;
+}
+
+#svg-main .border-default-highlight {
+  border-color: var(--default-color-highlight) !important;
+}
+
+#svg-main .fill-default-highlight {
+  fill: var(--default-color-highlight) !important;
+}
+
+#svg-main .text-default {
+  color: var(--default-color-default) !important;
+}
+
+/* Image Square Container Classes */
+#svg-main .image-square-container-50 {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-60 {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-75 {
+  width: 75px;
+  height: 75px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-100 {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-200 {
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* When inside col-span-2, container should take full width/height including gap */
+#svg-main .col-span-2 .image-square-container-200 {
+  width: 100%;
+  height: 100%;
+}
+
+#svg-main .image-square-container-50 img,
+#svg-main .image-square-container-60 img,
+#svg-main .image-square-container-75 img,
+#svg-main .image-square-container-100 img,
+#svg-main .image-square-container-200 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Favorite Container */
+#svg-main .favorite-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Favorite Overlay */
+#svg-main .favorite-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 40px;
+  font-weight: 500;
+}
+
+#svg-main .favorite-overlay * {
+  color: white !important;
+}
+
+/* Additional plugin utilities */
+#svg-main .items-baseline {
+  align-items: baseline;
+}
+
+#svg-main .shrink-0 {
+  flex-shrink: 0;
+}
+
+#svg-main .grid-cols-\[auto_auto_min-content\] {
+  grid-template-columns: auto auto min-content;
+}
+
+#svg-main .grid-cols-\[75px_1fr\] {
+  grid-template-columns: 75px 1fr;
+}
+
+#svg-main .h-\[50px\] {
+  height: 50px;
+}
+
+#svg-main .rounded-2xl {
+  border-radius: 1rem;
+}
+
+#svg-main .shadow-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+#svg-main .h-\[15px\] {
+  height: 15px;
+}
+
+#svg-main .leading-none {
+  line-height: 1;
+}
+
+#svg-main .text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#svg-main .sm-text {
+  font-size: 0.875rem;
+}
+
+#svg-main .md-2-text {
+  font-size: 0.875rem;
+}
+
+#svg-main .text-md {
+  font-size: 1rem;
+}
+
+#svg-main .no-underline {
+  text-decoration: none;
+}
+
+#svg-main .align-center {
+  align-items: center;
+}
+
+#svg-main .text-bold {
+  font-weight: 700;
+}
+
+#svg-main .genre-tag {
+  display: inline-block;
+}
+
+/* Line clamp utilities */
+#svg-main .line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Synopsis text */
+#svg-main .synopsis-text {
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  color: var(--default-color-muted);
+}
+
+#svg-main .bg-black\/25 {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Grid utilities */
+#svg-main .grid {
+  display: grid;
+}
+
+#svg-main .grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-8 {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+#svg-main .grid-cols-10 {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+}
+
+#svg-main .grid-rows-2 {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main .gap-1 {
+  gap: 0.25rem;
+}
+
+#svg-main .gap-2 {
+  gap: 0.5rem;
+}
+
+#svg-main .gap-4 {
+  gap: 1rem;
+}
+
+/* Half mode utilities - when #svg-main has class &quot;half&quot; */
+#svg-main.half .grid-cols-8 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#svg-main.half .grid-cols-10 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#svg-main.half .grid-cols-5 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main.half .gap-4 {
+  gap: 0.5rem;
+}
+
+/* Half-mode variant classes - applied when #svg-main has class &quot;half&quot; */
+/* These classes are used in components like &quot;half-mode:flex-col&quot; */
+#svg-main.half .half-mode\:flex-col {
+  flex-direction: column;
+}
+
+#svg-main.half .half-mode\:grid {
+  display: grid;
+}
+
+#svg-main.half .half-mode\:grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:gap-2 {
+  gap: 0.5rem;
+}
+
+#svg-main.half .half-mode\:text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+#svg-main.half .half-mode\:text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+#svg-main.half .half-mode\:hidden {
+  display: none;
+}
+
+/* Ensure all content respects half mode width */
+#svg-main.half * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#svg-main.half .default-container {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+#svg-main.half section {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Half-mode variant classes - applied when #svg-main has class &quot;half&quot; */
+/* These classes are used in components like &quot;half-mode:flex-col&quot; */
+#svg-main.half .half-mode\:flex-col {
+  flex-direction: column;
+}
+
+#svg-main.half .half-mode\:grid {
+  display: grid;
+}
+
+#svg-main.half .half-mode\:grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#svg-main.half .half-mode\:gap-2 {
+  gap: 0.5rem;
+}
+
+#svg-main.half .half-mode\:text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+#svg-main.half .half-mode\:text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+#svg-main.half .half-mode\:hidden {
+  display: none;
+}
+
+/* Min height utilities */
+#svg-main .min-h-100 {
+  min-height: 100px;
+}
+
+/* Grid span utilities */
+#svg-main .col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+#svg-main .row-span-2 {
+  grid-row: span 2 / span 2;
+}
+
+/* Width utilities */
+#svg-main .w-auto {
+  width: auto;
+}
+
+#svg-main .min-w-0 {
+  min-width: 0;
+}
+
+/* Ensure grid items with span take full space */
+#svg-main .col-span-2.row-span-2 {
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure image containers inside spanned items take full space */
+#svg-main .col-span-2 .image-square-container-200,
+#svg-main .col-span-2.row-span-2 .image-square-container-200 {
+  width: 100%;
+  height: 100%;
+}
+
+/* Tailwind utility classes - embedded for standalone SVG */
+/* Flexbox utilities */
+#svg-main .flex {
+  display: flex;
+}
+
+#svg-main .inline-flex {
+  display: inline-flex;
+}
+
+#svg-main .flex-col {
+  flex-direction: column;
+}
+
+#svg-main .items-center {
+  align-items: center;
+}
+
+#svg-main .items-end {
+  align-items: flex-end;
+}
+
+#svg-main .justify-between {
+  justify-content: space-between;
+}
+
+/* Gap utilities */
+#svg-main .gap-1\.5 {
+  gap: 0.375rem;
+}
+
+#svg-main .gap-3 {
+  gap: 0.75rem;
+}
+
+/* Width utilities */
+#svg-main .w-full {
+  width: 100%;
+}
+
+#svg-main .w-4 {
+  width: 1rem;
+}
+
+#svg-main .w-8 {
+  width: 2rem;
+}
+
+/* Height utilities */
+#svg-main .h-4 {
+  height: 1rem;
+}
+
+#svg-main .h-8 {
+  height: 2rem;
+}
+
+/* Padding utilities */
+#svg-main .p-2 {
+  padding: 0.5rem;
+}
+
+#svg-main .pb-0\.5 {
+  padding-bottom: 0.125rem;
+}
+
+/* Margin utilities */
+#svg-main .my-1\.5 {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+/* Text utilities */
+#svg-main .text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+#svg-main .text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+#svg-main .font-semibold {
+  font-weight: 600;
+}
+
+#svg-main .leading-relaxed {
+  line-height: 1.625;
+}
+
+/* Border utilities */
+#svg-main .border-0 {
+  border-width: 0;
+}
+
+#svg-main .border-b {
+  border-bottom-width: 1px;
+}
+
+#svg-main .border-solid {
+  border-style: solid;
+}
+
+/* Border radius utilities */
+#svg-main .rounded-lg {
+  border-radius: 0.5rem;
+}
+
+/* Overflow utilities */
+#svg-main .overflow-hidden {
+  overflow: hidden;
+}
+
+/* Position utilities */
+#svg-main .relative {
+  position: relative;
+}
+
+/* Transition utilities */
+#svg-main .transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Hover utilities */
+#svg-main .hover\:text-default-link-hover:hover {
+  color: var(--default-color-highlight) !important;
+}
+
+
+/* Shared CSS - Tailwind utility classes used by all plugins */
+/* ⚠️ AUTO-GENERATED - DO NOT EDIT MANUALLY ⚠️ */
+/* Run: pnpm generate:tailwind-css */
+/* These classes are embedded in the SVG so it works standalone */
+
+/* Flexbox utilities */
+#svg-main .flex {
+  display: flex;
+}
+#svg-main .items-center {
+  align-items: center;
+}
+#svg-main .justify-end {
+  justify-content: flex-end;
+}
+#svg-main .justify-between {
+  justify-content: space-between;
+}
+#svg-main .items-end {
+  align-items: flex-end;
+}
+#svg-main .flex-col {
+  flex-direction: column;
+}
+#svg-main .items-baseline {
+  align-items: baseline;
+}
+#svg-main .flex-row {
+  flex-direction: row;
+}
+#svg-main .justify-center {
+  justify-content: center;
+}
+#svg-main .items-start {
+  align-items: flex-start;
+}
+#svg-main .flex-wrap {
+  flex-wrap: wrap;
+}
+#svg-main .flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+/* Gap utilities */
+#svg-main .gap-0\.5 {
+  gap: 0.125rem;
+}
+#svg-main .gap-1\.5 {
+  gap: 0.375rem;
+}
+#svg-main .gap-2 {
+  gap: 0.5rem;
+}
+#svg-main .gap-1 {
+  gap: 0.25rem;
+}
+#svg-main .gap-4 {
+  gap: 1rem;
+}
+#svg-main .gap-3 {
+  gap: 0.75rem;
+}
+#svg-main .gap-\[1px\] {
+  gap: 1px;
+}
+
+/* Width utilities */
+#svg-main .w-full {
+  width: 100%;
+}
+#svg-main .w-fit {
+  width: fit-content;
+}
+#svg-main .w-auto {
+  width: auto;
+}
+#svg-main .w-20 {
+  width: 5rem;
+}
+#svg-main .w-36 {
+  width: 9rem;
+}
+#svg-main .w-4 {
+  width: 1rem;
+}
+#svg-main .w-10 {
+  width: 2.5rem;
+}
+#svg-main .w-8 {
+  width: 2rem;
+}
+#svg-main .w-3 {
+  width: 0.75rem;
+}
+#svg-main .w-2 {
+  width: 0.5rem;
+}
+#svg-main .w-12 {
+  width: 3rem;
+}
+#svg-main .w-\[0\.7rem\] {
+  width: 0.7rem;
+}
+#svg-main .w-\[0\.60rem\] {
+  width: 0.60rem;
+}
+
+/* Height utilities */
+#svg-main .h-\[15px\] {
+  height: 15px;
+}
+#svg-main .h-full {
+  height: 100%;
+}
+#svg-main .h-2\.5 {
+  height: 0.625rem;
+}
+#svg-main .h-\[50px\] {
+  height: 50px;
+}
+#svg-main .h-20 {
+  height: 5rem;
+}
+#svg-main .h-4 {
+  height: 1rem;
+}
+#svg-main .h-10 {
+  height: 2.5rem;
+}
+#svg-main .h-8 {
+  height: 2rem;
+}
+#svg-main .h-3 {
+  height: 0.75rem;
+}
+#svg-main .h-32 {
+  height: 8rem;
+}
+#svg-main .h-2 {
+  height: 0.5rem;
+}
+#svg-main .h-\[0\.7rem\] {
+  height: 0.7rem;
+}
+
+#svg-main .min-h-\[75px\] {
+  min-height: 75px;
+}
+
+#svg-main .max-h-\[75px\] {
+  max-height: 75px;
+}
+
+/* Padding utilities */
+#svg-main .px-2 {
+  padding-left: 0.5rem; padding-right: 0.5rem;
+}
+#svg-main .py-0\.5 {
+  padding-top: 0.125rem; padding-bottom: 0.125rem;
+}
+#svg-main .px-1 {
+  padding-left: 0.25rem; padding-right: 0.25rem;
+}
+#svg-main .pr-2 {
+  padding-right: 0.5rem;
+}
+#svg-main .pb-0\.5 {
+  padding-bottom: 0.125rem;
+}
+#svg-main .pl-1 {
+  padding-left: 0.25rem;
+}
+#svg-main .pl-2 {
+  padding-left: 0.5rem;
+}
+#svg-main .p-3 {
+  padding: 0.75rem;
+}
+#svg-main .p-4 {
+  padding: 1rem;
+}
+#svg-main .py-4 {
+  padding-top: 1rem; padding-bottom: 1rem;
+}
+#svg-main .p-2 {
+  padding: 0.5rem;
+}
+#svg-main .px-4 {
+  padding-left: 1rem; padding-right: 1rem;
+}
+
+/* Margin utilities */
+#svg-main .my-1\.5 {
+  margin-top: 0.375rem; margin-bottom: 0.375rem;
+}
+#svg-main .mx-1 {
+  margin-left: 0.25rem; margin-right: 0.25rem;
+}
+#svg-main .mt-2 {
+  margin-top: 0.5rem;
+}
+#svg-main .mt-1 {
+  margin-top: 0.25rem;
+}
+#svg-main .mt-0\.5 {
+  margin-top: 0.125rem;
+}
+#svg-main .mt-4 {
+  margin-top: 1rem;
+}
+#svg-main .mb-1 {
+  margin-bottom: 0.25rem;
+}
+#svg-main .ml-4 {
+  margin-left: 1rem;
+}
+#svg-main .mb-2 {
+  margin-bottom: 0.5rem;
+}
+#svg-main .mb-3 {
+  margin-bottom: 0.75rem;
+}
+#svg-main .mb-4 {
+  margin-bottom: 1rem;
+}
+#svg-main .mt-0\.5 {
+  margin-top: 0.125rem;
+}
+#svg-main .ml-2 {
+  margin-left: 0.5rem;
+}
+#svg-main .mr-2 {
+  margin-right: 0.5rem;
+}
+#svg-main .my-1 {
+  margin-top: 0.25rem; margin-bottom: 0.25rem;
+}
+
+/* Text utilities */
+#svg-main .font-bold {
+  font-weight: 700;
+}
+#svg-main .text-sm {
+  font-size: 0.875rem; line-height: 1.25rem;
+}
+#svg-main .text-xs {
+  font-size: 0.75rem; line-height: 1rem;
+}
+#svg-main .text-center {
+  text-align: center;
+}
+#svg-main .text-lg {
+  font-size: 1.125rem; line-height: 1.75rem;
+}
+#svg-main .text-xl {
+  font-size: 1.25rem; line-height: 1.75rem;
+}
+#svg-main .font-semibold {
+  font-weight: 600;
+}
+#svg-main .leading-none {
+  line-height: 1;
+}
+#svg-main .font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;
+}
+#svg-main .text-end {
+  text-align: end;
+}
+#svg-main .text-nowrap {
+  white-space: nowrap;
+}
+#svg-main .text-2xl {
+  font-size: 1.5rem; line-height: 2rem;
+}
+#svg-main .font-medium {
+  font-weight: 500;
+}
+#svg-main .text-right {
+  text-align: right;
+}
+#svg-main .text-\[0\.75rem\] {
+  font-size: 0.75rem;
+}
+#svg-main .leading-relaxed {
+  line-height: 1.625;
+}
+
+/* Border utilities */
+#svg-main .rounded {
+  border-radius: 0.25rem;
+}
+#svg-main .border {
+  border-width: 1px;
+}
+#svg-main .rounded-lg {
+  border-radius: 0.5rem;
+}
+#svg-main .rounded-2xl {
+  border-radius: 1rem;
+}
+#svg-main .border-0 {
+  border-width: 0;
+}
+#svg-main .border-b {
+  border-bottom-width: 1px;
+}
+#svg-main .border-solid {
+  border-style: solid;
+}
+#svg-main .rounded-lg {
+  border-radius: 0.5rem;
+}
+#svg-main .rounded-full {
+  border-radius: 9999px;
+}
+#svg-main .rounded-sm {
+  border-radius: 0.125rem;
+}
+#svg-main .rounded-t-md {
+  border-top-left-radius: 0.375rem; border-top-right-radius: 0.375rem;
+}
+
+/* Other utilities */
+#svg-main .relative {
+  position: relative;
+}
+#svg-main .overflow-hidden {
+  overflow: hidden;
+}
+#svg-main .mx-\[3px\] {
+  margin-left: 3px; margin-right: 3px;
+}
+#svg-main .mt-\[0\.5rem\] {
+  margin-top: 0.5rem;
+}
+#svg-main .transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;
+}
+#svg-main .transition-opacity {
+  transition-property: opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;
+}
+#svg-main .transition-all {
+  transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms;
+}
+#svg-main .inline-flex {
+  display: inline-flex;
+}</style><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-default:#24292f;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#24292f;--default-color-highlight:#FF7A3D"><div><div><section id="github-people"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Followers</h2></div></div><div class="flex flex-wrap gap-2"><a href="https://github.com/FernandoEGV" target="_blank" rel="noopener noreferrer" class="inline-block" title="FernandoEGV"><img src="https://avatars.githubusercontent.com/u/104585876?u=53370abe7b42e891789ef25b7f34c32f3e5f87fb&amp;v=4" alt="FernandoEGV" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/sh-lucas" target="_blank" rel="noopener noreferrer" class="inline-block" title="Lucas Schwalm Silva"><img src="https://avatars.githubusercontent.com/u/57202598?u=07d28aa77c08dcef79364a50831a494c1b16fecf&amp;v=4" alt="sh-lucas" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/mikew194" target="_blank" rel="noopener noreferrer" class="inline-block" title="Mike Wassermann"><img src="https://avatars.githubusercontent.com/u/1824010?v=4" alt="mikew194" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/motanelson" target="_blank" rel="noopener noreferrer" class="inline-block" title="nelson jr mota"><img src="https://avatars.githubusercontent.com/u/118323821?u=7d8591d3397b04783e1202947f719228163737d4&amp;v=4" alt="motanelson" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/donjoo" target="_blank" rel="noopener noreferrer" class="inline-block" title="DonJo"><img src="https://avatars.githubusercontent.com/u/142510150?u=d7e949bc5a74fd061a1b75f4a146fbe2cbf4e8ef&amp;v=4" alt="donjoo" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/kunleulysses" target="_blank" rel="noopener noreferrer" class="inline-block" title="Ulysses"><img src="https://avatars.githubusercontent.com/u/65002977?v=4" alt="kunleulysses" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/seplsy" target="_blank" rel="noopener noreferrer" class="inline-block" title="Murphy"><img src="https://avatars.githubusercontent.com/u/224399391?u=9b864bd71a864e4724409c62f0e0d2a65c5fcb76&amp;v=4" alt="seplsy" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/rmtsixq" target="_blank" rel="noopener noreferrer" class="inline-block" title="rmtsixq"><img src="https://avatars.githubusercontent.com/u/189560306?v=4" alt="rmtsixq" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/ranawasif896" target="_blank" rel="noopener noreferrer" class="inline-block" title="Muhammad Wasif"><img src="https://avatars.githubusercontent.com/u/196354093?u=e47a1060b053bbb47116115441e4ac7c08e81c35&amp;v=4" alt="ranawasif896" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><a href="https://github.com/Adeife004" target="_blank" rel="noopener noreferrer" class="inline-block" title="Adebowale Jasmine"><img src="https://avatars.githubusercontent.com/u/130067040?v=4" alt="Adeife004" class="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"/></a><div class="flex items-center ml-2 text-sm text-default-muted">+<!-- -->24<!-- --> more</div></div></section></div></div></div></div></foreignObject></svg>

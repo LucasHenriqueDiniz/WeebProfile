@@ -1,6 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "pnpm build",
-  "outputDirectory": "web-client/.next",
-  "framework": "nextjs"
+  "buildCommand": "pnpm --filter weeb-dashboard build",
+  "outputDirectory": "weeb-dashboard/.next",
+  "framework": "nextjs",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./weeb-dashboard"
 }

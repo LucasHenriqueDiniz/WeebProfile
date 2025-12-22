@@ -1,0 +1,6 @@
+web-client/
+node_modules/
+.next/
+dist/
+build/
+coverage/

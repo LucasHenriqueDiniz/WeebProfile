@@ -1,0 +1,29 @@
+---
+description: Rendering pipeline invariants (CSS -> plugins -> SVG container -> renderToString)
+globs:
+  - src/generator/**
+  - src/renderer/**
+  - docs/RENDERING_LOGIC.md
+alwaysApply: true
+---
+
+# Rendering pipeline invariants
+
+## Pipeline
+1) Calculate width/height
+2) Load CSS (`loadCss`)
+3) Render plugins (`renderPlugins`)
+4) Wrap with SVG container (`createSvgContainer`)
+5) `renderToString(svgElement)`
+
+## SVG container rules
+- Must produce:
+  - `<svg id="svg-main" width height ...>`
+  - `<foreignObject width="100%" height="100%">`
+  - an HTML root inside foreignObject with XHTML namespace:
+    - `<div xmlns="http://www.w3.org/1999/xhtml">`
+
+## Debug support
+- Internal `_debug` data may exist, but:
+  - must be sanitized before returning
+  - must never include essential configs

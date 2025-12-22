@@ -1,0 +1,5 @@
+{
+  "loader": "tsx/esm",
+  "tsconfig": "./tsconfig.json"
+}
+

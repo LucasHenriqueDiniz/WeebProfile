@@ -2,28 +2,27 @@
   "name": "weeb-profile",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.24.0",
   "workspaces": [
-    "core",
-    "source",
-    "web-client"
+    "svg-generator",
+    "weeb-plugins",
+    "weeb-dashboard",
+    "weeb-debug-tool"
   ],
   "scripts": {
-    "action:start": "pnpm --filter @weeb/core start",
-    "vercel:dev": "pnpm --filter @weeb/web-client dev",
-    "vercel:start": "pnpm --filter @weeb/web-client start",
-    "vercel:build": "pnpm --filter @weeb/web-client build",
-    "build": "pnpm --filter @weeb/web-client build",
-    "dev": "pnpm --filter @weeb/web-client dev",
-    "start": "pnpm --filter @weeb/web-client start",
-    "check:lint": "eslint \"./core/src/**/*.{ts,tsx}\" \"./source/**/*.{ts,tsx}\" \"./web-client/**/*.{ts,tsx}\" --max-warnings=0",
-    "check:lint-fix": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
-    "check:prettier": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
-    "check:prettier-fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss}\"",
-    "format": "pnpm check:prettier-fix && pnpm check:lint-fix",
-    "check:plugins": "tsx core/src/setup/checkPlugins/validatePlugins.ts",
-    "generate:readme": "tsx core/src/setup/readme/generateReadme.ts",
-    "generate:actions": "tsx core/src/setup/action/generateAction.ts"
+    "dev": "concurrently -n \"dashboard,generator\" -c \"cyan,magenta\" \"pnpm dev:dashboard\" \"pnpm dev:generator\"",
+    "dev:dashboard": "pnpm --filter weeb-dashboard dev",
+    "dev:generator": "pnpm --filter svg-generator dev:server",
+    "dev:debug-tool": "pnpm --filter weeb-debug-tool dev",
+    "build": "pnpm --filter weeb-dashboard build",
+    "build:deps": "pnpm --filter @weeb/weeb-plugins build && pnpm --filter @weeb/svg-generator build",
+    "start": "pnpm --filter weeb-dashboard start",
+    "lint": "pnpm --filter weeb-dashboard lint . && pnpm --filter @weeb/weeb-plugins lint && pnpm --filter @weeb/svg-generator lint",
+    "lint:fix": "pnpm --filter weeb-dashboard lint . --fix && pnpm --filter @weeb/weeb-plugins lint --fix && pnpm --filter @weeb/svg-generator lint --fix",
+    "typecheck": "pnpm --filter weeb-dashboard typecheck && pnpm --filter @weeb/weeb-plugins typecheck && pnpm --filter @weeb/svg-generator typecheck",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck"
   },
   "dependencies": {
     "@octokit/graphql": "^8.1.1",
@@ -40,13 +39,22 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0"
   },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^18.3.1",
+      "@types/react-dom": "^18.3.1"
+    }
+  },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@types/mustache": "^4.2.5",
     "@types/node": "^20.11.18",
+    "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.13.0",
     "@typescript-eslint/parser": "^8.13.0",
+    "baseline-browser-mapping": "^2.8.32",
+    "concurrently": "^9.1.0",
     "css-loader": "^7.1.2",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.2",

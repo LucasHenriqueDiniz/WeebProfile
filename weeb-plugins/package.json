@@ -1,0 +1,174 @@
+{
+  "name": "@weeb/weeb-plugins",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./plugins": {
+      "import": "./dist/plugins/index.js",
+      "types": "./dist/plugins/index.d.ts"
+    },
+    "./plugins/metadata": {
+      "import": "./dist/plugins/metadata.js",
+      "types": "./dist/plugins/metadata.d.ts"
+    },
+    "./plugins/tags": {
+      "import": "./dist/plugins/tags.js",
+      "types": "./dist/plugins/tags.d.ts"
+    },
+    "./plugins/github/components/RenderGithub": {
+      "import": "./dist/plugins/github/components/RenderGithub.js",
+      "types": "./dist/plugins/github/components/RenderGithub.d.ts"
+    },
+    "./plugins/github/types": {
+      "import": "./dist/plugins/github/types.js",
+      "types": "./dist/plugins/github/types.d.ts"
+    },
+    "./plugins/github/services/fetchGithub": {
+      "import": "./dist/plugins/github/services/fetchGithub.js",
+      "types": "./dist/plugins/github/services/fetchGithub.d.ts"
+    },
+    "./plugins/github/services/mock-data": {
+      "import": "./dist/plugins/github/services/mock-data.js",
+      "types": "./dist/plugins/github/services/mock-data.d.ts"
+    },
+    "./plugins/lastfm/components/RenderLastFm": {
+      "import": "./dist/plugins/lastfm/components/RenderLastFm.js",
+      "types": "./dist/plugins/lastfm/components/RenderLastFm.d.ts"
+    },
+    "./plugins/lastfm/types": {
+      "import": "./dist/plugins/lastfm/types.js",
+      "types": "./dist/plugins/lastfm/types.d.ts"
+    },
+    "./plugins/lastfm/services/mock-data": {
+      "import": "./dist/plugins/lastfm/services/mock-data.js",
+      "types": "./dist/plugins/lastfm/services/mock-data.d.ts"
+    },
+    "./plugins/myanimelist/components/RenderMyAnimeList": {
+      "import": "./dist/plugins/myanimelist/components/RenderMyAnimeList.js",
+      "types": "./dist/plugins/myanimelist/components/RenderMyAnimeList.d.ts"
+    },
+    "./plugins/myanimelist/types": {
+      "import": "./dist/plugins/myanimelist/types.js",
+      "types": "./dist/plugins/myanimelist/types.d.ts"
+    },
+    "./plugins/myanimelist/services/mock-data": {
+      "import": "./dist/plugins/myanimelist/services/mock-data.js",
+      "types": "./dist/plugins/myanimelist/services/mock-data.d.ts"
+    },
+    "./plugins/myanimelist/heights": {
+      "import": "./dist/plugins/myanimelist/heights.js",
+      "types": "./dist/plugins/myanimelist/heights.d.ts"
+    },
+    "./plugins/github/heights": {
+      "import": "./dist/plugins/github/heights.js",
+      "types": "./dist/plugins/github/heights.d.ts"
+    },
+    "./plugins/lastfm/heights": {
+      "import": "./dist/plugins/lastfm/heights.js",
+      "types": "./dist/plugins/lastfm/heights.d.ts"
+    },
+    "./plugins/stackoverflow/heights": {
+      "import": "./dist/plugins/stackoverflow/heights.js",
+      "types": "./dist/plugins/stackoverflow/heights.d.ts"
+    },
+    "./plugins/duolingo/heights": {
+      "import": "./dist/plugins/duolingo/heights.js",
+      "types": "./dist/plugins/duolingo/heights.d.ts"
+    },
+    "./plugins/codewars/heights": {
+      "import": "./dist/plugins/codewars/heights.js",
+      "types": "./dist/plugins/codewars/heights.d.ts"
+    },
+    "./plugins/codeforces/heights": {
+      "import": "./dist/plugins/codeforces/heights.js",
+      "types": "./dist/plugins/codeforces/heights.d.ts"
+    },
+    "./shared/types/heights": {
+      "import": "./dist/plugins/shared/types/heights.js",
+      "types": "./dist/plugins/shared/types/heights.d.ts"
+    },
+    "./templates": {
+      "import": "./dist/templates/index.js",
+      "types": "./dist/templates/index.d.ts"
+    },
+    "./themes": {
+      "import": "./dist/themes/index.js",
+      "types": "./dist/themes/index.d.ts"
+    },
+    "./styles": {
+      "import": "./dist/styles/index.js",
+      "types": "./dist/styles/index.d.ts"
+    },
+    "./styles/server": {
+      "import": "./dist/styles/server.js",
+      "types": "./dist/styles/server.d.ts"
+    },
+    "./templates/PluginStyles": {
+      "import": "./dist/templates/PluginStyles.js",
+      "types": "./dist/templates/PluginStyles.d.ts"
+    },
+    "./styles/registry": {
+      "import": "./dist/styles/registry.js",
+      "types": "./dist/styles/registry.d.ts"
+    },
+    "./styles/plugins": {
+      "import": "./dist/styles/plugins.js",
+      "types": "./dist/styles/plugins.d.ts"
+    },
+    "./themes/theme-utils": {
+      "import": "./dist/themes/theme-utils.js",
+      "types": "./dist/themes/theme-utils.d.ts"
+    },
+    "./plugins/manager": {
+      "import": "./dist/plugins/manager.js",
+      "types": "./dist/plugins/manager.d.ts"
+    }
+  },
+  "scripts": {
+    "validate": "tsx scripts/validate-plugins.ts",
+    "validate-previews": "tsx scripts/validate-previews.ts --warn-only",
+    "generate-section-previews": "tsx scripts/generate-section-previews.ts",
+    "generate-preview-images": "tsx scripts/generate-preview-images.ts",
+    "generate-types": "tsx scripts/generate-types.ts",
+    "generate-metadata": "tsx scripts/generate-metadata.ts",
+    "generate-tailwind-css": "tsx scripts/generate-tailwind-css.ts",
+    "generate-style-index": "tsx scripts/generate-style-index.ts",
+    "generate-duolingo-assets": "tsx scripts/generate-duolingo-assets.ts",
+    "copy-shared-css": "tsx scripts/copy-shared-css.ts",
+    "clean": "tsx scripts/clean-compiled-files.ts",
+    "build": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && pnpm generate-duolingo-assets && tsc && pnpm copy-shared-css",
+    "dev": "tsc --watch --project tsconfig.dev.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "create-plugin": "tsx scripts/create-plugin.ts",
+    "prepublishOnly": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index"
+  },
+  "dependencies": {
+    "@octokit/graphql": "^8.1.1",
+    "@octokit/rest": "^21.0.2",
+    "bottleneck": "^2.19.5",
+    "country-flag-icons": "^1.6.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/glob": "^9.0.0",
+    "@types/node": "^20.11.18",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.22",
+    "glob": "^13.0.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18",
+    "tsx": "^4.20.6",
+    "typescript": "^5.4.0"
+  }
+}

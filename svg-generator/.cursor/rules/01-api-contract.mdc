@@ -1,0 +1,40 @@
+---
+description: API contract + request parsing + validation/normalization rules
+globs:
+  - src/server.ts
+  - src/config/**
+  - src/types/**
+alwaysApply: true
+---
+
+# API contract & config rules
+
+## Request parsing
+- Accept only `POST` (and `OPTIONS` for CORS preflight).
+- Fail fast with **400** for malformed JSON or missing required fields.
+- Required fields:
+  - `style`: `"default" | "terminal"`
+  - `size`: `"half" | "full"`
+
+## Plugin payload rules
+- `plugins` is a map keyed by plugin id (e.g. `github`, `lastfm`, `myanimelist`), but the server should be **generic**:
+  - do not hardcode plugin ids unless strictly necessary.
+- A plugin is considered “enabled” only when:
+  - `enabled === true` AND
+  - `sections` is an array with at least one entry (current behavior in `validateConfig`).
+
+## Theme mapping
+- `theme` is a generic field; map it to:
+  - `defaultTheme` when `style === "default"`
+  - `terminalTheme` when `style === "terminal"`
+- Never invent new theme names; pass through what exists and let `weeb-plugins` resolve.
+
+## Normalization defaults (current intentions)
+- Keep `dev` boolean semantics: `dev: config.dev ?? false` (don’t clobber explicit false).
+- Default primary color only when absent.
+
+## Error responses
+- Use consistent JSON errors:
+  - `{ error: string }` or `{ error: string, message?: string }`
+- Prefer actionable messages:
+  - e.g. `"At least one plugin must be enabled with at least one section"`

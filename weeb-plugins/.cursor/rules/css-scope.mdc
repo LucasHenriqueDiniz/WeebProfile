@@ -1,0 +1,22 @@
+---
+description: CSS scoping rules for SVG embedding (#svg-main) + naming conventions
+globs:
+  - "src/**/*.css"
+---
+
+# CSS rules (SVG-safe)
+
+## Scoping
+- Every selector MUST be under `#svg-main ...` to avoid leaking into host pages.
+
+## Naming
+- Utility classes: `text-<style>-*`, `bg-<style>-*`, `image-*`
+- Plugin-specific classes: `<plugin>-*` (avoid generic names like `.title`)
+
+## Prefer
+- CSS variables over hard-coded colors
+- small reusable utilities over large custom blocks
+
+## Avoid
+- global selectors without `#svg-main`
+- `!important` unless absolutely necessary
