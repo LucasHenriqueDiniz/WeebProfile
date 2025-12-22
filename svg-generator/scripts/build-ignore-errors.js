@@ -50,25 +50,43 @@ try {
 
 // Verificar se os arquivos principais foram gerados
 // CRÍTICO: server.js é obrigatório para o serviço funcionar
+// O TypeScript pode gerar em dist/src/ ou dist/ dependendo da configuração
 const criticalFiles = [
-  "dist/server.js", // OBRIGATÓRIO
+  "dist/server.js", // OBRIGATÓRIO (caminho esperado)
+  "dist/src/server.js", // Alternativa (se TypeScript preservar src/)
 ]
 
 const importantFiles = [
   "dist/index.js",
+  "dist/src/index.js", // Alternativa
   "dist/index.d.ts",
+  "dist/src/index.d.ts", // Alternativa
   "dist/server.js",
+  "dist/src/server.js", // Alternativa
   "dist/config/config-loader.js",
+  "dist/src/config/config-loader.js", // Alternativa
   "dist/generator/svg-generator.js",
+  "dist/src/generator/svg-generator.js", // Alternativa
 ]
 
 // Verificar arquivos críticos primeiro
-const criticalFilesExist = criticalFiles.every((file) => existsSync(resolve(cwd, file)))
+// Verificar se pelo menos um dos caminhos críticos existe
+const criticalFilesExist = criticalFiles.some((file) => existsSync(resolve(cwd, file)))
 const generatedFiles = importantFiles.filter((file) => existsSync(resolve(cwd, file)))
+
+// Determinar qual caminho base está sendo usado
+let distBasePath = "dist"
+if (existsSync(resolve(cwd, "dist/src/server.js"))) {
+  distBasePath = "dist/src"
+  console.log("📁 Arquivos gerados em dist/src/ (estrutura preservada)")
+} else if (existsSync(resolve(cwd, "dist/server.js"))) {
+  distBasePath = "dist"
+  console.log("📁 Arquivos gerados em dist/ (estrutura plana)")
+}
 
 if (!criticalFilesExist) {
   console.error("❌ ERRO CRÍTICO: Arquivos obrigatórios não foram gerados!")
-  console.error(`   Arquivos críticos faltando: ${criticalFiles.filter((f) => !existsSync(resolve(cwd, f))).join(", ")}`)
+  console.error(`   Arquivos críticos faltando: dist/server.js ou dist/src/server.js`)
   
   // Debug: listar o que existe em dist/
   const distPath = resolve(cwd, "dist")
@@ -79,6 +97,12 @@ if (!criticalFilesExist) {
       console.error(`   Arquivos .js encontrados em dist/: ${jsFiles.length}`)
       if (jsFiles.length > 0) {
         console.error(`   Primeiros arquivos: ${jsFiles.slice(0, 10).join(", ")}`)
+        // Verificar se server.js existe em algum lugar
+        const serverJsFiles = jsFiles.filter((f) => f.includes("server.js"))
+        if (serverJsFiles.length > 0) {
+          console.error(`   ⚠️  server.js encontrado em: ${serverJsFiles.join(", ")}`)
+          console.error(`   💡 Ajuste o caminho no package.json start script ou no tsconfig.json`)
+        }
       }
     } catch (error) {
       console.error(`   Erro ao listar dist/: ${error}`)
@@ -87,7 +111,7 @@ if (!criticalFilesExist) {
     console.error("   dist/ não existe!")
   }
   
-  console.error("💡 O build TypeScript deve gerar dist/server.js")
+  console.error("💡 O build TypeScript deve gerar dist/server.js ou dist/src/server.js")
   process.exit(1)
 }
 
