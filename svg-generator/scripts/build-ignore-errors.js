@@ -13,8 +13,9 @@ console.log("🔨 Compilando svg-generator...")
 
 // Sempre tentar compilar, mesmo com erros
 let buildSucceeded = false
+let tscOutput = ""
 try {
-  execSync("tsc --skipLibCheck", {
+  tscOutput = execSync("tsc --skipLibCheck", {
     stdio: "pipe",
     cwd,
     encoding: "utf8",
@@ -22,13 +23,37 @@ try {
   console.log("✅ Build concluído com sucesso!")
   buildSucceeded = true
 } catch (error) {
-  // Continuar mesmo com erros - são apenas de tipo
-  console.log("⚠️  Build concluído com erros de tipo (não bloqueantes)")
+  // Capturar output do erro para debug
+  if (error.stdout) {
+    tscOutput = error.stdout.toString()
+  }
+  if (error.stderr) {
+    tscOutput += "\n" + error.stderr.toString()
+  }
+  
+  // Mostrar primeiros erros para debug
+  const errorLines = tscOutput.split("\n").filter((line) => 
+    line.includes("error") || line.includes("Error")
+  ).slice(0, 5)
+  
+  if (errorLines.length > 0) {
+    console.log("⚠️  Build concluído com erros de tipo (não bloqueantes)")
+    console.log("   Primeiros erros:")
+    errorLines.forEach((line) => console.log(`   ${line}`))
+  } else {
+    console.log("⚠️  Build concluído com erros de tipo (não bloqueantes)")
+  }
+  
   // Mesmo com erros, tsc pode ter gerado alguns arquivos
   buildSucceeded = false
 }
 
 // Verificar se os arquivos principais foram gerados
+// CRÍTICO: server.js é obrigatório para o serviço funcionar
+const criticalFiles = [
+  "dist/server.js", // OBRIGATÓRIO
+]
+
 const importantFiles = [
   "dist/index.js",
   "dist/index.d.ts",
@@ -37,10 +62,38 @@ const importantFiles = [
   "dist/generator/svg-generator.js",
 ]
 
+// Verificar arquivos críticos primeiro
+const criticalFilesExist = criticalFiles.every((file) => existsSync(resolve(cwd, file)))
 const generatedFiles = importantFiles.filter((file) => existsSync(resolve(cwd, file)))
+
+if (!criticalFilesExist) {
+  console.error("❌ ERRO CRÍTICO: Arquivos obrigatórios não foram gerados!")
+  console.error(`   Arquivos críticos faltando: ${criticalFiles.filter((f) => !existsSync(resolve(cwd, f))).join(", ")}`)
+  
+  // Debug: listar o que existe em dist/
+  const distPath = resolve(cwd, "dist")
+  if (existsSync(distPath)) {
+    try {
+      const distFiles = readdirSync(distPath, { recursive: true })
+      const jsFiles = distFiles.filter((f) => typeof f === "string" && f.endsWith(".js"))
+      console.error(`   Arquivos .js encontrados em dist/: ${jsFiles.length}`)
+      if (jsFiles.length > 0) {
+        console.error(`   Primeiros arquivos: ${jsFiles.slice(0, 10).join(", ")}`)
+      }
+    } catch (error) {
+      console.error(`   Erro ao listar dist/: ${error}`)
+    }
+  } else {
+    console.error("   dist/ não existe!")
+  }
+  
+  console.error("💡 O build TypeScript deve gerar dist/server.js")
+  process.exit(1)
+}
 
 if (generatedFiles.length > 0) {
   console.log(`✅ ${generatedFiles.length}/${importantFiles.length} arquivos principais gerados`)
+  console.log(`✅ Arquivos críticos verificados: ${criticalFiles.length}/${criticalFiles.length}`)
 
   // Verificar se o config-loader tem as correções
   const configLoaderPath = resolve(cwd, "dist/config/config-loader.js")
@@ -55,53 +108,13 @@ if (generatedFiles.length > 0) {
   console.log("✅ Build concluído! Arquivos prontos para uso.")
   process.exit(0)
 } else {
-  // Se não encontrou arquivos, verificar se dist/ existe e tem conteúdo
-  const distPath = resolve(cwd, "dist")
-  if (existsSync(distPath)) {
-    try {
-      // Listar arquivos em dist/ para debug
-      const distFiles = readdirSync(distPath, { recursive: true })
-      const jsFiles = distFiles.filter((f) => f.endsWith(".js"))
-      
-      if (jsFiles.length > 0) {
-        console.log(`⚠️  Arquivos não encontrados nos caminhos esperados, mas encontrados ${jsFiles.length} arquivos .js em dist/`)
-        console.log(`💡 Primeiros arquivos encontrados: ${jsFiles.slice(0, 5).join(", ")}`)
-        console.log("✅ Continuando mesmo assim - arquivos foram gerados")
-        process.exit(0)
-      } else {
-        // Se dist existe mas está vazio ou só tem .d.ts
-        if (buildSucceeded) {
-          console.log("⚠️  Build TypeScript concluído, mas arquivos .js não encontrados")
-          console.log("💡 Continuando mesmo assim - pode ser problema de caminho")
-          process.exit(0)
-        } else {
-          console.error("❌ Build falhou e nenhum arquivo foi gerado")
-          console.error("💡 Os erros são de tipo do React 19 e não bloqueiam o runtime")
-          process.exit(1)
-        }
-      }
-    } catch (error) {
-      // Se não conseguiu listar dist/, mas dist existe e build foi bem-sucedido, continuar
-      if (buildSucceeded) {
-        console.log("⚠️  Build TypeScript concluído, continuando...")
-        process.exit(0)
-      } else {
-        console.error("❌ Build falhou e nenhum arquivo foi gerado")
-        console.error("💡 Os erros são de tipo do React 19 e não bloqueiam o runtime")
-        process.exit(1)
-      }
-    }
+  // Se não encontrou arquivos importantes mas arquivos críticos existem, continuar
+  if (criticalFilesExist) {
+    console.log("⚠️  Alguns arquivos importantes não foram encontrados, mas arquivos críticos existem")
+    console.log("✅ Continuando com build...")
+    process.exit(0)
   } else {
-    // Se dist não existe e build falhou, falhar
-    if (buildSucceeded) {
-      // Build foi bem-sucedido mas dist não existe - pode ser problema de configuração
-      console.log("⚠️  Build TypeScript concluído, mas dist/ não encontrado")
-      console.log("💡 Continuando mesmo assim - pode ser problema de configuração")
-      process.exit(0)
-    } else {
-      console.error("❌ Build falhou e nenhum arquivo foi gerado")
-      console.error("💡 Os erros são de tipo do React 19 e não bloqueiam o runtime")
-      process.exit(1)
-    }
+    console.error("❌ Build falhou - arquivos críticos não foram gerados")
+    process.exit(1)
   }
 }
