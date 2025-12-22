@@ -1,49 +1,49 @@
 /**
- * Cálculo de altura para o plugin Duolingo
+ * Height Calculator for Duolingo Plugin
  * 
- * NOTA: Este arquivo é opcional, mas ajuda a calcular a altura estimada do SVG
+ * Calculates the estimated height of Duolingo sections based on configuration.
+ * Returns the height in pixels.
  */
 
-import type { DuolingoConfig, DuolingoData } from './types'
+import type { DuolingoConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
+/**
+ * Calculates height for Duolingo sections
+ */
 export function calculateDuolingoHeight(
+  section: string,
   config: DuolingoConfig,
-  data: DuolingoData
+  size: 'half' | 'full',
+  style: 'default' | 'terminal'
 ): number {
-  if (!config.enabled || config.sections.length === 0) {
-    return 0
+  const titleHeight = SECTION_TITLE_HEIGHT[style]
+  const hideTitle = (config.nonEssential as any)?.[`${section}_hide_title`] ?? false
+  const titleSpace = hideTitle ? 0 : titleHeight
+
+  // Current Streak - large card (p-5) with mascot and content
+  if (section === 'current_streak') {
+    return titleSpace + 120
   }
 
-  // Altura base por seção
-  const SECTION_BASE_HEIGHT = 80
-  const TITLE_HEIGHT = 30
-  const ITEM_HEIGHT = 50
-
-  let totalHeight = 0
-
-  for (const section of config.sections) {
-    const hideTitle = (config.nonEssential as any)?.[`${section}_hide_title`] || false
-    const sectionTitleHeight = hideTitle ? 0 : TITLE_HEIGHT
-
-    switch (section) {
-      case 'current_streak':
-      case 'total_xp':
-        totalHeight += SECTION_BASE_HEIGHT + sectionTitleHeight
-        break
-      case 'languages_learning': {
-        const maxItems = config.nonEssential?.languages_learning_max || 5
-        const itemCount = Math.min(data.languages.length, maxItems)
-        // Increased height for cards with progress bars
-        totalHeight += sectionTitleHeight + (itemCount * 90) + 20
-        break
-      }
-    }
-
-    // Espaçamento entre seções
-    totalHeight += 20
+  // Total XP - medium card (p-4) with trophy icon
+  if (section === 'total_xp') {
+    return titleSpace + 100
   }
 
-  return totalHeight
+  // Languages Learning - cards with progress bars (90px/item + gap-3 = 12px)
+  if (section === 'languages_learning') {
+    const maxItems = config.nonEssential?.languages_learning_max || 5
+    const itemHeight = 90 // Cards with progress bars are taller
+    const gapBetweenItems = 12 // gap-3 (12px)
+    const itemsHeight = maxItems * itemHeight
+    const gapHeight = Math.max(0, maxItems - 1) * gapBetweenItems
+    return titleSpace + itemsHeight + gapHeight
+  }
+
+  // Default fallback
+  const defaultHeight = size === 'half' ? 150 : 200
+  return titleSpace + defaultHeight
 }
 
 

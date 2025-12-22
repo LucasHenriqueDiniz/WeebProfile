@@ -46,9 +46,9 @@ export default function DashboardPage() {
       return
     }
 
-    // Buscar SVGs se o usuário estiver disponível
-    // O store já gerencia cache, então não precisa verificar se já tem dados
-    if (user) {
+    // Buscar SVGs apenas se o usuário estiver disponível e não tiver dados em cache
+    // O store já gerencia cache, então só buscar se realmente necessário
+    if (user && svgs.length === 0 && !svgsLoading) {
       fetchSvgs()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -166,25 +166,27 @@ export default function DashboardPage() {
 
 
   return (
-    <div className="p-6 md:p-8 lg:p-10 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
 
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="flex items-start justify-between"
+        transition={{ duration: 0.2 }}
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold">My SVGs</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            My SVGs
+          </h1>
+          <p className="text-muted-foreground mt-1.5 text-sm">
             {filteredAndSortedSvgs.length} of {svgs.length} SVG
             {svgs.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button asChild size="lg" className="gap-2">
+        <Button asChild size="lg" className="gap-2 shadow-sm">
           <Link href="/dashboard/new">
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4" />
             Create New
           </Link>
         </Button>
@@ -194,8 +196,8 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.3 }}
-        className="flex flex-col sm:flex-row gap-4"
+        transition={{ delay: 0.05, duration: 0.2 }}
+        className="flex flex-col sm:flex-row gap-3"
       >
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -240,34 +242,34 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.3 }}
+        transition={{ delay: 0.1, duration: 0.2 }}
         className="grid md:grid-cols-3 gap-4"
       >
-        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-          <CardContent className="p-6">
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Total SVGs</p>
-              <p className="text-3xl font-bold">{svgs.length}</p>
+        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground font-medium">Total SVGs</p>
+              <p className="text-2xl md:text-3xl font-bold">{svgs.length}</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
-          <CardContent className="p-6">
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Active</p>
-              <p className="text-3xl font-bold">
+        <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20 hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground font-medium">Active</p>
+              <p className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400">
                 {svgs.filter(s => s.status === "completed").length}
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border-yellow-500/20">
-          <CardContent className="p-6">
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Generating</p>
-              <p className="text-3xl font-bold">
+        <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border-yellow-500/20 hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground font-medium">Generating</p>
+              <p className="text-2xl md:text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                 {svgs.filter(s => s.status === "generating").length}
               </p>
             </div>
@@ -280,32 +282,33 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          transition={{ delay: 0.15, duration: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
           {filteredAndSortedSvgs.map((svg, index) => (
             <motion.div
               key={svg.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05, duration: 0.3 }}
+              transition={{ delay: index * 0.03, duration: 0.2 }}
             >
-              <Card className="hover:shadow-lg hover:border-primary/50 transition-all group h-full flex flex-col">
-                <CardContent className="p-6 flex flex-col flex-1">
+              <Card className="hover:shadow-lg hover:shadow-primary/5 hover:border-primary/50 transition-all group h-full flex flex-col border-border/50">
+                <CardContent className="p-5 flex flex-col flex-1">
                   {/* Preview Image */}
                   {svg.storageUrl && svg.status === "completed" ? (
-                    <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/50">
+                    <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/30 shadow-sm">
                       <img
                         src={svg.storageUrl}
                         alt={svg.name}
                         className="w-full h-auto object-contain"
+                        loading="lazy"
                         onError={(e) => {
                           e.currentTarget.style.display = "none"
                         }}
                       />
                     </div>
                   ) : (
-                    <div className="mb-4 rounded-lg border border-border bg-muted/50 aspect-video flex items-center justify-center">
+                    <div className="mb-4 rounded-lg border border-border bg-muted/30 aspect-video flex items-center justify-center shadow-sm">
                       {svg.status === "generating" ? (
                         <Loader2 className="w-8 h-8 text-primary animate-spin" />
                       ) : (
@@ -317,10 +320,10 @@ export default function DashboardPage() {
                   {/* Info */}
                   <div className="space-y-3 flex-1">
                     <div>
-                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors mb-1">
+                      <h3 className="font-semibold text-base group-hover:text-primary transition-colors mb-1.5 line-clamp-1">
                         {svg.name}
                       </h3>
-                      <code className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
+                      <code className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded font-mono">
                         /{svg.slug || svg.id.slice(0, 8)}
                       </code>
                     </div>
@@ -376,57 +379,60 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 mt-4 pt-4 border-t">
+                  <div className="flex items-center gap-1.5 mt-4 pt-4 border-t border-border/50">
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1"
+                      className="flex-1 text-xs"
                       onClick={() => router.push(`/dashboard/${svg.id}`)}
                     >
-                      <ExternalLink className="w-4 h-4 mr-2" />
+                      <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
                       View
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
+                      className="h-8 w-8 p-0"
                       onClick={() => handleCopyUrl(svg)}
                       title="Copy URL"
                     >
-                      <Copy className="w-4 h-4" />
+                      <Copy className="w-3.5 h-3.5" />
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
+                      className="h-8 w-8 p-0"
                       onClick={() => router.push(`/dashboard/${svg.id}/edit`)}
                       title="Edit"
                     >
-                      <Edit2 className="w-4 h-4" />
+                      <Edit2 className="w-3.5 h-3.5" />
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
+                      className="h-8 w-8 p-0"
                       onClick={() => handleForceGenerate(svg)}
                       disabled={generatingId === svg.id || svg.status === "generating"}
                       title="Force Generate"
                     >
                       {generatingId === svg.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       ) : (
-                        <RefreshCw className="w-4 h-4" />
+                        <RefreshCw className="w-3.5 h-3.5" />
                       )}
                     </Button>
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
+                      className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                       onClick={() => handleDelete(svg.id)}
                       disabled={deletingId === svg.id}
-                      className="text-destructive hover:text-destructive"
                       title="Delete"
                     >
                       {deletingId === svg.id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       ) : (
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       )}
                     </Button>
                   </div>
@@ -439,19 +445,19 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="text-center py-20"
+          transition={{ delay: 0.15, duration: 0.2 }}
+          className="text-center py-16 md:py-20"
         >
-          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6">
-            <ImageIcon className="w-12 h-12 text-primary" />
+          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
+            <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-primary" />
           </div>
-          <h3 className="text-2xl font-bold mb-2">No SVGs yet</h3>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
+          <h3 className="text-xl md:text-2xl font-bold mb-2">No SVGs yet</h3>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
             Create your first WeebProfile SVG to showcase your stats on GitHub
           </p>
-          <Button asChild size="lg" className="gap-2">
+          <Button asChild size="lg" className="gap-2 shadow-sm">
             <Link href="/dashboard/new">
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4" />
               Create Your First SVG
             </Link>
           </Button>
@@ -460,14 +466,14 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="text-center py-20"
+          transition={{ delay: 0.15, duration: 0.2 }}
+          className="text-center py-16 md:py-20"
         >
-          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-muted/50 mb-6">
-            <Search className="w-12 h-12 text-muted-foreground" />
+          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-muted/50 mb-6">
+            <Search className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
           </div>
-          <h3 className="text-2xl font-bold mb-2">No results found</h3>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
+          <h3 className="text-xl md:text-2xl font-bold mb-2">No results found</h3>
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
             Try adjusting your search or filter criteria
           </p>
           <Button

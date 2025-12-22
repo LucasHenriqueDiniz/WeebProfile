@@ -1,45 +1,54 @@
 /**
- * Cálculo de altura para o plugin Stack Overflow
+ * Height Calculator for Stack Overflow Plugin
+ * 
+ * Calculates the estimated height of Stack Overflow sections based on configuration.
+ * Returns the height in pixels.
  */
 
-import type { StackOverflowConfig, StackOverflowData } from './types'
+import type { StackOverflowConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
+/**
+ * Calculates height for Stack Overflow sections
+ */
 export function calculateStackOverflowHeight(
+  section: string,
   config: StackOverflowConfig,
-  data: StackOverflowData
+  size: 'half' | 'full',
+  style: 'default' | 'terminal'
 ): number {
-  if (!config.enabled || config.sections.length === 0) {
-    return 0
+  const titleHeight = SECTION_TITLE_HEIGHT[style]
+  const hideTitle = (config.nonEssential as any)?.[`${section}_hide_title`] ?? false
+  const titleSpace = hideTitle ? 0 : titleHeight
+
+  // Reputation - simple content (1 line)
+  if (section === 'reputation') {
+    return titleSpace + 60
   }
 
-  const SECTION_BASE_HEIGHT = 80
-  const TITLE_HEIGHT = 30
-  const ITEM_HEIGHT = 50
-
-  let totalHeight = 0
-
-  for (const section of config.sections) {
-    const hideTitle = (config.nonEssential as any)?.[`${section}_hide_title`] || false
-    const sectionTitleHeight = hideTitle ? 0 : TITLE_HEIGHT
-
-    switch (section) {
-      case 'reputation':
-      case 'badges':
-      case 'answers_questions':
-        totalHeight += SECTION_BASE_HEIGHT + sectionTitleHeight
-        break
-      case 'tags_expertise': {
-        const maxItems = config.nonEssential?.tags_expertise_max || 5
-        const itemCount = Math.min(data.topTags.length, maxItems)
-        totalHeight += sectionTitleHeight + (itemCount * ITEM_HEIGHT) + 20
-        break
-      }
-    }
-
-    totalHeight += 20
+  // Badges - content with 2 lines
+  if (section === 'badges') {
+    return titleSpace + 80
   }
 
-  return totalHeight
+  // Answers & Questions - simple content (1 line)
+  if (section === 'answers_questions') {
+    return titleSpace + 60
+  }
+
+  // Tags Expertise - list with items (50px/item + 4px gap)
+  if (section === 'tags_expertise') {
+    const maxItems = config.nonEssential?.tags_expertise_max || 5
+    const itemHeight = 50
+    const gapBetweenItems = 4 // gap-1 (4px)
+    const itemsHeight = maxItems * itemHeight
+    const gapHeight = Math.max(0, maxItems - 1) * gapBetweenItems
+    return titleSpace + itemsHeight + gapHeight
+  }
+
+  // Default fallback
+  const defaultHeight = size === 'half' ? 150 : 200
+  return titleSpace + defaultHeight
 }
 
 

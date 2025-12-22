@@ -95,6 +95,10 @@ const PLUGIN_CALCULATOR_FUNCTIONS: Record<string, string> = {
   github: 'calculateGitHubHeight',
   lastfm: 'calculateLastFMHeight',
   '16personalities': 'calculatePersonality16Height',
+  stackoverflow: 'calculateStackOverflowHeight',
+  duolingo: 'calculateDuolingoHeight',
+  codewars: 'calculateCodewarsHeight',
+  codeforces: 'calculateCodeforcesHeight',
 }
 
 /**

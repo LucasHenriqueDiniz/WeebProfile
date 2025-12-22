@@ -1,45 +1,54 @@
 /**
- * Cálculo de altura para o plugin Codeforces
+ * Height Calculator for Codeforces Plugin
+ * 
+ * Calculates the estimated height of Codeforces sections based on configuration.
+ * Returns the height in pixels.
  */
 
-import type { CodeforcesConfig, CodeforcesData } from './types'
+import type { CodeforcesConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
+/**
+ * Calculates height for Codeforces sections
+ */
 export function calculateCodeforcesHeight(
+  section: string,
   config: CodeforcesConfig,
-  data: CodeforcesData
+  size: 'half' | 'full',
+  style: 'default' | 'terminal'
 ): number {
-  if (!config.enabled || config.sections.length === 0) {
-    return 0
+  const titleHeight = SECTION_TITLE_HEIGHT[style]
+  const hideTitle = (config.nonEssential as any)?.[`${section}_hide_title`] ?? false
+  const titleSpace = hideTitle ? 0 : titleHeight
+
+  // Rating & Rank - simple content (1 line)
+  if (section === 'rating_rank') {
+    return titleSpace + 60
   }
 
-  const SECTION_BASE_HEIGHT = 80
-  const TITLE_HEIGHT = 30
-  const ITEM_HEIGHT = 50
-
-  let totalHeight = 0
-
-  for (const section of config.sections) {
-    const hideTitle = (config.nonEssential as any)?.[`${section}_hide_title`] || false
-    const sectionTitleHeight = hideTitle ? 0 : TITLE_HEIGHT
-
-    switch (section) {
-      case 'rating_rank':
-      case 'contests_participated':
-      case 'problems_solved':
-        totalHeight += SECTION_BASE_HEIGHT + sectionTitleHeight
-        break
-      case 'recent_submissions': {
-        const maxItems = config.nonEssential?.recent_submissions_max || 5
-        const itemCount = Math.min(data.recentSubmissions.length, maxItems)
-        totalHeight += sectionTitleHeight + (itemCount * ITEM_HEIGHT) + 20
-        break
-      }
-    }
-
-    totalHeight += 20
+  // Contests Participated - simple content (1 line)
+  if (section === 'contests_participated') {
+    return titleSpace + 60
   }
 
-  return totalHeight
+  // Problems Solved - content with 2-3 lines (total + difficulties)
+  if (section === 'problems_solved') {
+    return titleSpace + 80
+  }
+
+  // Recent Submissions - list with items (50px/item + 4px gap)
+  if (section === 'recent_submissions') {
+    const maxItems = config.nonEssential?.recent_submissions_max || 5
+    const itemHeight = 50
+    const gapBetweenItems = 4 // gap-1 (4px)
+    const itemsHeight = maxItems * itemHeight
+    const gapHeight = Math.max(0, maxItems - 1) * gapBetweenItems
+    return titleSpace + itemsHeight + gapHeight
+  }
+
+  // Default fallback
+  const defaultHeight = size === 'half' ? 150 : 200
+  return titleSpace + defaultHeight
 }
 
 

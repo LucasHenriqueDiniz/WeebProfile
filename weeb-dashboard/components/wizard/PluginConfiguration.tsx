@@ -443,7 +443,10 @@ export function PluginConfiguration() {
                           )}
                           {(() => {
                             const hasOAuth = metadata.essentialConfigKeysMetadata?.some(
-                              (keyMeta) => keyMeta.type === "oauth"
+                              (keyMeta) => {
+                                // Type assertion needed because TypeScript may not infer the union type correctly
+                                return (keyMeta.type as "text" | "password" | "oauth") === "oauth"
+                              }
                             )
                             return hasOAuth ? (
                               <TooltipProvider>

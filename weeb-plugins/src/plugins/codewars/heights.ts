@@ -1,50 +1,59 @@
 /**
- * Cálculo de altura para o plugin Codewars
+ * Height Calculator for Codewars Plugin
+ * 
+ * Calculates the estimated height of Codewars sections based on configuration.
+ * Returns the height in pixels.
  */
 
-import type { CodewarsConfig, CodewarsData } from './types'
+import type { CodewarsConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
+/**
+ * Calculates height for Codewars sections
+ */
 export function calculateCodewarsHeight(
+  section: string,
   config: CodewarsConfig,
-  data: CodewarsData
+  size: 'half' | 'full',
+  style: 'default' | 'terminal'
 ): number {
-  if (!config.enabled || config.sections.length === 0) {
-    return 0
+  const titleHeight = SECTION_TITLE_HEIGHT[style]
+  const hideTitle = (config.nonEssential as any)?.[`${section}_hide_title`] ?? false
+  const titleSpace = hideTitle ? 0 : titleHeight
+
+  // Rank & Honor - simple content (1 line)
+  if (section === 'rank_honor') {
+    return titleSpace + 60
   }
 
-  const SECTION_BASE_HEIGHT = 80
-  const TITLE_HEIGHT = 30
-  const ITEM_HEIGHT = 50
-
-  let totalHeight = 0
-
-  for (const section of config.sections) {
-    const hideTitle = (config.nonEssential as any)?.[`${section}_hide_title`] || false
-    const sectionTitleHeight = hideTitle ? 0 : TITLE_HEIGHT
-
-    switch (section) {
-      case 'rank_honor':
-      case 'leaderboard_position':
-        totalHeight += SECTION_BASE_HEIGHT + sectionTitleHeight
-        break
-      case 'completed_kata': {
-        const maxItems = config.nonEssential?.completed_kata_max || 5
-        const itemCount = Math.min(data.completedKata.length, maxItems)
-        totalHeight += sectionTitleHeight + (itemCount * ITEM_HEIGHT) + 20
-        break
-      }
-      case 'languages_proficiency': {
-        const maxItems = config.nonEssential?.languages_proficiency_max || 5
-        const itemCount = Math.min(Object.keys(data.languages).length, maxItems)
-        totalHeight += sectionTitleHeight + (itemCount * ITEM_HEIGHT) + 20
-        break
-      }
-    }
-
-    totalHeight += 20
+  // Leaderboard Position - simple content (1 line)
+  if (section === 'leaderboard_position') {
+    return titleSpace + 60
   }
 
-  return totalHeight
+  // Completed Kata - list with items (50px/item + 4px gap)
+  if (section === 'completed_kata') {
+    const maxItems = config.nonEssential?.completed_kata_max || 5
+    const itemHeight = 50
+    const gapBetweenItems = 4 // gap-1 (4px)
+    const itemsHeight = maxItems * itemHeight
+    const gapHeight = Math.max(0, maxItems - 1) * gapBetweenItems
+    return titleSpace + itemsHeight + gapHeight
+  }
+
+  // Languages Proficiency - list with items (50px/item + 4px gap)
+  if (section === 'languages_proficiency') {
+    const maxItems = config.nonEssential?.languages_proficiency_max || 5
+    const itemHeight = 50
+    const gapBetweenItems = 4 // gap-1 (4px)
+    const itemsHeight = maxItems * itemHeight
+    const gapHeight = Math.max(0, maxItems - 1) * gapBetweenItems
+    return titleSpace + itemsHeight + gapHeight
+  }
+
+  // Default fallback
+  const defaultHeight = size === 'half' ? 150 : 200
+  return titleSpace + defaultHeight
 }
 
 

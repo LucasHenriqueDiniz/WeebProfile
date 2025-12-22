@@ -44,6 +44,7 @@ interface GenerateRequest {
   dev?: boolean
   mock?: boolean // Alias for dev
   userId?: string // User ID to fetch essential configs from Supabase (production)
+  useRealMeasurement?: boolean // If true, measures actual height with Playwright (slower but accurate)
   // essentialConfigs?: Record<string, any> // Only for tests (test page) - do not use in production
   debug?: boolean // Include debug information in response
 }
@@ -176,6 +177,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       primaryColor: requestDataTyped.primaryColor || "#ff7a00", // Use default color if not defined
       essentialConfigs, // Use configs fetched from Supabase (production) or provided directly (tests)
       dev: requestDataTyped.dev === true || requestDataTyped.mock === true, // Use mock data if dev=true or mock=true
+      useRealMeasurement: requestDataTyped.useRealMeasurement === true, // Measure actual height with Playwright
     }
 
     console.log("🔧 [SERVER] Theme mapping:", {

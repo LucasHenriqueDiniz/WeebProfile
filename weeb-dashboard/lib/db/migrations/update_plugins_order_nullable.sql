@@ -21,3 +21,6 @@ UPDATE templates
 SET plugins_order = NULL 
 WHERE plugins_order = '' OR plugins_order IS NULL;
 
+
+
+

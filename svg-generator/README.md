@@ -4,11 +4,12 @@ Servidor HTTP Node.js para geração de SVGs usando React Server Components.
 
 ## 🎯 Características
 
-- ✅ **Sem Puppeteer** - Cálculo manual de altura (rápido e leve)
+- ✅ **Medição Híbrida de Altura** - Cálculo estimado (rápido) ou medição real com Playwright (preciso)
+- ✅ **Browser Pool** - Reutiliza browser Playwright para eficiência (otimizado para Railway FREE tier)
 - ✅ **React Server Components** - Renderização server-side com `react-dom/server`
 - ✅ **ES Modules** - Imports nativos
 - ✅ **Type Safe** - TypeScript rigoroso
-- ✅ **Railway Ready** - Configurado para deploy no Railway
+- ✅ **Railway Ready** - Configurado para deploy no Railway (incluindo FREE tier)
 - ✅ **Seguro** - Busca essential configs diretamente do Supabase (frontend nunca acessa)
 
 ## 📦 Instalação
@@ -116,7 +117,8 @@ Gera um SVG baseado na configuração fornecida.
   "hideTerminalEmojis": false,
   "hideTerminalHeader": false,
   "userId": "user-id-here", // Para buscar essential configs do Supabase (produção)
-  "mock": false // true para usar dados mockados
+  "mock": false, // true para usar dados mockados
+  "useRealMeasurement": false // true para medir altura real com Playwright (mais lento mas preciso)
 }
 ```
 
@@ -147,11 +149,14 @@ O frontend **NUNCA** acessa essential configs diretamente. Tudo fica isolado no 
 1. **Request** → Recebe config + `userId` (ou `essentialConfigs` para testes)
 2. **Buscar Configs** → Se `userId` fornecido, busca essential configs do Supabase
 3. **Configuração** → Valida e normaliza config
-4. **Cálculo de Dimensões** → Calcula altura estimada (sem Puppeteer)
+4. **Cálculo de Dimensões** → 
+   - Se `useRealMeasurement=false` (padrão): Calcula altura estimada (rápido)
+   - Se `useRealMeasurement=true`: Calcula estimada primeiro, depois mede real com Playwright
 5. **Carregamento CSS** → Carrega fonts, tailwind, globals
 6. **Renderização Plugins** → Renderiza plugins ativos usando React
 7. **Criação SVG** → Cria container SVG com foreignObject
 8. **Renderização Final** → Converte React para string SVG usando `renderToString`
+9. **Medição Real** (se habilitado) → Mede altura real e re-gera se diferença > 50px
 
 ### Estrutura
 
@@ -162,8 +167,10 @@ svg-generator/
 │   │   └── essential-configs.ts  # Busca essential configs do Supabase
 │   ├── generator/
 │   │   ├── svg-generator.ts      # Gerador principal
-│   │   ├── height-calculator.ts # Cálculo manual de altura
-│   │   └── css-loader.tsx       # Carregamento de CSS
+│   │   ├── height-calculator.ts  # Cálculo estimado de altura
+│   │   ├── height-measurer.ts    # Medição real com Playwright
+│   │   ├── browser-pool.ts       # Pool de browsers reutilizáveis
+│   │   └── css-loader.tsx        # Carregamento de CSS
 │   ├── renderer/
 │   │   ├── react-renderer.tsx   # Renderização de plugins
 │   │   └── template-renderer.tsx # Criação do container SVG
@@ -198,6 +205,38 @@ const sql = postgres(process.env.DATABASE_URL, {
 ```
 DATABASE_URL=postgresql://postgres.xxxxx:password@aws-0-us-east-1.pooler.supabase.com:6543/postgres
 ```
+
+## 📏 Medição de Altura
+
+O svg-generator oferece duas estratégias para calcular a altura dos SVGs:
+
+### Cálculo Estimado (Padrão)
+- **Rápido** (~50-100ms)
+- **Leve** (sem browser)
+- **Preciso** para a maioria dos casos
+- Usa funções de cálculo por plugin (`calculate*Height`)
+
+### Medição Real com Playwright
+- **Preciso** (mede altura real renderizada)
+- **Mais lento** (~1-2s por medida)
+- **Requer Playwright** (instalado automaticamente)
+- Útil quando:
+  - Quantidade de dados varia (APIs retornam diferentes quantidades)
+  - Erros de API podem fazer itens não renderizarem
+  - Precisa de precisão máxima
+
+**Uso:**
+```json
+{
+  "useRealMeasurement": true  // Habilita medição real
+}
+```
+
+**Otimizações para Railway FREE tier:**
+- Browser pool reutiliza 1 browser (economiza memória)
+- Timeout de 5s para evitar travamentos
+- Fecha browser após 5min de inatividade
+- Fallback automático para cálculo estimado em caso de erro
 
 ## 🐛 Debug
 

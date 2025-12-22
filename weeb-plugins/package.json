@@ -74,6 +74,22 @@
       "import": "./dist/plugins/lastfm/heights.js",
       "types": "./dist/plugins/lastfm/heights.d.ts"
     },
+    "./plugins/stackoverflow/heights": {
+      "import": "./dist/plugins/stackoverflow/heights.js",
+      "types": "./dist/plugins/stackoverflow/heights.d.ts"
+    },
+    "./plugins/duolingo/heights": {
+      "import": "./dist/plugins/duolingo/heights.js",
+      "types": "./dist/plugins/duolingo/heights.d.ts"
+    },
+    "./plugins/codewars/heights": {
+      "import": "./dist/plugins/codewars/heights.js",
+      "types": "./dist/plugins/codewars/heights.d.ts"
+    },
+    "./plugins/codeforces/heights": {
+      "import": "./dist/plugins/codeforces/heights.js",
+      "types": "./dist/plugins/codeforces/heights.d.ts"
+    },
     "./shared/types/heights": {
       "import": "./dist/plugins/shared/types/heights.js",
       "types": "./dist/plugins/shared/types/heights.d.ts"

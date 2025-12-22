@@ -100,16 +100,6 @@ export function PreviewRenderer({
       }
     }
     
-    console.log('[PreviewRenderer] Prepared configs:', {
-      count: Object.keys(configs).length,
-      plugins: Object.keys(configs),
-      details: Object.entries(configs).map(([name, config]) => ({
-        name,
-        enabled: config.enabled,
-        sections: config.sections,
-      })),
-    })
-    
     return configs
   }, [plugins, style, size, theme, hideTerminalEmojis])
 
@@ -118,16 +108,7 @@ export function PreviewRenderer({
     async function loadPlugins() {
       // Obter plugins ativos
       const activePlugins = await getActivePlugins(preparedPluginsConfig)
-      const map = new Map(activePlugins)
-      
-      console.log('[PreviewRenderer] Loaded plugins:', Array.from(map.keys()))
-      console.log('[PreviewRenderer] Prepared configs:', Object.keys(preparedPluginsConfig))
-      console.log('[PreviewRenderer] Prepared configs details:', Object.entries(preparedPluginsConfig).map(([name, config]) => ({
-        name,
-        enabled: config?.enabled,
-        sections: config?.sections,
-      })))
-      
+      const map = new Map(activePlugins)      
       setActivePluginsMap(map)
     }
 
@@ -148,13 +129,6 @@ export function PreviewRenderer({
       ...allEnabledPlugins.filter(name => !pluginsOrder.includes(name)).sort()
     ]
     
-    console.log('[PreviewRenderer] Rendering plugins:', {
-      allEnabledPlugins,
-      pluginsOrder,
-      orderedPlugins,
-      preparedConfigsKeys: Object.keys(preparedPluginsConfig),
-    })
-
     const components: React.ReactElement[] = []
 
     for (const pluginName of orderedPlugins) {
@@ -163,14 +137,6 @@ export function PreviewRenderer({
       const pluginData = (data as Record<string, any>)[pluginName]
 
       if (!plugin || !pluginConfig || !pluginConfig.enabled || !pluginData) {
-        console.log(`[PreviewRenderer] Skipping ${pluginName}:`, {
-          hasPlugin: !!plugin,
-          hasConfig: !!pluginConfig,
-          enabled: pluginConfig?.enabled,
-          hasData: !!pluginData,
-          sections: pluginConfig?.sections,
-          dataKeys: pluginData ? Object.keys(pluginData) : null,
-        })
         continue
       }
 
@@ -180,9 +146,6 @@ export function PreviewRenderer({
         // Sempre adicionar ao array - deixar o React decidir se é vazio
         // Componentes que retornam <></> ainda são válidos
         if (rendered === null || rendered === undefined) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`[PreviewRenderer] Plugin ${pluginName} rendered null/undefined`)
-          }
           continue
         }
         
@@ -230,15 +193,6 @@ export function PreviewRenderer({
     // 3. Plugins não têm seções ativas
     const enabledCount = Object.values(plugins).filter(p => p?.enabled).length
     const withSections = Object.values(plugins).filter(p => p?.enabled && p.sections?.length > 0).length
-    
-    console.log('[PreviewRenderer] No plugins rendered:', {
-      enabledCount,
-      withSections,
-      pluginsOrder,
-      dataKeys: Object.keys(data),
-      activePluginsKeys: Array.from(activePluginsMap.keys()),
-      preparedConfigKeys: Object.keys(preparedPluginsConfig),
-    })
     
     return (
       <div

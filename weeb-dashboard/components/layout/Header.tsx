@@ -267,14 +267,16 @@ export function Header({
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between px-6">
           {/* Left */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             {showSidebarToggle && onSidebarToggle && (
-              <Button variant="ghost" size="icon" className="lg:hidden" onClick={onSidebarToggle}>
+              <Button variant="ghost" size="icon" onClick={onSidebarToggle} className="h-9 w-9">
                 <Menu className="w-5 h-5" />
               </Button>
             )}
-            <div className="flex items-center gap-3">
-              <ImageIcon className="w-5 h-5" />
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-sm">
+                <span className="text-white font-bold text-sm">W</span>
+              </div>
               <span className="font-bold text-lg">WeebProfile</span>
             </div>
 

@@ -33,6 +33,7 @@ export interface SvgConfig {
   hideTerminalHeader?: boolean
   primaryColor?: string // Cor primária personalizada
   dev?: boolean // Modo desenvolvimento (usa dados mock)
+  useRealMeasurement?: boolean // Se true, mede altura real com Playwright (mais lento mas preciso)
   // Configurações essenciais (API keys, tokens) por plugin
   // Totalmente dinâmico - suporta qualquer plugin
   essentialConfigs?: {
