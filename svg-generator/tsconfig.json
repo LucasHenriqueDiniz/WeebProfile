@@ -18,6 +18,7 @@
     "declaration": true,
     "declarationMap": false,
     "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
       "@weeb/weeb-plugins/*": ["../weeb-plugins/src/*"]
