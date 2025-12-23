@@ -7,11 +7,11 @@ import { myAnimeListPlugin } from "./myanimelist/index.js"
 import type { EssentialPluginConfig } from "./shared/types/base.js"
 import type { Plugin } from "./shared/types/plugin.js"
 import { steamPlugin } from "./steam/index.js"
-import { spotifyPlugin } from './spotify/index'
-import { duolingoPlugin } from './duolingo/index'
-import { codewarsPlugin } from './codewars/index'
-import { codeforcesPlugin } from './codeforces/index'
-import { stackoverflowPlugin } from './stackoverflow/index'
+import { spotifyPlugin } from './spotify/index.js'
+import { duolingoPlugin } from './duolingo/index.js'
+import { codewarsPlugin } from './codewars/index.js'
+import { codeforcesPlugin } from './codeforces/index.js'
+import { stackoverflowPlugin } from './stackoverflow/index.js'
 
 export class PluginManager {
   private static instance: PluginManager

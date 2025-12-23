@@ -12,8 +12,8 @@
  * Terminal/console style with monospace font and terminal themes
  */
 
-import { terminalThemes } from '../../themes/themes'
-import type { TerminalTheme } from '../../themes/types'
+import { terminalThemes } from '../../themes/themes.js'
+import type { TerminalTheme } from '../../themes/types.js'
 
 /**
  * Terminal style CSS (embedded for browser compatibility)

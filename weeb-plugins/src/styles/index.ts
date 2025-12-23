@@ -7,8 +7,8 @@
  * For server-only functions (getCompleteCSS, getSharedCSS), use './server'
  */
 
-import { styleRegistry, getStyle, getStyleCSS, getAvailableStyles, styleExists } from './registry'
-import { getPluginCSS, getPluginsCSS, getActivePluginsCSS } from './plugins'
+import { styleRegistry, getStyle, getStyleCSS, getAvailableStyles, styleExists } from './registry.js'
+import { getPluginCSS, getPluginsCSS, getActivePluginsCSS } from './plugins.js'
 
 // Browser-compatible exports
 export { styleRegistry, getStyle, getStyleCSS, getAvailableStyles, styleExists }
