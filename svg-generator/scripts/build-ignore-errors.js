@@ -61,57 +61,52 @@ if (tscOutput.includes("Compilation complete") || tscOutput.includes("Found 0 er
   console.log("✅ TypeScript terminou com sucesso!")
 }
 
-// Verificar arquivo crítico gerado
-// Com rootDir: "./src" e outDir: "./dist", o TypeScript gera dist/server.js (estrutura plana)
-const distServerJs = resolve(cwd, "dist/server.js")
-const distSrcServerJs = resolve(cwd, "dist/src/server.js")
-
-console.log(`📂 Verificando arquivos gerados...`)
-console.log(`   dist/server.js existe: ${existsSync(distServerJs)}`)
-console.log(`   dist/src/server.js existe: ${existsSync(distSrcServerJs)}`)
-
-// Verificar se os arquivos principais foram gerados
-// CRÍTICO: server.js é obrigatório para o serviço funcionar
+// Buscar recursivamente por server.js em dist/
 // O TypeScript pode gerar em diferentes locais dependendo do contexto (monorepo vs standalone)
-const criticalFiles = [
-  "dist/server.js", // Estrutura plana (rootDir: "./src")
-  "dist/src/server.js", // Estrutura preservada
-  "dist/svg-generator/src/server.js", // Estrutura do workspace (monorepo)
-]
+console.log(`📂 Buscando server.js em dist/...`)
 
-const importantFiles = [
-  "dist/index.js",
-  "dist/index.d.ts",
-  "dist/server.js",
-  "dist/config/config-loader.js",
-  "dist/generator/svg-generator.js",
-]
-
-// Verificar arquivos críticos primeiro
-const criticalFilesExist = criticalFiles.some((file) => existsSync(resolve(cwd, file)))
-const generatedFiles = importantFiles.filter((file) => existsSync(resolve(cwd, file)))
-
-// Determinar qual caminho base está sendo usado
-let distBasePath = "dist"
 let actualServerPath = null
+let distBasePath = "dist"
+const distPath = resolve(cwd, "dist")
 
-for (const file of criticalFiles) {
-  const fullPath = resolve(cwd, file)
-  if (existsSync(fullPath)) {
-    actualServerPath = file
-    if (file.includes("svg-generator/src")) {
-      distBasePath = "dist/svg-generator/src"
-      console.log("📁 Arquivos gerados em dist/svg-generator/src/ (estrutura do workspace)")
-    } else if (file.includes("dist/src")) {
-      distBasePath = "dist/src"
-      console.log("📁 Arquivos gerados em dist/src/ (estrutura preservada)")
+if (existsSync(distPath)) {
+  try {
+    const distFiles = readdirSync(distPath, { recursive: true })
+    const serverJsFiles = distFiles.filter((f) => 
+      typeof f === "string" && f.endsWith("server.js")
+    )
+    
+    if (serverJsFiles.length > 0) {
+      // Pegar o primeiro server.js encontrado
+      actualServerPath = `dist/${serverJsFiles[0]}`
+      const fullPath = resolve(cwd, actualServerPath)
+      
+      if (existsSync(fullPath)) {
+        console.log(`✅ server.js encontrado em: ${actualServerPath}`)
+        
+        // Determinar estrutura baseada no caminho encontrado
+        if (actualServerPath.includes("svg-generator/src")) {
+          distBasePath = "dist/svg-generator/src"
+          console.log("📁 Estrutura: workspace (monorepo)")
+        } else if (actualServerPath.includes("src/")) {
+          distBasePath = "dist/src"
+          console.log("📁 Estrutura: preservada (src/)")
+        } else {
+          distBasePath = "dist"
+          console.log("📁 Estrutura: plana")
+        }
+      }
     } else {
-      distBasePath = "dist"
-      console.log("📁 Arquivos gerados em dist/ (estrutura plana)")
+      console.log("⚠️  server.js não encontrado em dist/")
     }
-    break
+  } catch (error) {
+    console.error(`❌ Erro ao buscar em dist/: ${error}`)
   }
+} else {
+  console.log("⚠️  dist/ não existe ainda")
 }
+
+const criticalFilesExist = actualServerPath !== null && existsSync(resolve(cwd, actualServerPath))
 
 if (!criticalFilesExist) {
   console.error("❌ ERRO CRÍTICO: Arquivos obrigatórios não foram gerados!")
@@ -122,22 +117,35 @@ if (!criticalFilesExist) {
   console.error(`   Build succeeded: ${buildSucceeded}`)
   console.error(`   Output length: ${tscOutput.length} chars`)
 
-  // Listar conteúdo completo de dist/
-  const distPath = resolve(cwd, "dist")
+  // Listar conteúdo completo de dist/ para debug
   if (existsSync(distPath)) {
     try {
       const distFiles = readdirSync(distPath, { recursive: true })
       console.error(`   Total de arquivos em dist/: ${distFiles.length}`)
       const jsFiles = distFiles.filter((f) => typeof f === "string" && f.endsWith(".js"))
       console.error(`   Arquivos .js em dist/: ${jsFiles.length}`)
-      if (jsFiles.length > 0) {
-        console.error(`   Arquivos .js encontrados:`)
-        jsFiles.slice(0, 20).forEach((f) => {
+      
+      // Procurar especificamente por server.js
+      const serverJsFiles = distFiles.filter((f) => 
+        typeof f === "string" && f.endsWith("server.js")
+      )
+      
+      if (serverJsFiles.length > 0) {
+        console.error(`   ✅ server.js encontrado em:`)
+        serverJsFiles.forEach((f) => {
           const fullPath = resolve(distPath, f)
           const exists = existsSync(fullPath)
           const size = exists ? statSync(fullPath).size : 0
-          console.error(`     - ${f} (${exists ? `${size} bytes` : 'não existe'})`)
+          console.error(`     - dist/${f} (${exists ? `${size} bytes` : 'não existe'})`)
         })
+      } else {
+        console.error(`   ❌ Nenhum server.js encontrado em dist/`)
+        if (jsFiles.length > 0) {
+          console.error(`   Primeiros arquivos .js encontrados:`)
+          jsFiles.slice(0, 10).forEach((f) => {
+            console.error(`     - ${f}`)
+          })
+        }
       }
     } catch (error) {
       console.error(`   Erro ao listar dist/: ${error}`)
@@ -146,24 +154,7 @@ if (!criticalFilesExist) {
     console.error("   dist/ não existe!")
   }
 
-  // Verificar se há algum arquivo server.js em qualquer lugar
-  try {
-    const findServerJs = execSync("find . -name 'server.js' -type f 2>/dev/null || echo 'find não encontrou nada'", {
-      cwd,
-      encoding: "utf8"
-    }).trim()
-    console.error(`   Arquivos server.js encontrados: ${findServerJs}`)
-  } catch (error) {
-    console.error(`   Erro ao procurar server.js: ${error.message}`)
-  }
-
-  console.error("💡 O build TypeScript deve gerar dist/server.js, dist/src/server.js ou dist/svg-generator/src/server.js")
-  
-  // Se encontrou o arquivo em algum lugar, mostrar onde está
-  if (actualServerPath) {
-    console.error(`   ⚠️  Arquivo encontrado em: ${actualServerPath}`)
-    console.error(`   💡 Ajuste o package.json start script para: node ${actualServerPath}`)
-  }
+  console.error("💡 O build TypeScript deve gerar server.js em algum lugar dentro de dist/")
 
   // Mesmo sem arquivos críticos, continuar se build foi bem-sucedido
   if (buildSucceeded) {
@@ -176,36 +167,37 @@ if (!criticalFilesExist) {
 
 if (criticalFilesExist && actualServerPath) {
   console.log(`✅ Arquivo crítico encontrado: ${actualServerPath}`)
-  console.log(`✅ ${generatedFiles.length}/${importantFiles.length} arquivos principais gerados`)
   
-  // Verificar se o config-loader tem as correções
-  const configLoaderPaths = [
-    resolve(cwd, "dist/config/config-loader.js"),
-    resolve(cwd, "dist/src/config/config-loader.js"),
-    resolve(cwd, "dist/svg-generator/src/config/config-loader.js"),
-  ]
-  
-  for (const configLoaderPath of configLoaderPaths) {
-    if (existsSync(configLoaderPath)) {
-      const content = readFileSync(configLoaderPath, "utf8")
-      if (content.includes("primaryColor") && content.includes("pluginsOrder")) {
-        console.log(`✅ Correções aplicadas em ${configLoaderPath.replace(cwd, '.')}!`)
+  // Verificar se o config-loader tem as correções (buscar recursivamente também)
+  let configLoaderFound = false
+  if (existsSync(distPath)) {
+    try {
+      const distFiles = readdirSync(distPath, { recursive: true })
+      const configLoaderFiles = distFiles.filter((f) => 
+        typeof f === "string" && f.endsWith("config-loader.js")
+      )
+      
+      for (const configLoaderFile of configLoaderFiles) {
+        const configLoaderPath = resolve(distPath, configLoaderFile)
+        if (existsSync(configLoaderPath)) {
+          const content = readFileSync(configLoaderPath, "utf8")
+          if (content.includes("primaryColor") && content.includes("pluginsOrder")) {
+            console.log(`✅ Correções aplicadas em dist/${configLoaderFile}!`)
+            configLoaderFound = true
+            break
+          }
+        }
       }
-      break
+    } catch (error) {
+      // Ignorar erro, não é crítico
     }
   }
 
   console.log("✅ Build concluído! Arquivos prontos para uso.")
-  console.log(`💡 Certifique-se de que o package.json start script aponta para: ${actualServerPath}`)
+  console.log(`💡 O script de start detectará automaticamente o caminho: ${actualServerPath}`)
   process.exit(0)
-} else if (generatedFiles.length > 0) {
-  // Se não encontrou arquivos importantes mas arquivos críticos existem, continuar
-  if (criticalFilesExist) {
-    console.log("⚠️  Alguns arquivos importantes não foram encontrados, mas arquivos críticos existem")
-    console.log("✅ Continuando com build...")
-    process.exit(0)
-  } else {
-    console.error("❌ Build falhou - arquivos críticos não foram gerados")
-    process.exit(1)
-  }
+} else {
+  // Se não encontrou server.js, falhar
+  console.error("❌ Build falhou - server.js não foi encontrado em dist/")
+  process.exit(1)
 }
