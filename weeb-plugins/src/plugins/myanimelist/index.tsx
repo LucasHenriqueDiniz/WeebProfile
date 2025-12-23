@@ -7,11 +7,11 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin.js'
-import type { PluginConfig, PluginData } from '../../types/index.js'
-import type { MyAnimeListConfig, MyAnimeListData } from './types.js'
-import { RenderMyAnimeList } from './components/RenderMyAnimeList.js'
-import { fetchMyAnimeListData } from './services/fetchMyAnimeList.js'
+import type { Plugin } from '../shared/types/plugin'
+import type { PluginConfig, PluginData } from '../../types/index'
+import type { MyAnimeListConfig, MyAnimeListData } from './types'
+import { RenderMyAnimeList } from './components/RenderMyAnimeList'
+import { fetchMyAnimeListData } from './services/fetchMyAnimeList'
 
 export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginData & MyAnimeListData> = {
   name: 'myanimelist',

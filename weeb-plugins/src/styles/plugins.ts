@@ -4,7 +4,7 @@
  * Aggregates CSS from all active plugins
  */
 
-import { PluginManager } from '../plugins/manager.js'
+import { PluginManager } from '../plugins/manager'
 
 /**
  * Get CSS from a specific plugin

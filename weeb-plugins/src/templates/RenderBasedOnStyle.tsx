@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { TerminalBody } from './Terminal/TerminalBody.js'
+import { TerminalBody } from './Terminal/TerminalBody'
 
 interface RenderBasedOnStyleProps {
   style: 'default' | 'terminal'

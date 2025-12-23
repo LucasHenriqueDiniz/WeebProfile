@@ -5,10 +5,10 @@
  */
 
 import React from 'react'
-import { TerminalHeader } from './Terminal/TerminalHeader.js'
-import { getDefaultThemeVariables } from '../themes/theme-utils.js'
-import { getTerminalThemeVariables } from '../themes/theme-utils.js'
-import type { DefaultTheme, TerminalTheme } from '../themes/types.js'
+import { TerminalHeader } from './Terminal/TerminalHeader'
+import { getDefaultThemeVariables } from '../themes/theme-utils'
+import { getTerminalThemeVariables } from '../themes/theme-utils'
+import type { DefaultTheme, TerminalTheme } from '../themes/types'
 
 interface PluginStylesProps {
   style: 'default' | 'terminal'

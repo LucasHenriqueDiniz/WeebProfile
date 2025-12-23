@@ -2,7 +2,7 @@
  * Personality type data and mappings for 16Personalities
  */
 
-import type { PersonalityType, Personality16Data } from '../types.js'
+import type { PersonalityType, Personality16Data } from '../types'
 
 /**
  * Mapping of personality types to complete data

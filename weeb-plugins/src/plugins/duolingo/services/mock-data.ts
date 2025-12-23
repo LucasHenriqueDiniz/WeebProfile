@@ -3,7 +3,7 @@
  * Usado em modo desenvolvimento
  */
 
-import type { DuolingoData } from '../types.js'
+import type { DuolingoData } from '../types'
 
 export function getMockDuolingoData(): DuolingoData {
   return {

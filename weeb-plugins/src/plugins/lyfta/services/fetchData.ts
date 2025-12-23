@@ -2,9 +2,9 @@
  * Fetches data from Lyfta API
  */
 
-import type { LyftaConfig, LyftaData } from '../types.js'
-import { getMockLyftaData } from './mock-data.js'
-import { urlToBase64 } from '../../../utils/image-to-base64.js'
+import type { LyftaConfig, LyftaData } from '../types'
+import { getMockLyftaData } from './mock-data'
+import { urlToBase64 } from '../../../utils/image-to-base64'
 
 const BASE_URL = 'https://my.lyfta.app'
 

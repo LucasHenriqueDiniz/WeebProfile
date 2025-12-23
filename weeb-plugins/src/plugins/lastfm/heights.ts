@@ -5,8 +5,8 @@
  * Returns the height in pixels.
  */
 
-import type { LastFmConfig } from './types.js'
-import { SECTION_TITLE_HEIGHT } from '../shared/types/heights.js'
+import type { LastFmConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
 /**
  * Layout heights for LastFM sections

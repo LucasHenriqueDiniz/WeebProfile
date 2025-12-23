@@ -1,17 +1,17 @@
-import type { PluginConfig, PluginData } from "../types/index.js"
-import { personality16Plugin } from "./16personalities/index.js"
-import { githubPlugin } from "./github/index.js"
-import { lastFmPlugin } from "./lastfm/index.js"
-import { lyftaPlugin } from "./lyfta/index.js"
-import { myAnimeListPlugin } from "./myanimelist/index.js"
-import type { EssentialPluginConfig } from "./shared/types/base.js"
-import type { Plugin } from "./shared/types/plugin.js"
-import { steamPlugin } from "./steam/index.js"
-import { spotifyPlugin } from './spotify/index.js'
-import { duolingoPlugin } from './duolingo/index.js'
-import { codewarsPlugin } from './codewars/index.js'
-import { codeforcesPlugin } from './codeforces/index.js'
-import { stackoverflowPlugin } from './stackoverflow/index.js'
+import type { PluginConfig, PluginData } from "../types/index"
+import { personality16Plugin } from "./16personalities/index"
+import { githubPlugin } from "./github/index"
+import { lastFmPlugin } from "./lastfm/index"
+import { lyftaPlugin } from "./lyfta/index"
+import { myAnimeListPlugin } from "./myanimelist/index"
+import type { EssentialPluginConfig } from "./shared/types/base"
+import type { Plugin } from "./shared/types/plugin"
+import { steamPlugin } from "./steam/index"
+import { spotifyPlugin } from './spotify/index'
+import { duolingoPlugin } from './duolingo/index'
+import { codewarsPlugin } from './codewars/index'
+import { codeforcesPlugin } from './codeforces/index'
+import { stackoverflowPlugin } from './stackoverflow/index'
 
 export class PluginManager {
   private static instance: PluginManager

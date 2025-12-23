@@ -5,11 +5,11 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin.js'
-import type { PluginData } from '../../types/index.js'
-import type { Personality16Config, Personality16Data } from './types.js'
-import { RenderPersonality16 } from './components/Render16personalities.js'
-import { fetchPersonality16Data } from './services/fetchData.js'
+import type { Plugin } from '../shared/types/plugin'
+import type { PluginData } from '../../types/index'
+import type { Personality16Config, Personality16Data } from './types'
+import { RenderPersonality16 } from './components/Render16personalities'
+import { fetchPersonality16Data } from './services/fetchData'
 
   /**
    * 16personalities Plugin

@@ -5,17 +5,17 @@
  */
 
 // Types
-export * from './types/base.js'
-export * from './types/plugin.js'
+export * from './types/base'
+export * from './types/plugin'
 
 // Utils
-export * from './utils/api.js'
-export * from './utils/errors.js'
-export * from './utils/formatting.js'
-export * from './utils/validation.js'
+export * from './utils/api'
+export * from './utils/errors'
+export * from './utils/formatting'
+export * from './utils/validation'
 
 // Constants
-export * from './constants/sections.js'
-export * from './constants/limits.js'
-export * from './constants/intervals.js'
+export * from './constants/sections'
+export * from './constants/limits'
+export * from './constants/intervals'
 

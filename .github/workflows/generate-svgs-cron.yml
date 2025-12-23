@@ -1,0 +1,29 @@
+name: Generate SVGs Cron
+
+on:
+  schedule:
+    # Roda às 3h da manhã UTC (ajuste para seu fuso horário)
+    # Para 3h da manhã em Brasília (UTC-3), use: '0 6 * * *'
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Permite execução manual no GitHub
+
+jobs:
+  generate-svgs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Cron Endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "⚠️ CRON_SECRET não configurado. Pulando autenticação..."
+            curl -X GET "${DASHBOARD_URL}/api/cron/generate-svgs"
+          else
+            echo "🔐 Usando autenticação com CRON_SECRET"
+            curl -X GET \
+              -H "Authorization: Bearer ${CRON_SECRET}" \
+              "${DASHBOARD_URL}/api/cron/generate-svgs"
+          fi
+
+

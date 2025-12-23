@@ -5,8 +5,8 @@
  * Returns the height in pixels.
  */
 
-import type { CodeforcesConfig } from './types.js'
-import { SECTION_TITLE_HEIGHT } from '../shared/types/heights.js'
+import type { CodeforcesConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
 /**
  * Calculates height for Codeforces sections

@@ -5,9 +5,9 @@
  * or extracts it from the provided URL
  */
 
-import type { Personality16Config, Personality16Data, PersonalityType } from '../types.js'
-import { getMockPersonality16Data } from './mock-data.js'
-import { getPersonalityData } from './personality-data.js'
+import type { Personality16Config, Personality16Data, PersonalityType } from '../types'
+import { getMockPersonality16Data } from './mock-data'
+import { getPersonalityData } from './personality-data'
 
 /**
  * Extracts personality type from 16Personalities URL

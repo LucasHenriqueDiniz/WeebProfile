@@ -1,12 +1,12 @@
 import React from 'react'
 import { GiWeightLiftingUp } from 'react-icons/gi'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots.js'
-import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
-import type { LyftaData, LyftaNonEssentialConfig } from '../types.js'
-import { formatWeight } from '../utils/weight.js'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { LyftaData, LyftaNonEssentialConfig } from '../types'
+import { formatWeight } from '../utils/weight'
 
 interface StatisticsProps {
   data: LyftaData

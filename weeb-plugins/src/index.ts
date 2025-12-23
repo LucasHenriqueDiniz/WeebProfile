@@ -5,23 +5,23 @@
  */
 
 // Plugins
-export * from "./plugins/index.js"
+export * from "./plugins/index"
 
 // Templates
-export * from "./templates/index.js"
+export * from "./templates/index"
 
 // Types
-export * from "./types/index.js"
+export * from "./types/index"
 
 // Utils
-export * from "./utils/number.js"
-export * from "./utils/pseudo-commands.js"
-export * from "./utils/string.js"
-export * from "./utils/emoji.js"
-export { ImageComponent } from "./utils/image.js"
+export * from "./utils/number"
+export * from "./utils/pseudo-commands"
+export * from "./utils/string"
+export * from "./utils/emoji"
+export { ImageComponent } from "./utils/image"
 
 // Themes
-export * from "./themes/index.js"
+export * from "./themes/index"
 
 // Styles - NOT exported for browser compatibility
 // Use @weeb/weeb-plugins/styles only in Node.js environments (svg-generator)

@@ -7,10 +7,10 @@
 import { graphql } from '@octokit/graphql'
 import { Octokit } from '@octokit/rest'
 import { GraphqlResponseError } from '@octokit/graphql'
-import type { GithubConfig, GithubData, ContributionWeek } from '../types.js'
-import { SECTION_QUERIES, FOLLOWERS_QUERY, REPOSITORY_STARGAZERS_QUERY, REPOSITORY_CONTRIBUTORS_QUERY, FEATURED_REPOSITORIES_QUERY, RECENT_ACTIVITY_QUERY } from './queries.js'
-import { getMockGithubData } from './mock-data.js'
-import { urlToBase64 } from '../../../utils/image-to-base64.js'
+import type { GithubConfig, GithubData, ContributionWeek } from '../types'
+import { SECTION_QUERIES, FOLLOWERS_QUERY, REPOSITORY_STARGAZERS_QUERY, REPOSITORY_CONTRIBUTORS_QUERY, FEATURED_REPOSITORIES_QUERY, RECENT_ACTIVITY_QUERY } from './queries'
+import { getMockGithubData } from './mock-data'
+import { urlToBase64 } from '../../../utils/image-to-base64'
 
 // Mapeamento de seções para permissões necessárias
 const SECTION_PERMISSIONS: Record<string, string[]> = {

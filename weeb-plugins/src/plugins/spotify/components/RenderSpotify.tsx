@@ -3,13 +3,13 @@
  */
 
 import React from 'react'
-import type { SpotifyConfig, SpotifyData } from '../types.js'
-import { RecentTracks } from './RecentTracks.js'
-import { TopArtists } from './TopArtists.js'
-import { TopTracks } from './TopTracks.js'
-import { CurrentlyPlaying } from './CurrentlyPlaying.js'
-import { Playlists } from './Playlists.js'
-import { Profile } from './Profile.js'
+import type { SpotifyConfig, SpotifyData } from '../types'
+import { RecentTracks } from './RecentTracks'
+import { TopArtists } from './TopArtists'
+import { TopTracks } from './TopTracks'
+import { CurrentlyPlaying } from './CurrentlyPlaying'
+import { Playlists } from './Playlists'
+import { Profile } from './Profile'
 
 interface RenderSpotifyProps {
   config: SpotifyConfig

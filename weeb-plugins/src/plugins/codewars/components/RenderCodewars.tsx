@@ -3,11 +3,11 @@
  */
 
 import React from 'react'
-import type { CodewarsConfig, CodewarsData } from '../types.js'
-import { RankHonor } from './RankHonor.js'
-import { CompletedKata } from './CompletedKata.js'
-import { LanguagesProficiency } from './LanguagesProficiency.js'
-import { LeaderboardPosition } from './LeaderboardPosition.js'
+import type { CodewarsConfig, CodewarsData } from '../types'
+import { RankHonor } from './RankHonor'
+import { CompletedKata } from './CompletedKata'
+import { LanguagesProficiency } from './LanguagesProficiency'
+import { LeaderboardPosition } from './LeaderboardPosition'
 
 interface RenderCodewarsProps {
   config: CodewarsConfig
@@ -101,6 +101,7 @@ export function RenderCodewars({
     </section>
   )
 }
+
 
 
 

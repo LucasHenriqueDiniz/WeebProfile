@@ -5,8 +5,8 @@
  * Returns the height in pixels.
  */
 
-import type { SteamConfig } from './types.js'
-import { SECTION_TITLE_HEIGHT } from '../shared/types/heights.js'
+import type { SteamConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
 /**
  * Calculates height for Steam sections

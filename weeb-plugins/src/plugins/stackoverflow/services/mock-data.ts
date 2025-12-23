@@ -2,7 +2,7 @@
  * Dados mock para o plugin Stack Overflow
  */
 
-import type { StackOverflowData } from '../types.js'
+import type { StackOverflowData } from '../types'
 
 export function getMockStackOverflowData(): StackOverflowData {
   return {

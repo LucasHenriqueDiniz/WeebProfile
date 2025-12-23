@@ -2,7 +2,7 @@
  * Tipos do Plugin Codewars
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
 
 export interface CodewarsKata {
   name: string
@@ -51,6 +51,7 @@ export interface CodewarsData {
   languages: Record<string, CodewarsLanguage>
   leaderboardPosition?: number
 }
+
 
 
 

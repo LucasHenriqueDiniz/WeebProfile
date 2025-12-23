@@ -2,7 +2,7 @@
  * Tipos do Plugin LastFM
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
 
 export interface LastFmTrack {
   track: string

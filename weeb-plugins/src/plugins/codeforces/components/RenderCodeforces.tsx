@@ -3,11 +3,11 @@
  */
 
 import React from 'react'
-import type { CodeforcesConfig, CodeforcesData } from '../types.js'
-import { RatingRank } from './RatingRank.js'
-import { ContestsParticipated } from './ContestsParticipated.js'
-import { ProblemsSolved } from './ProblemsSolved.js'
-import { RecentSubmissions } from './RecentSubmissions.js'
+import type { CodeforcesConfig, CodeforcesData } from '../types'
+import { RatingRank } from './RatingRank'
+import { ContestsParticipated } from './ContestsParticipated'
+import { ProblemsSolved } from './ProblemsSolved'
+import { RecentSubmissions } from './RecentSubmissions'
 
 interface RenderCodeforcesProps {
   config: CodeforcesConfig
@@ -100,6 +100,7 @@ export function RenderCodeforces({
     </section>
   )
 }
+
 
 
 

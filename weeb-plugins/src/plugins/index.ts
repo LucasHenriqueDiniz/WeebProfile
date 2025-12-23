@@ -2,13 +2,13 @@
  * Plugin registry
  */
 
-export { personality16Plugin } from "./16personalities/index.js"
-export { githubPlugin } from "./github/index.js"
-export { lastFmPlugin } from "./lastfm/index.js"
-export { lyftaPlugin } from "./lyfta/index.js"
-export { PluginManager } from "./manager.js"
-export { myAnimeListPlugin } from "./myanimelist/index.js"
-export { steamPlugin } from "./steam/index.js"
+export { personality16Plugin } from "./16personalities/index"
+export { githubPlugin } from "./github/index"
+export { lastFmPlugin } from "./lastfm/index"
+export { lyftaPlugin } from "./lyfta/index"
+export { PluginManager } from "./manager"
+export { myAnimeListPlugin } from "./myanimelist/index"
+export { steamPlugin } from "./steam/index"
 
 // Export centralized metadata
 export {
@@ -31,15 +31,15 @@ export {
   type PluginMetadata,
   type PluginSection,
   type SectionConfigOption,
-} from "./metadata.js"
+} from "./metadata"
 
 // Export plugin tags system
-export { getAllTags, getPluginsByTag, getPluginTags, hasPluginTag, PLUGIN_TAGS, type PluginTag } from "./tags.js"
-export { spotifyPlugin } from './spotify/index.js'
-export { duolingoPlugin } from './duolingo/index.js'
-export { codewarsPlugin } from './codewars/index.js'
-export { codeforcesPlugin } from './codeforces/index.js'
-export { stackoverflowPlugin } from './stackoverflow/index.js'
+export { getAllTags, getPluginsByTag, getPluginTags, hasPluginTag, PLUGIN_TAGS, type PluginTag } from "./tags"
+export { spotifyPlugin } from './spotify/index'
+export { duolingoPlugin } from './duolingo/index'
+export { codewarsPlugin } from './codewars/index'
+export { codeforcesPlugin } from './codeforces/index'
+export { stackoverflowPlugin } from './stackoverflow/index'
 
 // Export Plugin Registry (class)
 export {
@@ -48,4 +48,4 @@ export {
   pluginExists,
   PluginRegistry,
   pluginRegistry,
-} from "./registry.js"
+} from "./registry"

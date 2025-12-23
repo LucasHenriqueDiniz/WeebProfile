@@ -2,8 +2,8 @@
  * Mock data for development
  */
 
-import type { Personality16Data } from '../types.js'
-import { getPersonalityData } from './personality-data.js'
+import type { Personality16Data } from '../types'
+import { getPersonalityData } from './personality-data'
 
 /**
  * Generates mock data for the plugin

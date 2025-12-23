@@ -5,8 +5,8 @@
  * Returns the height in pixels.
  */
 
-import type { GithubConfig } from './types.js'
-import { SECTION_TITLE_HEIGHT } from '../shared/types/heights.js'
+import type { GithubConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
 /**
  * Layout heights for GitHub sections

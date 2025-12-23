@@ -1,14 +1,14 @@
 import React from 'react'
 import { FaGithub, FaUserFriends } from 'react-icons/fa'
 import { RiGitRepositoryLine } from 'react-icons/ri'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots.js'
-import { ImageComponent } from '../../../utils/image.js'
-import { abbreviateNumber } from '../../../utils/number.js'
-import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
-import type { GithubConfig, GithubData } from '../types.js'
-import { getCalendarColor } from '../utils.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
+import { ImageComponent } from '../../../utils/image'
+import { abbreviateNumber } from '../../../utils/number'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { GithubConfig, GithubData } from '../types'
+import { getCalendarColor } from '../utils'
 
 interface ProfileProps {
   data: GithubData['user']

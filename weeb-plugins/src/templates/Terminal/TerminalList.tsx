@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import { TerminalLine } from './TerminalLine.js'
-import type { TerminalLineProps } from '../types.js'
+import { TerminalLine } from './TerminalLine'
+import type { TerminalLineProps } from '../types'
 
 interface TerminalListProps {
   data: TerminalLineProps[]

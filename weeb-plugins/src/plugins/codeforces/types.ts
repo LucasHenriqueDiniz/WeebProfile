@@ -2,7 +2,7 @@
  * Tipos do Plugin Codeforces
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
 
 export interface CodeforcesSubmission {
   problem: string
@@ -46,6 +46,7 @@ export interface CodeforcesData {
   }
   recentSubmissions: CodeforcesSubmission[]
 }
+
 
 
 

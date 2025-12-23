@@ -2,13 +2,13 @@
  * Serviço principal para buscar dados do MyAnimeList
  */
 
-import type { MyAnimeListConfig, MyAnimeListData } from '../types.js'
-import { getMockMyAnimeListData } from './mock-data.js'
-import { fetchFullProfile } from './profile.js'
-import { fetchFavorites } from './favorites.js'
-import { transformLastUpdates } from './last-updates.js'
-import { transformStatistics } from './statistics.js'
-import { urlToBase64 } from '../../../utils/image-to-base64.js'
+import type { MyAnimeListConfig, MyAnimeListData } from '../types'
+import { getMockMyAnimeListData } from './mock-data'
+import { fetchFullProfile } from './profile'
+import { fetchFavorites } from './favorites'
+import { transformLastUpdates } from './last-updates'
+import { transformStatistics } from './statistics'
+import { urlToBase64 } from '../../../utils/image-to-base64'
 
 /**
  * Converte URLs de imagens para base64 recursivamente (para dados mock)

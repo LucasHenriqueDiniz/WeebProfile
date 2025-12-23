@@ -2,7 +2,7 @@
  * Tipos do Plugin Spotify
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
 
 export interface SpotifyTrack {
   id: string

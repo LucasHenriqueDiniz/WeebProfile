@@ -5,11 +5,11 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin.js'
-import type { PluginData } from '../../types/index.js'
-import type { SpotifyConfig, SpotifyData } from './types.js'
-import { RenderSpotify } from './components/RenderSpotify.js'
-import { fetchSpotifyData } from './services/fetchData.js'
+import type { Plugin } from '../shared/types/plugin'
+import type { PluginData } from '../../types/index'
+import type { SpotifyConfig, SpotifyData } from './types'
+import { RenderSpotify } from './components/RenderSpotify'
+import { fetchSpotifyData } from './services/fetchData'
 
 /**
  * Spotify Plugin

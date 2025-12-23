@@ -1,11 +1,11 @@
 import React from 'react'
 import { FaClock } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid.js'
-import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
-import type { SteamData, SteamNonEssentialConfig } from '../types.js'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { SteamData, SteamNonEssentialConfig } from '../types'
 
 interface RecentGamesProps {
   data: SteamData

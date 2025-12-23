@@ -6,7 +6,7 @@
  * Generated from real API data
  */
 
-import type { LyftaData, LyftaExerciseData, LyftaStatistics, LyftaWorkout, LyftaWorkoutSummary } from '../types.js'
+import type { LyftaData, LyftaExerciseData, LyftaStatistics, LyftaWorkout, LyftaWorkoutSummary } from '../types'
 
 const baseWorkouts: LyftaWorkout[] = [
   {

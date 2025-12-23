@@ -2,7 +2,7 @@
  * Utilitários para chamadas de API compartilhados
  */
 
-import { ApiError, ConfigError } from './errors.js'
+import { ApiError, ConfigError } from './errors'
 
 /**
  * Opções para requisições de API

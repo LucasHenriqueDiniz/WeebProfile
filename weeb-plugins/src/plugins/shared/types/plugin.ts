@@ -5,8 +5,8 @@
  */
 
 import type React from 'react'
-import type { BasePluginConfig, EssentialPluginConfig } from './base.js'
-import type { PluginData } from '../../../types/index.js'
+import type { BasePluginConfig, EssentialPluginConfig } from './base'
+import type { PluginData } from '../../../types/index'
 
 /**
  * Interface principal de um plugin

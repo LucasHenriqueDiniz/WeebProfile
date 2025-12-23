@@ -4,14 +4,14 @@
 
 import React from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
-import { DefaultList } from '../../../templates/Default/DefaultList.js'
-import { TerminalList } from '../../../templates/Terminal/TerminalList.js'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
-import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
-import type { ListItemProps, TerminalLineProps } from '../../../templates/types.js'
-import type { CodewarsConfig, CodewarsKata } from '../types.js'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
+import { DefaultList } from '../../../templates/Default/DefaultList'
+import { TerminalList } from '../../../templates/Terminal/TerminalList'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { ListItemProps, TerminalLineProps } from '../../../templates/types'
+import type { CodewarsConfig, CodewarsKata } from '../types'
 
 interface CompletedKataProps {
   data: CodewarsKata[]

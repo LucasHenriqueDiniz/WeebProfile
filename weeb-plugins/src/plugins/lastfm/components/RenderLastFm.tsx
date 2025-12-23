@@ -5,13 +5,13 @@
  */
 
 import React from 'react'
-import type { LastFmConfig, LastFmData } from '../types.js'
-import { RecentTracks } from './RecentTracks.js'
-import { Statistics } from './Statistics.js'
-import { TopArtists } from './TopArtists.js'
-import { TopAlbums } from './TopAlbums.js'
-import { TopTracks } from './TopTracks.js'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import type { LastFmConfig, LastFmData } from '../types'
+import { RecentTracks } from './RecentTracks'
+import { Statistics } from './Statistics'
+import { TopArtists } from './TopArtists'
+import { TopAlbums } from './TopAlbums'
+import { TopTracks } from './TopTracks'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 
 interface RenderLastFmProps {
   config: LastFmConfig

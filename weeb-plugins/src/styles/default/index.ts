@@ -12,9 +12,9 @@
  * Modern UI style with Poppins font and color theme variations
  */
 
-import { defaultThemes, type ThemeVariables } from '../../themes/themes.js'
-import type { DefaultTheme } from '../../themes/types.js'
-import { getDefaultThemeVariables as getDefaultThemeVariablesFromUtils } from '../../themes/theme-utils.js'
+import { defaultThemes, type ThemeVariables } from '../../themes/themes'
+import type { DefaultTheme } from '../../themes/types'
+import { getDefaultThemeVariables as getDefaultThemeVariablesFromUtils } from '../../themes/theme-utils'
 
 /**
  * Default style CSS (embedded for browser compatibility)

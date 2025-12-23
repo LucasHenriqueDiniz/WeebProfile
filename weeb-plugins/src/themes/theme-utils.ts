@@ -5,8 +5,8 @@
  * All themes are just CSS variable overrides.
  */
 
-import { defaultThemes, terminalThemes, type ThemeVariables, type TerminalThemeVariables } from './themes.js'
-import type { DefaultTheme, TerminalTheme } from './types.js'
+import { defaultThemes, terminalThemes, type ThemeVariables, type TerminalThemeVariables } from './themes'
+import type { DefaultTheme, TerminalTheme } from './types'
 
 /**
  * Get terminal theme variables

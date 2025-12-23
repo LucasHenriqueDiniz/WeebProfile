@@ -1,11 +1,11 @@
 // https://www.last.fm/api
 
-import type { LastFmConfig, LastFmData } from "../types.js"
-import type { EssentialPluginConfig } from "../../shared/types/base.js"
-import { getMockLastFmData } from "./mock-data.js"
-import { fetchLastFmDataFromApi } from "./fetchLastFmApi.js"
-import { requireApiKey } from "../../shared/utils/api.js"
-import { ConfigError } from "../../shared/utils/errors.js"
+import type { LastFmConfig, LastFmData } from "../types"
+import type { EssentialPluginConfig } from "../../shared/types/base"
+import { getMockLastFmData } from "./mock-data"
+import { fetchLastFmDataFromApi } from "./fetchLastFmApi"
+import { requireApiKey } from "../../shared/utils/api"
+import { ConfigError } from "../../shared/utils/errors"
 
 /**
  * Busca dados do LastFM

@@ -1,5 +1,5 @@
 import React from 'react'
-import type { GridItemProps } from '../types.js'
+import type { GridItemProps } from '../types'
 
 interface TerminalGridProps {
   data: GridItemProps[]

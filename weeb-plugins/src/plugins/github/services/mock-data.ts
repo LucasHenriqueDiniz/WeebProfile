@@ -1,4 +1,4 @@
-import type { GithubData } from '../types.js'
+import type { GithubData } from '../types'
 
 export async function getMockGithubData(): Promise<GithubData> {  
   // Dados reais copiados do real-data.json

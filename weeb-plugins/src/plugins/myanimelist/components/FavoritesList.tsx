@@ -30,19 +30,19 @@ import {
   FaVideo,
 } from "react-icons/fa"
 import { GoDotFill } from "react-icons/go"
-import { DefaultTitle } from "../../../templates/Default/DefaultTitle.js"
-import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle.js"
-import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand.js"
-import { ImageComponent } from "../../../utils/image.js"
-import { getPseudoCommands } from "../../../utils/pseudo-commands.js"
-import { treatJapaneseName } from "../../../utils/string.js"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { ImageComponent } from "../../../utils/image"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { treatJapaneseName } from "../../../utils/string"
 import type {
   BasicCharacterFavorite,
   BasicPeopleFavorite,
   FullAnimeFavorite,
   FullMangaFavorite,
   MyAnimeListConfig,
-} from "../types.js"
+} from "../types"
 
 type FavoriteType = "anime" | "manga" | "people" | "characters"
 type ListStyle = "simple" | "compact" | "detailed" | "minimal"

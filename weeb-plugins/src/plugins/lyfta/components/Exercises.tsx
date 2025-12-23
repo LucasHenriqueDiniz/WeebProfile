@@ -1,13 +1,13 @@
 import React from 'react'
 import { GiWeightLiftingUp } from 'react-icons/gi'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
-import { TerminalStatisticRow } from '../../../templates/Terminal/TerminalStatisticRow.js'
-import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
-import type { LyftaData, LyftaNonEssentialConfig } from '../types.js'
-import { formatWeight } from '../utils/weight.js'
-import { calculate1RM, format1RM } from '../utils/1rm.js'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { TerminalStatisticRow } from '../../../templates/Terminal/TerminalStatisticRow'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { LyftaData, LyftaNonEssentialConfig } from '../types'
+import { formatWeight } from '../utils/weight'
+import { calculate1RM, format1RM } from '../utils/1rm'
 
 interface ExercisesProps {
   data: LyftaData

@@ -2,7 +2,7 @@
  * Tipos do Plugin Lyfta
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
 
 export interface LyftaSet {
   id: string

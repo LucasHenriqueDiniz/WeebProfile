@@ -9,11 +9,11 @@ import type {
   BasicPeopleFavorite,
   FullAnimeFavorite,
   FullMangaFavorite,
-} from '../types.js'
-import { jikanGet, limiter } from './api-client.js'
-import { urlToBase64 } from '../../../utils/image-to-base64.js'
-import type { MalProfileResponse } from './profile.js'
-import type { MyAnimeListConfig } from '../types.js'
+} from '../types'
+import { jikanGet, limiter } from './api-client'
+import { urlToBase64 } from '../../../utils/image-to-base64'
+import type { MalProfileResponse } from './profile'
+import type { MyAnimeListConfig } from '../types'
 
 export interface BasicFavorites {
   anime: BasicAnimeFavorite[]

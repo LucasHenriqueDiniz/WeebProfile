@@ -5,10 +5,10 @@
 
 import React from 'react'
 import { MdOutlinePersonOutline } from 'react-icons/md'
-import type { LastFmArtist } from '../types.js'
-import { TopItems } from './TopItems.js'
-import { abbreviateNumber } from '../../../utils/number.js'
-import type { GridItemProps, ListItemProps } from '../../../templates/types.js'
+import type { LastFmArtist } from '../types'
+import { TopItems } from './TopItems'
+import { abbreviateNumber } from '../../../utils/number'
+import type { GridItemProps, ListItemProps } from '../../../templates/types'
 
 interface TopArtistsProps {
   data: LastFmArtist[]

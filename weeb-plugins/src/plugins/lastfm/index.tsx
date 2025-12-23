@@ -7,11 +7,11 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin.js'
-import type { PluginData } from '../../types/index.js'
-import type { LastFmConfig, LastFmData } from './types.js'
-import { RenderLastFm } from './components/RenderLastFm.js'
-import { fetchLastFmData } from './services/fetchLastFm.js'
+import type { Plugin } from '../shared/types/plugin'
+import type { PluginData } from '../../types/index'
+import type { LastFmConfig, LastFmData } from './types'
+import { RenderLastFm } from './components/RenderLastFm'
+import { fetchLastFmData } from './services/fetchLastFm'
 
 export const lastFmPlugin: Plugin<LastFmConfig, PluginData & LastFmData> = {
   name: 'lastfm',

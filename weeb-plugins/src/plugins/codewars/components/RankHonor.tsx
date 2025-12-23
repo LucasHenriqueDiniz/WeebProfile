@@ -5,13 +5,13 @@
 import React from 'react'
 import { FaMedal, FaTrophy } from 'react-icons/fa'
 import { IoStatsChartOutline } from 'react-icons/io5'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots.js'
-import { abbreviateNumber } from '../../../utils/number.js'
-import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
-import type { CodewarsConfig } from '../types.js'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
+import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
+import { abbreviateNumber } from '../../../utils/number'
+import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import type { CodewarsConfig } from '../types'
 
 interface RankHonorProps {
   rank: { name: string; color: string }

@@ -1,4 +1,4 @@
-import type { SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from '../types.js'
+import type { SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from '../types'
 
 const baseGames: SteamGame[] = [
   {

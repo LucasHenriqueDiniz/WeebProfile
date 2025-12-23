@@ -5,8 +5,8 @@
  * Returns the height in pixels.
  */
 
-import type { MyAnimeListConfig } from './types.js'
-import { SECTION_TITLE_HEIGHT } from '../shared/types/heights.js'
+import type { MyAnimeListConfig } from './types'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
 
 /**
  * Calculates height for MyAnimeList sections

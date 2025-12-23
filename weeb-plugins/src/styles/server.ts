@@ -6,8 +6,8 @@
  * DO NOT import in browser/client code
  */
 
-import { getStyleCSS } from "./registry.js"
-import { getActivePluginsCSS } from "./plugins.js"
+import { getStyleCSS } from "./registry"
+import { getActivePluginsCSS } from "./plugins"
 import { readFileSync, existsSync } from "fs"
 import { resolve, dirname } from "path"
 import { fileURLToPath } from "url"

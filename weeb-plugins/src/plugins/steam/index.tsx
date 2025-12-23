@@ -5,12 +5,12 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin.js'
-import type { PluginConfig, PluginData } from '../../types/index.js'
-import type { EssentialPluginConfig } from '../shared/types/base.js'
-import type { SteamConfig, SteamData } from './types.js'
-import { RenderSteam } from './components/RenderSteam.js'
-import { fetchSteamData } from './services/fetchData.js'
+import type { Plugin } from '../shared/types/plugin'
+import type { PluginConfig, PluginData } from '../../types/index'
+import type { EssentialPluginConfig } from '../shared/types/base'
+import type { SteamConfig, SteamData } from './types'
+import { RenderSteam } from './components/RenderSteam'
+import { fetchSteamData } from './services/fetchData'
 
 export const steamPlugin: Plugin<PluginConfig & SteamConfig, PluginData & SteamData> = {
   name: 'steam',

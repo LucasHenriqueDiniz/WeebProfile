@@ -7,10 +7,10 @@
  * Fonte: https://github.com/KartikTalwar/Duolingo
  */
 
-import type { DuolingoConfig, DuolingoData, DuolingoLanguage } from '../types.js'
-import { getMockDuolingoData } from './mock-data.js'
-import { fetchJson } from '../../shared/utils/api.js'
-import { ApiError } from '../../shared/utils/errors.js'
+import type { DuolingoConfig, DuolingoData, DuolingoLanguage } from '../types'
+import { getMockDuolingoData } from './mock-data'
+import { fetchJson } from '../../shared/utils/api'
+import { ApiError } from '../../shared/utils/errors'
 
 const DUOLINGO_API_BASE = 'https://www.duolingo.com/2017-06-30/users'
 

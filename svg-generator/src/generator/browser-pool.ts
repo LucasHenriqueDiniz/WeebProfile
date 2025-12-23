@@ -175,3 +175,4 @@ class BrowserPool {
 // Export singleton
 export const browserPool = BrowserPool.getInstance()
 
+

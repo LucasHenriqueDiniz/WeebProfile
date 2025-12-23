@@ -1,9 +1,9 @@
 import React from 'react'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
-import type { SteamConfig, SteamData } from '../types.js'
-import { Statistics } from './Statistics.js'
-import { RecentGames } from './RecentGames.js'
-import { TopGames } from './TopGames.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import type { SteamConfig, SteamData } from '../types'
+import { Statistics } from './Statistics'
+import { RecentGames } from './RecentGames'
+import { TopGames } from './TopGames'
 
 interface RenderSteamProps {
   config: SteamConfig

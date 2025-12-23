@@ -7,11 +7,11 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin.js'
-import type { PluginData } from '../../types/index.js'
-import type { DuolingoConfig, DuolingoData } from './types.js'
-import { RenderDuolingo } from './components/RenderDuolingo.js'
-import { fetchDuolingoData } from './services/fetchData.js'
+import type { Plugin } from '../shared/types/plugin'
+import type { PluginData } from '../../types/index'
+import type { DuolingoConfig, DuolingoData } from './types'
+import { RenderDuolingo } from './components/RenderDuolingo'
+import { fetchDuolingoData } from './services/fetchData'
 
 export const duolingoPlugin: Plugin<DuolingoConfig, PluginData & DuolingoData> = {
   name: 'duolingo',
@@ -39,6 +39,7 @@ export const duolingoPlugin: Plugin<DuolingoConfig, PluginData & DuolingoData> =
 }
 
 export default duolingoPlugin
+
 
 
 

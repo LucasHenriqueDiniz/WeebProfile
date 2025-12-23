@@ -2,7 +2,7 @@
  * Mock data for Spotify plugin development
  */
 
-import type { SpotifyData } from '../types.js'
+import type { SpotifyData } from '../types'
 
 /**
  * Generates mock data for the Spotify plugin
