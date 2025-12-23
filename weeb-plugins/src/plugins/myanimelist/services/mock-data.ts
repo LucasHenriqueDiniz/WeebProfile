@@ -11,7 +11,7 @@ import type {
   BasicMangaFavorite,
   LastUpdatesAnime,
   LastUpdatesManga
-} from "../types"
+} from "../types.js"
 
 export function getMockMyAnimeListData(): MyAnimeListData {
   const mockAnimeStats: AnimeStatistics = {

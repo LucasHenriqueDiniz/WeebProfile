@@ -1,4 +1,4 @@
-import type { LastFmData, LastFmTrack, LastFmArtist, LastFmAlbum, TopTrack, LastFmFeaturedTrack } from "../types"
+import type { LastFmData, LastFmTrack, LastFmArtist, LastFmAlbum, TopTrack, LastFmFeaturedTrack } from "../types.js"
 
 function generateMockRecentTracks(count = 50): LastFmTrack[] {
   const baseData: LastFmTrack[] = [

@@ -1,11 +1,11 @@
 import React from "react"
-import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
-import type { MyAnimeListConfig, MyAnimeListData } from "../types"
-import { FavoritesList } from "./FavoritesList"
-import { LastUpdates } from "./LastUpdates"
-import { SimpleStatistics } from "./SimpleStatistics"
-import { Statistics } from "./Statistics"
-import { StatisticsHorizontalBar } from "./StatisticsHorizontalBar"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle.js"
+import type { MyAnimeListConfig, MyAnimeListData } from "../types.js"
+import { FavoritesList } from "./FavoritesList.js"
+import { LastUpdates } from "./LastUpdates.js"
+import { SimpleStatistics } from "./SimpleStatistics.js"
+import { Statistics } from "./Statistics.js"
+import { StatisticsHorizontalBar } from "./StatisticsHorizontalBar.js"
 
 interface RenderMyAnimeListProps {
   config: MyAnimeListConfig

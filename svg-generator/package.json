@@ -18,7 +18,7 @@
     "build:check": "tsc",
     "dev": "tsc --watch",
     "dev:server": "tsx src/server.ts",
-    "start": "node dist/src/server.js",
+    "start": "node scripts/start.js",
     "start:dev": "tsx src/server.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",

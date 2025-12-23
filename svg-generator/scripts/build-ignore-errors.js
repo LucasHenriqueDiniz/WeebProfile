@@ -4,7 +4,7 @@
  */
 
 import { execSync } from "child_process"
-import { existsSync, readFileSync, readdirSync } from "fs"
+import { existsSync, readFileSync, readdirSync, statSync } from "fs"
 import { resolve } from "path"
 
 const cwd = resolve(process.cwd())
@@ -61,63 +61,56 @@ if (tscOutput.includes("Compilation complete") || tscOutput.includes("Found 0 er
   console.log("✅ TypeScript terminou com sucesso!")
 }
 
-// Forçar verificação dos arquivos gerados
+// Verificar arquivo crítico gerado
+// Com rootDir: "./src" e outDir: "./dist", o TypeScript gera dist/server.js (estrutura plana)
+const distServerJs = resolve(cwd, "dist/server.js")
 const distSrcServerJs = resolve(cwd, "dist/src/server.js")
-const srcServerJs = resolve(cwd, "src/server.js")
 
-console.log(`📂 Verificando arquivos...`)
-console.log(`   src/server.js existe: ${existsSync(srcServerJs)}`)
+console.log(`📂 Verificando arquivos gerados...`)
+console.log(`   dist/server.js existe: ${existsSync(distServerJs)}`)
 console.log(`   dist/src/server.js existe: ${existsSync(distSrcServerJs)}`)
-
-if (existsSync(distSrcServerJs)) {
-  const stats = statSync(distSrcServerJs)
-  console.log(`   dist/src/server.js tamanho: ${stats.size} bytes`)
-  console.log(`   dist/src/server.js modificado: ${stats.mtime}`)
-}
 
 // Verificar se os arquivos principais foram gerados
 // CRÍTICO: server.js é obrigatório para o serviço funcionar
-// O TypeScript pode gerar em dist/src/ ou dist/ dependendo da configuração
+// O TypeScript pode gerar em diferentes locais dependendo do contexto (monorepo vs standalone)
 const criticalFiles = [
-  "dist/server.js", // OBRIGATÓRIO (caminho esperado)
-  "dist/src/server.js", // Alternativa (se TypeScript preservar src/)
+  "dist/server.js", // Estrutura plana (rootDir: "./src")
+  "dist/src/server.js", // Estrutura preservada
+  "dist/svg-generator/src/server.js", // Estrutura do workspace (monorepo)
 ]
 
 const importantFiles = [
   "dist/index.js",
-  "dist/src/index.js", // Alternativa
   "dist/index.d.ts",
-  "dist/src/index.d.ts", // Alternativa
   "dist/server.js",
-  "dist/src/server.js", // Alternativa
   "dist/config/config-loader.js",
-  "dist/src/config/config-loader.js", // Alternativa
   "dist/generator/svg-generator.js",
-  "dist/src/generator/svg-generator.js", // Alternativa
 ]
 
 // Verificar arquivos críticos primeiro
-// Verificar se pelo menos um dos caminhos críticos existe
-let criticalFilesExist = criticalFiles.some((file) => existsSync(resolve(cwd, file)))
+const criticalFilesExist = criticalFiles.some((file) => existsSync(resolve(cwd, file)))
 const generatedFiles = importantFiles.filter((file) => existsSync(resolve(cwd, file)))
-
-// Se não encontrou em dist/, verificar se existe em dist/src/ e copiar
-if (!criticalFilesExist) {
-  const distSrcPath = resolve(cwd, "dist/src/server.js")
-  if (existsSync(distSrcPath)) {
-    console.log("⚠️  Arquivo encontrado em dist/src/, considerando válido")
-    criticalFilesExist = true
-  }
-}
 
 // Determinar qual caminho base está sendo usado
 let distBasePath = "dist"
-if (existsSync(resolve(cwd, "dist/src/server.js"))) {
-  distBasePath = "dist/src"
-  console.log("📁 Arquivos gerados em dist/src/ (estrutura preservada)")
-} else if (existsSync(resolve(cwd, "dist/server.js"))) {
-  distBasePath = "dist"
-  console.log("📁 Arquivos gerados em dist/ (estrutura plana)")
+let actualServerPath = null
+
+for (const file of criticalFiles) {
+  const fullPath = resolve(cwd, file)
+  if (existsSync(fullPath)) {
+    actualServerPath = file
+    if (file.includes("svg-generator/src")) {
+      distBasePath = "dist/svg-generator/src"
+      console.log("📁 Arquivos gerados em dist/svg-generator/src/ (estrutura do workspace)")
+    } else if (file.includes("dist/src")) {
+      distBasePath = "dist/src"
+      console.log("📁 Arquivos gerados em dist/src/ (estrutura preservada)")
+    } else {
+      distBasePath = "dist"
+      console.log("📁 Arquivos gerados em dist/ (estrutura plana)")
+    }
+    break
+  }
 }
 
 if (!criticalFilesExist) {
@@ -164,7 +157,13 @@ if (!criticalFilesExist) {
     console.error(`   Erro ao procurar server.js: ${error.message}`)
   }
 
-  console.error("💡 O build TypeScript deve gerar dist/server.js ou dist/src/server.js")
+  console.error("💡 O build TypeScript deve gerar dist/server.js, dist/src/server.js ou dist/svg-generator/src/server.js")
+  
+  // Se encontrou o arquivo em algum lugar, mostrar onde está
+  if (actualServerPath) {
+    console.error(`   ⚠️  Arquivo encontrado em: ${actualServerPath}`)
+    console.error(`   💡 Ajuste o package.json start script para: node ${actualServerPath}`)
+  }
 
   // Mesmo sem arquivos críticos, continuar se build foi bem-sucedido
   if (buildSucceeded) {
@@ -175,23 +174,31 @@ if (!criticalFilesExist) {
   }
 }
 
-if (generatedFiles.length > 0) {
+if (criticalFilesExist && actualServerPath) {
+  console.log(`✅ Arquivo crítico encontrado: ${actualServerPath}`)
   console.log(`✅ ${generatedFiles.length}/${importantFiles.length} arquivos principais gerados`)
-  console.log(`✅ Arquivos críticos verificados: ${criticalFiles.length}/${criticalFiles.length}`)
-
+  
   // Verificar se o config-loader tem as correções
-  const configLoaderPath = resolve(cwd, "dist/config/config-loader.js")
-
-  if (existsSync(configLoaderPath)) {
-    const content = readFileSync(configLoaderPath, "utf8")
-    if (content.includes("primaryColor") && content.includes("pluginsOrder")) {
-      console.log(`✅ Correções aplicadas em dist/config/config-loader.js!`)
+  const configLoaderPaths = [
+    resolve(cwd, "dist/config/config-loader.js"),
+    resolve(cwd, "dist/src/config/config-loader.js"),
+    resolve(cwd, "dist/svg-generator/src/config/config-loader.js"),
+  ]
+  
+  for (const configLoaderPath of configLoaderPaths) {
+    if (existsSync(configLoaderPath)) {
+      const content = readFileSync(configLoaderPath, "utf8")
+      if (content.includes("primaryColor") && content.includes("pluginsOrder")) {
+        console.log(`✅ Correções aplicadas em ${configLoaderPath.replace(cwd, '.')}!`)
+      }
+      break
     }
   }
 
   console.log("✅ Build concluído! Arquivos prontos para uso.")
+  console.log(`💡 Certifique-se de que o package.json start script aponta para: ${actualServerPath}`)
   process.exit(0)
-} else {
+} else if (generatedFiles.length > 0) {
   // Se não encontrou arquivos importantes mas arquivos críticos existem, continuar
   if (criticalFilesExist) {
     console.log("⚠️  Alguns arquivos importantes não foram encontrados, mas arquivos críticos existem")

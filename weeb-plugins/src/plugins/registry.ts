@@ -4,8 +4,8 @@
  * Centralized plugin registration and validation system with clear errors and type safety.
  */
 
-import { PLUGINS_METADATA, type PluginMetadata } from "./metadata"
-import type { Plugin } from "./shared/types/plugin"
+import { PLUGINS_METADATA, type PluginMetadata } from "./metadata.js"
+import type { Plugin } from "./shared/types/plugin.js"
 
 /**
  * Centralized plugin registry with validation
