@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "pnpm --filter weeb-dashboard build",
+  "buildCommand": "pnpm build:dashboard",
   "outputDirectory": "weeb-dashboard/.next",
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
