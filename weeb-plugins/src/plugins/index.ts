@@ -2,13 +2,13 @@
  * Plugin registry
  */
 
-export { personality16Plugin } from "./16personalities/index.js.js"
-export { githubPlugin } from "./github/index.js.js"
-export { lastFmPlugin } from "./lastfm/index.js.js"
-export { lyftaPlugin } from "./lyfta/index.js.js"
-export { PluginManager } from "./manager.js.js"
-export { myAnimeListPlugin } from "./myanimelist/index.js.js"
-export { steamPlugin } from "./steam/index.js.js"
+export { personality16Plugin } from "./16personalities/index.js"
+export { githubPlugin } from "./github/index.js"
+export { lastFmPlugin } from "./lastfm/index.js"
+export { lyftaPlugin } from "./lyfta/index.js"
+export { PluginManager } from "./manager.js"
+export { myAnimeListPlugin } from "./myanimelist/index.js"
+export { steamPlugin } from "./steam/index.js"
 
 // Export centralized metadata
 export {
@@ -31,10 +31,10 @@ export {
   type PluginMetadata,
   type PluginSection,
   type SectionConfigOption,
-} from "./metadata.js.js"
+} from "./metadata.js"
 
 // Export plugin tags system
-export { getAllTags, getPluginsByTag, getPluginTags, hasPluginTag, PLUGIN_TAGS, type PluginTag } from "./tags.js.js"
+export { getAllTags, getPluginsByTag, getPluginTags, hasPluginTag, PLUGIN_TAGS, type PluginTag } from "./tags.js"
 export { spotifyPlugin } from './spotify/index'
 export { duolingoPlugin } from './duolingo/index'
 export { codewarsPlugin } from './codewars/index'
@@ -48,4 +48,4 @@ export {
   pluginExists,
   PluginRegistry,
   pluginRegistry,
-} from "./registry.js.js"
+} from "./registry.js"
