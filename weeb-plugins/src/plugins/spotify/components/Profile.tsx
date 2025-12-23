@@ -1,11 +1,11 @@
 import React from 'react'
 import { MdOutlineAccountCircle } from 'react-icons/md'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { abbreviateNumber } from '../../../utils/number'
-import type { SpotifyProfile } from '../types'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
+import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
+import { abbreviateNumber } from '../../../utils/number.js'
+import type { SpotifyProfile } from '../types.js'
 
 interface ProfileProps {
   data: SpotifyProfile | null | undefined

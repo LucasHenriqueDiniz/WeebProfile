@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import { ImageComponent } from '../../utils/image'
-import type { GridItemProps } from '../types'
+import { ImageComponent } from '../../utils/image.js'
+import type { GridItemProps } from '../types.js'
 
 function GridItem({ image, title, value, subtitle, index }: GridItemProps & { index: number }): React.ReactElement {
   return (

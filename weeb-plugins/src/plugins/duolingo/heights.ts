@@ -5,8 +5,8 @@
  * Returns the height in pixels.
  */
 
-import type { DuolingoConfig } from './types'
-import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
+import type { DuolingoConfig } from './types.js'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights.js'
 
 /**
  * Calculates height for Duolingo sections

@@ -4,11 +4,11 @@
  * Fetches data from Spotify Web API using refresh token
  */
 
-import type { SpotifyConfig, SpotifyData } from '../types'
-import type { EssentialPluginConfig } from '../../shared/types/base'
-import { getMockSpotifyData } from './mock-data'
-import { requireToken } from '../../shared/utils/api'
-import { ConfigError } from '../../shared/utils/errors'
+import type { SpotifyConfig, SpotifyData } from '../types.js'
+import type { EssentialPluginConfig } from '../../shared/types/base.js'
+import { getMockSpotifyData } from './mock-data.js'
+import { requireToken } from '../../shared/utils/api.js'
+import { ConfigError } from '../../shared/utils/errors.js'
 import {
   getAccessTokenFromRefreshToken,
   fetchProfile,
@@ -18,7 +18,7 @@ import {
   fetchCurrentlyPlaying,
   fetchPlaylists,
   getPeriodLabel,
-} from './spotifyApi'
+} from './spotifyApi.js'
 
 /**
  * Fetches Spotify plugin data

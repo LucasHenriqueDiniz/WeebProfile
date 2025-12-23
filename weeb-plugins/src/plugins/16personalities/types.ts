@@ -2,7 +2,7 @@
  * 16personalities plugin specific types
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
 
 /**
  * 16Personalities personality types

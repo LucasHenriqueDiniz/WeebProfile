@@ -5,12 +5,12 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin'
-import type { PluginConfig, PluginData } from '../../types/index'
-import type { EssentialPluginConfig } from '../shared/types/base'
-import type { LyftaConfig, LyftaData } from './types'
-import { RenderLyfta } from './components/RenderLyfta'
-import { fetchLyftaData } from './services/fetchData'
+import type { Plugin } from '../shared/types/plugin.js'
+import type { PluginConfig, PluginData } from '../../types/index.js'
+import type { EssentialPluginConfig } from '../shared/types/base.js'
+import type { LyftaConfig, LyftaData } from './types.js'
+import { RenderLyfta } from './components/RenderLyfta.js'
+import { fetchLyftaData } from './services/fetchData.js'
 
 export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaData> = {
   name: 'lyfta',

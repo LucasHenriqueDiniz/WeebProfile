@@ -1,10 +1,10 @@
 import React from 'react'
 import { FaBuilding, FaLink, FaMapMarkerAlt, FaTwitter, FaUser, FaUsers } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
+import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
+import type { GithubConfig, GithubData } from '../types.js'
 
 interface IntroductionProps {
   data: GithubData['introduction']

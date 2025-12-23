@@ -1,14 +1,14 @@
 import React from 'react'
 import { FaCode, FaCodeBranch, FaExclamationCircle } from 'react-icons/fa'
 import { RiGitPullRequestLine } from 'react-icons/ri'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import type { GridItemProps } from '../../../templates/types'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
+import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid.js'
+import type { GridItemProps } from '../../../templates/types.js'
+import { abbreviateNumber } from '../../../utils/number.js'
+import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
+import type { GithubConfig, GithubData } from '../types.js'
 
 interface NotableContributionsProps {
   data: GithubData['notableContributions']

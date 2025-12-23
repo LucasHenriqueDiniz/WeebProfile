@@ -2,7 +2,7 @@
  * Tipos do Plugin Codewars
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
 
 export interface CodewarsKata {
   name: string

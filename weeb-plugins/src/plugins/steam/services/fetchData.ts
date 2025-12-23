@@ -2,8 +2,8 @@
  * Fetches data from Steam API
  */
 
-import type { SteamConfig, SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from '../types'
-import { getMockSteamData } from './mock-data'
+import type { SteamConfig, SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from '../types.js'
+import { getMockSteamData } from './mock-data.js'
 
 const STEAM_API_BASE = 'https://api.steampowered.com'
 const STEAM_STORE_API = 'https://store.steampowered.com/api'

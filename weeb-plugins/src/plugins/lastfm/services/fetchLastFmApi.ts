@@ -4,11 +4,11 @@
  * Documentação: https://www.last.fm/api
  */
 
-import type { LastFmData, LastFmTrack, LastFmArtist, LastFmAlbum, TopTrack } from '../types'
-import type { EssentialPluginConfig } from '../../shared/types/base'
-import { fetchJson, requireApiKey, buildQueryString } from '../../shared/utils/api'
-import { ApiError, ConfigError } from '../../shared/utils/errors'
-import { urlToBase64 } from '../../../utils/image-to-base64'
+import type { LastFmData, LastFmTrack, LastFmArtist, LastFmAlbum, TopTrack } from '../types.js'
+import type { EssentialPluginConfig } from '../../shared/types/base.js'
+import { fetchJson, requireApiKey, buildQueryString } from '../../shared/utils/api.js'
+import { ApiError, ConfigError } from '../../shared/utils/errors.js'
+import { urlToBase64 } from '../../../utils/image-to-base64.js'
 
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
 

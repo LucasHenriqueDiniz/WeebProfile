@@ -5,8 +5,8 @@
  * Returns the height in pixels.
  */
 
-import type { LyftaConfig } from './types'
-import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
+import type { LyftaConfig } from './types.js'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights.js'
 
 /**
  * Calculates height for Lyfta sections

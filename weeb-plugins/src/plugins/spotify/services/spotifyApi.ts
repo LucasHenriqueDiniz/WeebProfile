@@ -4,8 +4,8 @@
  * Handles authentication and API calls to Spotify Web API
  */
 
-import { fetchJson } from '../../shared/utils/api'
-import { ApiError } from '../../shared/utils/errors'
+import { fetchJson } from '../../shared/utils/api.js'
+import { ApiError } from '../../shared/utils/errors.js'
 
 const SPOTIFY_API_BASE = 'https://api.spotify.com/v1'
 const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'

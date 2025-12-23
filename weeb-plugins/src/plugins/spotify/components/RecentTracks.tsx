@@ -1,13 +1,13 @@
 import React from 'react'
 import { MdOutlineAudiotrack } from 'react-icons/md'
-import { DefaultList } from '../../../templates/Default/DefaultList'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalList } from '../../../templates/Terminal/TerminalList'
-import type { ListItemProps, TerminalLineProps } from '../../../templates/types'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { SpotifyTrack } from '../types'
+import { DefaultList } from '../../../templates/Default/DefaultList.js'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
+import { TerminalList } from '../../../templates/Terminal/TerminalList.js'
+import type { ListItemProps, TerminalLineProps } from '../../../templates/types.js'
+import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
+import type { SpotifyTrack } from '../types.js'
 
 interface RecentTracksProps {
   data: SpotifyTrack[]

@@ -3,11 +3,11 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin'
-import type { PluginData } from '../../types/index'
-import type { StackOverflowConfig, StackOverflowData } from './types'
-import { RenderStackOverflow } from './components/RenderStackOverflow'
-import { fetchStackOverflowData } from './services/fetchData'
+import type { Plugin } from '../shared/types/plugin.js'
+import type { PluginData } from '../../types/index.js'
+import type { StackOverflowConfig, StackOverflowData } from './types.js'
+import { RenderStackOverflow } from './components/RenderStackOverflow.js'
+import { fetchStackOverflowData } from './services/fetchData.js'
 
 export const stackoverflowPlugin: Plugin<StackOverflowConfig, PluginData & StackOverflowData> = {
   name: 'stackoverflow',

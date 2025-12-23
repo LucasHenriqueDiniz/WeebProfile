@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import { ImageComponent } from '../../utils/image'
-import type { ListItemProps } from '../types'
+import { ImageComponent } from '../../utils/image.js'
+import type { ListItemProps } from '../types.js'
 
 function ListItem({ right, center, left, image }: ListItemProps): React.ReactElement {
   const rightContent = typeof right === 'string' ? right : right

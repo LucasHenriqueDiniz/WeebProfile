@@ -5,10 +5,10 @@
  * Documentação: https://dev.codewars.com/
  */
 
-import type { CodewarsConfig, CodewarsData, CodewarsKata, CodewarsLanguage } from '../types'
-import { getMockCodewarsData } from './mock-data'
-import { fetchJson } from '../../shared/utils/api'
-import { ApiError } from '../../shared/utils/errors'
+import type { CodewarsConfig, CodewarsData, CodewarsKata, CodewarsLanguage } from '../types.js'
+import { getMockCodewarsData } from './mock-data.js'
+import { fetchJson } from '../../shared/utils/api.js'
+import { ApiError } from '../../shared/utils/errors.js'
 
 const CODEWARS_API_BASE = 'https://www.codewars.com/api/v1'
 

@@ -4,16 +4,16 @@
 
 import React from 'react'
 import { FaTag } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { DefaultList } from '../../../templates/Default/DefaultList'
-import { TerminalList } from '../../../templates/Terminal/TerminalList'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { getLanguageIcon, capitalizeLanguage } from '../../../utils/language-icons'
-import type { ListItemProps, TerminalLineProps } from '../../../templates/types'
-import type { StackOverflowConfig, StackOverflowTag } from '../types'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
+import { DefaultList } from '../../../templates/Default/DefaultList.js'
+import { TerminalList } from '../../../templates/Terminal/TerminalList.js'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import { abbreviateNumber } from '../../../utils/number.js'
+import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
+import { getLanguageIcon, capitalizeLanguage } from '../../../utils/language-icons.js'
+import type { ListItemProps, TerminalLineProps } from '../../../templates/types.js'
+import type { StackOverflowConfig, StackOverflowTag } from '../types.js'
 
 interface TagsExpertiseProps {
   data: StackOverflowTag[]

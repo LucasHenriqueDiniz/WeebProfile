@@ -2,7 +2,7 @@
  * Dados mock para o plugin Codeforces
  */
 
-import type { CodeforcesData } from '../types'
+import type { CodeforcesData } from '../types.js'
 
 export function getMockCodeforcesData(): CodeforcesData {
   return {

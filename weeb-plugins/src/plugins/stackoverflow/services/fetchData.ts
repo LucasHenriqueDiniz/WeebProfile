@@ -7,10 +7,10 @@
  * Rate Limit: 300 requests/day without key, more with key (optional)
  */
 
-import type { StackOverflowConfig, StackOverflowData, StackOverflowTag } from '../types'
-import { getMockStackOverflowData } from './mock-data'
-import { fetchJson, buildQueryString } from '../../shared/utils/api'
-import { ApiError } from '../../shared/utils/errors'
+import type { StackOverflowConfig, StackOverflowData, StackOverflowTag } from '../types.js'
+import { getMockStackOverflowData } from './mock-data.js'
+import { fetchJson, buildQueryString } from '../../shared/utils/api.js'
+import { ApiError } from '../../shared/utils/errors.js'
 
 const STACKEXCHANGE_API_BASE = 'https://api.stackexchange.com/2.3'
 const SITE = 'stackoverflow'

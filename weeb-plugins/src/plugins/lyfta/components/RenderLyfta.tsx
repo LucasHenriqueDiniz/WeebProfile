@@ -1,11 +1,11 @@
 import React from 'react'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import type { LyftaConfig, LyftaData } from '../types'
-import { Exercises } from './Exercises'
-import { LastWorkout } from './LastWorkout'
-import { Overview } from './Overview'
-import { RecentWorkouts } from './RecentWorkouts'
-import { Statistics } from './Statistics'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import type { LyftaConfig, LyftaData } from '../types.js'
+import { Exercises } from './Exercises.js'
+import { LastWorkout } from './LastWorkout.js'
+import { Overview } from './Overview.js'
+import { RecentWorkouts } from './RecentWorkouts.js'
+import { Statistics } from './Statistics.js'
 
 interface RenderLyftaProps {
   config: LyftaConfig

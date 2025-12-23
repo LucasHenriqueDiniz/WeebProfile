@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import type { TerminalLineProps } from '../types'
+import type { TerminalLineProps } from '../types.js'
 
 interface ClassNames {
   right?: string

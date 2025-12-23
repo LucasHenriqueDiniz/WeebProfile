@@ -1,14 +1,14 @@
 import { format } from 'date-fns'
 import React from 'react'
 import { FaList, FaStar } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { PercentageBar } from '../../../templates/Default/PercentageBar'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { emojiStatus } from '../../../utils/emoji'
-import { ImageComponent } from '../../../utils/image'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { LastUpdatesAnime, LastUpdatesManga, MyAnimeListConfig, MyAnimeListData } from '../types'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
+import { PercentageBar } from '../../../templates/Default/PercentageBar.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
+import { emojiStatus } from '../../../utils/emoji.js'
+import { ImageComponent } from '../../../utils/image.js'
+import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
+import type { LastUpdatesAnime, LastUpdatesManga, MyAnimeListConfig, MyAnimeListData } from '../types.js'
 
 function getStatusColor(status: string) {
   switch (status) {

@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import type { HorizontalMultipleItem } from '../Default/HorizontalMultipleItemsBar'
+import type { HorizontalMultipleItem } from '../Default/HorizontalMultipleItemsBar.js'
 
 interface TerminalHorizontalMultipleItemsBarProps {
   items: HorizontalMultipleItem[]

@@ -7,10 +7,10 @@
  * Rate Limit: ~5 requests per second per IP
  */
 
-import type { CodeforcesConfig, CodeforcesData, CodeforcesSubmission } from '../types'
-import { getMockCodeforcesData } from './mock-data'
-import { fetchJson } from '../../shared/utils/api'
-import { ApiError } from '../../shared/utils/errors'
+import type { CodeforcesConfig, CodeforcesData, CodeforcesSubmission } from '../types.js'
+import { getMockCodeforcesData } from './mock-data.js'
+import { fetchJson } from '../../shared/utils/api.js'
+import { ApiError } from '../../shared/utils/errors.js'
 
 const CODEFORCES_API_BASE = 'https://codeforces.com/api'
 

@@ -3,11 +3,11 @@
  */
 
 import React from 'react'
-import type { StackOverflowConfig, StackOverflowData } from '../types'
-import { Reputation } from './Reputation'
-import { Badges } from './Badges'
-import { AnswersQuestions } from './AnswersQuestions'
-import { TagsExpertise } from './TagsExpertise'
+import type { StackOverflowConfig, StackOverflowData } from '../types.js'
+import { Reputation } from './Reputation.js'
+import { Badges } from './Badges.js'
+import { AnswersQuestions } from './AnswersQuestions.js'
+import { TagsExpertise } from './TagsExpertise.js'
 
 interface RenderStackOverflowProps {
   config: StackOverflowConfig

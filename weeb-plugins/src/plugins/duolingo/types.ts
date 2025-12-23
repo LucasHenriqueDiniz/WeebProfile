@@ -2,7 +2,7 @@
  * Tipos do Plugin Duolingo
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
 
 export interface DuolingoLanguage {
   language: string

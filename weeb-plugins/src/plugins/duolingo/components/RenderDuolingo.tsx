@@ -3,10 +3,10 @@
  */
 
 import React from 'react'
-import type { DuolingoConfig, DuolingoData } from '../types'
-import { CurrentStreak } from './CurrentStreak'
-import { TotalXP } from './TotalXP'
-import { LanguagesLearning } from './LanguagesLearning'
+import type { DuolingoConfig, DuolingoData } from '../types.js'
+import { CurrentStreak } from './CurrentStreak.js'
+import { TotalXP } from './TotalXP.js'
+import { LanguagesLearning } from './LanguagesLearning.js'
 
 interface RenderDuolingoProps {
   config: DuolingoConfig

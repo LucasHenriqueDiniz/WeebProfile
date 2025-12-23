@@ -3,11 +3,11 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin'
-import type { PluginData } from '../../types/index'
-import type { CodeforcesConfig, CodeforcesData } from './types'
-import { RenderCodeforces } from './components/RenderCodeforces'
-import { fetchCodeforcesData } from './services/fetchData'
+import type { Plugin } from '../shared/types/plugin.js'
+import type { PluginData } from '../../types/index.js'
+import type { CodeforcesConfig, CodeforcesData } from './types.js'
+import { RenderCodeforces } from './components/RenderCodeforces.js'
+import { fetchCodeforcesData } from './services/fetchData.js'
 
 export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesData> = {
   name: 'codeforces',

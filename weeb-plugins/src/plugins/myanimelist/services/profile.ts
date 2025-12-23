@@ -2,7 +2,7 @@
  * Serviço para buscar perfil completo do MyAnimeList
  */
 
-import { jikanGet } from './api-client'
+import { jikanGet } from './api-client.js'
 
 export interface JikanUserFullResponse {
   data: {

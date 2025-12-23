@@ -2,7 +2,7 @@
  * Tipos do Plugin Stack Overflow
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
 
 export interface StackOverflowTag {
   name: string

@@ -2,7 +2,7 @@
  * Dados mock para o plugin Codewars
  */
 
-import type { CodewarsData } from '../types'
+import type { CodewarsData } from '../types.js'
 
 export function getMockCodewarsData(): CodewarsData {
   return {

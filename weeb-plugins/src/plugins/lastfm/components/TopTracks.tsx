@@ -5,10 +5,10 @@
 
 import React from 'react'
 import { AiOutlineTrophy } from 'react-icons/ai'
-import type { TopTrack } from '../types'
-import { TopItems } from './TopItems'
-import { abbreviateNumber } from '../../../utils/number'
-import type { GridItemProps, ListItemProps } from '../../../templates/types'
+import type { TopTrack } from '../types.js'
+import { TopItems } from './TopItems.js'
+import { abbreviateNumber } from '../../../utils/number.js'
+import type { GridItemProps, ListItemProps } from '../../../templates/types.js'
 
 interface TopTracksProps {
   data: TopTrack[]

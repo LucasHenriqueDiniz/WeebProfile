@@ -35,11 +35,11 @@ export {
 
 // Export plugin tags system
 export { getAllTags, getPluginsByTag, getPluginTags, hasPluginTag, PLUGIN_TAGS, type PluginTag } from "./tags.js"
-export { spotifyPlugin } from './spotify/index'
-export { duolingoPlugin } from './duolingo/index'
-export { codewarsPlugin } from './codewars/index'
-export { codeforcesPlugin } from './codeforces/index'
-export { stackoverflowPlugin } from './stackoverflow/index'
+export { spotifyPlugin } from './spotify/index.js'
+export { duolingoPlugin } from './duolingo/index.js'
+export { codewarsPlugin } from './codewars/index.js'
+export { codeforcesPlugin } from './codeforces/index.js'
+export { stackoverflowPlugin } from './stackoverflow/index.js'
 
 // Export Plugin Registry (class)
 export {

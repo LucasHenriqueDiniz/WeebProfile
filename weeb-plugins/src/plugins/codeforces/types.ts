@@ -2,7 +2,7 @@
  * Tipos do Plugin Codeforces
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
 
 export interface CodeforcesSubmission {
   problem: string

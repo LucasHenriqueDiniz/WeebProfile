@@ -5,8 +5,8 @@
  * Returns the height in pixels.
  */
 
-import type { Personality16Config } from './types'
-import { SECTION_TITLE_HEIGHT } from '../shared/types/heights'
+import type { Personality16Config } from './types.js'
+import { SECTION_TITLE_HEIGHT } from '../shared/types/heights.js'
 
 /**
  * Calculates height for 16personalities sections

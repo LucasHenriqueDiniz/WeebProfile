@@ -2,10 +2,10 @@
  * Serviço para processar últimas atualizações do MyAnimeList
  */
 
-import type { LastUpdatesAnime, LastUpdatesManga, MalLastUpdates } from '../types'
-import { urlToBase64 } from '../../../utils/image-to-base64'
-import type { MalProfileResponse } from './profile'
-import type { MyAnimeListConfig } from '../types'
+import type { LastUpdatesAnime, LastUpdatesManga, MalLastUpdates } from '../types.js'
+import { urlToBase64 } from '../../../utils/image-to-base64.js'
+import type { MalProfileResponse } from './profile.js'
+import type { MyAnimeListConfig } from '../types.js'
 
 /**
  * Transforma as atualizações do perfil em formato interno

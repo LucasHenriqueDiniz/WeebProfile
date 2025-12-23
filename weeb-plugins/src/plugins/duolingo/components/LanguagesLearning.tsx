@@ -4,16 +4,16 @@
 
 import React from 'react'
 import { FaLanguage } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { TerminalList } from '../../../templates/Terminal/TerminalList'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { getLanguageCode, CountryFlag } from '../../../utils/language-flags'
-import { DuolingoColors } from '../constants'
-import type { TerminalLineProps } from '../../../templates/types'
-import type { DuolingoConfig, DuolingoLanguage } from '../types'
+import { DefaultTitle } from '../../../templates/Default/DefaultTitle.js'
+import { TerminalList } from '../../../templates/Terminal/TerminalList.js'
+import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand.js'
+import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle.js'
+import { abbreviateNumber } from '../../../utils/number.js'
+import { getPseudoCommands } from '../../../utils/pseudo-commands.js'
+import { getLanguageCode, CountryFlag } from '../../../utils/language-flags.js'
+import { DuolingoColors } from '../constants.js'
+import type { TerminalLineProps } from '../../../templates/types.js'
+import type { DuolingoConfig, DuolingoLanguage } from '../types.js'
 
 /**
  * Calculate progress percentage based on XP

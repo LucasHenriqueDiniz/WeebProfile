@@ -3,11 +3,11 @@
  */
 
 import React from 'react'
-import type { Plugin } from '../shared/types/plugin'
-import type { PluginData } from '../../types/index'
-import type { CodewarsConfig, CodewarsData } from './types'
-import { RenderCodewars } from './components/RenderCodewars'
-import { fetchCodewarsData } from './services/fetchData'
+import type { Plugin } from '../shared/types/plugin.js'
+import type { PluginData } from '../../types/index.js'
+import type { CodewarsConfig, CodewarsData } from './types.js'
+import { RenderCodewars } from './components/RenderCodewars.js'
+import { fetchCodewarsData } from './services/fetchData.js'
 
 export const codewarsPlugin: Plugin<CodewarsConfig, PluginData & CodewarsData> = {
   name: 'codewars',

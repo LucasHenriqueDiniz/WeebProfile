@@ -2,7 +2,7 @@
  * Tipos do Plugin Steam
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base.js'
 
 export interface SteamGame {
   appid: number
