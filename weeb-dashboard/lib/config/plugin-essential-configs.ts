@@ -18,6 +18,7 @@ export interface EssentialConfigKey {
   placeholder?: string
   description?: string
   helpUrl?: string
+  tooltip?: string
   docKey?: string
   oauthProvider?: "spotify" // Provider OAuth quando type === "oauth"
 }

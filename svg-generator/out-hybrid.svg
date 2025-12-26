@@ -1,0 +1,1834 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="587" class="half default flex flex-col relative"><style>
+    #svg-main {
+  --default-color-surface: #ffffff;
+  --default-color-background: #ffffff;
+  --default-color-default: #9fa9b5;
+  --default-color-success: #2da44e;
+  --default-color-muted: #6e7781;
+  --default-color-muted-light: #8c959f;
+  --default-color-raw: #9fa9b5;
+  --default-color-highlight: #FF7A3D;
+    }
+  </style><style>/* Default Style CSS */
+
+/* Load Poppins font from Google Fonts */
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiEyp8kv8JHgFVrJJfecg.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLGT9Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: &#x27;Poppins&#x27;;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v21/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2) format(&#x27;woff2&#x27;);
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container */
+#svg-main .default-container {
+  --font-family: Poppins, sans-serif;
+  font-family: Poppins, sans-serif;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure foreignObject content doesn&#x27;t overflow */
+#svg-main foreignObject {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#svg-main foreignObject &gt; div {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Section styles for plugins */
+#svg-main section {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Plugin CSS Classes - Using CSS theme variables */
+#svg-main .text-default-muted {
+  color: var(--default-color-muted) !important;
+}
+
+#svg-main .text-default-muted-light {
+  color: var(--default-color-muted-light) !important;
+}
+
+#svg-main .text-default-highlight {
+  color: var(--default-color-highlight) !important;
+}
+
+#svg-main .text-default-raw {
+  color: var(--default-color-raw) !important;
+}
+
+#svg-main .text-default-success {
+  color: var(--default-color-success) !important;
+}
+
+#svg-main .text-default-fg {
+  color: var(--default-color-default) !important;
+}
+
+#svg-main .text-default-text {
+  color: var(--default-color-default) !important;
+}
+
+#svg-main .text-default-link {
+  color: var(--default-color-highlight) !important;
+}
+
+#svg-main .bg-default-highlight {
+  background-color: var(--default-color-highlight) !important;
+}
+
+#svg-main .bg-default-surface {
+  background-color: var(--default-color-surface) !important;
+}
+
+#svg-main .bg-default-muted {
+  background-color: var(--default-color-muted) !important;
+}
+
+#svg-main .bg-default-muted\/20 {
+  background-color: color-mix(in srgb, var(--default-color-muted) 20%, transparent) !important;
+}
+
+#svg-main .bg-default-15 {
+  background-color: color-mix(in srgb, var(--default-color-highlight) 15%, transparent) !important;
+}
+
+#svg-main .border-default-highlight {
+  border-color: var(--default-color-highlight) !important;
+}
+
+#svg-main .fill-default-highlight {
+  fill: var(--default-color-highlight) !important;
+}
+
+#svg-main .text-default {
+  color: var(--default-color-default) !important;
+}
+
+/* Image Square Container Classes */
+#svg-main .image-square-container-50 {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-60 {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-75 {
+  width: 75px;
+  height: 75px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-100 {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .image-square-container-200 {
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* When inside col-span-2, container should take full width/height including gap */
+#svg-main .col-span-2 .image-square-container-200 {
+  width: 100%;
+  height: 100%;
+}
+
+#svg-main .image-square-container-50 img,
+#svg-main .image-square-container-60 img,
+#svg-main .image-square-container-75 img,
+#svg-main .image-square-container-100 img,
+#svg-main .image-square-container-200 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Image classes for direct use (not in containers) */
+#svg-main .image-portrait {
+  width: 75px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 0.375rem;
+  flex-shrink: 0;
+}
+
+#svg-main .image-square {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.375rem;
+}
+
+/* Favorite Container - used as image container with overlay */
+#svg-main .favorite-container {
+  position: relative;
+  width: 75px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Favorite Container when used in simple grid (portrait images) */
+#svg-main .favorite-container img.image-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Favorite Overlay */
+#svg-main .favorite-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 40px;
+  font-weight: 500;
+}
+
+#svg-main .favorite-overlay * {
+  color: white !important;
+}
+
+/* Favorite Overlay Simple - smaller for image grid */
+#svg-main .favorite-overlay-simple {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.25rem 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  font-weight: 500;
+  font-size: 0.625rem;
+  line-height: 1;
+}
+
+#svg-main .favorite-overlay-simple * {
+  color: white !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Additional plugin utilities */
+#svg-main .items-baseline {
+  align-items: baseline;
+}
+
+#svg-main .shrink-0 {
+  flex-shrink: 0;
+}
+
+#svg-main .grid-cols-\[auto_auto_min-content\] {
+  grid-template-columns: auto auto min-content;
+}
+
+#svg-main .grid-cols-\[75px_1fr\] {
+  grid-template-columns: 75px 1fr;
+}
+
+#svg-main .h-\[50px\] {
+  height: 50px;
+}
+
+#svg-main .rounded-2xl {
+  border-radius: 1rem;
+}
+
+#svg-main .shadow-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+#svg-main .h-\[15px\] {
+  height: 15px;
+}
+
+#svg-main .leading-none {
+  line-height: 1;
+}
+
+#svg-main .text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#svg-main .sm-text {
+  font-size: 0.875rem;
+}
+
+#svg-main .md-2-text {
+  font-size: 0.875rem;
+}
+
+#svg-main .text-md {
+  font-size: 1rem;
+}
+
+#svg-main .no-underline {
+  text-decoration: none;
+}
+
+#svg-main .align-center {
+  align-items: center;
+}
+
+#svg-main .text-bold {
+  font-weight: 700;
+}
+
+
+/* Line clamp utilities */
+#svg-main .line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Synopsis text */
+#svg-main .synopsis-text {
+  font-size: 12px;
+  line-height: 1.25rem;
+  color: var(--default-color-muted);
+}
+
+#svg-main .bg-black\/25 {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Grid utilities are now auto-generated by Tailwind CSS */
+/* Use Tailwind classes like: grid-cols-10 half:grid-cols-5 */
+
+/* Half-mode variant classes are now auto-generated by Tailwind CSS */
+/* Use Tailwind classes like: half:grid-cols-5, half:flex-col, etc. */
+
+/* Ensure all content respects half mode width */
+#svg-main.half * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#svg-main.half .default-container {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+#svg-main.half section {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Min height utilities */
+#svg-main .min-h-100 {
+  min-height: 100px;
+}
+
+/* Grid span utilities */
+#svg-main .col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+#svg-main .row-span-2 {
+  grid-row: span 2 / span 2;
+}
+
+/* Width utilities */
+#svg-main .w-auto {
+  width: auto;
+}
+
+#svg-main .min-w-0 {
+  min-width: 0;
+}
+
+/* Ensure grid items with span take full space */
+#svg-main .col-span-2.row-span-2 {
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure image containers inside spanned items take full space */
+#svg-main .col-span-2 .image-square-container-200,
+#svg-main .col-span-2.row-span-2 .image-square-container-200 {
+  width: 100%;
+  height: 100%;
+}
+
+/* Tailwind utility classes are now auto-generated by generate-tailwind-css script */
+/* See src/styles/shared.css for all Tailwind utilities */
+/* Shared CSS - Tailwind utility classes used by all plugins */
+/* ⚠️ AUTO-GENERATED - DO NOT EDIT MANUALLY ⚠️ */
+/* Run: pnpm generate:tailwind-css */
+/* Generated using Tailwind CSS CLI - supports all Tailwind features including arbitrary values */
+/* These classes are embedded in the SVG so it works standalone */
+
+#svg-main /* Tailwind CSS Input File */
+
+/* This file is used as input for Tailwind CLI to generate utility classes */
+
+/* We only need utilities, not base or components */
+
+.static {
+  position: static
+}
+
+#svg-main .absolute {
+  position: absolute
+}
+
+#svg-main .relative {
+  position: relative
+}
+
+#svg-main .inset-0 {
+  inset: 0px
+}
+
+#svg-main .right-0 {
+  right: 0px
+}
+
+#svg-main .top-0 {
+  top: 0px
+}
+
+#svg-main .z-10 {
+  z-index: 10
+}
+
+#svg-main .col-span-2 {
+  grid-column: span 2 / span 2
+}
+
+#svg-main .row-span-2 {
+  grid-row: span 2 / span 2
+}
+
+#svg-main .m-0 {
+  margin: 0px
+}
+
+#svg-main .mx-1 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem
+}
+
+#svg-main .mx-\[3px\] {
+  margin-left: 3px;
+  margin-right: 3px
+}
+
+#svg-main .my-1 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem
+}
+
+#svg-main .my-1\.5 {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem
+}
+
+#svg-main .mb-0\.5 {
+  margin-bottom: 0.125rem
+}
+
+#svg-main .mb-1 {
+  margin-bottom: 0.25rem
+}
+
+#svg-main .mb-1\.5 {
+  margin-bottom: 0.375rem
+}
+
+#svg-main .mb-2 {
+  margin-bottom: 0.5rem
+}
+
+#svg-main .mb-2\.5 {
+  margin-bottom: 0.625rem
+}
+
+#svg-main .mb-3 {
+  margin-bottom: 0.75rem
+}
+
+#svg-main .mb-4 {
+  margin-bottom: 1rem
+}
+
+#svg-main .ml-1 {
+  margin-left: 0.25rem
+}
+
+#svg-main .ml-1\.5 {
+  margin-left: 0.375rem
+}
+
+#svg-main .ml-2 {
+  margin-left: 0.5rem
+}
+
+#svg-main .ml-auto {
+  margin-left: auto
+}
+
+#svg-main .mr-1 {
+  margin-right: 0.25rem
+}
+
+#svg-main .mr-2 {
+  margin-right: 0.5rem
+}
+
+#svg-main .mt-0\.5 {
+  margin-top: 0.125rem
+}
+
+#svg-main .mt-1 {
+  margin-top: 0.25rem
+}
+
+#svg-main .mt-2 {
+  margin-top: 0.5rem
+}
+
+#svg-main .mt-3 {
+  margin-top: 0.75rem
+}
+
+#svg-main .mt-4 {
+  margin-top: 1rem
+}
+
+#svg-main .mt-\[0\.25rem\] {
+  margin-top: 0.25rem
+}
+
+#svg-main .mt-\[0\.5rem\] {
+  margin-top: 0.5rem
+}
+
+#svg-main .line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1
+}
+
+#svg-main .line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2
+}
+
+#svg-main .block {
+  display: block
+}
+
+#svg-main .inline-block {
+  display: inline-block
+}
+
+#svg-main .inline {
+  display: inline
+}
+
+#svg-main .flex {
+  display: flex
+}
+
+#svg-main .inline-flex {
+  display: inline-flex
+}
+
+#svg-main .grid {
+  display: grid
+}
+
+#svg-main .inline-grid {
+  display: inline-grid
+}
+
+#svg-main .contents {
+  display: contents
+}
+
+#svg-main .hidden {
+  display: none
+}
+
+#svg-main .aspect-video {
+  aspect-ratio: 16 / 9
+}
+
+#svg-main .h-10 {
+  height: 2.5rem
+}
+
+#svg-main .h-12 {
+  height: 3rem
+}
+
+#svg-main .h-14 {
+  height: 3.5rem
+}
+
+#svg-main .h-16 {
+  height: 4rem
+}
+
+#svg-main .h-2 {
+  height: 0.5rem
+}
+
+#svg-main .h-2\.5 {
+  height: 0.625rem
+}
+
+#svg-main .h-20 {
+  height: 5rem
+}
+
+#svg-main .h-3 {
+  height: 0.75rem
+}
+
+#svg-main .h-3\.5 {
+  height: 0.875rem
+}
+
+#svg-main .h-32 {
+  height: 8rem
+}
+
+#svg-main .h-4 {
+  height: 1rem
+}
+
+#svg-main .h-6 {
+  height: 1.5rem
+}
+
+#svg-main .h-7 {
+  height: 1.75rem
+}
+
+#svg-main .h-8 {
+  height: 2rem
+}
+
+#svg-main .h-\[0\.7rem\] {
+  height: 0.7rem
+}
+
+#svg-main .h-\[100px\] {
+  height: 100px
+}
+
+#svg-main .h-\[120px\] {
+  height: 120px
+}
+
+#svg-main .h-\[15px\] {
+  height: 15px
+}
+
+#svg-main .h-\[50px\] {
+  height: 50px
+}
+
+#svg-main .h-\[60px\] {
+  height: 60px
+}
+
+#svg-main .h-\[75px\] {
+  height: 75px
+}
+
+#svg-main .h-full {
+  height: 100%
+}
+
+#svg-main .h-px {
+  height: 1px
+}
+
+#svg-main .max-h-\[50px\] {
+  max-height: 50px
+}
+
+#svg-main .min-h-\[120px\] {
+  min-height: 120px
+}
+
+#svg-main .min-h-\[50px\] {
+  min-height: 50px
+}
+
+#svg-main .min-h-\[75px\] {
+  min-height: 75px
+}
+
+#svg-main .min-h-\[80px\] {
+  min-height: 80px
+}
+
+#svg-main .w-10 {
+  width: 2.5rem
+}
+
+#svg-main .w-12 {
+  width: 3rem
+}
+
+#svg-main .w-14 {
+  width: 3.5rem
+}
+
+#svg-main .w-16 {
+  width: 4rem
+}
+
+#svg-main .w-2 {
+  width: 0.5rem
+}
+
+#svg-main .w-20 {
+  width: 5rem
+}
+
+#svg-main .w-3 {
+  width: 0.75rem
+}
+
+#svg-main .w-3\.5 {
+  width: 0.875rem
+}
+
+#svg-main .w-4 {
+  width: 1rem
+}
+
+#svg-main .w-6 {
+  width: 1.5rem
+}
+
+#svg-main .w-7 {
+  width: 1.75rem
+}
+
+#svg-main .w-8 {
+  width: 2rem
+}
+
+#svg-main .w-\[0\.60rem\] {
+  width: 0.60rem
+}
+
+#svg-main .w-\[0\.7rem\] {
+  width: 0.7rem
+}
+
+#svg-main .w-\[60px\] {
+  width: 60px
+}
+
+#svg-main .w-auto {
+  width: auto
+}
+
+#svg-main .w-fit {
+  width: -moz-fit-content;
+  width: fit-content
+}
+
+#svg-main .w-full {
+  width: 100%
+}
+
+#svg-main .w-px {
+  width: 1px
+}
+
+#svg-main .min-w-0 {
+  min-width: 0px
+}
+
+#svg-main .max-w-\[60\%\] {
+  max-width: 60%
+}
+
+#svg-main .max-w-full {
+  max-width: 100%
+}
+
+#svg-main .flex-1 {
+  flex: 1 1 0%
+}
+
+#svg-main .flex-shrink {
+  flex-shrink: 1
+}
+
+#svg-main .flex-shrink-0 {
+  flex-shrink: 0
+}
+
+#svg-main .shrink-0 {
+  flex-shrink: 0
+}
+
+#svg-main .rotate-12 {
+  --tw-rotate: 12deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+}
+
+#svg-main .transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+}
+
+#svg-main .select-none {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none
+}
+
+#svg-main .grid-flow-col {
+  grid-auto-flow: column
+}
+
+#svg-main .grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr))
+}
+
+#svg-main .grid-cols-10 {
+  grid-template-columns: repeat(10, minmax(0, 1fr))
+}
+
+#svg-main .grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+}
+
+#svg-main .grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr))
+}
+
+#svg-main .grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr))
+}
+
+#svg-main .grid-cols-8 {
+  grid-template-columns: repeat(8, minmax(0, 1fr))
+}
+
+#svg-main .grid-cols-\[30px_1fr\] {
+  grid-template-columns: 30px 1fr
+}
+
+#svg-main .grid-cols-\[30px_min-content_1fr\] {
+  grid-template-columns: 30px min-content 1fr
+}
+
+#svg-main .grid-cols-\[75px_1fr\] {
+  grid-template-columns: 75px 1fr
+}
+
+#svg-main .grid-cols-\[auto_min-content\] {
+  grid-template-columns: auto min-content
+}
+
+#svg-main .grid-rows-2 {
+  grid-template-rows: repeat(2, minmax(0, 1fr))
+}
+
+#svg-main .grid-rows-7 {
+  grid-template-rows: repeat(7, minmax(0, 1fr))
+}
+
+#svg-main .flex-row {
+  flex-direction: row
+}
+
+#svg-main .flex-col {
+  flex-direction: column
+}
+
+#svg-main .flex-wrap {
+  flex-wrap: wrap
+}
+
+#svg-main .flex-nowrap {
+  flex-wrap: nowrap
+}
+
+#svg-main .items-start {
+  align-items: flex-start
+}
+
+#svg-main .items-end {
+  align-items: flex-end
+}
+
+#svg-main .items-center {
+  align-items: center
+}
+
+#svg-main .items-baseline {
+  align-items: baseline
+}
+
+#svg-main .justify-start {
+  justify-content: flex-start
+}
+
+#svg-main .justify-end {
+  justify-content: flex-end
+}
+
+#svg-main .justify-center {
+  justify-content: center
+}
+
+#svg-main .justify-between {
+  justify-content: space-between
+}
+
+#svg-main .justify-evenly {
+  justify-content: space-evenly
+}
+
+#svg-main .gap-0\.5 {
+  gap: 0.125rem
+}
+
+#svg-main .gap-1 {
+  gap: 0.25rem
+}
+
+#svg-main .gap-1\.5 {
+  gap: 0.375rem
+}
+
+#svg-main .gap-2 {
+  gap: 0.5rem
+}
+
+#svg-main .gap-2\.5 {
+  gap: 0.625rem
+}
+
+#svg-main .gap-3 {
+  gap: 0.75rem
+}
+
+#svg-main .gap-4 {
+  gap: 1rem
+}
+
+#svg-main .gap-\[1px\] {
+  gap: 1px
+}
+
+#svg-main .gap-x-2 {
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem
+}
+
+#svg-main .gap-y-2 {
+  row-gap: 0.5rem
+}
+
+#svg-main .space-y-2 &gt; :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse))
+}
+
+#svg-main .space-y-2\.5 &gt; :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.625rem * var(--tw-space-y-reverse))
+}
+
+#svg-main .space-y-3 &gt; :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse))
+}
+
+#svg-main .self-end {
+  align-self: flex-end
+}
+
+#svg-main .overflow-hidden {
+  overflow: hidden
+}
+
+#svg-main .overflow-x-auto {
+  overflow-x: auto
+}
+
+#svg-main .overflow-y-hidden {
+  overflow-y: hidden
+}
+
+#svg-main .truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
+}
+
+#svg-main .overflow-ellipsis {
+  text-overflow: ellipsis
+}
+
+#svg-main .whitespace-nowrap {
+  white-space: nowrap
+}
+
+#svg-main .whitespace-pre-line {
+  white-space: pre-line
+}
+
+#svg-main .whitespace-pre-wrap {
+  white-space: pre-wrap
+}
+
+#svg-main .text-nowrap {
+  text-wrap: nowrap
+}
+
+#svg-main .break-words {
+  overflow-wrap: break-word
+}
+
+#svg-main .rounded {
+  border-radius: 0.25rem
+}
+
+#svg-main .rounded-2xl {
+  border-radius: 1rem
+}
+
+#svg-main .rounded-full {
+  border-radius: 9999px
+}
+
+#svg-main .rounded-lg {
+  border-radius: 0.5rem
+}
+
+#svg-main .rounded-md {
+  border-radius: 0.375rem
+}
+
+#svg-main .rounded-sm {
+  border-radius: 0.125rem
+}
+
+#svg-main .rounded-xl {
+  border-radius: 0.75rem
+}
+
+#svg-main .rounded-r-lg {
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem
+}
+
+#svg-main .rounded-t-md {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem
+}
+
+#svg-main .border {
+  border-width: 1px
+}
+
+#svg-main .border-0 {
+  border-width: 0px
+}
+
+#svg-main .border-2 {
+  border-width: 2px
+}
+
+#svg-main .border-b {
+  border-bottom-width: 1px
+}
+
+#svg-main .border-solid {
+  border-style: solid
+}
+
+#svg-main .border-white\/30 {
+  border-color: rgb(255 255 255 / 0.3)
+}
+
+#svg-main .bg-black {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1))
+}
+
+#svg-main .bg-black\/20 {
+  background-color: rgb(0 0 0 / 0.2)
+}
+
+#svg-main .bg-black\/25 {
+  background-color: rgb(0 0 0 / 0.25)
+}
+
+#svg-main .bg-black\/70 {
+  background-color: rgb(0 0 0 / 0.7)
+}
+
+#svg-main .bg-gray-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity, 1))
+}
+
+#svg-main .bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1))
+}
+
+#svg-main .bg-green-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1))
+}
+
+#svg-main .bg-red-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1))
+}
+
+#svg-main .fill-yellow-500 {
+  fill: #eab308
+}
+
+#svg-main .object-contain {
+  -o-object-fit: contain;
+     object-fit: contain
+}
+
+#svg-main .object-cover {
+  -o-object-fit: cover;
+     object-fit: cover
+}
+
+#svg-main .p-0 {
+  padding: 0px
+}
+
+#svg-main .p-1 {
+  padding: 0.25rem
+}
+
+#svg-main .p-2 {
+  padding: 0.5rem
+}
+
+#svg-main .p-3 {
+  padding: 0.75rem
+}
+
+#svg-main .p-4 {
+  padding: 1rem
+}
+
+#svg-main .p-5 {
+  padding: 1.25rem
+}
+
+#svg-main .px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem
+}
+
+#svg-main .px-1\.5 {
+  padding-left: 0.375rem;
+  padding-right: 0.375rem
+}
+
+#svg-main .px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem
+}
+
+#svg-main .px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem
+}
+
+#svg-main .px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem
+}
+
+#svg-main .py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem
+}
+
+#svg-main .py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem
+}
+
+#svg-main .py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem
+}
+
+#svg-main .py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem
+}
+
+#svg-main .pb-0\.5 {
+  padding-bottom: 0.125rem
+}
+
+#svg-main .pl-1 {
+  padding-left: 0.25rem
+}
+
+#svg-main .pl-3 {
+  padding-left: 0.75rem
+}
+
+#svg-main .pr-1 {
+  padding-right: 0.25rem
+}
+
+#svg-main .pr-2 {
+  padding-right: 0.5rem
+}
+
+#svg-main .pt-0\.5 {
+  padding-top: 0.125rem
+}
+
+#svg-main .pt-1 {
+  padding-top: 0.25rem
+}
+
+#svg-main .pt-2 {
+  padding-top: 0.5rem
+}
+
+#svg-main .text-center {
+  text-align: center
+}
+
+#svg-main .text-right {
+  text-align: right
+}
+
+#svg-main .text-end {
+  text-align: end
+}
+
+#svg-main .font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace
+}
+
+#svg-main .text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem
+}
+
+#svg-main .text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem
+}
+
+#svg-main .text-\[0\.75rem\] {
+  font-size: 0.75rem
+}
+
+#svg-main .text-\[10px\] {
+  font-size: 10px
+}
+
+#svg-main .text-\[11px\] {
+  font-size: 11px
+}
+
+#svg-main .text-\[12px\] {
+  font-size: 12px
+}
+
+#svg-main .text-\[8px\] {
+  font-size: 8px
+}
+
+#svg-main .text-\[9px\] {
+  font-size: 9px
+}
+
+#svg-main .text-base {
+  font-size: 1rem;
+  line-height: 1.5rem
+}
+
+#svg-main .text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem
+}
+
+#svg-main .text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem
+}
+
+#svg-main .text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem
+}
+
+#svg-main .text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem
+}
+
+#svg-main .font-black {
+  font-weight: 900
+}
+
+#svg-main .font-bold {
+  font-weight: 700
+}
+
+#svg-main .font-medium {
+  font-weight: 500
+}
+
+#svg-main .font-semibold {
+  font-weight: 600
+}
+
+#svg-main .uppercase {
+  text-transform: uppercase
+}
+
+#svg-main .capitalize {
+  text-transform: capitalize
+}
+
+#svg-main .tabular-nums {
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
+}
+
+#svg-main .leading-none {
+  line-height: 1
+}
+
+#svg-main .leading-relaxed {
+  line-height: 1.625
+}
+
+#svg-main .leading-tight {
+  line-height: 1.25
+}
+
+#svg-main .tracking-tight {
+  letter-spacing: -0.025em
+}
+
+#svg-main .tracking-tighter {
+  letter-spacing: -0.05em
+}
+
+#svg-main .tracking-wider {
+  letter-spacing: 0.05em
+}
+
+#svg-main .text-blue-500 {
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-gray-300 {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-green-500 {
+  --tw-text-opacity: 1;
+  color: rgb(34 197 94 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-green-600 {
+  --tw-text-opacity: 1;
+  color: rgb(22 163 74 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-orange-500 {
+  --tw-text-opacity: 1;
+  color: rgb(249 115 22 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-red-600 {
+  --tw-text-opacity: 1;
+  color: rgb(220 38 38 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-white\/50 {
+  color: rgb(255 255 255 / 0.5)
+}
+
+#svg-main .text-white\/60 {
+  color: rgb(255 255 255 / 0.6)
+}
+
+#svg-main .text-white\/80 {
+  color: rgb(255 255 255 / 0.8)
+}
+
+#svg-main .text-white\/90 {
+  color: rgb(255 255 255 / 0.9)
+}
+
+#svg-main .text-yellow-500 {
+  --tw-text-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .no-underline {
+  text-decoration-line: none
+}
+
+#svg-main .antialiased {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale
+}
+
+#svg-main .opacity-15 {
+  opacity: 0.15
+}
+
+#svg-main .opacity-50 {
+  opacity: 0.5
+}
+
+#svg-main .opacity-80 {
+  opacity: 0.8
+}
+
+#svg-main .opacity-90 {
+  opacity: 0.9
+}
+
+#svg-main .opacity-95 {
+  opacity: 0.95
+}
+
+#svg-main .shadow-lg {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+
+#svg-main .shadow-md {
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+
+#svg-main .shadow-sm {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+
+#svg-main .shadow-xl {
+  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+
+#svg-main .blur {
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .drop-shadow {
+  --tw-drop-shadow: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .drop-shadow-lg {
+  --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .drop-shadow-sm {
+  --tw-drop-shadow: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .grayscale {
+  --tw-grayscale: grayscale(100%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms
+}
+
+#svg-main .transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms
+}
+
+#svg-main .transition-opacity {
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms
+}
+
+#svg-main .transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms
+}
+
+#svg-main .duration-200 {
+  transition-duration: 200ms
+}
+
+#svg-main .duration-300 {
+  transition-duration: 300ms
+}
+
+#svg-main .hover\:underline:hover {
+  text-decoration-line: underline
+}
+
+#svg-main .hover\:opacity-80:hover {
+  opacity: 0.8
+}
+
+#svg-main .group:hover .group-hover\:scale-105 {
+  --tw-scale-x: 1.05;
+  --tw-scale-y: 1.05;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+}
+
+#svg-main .group:hover .group-hover\:shadow-md {
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+
+#svg-main.half .half\:mb-1\.5 {
+  margin-bottom: 0.375rem
+}
+
+#svg-main.half .half\:mb-2 {
+  margin-bottom: 0.5rem
+}
+
+#svg-main.half .half\:line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2
+}
+
+#svg-main.half .half\:hidden {
+  display: none
+}
+
+#svg-main.half .half\:h-10 {
+  height: 2.5rem
+}
+
+#svg-main.half .half\:h-12 {
+  height: 3rem
+}
+
+#svg-main.half .half\:h-14 {
+  height: 3.5rem
+}
+
+#svg-main.half .half\:h-16 {
+  height: 4rem
+}
+
+#svg-main.half .half\:h-5 {
+  height: 1.25rem
+}
+
+#svg-main.half .half\:h-6 {
+  height: 1.5rem
+}
+
+#svg-main.half .half\:h-\[50px\] {
+  height: 50px
+}
+
+#svg-main.half .half\:min-h-\[100px\] {
+  min-height: 100px
+}
+
+#svg-main.half .half\:min-h-\[70px\] {
+  min-height: 70px
+}
+
+#svg-main.half .half\:w-10 {
+  width: 2.5rem
+}
+
+#svg-main.half .half\:w-12 {
+  width: 3rem
+}
+
+#svg-main.half .half\:w-14 {
+  width: 3.5rem
+}
+
+#svg-main.half .half\:w-16 {
+  width: 4rem
+}
+
+#svg-main.half .half\:w-5 {
+  width: 1.25rem
+}
+
+#svg-main.half .half\:w-6 {
+  width: 1.5rem
+}
+
+#svg-main.half .half\:w-\[50px\] {
+  width: 50px
+}
+
+#svg-main.half .half\:grid-cols-10 {
+  grid-template-columns: repeat(10, minmax(0, 1fr))
+}
+
+#svg-main.half .half\:grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+}
+
+#svg-main.half .half\:grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr))
+}
+
+#svg-main.half .half\:flex-col {
+  flex-direction: column
+}
+
+#svg-main.half .half\:gap-1 {
+  gap: 0.25rem
+}
+
+#svg-main.half .half\:gap-2 {
+  gap: 0.5rem
+}
+
+#svg-main.half .half\:gap-2\.5 {
+  gap: 0.625rem
+}
+
+#svg-main.half .half\:gap-3 {
+  gap: 0.75rem
+}
+
+#svg-main.half .half\:px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem
+}
+
+#svg-main.half .half\:py-2\.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem
+}
+
+#svg-main.half .half\:py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem
+}
+
+#svg-main.half .half\:text-\[10px\] {
+  font-size: 10px
+}
+
+#svg-main.half .half\:text-\[11px\] {
+  font-size: 11px
+}
+
+#svg-main.half .half\:text-\[9px\] {
+  font-size: 9px
+}
+
+#svg-main.half .half\:text-base {
+  font-size: 1rem;
+  line-height: 1.5rem
+}
+
+#svg-main.half .half\:text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem
+}
+
+#svg-main.half .half\:text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem
+}
+
+#svg-main.half .half\:text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem
+}
+
+#svg-main.half .half\:text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem
+}
+
+@media (min-width: 768px) {#svg-main .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+  }
+}
+
+@media (prefers-color-scheme: dark) {#svg-main .dark\:bg-green-950 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(5 46 22 / var(--tw-bg-opacity, 1))
+  }
+
+  .dark\:bg-red-950 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
+  }
+
+  .dark\:text-green-400 {
+    --tw-text-opacity: 1;
+    color: rgb(74 222 128 / var(--tw-text-opacity, 1))
+  }
+
+  .dark\:text-red-400 {
+    --tw-text-opacity: 1;
+    color: rgb(248 113 113 / var(--tw-text-opacity, 1))
+  }
+}
+
+</style><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="duolingo-plugin" style="display:flex;flex-direction:column"><section id="duolingo-current-streak" style="display:flex;flex-direction:column"><div style="display:flex;flex-direction:column;gap:10px;margin-top:6px;margin-bottom:6px" class="w-full overflow-hidden"><div style="display:flex;flex-direction:column;background-color:#89E219;border-color:#58CC02;position:relative" class="rounded-2xl border-2 p-5 shadow-xl relative overflow-hidden"><div class="absolute top-0 right-0 opacity-15 transform rotate-12" style="width:120px;height:120px;position:absolute;top:0;right:0"><img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI2IDMyNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBjbGlwLXBhdGg9InVybCgjY2xpcDApIj48cGF0aCBvcGFjaXR5PSIwLjMiIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjMzLjAyIDI2My4zNUgxMTguNzQ3QzExNS45NTMgMjYzLjM1IDExMy41NzggMjY1LjU3NyAxMTMuNTc4IDI2OC41QzExMy41NzggMjcxLjI4NCAxMTUuODEzIDI3My42NSAxMTguNzQ3IDI3My42NUgyMzMuMDJDMjM1LjgxNCAyNzMuNjUgMjM4LjE4OSAyNzEuNDIzIDIzOC4xODkgMjY4LjVDMjM4LjE4OSAyNjUuNTc3IDIzNS44MTQgMjYzLjM1IDIzMy4wMiAyNjMuMzVaIiBmaWxsPSIjQUZBRkFGIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNzIuNTM1IDI1NC44NjFDMTcyLjUzNSAyNTAuMjY4IDE2OC43NjQgMjQ2LjM3MSAxNjQuMDE0IDI0Ni4zNzFIMTUwLjQ2M0MxNDUuODUzIDI0Ni4zNzEgMTQxLjk0MSAyNTAuMTI5IDE0MS45NDEgMjU0Ljg2MUMxNDEuOTQxIDI1OS40NTQgMTQ1LjcxMyAyNjMuMzUxIDE1MC40NjMgMjYzLjM1MUgxNjQuMDE0QzE2OC43NjQgMjYzLjM1MSAxNzIuNTM1IDI1OS41OTMgMTcyLjUzNSAyNTQuODYxWiIgZmlsbD0iI0Y0OTAwMCIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjE4LjM1NyAyNTguNjE4QzIyMC40NTMgMjU0LjQ0MyAyMTguNzc2IDI0OS40MzMgMjE0LjcyNSAyNDcuMzQ1TDIwNi40ODMgMjQzLjE3QzIwMi4yOTIgMjQxLjA4MiAxOTcuMjYzIDI0Mi43NTIgMTk1LjE2NyAyNDYuNzg4QzE5My4wNzIgMjUwLjk2NCAxOTQuNzQ4IDI1NS45NzQgMTk4LjggMjU4LjA2MkwyMDcuMDQyIDI2Mi4yMzdDMjExLjIzMyAyNjQuNDY0IDIxNi4yNjIgMjYyLjc5NCAyMTguMzU3IDI1OC42MThaIiBmaWxsPSIjRjQ5MDAwIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMjMuODA1IDI1NUMyMjMuODA1IDI1MC40MDcgMjIwLjAzMyAyNDYuNjQ5IDIxNS40MjMgMjQ2LjY0OUgyMTIuNzY5QzIwOC4xNTkgMjQ2LjY0OSAyMDQuMzg3IDI1MC40MDcgMjA0LjM4NyAyNTVDMjA0LjM4NyAyNTkuNTkzIDIwOC4xNTkgMjYzLjM1MSAyMTIuNzY5IDI2My4zNTFIMjE1LjQyM0MyMjAuMDMzIDI2My4zNTEgMjIzLjgwNSAyNTkuNTkzIDIyMy44MDUgMjU1WiIgZmlsbD0iI0Y0OTAwMCIvPjxwYXRoIGQ9Ik0xNTQuNjQ3IDE2My4xNDNMMjA2LjE5NSA2Mi4zNzg5QzIwOC45ODkgNTYuOTUxIDIxNi4yNTQgNTUuODM3NiAyMjAuNTg0IDYwLjE1MjFDMjQxLjI2IDgwLjc1MDMgMjQ2LjQyOCAxMTIuNzYxIDIzMi44NzggMTM5LjM0NEMyMTkuMzI3IDE2NS45MjcgMTkwLjEzIDE4MC41NCAxNjEuMjEyIDE3NS45NDdDMTU1LjIwNSAxNzQuOTczIDE1MS44NTMgMTY4LjU3MSAxNTQuNjQ3IDE2My4xNDNaIiBmaWxsPSIjNThDQzAyIi8+PHBhdGggZD0iTTc0LjE4MSAyMzcuMzI0TDk2LjUzMjcgMTMyLjY2M0M5Ny43OSAxMjcuMDk2IDEwNC4wNzYgMTI0LjMxMyAxMDkuMTA2IDEyNy4wOTZDMTMzLjEzNCAxNDAuODc1IDE0NS43MDcgMTY4Ljg0OSAxMzkuODM5IDE5Ni40MDZDMTMzLjk3MiAyMjMuOTYzIDExMC43ODIgMjQ0LjcwMSA4My4yNjE0IDI0Ny40ODRDNzcuNTMzNyAyNDguMDQxIDcyLjkyMzcgMjQzLjAzMSA3NC4xODEgMjM3LjMyNFoiIGZpbGw9IiM1OENDMDIiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE0OS4wNjIgNzkuMDgwMkMxMzYuOTA4IDkyLjk5NzkgMTI3Ljk2NyAxMDEuMzQ4IDEyMi4yNCAxMDQuMTMyQzExNi42NTIgMTA2LjkxNiAxMDQuNjM4IDEwOC43MjUgODYuNDc2OCAxMDkuNTZDNzQuNDYyOCAxMTAuMTE3IDY1LjI0MjcgMTIwLjQxNiA2NS44MDE1IDEzMi41MjRDNjUuOTQxMiAxMzUuNDQ3IDY2LjYzOTYgMTM4LjM3IDY4LjAzNjYgMTQxLjAxNEw5Ny42NTI3IDIwMS40MTdDMTEzLjQzOSAyMzMuNzA2IDE1Mi41NTQgMjQ3LjA2NyAxODUuMTA0IDIzMS4zNEMyMTcuNTE0IDIxNS42MTMgMjMwLjkyNSAxNzYuNzgyIDIxNS4xMzkgMTQ0LjYzM1YxNDQuNDkzTDE4NS4yNDQgODMuODEyMkMxNzkuOTM1IDcyLjk1NjQgMTY2LjgwMyA2OC41MDI3IDE1NS45MDcgNzMuNzkxNEMxNTMuMzkyIDc1LjA0NCAxNTEuMDE4IDc2Ljg1MzMgMTQ5LjA2MiA3OS4wODAyWiIgZmlsbD0iIzU4Q0MwMiIvPjxwYXRoIGQ9Ik0xODYuNTAzIDE4MS43OTNDMTg2LjM2MyAxODAuOTU4IDE4NS41MjUgMTgwLjU0IDE4NC42ODcgMTgwLjgxOUwxNzAuMDE4IDE4Ny45MTdDMTY5LjE4IDE4OC4zMzQgMTY5LjA0MSAxODkuMzA4IDE2OS41OTkgMTg5Ljg2NUMxNzIuNTMzIDE5Mi43ODggMTc3LjAwMyAxOTMuNDg0IDE4MC45MTUgMTkxLjY3NEMxODQuODI2IDE4OS44NjUgMTg3LjA2MiAxODUuODI5IDE4Ni41MDMgMTgxLjc5M1pNMTU5LjEyMiAxOTMuNjIzTDE0NC40NTQgMjAwLjcyMUMxNDMuNjE1IDIwMS4xMzggMTQzLjQ3NiAyMDIuMTEzIDE0NC4wMzQgMjAyLjY2OUMxNDYuOTY4IDIwNS41OTIgMTUxLjQzOSAyMDYuMjg4IDE1NS4zNSAyMDQuNDc5QzE1OS4yNjIgMjAyLjUzIDE2MS40OTcgMTk4LjQ5NCAxNjAuOTM4IDE5NC40NThDMTYwLjc5OCAxOTMuNzYyIDE1OS44MiAxOTMuMzQ0IDE1OS4xMjIgMTkzLjYyM1pNMTc4LjEyMSAxOTkuNzQ3TDE2My40NTMgMjA2Ljg0NUMxNjIuNjE0IDIwNy4yNjIgMTYyLjQ3NSAyMDguMjM2IDE2My4wMzMgMjA4Ljc5M0MxNjUuOTY3IDIxMS43MTYgMTcwLjQzOCAyMTIuNDEyIDE3NC4zNDkgMjEwLjYwMkMxNzguMjYxIDIwOC42NTQgMTgwLjQ5NiAyMDQuNjE4IDE3OS45MzcgMjAwLjU4MkMxNzkuNzk3IDE5OS44ODYgMTc4LjgxOSAxOTkuMzI5IDE3OC4xMjEgMTk5Ljc0N1oiIGZpbGw9IiM4OUUyMTkiLz48cGF0aCBkPSJNMTQ3LjI0NSA5Mi43MTk1TDEzOS4wMDMgMTIwLjQxNkMxMzguNTg0IDEyMS45NDcgMTM5LjcwMSAxMjMuMzM4IDE0MS4yMzggMTIzLjMzOEMxNDguNjQyIDEyMy4wNiAxNTUuMDY4IDExOC4wNSAxNTcuMTY0IDExMC44MTNDMTU5LjI1OSAxMDMuNTc1IDE1Ni40NjUgOTUuNzgxNCAxNTAuMzE4IDkxLjc0NTNDMTQ5LjA2MSA5MC45MTAyIDE0Ny42NjQgOTEuMzI3NyAxNDcuMjQ1IDkyLjcxOTVaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNDAuNjggMTE0LjcwOUMxMzguMDI2IDEyNC4wMzQgMTI3LjI2OSAxMjkuMzIzIDExOC4zMjggMTI1LjU2NUMxMjUuNzMyIDE0MC43MzYgMTM2Ljc2OCAxNjMuMTQzIDEzNi43NjggMTYzLjE0M0MxMzYuNzY4IDE2My4wMDQgMTQ0LjE3MiAxNTkuMzg1IDE1OS4yNiAxNTIuMjg3QzE1My44MTIgMTQxLjE1MyAxNDcuNTI1IDEyOC42MjcgMTQwLjY4IDExNC43MDlaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZD0iTTE1OC4xMzggOTIuOTk3OUwxNTAuMTc1IDEyMC40MTZDMTQ5Ljc1NiAxMjEuOTQ3IDE1MC44NzMgMTIzLjMzOCAxNTIuNDEgMTIzLjMzOEMxNTkuODE0IDEyMy4wNiAxNjYuMjQgMTE4LjA1IDE2OC4zMzYgMTEwLjgxM0MxNzAuNDMxIDEwMy41NzUgMTY3LjYzNyA5NS45MjA2IDE2MS40OSA5MS43NDUzQzE2MC4yMzMgOTAuNzcxIDE1OC41NTcgOTEuNDY2OSAxNTguMTM4IDkyLjk5NzlaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZD0iTTk3LjY1MTggMTE3LjIxNUwxMjQuNDc0IDEyOC4yMUMxMjUuODcxIDEyOC43NjYgMTI2LjI5IDEzMC41NzYgMTI1LjMxMiAxMzEuODI4QzEyMC40MjMgMTM3LjM5NSAxMTIuNDYgMTM5LjIwNSAxMDUuNDc1IDEzNi4yODJDOTguNDkgMTMzLjM1OSA5NC4yOTkgMTI2LjI2MSA5NC45OTc1IDExOS4wMjRDOTQuOTk3NSAxMTcuMzU0IDk2LjI1NDggMTE2LjY1OCA5Ny42NTE4IDExNy4yMTVaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZD0iTTkxLjIyNzEgMTI1LjI4N0wxMTcuNjMgMTM2LjQyMUMxMTkuMDI3IDEzNi45NzggMTE5LjQ0NiAxMzguNzg3IDExOC40NjggMTQwLjA0QzExMy41NzkgMTQ1LjYwNyAxMDUuNjE2IDE0Ny40MTYgOTguNjMxMSAxNDQuNDkzQzkxLjY0NjIgMTQxLjU3MSA4Ny40NTUzIDEzNC40NzMgODguMTUzNyAxMjcuMjM1Qzg4LjE1MzcgMTI1LjU2NSA4OS44MzAxIDEyNC43MyA5MS4yMjcxIDEyNS4yODdaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNTQuNzkxIDk5LjgxNzVMMTUyLjk3NSAxMDAuNjUzQzE0MC44MjEgMTA2LjQ5OCAxMzUuNzkyIDEyMC45NzIgMTQxLjc5OSAxMzMuMDgxTDE0OS42MjIgMTQ4Ljk0N0MxNTUuNDkgMTYwLjkxNiAxNzAuMDE4IDE2NS45MjcgMTgyLjE3MiAxNjAuMDgxTDE4My45ODggMTU5LjI0NkMxOTYuMTQyIDE1My40MDEgMjAxLjE3MSAxMzguOTI2IDE5NS4xNjQgMTI2LjgxOEwxODcuMzQxIDExMC45NTJDMTgxLjQ3MyA5OC45ODI1IDE2Ni45NDUgOTMuOTcyMSAxNTQuNzkxIDk5LjgxNzVaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05Ny45MzE3IDEyNi44MThMOTYuMTE1NiAxMjcuNjUzQzgzLjk2MTkgMTMzLjQ5OCA3OC45MzI3IDE0Ny45NzMgODQuOTM5OCAxNjAuMDgxTDkyLjc2MjkgMTc1Ljk0N0M5OC42MzAyIDE4Ny45MTcgMTEzLjE1OSAxOTIuOTI3IDEyNS4zMTMgMTg3LjA4MkwxMjYuOTg5IDE4Ni4yNDZDMTM5LjAwMyAxODAuNDAxIDE0NC4wMzIgMTY1LjkyNyAxMzguMzA1IDE1My45NTdMMTMwLjYyMSAxMzcuOTUyQzEyNC43NTQgMTI1Ljk4MyAxMTAuMjI1IDEyMC45NzIgOTcuOTMxNyAxMjYuODE4Qzk3LjkzMTcgMTI2LjgxOCA5OC4wNzE0IDEyNi44MTggOTcuOTMxNyAxMjYuODE4WiIgZmlsbD0iIzg5RTIxOSIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTAyLjI2MSAxMzUuNzI1QzkzLjMyMDYgMTQwLjA0IDg5LjY4ODUgMTUwLjc1NiA5NC4wMTkxIDE1OS41MjRMOTguNzY4OSAxNjkuMTI4QzEwMy4xIDE3OC4wMzUgMTEzLjg1NiAxODEuNjU0IDEyMi43OTcgMTc3LjMzOUMxMzEuNzM4IDE3My4wMjUgMTM1LjM3IDE2Mi4zMDggMTMxLjAzOSAxNTMuNTRMMTI2LjI4OSAxNDMuOTM3QzEyMS44MTkgMTM1LjE2OCAxMTEuMDYyIDEzMS40MTEgMTAyLjI2MSAxMzUuNzI1WiIgZmlsbD0id2hpdGUiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEwOS4zODkgMTQzLjM4QzEwNS4xOTggMTQ1LjQ2OCAxMDMuNTIxIDE1MC40NzggMTA1LjQ3NyAxNTQuNjUzTDEwOS41MjggMTYyLjg2NUMxMTEuNjI0IDE2Ny4wNCAxMTYuNjUzIDE2OC43MSAxMjAuODQ0IDE2Ni43NjJDMTI1LjAzNSAxNjQuNjc0IDEyNi43MTEgMTU5LjY2NCAxMjQuNzU2IDE1NS40ODhMMTIwLjcwNCAxNDcuMjc3QzExOC43NDkgMTQyLjk2MiAxMTMuNzE5IDE0MS4yOTIgMTA5LjM4OSAxNDMuMzhaIiBmaWxsPSIjNEI0QjRCIi8+PHBhdGggZD0iTTEwNS42MTMgMTU0LjM3NUMxMDguNTQ1IDE1NC4zNzUgMTEwLjkyMiAxNTIuMDA3IDExMC45MjIgMTQ5LjA4NkMxMTAuOTIyIDE0Ni4xNjUgMTA4LjU0NSAxNDMuNzk3IDEwNS42MTMgMTQzLjc5N0MxMDIuNjgxIDE0My43OTcgMTAwLjMwNSAxNDYuMTY1IDEwMC4zMDUgMTQ5LjA4NkMxMDAuMzA1IDE1Mi4wMDcgMTAyLjY4MSAxNTQuMzc1IDEwNS42MTMgMTU0LjM3NVoiIGZpbGw9IndoaXRlIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNTkuNTM5IDEwNy43NTFDMTUwLjU5OCAxMTIuMDY1IDE0Ni45NjYgMTIyLjc4MiAxNTEuMjk2IDEzMS41NUwxNTYuMDQ2IDE0MS4xNTNDMTYwLjM3NyAxNTAuMDYgMTcxLjEzNCAxNTMuNjc5IDE4MC4wNzQgMTQ5LjM2NUMxODkuMDE1IDE0NS4wNSAxOTIuNjQ3IDEzNC4zMzMgMTg4LjMxNyAxMjUuNTY1TDE4My41NjcgMTE1Ljk2MkMxNzkuMjM2IDEwNy4wNTUgMTY4LjQ3OSAxMDMuNDM2IDE1OS41MzkgMTA3Ljc1MVoiIGZpbGw9IndoaXRlIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNjEuNjM1IDExOC4zMjhDMTU3LjQ0NCAxMjAuNDE2IDE1NS43NjggMTI1LjQyNiAxNTcuNzIzIDEyOS42MDFMMTYxLjc3NSAxMzcuODEzQzE2My44NyAxNDEuOTg4IDE2OC44OTkgMTQzLjY1OCAxNzMuMDkgMTQxLjcxQzE3Ny4yODEgMTM5LjYyMiAxNzguOTU3IDEzNC42MTIgMTc3LjAwMiAxMzAuNDM2TDE3Mi45NSAxMjIuMjI1QzE3MC45OTUgMTE4LjA1IDE2NS45NjUgMTE2LjM4IDE2MS42MzUgMTE4LjMyOFoiIGZpbGw9IiM0QjRCNEIiLz48cGF0aCBkPSJNMTU3LjU4MiAxMjkuODhDMTYwLjUxNCAxMjkuODggMTYyLjg5MSAxMjcuNTEyIDE2Mi44OTEgMTI0LjU5MUMxNjIuODkxIDEyMS42NyAxNjAuNTE0IDExOS4zMDIgMTU3LjU4MiAxMTkuMzAyQzE1NC42NSAxMTkuMzAyIDE1Mi4yNzMgMTIxLjY3IDE1Mi4yNzMgMTI0LjU5MUMxNTIuMjczIDEyNy41MTIgMTU0LjY1IDEyOS44OCAxNTcuNTgyIDEyOS44OFoiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTEwMC41ODYgMTc4Ljg3TDkyLjkwMjMgMTYzLjI4MkMxMDkuNTI2IDE2MC4wODEgMTIzLjM1NyAxNjEuMTk1IDEzOS4wMDMgMTY2LjIwNUwxMzQuNjcyIDE3Ni42NDNDMTMzLjI3NSAxODAuMTIzIDEyOS41MDMgMTgxLjkzMiAxMjUuODcxIDE4MC45NThDMTE4LjYwNyAxNzguODcgMTExLjQ4MiAxNzguNzMxIDEwNC4wNzggMTgwLjU0QzEwMi44MjEgMTgwLjk1OCAxMDEuMjg0IDE4MC4xMjMgMTAwLjU4NiAxNzguODdaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZD0iTTE5NC43NDMgMTM2LjU2TDE4OS4wMTYgMTE5LjcyQzE3NC45MDYgMTI5LjE4NCAxNjUuODI2IDEzOS42MjIgMTU4LjQyMiAxNTQuMjM2TDE3Mi42NzEgMTYwLjIyQzE3NC4yMDggMTYwLjkxNiAxNzYuMDI0IDE2MC4yMiAxNzYuNzIyIDE1OC42ODlDMTgwLjQ5NCAxNTAuNjE3IDE4Ni4wODIgMTQ0LjM1NCAxOTMuNjI2IDEzOS43NjFDMTk0LjYwNCAxMzkuMjA1IDE5NS4xNjMgMTM3LjgxMyAxOTQuNzQzIDEzNi41NloiIGZpbGw9IiM4OUUyMTkiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE0My43NTMgMTQ4LjgwOEMxMzkuMTQzIDE1MS4wMzUgMTM3LjMyNyAxNTYuNDYzIDEzOS41NjMgMTYxLjA1NUwxNDAuNjggMTYzLjI4MkMxNDIuOTE1IDE2Ny44NzUgMTQ4LjUwMyAxNjkuNjg0IDE1Mi45NzQgMTY3LjQ1OEMxNTcuNTg0IDE2NS4yMzEgMTU5LjQgMTU5LjgwMyAxNTcuMTY1IDE1NS4yMUwxNTYuMDQ3IDE1Mi45ODNDMTUzLjk1MSAxNDguMzkgMTQ4LjM2NCAxNDYuNTgxIDE0My43NTMgMTQ4LjgwOFoiIGZpbGw9IiNGNDkwMDAiLz48cGF0aCBkPSJNMTU5LjUzOSAxNTIuNDI2QzE1Ni4wNDcgMTQ3LjY5NCAxNDkuMjAyIDE0NS44ODUgMTQzLjE5NSAxNDguOTQ3QzEzNy43NDYgMTUxLjU5MSAxMzQuOTUyIDE1Ny45OTMgMTM2LjYyOSAxNjMuN0wxMzYuOTA4IDE2NC4zOTZMMTQ5LjM0MSAxNjAuNzc3TDE1OS45NTggMTUzLjI2MUwxNTkuNTM5IDE1Mi40MjZaIiBmaWxsPSIjRkZDMjAwIi8+PHBhdGggZD0iTTE0My40NzYgMTU2LjA0NUMxNDMuMDU3IDE1Ni4wNDUgMTQyLjQ5OSAxNTUuOTA2IDE0Mi4yMTkgMTU1LjQ4OEMxNDEuNTIxIDE1NC43OTIgMTQxLjUyMSAxNTMuNjc5IDE0Mi4yMTkgMTUyLjk4M0MxNDMuODk2IDE1MS4zMTMgMTQ1Ljk5MSAxNTAuMiAxNDguMzY2IDE0OS45MjFDMTQ5LjM0NCAxNDkuNzgyIDE1MC4zMjIgMTUwLjQ3OCAxNTAuMzIyIDE1MS41OTFDMTUwLjQ2MSAxNTIuNTY2IDE0OS43NjMgMTUzLjU0IDE0OC42NDUgMTUzLjU0QzE0Ny4xMDkgMTUzLjY3OSAxNDUuODUxIDE1NC4zNzUgMTQ0LjczNCAxNTUuNDg4QzE0NC4zMTUgMTU1LjkwNiAxNDMuODk2IDE1Ni4wNDUgMTQzLjQ3NiAxNTYuMDQ1WiIgZmlsbD0iI0ZGREUwMCIvPjwvZz48ZGVmcz48Y2xpcFBhdGggaWQ9ImNsaXAwIj48cmVjdCB3aWR0aD0iMTc0LjYyMyIgaGVpZ2h0PSIyMTYuMTQyIiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjUuODAwOCA1Ny41MDc4KSIvPjwvY2xpcFBhdGg+PC9kZWZzPjwvc3ZnPg==" alt="" class="w-full h-full object-contain"/></div><div style="display:flex;flex-direction:row;gap:16px;align-items:center" class="relative z-10"><div style="display:flex;flex-direction:column;flex-shrink:0" class="flex-shrink-0"><div style="display:flex;flex-direction:column;background-color:rgba(255, 255, 255, 0.3);backdrop-filter:blur(4px)" class="rounded-full p-2 shadow-lg"><img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI2IDMyNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBjbGlwLXBhdGg9InVybCgjY2xpcDApIj48cGF0aCBvcGFjaXR5PSIwLjMiIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjMzLjAyIDI2My4zNUgxMTguNzQ3QzExNS45NTMgMjYzLjM1IDExMy41NzggMjY1LjU3NyAxMTMuNTc4IDI2OC41QzExMy41NzggMjcxLjI4NCAxMTUuODEzIDI3My42NSAxMTguNzQ3IDI3My42NUgyMzMuMDJDMjM1LjgxNCAyNzMuNjUgMjM4LjE4OSAyNzEuNDIzIDIzOC4xODkgMjY4LjVDMjM4LjE4OSAyNjUuNTc3IDIzNS44MTQgMjYzLjM1IDIzMy4wMiAyNjMuMzVaIiBmaWxsPSIjQUZBRkFGIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNzIuNTM1IDI1NC44NjFDMTcyLjUzNSAyNTAuMjY4IDE2OC43NjQgMjQ2LjM3MSAxNjQuMDE0IDI0Ni4zNzFIMTUwLjQ2M0MxNDUuODUzIDI0Ni4zNzEgMTQxLjk0MSAyNTAuMTI5IDE0MS45NDEgMjU0Ljg2MUMxNDEuOTQxIDI1OS40NTQgMTQ1LjcxMyAyNjMuMzUxIDE1MC40NjMgMjYzLjM1MUgxNjQuMDE0QzE2OC43NjQgMjYzLjM1MSAxNzIuNTM1IDI1OS41OTMgMTcyLjUzNSAyNTQuODYxWiIgZmlsbD0iI0Y0OTAwMCIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMjE4LjM1NyAyNTguNjE4QzIyMC40NTMgMjU0LjQ0MyAyMTguNzc2IDI0OS40MzMgMjE0LjcyNSAyNDcuMzQ1TDIwNi40ODMgMjQzLjE3QzIwMi4yOTIgMjQxLjA4MiAxOTcuMjYzIDI0Mi43NTIgMTk1LjE2NyAyNDYuNzg4QzE5My4wNzIgMjUwLjk2NCAxOTQuNzQ4IDI1NS45NzQgMTk4LjggMjU4LjA2MkwyMDcuMDQyIDI2Mi4yMzdDMjExLjIzMyAyNjQuNDY0IDIxNi4yNjIgMjYyLjc5NCAyMTguMzU3IDI1OC42MThaIiBmaWxsPSIjRjQ5MDAwIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMjMuODA1IDI1NUMyMjMuODA1IDI1MC40MDcgMjIwLjAzMyAyNDYuNjQ5IDIxNS40MjMgMjQ2LjY0OUgyMTIuNzY5QzIwOC4xNTkgMjQ2LjY0OSAyMDQuMzg3IDI1MC40MDcgMjA0LjM4NyAyNTVDMjA0LjM4NyAyNTkuNTkzIDIwOC4xNTkgMjYzLjM1MSAyMTIuNzY5IDI2My4zNTFIMjE1LjQyM0MyMjAuMDMzIDI2My4zNTEgMjIzLjgwNSAyNTkuNTkzIDIyMy44MDUgMjU1WiIgZmlsbD0iI0Y0OTAwMCIvPjxwYXRoIGQ9Ik0xNTQuNjQ3IDE2My4xNDNMMjA2LjE5NSA2Mi4zNzg5QzIwOC45ODkgNTYuOTUxIDIxNi4yNTQgNTUuODM3NiAyMjAuNTg0IDYwLjE1MjFDMjQxLjI2IDgwLjc1MDMgMjQ2LjQyOCAxMTIuNzYxIDIzMi44NzggMTM5LjM0NEMyMTkuMzI3IDE2NS45MjcgMTkwLjEzIDE4MC41NCAxNjEuMjEyIDE3NS45NDdDMTU1LjIwNSAxNzQuOTczIDE1MS44NTMgMTY4LjU3MSAxNTQuNjQ3IDE2My4xNDNaIiBmaWxsPSIjNThDQzAyIi8+PHBhdGggZD0iTTc0LjE4MSAyMzcuMzI0TDk2LjUzMjcgMTMyLjY2M0M5Ny43OSAxMjcuMDk2IDEwNC4wNzYgMTI0LjMxMyAxMDkuMTA2IDEyNy4wOTZDMTMzLjEzNCAxNDAuODc1IDE0NS43MDcgMTY4Ljg0OSAxMzkuODM5IDE5Ni40MDZDMTMzLjk3MiAyMjMuOTYzIDExMC43ODIgMjQ0LjcwMSA4My4yNjE0IDI0Ny40ODRDNzcuNTMzNyAyNDguMDQxIDcyLjkyMzcgMjQzLjAzMSA3NC4xODEgMjM3LjMyNFoiIGZpbGw9IiM1OENDMDIiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE0OS4wNjIgNzkuMDgwMkMxMzYuOTA4IDkyLjk5NzkgMTI3Ljk2NyAxMDEuMzQ4IDEyMi4yNCAxMDQuMTMyQzExNi42NTIgMTA2LjkxNiAxMDQuNjM4IDEwOC43MjUgODYuNDc2OCAxMDkuNTZDNzQuNDYyOCAxMTAuMTE3IDY1LjI0MjcgMTIwLjQxNiA2NS44MDE1IDEzMi41MjRDNjUuOTQxMiAxMzUuNDQ3IDY2LjYzOTYgMTM4LjM3IDY4LjAzNjYgMTQxLjAxNEw5Ny42NTI3IDIwMS40MTdDMTEzLjQzOSAyMzMuNzA2IDE1Mi41NTQgMjQ3LjA2NyAxODUuMTA0IDIzMS4zNEMyMTcuNTE0IDIxNS42MTMgMjMwLjkyNSAxNzYuNzgyIDIxNS4xMzkgMTQ0LjYzM1YxNDQuNDkzTDE4NS4yNDQgODMuODEyMkMxNzkuOTM1IDcyLjk1NjQgMTY2LjgwMyA2OC41MDI3IDE1NS45MDcgNzMuNzkxNEMxNTMuMzkyIDc1LjA0NCAxNTEuMDE4IDc2Ljg1MzMgMTQ5LjA2MiA3OS4wODAyWiIgZmlsbD0iIzU4Q0MwMiIvPjxwYXRoIGQ9Ik0xODYuNTAzIDE4MS43OTNDMTg2LjM2MyAxODAuOTU4IDE4NS41MjUgMTgwLjU0IDE4NC42ODcgMTgwLjgxOUwxNzAuMDE4IDE4Ny45MTdDMTY5LjE4IDE4OC4zMzQgMTY5LjA0MSAxODkuMzA4IDE2OS41OTkgMTg5Ljg2NUMxNzIuNTMzIDE5Mi43ODggMTc3LjAwMyAxOTMuNDg0IDE4MC45MTUgMTkxLjY3NEMxODQuODI2IDE4OS44NjUgMTg3LjA2MiAxODUuODI5IDE4Ni41MDMgMTgxLjc5M1pNMTU5LjEyMiAxOTMuNjIzTDE0NC40NTQgMjAwLjcyMUMxNDMuNjE1IDIwMS4xMzggMTQzLjQ3NiAyMDIuMTEzIDE0NC4wMzQgMjAyLjY2OUMxNDYuOTY4IDIwNS41OTIgMTUxLjQzOSAyMDYuMjg4IDE1NS4zNSAyMDQuNDc5QzE1OS4yNjIgMjAyLjUzIDE2MS40OTcgMTk4LjQ5NCAxNjAuOTM4IDE5NC40NThDMTYwLjc5OCAxOTMuNzYyIDE1OS44MiAxOTMuMzQ0IDE1OS4xMjIgMTkzLjYyM1pNMTc4LjEyMSAxOTkuNzQ3TDE2My40NTMgMjA2Ljg0NUMxNjIuNjE0IDIwNy4yNjIgMTYyLjQ3NSAyMDguMjM2IDE2My4wMzMgMjA4Ljc5M0MxNjUuOTY3IDIxMS43MTYgMTcwLjQzOCAyMTIuNDEyIDE3NC4zNDkgMjEwLjYwMkMxNzguMjYxIDIwOC42NTQgMTgwLjQ5NiAyMDQuNjE4IDE3OS45MzcgMjAwLjU4MkMxNzkuNzk3IDE5OS44ODYgMTc4LjgxOSAxOTkuMzI5IDE3OC4xMjEgMTk5Ljc0N1oiIGZpbGw9IiM4OUUyMTkiLz48cGF0aCBkPSJNMTQ3LjI0NSA5Mi43MTk1TDEzOS4wMDMgMTIwLjQxNkMxMzguNTg0IDEyMS45NDcgMTM5LjcwMSAxMjMuMzM4IDE0MS4yMzggMTIzLjMzOEMxNDguNjQyIDEyMy4wNiAxNTUuMDY4IDExOC4wNSAxNTcuMTY0IDExMC44MTNDMTU5LjI1OSAxMDMuNTc1IDE1Ni40NjUgOTUuNzgxNCAxNTAuMzE4IDkxLjc0NTNDMTQ5LjA2MSA5MC45MTAyIDE0Ny42NjQgOTEuMzI3NyAxNDcuMjQ1IDkyLjcxOTVaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNDAuNjggMTE0LjcwOUMxMzguMDI2IDEyNC4wMzQgMTI3LjI2OSAxMjkuMzIzIDExOC4zMjggMTI1LjU2NUMxMjUuNzMyIDE0MC43MzYgMTM2Ljc2OCAxNjMuMTQzIDEzNi43NjggMTYzLjE0M0MxMzYuNzY4IDE2My4wMDQgMTQ0LjE3MiAxNTkuMzg1IDE1OS4yNiAxNTIuMjg3QzE1My44MTIgMTQxLjE1MyAxNDcuNTI1IDEyOC42MjcgMTQwLjY4IDExNC43MDlaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZD0iTTE1OC4xMzggOTIuOTk3OUwxNTAuMTc1IDEyMC40MTZDMTQ5Ljc1NiAxMjEuOTQ3IDE1MC44NzMgMTIzLjMzOCAxNTIuNDEgMTIzLjMzOEMxNTkuODE0IDEyMy4wNiAxNjYuMjQgMTE4LjA1IDE2OC4zMzYgMTEwLjgxM0MxNzAuNDMxIDEwMy41NzUgMTY3LjYzNyA5NS45MjA2IDE2MS40OSA5MS43NDUzQzE2MC4yMzMgOTAuNzcxIDE1OC41NTcgOTEuNDY2OSAxNTguMTM4IDkyLjk5NzlaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZD0iTTk3LjY1MTggMTE3LjIxNUwxMjQuNDc0IDEyOC4yMUMxMjUuODcxIDEyOC43NjYgMTI2LjI5IDEzMC41NzYgMTI1LjMxMiAxMzEuODI4QzEyMC40MjMgMTM3LjM5NSAxMTIuNDYgMTM5LjIwNSAxMDUuNDc1IDEzNi4yODJDOTguNDkgMTMzLjM1OSA5NC4yOTkgMTI2LjI2MSA5NC45OTc1IDExOS4wMjRDOTQuOTk3NSAxMTcuMzU0IDk2LjI1NDggMTE2LjY1OCA5Ny42NTE4IDExNy4yMTVaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZD0iTTkxLjIyNzEgMTI1LjI4N0wxMTcuNjMgMTM2LjQyMUMxMTkuMDI3IDEzNi45NzggMTE5LjQ0NiAxMzguNzg3IDExOC40NjggMTQwLjA0QzExMy41NzkgMTQ1LjYwNyAxMDUuNjE2IDE0Ny40MTYgOTguNjMxMSAxNDQuNDkzQzkxLjY0NjIgMTQxLjU3MSA4Ny40NTUzIDEzNC40NzMgODguMTUzNyAxMjcuMjM1Qzg4LjE1MzcgMTI1LjU2NSA4OS44MzAxIDEyNC43MyA5MS4yMjcxIDEyNS4yODdaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNTQuNzkxIDk5LjgxNzVMMTUyLjk3NSAxMDAuNjUzQzE0MC44MjEgMTA2LjQ5OCAxMzUuNzkyIDEyMC45NzIgMTQxLjc5OSAxMzMuMDgxTDE0OS42MjIgMTQ4Ljk0N0MxNTUuNDkgMTYwLjkxNiAxNzAuMDE4IDE2NS45MjcgMTgyLjE3MiAxNjAuMDgxTDE4My45ODggMTU5LjI0NkMxOTYuMTQyIDE1My40MDEgMjAxLjE3MSAxMzguOTI2IDE5NS4xNjQgMTI2LjgxOEwxODcuMzQxIDExMC45NTJDMTgxLjQ3MyA5OC45ODI1IDE2Ni45NDUgOTMuOTcyMSAxNTQuNzkxIDk5LjgxNzVaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05Ny45MzE3IDEyNi44MThMOTYuMTE1NiAxMjcuNjUzQzgzLjk2MTkgMTMzLjQ5OCA3OC45MzI3IDE0Ny45NzMgODQuOTM5OCAxNjAuMDgxTDkyLjc2MjkgMTc1Ljk0N0M5OC42MzAyIDE4Ny45MTcgMTEzLjE1OSAxOTIuOTI3IDEyNS4zMTMgMTg3LjA4MkwxMjYuOTg5IDE4Ni4yNDZDMTM5LjAwMyAxODAuNDAxIDE0NC4wMzIgMTY1LjkyNyAxMzguMzA1IDE1My45NTdMMTMwLjYyMSAxMzcuOTUyQzEyNC43NTQgMTI1Ljk4MyAxMTAuMjI1IDEyMC45NzIgOTcuOTMxNyAxMjYuODE4Qzk3LjkzMTcgMTI2LjgxOCA5OC4wNzE0IDEyNi44MTggOTcuOTMxNyAxMjYuODE4WiIgZmlsbD0iIzg5RTIxOSIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTAyLjI2MSAxMzUuNzI1QzkzLjMyMDYgMTQwLjA0IDg5LjY4ODUgMTUwLjc1NiA5NC4wMTkxIDE1OS41MjRMOTguNzY4OSAxNjkuMTI4QzEwMy4xIDE3OC4wMzUgMTEzLjg1NiAxODEuNjU0IDEyMi43OTcgMTc3LjMzOUMxMzEuNzM4IDE3My4wMjUgMTM1LjM3IDE2Mi4zMDggMTMxLjAzOSAxNTMuNTRMMTI2LjI4OSAxNDMuOTM3QzEyMS44MTkgMTM1LjE2OCAxMTEuMDYyIDEzMS40MTEgMTAyLjI2MSAxMzUuNzI1WiIgZmlsbD0id2hpdGUiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEwOS4zODkgMTQzLjM4QzEwNS4xOTggMTQ1LjQ2OCAxMDMuNTIxIDE1MC40NzggMTA1LjQ3NyAxNTQuNjUzTDEwOS41MjggMTYyLjg2NUMxMTEuNjI0IDE2Ny4wNCAxMTYuNjUzIDE2OC43MSAxMjAuODQ0IDE2Ni43NjJDMTI1LjAzNSAxNjQuNjc0IDEyNi43MTEgMTU5LjY2NCAxMjQuNzU2IDE1NS40ODhMMTIwLjcwNCAxNDcuMjc3QzExOC43NDkgMTQyLjk2MiAxMTMuNzE5IDE0MS4yOTIgMTA5LjM4OSAxNDMuMzhaIiBmaWxsPSIjNEI0QjRCIi8+PHBhdGggZD0iTTEwNS42MTMgMTU0LjM3NUMxMDguNTQ1IDE1NC4zNzUgMTEwLjkyMiAxNTIuMDA3IDExMC45MjIgMTQ5LjA4NkMxMTAuOTIyIDE0Ni4xNjUgMTA4LjU0NSAxNDMuNzk3IDEwNS42MTMgMTQzLjc5N0MxMDIuNjgxIDE0My43OTcgMTAwLjMwNSAxNDYuMTY1IDEwMC4zMDUgMTQ5LjA4NkMxMDAuMzA1IDE1Mi4wMDcgMTAyLjY4MSAxNTQuMzc1IDEwNS42MTMgMTU0LjM3NVoiIGZpbGw9IndoaXRlIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNTkuNTM5IDEwNy43NTFDMTUwLjU5OCAxMTIuMDY1IDE0Ni45NjYgMTIyLjc4MiAxNTEuMjk2IDEzMS41NUwxNTYuMDQ2IDE0MS4xNTNDMTYwLjM3NyAxNTAuMDYgMTcxLjEzNCAxNTMuNjc5IDE4MC4wNzQgMTQ5LjM2NUMxODkuMDE1IDE0NS4wNSAxOTIuNjQ3IDEzNC4zMzMgMTg4LjMxNyAxMjUuNTY1TDE4My41NjcgMTE1Ljk2MkMxNzkuMjM2IDEwNy4wNTUgMTY4LjQ3OSAxMDMuNDM2IDE1OS41MzkgMTA3Ljc1MVoiIGZpbGw9IndoaXRlIi8+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNjEuNjM1IDExOC4zMjhDMTU3LjQ0NCAxMjAuNDE2IDE1NS43NjggMTI1LjQyNiAxNTcuNzIzIDEyOS42MDFMMTYxLjc3NSAxMzcuODEzQzE2My44NyAxNDEuOTg4IDE2OC44OTkgMTQzLjY1OCAxNzMuMDkgMTQxLjcxQzE3Ny4yODEgMTM5LjYyMiAxNzguOTU3IDEzNC42MTIgMTc3LjAwMiAxMzAuNDM2TDE3Mi45NSAxMjIuMjI1QzE3MC45OTUgMTE4LjA1IDE2NS45NjUgMTE2LjM4IDE2MS42MzUgMTE4LjMyOFoiIGZpbGw9IiM0QjRCNEIiLz48cGF0aCBkPSJNMTU3LjU4MiAxMjkuODhDMTYwLjUxNCAxMjkuODggMTYyLjg5MSAxMjcuNTEyIDE2Mi44OTEgMTI0LjU5MUMxNjIuODkxIDEyMS42NyAxNjAuNTE0IDExOS4zMDIgMTU3LjU4MiAxMTkuMzAyQzE1NC42NSAxMTkuMzAyIDE1Mi4yNzMgMTIxLjY3IDE1Mi4yNzMgMTI0LjU5MUMxNTIuMjczIDEyNy41MTIgMTU0LjY1IDEyOS44OCAxNTcuNTgyIDEyOS44OFoiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTEwMC41ODYgMTc4Ljg3TDkyLjkwMjMgMTYzLjI4MkMxMDkuNTI2IDE2MC4wODEgMTIzLjM1NyAxNjEuMTk1IDEzOS4wMDMgMTY2LjIwNUwxMzQuNjcyIDE3Ni42NDNDMTMzLjI3NSAxODAuMTIzIDEyOS41MDMgMTgxLjkzMiAxMjUuODcxIDE4MC45NThDMTE4LjYwNyAxNzguODcgMTExLjQ4MiAxNzguNzMxIDEwNC4wNzggMTgwLjU0QzEwMi44MjEgMTgwLjk1OCAxMDEuMjg0IDE4MC4xMjMgMTAwLjU4NiAxNzguODdaIiBmaWxsPSIjODlFMjE5Ii8+PHBhdGggZD0iTTE5NC43NDMgMTM2LjU2TDE4OS4wMTYgMTE5LjcyQzE3NC45MDYgMTI5LjE4NCAxNjUuODI2IDEzOS42MjIgMTU4LjQyMiAxNTQuMjM2TDE3Mi42NzEgMTYwLjIyQzE3NC4yMDggMTYwLjkxNiAxNzYuMDI0IDE2MC4yMiAxNzYuNzIyIDE1OC42ODlDMTgwLjQ5NCAxNTAuNjE3IDE4Ni4wODIgMTQ0LjM1NCAxOTMuNjI2IDEzOS43NjFDMTk0LjYwNCAxMzkuMjA1IDE5NS4xNjMgMTM3LjgxMyAxOTQuNzQzIDEzNi41NloiIGZpbGw9IiM4OUUyMTkiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE0My43NTMgMTQ4LjgwOEMxMzkuMTQzIDE1MS4wMzUgMTM3LjMyNyAxNTYuNDYzIDEzOS41NjMgMTYxLjA1NUwxNDAuNjggMTYzLjI4MkMxNDIuOTE1IDE2Ny44NzUgMTQ4LjUwMyAxNjkuNjg0IDE1Mi45NzQgMTY3LjQ1OEMxNTcuNTg0IDE2NS4yMzEgMTU5LjQgMTU5LjgwMyAxNTcuMTY1IDE1NS4yMUwxNTYuMDQ3IDE1Mi45ODNDMTUzLjk1MSAxNDguMzkgMTQ4LjM2NCAxNDYuNTgxIDE0My43NTMgMTQ4LjgwOFoiIGZpbGw9IiNGNDkwMDAiLz48cGF0aCBkPSJNMTU5LjUzOSAxNTIuNDI2QzE1Ni4wNDcgMTQ3LjY5NCAxNDkuMjAyIDE0NS44ODUgMTQzLjE5NSAxNDguOTQ3QzEzNy43NDYgMTUxLjU5MSAxMzQuOTUyIDE1Ny45OTMgMTM2LjYyOSAxNjMuN0wxMzYuOTA4IDE2NC4zOTZMMTQ5LjM0MSAxNjAuNzc3TDE1OS45NTggMTUzLjI2MUwxNTkuNTM5IDE1Mi40MjZaIiBmaWxsPSIjRkZDMjAwIi8+PHBhdGggZD0iTTE0My40NzYgMTU2LjA0NUMxNDMuMDU3IDE1Ni4wNDUgMTQyLjQ5OSAxNTUuOTA2IDE0Mi4yMTkgMTU1LjQ4OEMxNDEuNTIxIDE1NC43OTIgMTQxLjUyMSAxNTMuNjc5IDE0Mi4yMTkgMTUyLjk4M0MxNDMuODk2IDE1MS4zMTMgMTQ1Ljk5MSAxNTAuMiAxNDguMzY2IDE0OS45MjFDMTQ5LjM0NCAxNDkuNzgyIDE1MC4zMjIgMTUwLjQ3OCAxNTAuMzIyIDE1MS41OTFDMTUwLjQ2MSAxNTIuNTY2IDE0OS43NjMgMTUzLjU0IDE0OC42NDUgMTUzLjU0QzE0Ny4xMDkgMTUzLjY3OSAxNDUuODUxIDE1NC4zNzUgMTQ0LjczNCAxNTUuNDg4QzE0NC4zMTUgMTU1LjkwNiAxNDMuODk2IDE1Ni4wNDUgMTQzLjQ3NiAxNTYuMDQ1WiIgZmlsbD0iI0ZGREUwMCIvPjwvZz48ZGVmcz48Y2xpcFBhdGggaWQ9ImNsaXAwIj48cmVjdCB3aWR0aD0iMTc0LjYyMyIgaGVpZ2h0PSIyMTYuMTQyIiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjUuODAwOCA1Ny41MDc4KSIvPjwvY2xpcFBhdGg+PC9kZWZzPjwvc3ZnPg==" alt="Duolingo mascot" class="w-12 h-12 object-contain" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2))"/></div></div><div style="display:flex;flex-direction:column;flex:1;min-width:0" class="flex-1 min-w-0"><div style="display:flex;flex-direction:row;gap:8px;align-items:baseline;margin-bottom:4px"><span class="text-3xl font-bold drop-shadow-sm" style="color:#FFFFFF">0</span><span class="text-sm font-semibold opacity-90" style="color:#FFFFFF">days</span></div><p class="text-sm font-semibold opacity-95" style="color:#FFFFFF">Start your streak!</p></div><div style="display:flex;flex-direction:column;flex-shrink:0" class="flex-shrink-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" class="text-2xl opacity-80" style="color:#FFFFFF;filter:none;animation:none" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M216 23.86c0-23.8-30.65-32.77-44.15-13.04C48 191.85 224 200 224 288c0 35.63-29.11 64.46-64.85 63.99-35.17-.45-63.15-29.77-63.15-64.94v-85.51c0-21.7-26.47-32.23-41.43-16.5C27.8 213.16 0 261.33 0 320c0 105.87 86.13 192 192 192s192-86.13 192-192c0-170.29-168-193-168-296.14z"></path></svg></div></div></div></div></section><section id="duolingo-languages-learning" style="display:flex;flex-direction:column"><div style="display:flex;flex-direction:column;gap:10px" class="w-full overflow-hidden"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M152.1 236.2c-3.5-12.1-7.8-33.2-7.8-33.2h-.5s-4.3 21.1-7.8 33.2l-11.1 37.5H163zM616 96H336v320h280c13.3 0 24-10.7 24-24V120c0-13.3-10.7-24-24-24zm-24 120c0 6.6-5.4 12-12 12h-11.4c-6.9 23.6-21.7 47.4-42.7 69.9 8.4 6.4 17.1 12.5 26.1 18 5.5 3.4 7.3 10.5 4.1 16.2l-7.9 13.9c-3.4 5.9-10.9 7.8-16.7 4.3-12.6-7.8-24.5-16.1-35.4-24.9-10.9 8.7-22.7 17.1-35.4 24.9-5.8 3.5-13.3 1.6-16.7-4.3l-7.9-13.9c-3.2-5.6-1.4-12.8 4.2-16.2 9.3-5.7 18-11.7 26.1-18-7.9-8.4-14.9-17-21-25.7-4-5.7-2.2-13.6 3.7-17.1l6.5-3.9 7.3-4.3c5.4-3.2 12.4-1.7 16 3.4 5 7 10.8 14 17.4 20.9 13.5-14.2 23.8-28.9 30-43.2H412c-6.6 0-12-5.4-12-12v-16c0-6.6 5.4-12 12-12h64v-16c0-6.6 5.4-12 12-12h16c6.6 0 12 5.4 12 12v16h64c6.6 0 12 5.4 12 12zM0 120v272c0 13.3 10.7 24 24 24h280V96H24c-13.3 0-24 10.7-24 24zm58.9 216.1L116.4 167c1.7-4.9 6.2-8.1 11.4-8.1h32.5c5.1 0 9.7 3.3 11.4 8.1l57.5 169.1c2.6 7.8-3.1 15.9-11.4 15.9h-22.9a12 12 0 0 1-11.5-8.6l-9.4-31.9h-60.2l-9.1 31.8c-1.5 5.1-6.2 8.7-11.5 8.7H70.3c-8.2 0-14-8.1-11.4-15.9z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Languages Learning</h2></div></div><div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;flex-direction:column;background-color:#58CC0215;border-color:#58CC0240" class="rounded-xl border-2 p-4 shadow-lg"><div style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:row;gap:10px;align-items:center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" style="width:24px;height:24px;object-fit:cover;border-radius:2px;flex-shrink:0"><title>GB</title><g fill="#FFF"><path d="M0 0h513v341.3H0V0z"></path><path d="M311.7 230 513 341.3v-31.5L369.3 230h-57.6zM200.3 111.3 0 0v31.5l143.7 79.8h56.6z"></path></g><path d="M393.8 230 513 295.7V230H393.8zm-82.1 0L513 341.3v-31.5L369.3 230h-57.6zm146.9 111.3-147-81.7v81.7h147zM90.3 230 0 280.2V230h90.3zm110 14.2v97.2H25.5l174.8-97.2zm-82.1-132.9L0 45.6v65.7h118.2zm82.1 0L0 0v31.5l143.7 79.8h56.6zM53.4 0l147 81.7V0h-147zm368.3 111.3L513 61.1v50.2h-91.3zm-110-14.2V0h174.9L311.7 97.1z" fill="#0052B4"></path><g fill="#D80027"><path d="M288 0h-64v138.7H0v64h224v138.7h64V202.7h224v-64H288V0z"></path><path d="M311.7 230 513 341.3v-31.5L369.3 230h-57.6zm-168 0L0 309.9v31.5L200.3 230h-56.6zm56.6-118.7L0 0v31.5l143.7 79.8h56.6zm168 0L513 31.5V0L311.7 111.3h56.6z"></path></g></svg><h3 class="text-base font-bold" style="color:#4B4B4B">English</h3></div><div style="display:flex;flex-direction:row;gap:12px;align-items:center"><span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold" style="background-color:#58CC0220;color:#58CC02;border:1px solid #58CC0240">Level <!-- -->2000</span><span class="text-sm font-bold" style="color:#58CC02">508<!-- --> XP</span></div></div><div style="display:flex;flex-direction:column" class="w-full"><div style="display:flex;flex-direction:column;background-color:#58CC0220;height:8px" class="h-2 rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-300" style="width:100%;background-color:#58CC02;box-shadow:0 0 8px #58CC0240;height:100%"></div></div></div></div></div><div style="display:flex;flex-direction:column;background-color:#58CC0215;border-color:#58CC0240" class="rounded-xl border-2 p-4 shadow-lg"><div style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:row;gap:10px;align-items:center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" style="width:24px;height:24px;object-fit:cover;border-radius:2px;flex-shrink:0"><title>FR</title><path fill="#FFF" d="M0 0h513v342H0z"></path><path fill="#00318A" d="M0 0h171v342H0z"></path><path fill="#D80027" d="M342 0h171v342H342z"></path></svg><h3 class="text-base font-bold" style="color:#4B4B4B">French</h3></div><div style="display:flex;flex-direction:row;gap:12px;align-items:center"><span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold" style="background-color:#58CC0220;color:#58CC02;border:1px solid #58CC0240">Level <!-- -->2000</span><span class="text-sm font-bold" style="color:#58CC02">439<!-- --> XP</span></div></div><div style="display:flex;flex-direction:column" class="w-full"><div style="display:flex;flex-direction:column;background-color:#58CC0220;height:8px" class="h-2 rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-300" style="width:97.66266338280923%;background-color:#58CC02;box-shadow:0 0 8px #58CC0240;height:100%"></div></div></div></div></div><div style="display:flex;flex-direction:column;background-color:#58CC0215;border-color:#58CC0240" class="rounded-xl border-2 p-4 shadow-lg"><div style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;flex-direction:row;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:row;gap:10px;align-items:center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" style="width:24px;height:24px;object-fit:cover;border-radius:2px;flex-shrink:0"><title>JP</title><path fill="#FFF" d="M0 0h512v342H0z"></path><circle fill="#D80027" cx="256.5" cy="171" r="96"></circle></svg><h3 class="text-base font-bold" style="color:#4B4B4B">Japanese</h3></div><div style="display:flex;flex-direction:row;gap:12px;align-items:center"><span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold" style="background-color:#58CC0220;color:#58CC02;border:1px solid #58CC0240">Level <!-- -->2000</span><span class="text-sm font-bold" style="color:#58CC02">34<!-- --> XP</span></div></div><div style="display:flex;flex-direction:column" class="w-full"><div style="display:flex;flex-direction:column;background-color:#58CC0220;height:8px" class="h-2 rounded-full overflow-hidden"><div class="h-full rounded-full transition-all duration-300" style="width:57.04577161410798%;background-color:#58CC02;box-shadow:0 0 8px #58CC0240;height:100%"></div></div></div></div></div></div></div></section></section></div></div></div></div></foreignObject></svg>

@@ -61,6 +61,7 @@ export const lastfmPluginMetadata = {
           max: 20,
           step: 1,
           description: "Máximo 20 músicas",
+          tooltip: "Número máximo de músicas recentes que serão exibidas. Mostra as últimas músicas que você escutou no LastFM.",
         },
       ],
     },
@@ -115,6 +116,7 @@ export const lastfmPluginMetadata = {
           max: 20,
           step: 1,
           description: "Máximo 20 artistas",
+          tooltip: "Número máximo de artistas que serão exibidos. Valores maiores podem aumentar o tempo de carregamento.",
         },
         {
           key: "top_artists_style",
@@ -126,6 +128,7 @@ export const lastfmPluginMetadata = {
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" },
           ],
+          tooltip: "Grid: exibe os artistas em formato de grade com imagens de perfil.\nList: exibe os artistas em formato de lista compacta.",
         },
         {
           key: "top_artists_period",
@@ -140,6 +143,7 @@ export const lastfmPluginMetadata = {
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" },
           ],
+          tooltip: "Período de tempo para calcular os artistas mais ouvidos. 'All time' mostra seus artistas mais ouvidos de todos os tempos.",
         },
       ],
     },
@@ -169,6 +173,7 @@ export const lastfmPluginMetadata = {
           max: 20,
           step: 1,
           description: "Máximo 20 álbuns",
+          tooltip: "Número máximo de álbuns que serão exibidos. Valores maiores podem aumentar o tempo de carregamento.",
         },
         {
           key: "top_albums_style",
@@ -180,6 +185,7 @@ export const lastfmPluginMetadata = {
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" },
           ],
+          tooltip: "Grid: exibe os álbuns em formato de grade com capas de álbum.\nList: exibe os álbuns em formato de lista compacta.",
         },
         {
           key: "top_albums_period",
@@ -194,6 +200,7 @@ export const lastfmPluginMetadata = {
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" },
           ],
+          tooltip: "Período de tempo para calcular os álbuns mais ouvidos. 'All time' mostra seus álbuns mais ouvidos de todos os tempos.",
         },
       ],
     },
@@ -223,6 +230,7 @@ export const lastfmPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 tracks",
+          tooltip: "Número máximo de faixas que serão exibidas. Valores maiores podem aumentar o tempo de carregamento.",
         },
         {
           key: "top_tracks_style",
@@ -234,6 +242,7 @@ export const lastfmPluginMetadata = {
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" },
           ],
+          tooltip: "Grid: exibe as faixas em formato de grade com capas de álbum.\nList: exibe as faixas em formato de lista compacta.",
         },
         {
           key: "top_tracks_period",
@@ -248,6 +257,7 @@ export const lastfmPluginMetadata = {
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" },
           ],
+          tooltip: "Período de tempo para calcular as faixas mais ouvidas. 'All time' mostra suas faixas mais ouvidas de todos os tempos.",
         },
       ],
     },

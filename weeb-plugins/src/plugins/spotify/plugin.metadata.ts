@@ -42,6 +42,7 @@ export const spotifyPluginMetadata = {
           max: 50,
           step: 1,
           description: "Maximum 50 tracks",
+          tooltip: "Número máximo de faixas recentes que serão exibidas. Mostra as últimas músicas que você tocou no Spotify.",
         },
       ],
     },
@@ -71,6 +72,7 @@ export const spotifyPluginMetadata = {
           max: 50,
           step: 1,
           description: "Maximum 50 artists",
+          tooltip: "Número máximo de artistas que serão exibidos. Valores maiores podem aumentar o tempo de carregamento.",
         },
         {
           key: "top_artists_style",
@@ -82,6 +84,7 @@ export const spotifyPluginMetadata = {
             { value: "list", label: "List" },
             { value: "default", label: "Default" },
           ],
+          tooltip: "Grid: exibe os artistas em formato de grade com imagens de perfil.\nList: exibe os artistas em formato de lista compacta.\nDefault: usa o estilo padrão do tema.",
         },
         {
           key: "top_artists_period",
@@ -93,6 +96,7 @@ export const spotifyPluginMetadata = {
             { value: "medium_term", label: "Last 6 months" },
             { value: "long_term", label: "All time" },
           ],
+          tooltip: "Período de tempo para calcular os artistas mais ouvidos.\nLast 4 weeks: últimas 4 semanas\nLast 6 months: últimos 6 meses\nAll time: todos os tempos",
         },
       ],
     },
@@ -122,6 +126,7 @@ export const spotifyPluginMetadata = {
           max: 50,
           step: 1,
           description: "Maximum 50 tracks",
+          tooltip: "Número máximo de faixas que serão exibidas. Valores maiores podem aumentar o tempo de carregamento.",
         },
         {
           key: "top_tracks_style",
@@ -133,6 +138,7 @@ export const spotifyPluginMetadata = {
             { value: "list", label: "List" },
             { value: "default", label: "Default" },
           ],
+          tooltip: "Grid: exibe as faixas em formato de grade com capas de álbum.\nList: exibe as faixas em formato de lista compacta.\nDefault: usa o estilo padrão do tema.",
         },
         {
           key: "top_tracks_period",
@@ -144,6 +150,7 @@ export const spotifyPluginMetadata = {
             { value: "medium_term", label: "Last 6 months" },
             { value: "long_term", label: "All time" },
           ],
+          tooltip: "Período de tempo para calcular as faixas mais ouvidas.\nLast 4 weeks: últimas 4 semanas\nLast 6 months: últimos 6 meses\nAll time: todos os tempos",
         },
       ],
     },
@@ -192,6 +199,7 @@ export const spotifyPluginMetadata = {
           max: 50,
           step: 1,
           description: "Maximum 50 playlists",
+          tooltip: "Número máximo de playlists que serão exibidas. Mostra suas playlists públicas e privadas (se autorizado).",
         },
       ],
     },

@@ -56,6 +56,7 @@ export const codewarsPluginMetadata = {
           max: 50,
           step: 1,
           description: "Maximum 50 kata",
+          tooltip: "Número máximo de kata completados que serão exibidos na seção. Valores maiores podem aumentar o tempo de carregamento.",
         },
       ],
     },
@@ -85,6 +86,7 @@ export const codewarsPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 languages",
+          tooltip: "Número máximo de linguagens de programação que serão exibidas, ordenadas por proficiência (maior XP primeiro).",
         },
       ],
     },
@@ -122,6 +124,8 @@ export const codewarsPluginMetadata = {
     username: "example",
   },
 }
+
+
 
 
 

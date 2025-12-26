@@ -8,8 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, AlertCircle, CheckCircle2, XCircle, Music } from "lucide-react"
+import { Loader2, AlertCircle, CheckCircle2, XCircle, Music, HelpCircle, ExternalLink } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { useToast } from "@/hooks/use-toast"
 import { profileApi, ApiException } from "@/lib/api"
 import { getMissingEssentialConfigs, getPluginEssentialConfigKeys } from "@/lib/config/plugin-essential-configs"
@@ -250,6 +256,37 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                   <Label htmlFor={`${pluginName}-${keyDef.key}`}>
                                     {keyDef.label} <span className="text-destructive">*</span>
                                   </Label>
+                                  {keyDef.tooltip ? (
+                                    // Se tiver tooltip, mostrar tooltip com o texto
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top" className="max-w-xs">
+                                          <p className="text-sm whitespace-pre-line">{keyDef.tooltip}</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  ) : keyDef.helpUrl ? (
+                                    // Se não tiver tooltip mas tiver helpUrl, mostrar ícone de ajuda com tooltip + link
+                                    <div className="flex items-center gap-1">
+                                      <TooltipProvider>
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                                          </TooltipTrigger>
+                                          <TooltipContent side="top" className="max-w-xs">
+                                            <p className="text-sm whitespace-pre-line">
+                                              {keyDef.description 
+                                                ? `${keyDef.description}\n\nClique no link ao lado para obter mais informações.`
+                                                : "Clique no link ao lado para abrir o link de ajuda e obter mais informações."}
+                                            </p>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      </TooltipProvider>
+                                    </div>
+                                  ) : null}
                                   {isSet && (
                                     <Badge variant="outline" className="text-xs gap-1">
                                       <CheckCircle2 className="w-3 h-3 text-green-600" />
@@ -268,8 +305,10 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                     href={keyDef.helpUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-primary hover:underline"
+                                    className="text-xs text-primary hover:underline flex items-center gap-1"
+                                    title="Abrir link de ajuda"
                                   >
+                                    <ExternalLink className="w-3 h-3" />
                                     Como obter?
                                   </a>
                                 )}

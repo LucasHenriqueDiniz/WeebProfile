@@ -44,7 +44,6 @@ interface GenerateRequest {
   dev?: boolean
   mock?: boolean // Alias for dev
   userId?: string // User ID to fetch essential configs from Supabase (production)
-  useRealMeasurement?: boolean // If true, measures actual height with Playwright (slower but accurate)
   // essentialConfigs?: Record<string, any> // Only for tests (test page) - do not use in production
   debug?: boolean // Include debug information in response
 }
@@ -148,10 +147,8 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
 
     console.log("🔧 [SERVER] Final plugins object:", JSON.stringify(plugins, null, 2))
 
-    // Generate pluginsOrder dynamically if not provided or empty (alphabetical order)
-    const pluginsOrder = (requestDataTyped.pluginsOrder && requestDataTyped.pluginsOrder.length > 0) 
-      ? requestDataTyped.pluginsOrder 
-      : Object.keys(plugins).sort() // Alphabetical order when null/empty
+    // Generate pluginsOrder dynamically if not provided
+    const pluginsOrder = requestDataTyped.pluginsOrder || Object.keys(plugins)
     console.log("🔧 [SERVER] Plugins order:", pluginsOrder)
 
     // Map theme to defaultTheme or terminalTheme based on style
@@ -177,7 +174,6 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       primaryColor: requestDataTyped.primaryColor || "#ff7a00", // Use default color if not defined
       essentialConfigs, // Use configs fetched from Supabase (production) or provided directly (tests)
       dev: requestDataTyped.dev === true || requestDataTyped.mock === true, // Use mock data if dev=true or mock=true
-      useRealMeasurement: requestDataTyped.useRealMeasurement === true, // Measure actual height with Playwright
     }
 
     console.log("🔧 [SERVER] Theme mapping:", {

@@ -24,9 +24,15 @@ import {
   PLUGINS_METADATA,
   getSectionConfigOptions as getSectionConfigOptionsFromMetadata
 } from "@weeb/weeb-plugins/plugins/metadata"
-import { Settings, X, Plus } from "lucide-react"
+import { Settings, X, Plus, HelpCircle, ExternalLink } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 // Define SectionConfigOption locally since it's not exported from metadata path
 interface SectionConfigOption {
@@ -39,6 +45,9 @@ interface SectionConfigOption {
   step?: number
   description?: string
   options?: { value: string; label: string }[]
+  helpUrl?: string
+  tooltip?: string
+  docUrl?: string
 }
 
 // Usar metadata centralizada
@@ -124,8 +133,51 @@ export function SectionConfigDialog({
 
             return (
               <div key={option.key} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor={option.key}>{option.label}</Label>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor={option.key}>{option.label}</Label>
+                    {option.tooltip ? (
+                      // Se tiver tooltip, mostrar tooltip com o texto
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs">
+                            <p className="text-sm whitespace-pre-line">{option.tooltip}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : option.helpUrl ? (
+                      // Se não tiver tooltip mas tiver helpUrl, mostrar ícone de ajuda com tooltip + link
+                      <div className="flex items-center gap-1">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-xs">
+                              <p className="text-sm whitespace-pre-line">
+                                {option.description 
+                                  ? `${option.description}\n\nClique no link ao lado para obter mais informações.`
+                                  : "Clique no link ao lado para abrir o link de ajuda e obter mais informações."}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <a
+                          href={option.helpUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:text-primary/80 transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                          title="Abrir link de ajuda"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </div>
+                    ) : null}
+                  </div>
                   {option.min !== undefined && option.max !== undefined && (
                     <span className="text-xs text-muted-foreground">
                       {option.min} - {option.max}

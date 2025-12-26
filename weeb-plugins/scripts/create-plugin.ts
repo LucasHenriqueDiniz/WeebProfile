@@ -74,13 +74,6 @@ function processFile(sourcePath: string, targetPath: string): void {
   content = content.replace(/PluginName/g, PluginName)
   content = content.replace(/PLUGIN_NAME_UPPER/g, PLUGIN_NAME_UPPER)
   
-  // Special handling for heights.ts - replace function name
-  if (targetPath.includes('heights.ts')) {
-    // Convert plugin name to PascalCase for function name
-    const functionName = `calculate${PluginName}Height`
-    content = content.replace(/calculatePluginNameHeight/g, functionName)
-  }
-  
   // Replace filename if necessary
   const fileName = targetPath.split('/').pop() || ''
   if (fileName.includes('PLUGIN_NAME')) {
@@ -92,11 +85,11 @@ function processFile(sourcePath: string, targetPath: string): void {
 }
 
 // Copy and process files
+// NOTE: heights.ts is no longer required - height is calculated dynamically using Playwright
 const filesToCopy = [
   { from: 'index.tsx', to: 'index.tsx' },
   { from: 'types.ts', to: 'types.ts' },
   { from: 'plugin.metadata.ts', to: 'plugin.metadata.ts' },
-  { from: 'heights.ts', to: 'heights.ts' },
   { from: 'services/fetchData.ts', to: 'services/fetchData.ts' },
   { from: 'services/mock-data.ts', to: 'services/mock-data.ts' },
   { from: 'components/RenderPLUGIN_NAME.tsx', to: `components/Render${PluginName}.tsx` },

@@ -3,10 +3,10 @@
  */
 
 import React from 'react'
-import type { DuolingoConfig, DuolingoData } from '../types'
 import { CurrentStreak } from './CurrentStreak'
 import { TotalXP } from './TotalXP'
 import { LanguagesLearning } from './LanguagesLearning'
+import type { DuolingoConfig, DuolingoData } from '../types'
 
 interface RenderDuolingoProps {
   config: DuolingoConfig
@@ -15,14 +15,9 @@ interface RenderDuolingoProps {
   size?: 'half' | 'full'
 }
 
-export function RenderDuolingo({
-  config,
-  data,
-  style = 'default',
-  size = 'half',
-}: RenderDuolingoProps): React.ReactElement {
+export function RenderDuolingo({ config, data, style = 'default', size = 'half' }: RenderDuolingoProps): React.ReactElement {
   if (!config.enabled || config.sections.length === 0) {
-    return <></>
+    return React.createElement(React.Fragment, null)
   }
 
   const sections = config.sections
@@ -37,13 +32,13 @@ export function RenderDuolingo({
         key.startsWith('total_xp_') ||
         key.startsWith('languages_learning_')
       ) {
-        acc[key] = (config as any)[key]
+        acc[key] = config[key]
       }
       return acc
-    }, {} as Record<string, any>),
+    }, {} as Record<string, unknown>),
   }
 
-  const fullConfig = { ...config, nonEssential: sectionConfig as any }
+  const fullConfig = { ...config, nonEssential: sectionConfig }
 
   // Renderizar cada seção solicitada
   const renderedSections = sections.map((section) => {
@@ -84,10 +79,8 @@ export function RenderDuolingo({
   })
 
   return (
-    <section id="duolingo-plugin">
+    <section id="duolingo-plugin" className="duolingo-plugin-section">
       {renderedSections.filter(Boolean)}
     </section>
   )
 }
-
-

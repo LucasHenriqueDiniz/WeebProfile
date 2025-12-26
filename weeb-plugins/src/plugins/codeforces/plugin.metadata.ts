@@ -94,6 +94,7 @@ export const codeforcesPluginMetadata = {
           max: 50,
           step: 1,
           description: "Maximum 50 submissions",
+          tooltip: "Número máximo de submissões recentes que serão exibidas. Mostra as submissões mais recentes do seu perfil.",
         },
       ],
     },
@@ -112,6 +113,8 @@ export const codeforcesPluginMetadata = {
     username: "example",
   },
 }
+
+
 
 
 

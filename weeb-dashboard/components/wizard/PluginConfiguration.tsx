@@ -24,7 +24,7 @@ import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { PLUGINS_DATA } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
-import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music } from "lucide-react"
+import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
 import { useMemo, useState, useEffect, useCallback, useRef } from "react"
 import { ProfileConfigModal } from "./ProfileConfigModal"
 import { SectionConfigDialog } from "./SectionConfigDialog"
@@ -443,10 +443,7 @@ export function PluginConfiguration() {
                           )}
                           {(() => {
                             const hasOAuth = metadata.essentialConfigKeysMetadata?.some(
-                              (keyMeta) => {
-                                // Type assertion needed because TypeScript may not infer the union type correctly
-                                return (keyMeta.type as "text" | "password" | "oauth") === "oauth"
-                              }
+                              (keyMeta: { type: string }) => keyMeta.type === "oauth"
                             )
                             return hasOAuth ? (
                               <TooltipProvider>
@@ -497,7 +494,7 @@ export function PluginConfiguration() {
                             Required for data fetching
                           </p>
                           {metadata.essentialConfigKeysMetadata.map((configKeyMeta) => {
-                            const configKey = configKeyMeta as { key: string; label: string; type: "text" | "password" | "oauth"; placeholder?: string; description?: string; helpUrl?: string; oauthProvider?: string }
+                            const configKey = configKeyMeta as { key: string; label: string; type: "text" | "password" | "oauth"; placeholder?: string; description?: string; helpUrl?: string; tooltip?: string; oauthProvider?: string }
                             const value = (state as any)[configKey.key] || ""
                             const configKeyId = `${plugin.name}.${configKey.key}`
                             const isUnlocked = unlockedConfigs.has(configKeyId)
@@ -520,6 +517,37 @@ export function PluginConfiguration() {
                                     <Label className="text-xs font-medium">
                                       {configKey.label}
                                     </Label>
+                                    {configKey.tooltip ? (
+                                      // Se tiver tooltip, mostrar tooltip com o texto
+                                      <TooltipProvider>
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                                          </TooltipTrigger>
+                                          <TooltipContent side="top" className="max-w-xs">
+                                            <p className="text-sm whitespace-pre-line">{configKey.tooltip}</p>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      </TooltipProvider>
+                                    ) : configKey.helpUrl ? (
+                                      // Se não tiver tooltip mas tiver helpUrl, mostrar ícone de ajuda com tooltip + link
+                                      <div className="flex items-center gap-1">
+                                        <TooltipProvider>
+                                          <Tooltip>
+                                            <TooltipTrigger asChild>
+                                              <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top" className="max-w-xs">
+                                              <p className="text-sm whitespace-pre-line">
+                                                {configKey.description 
+                                                  ? `${configKey.description}\n\nClique no link ao lado para obter mais informações.`
+                                                  : "Clique no link ao lado para abrir o link de ajuda e obter mais informações."}
+                                              </p>
+                                            </TooltipContent>
+                                          </Tooltip>
+                                        </TooltipProvider>
+                                      </div>
+                                    ) : null}
                                     {isConfigured && (
                                       <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
                                         <CheckCircle2 className="h-2.5 w-2.5 mr-0.5" />
@@ -532,8 +560,10 @@ export function PluginConfiguration() {
                                       href={configKey.helpUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-xs text-primary hover:underline"
+                                      className="text-xs text-primary hover:underline flex items-center gap-1"
+                                      title="Abrir link de ajuda"
                                     >
+                                      <ExternalLink className="w-3 h-3" />
                                       Help
                                     </a>
                                   )}

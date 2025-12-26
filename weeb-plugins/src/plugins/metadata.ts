@@ -32,6 +32,15 @@ export interface EssentialConfigKeyMetadata {
 }
 
 /**
+ * Helper fields for configuration options (tooltip, helpUrl, docUrl)
+ */
+export type ConfigOptionHelpFields = {
+  tooltip?: string
+  helpUrl?: string
+  docUrl?: string
+}
+
+/**
  * Configuration option for a section
  */
 export interface SectionConfigOption {
@@ -46,6 +55,9 @@ export interface SectionConfigOption {
   placeholder?: string
   required?: boolean
   options?: { value: string; label: string }[]
+  tooltip?: string
+  helpUrl?: string
+  docUrl?: string
 }
 
 /**
@@ -121,7 +133,9 @@ export const PLUGINS_METADATA = {
           defaultValue: "",
           description: "Paste your 16Personalities test result URL to automatically detect your type",
           placeholder: "https://www.16personalities.com/br/resultados/enfj-t/m/...",
-          required: true
+          required: true,
+          helpUrl: "https://www.16personalities.com/free-personality-test",
+          tooltip: "Faça o quiz em https://www.16personalities.com/free-personality-test e copie o resultado (ex: https://www.16personalities.com/br/resultados/enfj-t/m/4lyvq4j0t)"
         },
         {
           key: "personality_hide_title",
@@ -263,7 +277,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Maximum 50 submissions"
+          description: "Maximum 50 submissions",
+          tooltip: "Número máximo de submissões recentes que serão exibidas. Mostra as submissões mais recentes do seu perfil."
         }
         ]
       }
@@ -346,7 +361,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Maximum 50 kata"
+          description: "Maximum 50 kata",
+          tooltip: "Número máximo de kata completados que serão exibidos na seção. Valores maiores podem aumentar o tempo de carregamento."
         }
         ]
       },
@@ -375,7 +391,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 languages"
+          description: "Maximum 20 languages",
+          tooltip: "Número máximo de linguagens de programação que serão exibidas, ordenadas por proficiência (maior XP primeiro)."
         }
         ]
       },
@@ -496,14 +513,16 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 languages"
+          description: "Maximum 20 languages",
+          tooltip: "Número máximo de idiomas que serão exibidos. Os idiomas são ordenados por XP total (maior XP primeiro)."
         },
         {
           key: "languages_learning_hide_languages",
           label: "Hide languages",
           type: "array",
           defaultValue: [],
-          description: "List of language names to hide (e.g., Japanese, French)"
+          description: "List of language names to hide (e.g., Japanese, French)",
+          tooltip: "Lista de nomes de idiomas que você quer ocultar da exibição. Digite o nome exato do idioma (ex: 'Japanese', 'French', 'Spanish') e pressione Enter para adicionar."
         }
         ]
       }
@@ -614,7 +633,8 @@ export const PLUGINS_METADATA = {
           key: "repositories_use_private",
           label: "Incluir repositórios privados",
           type: "boolean",
-          defaultValue: false
+          defaultValue: false,
+          tooltip: "Se ativado, inclui repositórios privados na lista. Requer que o token GitHub tenha permissão 'repo' para acessar repositórios privados."
         },
         {
           key: "repositories_max",
@@ -624,7 +644,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 repositórios"
+          description: "Máximo 20 repositórios",
+          tooltip: "Número máximo de repositórios que serão exibidos. Os repositórios são ordenados por estrelas (mais estrelados primeiro)."
         }
         ]
       },
@@ -653,14 +674,16 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 linguagens"
+          description: "Máximo 20 linguagens",
+          tooltip: "Número máximo de linguagens de programação que serão exibidas. As linguagens são ordenadas por quantidade de código (mais código primeiro)."
         },
         {
           key: "favorite_languages_ignore_languages",
           label: "Ignorar linguagens",
           type: "string",
           defaultValue: "",
-          description: "Lista de linguagens separadas por vírgula para ignorar"
+          description: "Lista de linguagens separadas por vírgula para ignorar",
+          tooltip: "Lista de linguagens que você quer ignorar na exibição. Separe por vírgula (ex: 'HTML, CSS, Markdown'). Linguagens ignoradas não aparecerão na lista."
         }
         ]
       },
@@ -705,7 +728,8 @@ export const PLUGINS_METADATA = {
           label: "Anos",
           type: "string",
           defaultValue: "",
-          description: "Lista de anos separados por vírgula (ex: '2023,2024'). Deixe vazio para ano atual"
+          description: "Lista de anos separados por vírgula (ex: '2023,2024'). Deixe vazio para ano atual",
+          tooltip: "Anos do calendário de contribuições a serem exibidos. Separe múltiplos anos por vírgula (ex: '2023,2024'). Deixe vazio para mostrar apenas o ano atual."
         }
         ]
       },
@@ -783,7 +807,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 repositórios"
+          description: "Máximo 50 repositórios",
+          tooltip: "Número máximo de repositórios favoritados (starred) que serão exibidos. Os repositórios são ordenados por data de favoritação (mais recentes primeiro)."
         }
         ]
       },
@@ -812,7 +837,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 gists"
+          description: "Máximo 50 gists",
+          tooltip: "Número máximo de gists públicos que serão exibidos. Os gists são ordenados por data de criação (mais recentes primeiro)."
         }
         ]
       },
@@ -879,7 +905,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 listas"
+          description: "Máximo 20 listas",
+          tooltip: "Número máximo de listas de repositórios favoritados que serão exibidas. As listas são ordenadas por data de criação (mais recentes primeiro)."
         }
         ]
       },
@@ -908,7 +935,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 contribuições"
+          description: "Máximo 50 contribuições",
+          tooltip: "Número máximo de contribuições notáveis que serão exibidas. Mostra suas contribuições mais importantes em repositórios open source."
         }
         ]
       },
@@ -937,7 +965,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 atividades"
+          description: "Máximo 50 atividades",
+          tooltip: "Número máximo de atividades recentes que serão exibidas. Mostra commits, PRs, issues e outras atividades do seu perfil GitHub."
         }
         ]
       },
@@ -1018,7 +1047,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 sponsorships"
+          description: "Máximo 50 sponsorships",
+          tooltip: "Número máximo de patrocínios que você faz que serão exibidos. Mostra os desenvolvedores/organizações que você patrocina no GitHub."
         }
         ]
       },
@@ -1047,7 +1077,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 sponsors"
+          description: "Máximo 50 sponsors",
+          tooltip: "Número máximo de patrocinadores que você tem que serão exibidos. Mostra as pessoas/organizações que patrocinam você no GitHub."
         }
         ]
       },
@@ -1093,7 +1124,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 pessoas"
+          description: "Máximo 50 pessoas",
+          tooltip: "Número máximo de pessoas que você segue que serão exibidas. Mostra desenvolvedores que você segue no GitHub."
         }
         ]
       },
@@ -1129,7 +1161,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 contribuidores"
+          description: "Máximo 50 contribuidores",
+          tooltip: "Número máximo de contribuidores que serão exibidos. Mostra os principais contribuidores dos seus repositórios (ordenados por número de commits)."
         }
         ]
       }
@@ -1208,7 +1241,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 músicas"
+          description: "Máximo 20 músicas",
+          tooltip: "Número máximo de músicas recentes que serão exibidas. Mostra as últimas músicas que você escutou no LastFM."
         }
         ]
       },
@@ -1262,7 +1296,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 artistas"
+          description: "Máximo 20 artistas",
+          tooltip: "Número máximo de artistas que serão exibidos. Valores maiores podem aumentar o tempo de carregamento."
         },
         {
           key: "top_artists_style",
@@ -1273,7 +1308,8 @@ export const PLUGINS_METADATA = {
             { value: "grid", label: "Grid" },
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" }
-          ]
+          ],
+          tooltip: "Grid: exibe os artistas em formato de grade com imagens de perfil.\nList: exibe os artistas em formato de lista compacta."
         },
         {
           key: "top_artists_period",
@@ -1287,7 +1323,8 @@ export const PLUGINS_METADATA = {
             { value: "3month", label: "Last 3 months" },
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" }
-          ]
+          ],
+          tooltip: "Período de tempo para calcular os artistas mais ouvidos. 'All time' mostra seus artistas mais ouvidos de todos os tempos."
         }
         ]
       },
@@ -1316,7 +1353,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 álbuns"
+          description: "Máximo 20 álbuns",
+          tooltip: "Número máximo de álbuns que serão exibidos. Valores maiores podem aumentar o tempo de carregamento."
         },
         {
           key: "top_albums_style",
@@ -1327,7 +1365,8 @@ export const PLUGINS_METADATA = {
             { value: "grid", label: "Grid" },
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" }
-          ]
+          ],
+          tooltip: "Grid: exibe os álbuns em formato de grade com capas de álbum.\nList: exibe os álbuns em formato de lista compacta."
         },
         {
           key: "top_albums_period",
@@ -1341,7 +1380,8 @@ export const PLUGINS_METADATA = {
             { value: "3month", label: "Last 3 months" },
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" }
-          ]
+          ],
+          tooltip: "Período de tempo para calcular os álbuns mais ouvidos. 'All time' mostra seus álbuns mais ouvidos de todos os tempos."
         }
         ]
       },
@@ -1370,7 +1410,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 tracks"
+          description: "Maximum 20 tracks",
+          tooltip: "Número máximo de faixas que serão exibidas. Valores maiores podem aumentar o tempo de carregamento."
         },
         {
           key: "top_tracks_style",
@@ -1381,7 +1422,8 @@ export const PLUGINS_METADATA = {
             { value: "grid", label: "Grid" },
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" }
-          ]
+          ],
+          tooltip: "Grid: exibe as faixas em formato de grade com capas de álbum.\nList: exibe as faixas em formato de lista compacta."
         },
         {
           key: "top_tracks_period",
@@ -1395,7 +1437,8 @@ export const PLUGINS_METADATA = {
             { value: "3month", label: "Last 3 months" },
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" }
-          ]
+          ],
+          tooltip: "Período de tempo para calcular as faixas mais ouvidas. 'All time' mostra suas faixas mais ouvidas de todos os tempos."
         }
         ]
       }
@@ -2061,7 +2104,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Maximum 50 tracks"
+          description: "Maximum 50 tracks",
+          tooltip: "Número máximo de faixas recentes que serão exibidas. Mostra as últimas músicas que você tocou no Spotify."
         }
         ]
       },
@@ -2090,7 +2134,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Maximum 50 artists"
+          description: "Maximum 50 artists",
+          tooltip: "Número máximo de artistas que serão exibidos. Valores maiores podem aumentar o tempo de carregamento."
         },
         {
           key: "top_artists_style",
@@ -2101,7 +2146,8 @@ export const PLUGINS_METADATA = {
             { value: "grid", label: "Grid" },
             { value: "list", label: "List" },
             { value: "default", label: "Default" }
-          ]
+          ],
+          tooltip: "Grid: exibe os artistas em formato de grade com imagens de perfil.\nList: exibe os artistas em formato de lista compacta.\nDefault: usa o estilo padrão do tema."
         },
         {
           key: "top_artists_period",
@@ -2112,7 +2158,8 @@ export const PLUGINS_METADATA = {
             { value: "short_term", label: "Last 4 weeks" },
             { value: "medium_term", label: "Last 6 months" },
             { value: "long_term", label: "All time" }
-          ]
+          ],
+          tooltip: "Período de tempo para calcular os artistas mais ouvidos.\nLast 4 weeks: últimas 4 semanas\nLast 6 months: últimos 6 meses\nAll time: todos os tempos"
         }
         ]
       },
@@ -2141,7 +2188,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Maximum 50 tracks"
+          description: "Maximum 50 tracks",
+          tooltip: "Número máximo de faixas que serão exibidas. Valores maiores podem aumentar o tempo de carregamento."
         },
         {
           key: "top_tracks_style",
@@ -2152,7 +2200,8 @@ export const PLUGINS_METADATA = {
             { value: "grid", label: "Grid" },
             { value: "list", label: "List" },
             { value: "default", label: "Default" }
-          ]
+          ],
+          tooltip: "Grid: exibe as faixas em formato de grade com capas de álbum.\nList: exibe as faixas em formato de lista compacta.\nDefault: usa o estilo padrão do tema."
         },
         {
           key: "top_tracks_period",
@@ -2163,7 +2212,8 @@ export const PLUGINS_METADATA = {
             { value: "short_term", label: "Last 4 weeks" },
             { value: "medium_term", label: "Last 6 months" },
             { value: "long_term", label: "All time" }
-          ]
+          ],
+          tooltip: "Período de tempo para calcular as faixas mais ouvidas.\nLast 4 weeks: últimas 4 semanas\nLast 6 months: últimos 6 meses\nAll time: todos os tempos"
         }
         ]
       },
@@ -2211,7 +2261,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 50,
           step: 1,
-          description: "Maximum 50 playlists"
+          description: "Maximum 50 playlists",
+          tooltip: "Número máximo de playlists que serão exibidas. Mostra suas playlists públicas e privadas (se autorizado)."
         }
         ]
       },

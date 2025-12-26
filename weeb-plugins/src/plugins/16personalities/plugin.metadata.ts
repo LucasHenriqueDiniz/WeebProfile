@@ -5,26 +5,6 @@
  * It's used to automatically generate the centralized metadata.ts.
  */
 
-// Personality types mapping
-const PERSONALITY_TYPES = [
-  { value: 'ENFJ', label: 'ENFJ - Protagonist' },
-  { value: 'ENFP', label: 'ENFP - Campaigner' },
-  { value: 'ENTJ', label: 'ENTJ - Commander' },
-  { value: 'ENTP', label: 'ENTP - Debater' },
-  { value: 'ESFJ', label: 'ESFJ - Consul' },
-  { value: 'ESFP', label: 'ESFP - Entertainer' },
-  { value: 'ESTJ', label: 'ESTJ - Executive' },
-  { value: 'ESTP', label: 'ESTP - Entrepreneur' },
-  { value: 'INFJ', label: 'INFJ - Advocate' },
-  { value: 'INFP', label: 'INFP - Mediator' },
-  { value: 'INTJ', label: 'INTJ - Architect' },
-  { value: 'INTP', label: 'INTP - Thinker' },
-  { value: 'ISFJ', label: 'ISFJ - Protector' },
-  { value: 'ISFP', label: 'ISFP - Adventurer' },
-  { value: 'ISTJ', label: 'ISTJ - Logistician' },
-  { value: 'ISTP', label: 'ISTP - Virtuoso' },
-] as const
-
 export const personality16PluginMetadata = {
   displayName: "16Personalities",
   description: "Display your 16Personalities type with emoji and link",
@@ -47,6 +27,8 @@ export const personality16PluginMetadata = {
           placeholder: "https://www.16personalities.com/br/resultados/enfj-t/m/...",
           description: "Paste your 16Personalities test result URL to automatically detect your type",
           required: true,
+          helpUrl: "https://www.16personalities.com/free-personality-test",
+          tooltip: "Faça o quiz em https://www.16personalities.com/free-personality-test e copie o resultado (ex: https://www.16personalities.com/br/resultados/enfj-t/m/4lyvq4j0t)",
         },
         {
           key: "personality_hide_title",

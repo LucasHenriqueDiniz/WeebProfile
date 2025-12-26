@@ -24,23 +24,24 @@
     "lint": "eslint src --ext .ts,.tsx",
     "test": "echo \"Tests coming soon\"",
     "test:generate": "tsx test/generate-test.ts",
+    "test:measure": "tsx scripts/test-measure-height.ts",
     "generate:previews": "tsx scripts/generate-section-previews.ts",
     "generate:previews:force": "tsx scripts/generate-section-previews.ts --force",
     "generate:previews:png": "tsx scripts/generate-section-previews.ts --png",
     "watch:previews": "tsx scripts/watch-previews.ts",
     "watch:previews:all": "tsx scripts/watch-previews.ts --all",
     "serve:previews": "tsx scripts/serve-previews.ts",
-    "postinstall": "playwright install chromium"
+    "postinstall": "playwright install chromium --with-deps || echo 'Playwright install failed, continuing...'"
   },
-  "dependencies": {
-    "@weeb/weeb-plugins": "workspace:*",
-    "dotenv": "^16.4.5",
-    "playwright": "^1.40.0",
-    "postgres": "^3.4.7",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "server-only": "^0.0.1"
-  },
+    "dependencies": {
+      "@weeb/weeb-plugins": "workspace:*",
+      "dotenv": "^16.4.5",
+      "playwright-core": "^1.40.0",
+      "postgres": "^3.4.7",
+      "react": "^18.3.1",
+      "react-dom": "^18.3.1",
+      "server-only": "^0.0.1"
+    },
   "peerDependencies": {
     "@weeb/weeb-plugins": "workspace:*"
   },

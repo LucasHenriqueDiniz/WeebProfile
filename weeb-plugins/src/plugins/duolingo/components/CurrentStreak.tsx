@@ -87,27 +87,18 @@ export function CurrentStreak({ streak, config, style = 'default', size = 'half'
 
             {/* Streak Card */}
             <div 
-              className="rounded-2xl border-2 p-5 shadow-xl relative overflow-hidden"
-              style={{
-                background: `linear-gradient(135deg, ${gradient.from} 0%, ${gradient.to} 100%)`,
-                borderColor: gradient.border,
-              }}
+              className="duolingo-streak-card"
+              data-intensity={intensity}
             >
               {/* Background mascot decoration */}
-              <div className="absolute top-0 right-0 opacity-15 transform rotate-12" style={{ width: '120px', height: '120px' }}>
-                <img src={mascotAsset} alt="" className="w-full h-full object-contain" />
+              <div className="duolingo-mascot-decoration">
+                <img src={mascotAsset} alt="" />
               </div>
 
               <div className="relative z-10 flex items-center gap-4">
                 {/* Duolingo Mascot */}
                 <div className="flex-shrink-0">
-                  <div 
-                    className="rounded-full p-2 shadow-lg"
-                    style={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                      backdropFilter: 'blur(4px)',
-                    }}
-                  >
+                  <div className="duolingo-icon-container" style={{ padding: '0.5rem' }}>
                     <img 
                       src={mascotAsset} 
                       alt="Duolingo mascot" 
@@ -120,23 +111,14 @@ export function CurrentStreak({ streak, config, style = 'default', size = 'half'
                 {/* Streak Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span 
-                      className="text-3xl font-bold drop-shadow-sm"
-                      style={{ color: DuolingoColors.snow }}
-                    >
+                    <span className="text-3xl font-bold drop-shadow-sm duolingo-text-snow">
                       {abbreviateNumber(streak)}
                     </span>
-                    <span 
-                      className="text-sm font-semibold opacity-90"
-                      style={{ color: DuolingoColors.snow }}
-                    >
+                    <span className="text-sm font-semibold opacity-90 duolingo-text-snow">
                       days
                     </span>
                   </div>
-                  <p 
-                    className="text-sm font-semibold opacity-95"
-                    style={{ color: DuolingoColors.snow }}
-                  >
+                  <p className="text-sm font-semibold opacity-95 duolingo-text-snow">
                     {message}
                   </p>
                 </div>
@@ -144,9 +126,8 @@ export function CurrentStreak({ streak, config, style = 'default', size = 'half'
                 {/* Fire icon for extra emphasis - more dramatic for higher streaks */}
                 <div className="flex-shrink-0">
                   <FaFire 
-                    className="text-2xl opacity-80"
+                    className="text-2xl opacity-80 duolingo-text-snow"
                     style={{ 
-                      color: DuolingoColors.snow,
                       filter: intensity === 'godlike' || intensity === 'legendary' 
                         ? 'drop-shadow(0 0 12px rgba(255,255,255,0.8))' 
                         : intensity === 'high'

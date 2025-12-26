@@ -35,28 +35,16 @@ export function TotalXP({ totalXP, config, style = 'default', size = 'half' }: T
             {!hideTitle && <DefaultTitle title={title} icon={<IoStatsChartOutline />} />}
             
             {/* XP Card */}
-            <div
-              className="rounded-2xl border-2 p-4 shadow-lg relative overflow-hidden"
-              style={{
-                background: `linear-gradient(135deg, ${DuolingoColors.featherGreen} 0%, ${DuolingoColors.maskGreen} 100%)`,
-                borderColor: DuolingoColors.featherGreen,
-              }}
-            >
+            <div className="duolingo-xp-card">
               {/* Background mascot decoration */}
-              <div className="absolute top-0 right-0 opacity-15 transform rotate-12" style={{ width: '120px', height: '120px' }}>
-                <img src={duolingoAssets.amazed} alt="" className="w-full h-full object-contain" />
+              <div className="duolingo-mascot-decoration">
+                <img src={duolingoAssets.amazed} alt="" />
               </div>
 
               <div className="relative z-10 flex items-center gap-4">
                 {/* Trophy Icon */}
                 <div className="flex-shrink-0">
-                  <div 
-                    className="rounded-full p-3 shadow-lg"
-                    style={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                      backdropFilter: 'blur(4px)',
-                    }}
-                  >
+                  <div className="duolingo-icon-container" style={{ padding: '0.75rem' }}>
                     <FaTrophy 
                       className="text-2xl"
                       style={{ 
@@ -69,16 +57,10 @@ export function TotalXP({ totalXP, config, style = 'default', size = 'half' }: T
 
                 {/* XP Info */}
                 <div className="flex-1 min-w-0">
-                  <p 
-                    className="text-xs font-medium mb-1 opacity-90"
-                    style={{ color: DuolingoColors.snow }}
-                  >
+                  <p className="text-xs font-medium mb-1 opacity-90 duolingo-text-snow">
                     Total XP
                   </p>
-                  <p 
-                    className="text-2xl font-bold"
-                    style={{ color: DuolingoColors.snow }}
-                  >
+                  <p className="text-2xl font-bold duolingo-text-snow">
                     {abbreviateNumber(totalXP)}
                   </p>
                 </div>

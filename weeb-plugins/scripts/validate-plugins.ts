@@ -233,45 +233,8 @@ for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
   }
 }
 
-// 8. Validate that each plugin has a heights.ts file
-async function validateHeightsFiles() {
-  for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
-    const heightsPath = join(PLUGINS_DIR, pluginName, 'heights.ts')
-    if (!existsSync(heightsPath)) {
-      errors.push({
-        plugin: pluginName,
-        field: 'heights.ts',
-        message: `Plugin must have a heights.ts file for height calculation`
-      })
-    } else {
-      // Try to validate that the file exports the correct function
-      try {
-        const pluginModule = await import(`../src/plugins/${pluginName}/heights.ts`)
-        // Check for common function name patterns
-        const hasCalculator = Object.keys(pluginModule).some(key => 
-          key.includes('Height') && typeof pluginModule[key] === 'function'
-        )
-        
-        if (!hasCalculator) {
-          warnings.push({
-            plugin: pluginName,
-            field: 'heights.ts',
-            message: `heights.ts exists but may not export a height calculator function`
-          })
-        }
-      } catch (importError) {
-        warnings.push({
-          plugin: pluginName,
-          field: 'heights.ts',
-          message: `Could not validate heights.ts export: ${importError instanceof Error ? importError.message : String(importError)}`
-        })
-      }
-    }
-  }
-}
-
-// Run async validation
-await validateHeightsFiles()
+// 8. Heights.ts files are no longer required - height is now calculated dynamically using Playwright
+// (see svg-generator/src/layout/measure-height.ts)
 
 // Report warnings first
 if (warnings.length > 0) {

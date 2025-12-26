@@ -82,6 +82,7 @@ export const duolingoPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 languages",
+          tooltip: "Número máximo de idiomas que serão exibidos. Os idiomas são ordenados por XP total (maior XP primeiro).",
         },
         {
           key: "languages_learning_hide_languages",
@@ -89,6 +90,7 @@ export const duolingoPluginMetadata = {
           type: "array" as const,
           defaultValue: [],
           description: "List of language names to hide (e.g., Japanese, French)",
+          tooltip: "Lista de nomes de idiomas que você quer ocultar da exibição. Digite o nome exato do idioma (ex: 'Japanese', 'French', 'Spanish') e pressione Enter para adicionar.",
         },
       ],
     },

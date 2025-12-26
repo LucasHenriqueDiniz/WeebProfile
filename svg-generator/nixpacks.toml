@@ -13,7 +13,6 @@ cmds = [
 cmds = [
   "pnpm --filter @weeb/weeb-plugins build",
   "cd svg-generator",
-  "pnpm install", # Garante que Playwright browsers sejam instalados
   "pnpm build"
 ]
 

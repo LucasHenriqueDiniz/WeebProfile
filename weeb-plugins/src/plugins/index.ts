@@ -26,6 +26,7 @@ export {
   isValidPluginMetadata,
   isValidPluginName,
   PLUGINS_METADATA,
+  type ConfigOptionHelpFields,
   type EssentialConfigKeyMetadata,
   type PluginCategory,
   type PluginMetadata,

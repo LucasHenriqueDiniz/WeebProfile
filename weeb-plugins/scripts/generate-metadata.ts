@@ -64,11 +64,12 @@ interface PluginMetadataPartial {
   essentialConfigKeysMetadata: Array<{
     key: string
     label: string
-    type: 'text' | 'password'
+    type: 'text' | 'password' | 'oauth'
     placeholder?: string
     description?: string
     helpUrl?: string
     docKey?: string
+    oauthProvider?: 'spotify'
   }>
   sections: Array<{
     id: string
@@ -86,6 +87,9 @@ interface PluginMetadataPartial {
       placeholder?: string
       required?: boolean
       options?: Array<{ value: string; label: string }>
+      helpUrl?: string
+      tooltip?: string
+      docUrl?: string
     }>
   }>
   globalConfigOptions?: Array<{
@@ -97,7 +101,12 @@ interface PluginMetadataPartial {
     max?: number
     step?: number
     description?: string
+    placeholder?: string
+    required?: boolean
     options?: Array<{ value: string; label: string }>
+    helpUrl?: string
+    tooltip?: string
+    docUrl?: string
   }>
   exampleConfig?: Record<string, any>
   defaultConfig?: {
@@ -318,6 +327,15 @@ export interface EssentialConfigKeyMetadata {
 }
 
 /**
+ * Helper fields for configuration options (tooltip, helpUrl, docUrl)
+ */
+export type ConfigOptionHelpFields = {
+  tooltip?: string
+  helpUrl?: string
+  docUrl?: string
+}
+
+/**
  * Configuration option for a section
  */
 export interface SectionConfigOption {
@@ -332,6 +350,9 @@ export interface SectionConfigOption {
   placeholder?: string
   required?: boolean
   options?: { value: string; label: string }[]
+  tooltip?: string
+  helpUrl?: string
+  docUrl?: string
 }
 
 /**
@@ -433,6 +454,15 @@ export const PLUGINS_METADATA = {
                 `            { value: ${JSON.stringify(o.value)}, label: ${JSON.stringify(o.label)} }`
               ).join(',\n')
               optStr += `,\n          options: [\n${optionsStr}\n          ]`
+            }
+            if (opt.helpUrl) {
+              optStr += `,\n          helpUrl: ${JSON.stringify(opt.helpUrl)}`
+            }
+            if (opt.tooltip) {
+              optStr += `,\n          tooltip: ${JSON.stringify(opt.tooltip)}`
+            }
+            if (opt.docUrl) {
+              optStr += `,\n          docUrl: ${JSON.stringify(opt.docUrl)}`
             }
             
             optStr += '\n        }'

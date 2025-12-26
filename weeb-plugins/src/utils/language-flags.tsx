@@ -79,77 +79,157 @@ export function getLanguageCode(languageName: string): string {
  * Componente de bandeira de país
  * Usa country-flag-icons para renderizar SVGs de bandeiras
  * 
- * Nota: Para reduzir bundle size, apenas as bandeiras mais comuns são importadas.
- * Para outros países, mostra um badge com o código do país.
+ * IMPORTANTE: Importa estaticamente para funcionar no SSR/Playwright
+ * React.lazy não funciona no servidor, então importamos diretamente
  */
+// Importações estáticas para funcionar no SSR
+import GB from 'country-flag-icons/react/3x2/GB'
+import ES from 'country-flag-icons/react/3x2/ES'
+import FR from 'country-flag-icons/react/3x2/FR'
+import DE from 'country-flag-icons/react/3x2/DE'
+import IT from 'country-flag-icons/react/3x2/IT'
+import PT from 'country-flag-icons/react/3x2/PT'
+import RU from 'country-flag-icons/react/3x2/RU'
+import JP from 'country-flag-icons/react/3x2/JP'
+import CN from 'country-flag-icons/react/3x2/CN'
+import KR from 'country-flag-icons/react/3x2/KR'
+import SA from 'country-flag-icons/react/3x2/SA'
+import IN from 'country-flag-icons/react/3x2/IN'
+import TR from 'country-flag-icons/react/3x2/TR'
+import PL from 'country-flag-icons/react/3x2/PL'
+import NL from 'country-flag-icons/react/3x2/NL'
+import SE from 'country-flag-icons/react/3x2/SE'
+import NO from 'country-flag-icons/react/3x2/NO'
+import DK from 'country-flag-icons/react/3x2/DK'
+import FI from 'country-flag-icons/react/3x2/FI'
+import GR from 'country-flag-icons/react/3x2/GR'
+import IL from 'country-flag-icons/react/3x2/IL'
+import VN from 'country-flag-icons/react/3x2/VN'
+import TH from 'country-flag-icons/react/3x2/TH'
+import ID from 'country-flag-icons/react/3x2/ID'
+import UA from 'country-flag-icons/react/3x2/UA'
+import CZ from 'country-flag-icons/react/3x2/CZ'
+import RO from 'country-flag-icons/react/3x2/RO'
+import HU from 'country-flag-icons/react/3x2/HU'
+import KE from 'country-flag-icons/react/3x2/KE'
+import IE from 'country-flag-icons/react/3x2/IE'
+import BR from 'country-flag-icons/react/3x2/BR'
+import MX from 'country-flag-icons/react/3x2/MX'
+import CA from 'country-flag-icons/react/3x2/CA'
+import TW from 'country-flag-icons/react/3x2/TW'
+
+const commonFlags: Record<string, React.ComponentType<any>> = {
+  GB,
+  ES,
+  FR,
+  DE,
+  IT,
+  PT,
+  RU,
+  JP,
+  CN,
+  KR,
+  SA,
+  IN,
+  TR,
+  PL,
+  NL,
+  SE,
+  NO,
+  DK,
+  FI,
+  GR,
+  IL,
+  VN,
+  TH,
+  ID,
+  UA,
+  CZ,
+  RO,
+  HU,
+  KE,
+  IE,
+  BR,
+  MX,
+  CA,
+  TW,
+}
+
+// Mapeamento de códigos de país para emojis de bandeira Unicode
+const FLAG_EMOJIS: Record<string, string> = {
+  GB: '🇬🇧',
+  ES: '🇪🇸',
+  FR: '🇫🇷',
+  DE: '🇩🇪',
+  IT: '🇮🇹',
+  PT: '🇵🇹',
+  RU: '🇷🇺',
+  JP: '🇯🇵',
+  CN: '🇨🇳',
+  KR: '🇰🇷',
+  SA: '🇸🇦',
+  IN: '🇮🇳',
+  TR: '🇹🇷',
+  PL: '🇵🇱',
+  NL: '🇳🇱',
+  SE: '🇸🇪',
+  NO: '🇳🇴',
+  DK: '🇩🇰',
+  FI: '🇫🇮',
+  GR: '🇬🇷',
+  IL: '🇮🇱',
+  VN: '🇻🇳',
+  TH: '🇹🇭',
+  ID: '🇮🇩',
+  UA: '🇺🇦',
+  CZ: '🇨🇿',
+  RO: '🇷🇴',
+  HU: '🇭🇺',
+  KE: '🇰🇪',
+  IE: '🇮🇪',
+  BR: '🇧🇷',
+  MX: '🇲🇽',
+  CA: '🇨🇦',
+  TW: '🇹🇼',
+  EO: '🏳️', // Esperanto - bandeira neutra
+}
+
 export function CountryFlag({ code, className = '' }: { code: string; className?: string }): ReactElement {
-  // Importar apenas as bandeiras mais comuns estaticamente
-  // Para outras, usar fallback
-  const commonFlags: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
-    GB: React.lazy(() => import('country-flag-icons/react/3x2/GB')),
-    ES: React.lazy(() => import('country-flag-icons/react/3x2/ES')),
-    FR: React.lazy(() => import('country-flag-icons/react/3x2/FR')),
-    DE: React.lazy(() => import('country-flag-icons/react/3x2/DE')),
-    IT: React.lazy(() => import('country-flag-icons/react/3x2/IT')),
-    PT: React.lazy(() => import('country-flag-icons/react/3x2/PT')),
-    RU: React.lazy(() => import('country-flag-icons/react/3x2/RU')),
-    JP: React.lazy(() => import('country-flag-icons/react/3x2/JP')),
-    CN: React.lazy(() => import('country-flag-icons/react/3x2/CN')),
-    KR: React.lazy(() => import('country-flag-icons/react/3x2/KR')),
-    SA: React.lazy(() => import('country-flag-icons/react/3x2/SA')),
-    IN: React.lazy(() => import('country-flag-icons/react/3x2/IN')),
-    TR: React.lazy(() => import('country-flag-icons/react/3x2/TR')),
-    PL: React.lazy(() => import('country-flag-icons/react/3x2/PL')),
-    NL: React.lazy(() => import('country-flag-icons/react/3x2/NL')),
-    SE: React.lazy(() => import('country-flag-icons/react/3x2/SE')),
-    NO: React.lazy(() => import('country-flag-icons/react/3x2/NO')),
-    DK: React.lazy(() => import('country-flag-icons/react/3x2/DK')),
-    FI: React.lazy(() => import('country-flag-icons/react/3x2/FI')),
-    GR: React.lazy(() => import('country-flag-icons/react/3x2/GR')),
-    IL: React.lazy(() => import('country-flag-icons/react/3x2/IL')),
-    VN: React.lazy(() => import('country-flag-icons/react/3x2/VN')),
-    TH: React.lazy(() => import('country-flag-icons/react/3x2/TH')),
-    ID: React.lazy(() => import('country-flag-icons/react/3x2/ID')),
-    UA: React.lazy(() => import('country-flag-icons/react/3x2/UA')),
-    CZ: React.lazy(() => import('country-flag-icons/react/3x2/CZ')),
-    RO: React.lazy(() => import('country-flag-icons/react/3x2/RO')),
-    HU: React.lazy(() => import('country-flag-icons/react/3x2/HU')),
-    KE: React.lazy(() => import('country-flag-icons/react/3x2/KE')),
-    IE: React.lazy(() => import('country-flag-icons/react/3x2/IE')),
-    BR: React.lazy(() => import('country-flag-icons/react/3x2/BR')),
-    MX: React.lazy(() => import('country-flag-icons/react/3x2/MX')),
-    CA: React.lazy(() => import('country-flag-icons/react/3x2/CA')),
-    TW: React.lazy(() => import('country-flag-icons/react/3x2/TW')),
-  }
+  // Usar emoji de bandeira Unicode para garantir renderização no Playwright
+  const flagEmoji = FLAG_EMOJIS[code]
   
-  const FlagComponent = commonFlags[code]
-  
-  if (!FlagComponent) {
-    // Fallback: badge com código do país
+  if (flagEmoji) {
     return (
       <span 
-        className={`inline-flex items-center justify-center w-6 h-4 rounded text-[10px] font-bold text-white bg-gray-500 ${className}`}
+        className={`inline-flex items-center justify-center w-6 h-4 text-lg leading-none ${className}`}
         title={code}
+        role="img"
+        aria-label={`Flag of ${code}`}
       >
-        {code}
+        {flagEmoji}
       </span>
     )
   }
   
-  return (
-    <React.Suspense
-      fallback={
-        <span 
-          className={`inline-flex items-center justify-center w-6 h-4 rounded text-[10px] font-bold text-white bg-gray-400 ${className}`}
-        >
-          {code}
-        </span>
-      }
-    >
+  // Fallback: tentar usar componente SVG se disponível
+  const FlagComponent = commonFlags[code]
+  
+  if (FlagComponent) {
+    return (
       <FlagComponent 
         className={`w-6 h-4 object-cover rounded-sm flex-shrink-0 ${className}`}
         title={code}
       />
-    </React.Suspense>
+    )
+  }
+  
+  // Último fallback: badge com código do país
+  return (
+    <span 
+      className={`inline-flex items-center justify-center w-6 h-4 rounded text-[10px] font-bold text-white bg-gray-500 ${className}`}
+      title={code}
+    >
+      {code}
+    </span>
   )
 }
