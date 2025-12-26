@@ -24,6 +24,7 @@ import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { PLUGINS_DATA } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
+import { selectEnabledPluginNames } from "@/stores/wizard-selectors"
 import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
 import { useMemo, useState, useEffect, useCallback, useRef } from "react"
 import { ProfileConfigModal } from "./ProfileConfigModal"
@@ -59,7 +60,10 @@ export function PluginConfiguration() {
   const [savedConfigs, setSavedConfigs] = useState<Set<string>>(new Set())
   const pluginRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
-  const enabledPlugins = pluginsOrder.filter((name) => plugins[name]?.enabled)
+  // Use canonical selector for enabled plugins
+  const enabledPlugins = useMemo(() => {
+    return selectEnabledPluginNames({ plugins, pluginsOrder })
+  }, [plugins, pluginsOrder])
 
   const scrollToPlugin = useCallback((pluginName: string) => {
     setExpandedPlugins((prev) => new Set(prev).add(pluginName))

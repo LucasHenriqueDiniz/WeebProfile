@@ -1,45 +1,44 @@
 /**
  * Local plugin registry for weeb-dashboard
  *
- * Uses PluginManager from @weeb/weeb-plugins
+ * Uses the new plugin registry structure for better organization.
+ * Re-exports functions from plugin-registry for backward compatibility.
  */
 
-import { PluginManager } from '@weeb/weeb-plugins/plugins/manager'
+import { getPlugin as getPluginFromRegistry, getPlugins } from "./plugins/plugin-registry"
 
-let pluginsCache: Map<string, any> | null = null
+// Cache for loaded plugins (prevents re-loading)
+const pluginsCache = new Map<string, any>()
 
+/**
+ * Get a plugin by name with caching
+ */
 export async function getPlugin(name: string): Promise<any> {
-  if (!pluginsCache) {
-    pluginsCache = new Map()
-  }
-
   if (pluginsCache.has(name)) {
     return pluginsCache.get(name)
   }
 
-  // Load plugin using PluginManager
-  const pluginManager = PluginManager.getInstance()
-  const plugin = pluginManager.get(name)
+  const plugin = await getPluginFromRegistry(name)
 
   if (plugin) {
     pluginsCache.set(name, plugin)
   }
+
   return plugin
 }
 
+/**
+ * Get active plugins based on config
+ * Only loads plugins that are enabled and have sections
+ */
 export async function getActivePlugins(
-  pluginsConfig: Record<string, { enabled?: boolean }>
+  pluginsConfig: Record<string, { enabled?: boolean; sections?: string[] }>
 ): Promise<Array<[string, any]>> {
-  const activePlugins: Array<[string, any]> = []
+  // Filter to only enabled plugins with sections
+  const activePluginNames = Object.entries(pluginsConfig)
+    .filter(([_, config]) => config?.enabled && config?.sections && config.sections.length > 0)
+    .map(([name]) => name)
 
-  for (const [name, config] of Object.entries(pluginsConfig)) {
-    if (config?.enabled) {
-      const plugin = await getPlugin(name)
-      if (plugin) {
-        activePlugins.push([name, plugin])
-      }
-    }
-  }
-
-  return activePlugins
+  // Load plugins in parallel with caching
+  return getPlugins(activePluginNames)
 }

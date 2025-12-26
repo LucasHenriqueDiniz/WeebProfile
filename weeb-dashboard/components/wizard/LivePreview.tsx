@@ -2,6 +2,7 @@
 
 import { useWizardStore } from "@/stores/wizard-store"
 import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
+import { debugPreview } from "@/lib/debug"
 
 
 export function LivePreview() {
@@ -17,14 +18,9 @@ export function LivePreview() {
     customThemeColors,
   } = useWizardStore()
 
-  console.log('[LivePreview] Received props:', {
+  debugPreview('Received props:', {
     pluginsOrder,
     pluginsCount: Object.keys(plugins).length,
-    enabledPlugins: Object.entries(plugins).filter(([_, p]) => p?.enabled).map(([name]) => name),
-    pluginsWithSections: Object.entries(plugins).filter(([_, p]) => p?.enabled && p.sections?.length > 0).map(([name, p]) => ({
-      name,
-      sections: p.sections,
-    })),
   })
 
   // Calcular largura baseada no size (415px para half, 830px para full - tamanho exato do SVG)

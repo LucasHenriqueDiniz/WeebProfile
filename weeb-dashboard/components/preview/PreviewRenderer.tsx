@@ -5,6 +5,7 @@ import { getActivePlugins } from "@/lib/plugins-registry"
 import { motion } from "framer-motion"
 import React, { useEffect, useMemo, useState } from "react"
 import { PreviewSvgContainer } from "./PreviewSvgContainer"
+import { PluginErrorBoundary } from "./PluginErrorBoundary"
 
 interface PluginConfig {
   enabled: boolean
@@ -152,7 +153,7 @@ export function PreviewRenderer({
         // Usar key única baseada em pluginName + índice estável
         const stableKey = `${pluginName}-${components.length}`
         components.push(
-          <React.Fragment key={stableKey}>
+          <PluginErrorBoundary key={stableKey} pluginName={pluginName}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -164,7 +165,7 @@ export function PreviewRenderer({
             >
               {rendered}
             </motion.div>
-          </React.Fragment>
+          </PluginErrorBoundary>
         )
       } catch (error) {
         console.error(`Error rendering plugin ${pluginName}:`, error)
