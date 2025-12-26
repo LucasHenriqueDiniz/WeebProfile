@@ -37,7 +37,7 @@ export function WizardTabs({ activeTab, onTabChange, children }: WizardTabsProps
         </TabsList>
       </div>
 
-      {/* Render children - Radix Tabs handles visibility automatically */}
+      {/* Render children - Radix UI handles visibility automatically */}
       {children}
     </Tabs>
   )

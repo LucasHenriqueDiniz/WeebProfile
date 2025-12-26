@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { useMemo, useState, useCallback } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"
+import { useWizardUIState } from "@/hooks/useWizardUIState"
 import { selectEnabledPluginNames, selectPluginsWithSections, selectTotalSections } from "@/stores/wizard-selectors"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ApiException, svgApi } from "@/lib/api"
@@ -23,7 +24,9 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
   const router = useRouter()
   const { toast } = useToast()
   const [isSaving, setIsSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState<"plugins" | "style">("plugins")
+  
+  // UX 2: Use persisted UI state for activeTab
+  const { activeTab, setActiveTab } = useWizardUIState()
 
   const {
     name,

@@ -26,7 +26,8 @@ import { PLUGINS_DATA } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
 import { selectEnabledPluginNames } from "@/stores/wizard-selectors"
 import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
-import { useMemo, useState, useEffect, useCallback, useRef } from "react"
+import { useMemo, useState, useEffect, useCallback, useRef, useDeferredValue } from "react"
+import { useShallow } from "zustand/react/shallow"
 import { ProfileConfigModal } from "./ProfileConfigModal"
 import { SectionConfigDialog } from "./SectionConfigDialog"
 import { profileApi } from "@/lib/api/client"
@@ -34,26 +35,40 @@ import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { getSectionPreview } from "@/lib/config/section-previews"
 import { getPluginTags, getAllTags, type PluginTag } from "@/lib/config/plugin-tags"
+import { useDebouncedValue } from "@/hooks/useDebouncedValue"
+import { useVirtualizer } from "@tanstack/react-virtual"
+import { useWizardUIState } from "@/hooks/useWizardUIState"
+import { EmptyState } from "./EmptyState"
+import { PluginCard } from "./PluginCard"
 
 export function PluginConfiguration() {
   const { user } = useAuth()
   const { toast } = useToast()
-  const {
-    plugins,
-    pluginsOrder,
-    setPluginRequiredField,
-    togglePlugin,
-    setPluginSections,
-    setSectionConfig,
-    setPluginsHaveMissingEssentialConfigs,
-    style,
-  } = useWizardStore()
+  // Use useShallow to prevent unnecessary re-renders
+  const { plugins, pluginsOrder, style } = useWizardStore(
+    useShallow((state) => ({
+      plugins: state.plugins,
+      pluginsOrder: state.pluginsOrder,
+      style: state.style,
+    }))
+  )
+  const setPluginRequiredField = useWizardStore((state) => state.setPluginRequiredField)
+  const togglePlugin = useWizardStore((state) => state.togglePlugin)
+  const setPluginSections = useWizardStore((state) => state.setPluginSections)
+  const setSectionConfig = useWizardStore((state) => state.setSectionConfig)
+  const setPluginsHaveMissingEssentialConfigs = useWizardStore((state) => state.setPluginsHaveMissingEssentialConfigs)
 
   const [showProfileModal, setShowProfileModal] = useState(false)
-  const [category, setCategory] = useState<PluginCategory | "all" | PluginTag>("all")
-  const [query, setQuery] = useState("")
-  const [onlyEnabled, setOnlyEnabled] = useState(false)
-  const [expandedPlugins, setExpandedPlugins] = useState<Set<string>>(new Set())
+  
+  // UX 2: Use persisted UI state hook
+  const uiState = useWizardUIState()
+  const { category, query, onlyEnabled, expandedPlugins, toggleExpanded, setCategory, setQuery, setOnlyEnabled } = uiState
+  
+  // Phase 1.1: useDeferredValue for smooth search
+  const deferredQuery = useDeferredValue(query)
+  // Phase 1.2: Debounce for additional optimization
+  const debouncedQuery = useDebouncedValue(deferredQuery, 150)
+  
   const [unlockedConfigs, setUnlockedConfigs] = useState<Set<string>>(new Set())
   const [unlockDialog, setUnlockDialog] = useState<{ plugin: string; key: string } | null>(null)
   const [savingConfigs, setSavingConfigs] = useState<Set<string>>(new Set())
@@ -66,17 +81,28 @@ export function PluginConfiguration() {
   }, [plugins, pluginsOrder])
 
   const scrollToPlugin = useCallback((pluginName: string) => {
-    setExpandedPlugins((prev) => new Set(prev).add(pluginName))
+    toggleExpanded(pluginName)
     setTimeout(() => {
       pluginRefs.current[pluginName]?.scrollIntoView({
         behavior: "smooth",
         block: "center",
       })
     }, 100)
-  }, [])
+  }, [toggleExpanded])
 
   // Use new hook for profile config
-  const { profile, essentialConfigs, missingConfigs, loading: profileLoading } = useProfileConfig(enabledPlugins)
+  const { profile, essentialConfigs, missingConfigs: rawMissingConfigs, loading: profileLoading } = useProfileConfig(enabledPlugins)
+  
+  // Transform missingConfigs to the format expected by PluginCard
+  const missingConfigs = useMemo(() => {
+    return rawMissingConfigs.flatMap(({ pluginName, missingKeys }) =>
+      missingKeys.map((key) => ({
+        plugin: pluginName,
+        field: key.key,
+        label: key.label || key.key,
+      }))
+    )
+  }, [rawMissingConfigs])
   
   // Update store with missing configs status
   useEffect(() => {
@@ -131,7 +157,7 @@ export function PluginConfiguration() {
     )
   }, [groupedPlugins])
 
-  // Filter plugins
+  // Filter plugins - Phase 1.1 & 1.2: Use deferred and debounced query
   const filteredPlugins = useMemo(() => {
     return allPlugins.filter((plugin) => {
       const state = plugins[plugin.name]
@@ -157,9 +183,9 @@ export function PluginConfiguration() {
         }
       }
 
-      // Filter by search
-      if (query) {
-        const searchLower = query.toLowerCase()
+      // Filter by search - use debounced query
+      if (debouncedQuery) {
+        const searchLower = debouncedQuery.toLowerCase()
         const pluginData = PLUGINS_DATA[plugin.name as keyof typeof PLUGINS_DATA]
         return (
           pluginData?.name.toLowerCase().includes(searchLower) ||
@@ -169,19 +195,11 @@ export function PluginConfiguration() {
 
       return true
     })
-  }, [allPlugins, plugins, category, query, onlyEnabled])
+  }, [allPlugins, plugins, category, debouncedQuery, onlyEnabled])
 
-  const togglePluginExpanded = (pluginId: string) => {
-    setExpandedPlugins((prev) => {
-      const next = new Set(prev)
-      if (next.has(pluginId)) {
-        next.delete(pluginId)
-      } else {
-        next.add(pluginId)
-      }
-      return next
-    })
-  }
+  const togglePluginExpanded = useCallback((pluginId: string) => {
+    toggleExpanded(pluginId)
+  }, [toggleExpanded])
 
   const toggleSection = (pluginName: string, sectionId: string) => {
     const currentSections = plugins[pluginName]?.sections || []
@@ -257,28 +275,42 @@ export function PluginConfiguration() {
     return { id, name: pluginData?.name ?? id }
   })
 
-  const totalSections = enabledPlugins.reduce((sum, name) => {
-    return sum + (plugins[name]?.sections?.length || 0)
-  }, 0)
+  // Calculate total sections for progress indicator
+  const totalSections = useMemo(() => {
+    return enabledPlugins.reduce((sum, name) => {
+      return sum + (plugins[name]?.sections?.length || 0)
+    }, 0)
+  }, [enabledPlugins, plugins])
 
-  const hasMissingEssential = Object.entries(plugins).some(([id, plugin]) => {
-    if (!plugin.enabled) return false
-    const metadata = PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]
-    if (!metadata) return false
-    return metadata.requiredFields.some((field) => {
-      const value = (plugin as any)[field]
-      if (typeof value === 'string') return !value.trim()
-      return !value
-    })
-  })
+  // Use missingConfigs to determine hasMissingEssential
+  const hasMissingEssential = missingConfigs.length > 0
 
-  // Show loading state while profile config is loading
+  // Phase 1.4: Improved loading state with skeleton
   if (profileLoading && enabledPlugins.length > 0) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-muted-foreground">Loading plugin configurations...</p>
+      <div className="space-y-3">
+        {/* Search bar skeleton */}
+        <div className="space-y-3">
+          <div className="relative h-10 bg-muted/50 rounded-md animate-pulse" />
+          <div className="flex flex-wrap gap-2">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-7 w-20 bg-muted/50 rounded-full animate-pulse" />
+            ))}
+          </div>
+        </div>
+        
+        {/* Plugin cards skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="rounded-lg border border-border bg-card p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="h-5 w-32 bg-muted/50 rounded animate-pulse" />
+                <div className="h-5 w-9 bg-muted/50 rounded-full animate-pulse" />
+              </div>
+              <div className="h-4 w-full bg-muted/30 rounded animate-pulse" />
+              <div className="h-4 w-2/3 bg-muted/30 rounded animate-pulse" />
+            </div>
+          ))}
         </div>
       </div>
     )
@@ -357,423 +389,312 @@ export function PluginConfiguration() {
         </div>
       </div>
 
-      {/* Enabled plugins pills */}
-      {enabledPluginsList.length > 0 && (
-        <div className="rounded-lg border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/20 p-3">
-          <p className="text-xs font-medium text-emerald-900 dark:text-emerald-200 mb-2">
-            Enabled plugins ({enabledPluginsList.length})
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {enabledPluginsList.map(({ id, name }) => (
-              <button
-                key={id}
-                onClick={() => scrollToPlugin(id)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-medium hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
-                {name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Warning banner */}
-      {hasMissingEssential && (
-        <div className="rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 flex items-start gap-3">
-          <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
-          <div className="text-sm flex-1">
-            <p className="font-medium text-amber-900 dark:text-amber-200">
-              Missing essential configuration
-            </p>
-            <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
-              Some enabled plugins require essential fields to be filled.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Plugins list */}
-      {filteredPlugins.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {filteredPlugins.map((plugin) => {
-            const state = plugins[plugin.name]
-            if (!state) return null
-
-            const isExpanded = expandedPlugins.has(plugin.name)
-            const metadata = PLUGINS_METADATA[plugin.name as keyof typeof PLUGINS_METADATA]
-            const pluginData = PLUGINS_DATA[plugin.name as keyof typeof PLUGINS_DATA]
-
-            if (!metadata || !pluginData) return null
-
-            const missingEssential =
-              state.enabled &&
-              metadata.requiredFields.some((field) => {
-                const value = (state as any)[field]
-                if (typeof value === 'string') return !value.trim()
-                return !value
-              })
-
-            const activeSectionCount = state.sections?.length || 0
-
-            return (
-              <div
-                key={plugin.name}
-                ref={(el) => {
-                  pluginRefs.current[plugin.name] = el
-                }}
-                className="rounded-lg border border-border bg-card overflow-hidden hover:border-primary/50 transition-colors"
-              >
-                <div className="p-4">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <button
-                      onClick={() => togglePluginExpanded(plugin.name)}
-                      className="flex items-center gap-2 flex-1 text-left"
-                    >
-                      {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold text-foreground">
-                            {pluginData.name}
-                          </span>
-                          {state.enabled && (
-                            <Badge variant="secondary" className="text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400">
-                              enabled
-                            </Badge>
-                          )}
-                          {(() => {
-                            const hasOAuth = metadata.essentialConfigKeysMetadata?.some(
-                              (keyMeta: { type: string }) => keyMeta.type === "oauth"
-                            )
-                            return hasOAuth ? (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Badge variant="outline" className="text-[10px] font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800">
-                                      OAuth
-                                    </Badge>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="text-xs">Este plugin requer conexão OAuth</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            ) : null
-                          })()}
-                          {missingEssential && (
-                            <Badge variant="destructive" className="text-[10px] font-medium">
-                              config required
-                            </Badge>
-                          )}
-                          <Badge variant="outline" className="text-[10px] font-medium">
-                            {activeSectionCount}/{metadata.sections.length} sections
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {pluginData.description}
-                        </p>
-                      </div>
-                    </button>
-                    <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={state.enabled}
-                        onChange={() => togglePlugin(plugin.name)}
-                      />
-                      <div className="w-9 h-5 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:border-border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-violet-600 peer-checked:to-purple-600"></div>
-                    </label>
-                  </div>
-
-                  {isExpanded && (
-                    <div className="mt-3 space-y-3 pt-3 border-t border-border">
-                      {/* Essential configs (from essentialConfigKeysMetadata) */}
-                      {metadata.essentialConfigKeysMetadata && metadata.essentialConfigKeysMetadata.length > 0 && (
-                        <div className="space-y-2">
-                          <p className="text-xs font-semibold text-foreground">
-                            Required for data fetching
-                          </p>
-                          {metadata.essentialConfigKeysMetadata.map((configKeyMeta) => {
-                            const configKey = configKeyMeta as { key: string; label: string; type: "text" | "password" | "oauth"; placeholder?: string; description?: string; helpUrl?: string; tooltip?: string; oauthProvider?: string }
-                            const value = (state as any)[configKey.key] || ""
-                            const configKeyId = `${plugin.name}.${configKey.key}`
-                            const isUnlocked = unlockedConfigs.has(configKeyId)
-                            const isLocked = essentialConfigs[plugin.name]?.[configKey.key] === true && !isUnlocked
-                            const isSaving = savingConfigs.has(configKeyId)
-                            const isSaved = savedConfigs.has(configKeyId)
-                            const isConfigured = isLocked && !isUnlocked
-                            const isOAuth = configKey.type === "oauth"
-
-                            // Handler para iniciar OAuth
-                            const handleOAuthConnect = () => {
-                              const currentPath = window.location.pathname + window.location.search
-                              window.location.href = `/api/auth/${configKey.oauthProvider || "spotify"}/authorize?returnTo=${encodeURIComponent(currentPath)}`
-                            }
-
-                            return (
-                              <div key={configKey.key} className="space-y-1">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-2">
-                                    <Label className="text-xs font-medium">
-                                      {configKey.label}
-                                    </Label>
-                                    {configKey.tooltip ? (
-                                      // Se tiver tooltip, mostrar tooltip com o texto
-                                      <TooltipProvider>
-                                        <Tooltip>
-                                          <TooltipTrigger asChild>
-                                            <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
-                                          </TooltipTrigger>
-                                          <TooltipContent side="top" className="max-w-xs">
-                                            <p className="text-sm whitespace-pre-line">{configKey.tooltip}</p>
-                                          </TooltipContent>
-                                        </Tooltip>
-                                      </TooltipProvider>
-                                    ) : configKey.helpUrl ? (
-                                      // Se não tiver tooltip mas tiver helpUrl, mostrar ícone de ajuda com tooltip + link
-                                      <div className="flex items-center gap-1">
-                                        <TooltipProvider>
-                                          <Tooltip>
-                                            <TooltipTrigger asChild>
-                                              <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top" className="max-w-xs">
-                                              <p className="text-sm whitespace-pre-line">
-                                                {configKey.description 
-                                                  ? `${configKey.description}\n\nClique no link ao lado para obter mais informações.`
-                                                  : "Clique no link ao lado para abrir o link de ajuda e obter mais informações."}
-                                              </p>
-                                            </TooltipContent>
-                                          </Tooltip>
-                                        </TooltipProvider>
-                                      </div>
-                                    ) : null}
-                                    {isConfigured && (
-                                      <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
-                                        <CheckCircle2 className="h-2.5 w-2.5 mr-0.5" />
-                                        OK
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  {!isOAuth && configKey.helpUrl && (
-                                    <a
-                                      href={configKey.helpUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-xs text-primary hover:underline flex items-center gap-1"
-                                      title="Abrir link de ajuda"
-                                    >
-                                      <ExternalLink className="w-3 h-3" />
-                                      Help
-                                    </a>
-                                  )}
-                                </div>
-                                
-                                {isOAuth ? (
-                                  // Botão OAuth
-                                  <Button
-                                    type="button"
-                                    onClick={handleOAuthConnect}
-                                    variant={isConfigured ? "outline" : "default"}
-                                    size="sm"
-                                    className="w-full h-8 text-xs"
-                                  >
-                                    {isConfigured ? (
-                                      <>
-                                        <Music className="w-3 h-3 mr-1" />
-                                        Reconectar
-                                      </>
-                                    ) : (
-                                      <>
-                                        <Music className="w-3 h-3 mr-1" />
-                                        Conectar com {configKey.oauthProvider === "spotify" ? "Spotify" : configKey.oauthProvider}
-                                      </>
-                                    )}
-                                  </Button>
-                                ) : (
-                                  // Input tradicional
-                                  <div className="flex gap-2">
-                                    <div className="relative flex-1">
-                                      <Input
-                                        type={configKey.type}
-                                        className={cn(
-                                          "h-8 text-xs pr-8",
-                                          isLocked && "bg-muted/50 text-muted-foreground italic cursor-not-allowed"
-                                        )}
-                                        placeholder={configKey.placeholder || `Enter ${configKey.key}...`}
-                                        value={isLocked ? "**** locked" : value}
-                                        disabled={isLocked || isSaving}
-                                        onChange={(e) => handleEssentialConfigChange(plugin.name, configKey.key, e.target.value)}
-                                      />
-                                      {isLocked && (
-                                        <Lock className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                                      )}
-                                      {isSaving && (
-                                        <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-primary animate-spin" />
-                                      )}
-                                      {isSaved && !isSaving && (
-                                        <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-green-600" />
-                                      )}
-                                    </div>
-                                    {isLocked && (
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handleUnlockConfig(plugin.name, configKey.key)}
-                                        className="h-8 text-xs"
-                                      >
-                                        <Unlock className="h-3 w-3 mr-1" />
-                                        Unlock
-                                      </Button>
-                                    )}
-                                  </div>
-                                )}
-                                
-                                {configKey.description && (
-                                  <p className="text-xs text-muted-foreground">{configKey.description}</p>
-                                )}
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
-
-                      {/* Required fields (fallback para plugins sem essentialConfigKeysMetadata) */}
-                      {(!metadata.essentialConfigKeysMetadata || metadata.essentialConfigKeysMetadata.length === 0) && metadata.requiredFields.length > 0 && (
-                        <div className="space-y-2">
-                          <p className="text-xs font-semibold text-foreground">
-                            Required for data fetching
-                          </p>
-                          {metadata.requiredFields.map((field) => {
-                            const value = (state as any)[field] || ""
-                            return (
-                              <div key={field} className="space-y-1">
-                                <Label className="text-xs font-medium capitalize">
-                                  {field.replace(/([A-Z])/g, " $1").trim()}
-                                </Label>
-                                <Input
-                                  type={
-                                    field.includes("token") ||
-                                    field.includes("key") ||
-                                    field.includes("Token")
-                                      ? "password"
-                                      : "text"
-                                  }
-                                  className="h-8 text-xs"
-                                  placeholder={`Enter ${field}...`}
-                                  value={value}
-                                  onChange={(e) =>
-                                    setPluginRequiredField(plugin.name, field, e.target.value)
-                                  }
-                                />
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
-
-                      {/* Sections */}
-                      <div className="space-y-2">
-                        <p className="text-xs font-semibold text-foreground">
-                          Sections ({activeSectionCount}/{metadata.sections.length})
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {metadata.sections.map((section) => {
-                            const isSelected = state.sections?.includes(section.id) || false
-                            const hasConfigs = section.configOptions && section.configOptions.length > 0
-                            const sectionConfig = state.sectionConfigs?.[section.id] || {}
-
-                            return (
-                              <TooltipProvider key={section.id} delayDuration={200}>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className="inline-flex items-center gap-1">
-                                      <label
-                                        className={cn(
-                                          "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium cursor-pointer transition-all border relative group",
-                                          isSelected
-                                            ? "bg-primary/10 text-primary border-primary/20"
-                                            : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
-                                        )}
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          className="sr-only"
-                                          checked={isSelected}
-                                          onChange={() => toggleSection(plugin.name, section.id)}
-                                        />
-                                        {isSelected && <Check className="h-3 w-3" />}
-                                        <span>{section.name}</span>
-                                        {hasConfigs && isSelected && (
-                                          <span className="ml-1">
-                                            <SectionConfigDialog
-                                              plugin={plugin.name}
-                                              section={section}
-                                              sectionConfig={sectionConfig}
-                                              onConfigChange={(config) => setSectionConfig(plugin.name, section.id, config)}
-                                            />
-                                          </span>
-                                        )}
-                                      </label>
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="top" className="max-w-xs p-3">
-                                    <div className="space-y-2">
-                                      <p className="font-medium text-sm">{section.name}</p>
-                                      {section.description && (
-                                        <p className="text-xs text-muted-foreground">{section.description}</p>
-                                      )}
-                                      {(() => {
-                                        const previewImage = getSectionPreview(plugin.name, section.id, style)
-                                        if (previewImage) {
-                                          return (
-                                            <div className="mt-2 rounded-md overflow-hidden border border-border bg-background">
-                                              <img 
-                                                src={previewImage} 
-                                                alt={`${section.name} preview`}
-                                                className="w-full h-auto"
-                                                onError={(e) => {
-                                                  // Hide image on error
-                                                  e.currentTarget.style.display = 'none'
-                                                }}
-                                              />
-                                            </div>
-                                          )
-                                        }
-                                        return null
-                                      })()}
-                                      {hasConfigs && (
-                                        <p className="text-xs text-primary mt-1 font-medium">
-                                          ⚙️ Tem configurações disponíveis
-                                        </p>
-                                      )}
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+      {/* UX 4: Progress indicator and enabled plugins summary */}
+      <div className="space-y-3">
+        {enabledPluginsList.length > 0 && (
+          <div className="rounded-lg border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/20 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-medium text-emerald-900 dark:text-emerald-200">
+                Enabled plugins ({enabledPluginsList.length})
+              </p>
+              {/* UX 5: Quick actions */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const allPluginNames = filteredPlugins.map(p => p.name)
+                    allPluginNames.forEach(name => {
+                      if (!expandedPlugins.has(name)) toggleExpanded(name)
+                    })
+                  }}
+                  className="text-xs text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-100 font-medium"
+                >
+                  Expand all
+                </button>
+                <span className="text-emerald-700 dark:text-emerald-300">•</span>
+                <button
+                  onClick={() => {
+                    expandedPlugins.forEach(name => toggleExpanded(name))
+                  }}
+                  className="text-xs text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-100 font-medium"
+                >
+                  Collapse all
+                </button>
               </div>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-sm text-muted-foreground">
-            No plugins found matching your filters
-          </p>
+            </div>
+            {/* Progress bar */}
+            <div className="mb-2">
+              <div className="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 mb-1">
+                <span>Progress: {totalSections} sections configured</span>
+                <span>{enabledPluginsList.length} plugins enabled</span>
+              </div>
+              <div className="h-2 bg-emerald-200 dark:bg-emerald-900/50 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-300"
+                  style={{
+                    width: `${Math.min((totalSections / Math.max(enabledPluginsList.length * 3, 1)) * 100, 100)}%`,
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {enabledPluginsList.map(({ id, name }) => (
+                <button
+                  key={id}
+                  onClick={() => scrollToPlugin(id)}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-medium hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
+                  {name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* UX 3: Improved warning banner with action */}
+      {missingConfigs.length > 0 && (
+        <div className="rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30 px-4 py-3">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
+            <div className="text-sm flex-1 min-w-0">
+              <p className="font-medium text-amber-900 dark:text-amber-200">
+                Configuração incompleta
+              </p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                {missingConfigs.length === 1 
+                  ? "1 campo obrigatório precisa ser preenchido" 
+                  : `${missingConfigs.length} campos obrigatórios precisam ser preenchidos`}
+              </p>
+              {/* UX 5: Quick action to expand plugins with missing configs */}
+              <div className="mt-2 flex flex-wrap gap-2">
+                {Array.from(new Set(missingConfigs.map(m => m.plugin))).slice(0, 5).map((pluginName) => (
+                  <button
+                    key={pluginName}
+                    onClick={() => scrollToPlugin(pluginName)}
+                    className="text-xs px-2 py-1 rounded-md bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 hover:bg-amber-200 dark:hover:bg-amber-900/70 transition-colors capitalize"
+                  >
+                    Ir para {pluginName}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
+      {/* Plugins list - Phase 2.2: Virtualization for performance */}
+      {filteredPlugins.length > 0 ? (
+        <VirtualizedPluginList
+          plugins={filteredPlugins}
+          expandedPlugins={expandedPlugins}
+          unlockedConfigs={unlockedConfigs}
+          savingConfigs={savingConfigs}
+          savedConfigs={savedConfigs}
+          essentialConfigs={essentialConfigs}
+          missingConfigs={missingConfigs}
+          style={style}
+          pluginsState={plugins}
+          pluginRefs={pluginRefs}
+          onToggleExpanded={togglePluginExpanded}
+          onTogglePlugin={togglePlugin}
+          onToggleSection={toggleSection}
+          onEssentialConfigChange={handleEssentialConfigChange}
+          onUnlockConfig={handleUnlockConfig}
+          onSetPluginRequiredField={setPluginRequiredField}
+          onSetSectionConfig={setSectionConfig}
+        />
+      ) : (
+        /* Phase 1.3: Empty state with helpful message */
+        <EmptyState query={query} category={category} onlyEnabled={onlyEnabled} onClearFilters={() => {
+          setQuery("")
+          setCategory("all")
+          setOnlyEnabled(false)
+        }} />
+      )}
+
+      <PluginConfigurationFooter
+        showProfileModal={showProfileModal}
+        setShowProfileModal={setShowProfileModal}
+        enabledPlugins={enabledPlugins}
+        unlockDialog={unlockDialog}
+        setUnlockDialog={setUnlockDialog}
+        confirmUnlock={confirmUnlock}
+      />
+    </div>
+  )
+}
+
+// Phase 2.2: Virtualized plugin list component
+function VirtualizedPluginList({
+  plugins,
+  expandedPlugins,
+  unlockedConfigs,
+  savingConfigs,
+  savedConfigs,
+  essentialConfigs,
+  missingConfigs,
+  style,
+  pluginsState,
+  pluginRefs,
+  onToggleExpanded,
+  onTogglePlugin,
+  onToggleSection,
+  onEssentialConfigChange,
+  onUnlockConfig,
+  onSetPluginRequiredField,
+  onSetSectionConfig,
+}: {
+  plugins: Array<{ name: string; categoryId?: string }>
+  expandedPlugins: Set<string>
+  unlockedConfigs: Set<string>
+  savingConfigs: Set<string>
+  savedConfigs: Set<string>
+  essentialConfigs: Record<string, Record<string, any>>
+  missingConfigs: Array<{ plugin: string; field: string; label: string }>
+  style: string
+  pluginsState: Record<string, any>
+  pluginRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>
+  onToggleExpanded: (name: string) => void
+  onTogglePlugin: (name: string) => void
+  onToggleSection: (name: string, sectionId: string) => void
+  onEssentialConfigChange: (plugin: string, key: string, value: string) => Promise<void>
+  onUnlockConfig: (plugin: string, key: string) => void
+  onSetPluginRequiredField: (plugin: string, field: string, value: string) => void
+  onSetSectionConfig: (plugin: string, sectionId: string, config: any) => void
+}) {
+  const parentRef = useRef<HTMLDivElement>(null)
+
+  // Only virtualize if we have many plugins (performance optimization)
+  const shouldVirtualize = plugins.length > 10
+
+  const virtualizer = useVirtualizer({
+    count: plugins.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 200, // Estimated card height
+    overscan: 5,
+    enabled: shouldVirtualize,
+  })
+
+  if (!shouldVirtualize) {
+    // Render normally for small lists using memoized PluginCard
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {plugins.map((plugin) => {
+          const state = pluginsState[plugin.name]
+          if (!state) return null
+
+          const isExpanded = expandedPlugins.has(plugin.name)
+
+          return (
+            <div
+              key={plugin.name}
+              ref={(el) => {
+                pluginRefs.current[plugin.name] = el
+              }}
+            >
+              <PluginCard
+                plugin={plugin}
+                state={state}
+                isExpanded={isExpanded}
+                expandedPlugins={expandedPlugins}
+                unlockedConfigs={unlockedConfigs}
+                savingConfigs={savingConfigs}
+                savedConfigs={savedConfigs}
+                essentialConfigs={essentialConfigs}
+                missingConfigs={missingConfigs}
+                style={style}
+                onToggleExpanded={onToggleExpanded}
+                onTogglePlugin={onTogglePlugin}
+                onToggleSection={onToggleSection}
+                onEssentialConfigChange={onEssentialConfigChange}
+                onUnlockConfig={onUnlockConfig}
+                onSetPluginRequiredField={onSetPluginRequiredField}
+                onSetSectionConfig={onSetSectionConfig}
+              />
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  // Virtualized rendering for large lists
+  return (
+    <div ref={parentRef} className="h-[600px] overflow-auto">
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          width: '100%',
+          position: 'relative',
+        }}
+      >
+        {virtualizer.getVirtualItems().map((virtualItem: any) => {
+          const plugin = plugins[virtualItem.index]
+          const state = pluginsState[plugin.name]
+          if (!state) return null
+
+          const isExpanded = expandedPlugins.has(plugin.name)
+
+          return (
+            <div
+              key={virtualItem.key}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${virtualItem.size}px`,
+                transform: `translateY(${virtualItem.start}px)`,
+              }}
+              ref={(el) => {
+                pluginRefs.current[plugin.name] = el
+              }}
+            >
+              <PluginCard
+                plugin={plugin}
+                state={state}
+                isExpanded={isExpanded}
+                expandedPlugins={expandedPlugins}
+                unlockedConfigs={unlockedConfigs}
+                savingConfigs={savingConfigs}
+                savedConfigs={savedConfigs}
+                essentialConfigs={essentialConfigs}
+                missingConfigs={missingConfigs}
+                style={style}
+                onToggleExpanded={onToggleExpanded}
+                onTogglePlugin={onTogglePlugin}
+                onToggleSection={onToggleSection}
+                onEssentialConfigChange={onEssentialConfigChange}
+                onUnlockConfig={onUnlockConfig}
+                onSetPluginRequiredField={onSetPluginRequiredField}
+                onSetSectionConfig={onSetSectionConfig}
+              />
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+export function PluginConfigurationFooter({
+  showProfileModal,
+  setShowProfileModal,
+  enabledPlugins,
+  unlockDialog,
+  setUnlockDialog,
+  confirmUnlock,
+}: {
+  showProfileModal: boolean
+  setShowProfileModal: (open: boolean) => void
+  enabledPlugins: string[]
+  unlockDialog: { plugin: string; key: string } | null
+  setUnlockDialog: (dialog: { plugin: string; key: string } | null) => void
+  confirmUnlock: () => void
+}) {
+  return (
+    <>
       <ProfileConfigModal
         open={showProfileModal}
         onOpenChange={setShowProfileModal}
@@ -802,7 +723,7 @@ export function PluginConfiguration() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }
 

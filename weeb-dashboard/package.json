@@ -37,6 +37,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.81.1",
+    "@tanstack/react-virtual": "^3.13.13",
     "@weeb/svg-generator": "workspace:*",
     "@weeb/weeb-plugins": "workspace:*",
     "class-variance-authority": "^0.7.1",
