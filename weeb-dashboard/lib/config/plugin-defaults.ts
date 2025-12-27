@@ -28,13 +28,18 @@ export function applyPluginDefaults(
   const defaultConfig = metadata.defaultConfig || {}
 
   // Mesclar defaults na ordem: metadata defaults -> user defaults -> config fornecido
+  const enabled = config.enabled ?? userDefaults?.enabled ?? defaultConfig.enabled ?? false
+  
   return {
     ...defaultConfig,
     ...userDefaults,
     ...config,
     // Garantir que enabled e sections tenham valores padrão se não foram fornecidos
-    enabled: config.enabled ?? userDefaults?.enabled ?? defaultConfig.enabled ?? false,
-    sections: config.sections ?? userDefaults?.sections ?? defaultConfig.sections ?? [],
+    // Se plugin está desligado, não deve ter sections
+    enabled,
+    sections: enabled 
+      ? (config.sections ?? userDefaults?.sections ?? defaultConfig.sections ?? [])
+      : [],
     // Garantir que sectionConfigs e fields existam
     sectionConfigs: config.sectionConfigs ?? userDefaults?.sectionConfigs ?? defaultConfig.sectionConfigs ?? {},
     fields: config.fields ?? userDefaults?.fields ?? defaultConfig.fields ?? {},
@@ -58,6 +63,7 @@ export function getPluginFieldDefault(pluginName: string, fieldName: string): an
   
   return fieldDefaults?.[fieldName] || defaultConfig?.[fieldName]
 }
+
 
 
 

@@ -223,17 +223,34 @@ export const useWizardStore = create<WizardState>()(
 
       setPluginConfig: (plugin, config) => {
         const currentConfig = get().plugins[plugin] || {}
-        // Apply defaults before merging with provided config
+        // Apply defaults only for missing fields, preserving existing values
         const defaults = applyPluginDefaults(plugin, {}, undefined)
+        
+        // Merge preserving existing values: defaults -> currentConfig -> config
+        // This ensures we don't reset enabled/sections unless explicitly set
+        const newConfig = {
+          ...defaults,
+          ...currentConfig,
+          ...config,
+          // Preserve sections unless explicitly clearing or disabling
+          sections: config.sections !== undefined 
+            ? config.sections 
+            : (currentConfig.sections !== undefined ? currentConfig.sections : defaults.sections || []),
+          // Preserve enabled unless explicitly set
+          enabled: config.enabled !== undefined 
+            ? config.enabled 
+            : (currentConfig.enabled !== undefined ? currentConfig.enabled : defaults.enabled ?? false),
+        }
+        
+        // Se plugin está sendo desligado, limpar todas as sections
+        if (config.enabled === false || (!config.enabled && newConfig.enabled === false)) {
+          newConfig.sections = []
+        }
         
         set({
           plugins: {
             ...get().plugins,
-            [plugin]: {
-              ...defaults,
-              ...currentConfig,
-              ...config,
-            },
+            [plugin]: newConfig,
           },
         })
         get().validateStep(1) // Step 1: Plugins
@@ -249,7 +266,33 @@ export const useWizardStore = create<WizardState>()(
           state.setPluginConfig(plugin, current)
         }
         
-        get().setPluginConfig(plugin, { enabled: !current.enabled })
+        const newEnabled = !current.enabled
+        
+        // Se está desligando, limpar todas as sections
+        // Se está ligando, verificar se tem apenas uma section e ativar automaticamente
+        let newSections: string[] = []
+        if (newEnabled) {
+          const metadata = getPluginMetadata(plugin)
+          if (metadata && metadata.sections.length === 1) {
+            // Se tem apenas uma section, ativar automaticamente
+            newSections = [metadata.sections[0].id]
+          } else {
+            // Caso contrário, manter sections existentes ou vazias
+            newSections = current.sections || []
+          }
+        }
+        
+        get().setPluginConfig(plugin, { 
+          enabled: newEnabled,
+          sections: newSections
+        })
+        
+        // Se está ativando, mover para o topo da lista
+        if (newEnabled) {
+          const currentOrder = state.pluginsOrder || []
+          const newOrder = [plugin, ...currentOrder.filter(p => p !== plugin)]
+          set({ pluginsOrder: newOrder })
+        }
       },
 
       setPluginSections: (plugin, sections) => {
@@ -434,18 +477,25 @@ export const useWizardStore = create<WizardState>()(
       onRehydrateStorage: () => (state) => {
         // Ensure all plugins from metadata are initialized after rehydration
         // This handles cases where new plugins were added but localStorage doesn't have them
-        if (state) {
-          const allPlugins = ensureAllPlugins(state.plugins)
-          const allPluginsOrder = generateInitialPluginsOrder()
-          
-          // Only update if plugins are missing
+        // IMPORTANT: Only add missing plugins, never reset existing ones
+        if (state && state.plugins) {
+          // Only add missing plugins, preserve existing ones completely
           const hasMissingPlugins = getEnabledPlugins()
             .some(pluginName => !state.plugins[pluginName])
           
           if (hasMissingPlugins) {
-            state.plugins = allPlugins
+            // Only add missing plugins, don't touch existing ones
+            const updatedPlugins = { ...state.plugins }
+            getEnabledPlugins().forEach((pluginName) => {
+              if (!updatedPlugins[pluginName]) {
+                updatedPlugins[pluginName] = applyPluginDefaults(pluginName, {})
+              }
+            })
+            state.plugins = updatedPlugins
+            
             // Merge pluginsOrder to include new plugins while preserving order
             const existingOrder = state.pluginsOrder || []
+            const allPluginsOrder = generateInitialPluginsOrder()
             const newPlugins = allPluginsOrder.filter(p => !existingOrder.includes(p))
             state.pluginsOrder = [...existingOrder, ...newPlugins]
           }

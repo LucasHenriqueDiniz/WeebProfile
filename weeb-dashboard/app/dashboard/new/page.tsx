@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import LoadingScreen from "@/components/loading/LoadingScreen"
@@ -11,6 +11,7 @@ export default function NewSvgPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { reset } = useWizardStore()
+  const hasResetRef = useRef(false)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -18,9 +19,11 @@ export default function NewSvgPage() {
       return
     }
 
-    // Reset wizard store when accessing /new to ensure clean state
-    if (user && !authLoading) {
+    // Reset wizard store ONLY ONCE when first accessing /new to ensure clean state
+    // Don't reset when page regains focus or re-renders
+    if (user && !authLoading && !hasResetRef.current) {
       reset()
+      hasResetRef.current = true
     }
   }, [user, authLoading, router, reset])
 

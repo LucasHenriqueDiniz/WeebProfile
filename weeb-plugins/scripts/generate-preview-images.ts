@@ -70,9 +70,22 @@ async function getPluginSections(pluginName: string): Promise<string[]> {
   try {
     // Importar dinamicamente o metadata
     const metadataModule = await import(`../src/plugins/${pluginName}/plugin.metadata.ts`)
-    const metadata = metadataModule[`${pluginName}PluginMetadata`] || metadataModule.default
+    
+    // Tentar diferentes nomes de exportação
+    // 1. Nome padrão: {pluginName}PluginMetadata
+    // 2. Nome com primeira letra maiúscula: {PluginName}PluginMetadata
+    // 3. Nome alternativo (ex: personality16PluginMetadata para 16personalities)
+    // 4. default export
+    const camelCaseName = pluginName.charAt(0).toUpperCase() + pluginName.slice(1)
+    const metadata = 
+      metadataModule[`${pluginName}PluginMetadata`] ||
+      metadataModule[`${camelCaseName}PluginMetadata`] ||
+      metadataModule[`personality16PluginMetadata`] || // Caso especial para 16personalities
+      Object.values(metadataModule).find((exp: any) => exp?.sections) ||
+      metadataModule.default
     
     if (!metadata || !metadata.sections) {
+      console.warn(`  ⚠️  Metadata não encontrado ou sem seções para ${pluginName}`)
       return []
     }
     
@@ -144,7 +157,13 @@ function savePreviewSvg(pluginName: string, sectionId: string, svgContent: strin
  * Main
  */
 async function main() {
+  // Verificar flag --force
+  const force = process.argv.includes('--force')
+  
   console.log('🎨 Gerando previews de seções...\n')
+  if (force) {
+    console.log('⚠️  Modo --force ativado: regenerando todos os previews\n')
+  }
   console.log(`📡 SVG Generator URL: ${SVG_GENERATOR_URL}\n`)
 
   // Verificar se o svg-generator está acessível fazendo uma requisição de teste
@@ -203,14 +222,19 @@ async function main() {
       const previewFileName = `${pluginName}_${sectionId}.svg`
       const previewPath = path.join(previewsDir, previewFileName)
 
-      // Verificar se já existe
-      if (fs.existsSync(previewPath)) {
+      // Verificar se já existe (a menos que --force esteja ativo)
+      if (!force && fs.existsSync(previewPath)) {
         console.log(`  ⏭️  ${previewFileName} (já existe, pulando)`)
         totalSkipped++
         continue
       }
 
-      console.log(`  🔄 Gerando ${previewFileName}...`)
+      if (force && fs.existsSync(previewPath)) {
+        console.log(`  🔄 Regenerando ${previewFileName}...`)
+      } else {
+        console.log(`  🔄 Gerando ${previewFileName}...`)
+      }
+      
       const svgContent = await generatePreviewSvg(pluginName, sectionId)
 
       if (svgContent) {

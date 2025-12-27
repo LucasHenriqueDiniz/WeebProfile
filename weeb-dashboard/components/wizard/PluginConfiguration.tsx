@@ -22,7 +22,7 @@ import {
 import { useAuth } from "@/hooks/useAuth"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
-import { PLUGINS_DATA } from "@/lib/plugins-data"
+import { PLUGINS_DATA, getPluginIcon } from "@/lib/plugins-data"
 import { useWizardStore } from "@/stores/wizard-store"
 import { selectEnabledPluginNames } from "@/stores/wizard-selectors"
 import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
@@ -62,7 +62,7 @@ export function PluginConfiguration() {
   
   // UX 2: Use persisted UI state hook
   const uiState = useWizardUIState()
-  const { category, query, onlyEnabled, expandedPlugins, toggleExpanded, setCategory, setQuery, setOnlyEnabled } = uiState
+  const { category, query, onlyEnabled, expandedPlugins, selectedPlugin, toggleExpanded, setCategory, setQuery, setOnlyEnabled, setSelectedPlugin } = uiState
   
   // Phase 1.1: useDeferredValue for smooth search
   const deferredQuery = useDeferredValue(query)
@@ -82,16 +82,38 @@ export function PluginConfiguration() {
 
   const scrollToPlugin = useCallback((pluginName: string) => {
     toggleExpanded(pluginName)
+    // Increased timeout to allow banner animations and layout to settle
     setTimeout(() => {
-      pluginRefs.current[pluginName]?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      })
-    }, 100)
+      const element = pluginRefs.current[pluginName]
+      if (element) {
+        // Scroll to show the plugin card with some offset to account for banners
+        const rect = element.getBoundingClientRect()
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+        const targetY = scrollTop + rect.top - 100 // 100px offset to show banners above
+        
+        window.scrollTo({
+          top: targetY,
+          behavior: "smooth",
+        })
+      }
+    }, 200)
   }, [toggleExpanded])
 
   // Use new hook for profile config
-  const { profile, essentialConfigs, missingConfigs: rawMissingConfigs, loading: profileLoading } = useProfileConfig(enabledPlugins)
+  const { profile, essentialConfigs, missingConfigs: rawMissingConfigs } = useProfileConfig(enabledPlugins)
+  
+  // Force refresh when plugins are enabled/disabled
+  const prevEnabledPluginsRef = useRef<string[]>([])
+  useEffect(() => {
+    const prevEnabled = prevEnabledPluginsRef.current
+    const currentEnabled = enabledPlugins
+    
+    // If plugins changed, force refresh
+    if (prevEnabled.join(",") !== currentEnabled.join(",")) {
+      prevEnabledPluginsRef.current = currentEnabled
+      // The useProfileConfig hook will automatically update when enabledPlugins changes
+    }
+  }, [enabledPlugins])
   
   // Transform missingConfigs to the format expected by PluginCard
   const missingConfigs = useMemo(() => {
@@ -163,6 +185,11 @@ export function PluginConfiguration() {
       const state = plugins[plugin.name]
       if (!state) return false
 
+      // Filter by selected plugin (show only that plugin)
+      if (selectedPlugin) {
+        return plugin.name === selectedPlugin
+      }
+
       // Filter by enabled
       if (onlyEnabled && !state.enabled) return false
 
@@ -195,7 +222,7 @@ export function PluginConfiguration() {
 
       return true
     })
-  }, [allPlugins, plugins, category, debouncedQuery, onlyEnabled])
+  }, [allPlugins, plugins, category, debouncedQuery, onlyEnabled, selectedPlugin])
 
   const togglePluginExpanded = useCallback((pluginId: string) => {
     toggleExpanded(pluginId)
@@ -220,6 +247,9 @@ export function PluginConfiguration() {
     setUnlockDialog(null)
   }
 
+  // Debounce timers for each input
+  const debounceTimersRef = useRef<Record<string, NodeJS.Timeout>>({})
+
   const handleEssentialConfigChange = async (plugin: string, key: string, value: string) => {
     const configKey = `${plugin}.${key}`
     const isUnlocked = unlockedConfigs.has(configKey)
@@ -231,42 +261,51 @@ export function PluginConfiguration() {
       return
     }
 
-    // Atualizar localmente
+    // Clear existing debounce timer for this input
+    if (debounceTimersRef.current[configKey]) {
+      clearTimeout(debounceTimersRef.current[configKey])
+    }
+
+    // Atualizar localmente imediatamente (para UI responsiva)
     setPluginRequiredField(plugin, key, value)
 
-    // Se foi desbloqueado, salvar via API
-    if (isUnlocked && value.trim()) {
-      setSavingConfigs((prev) => new Set(prev).add(configKey))
-      try {
-        await profileApi.updateEssentialConfig(plugin, key, value)
-        setSavedConfigs((prev) => new Set(prev).add(configKey))
-        toast({
-          title: "Configuração salva",
-          description: `${key} foi atualizado com sucesso`,
-        })
-        // Remover indicador de salvo após 2 segundos
-        setTimeout(() => {
-          setSavedConfigs((prev) => {
+    // Debounce API calls and preview updates (500ms)
+    debounceTimersRef.current[configKey] = setTimeout(async () => {
+      // Se foi desbloqueado, salvar via API
+      if (isUnlocked && value.trim()) {
+        setSavingConfigs((prev) => new Set(prev).add(configKey))
+        try {
+          await profileApi.updateEssentialConfig(plugin, key, value)
+          setSavedConfigs((prev) => new Set(prev).add(configKey))
+          toast({
+            title: "Configuração salva",
+            description: `${key} foi atualizado com sucesso`,
+          })
+          // Remover indicador de salvo após 2 segundos
+          setTimeout(() => {
+            setSavedConfigs((prev) => {
+              const next = new Set(prev)
+              next.delete(configKey)
+              return next
+            })
+          }, 2000)
+        } catch (error) {
+          console.error("Error saving essential config:", error)
+          toast({
+            title: "Erro ao salvar",
+            description: "Não foi possível salvar a configuração",
+            variant: "destructive",
+          })
+        } finally {
+          setSavingConfigs((prev) => {
             const next = new Set(prev)
             next.delete(configKey)
             return next
           })
-        }, 2000)
-      } catch (error) {
-        console.error("Error saving essential config:", error)
-        toast({
-          title: "Erro ao salvar",
-          description: "Não foi possível salvar a configuração",
-          variant: "destructive",
-        })
-      } finally {
-        setSavingConfigs((prev) => {
-          const next = new Set(prev)
-          next.delete(configKey)
-          return next
-        })
+        }
       }
-    }
+      delete debounceTimersRef.current[configKey]
+    }, 500)
   }
 
   // Preview stats
@@ -285,39 +324,69 @@ export function PluginConfiguration() {
   // Use missingConfigs to determine hasMissingEssential
   const hasMissingEssential = missingConfigs.length > 0
 
-  // Phase 1.4: Improved loading state with skeleton
-  if (profileLoading && enabledPlugins.length > 0) {
-    return (
-      <div className="space-y-3">
-        {/* Search bar skeleton */}
-        <div className="space-y-3">
-          <div className="relative h-10 bg-muted/50 rounded-md animate-pulse" />
-          <div className="flex flex-wrap gap-2">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-7 w-20 bg-muted/50 rounded-full animate-pulse" />
-            ))}
-          </div>
-        </div>
-        
-        {/* Plugin cards skeleton */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="rounded-lg border border-border bg-card p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="h-5 w-32 bg-muted/50 rounded animate-pulse" />
-                <div className="h-5 w-9 bg-muted/50 rounded-full animate-pulse" />
-              </div>
-              <div className="h-4 w-full bg-muted/30 rounded animate-pulse" />
-              <div className="h-4 w-2/3 bg-muted/30 rounded animate-pulse" />
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-3">
+      {/* Active Plugins Bar */}
+      {enabledPlugins.length > 0 && (
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-medium text-muted-foreground">Plugins ativos:</span>
+            {enabledPlugins.map((pluginName) => {
+              const pluginData = PLUGINS_DATA[pluginName as keyof typeof PLUGINS_DATA]
+              const PluginIcon = getPluginIcon(pluginName)
+              const isSelected = selectedPlugin === pluginName
+              
+              return (
+                <button
+                  key={pluginName}
+                  onClick={() => {
+                    if (isSelected) {
+                      setSelectedPlugin(null)
+                    } else {
+                      setSelectedPlugin(pluginName)
+                      toggleExpanded(pluginName)
+                      setTimeout(() => {
+                        pluginRefs.current[pluginName]?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "center",
+                        })
+                      }, 100)
+                    }
+                  }}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all border",
+                    isSelected
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-background text-foreground border-border hover:bg-muted hover:border-primary/30"
+                  )}
+                >
+                  {PluginIcon && <PluginIcon className="h-3 w-3" />}
+                  <span>{pluginData?.name || pluginName}</span>
+                  {isSelected && (
+                    <X 
+                      className="h-3 w-3 ml-0.5" 
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        setSelectedPlugin(null)
+                      }}
+                    />
+                  )}
+                </button>
+              )
+            })}
+            {selectedPlugin && (
+              <button
+                onClick={() => setSelectedPlugin(null)}
+                className="ml-auto text-xs text-muted-foreground hover:text-foreground font-medium"
+              >
+                Mostrar todos
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Search and filters */}
       <div className="space-y-3">
         {/* Search bar */}
@@ -362,12 +431,12 @@ export function PluginConfiguration() {
                 <button
                   key={cat}
                   onClick={() => setCategory(cat)}
-                  className={cn(
-                    "px-3 py-1 rounded-full text-xs font-medium transition-all capitalize",
-                    category === cat
-                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/30"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80"
-                  )}
+                    className={cn(
+                      "px-3 py-1 rounded-full text-xs font-medium transition-all capitalize",
+                      category === cat
+                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    )}
                 >
                   {categoryLabels[cat] || cat}
                 </button>
@@ -389,68 +458,6 @@ export function PluginConfiguration() {
         </div>
       </div>
 
-      {/* UX 4: Progress indicator and enabled plugins summary */}
-      <div className="space-y-3">
-        {enabledPluginsList.length > 0 && (
-          <div className="rounded-lg border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/20 p-3">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-medium text-emerald-900 dark:text-emerald-200">
-                Enabled plugins ({enabledPluginsList.length})
-              </p>
-              {/* UX 5: Quick actions */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    const allPluginNames = filteredPlugins.map(p => p.name)
-                    allPluginNames.forEach(name => {
-                      if (!expandedPlugins.has(name)) toggleExpanded(name)
-                    })
-                  }}
-                  className="text-xs text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-100 font-medium"
-                >
-                  Expand all
-                </button>
-                <span className="text-emerald-700 dark:text-emerald-300">•</span>
-                <button
-                  onClick={() => {
-                    expandedPlugins.forEach(name => toggleExpanded(name))
-                  }}
-                  className="text-xs text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-100 font-medium"
-                >
-                  Collapse all
-                </button>
-              </div>
-            </div>
-            {/* Progress bar */}
-            <div className="mb-2">
-              <div className="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 mb-1">
-                <span>Progress: {totalSections} sections configured</span>
-                <span>{enabledPluginsList.length} plugins enabled</span>
-              </div>
-              <div className="h-2 bg-emerald-200 dark:bg-emerald-900/50 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-300"
-                  style={{
-                    width: `${Math.min((totalSections / Math.max(enabledPluginsList.length * 3, 1)) * 100, 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {enabledPluginsList.map(({ id, name }) => (
-                <button
-                  key={id}
-                  onClick={() => scrollToPlugin(id)}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-medium hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors"
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
-                  {name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* UX 3: Improved warning banner with action */}
       {missingConfigs.length > 0 && (
@@ -468,15 +475,49 @@ export function PluginConfiguration() {
               </p>
               {/* UX 5: Quick action to expand plugins with missing configs */}
               <div className="mt-2 flex flex-wrap gap-2">
-                {Array.from(new Set(missingConfigs.map(m => m.plugin))).slice(0, 5).map((pluginName) => (
-                  <button
-                    key={pluginName}
-                    onClick={() => scrollToPlugin(pluginName)}
-                    className="text-xs px-2 py-1 rounded-md bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 hover:bg-amber-200 dark:hover:bg-amber-900/70 transition-colors capitalize"
-                  >
-                    Ir para {pluginName}
-                  </button>
-                ))}
+                {Array.from(new Set(missingConfigs.map(m => m.plugin))).slice(0, 5).map((pluginName) => {
+                  const pluginData = PLUGINS_DATA[pluginName as keyof typeof PLUGINS_DATA]
+                  const PluginIcon = getPluginIcon(pluginName)
+                  const isSelected = selectedPlugin === pluginName
+                  
+                  return (
+                    <button
+                      key={pluginName}
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedPlugin(null)
+                        } else {
+                          setSelectedPlugin(pluginName)
+                          toggleExpanded(pluginName)
+                          setTimeout(() => {
+                            pluginRefs.current[pluginName]?.scrollIntoView({
+                              behavior: "smooth",
+                              block: "center",
+                            })
+                          }, 100)
+                        }
+                      }}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all border capitalize",
+                        isSelected
+                          ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                          : "bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-800 hover:bg-amber-200 dark:hover:bg-amber-900/70"
+                      )}
+                    >
+                      {PluginIcon && <PluginIcon className="h-3 w-3" />}
+                      <span>{pluginData?.name || pluginName}</span>
+                      {isSelected && (
+                        <X 
+                          className="h-3 w-3 ml-0.5" 
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedPlugin(null)
+                          }}
+                        />
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -503,6 +544,7 @@ export function PluginConfiguration() {
           onUnlockConfig={handleUnlockConfig}
           onSetPluginRequiredField={setPluginRequiredField}
           onSetSectionConfig={setSectionConfig}
+          onSetPluginSections={setPluginSections}
         />
       ) : (
         /* Phase 1.3: Empty state with helpful message */
@@ -544,6 +586,7 @@ function VirtualizedPluginList({
   onUnlockConfig,
   onSetPluginRequiredField,
   onSetSectionConfig,
+  onSetPluginSections,
 }: {
   plugins: Array<{ name: string; categoryId?: string }>
   expandedPlugins: Set<string>
@@ -562,6 +605,7 @@ function VirtualizedPluginList({
   onUnlockConfig: (plugin: string, key: string) => void
   onSetPluginRequiredField: (plugin: string, field: string, value: string) => void
   onSetSectionConfig: (plugin: string, sectionId: string, config: any) => void
+  onSetPluginSections: (plugin: string, sections: string[]) => void
 }) {
   const parentRef = useRef<HTMLDivElement>(null)
 
@@ -579,7 +623,7 @@ function VirtualizedPluginList({
   if (!shouldVirtualize) {
     // Render normally for small lists using memoized PluginCard
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {plugins.map((plugin) => {
           const state = pluginsState[plugin.name]
           if (!state) return null
@@ -611,6 +655,7 @@ function VirtualizedPluginList({
                 onUnlockConfig={onUnlockConfig}
                 onSetPluginRequiredField={onSetPluginRequiredField}
                 onSetSectionConfig={onSetSectionConfig}
+                onSetPluginSections={onSetPluginSections}
               />
             </div>
           )
@@ -667,9 +712,10 @@ function VirtualizedPluginList({
                 onToggleSection={onToggleSection}
                 onEssentialConfigChange={onEssentialConfigChange}
                 onUnlockConfig={onUnlockConfig}
-                onSetPluginRequiredField={onSetPluginRequiredField}
-                onSetSectionConfig={onSetSectionConfig}
-              />
+          onSetPluginRequiredField={onSetPluginRequiredField}
+          onSetSectionConfig={onSetSectionConfig}
+          onSetPluginSections={onSetPluginSections}
+        />
             </div>
           )
         })}

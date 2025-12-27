@@ -21,7 +21,7 @@ interface WizardShellProps {
 }
 
 export function WizardShell({ stats, preview, footer, children }: WizardShellProps) {
-  const { plugins, pluginsOrder } = useWizardStore()
+  const { plugins, pluginsOrder, size } = useWizardStore()
 
   return (
     <div className="flex flex-col h-screen bg-background relative overflow-hidden">
@@ -72,37 +72,41 @@ export function WizardShell({ stats, preview, footer, children }: WizardShellPro
         </div>
 
         {/* RIGHT: Preview */}
-        <div className="relative w-[450px] border-l border-border bg-card/50 backdrop-blur-sm overflow-y-auto overflow-x-hidden flex flex-col flex-shrink-0">
-          <div className="scrollbar-hide pt-2 flex flex-col h-full max-h-[calc(100vh-100px)]">
-            {/* SVG Preview - Exatamente 415px de largura */}
-            <div className="bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 p-0 flex items-start justify-center mb-4" style={{ width: "450px" }}>
-              {(() => {
-                const pluginsWithSections = selectPluginsWithSections({ plugins, pluginsOrder })
-                
-                if (pluginsWithSections.length > 0) {
-                  return (
-                    <div className="w-full flex justify-center h-full" style={{ width: "415px" }}>
-                      {preview}
-                    </div>
-                  )
-                } else {
-                  return (
-                    <div className="flex items-center justify-center h-full" style={{ width: "415px" }}>
-                      <div className="text-center space-y-2">
-                        <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-                          <Package className="h-4 w-4 mr-2" />
-                          Habilite pelo menos um plugin e selecione seções para ver o preview
-                        </p>
+        <div className="relative border-l border-border bg-card/50 backdrop-blur-sm overflow-hidden flex flex-col flex-shrink-0">
+          {(() => {
+            const pluginsWithSections = selectPluginsWithSections({ plugins, pluginsOrder })
+            const previewWidth = size === "half" ? 450 : 900
+            const contentWidth = size === "half" ? 415 : 830
+            
+            return (
+              <>
+                <div className="flex-1 overflow-y-auto scrollbar-hide pt-2" style={{ width: `${previewWidth}px` }}>
+                  {/* SVG Preview - Responsive width */}
+                  <div className="bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 p-0 flex items-start justify-center mb-4" style={{ width: `${previewWidth}px` }}>
+                    {pluginsWithSections.length > 0 ? (
+                      <div className="w-full flex justify-center h-full" style={{ width: `${contentWidth}px` }}>
+                        {preview}
                       </div>
-                    </div>
-                  )
-                }
-              })()}
-            </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full" style={{ width: `${contentWidth}px` }}>
+                        <div className="text-center space-y-2">
+                          <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                            <Package className="h-4 w-4 mr-2" />
+                            Habilite pelo menos um plugin e selecione seções para ver o preview
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-            {/* Footer */}
-            {footer}
-          </div>
+                {/* Footer - Always at bottom, no scrollbar */}
+                <div className="flex-shrink-0 overflow-hidden" style={{ width: `${previewWidth}px` }}>
+                  {footer}
+                </div>
+              </>
+            )
+          })()}
         </div>
       </div>
     </div>

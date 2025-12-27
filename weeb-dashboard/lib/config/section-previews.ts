@@ -6,6 +6,30 @@
 // e verifica quais previews existem na pasta previews/ de cada plugin
 
 export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
+  "16personalities": {
+    personality: "16personalities/default/personality.svg",
+  },
+
+  codeforces: {
+    rating_rank: "codeforces/default/rating_rank.svg",
+    contests_participated: "codeforces/default/contests_participated.svg",
+    problems_solved: "codeforces/default/problems_solved.svg",
+    recent_submissions: "codeforces/default/recent_submissions.svg",
+  },
+
+  codewars: {
+    rank_honor: "codewars/default/rank_honor.svg",
+    completed_kata: "codewars/default/completed_kata.svg",
+    languages_proficiency: "codewars/default/languages_proficiency.svg",
+    leaderboard_position: "codewars/default/leaderboard_position.svg",
+  },
+
+  duolingo: {
+    current_streak: "duolingo/default/current_streak.svg",
+    total_xp: "duolingo/default/total_xp.svg",
+    languages_learning: "duolingo/default/languages_learning.svg",
+  },
+
   github: {
     profile: "github/default/profile.svg",
     activity: "github/default/activity.svg",
@@ -37,6 +61,14 @@ export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
     top_tracks: "lastfm/default/top_tracks.svg",
   },
 
+  lyfta: {
+    statistics: "lyfta/default/statistics.svg",
+    recent_workouts: "lyfta/default/recent_workouts.svg",
+    exercises: "lyfta/default/exercises.svg",
+    overview: "lyfta/default/overview.svg",
+    last_workout: "lyfta/default/last_workout.svg",
+  },
+
   myanimelist: {
     statistics: "myanimelist/default/statistics.svg",
     last_activity: "myanimelist/default/last_activity.svg",
@@ -45,7 +77,30 @@ export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
     manga_bar: "myanimelist/default/manga_bar.svg",
     anime_favorites: "myanimelist/default/anime_favorites.svg",
     manga_favorites: "myanimelist/default/manga_favorites.svg",
+    character_favorites: "myanimelist/default/character_favorites.svg",
     people_favorites: "myanimelist/default/people_favorites.svg",
+  },
+
+  spotify: {
+    recent_tracks: "spotify/default/recent_tracks.svg",
+    top_artists: "spotify/default/top_artists.svg",
+    top_tracks: "spotify/default/top_tracks.svg",
+    currently_playing: "spotify/default/currently_playing.svg",
+    playlists: "spotify/default/playlists.svg",
+    profile: "spotify/default/profile.svg",
+  },
+
+  stackoverflow: {
+    reputation: "stackoverflow/default/reputation.svg",
+    badges: "stackoverflow/default/badges.svg",
+    answers_questions: "stackoverflow/default/answers_questions.svg",
+    tags_expertise: "stackoverflow/default/tags_expertise.svg",
+  },
+
+  steam: {
+    statistics: "steam/default/statistics.svg",
+    recent_games: "steam/default/recent_games.svg",
+    top_games: "steam/default/top_games.svg",
   },
 }
 
@@ -57,6 +112,6 @@ export function getSectionPreview(plugin: string, section: string, style: "defau
   const previewPath = pluginPreviews[section]
   if (!previewPath) return null
 
-  // Usar rota API para servir as imagens
-  return `/api/section-preview/${previewPath}`
+  // Usar caminho estático: arquivos estão em public/previews/
+  return `/previews/${previewPath}`
 }

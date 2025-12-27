@@ -42,7 +42,7 @@ export function WizardFooter({
   }
 
   return (
-    <div className="sticky bottom-0 bg-card/95 backdrop-blur-sm pt-2 border-t-2 border-border">
+    <div className="bg-card/95 backdrop-blur-sm pt-2 border-t-2 border-border">
       {/* UX 4: Status indicator above button */}
       {hasMissingEssential && missingConfigs.length > 0 && (
         <div className="mb-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50">

@@ -68,9 +68,22 @@ async function getPluginSections(pluginName: string): Promise<string[]> {
   try {
     // Importar dinamicamente o metadata
     const metadataModule = await import(`../src/plugins/${pluginName}/plugin.metadata.ts`)
-    const metadata = metadataModule[`${pluginName}PluginMetadata`] || metadataModule.default
+    
+    // Tentar diferentes nomes de exportação
+    // 1. Nome padrão: {pluginName}PluginMetadata
+    // 2. Nome com primeira letra maiúscula: {PluginName}PluginMetadata
+    // 3. Nome alternativo (ex: personality16PluginMetadata para 16personalities)
+    // 4. default export
+    const camelCaseName = pluginName.charAt(0).toUpperCase() + pluginName.slice(1)
+    const metadata = 
+      metadataModule[`${pluginName}PluginMetadata`] ||
+      metadataModule[`${camelCaseName}PluginMetadata`] ||
+      metadataModule[`personality16PluginMetadata`] || // Caso especial para 16personalities
+      Object.values(metadataModule).find((exp: any) => exp?.sections) ||
+      metadataModule.default
     
     if (!metadata || !metadata.sections) {
+      console.warn(`  ⚠️  Metadata não encontrado ou sem seções para ${pluginName}`)
       return []
     }
     
@@ -138,12 +151,60 @@ export function getSectionPreview(plugin: string, section: string, style: "defau
   const previewPath = pluginPreviews[section]
   if (!previewPath) return null
 
-  // Usar rota API para servir as imagens
-  return \`/api/section-preview/\${previewPath}\`
+  // Usar caminho estático: arquivos estão em public/previews/
+  return \`/previews/\${previewPath}\`
 }
 `
 
   return header + pluginEntries.join('\n\n') + '\n' + footer
+}
+
+/**
+ * Copia previews para public/previews/ do dashboard
+ */
+function copyPreviewsToPublic(pluginsData: Map<string, Array<{ section: string; hasPreview: boolean }>>) {
+  const PUBLIC_PREVIEWS_DIR = path.join(DASHBOARD_DIR, 'public', 'previews')
+  
+  // Criar diretório se não existir
+  if (!fs.existsSync(PUBLIC_PREVIEWS_DIR)) {
+    fs.mkdirSync(PUBLIC_PREVIEWS_DIR, { recursive: true })
+  }
+  
+  let copiedCount = 0
+  let skippedCount = 0
+  
+  for (const [pluginName, sections] of pluginsData) {
+    for (const { section, hasPreview } of sections) {
+      if (!hasPreview) continue
+      
+      const sourceFile = path.join(PLUGINS_DIR, pluginName, 'previews', `${pluginName}_${section}.svg`)
+      const targetDir = path.join(PUBLIC_PREVIEWS_DIR, pluginName, 'default')
+      const targetFile = path.join(targetDir, `${section}.svg`)
+      
+      // Criar diretório de destino se não existir
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true })
+      }
+      
+      // Copiar arquivo se existir
+      if (fs.existsSync(sourceFile)) {
+        try {
+          fs.copyFileSync(sourceFile, targetFile)
+          copiedCount++
+        } catch (error) {
+          console.warn(`⚠️  Erro ao copiar ${sourceFile}:`, error)
+        }
+      } else {
+        skippedCount++
+      }
+    }
+  }
+  
+  console.log(`\n📁 Previews copiados para public/previews/:`)
+  console.log(`   Copiados: ${copiedCount}`)
+  if (skippedCount > 0) {
+    console.log(`   Pulados (não encontrados): ${skippedCount}`)
+  }
 }
 
 /**
@@ -184,6 +245,9 @@ async function main() {
   
   fs.writeFileSync(OUTPUT_FILE, content, 'utf-8')
   
+  // Copiar previews para public/previews/
+  copyPreviewsToPublic(pluginsData)
+  
   // Estatísticas
   let totalSections = 0
   let totalWithPreview = 0
@@ -193,7 +257,7 @@ async function main() {
     totalWithPreview += sections.filter(s => s.hasPreview).length
   }
   
-  console.log(`✅ section-previews.ts gerado em: ${OUTPUT_FILE}`)
+  console.log(`\n✅ section-previews.ts gerado em: ${OUTPUT_FILE}`)
   console.log(`\n📊 Estatísticas:`)
   console.log(`   Plugins: ${pluginsData.size}`)
   console.log(`   Seções totais: ${totalSections}`)
@@ -209,6 +273,7 @@ main().catch((error) => {
   console.error('Erro ao gerar section-previews.ts:', error)
   process.exit(1)
 })
+
 
 
 

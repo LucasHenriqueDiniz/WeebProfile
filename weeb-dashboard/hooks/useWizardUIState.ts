@@ -13,6 +13,7 @@ interface WizardUIState {
   category: string
   query: string
   onlyEnabled: boolean
+  selectedPlugin: string | null
 }
 
 const defaultState: WizardUIState = {
@@ -21,6 +22,7 @@ const defaultState: WizardUIState = {
   category: "all",
   query: "",
   onlyEnabled: false,
+  selectedPlugin: null,
 }
 
 function loadFromStorage(): Partial<WizardUIState> {
@@ -37,6 +39,7 @@ function loadFromStorage(): Partial<WizardUIState> {
       category: parsed.category || "all",
       query: parsed.query || "",
       onlyEnabled: parsed.onlyEnabled || false,
+      selectedPlugin: parsed.selectedPlugin || null,
     }
   } catch {
     return {}
@@ -53,6 +56,7 @@ function saveToStorage(state: Partial<WizardUIState>) {
       category: state.category,
       query: state.query,
       onlyEnabled: state.onlyEnabled,
+      selectedPlugin: state.selectedPlugin,
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
   } catch {
@@ -86,6 +90,11 @@ export function useWizardUIState() {
     return saved.onlyEnabled || false
   })
 
+  const [selectedPlugin, setSelectedPlugin] = useState<string | null>(() => {
+    const saved = loadFromStorage()
+    return saved.selectedPlugin || null
+  })
+
   // Persist expandedPlugins
   useEffect(() => {
     saveToStorage({ expandedPlugins })
@@ -99,10 +108,10 @@ export function useWizardUIState() {
   // Debounced persistence for search/category filters (don't spam localStorage)
   useEffect(() => {
     const timer = setTimeout(() => {
-      saveToStorage({ category, query, onlyEnabled })
+      saveToStorage({ category, query, onlyEnabled, selectedPlugin })
     }, 500)
     return () => clearTimeout(timer)
-  }, [category, query, onlyEnabled])
+  }, [category, query, onlyEnabled, selectedPlugin])
 
   const toggleExpanded = useCallback((pluginName: string) => {
     setExpandedPlugins((prev) => {
@@ -132,6 +141,7 @@ export function useWizardUIState() {
     category,
     query,
     onlyEnabled,
+    selectedPlugin,
     
     // Setters
     setExpandedPlugins,
@@ -139,6 +149,7 @@ export function useWizardUIState() {
     setCategory,
     setQuery,
     setOnlyEnabled,
+    setSelectedPlugin,
     
     // Helpers
     toggleExpanded,
@@ -146,4 +157,5 @@ export function useWizardUIState() {
     collapseAll,
   }
 }
+
 
