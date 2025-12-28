@@ -58,20 +58,16 @@ export const svgs = pgTable(
     style: text("style").notNull().default("default"),
     size: text("size").notNull().default("half"),
     theme: text("theme").default("default"), // Unified theme field (replaces terminalTheme and defaultTheme)
-    hideTerminalEmojis: boolean("hide_terminal_emojis").default(false).notNull(),
-    hideTerminalHeader: boolean("hide_terminal_header").default(false).notNull(),
     customCss: text("custom_css"),
     pluginsOrder: text("plugins_order"), // Order will be generated dynamically from PLUGINS_METADATA (null = alphabetical order)
-    pluginsConfig: jsonb("plugins_config").notNull().default({}),
+    pluginsConfig: jsonb("plugins_config").notNull().default({}), // Terminal configs (hideTerminalEmojis, hideTerminalHeader, hideTerminalCommand) are stored here
     storagePath: text("storage_path"),
     storageUrl: text("storage_url"),
     status: text("status").notNull().default("pending"),
     forceRegenerate: boolean("force_regenerate").default(false).notNull(),
     dataHash: text("data_hash"),
     lastGeneratedAt: timestamp("last_generated_at", { withTimezone: true }),
-    nextGenerationAt: timestamp("next_generation_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_svgs_user_id").on(table.userId),
@@ -79,7 +75,6 @@ export const svgs = pgTable(
     userIdSlugIdx: index("idx_svgs_user_id_slug").on(table.userId, table.slug),
     statusIdx: index("idx_svgs_status").on(table.status),
     forceRegenerateIdx: index("idx_svgs_force_regenerate").on(table.forceRegenerate),
-    nextGenerationIdx: index("idx_svgs_next_generation").on(table.nextGenerationAt),
   })
 )
 
@@ -100,14 +95,11 @@ export const templates = pgTable(
     style: text("style").notNull().default("default"),
     size: text("size").notNull().default("half"),
     theme: text("theme").default("default"),
-    hideTerminalEmojis: boolean("hide_terminal_emojis").default(false).notNull(),
-    hideTerminalHeader: boolean("hide_terminal_header").default(false).notNull(),
     customCss: text("custom_css"),
     pluginsOrder: text("plugins_order"), // Order will be generated dynamically (null = alphabetical order)
-    pluginsConfig: jsonb("plugins_config").notNull().default({}),
+    pluginsConfig: jsonb("plugins_config").notNull().default({}), // Terminal configs (hideTerminalEmojis, hideTerminalHeader, hideTerminalCommand) are stored here
     isPublic: boolean("is_public").default(false).notNull(), // Whether template is publicly available
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_templates_user_id").on(table.userId),

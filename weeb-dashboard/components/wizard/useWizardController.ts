@@ -14,6 +14,7 @@ import { selectEnabledPluginNames, selectPluginsWithSections, selectTotalSection
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ApiException, svgApi } from "@/lib/api"
 import { debugWizard } from "@/lib/debug"
+import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 interface UseWizardControllerProps {
   isEditMode?: boolean
@@ -38,6 +39,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     theme,
     hideTerminalEmojis,
     hideTerminalHeader,
+    hideTerminalCommand,
     customCss,
     customThemeColors,
     setBasicInfo,
@@ -193,16 +195,25 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
       const isOrderCustomized = JSON.stringify(enabledPluginsOrdered) !== JSON.stringify(currentOrderFiltered)
 
       // 1. Create/Update SVG
+      // Merge terminal configs into pluginsConfig
+      const finalPluginsConfig = setTerminalConfigs(pluginsConfig, {
+        hideTerminalEmojis,
+        hideTerminalHeader,
+        hideTerminalCommand,
+      })
+      
       const svgData: any = {
         name: autoName,
         style,
         size,
         theme,
-        hideTerminalEmojis,
-        hideTerminalHeader,
         customCss: customCss || null,
         customThemeColors: theme === "custom" ? customThemeColors : undefined,
-        pluginsConfig,
+        pluginsConfig: finalPluginsConfig,
+        // Terminal configs are passed separately for API compatibility (will be merged on server)
+        hideTerminalEmojis,
+        hideTerminalHeader,
+        hideTerminalCommand,
       }
 
       // Only include pluginsOrder if customized (not alphabetical default)

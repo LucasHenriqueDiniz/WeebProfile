@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { svgs } from "@/lib/db/schema"
 import { eq, count } from "drizzle-orm"
 import { NextResponse } from "next/server"
+import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 const MAX_SVGS_FREE_TIER = 3
 
@@ -54,6 +55,7 @@ export async function POST(request: Request) {
           theme = "default",
           hideTerminalEmojis = false,
           hideTerminalHeader = false,
+          hideTerminalCommand = false,
           customCss,
           customThemeColors,
           pluginsOrder,
@@ -84,11 +86,18 @@ export async function POST(request: Request) {
           .replace(/^-+|-+$/g, "")
         const slug = `${slugBase}-${Date.now().toString(36)}`
 
-        // Incluir customThemeColors no pluginsConfig se fornecido
-        const finalPluginsConfig = {
-          ...pluginsConfig,
-          ...(customThemeColors && Object.keys(customThemeColors).length > 0 && { customThemeColors }),
-        }
+        // Incluir customThemeColors e terminal configs no pluginsConfig
+        const finalPluginsConfig = setTerminalConfigs(
+          {
+            ...pluginsConfig,
+            ...(customThemeColors && Object.keys(customThemeColors).length > 0 && { customThemeColors }),
+          },
+          {
+            hideTerminalEmojis,
+            hideTerminalHeader,
+            hideTerminalCommand,
+          }
+        )
 
         const [newSvg] = await db
           .insert(svgs)
@@ -100,8 +109,6 @@ export async function POST(request: Request) {
             style,
             size,
             theme,
-            hideTerminalEmojis,
-            hideTerminalHeader,
             customCss: customCss || null,
             pluginsOrder: pluginsOrder || null, // null means use alphabetical order
             status: "pending",

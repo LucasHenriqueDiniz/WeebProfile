@@ -187,10 +187,12 @@ export const useSvgStore = create<SvgStore>()(
           })
 
           // Limpar SVGs muito antigos da lista (mais de 1 hora)
+          // Usar lastGeneratedAt ou createdAt como fallback
           const validSvgs = state.svgs.filter(svg => {
-            if (!svg.updatedAt) return true
-            const updatedAt = new Date(svg.updatedAt).getTime()
-            return now - updatedAt < 60 * 60 * 1000 // 1 hora
+            const timestamp = svg.lastGeneratedAt || svg.createdAt
+            if (!timestamp) return true
+            const timestampTime = new Date(timestamp).getTime()
+            return now - timestampTime < 60 * 60 * 1000 // 1 hora
           })
 
           state.svgCache = validCache

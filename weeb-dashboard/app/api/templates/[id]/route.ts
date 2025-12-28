@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { templates } from "@/lib/db/schema"
 import { eq, and, or } from "drizzle-orm"
+import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 /**
  * GET /api/templates/[id]
@@ -87,11 +88,20 @@ export async function PUT(
       theme,
       hideTerminalEmojis,
       hideTerminalHeader,
+      hideTerminalCommand,
       customCss,
       pluginsOrder,
       pluginsConfig,
       isPublic,
     } = body
+
+    // Merge terminal configs into pluginsConfig
+    const updatedPluginsConfig = pluginsConfig !== undefined ? pluginsConfig : existingTemplate.pluginsConfig
+    const finalPluginsConfig = setTerminalConfigs(updatedPluginsConfig, {
+      hideTerminalEmojis,
+      hideTerminalHeader,
+      hideTerminalCommand,
+    })
 
     const [updatedTemplate] = await db
       .update(templates)
@@ -101,13 +111,10 @@ export async function PUT(
         style: style !== undefined ? style : existingTemplate.style,
         size: size !== undefined ? size : existingTemplate.size,
         theme: theme !== undefined ? theme : existingTemplate.theme,
-        hideTerminalEmojis: hideTerminalEmojis !== undefined ? hideTerminalEmojis : existingTemplate.hideTerminalEmojis,
-        hideTerminalHeader: hideTerminalHeader !== undefined ? hideTerminalHeader : existingTemplate.hideTerminalHeader,
         customCss: customCss !== undefined ? customCss : existingTemplate.customCss,
         pluginsOrder: pluginsOrder !== undefined ? pluginsOrder : existingTemplate.pluginsOrder,
-        pluginsConfig: pluginsConfig !== undefined ? pluginsConfig : existingTemplate.pluginsConfig,
+        pluginsConfig: finalPluginsConfig,
         isPublic: isPublic !== undefined ? isPublic : existingTemplate.isPublic,
-        updatedAt: new Date(),
       })
       .where(eq(templates.id, id))
       .returning()

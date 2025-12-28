@@ -5,6 +5,7 @@ import { eq, and } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { convertSvgToPluginsConfig, generateDataHash, saveSvgToStorage } from "@/lib/svg-generator"
 import { generateSvgViaHttpService } from "@/lib/svg-generator-client"
+import { getTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 /**
  * POST /api/svgs/[id]/generate - Gerar SVG
@@ -72,7 +73,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       .update(svgs)
       .set({
         status: "generating",
-        updatedAt: new Date(),
       })
       .where(eq(svgs.id, id))
 
@@ -97,6 +97,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       // Preparar request para o svg-generator HTTP service
       // O svg-generator vai buscar essential configs do Supabase usando userId
       // pluginsOrder já vem convertido com ordem alfabética se null/empty
+      const terminalConfigs = getTerminalConfigs(svg.pluginsConfig as Record<string, any>)
       const requestConfig = {
         style: svg.style || 'default',
         size: svg.size || 'half',
@@ -104,8 +105,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         pluginsOrder, // Already converted by convertSvgToPluginsConfig (alphabetical if null/empty)
         customCss: svg.customCss || undefined,
         theme: svg.theme || undefined,
-        hideTerminalEmojis: svg.hideTerminalEmojis || undefined,
-        hideTerminalHeader: svg.hideTerminalHeader || undefined,
+        hideTerminalEmojis: terminalConfigs.hideTerminalEmojis,
+        hideTerminalHeader: terminalConfigs.hideTerminalHeader,
+        hideTerminalCommand: terminalConfigs.hideTerminalCommand,
         customThemeColors: (svg.pluginsConfig as any)?.customThemeColors || undefined,
         userId: user.id, // Passar userId para svg-generator buscar essential configs
         mock: false, // Sempre usar dados reais em produção
@@ -125,10 +127,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       // Calcular hash dos dados
       const dataHash = generateDataHash(svg)
 
-      // Calcular próxima geração permitida (cooldown)
-      const nextGenerationAt = new Date()
-      nextGenerationAt.setMinutes(nextGenerationAt.getMinutes() + 20) // 20 minutos de cooldown
-
       // Atualizar SVG com resultado
       const [updatedSvg] = await db
         .update(svgs)
@@ -138,9 +136,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           storageUrl: url,
           dataHash,
           lastGeneratedAt: new Date(),
-          nextGenerationAt,
           forceRegenerate: false,
-          updatedAt: new Date(),
         })
         .where(eq(svgs.id, id))
         .returning()
@@ -150,14 +146,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         svg: updatedSvg,
       })
     } catch (error) {
-      // Atualizar status para "failed"
-      await db
-        .update(svgs)
-        .set({
-          status: "failed",
-          updatedAt: new Date(),
-        })
-        .where(eq(svgs.id, id))
+        // Atualizar status para "failed"
+        await db
+          .update(svgs)
+          .set({
+            status: "failed",
+          })
+          .where(eq(svgs.id, id))
 
       console.error("Error generating SVG:", error)
       return NextResponse.json(

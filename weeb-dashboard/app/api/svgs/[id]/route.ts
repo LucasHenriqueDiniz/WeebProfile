@@ -4,6 +4,7 @@ import { svgs } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { deleteSvgFromStorage } from "@/lib/svg-generator"
+import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 /**
  * GET /api/svgs/[id] - Buscar SVG específico
@@ -68,6 +69,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "SVG not found" }, { status: 404 })
     }
 
+    // Merge terminal configs into pluginsConfig
+    const updatedPluginsConfig = body.pluginsConfig || existingSvg.pluginsConfig
+    const finalPluginsConfig = setTerminalConfigs(updatedPluginsConfig, {
+      hideTerminalEmojis: body.hideTerminalEmojis,
+      hideTerminalHeader: body.hideTerminalHeader,
+      hideTerminalCommand: body.hideTerminalCommand,
+    })
+
     // Atualizar SVG
     const [updatedSvg] = await db
       .update(svgs)
@@ -76,12 +85,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         style: body.style || existingSvg.style,
         size: body.size || existingSvg.size,
         theme: body.theme !== undefined ? body.theme : existingSvg.theme,
-        hideTerminalEmojis: body.hideTerminalEmojis !== undefined ? body.hideTerminalEmojis : existingSvg.hideTerminalEmojis,
-        hideTerminalHeader: body.hideTerminalHeader !== undefined ? body.hideTerminalHeader : existingSvg.hideTerminalHeader,
         customCss: body.customCss !== undefined ? body.customCss : existingSvg.customCss,
         pluginsOrder: body.pluginsOrder !== undefined ? (body.pluginsOrder || null) : existingSvg.pluginsOrder, // null means use alphabetical order
-        pluginsConfig: body.pluginsConfig || existingSvg.pluginsConfig,
-        updatedAt: new Date(),
+        pluginsConfig: finalPluginsConfig,
       })
       .where(eq(svgs.id, id))
       .returning()

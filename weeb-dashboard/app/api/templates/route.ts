@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { templates, templateLikes } from "@/lib/db/schema"
 import { eq, and, inArray, ne } from "drizzle-orm"
+import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 /**
  * GET /api/templates
@@ -105,6 +106,7 @@ export async function POST(request: Request) {
       theme,
       hideTerminalEmojis,
       hideTerminalHeader,
+      hideTerminalCommand,
       customCss,
       pluginsOrder,
       pluginsConfig,
@@ -114,6 +116,13 @@ export async function POST(request: Request) {
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
+
+    // Merge terminal configs into pluginsConfig
+    const finalPluginsConfig = setTerminalConfigs(pluginsConfig || {}, {
+      hideTerminalEmojis,
+      hideTerminalHeader,
+      hideTerminalCommand,
+    })
 
     const [newTemplate] = await db
       .insert(templates)
@@ -125,11 +134,9 @@ export async function POST(request: Request) {
         style: style || "default",
         size: size || "half",
         theme: theme || "default",
-        hideTerminalEmojis: hideTerminalEmojis || false,
-        hideTerminalHeader: hideTerminalHeader || false,
         customCss: customCss || null,
         pluginsOrder: pluginsOrder || null, // null means use alphabetical order
-        pluginsConfig: pluginsConfig || {},
+        pluginsConfig: finalPluginsConfig,
         isPublic: isPublic || false,
       })
       .returning()

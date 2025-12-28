@@ -27,6 +27,7 @@ export interface WizardState {
   theme: string // Unified theme field (replaces terminalTheme and defaultTheme)
   hideTerminalEmojis: boolean
   hideTerminalHeader: boolean
+  hideTerminalCommand: boolean
   customCss: string
   customThemeColors: Record<string, string> // Custom theme colors (only used when theme === 'custom')
 
@@ -60,6 +61,7 @@ export interface WizardState {
   setCustomCss: (css: string) => void
   setHideTerminalEmojis: (hide: boolean) => void
   setHideTerminalHeader: (hide: boolean) => void
+  setHideTerminalCommand: (hide: boolean) => void
   setCustomThemeColor: (variable: string, color: string) => void
   resetCustomThemeColors: () => void
   setPreviewUrl: (url: string | null) => void
@@ -107,6 +109,7 @@ const initialState = {
   theme: "default",
   hideTerminalEmojis: false,
   hideTerminalHeader: false,
+  hideTerminalCommand: false,
   customCss: "",
   customThemeColors: {},
   previewUrl: null,
@@ -341,6 +344,10 @@ export const useWizardStore = create<WizardState>()(
         set({ hideTerminalHeader: hide })
       },
 
+      setHideTerminalCommand: (hide) => {
+        set({ hideTerminalCommand: hide })
+      },
+
       setCustomThemeColor: (variable, color) => {
         set((state) => ({
           customThemeColors: {
@@ -443,6 +450,7 @@ export const useWizardStore = create<WizardState>()(
         theme: state.theme,
         hideTerminalEmojis: state.hideTerminalEmojis,
         hideTerminalHeader: state.hideTerminalHeader,
+        hideTerminalCommand: state.hideTerminalCommand,
         customCss: state.customCss,
         customThemeColors: state.customThemeColors,
         previewUrl: state.previewUrl,

@@ -10,6 +10,7 @@ import { useSvgStore } from "@/stores/svg-store"
 import type { Svg } from "@/lib/db/schema"
 import { ApiException } from "@/lib/api"
 import LoadingScreen from "@/components/loading/LoadingScreen"
+import { getTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 export default function EditSvgPage() {
   const { user, loading: authLoading } = useAuth()
@@ -22,7 +23,7 @@ export default function EditSvgPage() {
   const cachedSvg = getSvgSync(svgId)
   const [loading, setLoading] = useState(!cachedSvg)
   const [hasLoaded, setHasLoaded] = useState(false)
-  const { reset, setBasicInfo, setPluginConfig, setStyle, setSize, setTheme, setHideTerminalEmojis, setHideTerminalHeader, setCustomCss, reorderPlugins } = useWizardStore()
+  const { reset, setBasicInfo, setPluginConfig, setStyle, setSize, setTheme, setHideTerminalEmojis, setHideTerminalHeader, setHideTerminalCommand, setCustomCss, reorderPlugins } = useWizardStore()
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -90,8 +91,13 @@ export default function EditSvgPage() {
     setStyle(svg.style as "default" | "terminal")
     setSize(svg.size as "half" | "full")
     setTheme(svg.theme || "default")
-    setHideTerminalEmojis(svg.hideTerminalEmojis)
-    setHideTerminalHeader(svg.hideTerminalHeader)
+    
+    // Read terminal configs from pluginsConfig
+    const terminalConfigs = getTerminalConfigs(svg.pluginsConfig as Record<string, any>)
+    setHideTerminalEmojis(terminalConfigs.hideTerminalEmojis)
+    setHideTerminalHeader(terminalConfigs.hideTerminalHeader)
+    setHideTerminalCommand(terminalConfigs.hideTerminalCommand)
+    
     setCustomCss(svg.customCss || "")
 
     // Carregar plugins config
