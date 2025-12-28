@@ -37,23 +37,21 @@ export function LivePreview() {
   // Use state to store debounced plugins
   const [debouncedPlugins, setDebouncedPlugins] = React.useState(plugins)
   const pluginsRef = React.useRef(plugins)
-  const lastSectionsRef = React.useRef<Record<string, string[]>>(() => {
-    // Initialize with current sections
-    const initial: Record<string, string[]> = {}
-    Object.keys(plugins).forEach(pluginName => {
-      initial[pluginName] = plugins[pluginName]?.sections || []
-    })
-    return initial
-  })
-  const lastSectionConfigsRef = React.useRef<Record<string, Record<string, Record<string, unknown>>>>(() => {
-    // Initialize with current sectionConfigs
-    const initial: Record<string, Record<string, Record<string, unknown>>> = {}
-    Object.keys(plugins).forEach(pluginName => {
-      initial[pluginName] = plugins[pluginName]?.sectionConfigs || {}
-    })
-    return initial
-  })
+  const lastSectionsRef = React.useRef<Record<string, string[]>>({})
+  const lastSectionConfigsRef = React.useRef<Record<string, Record<string, Record<string, unknown>>>>({})
   const debounceTimerRef = React.useRef<NodeJS.Timeout | null>(null)
+  const isInitializedRef = React.useRef(false)
+  
+  // Initialize refs with current values on mount
+  React.useEffect(() => {
+    if (!isInitializedRef.current) {
+      Object.keys(plugins).forEach(pluginName => {
+        lastSectionsRef.current[pluginName] = plugins[pluginName]?.sections || []
+        lastSectionConfigsRef.current[pluginName] = plugins[pluginName]?.sectionConfigs || {}
+      })
+      isInitializedRef.current = true
+    }
+  }, [plugins])
   
   // Update ref when plugins change
   React.useEffect(() => {

@@ -5,7 +5,7 @@
  * Re-exports functions from plugin-registry for backward compatibility.
  */
 
-import { getPlugin as getPluginFromRegistry, getPlugins } from "./plugins/plugin-registry"
+import { getPlugin as getPluginFromRegistry, getPlugins } from "@/lib/plugins/plugin-registry"
 
 // Cache for loaded plugins (prevents re-loading)
 const pluginsCache = new Map<string, any>()
