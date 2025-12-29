@@ -4,5 +4,5 @@
   "outputDirectory": "weeb-dashboard/.next",
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./weeb-dashboard"
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./weeb-dashboard ./weeb-plugins"
 }
