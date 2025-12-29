@@ -6,6 +6,7 @@ import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import { ImageComponent } from '../../../utils/image'
 import type { GithubConfig, GithubData } from '../types'
 
 interface RepositoryContributorsProps {
@@ -29,9 +30,11 @@ const DefaultRepositoryContributors = ({ data, max }: { data: GithubData['reposi
           key={index}
           className="flex items-center gap-2 p-2 rounded-lg border border-default-border hover:bg-default-hover transition-colors"
         >
-          <img
-            src={contributor.avatarUrl}
+          <ImageComponent
+            url64={contributor.avatarUrl}
             alt={contributor.login}
+            width={32}
+            height={32}
             className="w-8 h-8 rounded-full"
           />
           <div className="flex-1 min-w-0">

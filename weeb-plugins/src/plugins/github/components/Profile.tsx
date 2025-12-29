@@ -33,7 +33,6 @@ const DefaultProfile = ({ data, size }: { data: GithubData['user']; size: 'half'
           width={45}
           height={45}
           className="rounded-full pb-0.5"
-          dontUseUrl64
         />
         <div>
           <h2 className="text-lg font-semibold">{data.name}</h2>

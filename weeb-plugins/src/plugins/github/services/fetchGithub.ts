@@ -385,32 +385,52 @@ export async function fetchGithubData(
 
           case 'sponsorships':
             const sponsorships = result.user.sponsorshipsAsSponsor
+            const sponsorshipsNodes = await Promise.all(
+              (sponsorships?.nodes || []).map(async (sponsorship: any) => {
+                const avatarUrl = sponsorship.sponsorable?.avatarUrl || ''
+                const avatarUrlBase64 = avatarUrl && 
+                  (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
+                  ? await urlToBase64(avatarUrl)
+                  : avatarUrl
+                return {
+                  sponsorable: {
+                    login: sponsorship.sponsorable?.login || '',
+                    name: sponsorship.sponsorable?.name || null,
+                    avatarUrl: avatarUrlBase64 || avatarUrl,
+                  },
+                  tier: sponsorship.tier ? {
+                    name: sponsorship.tier.name,
+                    monthlyPriceInDollars: sponsorship.tier.monthlyPriceInDollars,
+                  } : null,
+                }
+              })
+            )
             data.sponsorships = {
               totalCount: sponsorships?.totalCount || 0,
-              nodes: (sponsorships?.nodes || []).map((sponsorship: any) => ({
-                sponsorable: {
-                  login: sponsorship.sponsorable?.login || '',
-                  name: sponsorship.sponsorable?.name || null,
-                  avatarUrl: sponsorship.sponsorable?.avatarUrl || '',
-                },
-                tier: sponsorship.tier ? {
-                  name: sponsorship.tier.name,
-                  monthlyPriceInDollars: sponsorship.tier.monthlyPriceInDollars,
-                } : null,
-              })),
+              nodes: sponsorshipsNodes,
             }
             break
 
           case 'sponsors':
             const sponsors = result.user.sponsors
+            const sponsorsNodes = await Promise.all(
+              (sponsors?.nodes || []).map(async (sponsor: any) => {
+                const avatarUrl = sponsor.avatarUrl || ''
+                const avatarUrlBase64 = avatarUrl && 
+                  (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
+                  ? await urlToBase64(avatarUrl)
+                  : avatarUrl
+                return {
+                  login: sponsor.login || '',
+                  name: sponsor.name || null,
+                  avatarUrl: avatarUrlBase64 || avatarUrl,
+                  tier: null, // TODO: pegar tier do sponsor
+                }
+              })
+            )
             data.sponsors = {
               totalCount: sponsors?.totalCount || 0,
-              nodes: (sponsors?.nodes || []).map((sponsor: any) => ({
-                login: sponsor.login || '',
-                name: sponsor.name || null,
-                avatarUrl: sponsor.avatarUrl || '',
-                tier: null, // TODO: pegar tier do sponsor
-              })),
+              nodes: sponsorsNodes,
             }
             break
         }
@@ -825,14 +845,24 @@ async function processPeopleData(
     })
 
     const followers = result.user.followers
+    const followersNodes = await Promise.all(
+      (followers?.nodes || []).map(async (follower: any) => {
+        const avatarUrl = follower.avatarUrl || ''
+        const avatarUrlBase64 = avatarUrl && 
+          (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
+          ? await urlToBase64(avatarUrl)
+          : avatarUrl
+        return {
+          login: follower.login || '',
+          name: follower.name || null,
+          avatarUrl: avatarUrlBase64 || avatarUrl,
+        }
+      })
+    )
     data.people = {
       type: 'profile',
       totalCount: followers?.totalCount || 0,
-      nodes: (followers?.nodes || []).map((follower: any) => ({
-        login: follower.login || '',
-        name: follower.name || null,
-        avatarUrl: follower.avatarUrl || '',
-      })),
+      nodes: followersNodes,
     }
   } else {
     // Buscar people do repositório (contributors, stargazers, watchers)
@@ -857,14 +887,24 @@ async function processPeopleData(
     })
 
     const stargazers = result.repository?.stargazers
+    const stargazersNodes = await Promise.all(
+      (stargazers?.nodes || []).map(async (person: any) => {
+        const avatarUrl = person.avatarUrl || ''
+        const avatarUrlBase64 = avatarUrl && 
+          (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
+          ? await urlToBase64(avatarUrl)
+          : avatarUrl
+        return {
+          login: person.login || '',
+          name: person.name || null,
+          avatarUrl: avatarUrlBase64 || avatarUrl,
+        }
+      })
+    )
     data.people = {
       type: 'repository',
       totalCount: stargazers?.totalCount || 0,
-      nodes: (stargazers?.nodes || []).map((person: any) => ({
-        login: person.login || '',
-        name: person.name || null,
-        avatarUrl: person.avatarUrl || '',
-      })),
+      nodes: stargazersNodes,
     }
   }
 }
@@ -898,12 +938,21 @@ async function processRepositoryContributorsData(
       per_page: config.repository_contributors_max || 10,
     })
 
-    data.repositoryContributors = response.data.map((contributor: any) => ({
-      login: contributor.login,
-      name: contributor.name || null,
-      avatarUrl: contributor.avatar_url || '',
-      contributions: contributor.contributions || 0,
-    }))
+    data.repositoryContributors = await Promise.all(
+      response.data.map(async (contributor: any) => {
+        const avatarUrl = contributor.avatar_url || ''
+        const avatarUrlBase64 = avatarUrl && 
+          (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
+          ? await urlToBase64(avatarUrl)
+          : avatarUrl
+        return {
+          login: contributor.login,
+          name: contributor.name || null,
+          avatarUrl: avatarUrlBase64 || avatarUrl,
+          contributions: contributor.contributions || 0,
+        }
+      })
+    )
   } catch (error: any) {
     // Fallback para GraphQL se REST API falhar
     try {
@@ -936,9 +985,23 @@ async function processRepositoryContributorsData(
         })
       })
 
-      data.repositoryContributors = Array.from(contributorsMap.values())
+      const contributorsArray = Array.from(contributorsMap.values())
         .sort((a, b) => b.contributions - a.contributions)
         .slice(0, config.repository_contributors_max || 10)
+      
+      data.repositoryContributors = await Promise.all(
+        contributorsArray.map(async (contributor) => {
+          const avatarUrl = contributor.avatarUrl || ''
+          const avatarUrlBase64 = avatarUrl && 
+            (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
+            ? await urlToBase64(avatarUrl)
+            : avatarUrl
+          return {
+            ...contributor,
+            avatarUrl: avatarUrlBase64 || avatarUrl,
+          }
+        })
+      )
     } catch (graphqlError) {
       console.warn('Error fetching repository contributors (both REST and GraphQL failed):', graphqlError)
       data.repositoryContributors = []

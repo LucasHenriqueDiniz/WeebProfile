@@ -6,6 +6,7 @@ import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import { ImageComponent } from '../../../utils/image'
 import type { GithubConfig, GithubData } from '../types'
 
 interface SponsorsProps {
@@ -34,9 +35,11 @@ const DefaultSponsors = ({ data, max }: { data: GithubData['sponsors']; max: num
           key={index}
           className="flex items-center gap-3 p-3 rounded-lg border border-default-border hover:bg-default-hover transition-colors"
         >
-          <img
-            src={sponsor.avatarUrl}
+          <ImageComponent
+            url64={sponsor.avatarUrl}
             alt={sponsor.login}
+            width={40}
+            height={40}
             className="w-10 h-10 rounded-full"
           />
           <div className="flex-1">

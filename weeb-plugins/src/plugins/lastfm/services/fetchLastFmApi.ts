@@ -9,6 +9,7 @@ import type { EssentialPluginConfig } from '../../shared/types/base'
 import { fetchJson, requireApiKey, buildQueryString } from '../../shared/utils/api'
 import { ApiError, ConfigError } from '../../shared/utils/errors'
 import { urlToBase64 } from '../../../utils/image-to-base64'
+import { getArtistImageFallback } from './artistImageFallback'
 
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
 
@@ -165,7 +166,8 @@ async function fetchTopArtists(
 
   const artists = response.topartists?.artist || []
   
-  return artists.map((artist) => {
+  // Mapear artistas com suas imagens do Last.fm
+  const artistsWithImages = artists.map((artist) => {
     const image = artist.image?.find(img => img.size === 'large')?.['#text'] ||
                   artist.image?.find(img => img.size === 'medium')?.['#text'] ||
                   artist.image?.[0]?.['#text']
@@ -176,6 +178,20 @@ async function fetchTopArtists(
       image,
     }
   })
+
+  // Aplicar fallback para imagens que são padrão do Last.fm
+  // Fazemos em paralelo mas com throttle já implementado no serviço
+  const artistsWithFallback = await Promise.all(
+    artistsWithImages.map(async (artist) => {
+      const fallbackImage = await getArtistImageFallback(artist.artist, artist.image)
+      return {
+        ...artist,
+        image: fallbackImage || artist.image, // Usa fallback se encontrou, senão mantém original
+      }
+    })
+  )
+
+  return artistsWithFallback
 }
 
 /**

@@ -89,6 +89,41 @@ export async function measureHeight(options: MeasureHeightOptions): Promise<numb
       // Isso é especialmente importante para gradientes e estilos complexos
       await page.waitForTimeout(200)
       
+      // Aguardar que todas as imagens sejam carregadas antes de medir altura
+      // Isso é crítico para cálculo correto de altura quando há imagens
+      await page.waitForFunction(
+        () => {
+          const svgMain = document.getElementById('svg-main')
+          if (!svgMain) return false
+          
+          // Buscar todas as imagens dentro do SVG
+          const images = svgMain.querySelectorAll('img')
+          if (images.length === 0) return true // Se não há imagens, está OK
+          
+          // Verificar se todas as imagens foram carregadas
+          let allLoaded = true
+          for (const img of Array.from(images)) {
+            const htmlImg = img as HTMLImageElement
+            // Se a imagem não está completa e não é um placeholder/data URI, ainda está carregando
+            if (!htmlImg.complete && !htmlImg.src.startsWith('data:')) {
+              allLoaded = false
+              break
+            }
+            // Verificar se a imagem tem dimensões válidas (indicando que carregou)
+            if (htmlImg.naturalWidth === 0 && htmlImg.naturalHeight === 0 && !htmlImg.src.startsWith('data:')) {
+              allLoaded = false
+              break
+            }
+          }
+          
+          return allLoaded
+        },
+        { timeout: timeoutMs }
+      ).catch(() => {
+        // Se a verificação falhar, continuar mesmo assim (imagens podem falhar ao carregar)
+        console.warn('[MeasureHeight] ⚠️ Some images may not have loaded, continuing measurement...')
+      })
+      
       // Verificar se estilos foram aplicados usando waitForFunction
       // Isso garante que pelo menos um elemento com classe CSS existe e tem estilos aplicados
       await page.waitForFunction(

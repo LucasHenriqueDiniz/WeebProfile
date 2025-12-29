@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
         hostname: 'media.steampowered.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.scdn.co',
+        pathname: '/**',
+      },
     ],
   },
   env: {

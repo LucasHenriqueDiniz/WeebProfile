@@ -1,4 +1,5 @@
 import type { GithubData } from '../types'
+import { urlToBase64 } from '../../../utils/image-to-base64'
 
 export async function getMockGithubData(): Promise<GithubData> {  
   // Dados reais copiados do real-data.json
@@ -6430,12 +6431,75 @@ export async function getMockGithubData(): Promise<GithubData> {
 "sponsoringCount": 3,
 } as GithubData
   
-  // Manter avatar do octocat
+  // Converter todos os avatarUrls para base64
+  const convertAvatarUrl = async (url: string | undefined): Promise<string | undefined> => {
+    if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
+      return url
+    }
+    try {
+      return await urlToBase64(url)
+    } catch (error) {
+      console.warn(`Failed to convert avatar URL to base64: ${url}`, error)
+      return url
+    }
+  }
+
+  // Converter avatarUrl do user
+  const userAvatarUrl = await convertAvatarUrl(realData.user?.avatarUrl ?? 'https://avatars.githubusercontent.com/octocat')
+
+  // Converter avatarUrls de people
+  const peopleNodes = await Promise.all(
+    (realData.people?.nodes || []).map(async (person) => ({
+      ...person,
+      avatarUrl: await convertAvatarUrl(person.avatarUrl) || person.avatarUrl,
+    }))
+  )
+
+  // Converter avatarUrls de sponsors
+  const sponsorsNodes = await Promise.all(
+    (realData.sponsors?.nodes || []).map(async (sponsor) => ({
+      ...sponsor,
+      avatarUrl: await convertAvatarUrl(sponsor.avatarUrl) || sponsor.avatarUrl,
+    }))
+  )
+
+  // Converter avatarUrls de sponsorships
+  const sponsorshipsNodes = await Promise.all(
+    (realData.sponsorships?.nodes || []).map(async (sponsorship) => ({
+      ...sponsorship,
+      sponsorable: {
+        ...sponsorship.sponsorable,
+        avatarUrl: await convertAvatarUrl(sponsorship.sponsorable.avatarUrl) || sponsorship.sponsorable.avatarUrl,
+      },
+    }))
+  )
+
+  // Converter avatarUrls de repositoryContributors
+  const repositoryContributors = await Promise.all(
+    (realData.repositoryContributors || []).map(async (contributor) => ({
+      ...contributor,
+      avatarUrl: await convertAvatarUrl(contributor.avatarUrl) || contributor.avatarUrl,
+    }))
+  )
+
   return {
     ...realData,
     user: {
       ...realData.user,
-      avatarUrl: realData.user?.avatarUrl ?? 'https://avatars.githubusercontent.com/octocat',
+      avatarUrl: userAvatarUrl ?? 'https://avatars.githubusercontent.com/octocat',
     },
+    people: realData.people ? {
+      ...realData.people,
+      nodes: peopleNodes,
+    } : undefined,
+    sponsors: realData.sponsors ? {
+      ...realData.sponsors,
+      nodes: sponsorsNodes,
+    } : undefined,
+    sponsorships: realData.sponsorships ? {
+      ...realData.sponsorships,
+      nodes: sponsorshipsNodes,
+    } : undefined,
+    repositoryContributors: repositoryContributors.length > 0 ? repositoryContributors : realData.repositoryContributors,
   }
 }

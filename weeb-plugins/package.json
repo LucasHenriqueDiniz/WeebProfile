@@ -149,6 +149,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "create-plugin": "tsx scripts/create-plugin.ts",
+    "update-lastfm-mock": "tsx scripts/update-lastfm-mock-data.ts",
     "prepublishOnly": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index"
   },
   "dependencies": {

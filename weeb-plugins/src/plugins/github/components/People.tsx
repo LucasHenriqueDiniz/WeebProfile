@@ -6,6 +6,7 @@ import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
 import type { GridItemProps } from '../../../templates/types'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import { ImageComponent } from '../../../utils/image'
 import type { GithubConfig, GithubData } from '../types'
 
 interface PeopleProps {
@@ -33,9 +34,11 @@ const DefaultPeople = ({ data, max }: { data: GithubData['people']; max: number 
           className="inline-block"
           title={person.name || person.login}
         >
-          <img
-            src={person.avatarUrl}
+          <ImageComponent
+            url64={person.avatarUrl}
             alt={person.login}
+            width={40}
+            height={40}
             className="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"
           />
         </a>
