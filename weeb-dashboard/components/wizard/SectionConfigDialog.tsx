@@ -20,10 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
-
-// Temporary simplified implementation
-const getSectionConfigOptionsFromMetadata = () => []
+import { PLUGINS_METADATA, getSectionConfigOptions as getSectionConfigOptionsFromMetadata } from "@weeb/weeb-plugins/plugins/metadata"
 import { Settings, X, Plus, HelpCircle, ExternalLink } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"

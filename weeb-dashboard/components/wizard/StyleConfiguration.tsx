@@ -3,11 +3,12 @@
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-// Temporary simplified imports
-const DEFAULT_THEME_VARIABLES = {}
-const DEFAULT_THEME_VARIABLE_DESCRIPTIONS = {}
-const DEFAULT_THEME_VARIABLE_LABELS = {}
-const themesFromPlugins = []
+import {
+  DEFAULT_THEME_VARIABLES,
+  DEFAULT_THEME_VARIABLE_DESCRIPTIONS,
+  DEFAULT_THEME_VARIABLE_LABELS,
+  defaultThemes as themesFromPlugins
+} from "@weeb/weeb-plugins/themes"
 import { useWizardStore } from "@/stores/wizard-store"
 import React, { useCallback, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"

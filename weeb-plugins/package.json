@@ -9,7 +9,12 @@
     ".": "./dist/index.js",
     "./plugins": "./dist/plugins/index.js",
     "./plugins/metadata": "./dist/plugins/metadata.js",
-    "./plugins/manager": "./dist/plugins/manager.js"
+    "./plugins/manager": "./dist/plugins/manager.js",
+    "./plugins/tags": "./dist/plugins/tags.js",
+    "./styles": "./dist/styles/index.js",
+    "./styles/server": "./dist/styles/server.js",
+    "./themes": "./dist/themes/index.js",
+    "./templates": "./dist/templates/index.js"
   },
   "dependencies": {
     "@octokit/graphql": "^8.1.1",

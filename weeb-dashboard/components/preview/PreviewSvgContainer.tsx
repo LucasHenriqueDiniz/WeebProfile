@@ -1,9 +1,9 @@
 "use client"
 
 import React, { useEffect, useRef, useMemo, useState } from "react"
-import { PluginStyles } from "@/lib/templates.js"
-import { getStyleCSS, getActivePluginsCSS as getPluginsCSS } from "@/lib/styles.js"
-import { getDefaultThemeVariables, getTerminalThemeVariables } from "@/lib/themes.js"
+import { PluginStyles } from "@weeb/weeb-plugins/templates"
+import { getStyleCSS, getActivePluginsCSS as getPluginsCSS } from "@weeb/weeb-plugins/styles"
+import { getDefaultThemeVariables, getTerminalThemeVariables } from "@weeb/weeb-plugins/themes"
 
 interface PreviewSvgContainerProps {
   width: number

@@ -1,11 +1,11 @@
 /**
  * Local plugin registry for weeb-dashboard
  *
- * Uses the new plugin registry structure for better organization.
- * Re-exports functions from plugin-registry for backward compatibility.
+ * Uses PluginManager from weeb-plugins for plugin access.
+ * Provides async-compatible interface for backward compatibility.
  */
 
-import { getPlugin as getPluginFromRegistry, getPlugins } from "./plugins/plugin-registry.js"
+import { PluginManager } from "@weeb/weeb-plugins/plugins/manager"
 
 // Cache for loaded plugins (prevents re-loading)
 const pluginsCache = new Map<string, any>()
@@ -18,13 +18,14 @@ export async function getPlugin(name: string): Promise<any> {
     return pluginsCache.get(name)
   }
 
-  const plugin = await getPluginFromRegistry(name)
+  const manager = PluginManager.getInstance()
+  const plugin = manager.get(name)
 
   if (plugin) {
     pluginsCache.set(name, plugin)
   }
 
-  return plugin
+  return plugin || null
 }
 
 /**
@@ -40,5 +41,20 @@ export async function getActivePlugins(
     .map(([name]) => name)
 
   // Load plugins in parallel with caching
-  return getPlugins(activePluginNames)
+  const manager = PluginManager.getInstance()
+  const results: Array<[string, any]> = []
+  
+  for (const name of activePluginNames) {
+    if (pluginsCache.has(name)) {
+      results.push([name, pluginsCache.get(name)])
+    } else {
+      const plugin = manager.get(name)
+      if (plugin) {
+        pluginsCache.set(name, plugin)
+        results.push([name, plugin])
+      }
+    }
+  }
+  
+  return results
 }

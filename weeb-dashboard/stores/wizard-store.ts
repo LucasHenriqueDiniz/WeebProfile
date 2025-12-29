@@ -1,10 +1,10 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 // Temporary implementations
-const getPluginMetadata = (name: string) => PLUGINS_METADATA[name] || {}
-const getEnabledPlugins = (config: any) => Object.keys(config || {}).filter(name => config[name]?.enabled)
+const getPluginMetadata = (name: string) => (PLUGINS_METADATA as Record<string, any>)[name] || {}
+const getEnabledPlugins = (config?: any) => Object.keys(config || {}).filter(name => config?.[name]?.enabled)
 import { applyPluginDefaults } from "@/lib/config/plugin-defaults"
 
 export interface PluginConfig {
@@ -81,7 +81,7 @@ export interface WizardState {
  */
 function generateInitialPlugins(userDefaults?: Record<string, any>): Record<string, PluginConfig> {
   const plugins: Record<string, PluginConfig> = {}
-  getEnabledPlugins().forEach((pluginName) => {
+  Object.keys(PLUGINS_METADATA as Record<string, any>).forEach((pluginName) => {
     if (pluginName === 'github') {
       // GitHub ativado por padrão com profile + activity
       plugins[pluginName] = applyPluginDefaults(pluginName, {
@@ -412,7 +412,7 @@ export const useWizardStore = create<WizardState>()(
               if (cfg.sections.length === 0) return false
 
               // requiredFields (ex: "username", "personality_url", etc)
-              const requiredOk = meta.requiredFields.every((field) => {
+              const requiredOk = meta.requiredFields.every((field: string) => {
                 const value = cfg[field as keyof PluginConfig]
                 if (typeof value === 'string') return !!value.trim()
                 return !!value

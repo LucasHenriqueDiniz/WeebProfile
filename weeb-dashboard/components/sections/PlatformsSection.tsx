@@ -11,13 +11,13 @@ import Autoplay from "embla-carousel-autoplay"
 import { useRef, useMemo } from "react"
 import Link from "next/link"
 import { getPluginIcon } from "@/lib/plugins-data"
-import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 // Temporary implementation
 const getEnabledPluginsMetadata = (plugins: any) => {
   return Object.entries(plugins || {}).map(([name, config]) => ({
     name,
-    ...(PLUGINS_METADATA[name] || {}),
+    ...((PLUGINS_METADATA as Record<string, any>)[name] || {}),
     config
   }))
 }
@@ -108,9 +108,9 @@ export function PlatformsSection() {
     Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })
   )
 
-  // Convert PLUGINS_METADATA to platforms format (apenas plugins habilitados)
+  // Convert PLUGINS_METADATA to platforms format (todos os plugins disponíveis)
   const platforms = useMemo(() => {
-    return getEnabledPluginsMetadata().map((metadata: PluginMetadata) => ({
+    return Object.values(PLUGINS_METADATA as Record<string, any>).map((metadata: PluginMetadata) => ({
       id: metadata.name,
       name: metadata.displayName,
       icon: metadata.icon,
