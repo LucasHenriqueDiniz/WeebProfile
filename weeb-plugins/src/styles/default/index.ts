@@ -209,8 +209,8 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 }
 
 #svg-main .image-square-container-200 {
-  width: 200px !important;
-  height: 200px !important;
+  width: 200px;
+  height: 200px;
   flex-shrink: 0;
   border-radius: 0.375rem;
   overflow: hidden;
@@ -219,11 +219,11 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
   justify-content: center;
 }
 
-/* When inside col-span-2, container should take full width/height including gap */
+/* When inside col-span-2, container should take full width/height including gap 
 #svg-main .col-span-2 .image-square-container-200 {
   width: 100%;
   height: 100%;
-}
+}*/
 
 #svg-main .image-square-container-50 img,
 #svg-main .image-square-container-60 img,

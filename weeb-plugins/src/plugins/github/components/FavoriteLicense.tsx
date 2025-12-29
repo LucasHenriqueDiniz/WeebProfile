@@ -28,7 +28,7 @@ const DefaultFavoriteLicense = ({ data, total }: { data: GithubData['favoriteLic
       </div>
       <div className="flex flex-col w-full">
         <span className="text-semibold text-default-muted text-lg">{data.name}</span>
-        <span className="text-sm">
+        <span className="text-sm text-default-muted">
           Used in {data.count} out of {total} repositories
         </span>
       </div>

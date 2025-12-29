@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ES2022",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "strict": true,

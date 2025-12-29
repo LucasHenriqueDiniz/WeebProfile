@@ -9,8 +9,7 @@
 import { getStyleCSS } from "./registry"
 import { getActivePluginsCSS } from "./plugins"
 import { readFileSync, existsSync } from "fs"
-import { resolve, dirname } from "path"
-import { fileURLToPath } from "url"
+import { resolve } from "path"
 
 /**
  * Get shared CSS (common utilities)
@@ -18,22 +17,23 @@ import { fileURLToPath } from "url"
  */
 export function getSharedCSS(): string {
   // Load shared CSS file (Tailwind utilities)
-  // Use same pattern as default/index.ts
   try {
-    const __filename = fileURLToPath(import.meta.url)
-    const __dirname = dirname(__filename)
+    // Try different possible locations for shared.css
+    const possiblePaths = [
+      "./shared.css",  // Production (same directory)
+      "../shared.css", // Alternative production path
+      "../../src/styles/shared.css", // Development path
+      "./src/styles/shared.css" // Fallback
+    ]
 
-    // Try dist first (compiled), then src (development)
-    let sharedCssPath = resolve(__dirname, "shared.css")
-    if (!existsSync(sharedCssPath)) {
-      // If not in dist, try src
-      const srcPath = resolve(__dirname, "../../src/styles/shared.css")
-      if (existsSync(srcPath)) {
-        sharedCssPath = srcPath
+    for (const path of possiblePaths) {
+      if (existsSync(path)) {
+        return readFileSync(path, "utf8")
       }
     }
 
-    return readFileSync(sharedCssPath, "utf8")
+    // If no path found, return empty string
+    return ""
   } catch (error) {
     // If file doesn't exist or can't be read, return empty string
     console.warn("[Styles] Failed to load shared.css:", error)
