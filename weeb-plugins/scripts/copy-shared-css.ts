@@ -13,8 +13,9 @@ const workspaceRoot = resolve(__dirname, '..')
 const srcPath = resolve(workspaceRoot, 'src/styles/shared.css')
 const distPath = resolve(workspaceRoot, 'dist/styles/shared.css')
 
-// Dashboard paths
+  // Dashboard paths
 const dashboardLibPath = resolve(workspaceRoot, '../weeb-dashboard/lib')
+const dashboardPluginsPath = resolve(dashboardLibPath, 'plugins')
 const managerDest = resolve(dashboardLibPath, 'plugin-manager.js')
 const metadataDest = resolve(dashboardLibPath, 'plugin-metadata.js')
 
@@ -85,6 +86,66 @@ export function getActivePluginsCSS() { return ""; }`
       // Create minimal fallback
       fs.writeFileSync(file.dest, '// Fallback file - implementation needed\nexport const PLUGINS_METADATA = {};')
     }
+  }
+
+  // Create plugin-registry.js in plugins directory
+  try {
+    mkdirSync(dashboardPluginsPath, { recursive: true })
+    const pluginRegistryContent = `// Plugin registry shim for dashboard
+import { PLUGINS_METADATA } from "../plugin-metadata.js";
+
+export const pluginRegistry = {};
+
+// Initialize registry with metadata
+const pluginNames = Object.keys(PLUGINS_METADATA);
+pluginNames.forEach((pluginName) => {
+  pluginRegistry[pluginName] = {
+    meta: PLUGINS_METADATA[pluginName],
+    load: async () => {
+      console.warn(\`Plugin \${pluginName} loading not implemented yet\`);
+      return null;
+    },
+  };
+});
+
+export async function getPlugin(name) {
+  const entry = pluginRegistry[name];
+  if (!entry) {
+    console.warn(\`Plugin not found in registry: \${name}\`);
+    return null;
+  }
+  return entry.load();
+}
+
+export async function getPlugins(names) {
+  const results = [];
+  await Promise.all(
+    names.map(async (name) => {
+      try {
+        const plugin = await getPlugin(name);
+        if (plugin) {
+          results.push([name, plugin]);
+        }
+      } catch (error) {
+        console.error(\`Failed to load plugin \${name}:\`, error);
+      }
+    })
+  );
+  return results;
+}
+
+export function hasPlugin(name) {
+  return name in pluginRegistry;
+}
+
+export function getAllPluginNames() {
+  return Object.keys(pluginRegistry);
+}
+`
+    fs.writeFileSync(resolve(dashboardPluginsPath, 'plugin-registry.js'), pluginRegistryContent)
+    console.log('✅ Created plugin-registry.js for dashboard')
+  } catch (error) {
+    console.warn('⚠️  Failed to create plugin-registry.js:', error)
   }
 
   console.log('✅ Created simplified files for dashboard')

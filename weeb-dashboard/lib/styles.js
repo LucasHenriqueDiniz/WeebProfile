@@ -1,2 +1,2 @@
-export function getStyleCSS(style) { return ""; }
-export function getActivePluginsCSS(plugins) { return ""; }
+export function getStyleCSS() { return ""; }
+export function getActivePluginsCSS() { return ""; }
