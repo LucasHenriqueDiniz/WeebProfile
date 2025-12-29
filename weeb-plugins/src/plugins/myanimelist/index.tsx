@@ -15,7 +15,7 @@ import { fetchMyAnimeListData } from './services/fetchMyAnimeList'
 
 export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginData & MyAnimeListData> = {
   name: 'myanimelist',
-  essentialConfigKeys: ['token'],
+  essentialConfigKeys: [],
   config: {
     enabled: false,
     sections: [],
