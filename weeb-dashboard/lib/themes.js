@@ -1,0 +1,1 @@
+export const DEFAULT_THEME_VARIABLES = {}; export function getDefaultThemeVariables() { return {}; } export function getTerminalThemeVariables() { return {}; }

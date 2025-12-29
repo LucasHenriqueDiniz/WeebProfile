@@ -23,7 +23,7 @@ import { Switch } from "@/components/ui/switch"
 import {
   PLUGINS_METADATA,
   getSectionConfigOptions as getSectionConfigOptionsFromMetadata
-} from "@weeb/weeb-plugins/plugins/metadata"
+} from "@/lib/plugin-metadata"
 import { Settings, X, Plus, HelpCircle, ExternalLink } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"

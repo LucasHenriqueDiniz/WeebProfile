@@ -12,5 +12,5 @@ export {
   hasPluginTag,
   getPluginsByTag,
   type PluginTag,
-} from "@weeb/weeb-plugins/plugins/tags"
+} from "../plugin-tags-data"
 

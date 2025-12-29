@@ -5,7 +5,7 @@
  * Funciona automaticamente com qualquer plugin novo adicionado
  */
 
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "../plugin-metadata"
 
 /**
  * Tipo para metadata de uma essential config key

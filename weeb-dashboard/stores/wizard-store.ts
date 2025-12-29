@@ -1,6 +1,10 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { PLUGINS_METADATA, getPluginMetadata, getEnabledPlugins } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+
+// Temporary implementations
+const getPluginMetadata = (name: string) => PLUGINS_METADATA[name]
+const getEnabledPlugins = (config: any) => Object.keys(config || {}).filter(name => config[name]?.enabled)
 import { applyPluginDefaults } from "@/lib/config/plugin-defaults"
 
 export interface PluginConfig {

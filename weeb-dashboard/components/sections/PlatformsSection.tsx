@@ -11,7 +11,18 @@ import Autoplay from "embla-carousel-autoplay"
 import { useRef, useMemo } from "react"
 import Link from "next/link"
 import { getPluginIcon } from "@/lib/plugins-data"
-import { getEnabledPluginsMetadata, type PluginMetadata } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+
+// Temporary implementation
+const getEnabledPluginsMetadata = (plugins: any) => {
+  return Object.entries(plugins || {}).map(([name, config]) => ({
+    name,
+    ...PLUGINS_METADATA[name],
+    config
+  }))
+}
+
+type PluginMetadata = any
 import type { ComponentType } from "react"
 
 // Map category to color

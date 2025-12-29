@@ -8,7 +8,7 @@ import {
   DEFAULT_THEME_VARIABLE_DESCRIPTIONS,
   DEFAULT_THEME_VARIABLE_LABELS,
   defaultThemes as themesFromPlugins
-} from "@weeb/weeb-plugins/themes"
+} from "@/lib/themes.js"
 import { useWizardStore } from "@/stores/wizard-store"
 import React, { useCallback, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
