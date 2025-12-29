@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware"
 import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
 
 // Temporary implementations
-const getPluginMetadata = (name: string) => PLUGINS_METADATA[name]
+const getPluginMetadata = (name: string) => PLUGINS_METADATA[name] || {}
 const getEnabledPlugins = (config: any) => Object.keys(config || {}).filter(name => config[name]?.enabled)
 import { applyPluginDefaults } from "@/lib/config/plugin-defaults"
 

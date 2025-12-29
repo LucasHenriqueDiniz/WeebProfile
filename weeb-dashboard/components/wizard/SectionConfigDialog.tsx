@@ -20,10 +20,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import {
-  PLUGINS_METADATA,
-  getSectionConfigOptions as getSectionConfigOptionsFromMetadata
-} from "@/lib/plugin-metadata"
+import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
+
+// Temporary simplified implementation
+const getSectionConfigOptionsFromMetadata = () => []
 import { Settings, X, Plus, HelpCircle, ExternalLink } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"

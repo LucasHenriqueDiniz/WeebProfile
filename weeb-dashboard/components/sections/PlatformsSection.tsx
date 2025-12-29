@@ -17,7 +17,7 @@ import { PLUGINS_METADATA } from "@/lib/plugin-metadata"
 const getEnabledPluginsMetadata = (plugins: any) => {
   return Object.entries(plugins || {}).map(([name, config]) => ({
     name,
-    ...PLUGINS_METADATA[name],
+    ...(PLUGINS_METADATA[name] || {}),
     config
   }))
 }
