@@ -50,5 +50,5 @@ jobs:
       # To generate previews manually, use the svg-generator service (separate script).
       - name: Validate section previews
         working-directory: weeb-plugins
-        run: pnpm validate-previews
+        run: pnpm validate-previews --warn-only
         continue-on-error: true

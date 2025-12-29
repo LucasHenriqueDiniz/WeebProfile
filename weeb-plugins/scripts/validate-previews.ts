@@ -62,23 +62,27 @@ function discoverPlugins(): string[] {
 /**
  * Lê o metadata de um plugin e extrai as seções
  */
-async function getPluginSections(pluginName: string): Promise<string[]> {
+function getPluginSections(pluginName: string): string[] {
   const metadataPath = path.join(PLUGINS_DIR, pluginName, 'plugin.metadata.ts')
-  
+
   if (!fs.existsSync(metadataPath)) {
     return []
   }
-  
+
   try {
-    // Importar dinamicamente o metadata
-    const metadataModule = await import(`../src/plugins/${pluginName}/plugin.metadata.ts`)
-    const metadata = metadataModule[`${pluginName}PluginMetadata`] || metadataModule.default
-    
-    if (!metadata || !metadata.sections) {
-      return []
+    // Ler o arquivo diretamente e extrair informações básicas
+    const content = fs.readFileSync(metadataPath, 'utf8')
+
+    // Procurar por seções definidas no arquivo
+    const sectionMatches = content.match(/id:\s*['"`]([^'"`]+)['"`]/g)
+    if (sectionMatches) {
+      return sectionMatches.map(match => {
+        const idMatch = match.match(/id:\s*['"`]([^'"`]+)['"`]/)
+        return idMatch ? idMatch[1] : ''
+      }).filter(Boolean)
     }
-    
-    return metadata.sections.map((section: any) => section.id)
+
+    return []
   } catch (error) {
     console.error(`Error reading metadata for ${pluginName}:`, error)
     return []
@@ -102,16 +106,16 @@ function checkPreviewExists(pluginName: string, sectionId: string): { exists: bo
 /**
  * Valida todos os previews
  */
-async function validatePreviews(): Promise<PreviewStatus[]> {
+function validatePreviews(): PreviewStatus[] {
   const plugins = discoverPlugins()
   const results: PreviewStatus[] = []
-  
+
   for (const pluginName of plugins) {
-    const sections = await getPluginSections(pluginName)
-    
+    const sections = getPluginSections(pluginName)
+
     for (const sectionId of sections) {
       const { exists, path: previewPath } = checkPreviewExists(pluginName, sectionId)
-      
+
       results.push({
         plugin: pluginName,
         section: sectionId,
@@ -120,7 +124,7 @@ async function validatePreviews(): Promise<PreviewStatus[]> {
       })
     }
   }
-  
+
   return results
 }
 
@@ -191,8 +195,8 @@ async function main() {
   const warnOnly = args.includes('--warn-only') || args.includes('-w')
   
   console.log('🔍 Validando previews de seções...\n')
-  
-  const results = await validatePreviews()
+
+  const results = validatePreviews()
   generateReport(results)
   
   const missingCount = results.filter(r => !r.exists).length

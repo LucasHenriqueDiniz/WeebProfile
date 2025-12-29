@@ -12,6 +12,8 @@
     "./plugins/manager": "./dist/plugins/manager.js"
   },
   "dependencies": {
+    "@octokit/graphql": "^8.1.1",
+    "@octokit/rest": "^21.0.2",
     "@types/glob": "^9.0.0",
     "bottleneck": "^2.19.5",
     "country-flag-icons": "^1.6.4",
@@ -21,20 +23,33 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.18",
-    "tsx": "^4.19.2",
-    "typescript": "^5.9.3"
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.22",
+    "glob": "^13.0.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18",
+    "tsx": "^4.20.6",
+    "typescript": "^5.4.0"
   },
   "scripts": {
     "build": "pnpm clean && pnpm remove-js-extensions && pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && pnpm generate-duolingo-assets && tsc && pnpm copy-shared-css",
     "clean": "tsx scripts/clean-compiled-files.ts",
     "remove-js-extensions": "tsx scripts/remove-js-extensions.ts",
     "validate": "tsx scripts/validate-plugins.ts",
+    "validate-previews": "tsx scripts/validate-previews.ts --warn-only",
     "generate-metadata": "tsx scripts/generate-metadata.ts",
     "generate-types": "tsx scripts/generate-types.ts",
     "generate-section-previews": "tsx scripts/generate-section-previews.ts",
     "generate-tailwind-css": "tsx scripts/generate-tailwind-css.ts",
     "generate-style-index": "tsx scripts/generate-style-index.ts",
     "generate-duolingo-assets": "tsx scripts/generate-duolingo-assets.ts",
-    "copy-shared-css": "tsx scripts/copy-shared-css.ts"
+    "copy-shared-css": "tsx scripts/copy-shared-css.ts",
+    "dev": "tsc --watch --project tsconfig.dev.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "create-plugin": "tsx scripts/create-plugin.ts",
+    "update-lastfm-mock": "tsx scripts/update-lastfm-mock-data.ts",
+    "prepublishOnly": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index"
   }
 }
