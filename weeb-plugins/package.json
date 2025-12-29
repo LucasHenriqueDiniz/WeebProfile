@@ -2,7 +2,7 @@
   "name": "@weeb/weeb-plugins",
   "version": "2.0.0",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -17,6 +17,10 @@
     "./plugins/metadata": {
       "import": "./dist/plugins/metadata.js",
       "types": "./dist/plugins/metadata.d.ts"
+    },
+    "./plugins/manager": {
+      "import": "./dist/plugins/manager.js",
+      "types": "./dist/plugins/manager.d.ts"
     },
     "./plugins/tags": {
       "import": "./dist/plugins/tags.js",
