@@ -209,8 +209,8 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 }
 
 #svg-main .image-square-container-200 {
-  width: 200px;
-  height: 200px;
+  width: 200px !important;
+  height: 200px !important;
   flex-shrink: 0;
   border-radius: 0.375rem;
   overflow: hidden;

@@ -198,11 +198,11 @@
   justify-content: center;
 }
 
-/* When inside col-span-2, container should take full width/height including gap */
+/* When inside col-span-2, container should take full width/height including gap 
 #svg-main .col-span-2 .image-square-container-200 {
   width: 100%;
   height: 100%;
-}
+}*/
 
 #svg-main .image-square-container-50 img,
 #svg-main .image-square-container-60 img,
