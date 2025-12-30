@@ -4,7 +4,20 @@ import { profiles } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { NextResponse } from "next/server"
 
+function getBaseUrl(request: Request): string {
+  // Use NEXT_PUBLIC_SITE_URL if available (for production), otherwise use request URL
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  if (siteUrl) {
+    return siteUrl
+  }
+  
+  // Fallback to request URL origin
+  const requestUrl = new URL(request.url)
+  return requestUrl.origin
+}
+
 export async function GET(request: Request) {
+  const baseUrl = getBaseUrl(request)
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get("code")
   const error = requestUrl.searchParams.get("error")
@@ -16,7 +29,7 @@ export async function GET(request: Request) {
     return NextResponse.redirect(
       new URL(
         `/login?error=${error}&error_description=${encodeURIComponent(errorDescription || "")}`,
-        request.url
+        baseUrl
       )
     )
   }
@@ -75,19 +88,19 @@ export async function GET(request: Request) {
         console.error("Error creating/updating profile:", profileError)
       }
 
-      return NextResponse.redirect(new URL("/dashboard", request.url))
+      return NextResponse.redirect(new URL("/dashboard", baseUrl))
     } else {
       console.error("Error exchanging code:", exchangeError)
       return NextResponse.redirect(
         new URL(
           `/login?error=exchange_failed&error_description=${encodeURIComponent(exchangeError?.message || "Unknown error")}`,
-          request.url
+          baseUrl
         )
       )
     }
   }
 
-  return NextResponse.redirect(new URL("/login?error=no_code", request.url))
+  return NextResponse.redirect(new URL("/login?error=no_code", baseUrl))
 }
 
 

@@ -52,11 +52,19 @@ export function useAuth() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase]) // Executar apenas uma vez quando supabase é criado
 
+  const getRedirectUrl = () => {
+    // Use NEXT_PUBLIC_SITE_URL if available (for production), otherwise use window.location.origin
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
+    return siteUrl || origin
+  }
+
   const signInWithGitHub = async () => {
+    const redirectUrl = getRedirectUrl()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${redirectUrl}/auth/callback`,
         scopes: "read:user public_repo read:org user:follow",
       },
     })
@@ -64,10 +72,11 @@ export function useAuth() {
   }
 
   const signInWithGoogle = async () => {
+    const redirectUrl = getRedirectUrl()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${redirectUrl}/auth/callback`,
       },
     })
     return { error }
@@ -82,11 +91,12 @@ export function useAuth() {
   }
 
   const signUpWithEmail = async (email: string, password: string) => {
+    const redirectUrl = getRedirectUrl()
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${redirectUrl}/auth/callback`,
       },
     })
     return { error }
