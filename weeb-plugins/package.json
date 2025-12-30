@@ -38,7 +38,7 @@
     "typescript": "^5.4.0"
   },
   "scripts": {
-    "build": "pnpm clean && pnpm remove-js-extensions && pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && pnpm generate-duolingo-assets && tsc && pnpm copy-shared-css",
+    "build": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && pnpm generate-duolingo-assets && tsc && pnpm copy-shared-css",
     "clean": "tsx scripts/clean-compiled-files.ts",
     "remove-js-extensions": "tsx scripts/remove-js-extensions.ts",
     "validate": "tsx scripts/validate-plugins.ts",
