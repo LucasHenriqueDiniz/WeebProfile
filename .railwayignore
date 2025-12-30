@@ -8,7 +8,7 @@ weeb-dashboard/
 weeb-debug-tool/
 
 # Ignore weeb-plugins (library, not a service)
-weeb-plugins/
+# weeb-plugins/
 
 # Only deploy svg-generator
 # svg-generator/ is allowed
