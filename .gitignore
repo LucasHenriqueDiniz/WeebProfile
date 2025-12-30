@@ -3,8 +3,6 @@ node_modules
 .pnp
 .pnp.js
 
-
-
 # Weeb Dashboard 
 /weeb-dashboard/node_modules
 /weeb-dashboard/.next/
@@ -40,13 +38,9 @@ pnpm-debug.log*
 # Local env files
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
 # Vercel
 .vercel
-source/styles/generated-tailwind.css
 
 # Cursor
 /.cursor
