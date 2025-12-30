@@ -5,8 +5,8 @@
  * New styles are automatically available once registered here
  */
 
-import defaultStyle from './default/index.js'
-import terminalStyle from './terminal/index.js'
+import defaultStyle from './default/index'
+import terminalStyle from './terminal/index'
 
 export interface StyleDefinition {
   name: string
