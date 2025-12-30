@@ -10,6 +10,7 @@ export default defineConfig({
     'styles/index': 'src/styles/index.ts',
     'styles/server': 'src/styles/server.ts',
     'themes/index': 'src/themes/index.ts',
+    'themes/theme-utils': 'src/themes/theme-utils.ts',
     'templates/index': 'src/templates/index.ts',
   },
   format: ['esm'],

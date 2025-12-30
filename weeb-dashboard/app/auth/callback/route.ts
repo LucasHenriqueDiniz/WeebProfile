@@ -7,12 +7,22 @@ import { NextResponse } from "next/server"
 function getBaseUrl(request: Request): string {
   // Use NEXT_PUBLIC_SITE_URL if available (for production), otherwise use request URL
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  if (siteUrl) {
+  const requestUrl = new URL(request.url)
+  
+  // In production, prefer NEXT_PUBLIC_SITE_URL, but only if it's set
+  // Otherwise, use the request origin (which should be correct in production)
+  if (siteUrl && siteUrl.trim() !== '') {
+    // Debug log
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Auth Callback] Using NEXT_PUBLIC_SITE_URL:', siteUrl)
+    }
     return siteUrl
   }
   
   // Fallback to request URL origin
-  const requestUrl = new URL(request.url)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Auth Callback] Using request origin:', requestUrl.origin)
+  }
   return requestUrl.origin
 }
 

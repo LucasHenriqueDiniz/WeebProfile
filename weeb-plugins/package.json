@@ -14,6 +14,7 @@
     "./styles": "./dist/styles/index.js",
     "./styles/server": "./dist/styles/server.js",
     "./themes": "./dist/themes/index.js",
+    "./themes/theme-utils": "./dist/themes/theme-utils.js",
     "./templates": "./dist/templates/index.js"
   },
   "dependencies": {

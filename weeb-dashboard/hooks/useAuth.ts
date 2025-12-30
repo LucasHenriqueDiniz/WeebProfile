@@ -54,31 +54,63 @@ export function useAuth() {
 
   const getRedirectUrl = () => {
     // Use NEXT_PUBLIC_SITE_URL if available (for production), otherwise use window.location.origin
+    // In Next.js, NEXT_PUBLIC_* vars are available at build time and embedded in the client bundle
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
     const origin = typeof window !== 'undefined' ? window.location.origin : ''
-    return siteUrl || origin
+    const finalUrl = siteUrl || origin
+    
+    // Debug log (only in development)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Auth] Redirect URL:', { siteUrl, origin, finalUrl })
+    }
+    
+    return finalUrl
   }
 
   const signInWithGitHub = async () => {
     const redirectUrl = getRedirectUrl()
+    const callbackUrl = `${redirectUrl}/auth/callback`
+    
+    // Debug log
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Auth] GitHub login redirectTo:', callbackUrl)
+    }
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${redirectUrl}/auth/callback`,
+        redirectTo: callbackUrl,
         scopes: "read:user public_repo read:org user:follow",
       },
     })
+    
+    if (error && process.env.NODE_ENV === 'development') {
+      console.error('[Auth] GitHub login error:', error)
+    }
+    
     return { error }
   }
 
   const signInWithGoogle = async () => {
     const redirectUrl = getRedirectUrl()
+    const callbackUrl = `${redirectUrl}/auth/callback`
+    
+    // Debug log
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Auth] Google login redirectTo:', callbackUrl)
+    }
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${redirectUrl}/auth/callback`,
+        redirectTo: callbackUrl,
       },
     })
+    
+    if (error && process.env.NODE_ENV === 'development') {
+      console.error('[Auth] Google login error:', error)
+    }
+    
     return { error }
   }
 
