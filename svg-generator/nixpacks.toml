@@ -12,7 +12,8 @@ cmds = [
 [phases.build]
 cmds = [
   "pnpm --filter @weeb/weeb-plugins build",
-  "pnpm --filter @weeb/svg-generator build"
+  "pnpm --filter @weeb/svg-generator build",
+  "cd svg-generator && npx playwright@latest install chromium --with-deps"
 ]
 
 [start]

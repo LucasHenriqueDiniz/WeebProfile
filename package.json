@@ -21,7 +21,7 @@
     "build": "pnpm build:dashboard",
     "build:dashboard": "pnpm --filter weeb-dashboard build",
     "build:railway": "pnpm --filter @weeb/weeb-plugins build && pnpm --filter @weeb/svg-generator build",
-    "build:railway:full": "pnpm --filter @weeb/weeb-plugins build && pnpm --filter @weeb/svg-generator build",
+    "build:railway:full": "pnpm --filter @weeb/weeb-plugins build && pnpm --filter @weeb/svg-generator build && cd svg-generator && npx playwright@latest install chromium --with-deps",
     "build:all": "pnpm build:dashboard && pnpm build:railway",
     "build:deps": "pnpm --filter @weeb/weeb-plugins build",
     "start": "pnpm --filter weeb-dashboard start",

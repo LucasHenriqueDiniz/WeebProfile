@@ -31,7 +31,7 @@
     "watch:previews": "tsx scripts/watch-previews.ts",
     "watch:previews:all": "tsx scripts/watch-previews.ts --all",
     "serve:previews": "tsx scripts/serve-previews.ts",
-    "postinstall": "playwright install chromium --with-deps || echo 'Playwright install failed, continuing...'"
+    "postinstall": "npx playwright@latest install chromium --with-deps || echo 'Playwright install failed, continuing...'"
   },
     "dependencies": {
       "@supabase/supabase-js": "^2.81.1",
