@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
-import { PLUGINS_DATA, getPluginIcon } from "@/lib/plugins-data"
+import { getPluginIcon } from "@/lib/plugin-icons"
 import { AlertCircle, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink, Sparkles, Zap } from "lucide-react"
 import React, { useCallback, useState, useEffect } from "react"
 import { SectionConfigDialog } from "./SectionConfigDialog"
@@ -65,7 +65,6 @@ export const PluginCard = React.memo(function PluginCard({
   onSetPluginSections,
 }: PluginCardProps) {
   const metadata = PLUGINS_METADATA[plugin.name as keyof typeof PLUGINS_METADATA]
-  const pluginData = PLUGINS_DATA[plugin.name as keyof typeof PLUGINS_DATA]
   
   // Local state for input values to ensure immediate UI updates
   const [localInputValues, setLocalInputValues] = React.useState<Record<string, string>>({})
@@ -110,7 +109,7 @@ export const PluginCard = React.memo(function PluginCard({
   }, [state, metadata])
   const [showEssentialConfigs, setShowEssentialConfigs] = useState(false)
 
-  if (!metadata || !pluginData) return null
+  if (!metadata) return null
 
   const missingEssential =
     state.enabled &&
@@ -286,7 +285,7 @@ export const PluginCard = React.memo(function PluginCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-0.5">
               <span className="text-sm font-semibold text-foreground">
-                {pluginData.name}
+                {metadata.displayName}
               </span>
                 {state.enabled && (
                   <Badge variant="secondary" className="text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400">
@@ -322,7 +321,7 @@ export const PluginCard = React.memo(function PluginCard({
                 )}
               </div>
               <p className="text-xs text-muted-foreground line-clamp-1">
-                {pluginData.description}
+                {metadata.description}
               </p>
             </div>
           
@@ -340,7 +339,7 @@ export const PluginCard = React.memo(function PluginCard({
                 ? "bg-muted text-muted-foreground border-border hover:bg-muted/80"
                 : "bg-background text-muted-foreground border-border hover:bg-muted hover:border-primary/30"
             )}
-            aria-label={`${state.enabled ? 'Desativar' : 'Ativar'} ${pluginData.name} plugin`}
+            aria-label={`${state.enabled ? 'Desativar' : 'Ativar'} ${metadata.displayName} plugin`}
           >
             {state.enabled && activeSectionCount > 0 ? (
               <>

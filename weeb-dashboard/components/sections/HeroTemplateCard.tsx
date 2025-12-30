@@ -1,6 +1,6 @@
 "use client"
 
-import { getPluginIcon } from "@/lib/plugins-data"
+import { getPluginIcon } from "@/lib/plugin-icons"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
 import { Check, Monitor, Terminal } from "lucide-react"

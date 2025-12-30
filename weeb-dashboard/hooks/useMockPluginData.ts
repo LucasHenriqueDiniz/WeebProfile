@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { getPlugin } from "@/lib/plugins-registry"
+import { PluginManager } from "@weeb/weeb-plugins/plugins/manager"
 
 interface PluginConfig {
   enabled: boolean
@@ -54,7 +54,7 @@ export function useMockPluginData({ plugins }: UseMockPluginDataProps): {
     for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
       if (pluginConfig?.enabled) {
         loadPromises.push(
-          getPlugin(pluginName)
+          Promise.resolve(PluginManager.getInstance().get(pluginName))
             .then((plugin) => {
               if (!plugin) {
                 console.warn(`Plugin "${pluginName}" not found`)

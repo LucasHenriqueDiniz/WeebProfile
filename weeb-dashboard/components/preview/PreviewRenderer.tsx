@@ -1,7 +1,7 @@
 "use client"
 
 import { useMockPluginData } from "@/hooks/useMockPluginData"
-import { getActivePlugins } from "@/lib/plugins-registry"
+import { PluginManager } from "@weeb/weeb-plugins/plugins/manager"
 import { motion } from "framer-motion"
 import React, { useEffect, useMemo, useState } from "react"
 import { PreviewSvgContainer } from "./PreviewSvgContainer"
@@ -107,9 +107,23 @@ export function PreviewRenderer({
   // Carregar plugins ativos
   useEffect(() => {
     async function loadPlugins() {
-      // Obter plugins ativos
-      const activePlugins = await getActivePlugins(preparedPluginsConfig)
-      const map = new Map(activePlugins)      
+      const manager = PluginManager.getInstance()
+      // Filtrar plugins habilitados com seções
+      const activePluginNames = Object.keys(preparedPluginsConfig).filter(
+        name => preparedPluginsConfig[name]?.enabled && preparedPluginsConfig[name]?.sections?.length > 0
+      )
+
+      const map = new Map()
+      for (const name of activePluginNames) {
+        try {
+          const plugin = manager.get(name)
+          if (plugin) {
+            map.set(name, plugin)
+          }
+        } catch (error) {
+          console.error(`Failed to load plugin ${name}:`, error)
+        }
+      }
       setActivePluginsMap(map)
     }
 

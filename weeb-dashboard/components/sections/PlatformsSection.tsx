@@ -10,7 +10,7 @@ import {
 import Autoplay from "embla-carousel-autoplay"
 import { useRef, useMemo } from "react"
 import Link from "next/link"
-import { getPluginIcon } from "@/lib/plugins-data"
+import { getPluginIcon } from "@/lib/plugin-icons"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 // Temporary implementation

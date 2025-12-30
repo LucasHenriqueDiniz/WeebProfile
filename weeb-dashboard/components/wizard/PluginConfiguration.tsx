@@ -22,7 +22,7 @@ import {
 import { useAuth } from "@/hooks/useAuth"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
-import { PLUGINS_DATA, getPluginIcon } from "@/lib/plugins-data"
+import { getPluginIcon } from "@/lib/plugin-icons"
 import { useWizardStore } from "@/stores/wizard-store"
 import { selectEnabledPluginNames } from "@/stores/wizard-selectors"
 import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
@@ -213,10 +213,10 @@ export function PluginConfiguration() {
       // Filter by search - use debounced query
       if (debouncedQuery) {
         const searchLower = debouncedQuery.toLowerCase()
-        const pluginData = PLUGINS_DATA[plugin.name as keyof typeof PLUGINS_DATA]
+        const metadata = PLUGINS_METADATA[plugin.name as keyof typeof PLUGINS_METADATA]
         return (
-          pluginData?.name.toLowerCase().includes(searchLower) ||
-          pluginData?.description.toLowerCase().includes(searchLower)
+          metadata?.displayName.toLowerCase().includes(searchLower) ||
+          metadata?.description.toLowerCase().includes(searchLower)
         )
       }
 
@@ -310,8 +310,8 @@ export function PluginConfiguration() {
 
   // Preview stats
   const enabledPluginsList = enabledPlugins.map((id) => {
-    const pluginData = PLUGINS_DATA[id as keyof typeof PLUGINS_DATA]
-    return { id, name: pluginData?.name ?? id }
+    const metadata = PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]
+    return { id, name: metadata?.displayName ?? id }
   })
 
   // Calculate total sections for progress indicator
@@ -332,7 +332,7 @@ export function PluginConfiguration() {
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-medium text-muted-foreground">Plugins ativos:</span>
             {enabledPlugins.map((pluginName) => {
-              const pluginData = PLUGINS_DATA[pluginName as keyof typeof PLUGINS_DATA]
+              const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
               const PluginIcon = getPluginIcon(pluginName)
               const isSelected = selectedPlugin === pluginName
               
@@ -361,7 +361,7 @@ export function PluginConfiguration() {
                   )}
                 >
                   {PluginIcon && <PluginIcon className="h-3 w-3" />}
-                  <span>{pluginData?.name || pluginName}</span>
+                  <span>{metadata?.displayName || pluginName}</span>
                   {isSelected && (
                     <X 
                       className="h-3 w-3 ml-0.5" 
@@ -476,7 +476,7 @@ export function PluginConfiguration() {
               {/* UX 5: Quick action to expand plugins with missing configs */}
               <div className="mt-2 flex flex-wrap gap-2">
                 {Array.from(new Set(missingConfigs.map(m => m.plugin))).slice(0, 5).map((pluginName) => {
-                  const pluginData = PLUGINS_DATA[pluginName as keyof typeof PLUGINS_DATA]
+                  const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
                   const PluginIcon = getPluginIcon(pluginName)
                   const isSelected = selectedPlugin === pluginName
                   
@@ -505,7 +505,7 @@ export function PluginConfiguration() {
                       )}
                     >
                       {PluginIcon && <PluginIcon className="h-3 w-3" />}
-                      <span>{pluginData?.name || pluginName}</span>
+                      <span>{metadata?.displayName || pluginName}</span>
                       {isSelected && (
                         <X 
                           className="h-3 w-3 ml-0.5" 
