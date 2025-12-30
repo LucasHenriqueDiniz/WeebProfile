@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, boolean, timestamp, jsonb, index, unique } from "drizzle-orm/pg-core"
+import { pgTable, uuid, text, boolean, timestamp, jsonb, index, unique, integer } from "drizzle-orm/pg-core"
 
 /**
  * User profiles table (global settings)
@@ -67,6 +67,12 @@ export const svgs = pgTable(
     forceRegenerate: boolean("force_regenerate").default(false).notNull(),
     dataHash: text("data_hash"),
     lastGeneratedAt: timestamp("last_generated_at", { withTimezone: true }),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+    nextRegenerationAt: timestamp("next_regeneration_at", { withTimezone: true }),
+    lastPayloadHash: text("last_payload_hash"),
+    failCount: integer("fail_count").notNull().default(0),
+    lastError: text("last_error"),
+    isPaused: boolean("is_paused").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
@@ -75,6 +81,9 @@ export const svgs = pgTable(
     userIdSlugIdx: index("idx_svgs_user_id_slug").on(table.userId, table.slug),
     statusIdx: index("idx_svgs_status").on(table.status),
     forceRegenerateIdx: index("idx_svgs_force_regenerate").on(table.forceRegenerate),
+    // Partial indexes for regeneration queries (created via SQL migration)
+    // idx_svgs_next_regeneration_due: partial index on next_regeneration_at WHERE next_regeneration_at IS NOT NULL AND is_paused = false
+    // idx_svgs_status_next_regeneration: partial index on (status, next_regeneration_at) WHERE status IN ('completed', 'error', 'pending') AND is_paused = false
   })
 )
 

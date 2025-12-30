@@ -34,6 +34,7 @@
     "postinstall": "playwright install chromium --with-deps || echo 'Playwright install failed, continuing...'"
   },
     "dependencies": {
+      "@supabase/supabase-js": "^2.81.1",
       "@weeb/weeb-plugins": "workspace:*",
       "dotenv": "^16.4.5",
       "playwright-core": "^1.40.0",

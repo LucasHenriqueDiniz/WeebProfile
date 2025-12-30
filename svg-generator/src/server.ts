@@ -18,12 +18,69 @@ config({ path: resolve(process.cwd(), ".env") })
 
 import { createServer } from "node:http"
 import type { IncomingMessage, ServerResponse } from "node:http"
+import { URL } from "node:url"
 import { generateSvg, validateConfig, normalizeConfig } from "./index.js"
 import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
 import { getUserEssentialConfigs } from "./db/essential-configs.js"
+import { processRegenerationBatch } from "./cron/regeneration-worker.js"
 
 // Railway uses PORT, but also supports SVG_GENERATOR_PORT for local development
 const PORT = process.env.PORT || process.env.SVG_GENERATOR_PORT || 3001
+
+/**
+ * Handles cron endpoint for automatic SVG regeneration
+ */
+async function handleCronRequest(req: IncomingMessage, res: ServerResponse, url: URL) {
+  try {
+    // Authenticate request
+    const authHeader = req.headers.authorization
+    const cronSecret = process.env.CRON_SECRET
+
+    if (!cronSecret) {
+      console.error("❌ [CRON] CRON_SECRET not configured")
+      res.writeHead(500, { "Content-Type": "application/json" })
+      res.end(JSON.stringify({ error: "Cron secret not configured" }))
+      return
+    }
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      res.writeHead(401, { "Content-Type": "application/json" })
+      res.end(JSON.stringify({ error: "Unauthorized" }))
+      return
+    }
+
+    const token = authHeader.substring(7)
+    if (token !== cronSecret) {
+      res.writeHead(401, { "Content-Type": "application/json" })
+      res.end(JSON.stringify({ error: "Invalid token" }))
+      return
+    }
+
+    // Parse query parameters
+    const limit = parseInt(url.searchParams.get("limit") || "50", 10)
+    const timeboxMs = parseInt(url.searchParams.get("timeboxMs") || "360000", 10)
+
+    console.log(`🔄 [CRON] Processing regeneration batch (limit: ${limit}, timebox: ${timeboxMs}ms)`)
+
+    // Process batch
+    const result = await processRegenerationBatch(limit, timeboxMs)
+
+    console.log(`✅ [CRON] Batch completed:`, result)
+
+    // Return result
+    res.writeHead(200, { "Content-Type": "application/json" })
+    res.end(JSON.stringify(result))
+  } catch (error) {
+    console.error("❌ [CRON] Error processing batch:", error)
+    res.writeHead(500, { "Content-Type": "application/json" })
+    res.end(
+      JSON.stringify({
+        error: "Failed to process batch",
+        message: error instanceof Error ? error.message : "Unknown error",
+      })
+    )
+  }
+}
 
 interface GenerateRequest {
   style?: string
@@ -52,11 +109,21 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*")
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS")
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type")
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
   if (req.method === "OPTIONS") {
     res.writeHead(200)
     res.end()
+    return
+  }
+
+  // Parse URL
+  const url = new URL(req.url || "/", `http://${req.headers.host}`)
+  const pathname = url.pathname
+
+  // Handle cron endpoint
+  if (pathname === "/api/cron/generate-svgs" && req.method === "POST") {
+    await handleCronRequest(req, res, url)
     return
   }
 

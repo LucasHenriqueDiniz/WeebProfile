@@ -128,6 +128,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       const dataHash = generateDataHash(svg)
 
       // Atualizar SVG com resultado
+      // Set next_regeneration_at to 24 hours from now for automatic regeneration
+      const nextRegenerationAt = new Date()
+      nextRegenerationAt.setHours(nextRegenerationAt.getHours() + 24)
+
       const [updatedSvg] = await db
         .update(svgs)
         .set({
@@ -136,6 +140,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           storageUrl: url,
           dataHash,
           lastGeneratedAt: new Date(),
+          nextRegenerationAt,
           forceRegenerate: false,
         })
         .where(eq(svgs.id, id))

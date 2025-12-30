@@ -2,28 +2,51 @@ name: Generate SVGs Cron
 
 on:
   schedule:
-    # Roda às 3h da manhã UTC (ajuste para seu fuso horário)
-    # Para 3h da manhã em Brasília (UTC-3), use: '0 6 * * *'
-    - cron: '0 3 * * *'
+    # Roda às 3h07 da manhã UTC (00h07 horário de Brasília)
+    - cron: "7 3 * * *"
   workflow_dispatch: # Permite execução manual no GitHub
 
 jobs:
   generate-svgs:
     runs-on: ubuntu-latest
     steps:
-      - name: Call Cron Endpoint
+      - name: Regenerate all due SVGs (loop)
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
+          RAILWAY_URL: ${{ secrets.RAILWAY_URL }}
         run: |
           if [ -z "$CRON_SECRET" ]; then
-            echo "⚠️ CRON_SECRET não configurado. Pulando autenticação..."
-            curl -X GET "${DASHBOARD_URL}/api/cron/generate-svgs"
-          else
-            echo "🔐 Usando autenticação com CRON_SECRET"
-            curl -X GET \
-              -H "Authorization: Bearer ${CRON_SECRET}" \
-              "${DASHBOARD_URL}/api/cron/generate-svgs"
+            echo "❌ CRON_SECRET não configurado"
+            exit 1
           fi
 
+          if [ -z "$RAILWAY_URL" ]; then
+            echo "❌ RAILWAY_URL não configurado"
+            exit 1
+          fi
 
+          echo "🔄 Starting regeneration loop..."
+
+          # Loop até não haver mais SVGs para processar
+          for i in {1..20}; do
+            echo "📦 Run $i"
+            
+            RES=$(curl -fsS --retry 5 --retry-all-errors --max-time 420 \
+              -X POST \
+              -H "Authorization: Bearer ${CRON_SECRET}" \
+              -H "Content-Type: application/json" \
+              "${RAILWAY_URL}/api/cron/generate-svgs?limit=50&timeboxMs=360000" || echo '{"hasMore":false}')
+            
+            echo "$RES"
+            
+            # Se o endpoint indicar que não há mais trabalho, sai
+            if echo "$RES" | grep -q '"hasMore":false'; then
+              echo "✅ No more SVGs to process, exiting loop"
+              break
+            fi
+            
+            # Pequena pausa entre requests
+            sleep 5
+          done
+
+          echo "✅ Regeneration loop completed"
