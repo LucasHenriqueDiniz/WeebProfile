@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import { env } from "@/lib/config/env"
+import { generateSvgViaHttpService } from "@/lib/svg-generator-client"
 
 /**
  * POST /api/preview/generate - Gerar preview de SVG usando core-v2
  * 
  * Esta rota chama um serviço Node.js separado que gera o SVG.
  * Isso evita completamente que o Turbopack analise o código do core-v2.
+ * 
+ * Usa retry automático com backoff exponencial para lidar com cold starts do Railway.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -24,43 +27,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // URL do serviço SVG Generator
-    // Em desenvolvimento: localhost:3001
-    // Em produção: pode ser um serviço separado ou mesma instância
-    const svgGeneratorUrl = env.svgGeneratorUrl
-
-    // Chamar serviço separado para gerar SVG
-    const response = await fetch(svgGeneratorUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: "Unknown error" }))
-      return NextResponse.json(
-        {
-          error: "Failed to generate preview",
-          message: error.error || error.message || `HTTP ${response.status}`,
-        },
-        { status: response.status }
-      )
-    }
-
-    const result = await response.json()
+    // Usar o cliente com retry automático
+    const result = await generateSvgViaHttpService(body)
     return NextResponse.json(result)
   } catch (error) {
     console.error("Error calling SVG generator service:", error)
     
     // Se o serviço não estiver rodando, dar mensagem clara
-    if (error instanceof Error && error.message.includes("ECONNREFUSED")) {
+    if (error instanceof Error && (
+      error.message.includes("ECONNREFUSED") ||
+      error.message.includes("ECONNRESET") ||
+      error.message.includes("timeout")
+    )) {
       return NextResponse.json(
         {
           error: "SVG Generator service not available",
           message:
-            "Make sure the SVG generator service is running: pnpm dev:svg-generator",
+            "The service may be starting up. Please try again in a few seconds.",
           details: error.message,
         },
         { status: 503 }
