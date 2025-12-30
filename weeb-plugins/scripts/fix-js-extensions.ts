@@ -10,31 +10,39 @@ import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs'
 import { join } from 'path'
 
 function fixJsExtensions(filePath: string): boolean {
-  const content = readFileSync(filePath, 'utf8')
-  
-  // Regex: encontra imports/exports relativos
-  // Match: from "./path" ou from "../path"
-  const newContent = content.replace(/(from\s+['"])(\.\.?\/[^'"]+)(['"])/g, (match, prefix, importPath, quote) => {
-    // Não modificar se já tiver extensão .js
-    if (importPath.endsWith('.js')) {
-      return match
-    }
+  try {
+    const content = readFileSync(filePath, 'utf8')
     
-    // Se terminar com /index, adicionar .js para ficar /index.js
-    if (importPath.endsWith('/index')) {
+    // Regex: encontra imports/exports relativos
+    // Match: from "./path" ou from "../path"
+    let modified = false
+    const newContent = content.replace(/(from\s+['"])(\.\.?\/[^'"]+)(['"])/g, (match, prefix, importPath, quote) => {
+      // Não modificar se já tiver extensão .js
+      if (importPath.endsWith('.js')) {
+        return match
+      }
+      
+      // Se terminar com /index, adicionar .js para ficar /index.js
+      if (importPath.endsWith('/index')) {
+        modified = true
+        return `${prefix}${importPath}.js${quote}`
+      }
+      
+      // Adicionar .js em outros casos
+      modified = true
       return `${prefix}${importPath}.js${quote}`
+    })
+
+    if (modified) {
+      writeFileSync(filePath, newContent, 'utf8')
+      return true
     }
-    
-    // Adicionar .js em outros casos
-    return `${prefix}${importPath}.js${quote}`
-  })
 
-  if (newContent !== content) {
-    writeFileSync(filePath, newContent, 'utf8')
-    return true
+    return false
+  } catch (error) {
+    console.error(`❌ Erro ao processar ${filePath}:`, error)
+    return false
   }
-
-  return false
 }
 
 function processDirectory(dir: string): number {
@@ -57,10 +65,11 @@ function processDirectory(dir: string): number {
     if (entry.isDirectory()) {
       filesFixed += processDirectory(fullPath)
     } else if (entry.isFile() && entry.name.endsWith('.js')) {
-      if (fixJsExtensions(fullPath)) {
+      const wasFixed = fixJsExtensions(fullPath)
+      if (wasFixed) {
         filesFixed++
         // Log apenas para arquivos importantes
-        if (fullPath.includes('index.js') || fullPath.includes('plugins.js') || fullPath.includes('server.js')) {
+        if (fullPath.includes('index.js') || fullPath.includes('plugins.js') || fullPath.includes('server.js') || fullPath.includes('registry.js')) {
           console.log(`  ✅ ${fullPath.replace(process.cwd(), '.')}`)
         }
       }
@@ -81,10 +90,13 @@ function main() {
     process.exit(1)
   }
   
+  console.log('🔧 Processando arquivos compilados em dist/...')
   const filesFixed = processDirectory(distDir)
 
   if (filesFixed > 0) {
     console.log(`✅ Adicionado .js em ${filesFixed} arquivo(s) compilado(s)`)
+  } else {
+    console.log('ℹ️  Nenhum arquivo precisou de correção')
   }
 }
 

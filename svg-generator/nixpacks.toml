@@ -12,8 +12,7 @@ cmds = [
 [phases.build]
 cmds = [
   "pnpm --filter @weeb/weeb-plugins build",
-  "cd svg-generator",
-  "pnpm build"
+  "pnpm --filter @weeb/svg-generator build"
 ]
 
 [start]
