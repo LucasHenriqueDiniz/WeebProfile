@@ -14,7 +14,9 @@ export async function fetchLyftaData(
   apiKey?: string
 ): Promise<LyftaData> {
   if (dev || !apiKey) {
-    return await getMockLyftaData()
+    const mockData = await getMockLyftaData()
+    // Converter URLs de imagens para base64 para funcionar nos previews (Playwright bloqueia requisições externas)
+    return await convertImageUrlsToBase64(mockData)
   }
 
   try {
@@ -243,5 +245,33 @@ function calculateStatistics(workouts: any[]): any {
     workoutStreak,
     exerciseStats,
   }
+}
+
+/**
+ * Converte URLs de imagens para base64 recursivamente
+ */
+async function convertImageUrlsToBase64(data: any): Promise<any> {
+  if (Array.isArray(data)) {
+    return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
+  }
+
+  if (data && typeof data === 'object') {
+    const result: any = {}
+    for (const [key, value] of Object.entries(data)) {
+      if (
+        (key === 'image' || key === 'exercise_image' || key === 'image_name') &&
+        typeof value === 'string' &&
+        (value.startsWith('http://') || value.startsWith('https://'))
+      ) {
+        // Converter URL para base64
+        result[key] = await urlToBase64(value)
+      } else {
+        result[key] = await convertImageUrlsToBase64(value)
+      }
+    }
+    return result
+  }
+
+  return data
 }
 

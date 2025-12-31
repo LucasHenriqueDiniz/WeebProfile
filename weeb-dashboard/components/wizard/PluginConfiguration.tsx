@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import {
   Dialog,
   DialogContent,
@@ -25,7 +24,7 @@ import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } fr
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { useWizardStore } from "@/stores/wizard-store"
 import { selectEnabledPluginNames } from "@/stores/wizard-selectors"
-import { AlertCircle, Search, X, ChevronDown, ChevronRight, Check, Lock, Unlock, Settings, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
+import { AlertCircle, Search, X, Check, Lock, Unlock, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
 import { useMemo, useState, useEffect, useCallback, useRef, useDeferredValue } from "react"
 import { useShallow } from "zustand/react/shallow"
 import { ProfileConfigModal } from "./ProfileConfigModal"
@@ -36,7 +35,6 @@ import { cn } from "@/lib/utils"
 import { getSectionPreview } from "@/lib/config/section-previews"
 import { getPluginTags, getAllTags, type PluginTag } from "@/lib/config/plugin-tags"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
-import { useVirtualizer } from "@tanstack/react-virtual"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
 import { EmptyState } from "./EmptyState"
 import { PluginCard } from "./PluginCard"
@@ -524,30 +522,47 @@ export function PluginConfiguration() {
         </div>
       )}
 
-      {/* Plugins list - Phase 2.2: Virtualization for performance */}
+      {/* Plugins list */}
       {filteredPlugins.length > 0 ? (
-        <VirtualizedPluginList
-          plugins={filteredPlugins}
-          expandedPlugins={expandedPlugins}
-          unlockedConfigs={unlockedConfigs}
-          savingConfigs={savingConfigs}
-          savedConfigs={savedConfigs}
-          essentialConfigs={essentialConfigs}
-          missingConfigs={missingConfigs}
-          style={style}
-          pluginsState={plugins}
-          pluginRefs={pluginRefs}
-          onToggleExpanded={togglePluginExpanded}
-          onTogglePlugin={togglePlugin}
-          onToggleSection={toggleSection}
-          onEssentialConfigChange={handleEssentialConfigChange}
-          onUnlockConfig={handleUnlockConfig}
-          onSetPluginRequiredField={setPluginRequiredField}
-          onSetSectionConfig={setSectionConfig}
-          onSetPluginSections={setPluginSections}
-        />
+        <div className="grid grid-cols-1 gap-3">
+          {filteredPlugins.map((plugin) => {
+            const state = plugins[plugin.name]
+            if (!state) return null
+
+            const isExpanded = expandedPlugins.has(plugin.name)
+
+            return (
+              <div
+                key={plugin.name}
+                ref={(el) => {
+                  pluginRefs.current[plugin.name] = el
+                }}
+              >
+                <PluginCard
+                  plugin={plugin}
+                  state={state}
+                  isExpanded={isExpanded}
+                  expandedPlugins={expandedPlugins}
+                  unlockedConfigs={unlockedConfigs}
+                  savingConfigs={savingConfigs}
+                  savedConfigs={savedConfigs}
+                  essentialConfigs={essentialConfigs}
+                  missingConfigs={missingConfigs}
+                  style={style}
+                  onToggleExpanded={togglePluginExpanded}
+                  onTogglePlugin={togglePlugin}
+                  onToggleSection={toggleSection}
+                  onEssentialConfigChange={handleEssentialConfigChange}
+                  onUnlockConfig={handleUnlockConfig}
+                  onSetPluginRequiredField={setPluginRequiredField}
+                  onSetSectionConfig={setSectionConfig}
+                  onSetPluginSections={setPluginSections}
+                />
+              </div>
+            )
+          })}
+        </div>
       ) : (
-        /* Phase 1.3: Empty state with helpful message */
         <EmptyState query={query} category={category} onlyEnabled={onlyEnabled} onClearFilters={() => {
           setQuery("")
           setCategory("all")
@@ -563,163 +578,6 @@ export function PluginConfiguration() {
         setUnlockDialog={setUnlockDialog}
         confirmUnlock={confirmUnlock}
       />
-    </div>
-  )
-}
-
-// Phase 2.2: Virtualized plugin list component
-function VirtualizedPluginList({
-  plugins,
-  expandedPlugins,
-  unlockedConfigs,
-  savingConfigs,
-  savedConfigs,
-  essentialConfigs,
-  missingConfigs,
-  style,
-  pluginsState,
-  pluginRefs,
-  onToggleExpanded,
-  onTogglePlugin,
-  onToggleSection,
-  onEssentialConfigChange,
-  onUnlockConfig,
-  onSetPluginRequiredField,
-  onSetSectionConfig,
-  onSetPluginSections,
-}: {
-  plugins: Array<{ name: string; categoryId?: string }>
-  expandedPlugins: Set<string>
-  unlockedConfigs: Set<string>
-  savingConfigs: Set<string>
-  savedConfigs: Set<string>
-  essentialConfigs: Record<string, Record<string, any>>
-  missingConfigs: Array<{ plugin: string; field: string; label: string }>
-  style: string
-  pluginsState: Record<string, any>
-  pluginRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>
-  onToggleExpanded: (name: string) => void
-  onTogglePlugin: (name: string) => void
-  onToggleSection: (name: string, sectionId: string) => void
-  onEssentialConfigChange: (plugin: string, key: string, value: string) => Promise<void>
-  onUnlockConfig: (plugin: string, key: string) => void
-  onSetPluginRequiredField: (plugin: string, field: string, value: string) => void
-  onSetSectionConfig: (plugin: string, sectionId: string, config: any) => void
-  onSetPluginSections: (plugin: string, sections: string[]) => void
-}) {
-  const parentRef = useRef<HTMLDivElement>(null)
-
-  // Only virtualize if we have many plugins (performance optimization)
-  const shouldVirtualize = plugins.length > 10
-
-  const virtualizer = useVirtualizer({
-    count: plugins.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 200, // Estimated card height
-    overscan: 5,
-    enabled: shouldVirtualize,
-  })
-
-  if (!shouldVirtualize) {
-    // Render normally for small lists using memoized PluginCard
-    return (
-      <div className="grid grid-cols-1 gap-3">
-        {plugins.map((plugin) => {
-          const state = pluginsState[plugin.name]
-          if (!state) return null
-
-          const isExpanded = expandedPlugins.has(plugin.name)
-
-          return (
-            <div
-              key={plugin.name}
-              ref={(el) => {
-                pluginRefs.current[plugin.name] = el
-              }}
-            >
-              <PluginCard
-                plugin={plugin}
-                state={state}
-                isExpanded={isExpanded}
-                expandedPlugins={expandedPlugins}
-                unlockedConfigs={unlockedConfigs}
-                savingConfigs={savingConfigs}
-                savedConfigs={savedConfigs}
-                essentialConfigs={essentialConfigs}
-                missingConfigs={missingConfigs}
-                style={style}
-                onToggleExpanded={onToggleExpanded}
-                onTogglePlugin={onTogglePlugin}
-                onToggleSection={onToggleSection}
-                onEssentialConfigChange={onEssentialConfigChange}
-                onUnlockConfig={onUnlockConfig}
-                onSetPluginRequiredField={onSetPluginRequiredField}
-                onSetSectionConfig={onSetSectionConfig}
-                onSetPluginSections={onSetPluginSections}
-              />
-            </div>
-          )
-        })}
-      </div>
-    )
-  }
-
-  // Virtualized rendering for large lists
-  return (
-    <div ref={parentRef} className="h-[600px] overflow-auto">
-      <div
-        style={{
-          height: `${virtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
-        }}
-      >
-        {virtualizer.getVirtualItems().map((virtualItem: any) => {
-          const plugin = plugins[virtualItem.index]
-          const state = pluginsState[plugin.name]
-          if (!state) return null
-
-          const isExpanded = expandedPlugins.has(plugin.name)
-
-          return (
-            <div
-              key={virtualItem.key}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: `${virtualItem.size}px`,
-                transform: `translateY(${virtualItem.start}px)`,
-              }}
-              ref={(el) => {
-                pluginRefs.current[plugin.name] = el
-              }}
-            >
-              <PluginCard
-                plugin={plugin}
-                state={state}
-                isExpanded={isExpanded}
-                expandedPlugins={expandedPlugins}
-                unlockedConfigs={unlockedConfigs}
-                savingConfigs={savingConfigs}
-                savedConfigs={savedConfigs}
-                essentialConfigs={essentialConfigs}
-                missingConfigs={missingConfigs}
-                style={style}
-                onToggleExpanded={onToggleExpanded}
-                onTogglePlugin={onTogglePlugin}
-                onToggleSection={onToggleSection}
-                onEssentialConfigChange={onEssentialConfigChange}
-                onUnlockConfig={onUnlockConfig}
-          onSetPluginRequiredField={onSetPluginRequiredField}
-          onSetSectionConfig={onSetSectionConfig}
-          onSetPluginSections={onSetPluginSections}
-        />
-            </div>
-          )
-        })}
-      </div>
     </div>
   )
 }

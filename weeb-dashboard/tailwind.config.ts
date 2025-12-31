@@ -62,14 +62,30 @@ const config: Config = {
   		},
   		fontFamily: {
   			sans: [
-  				'var(--font-display)',
+  				'var(--font-body)',
+  				'Inter',
+  				'sans-serif'
+  			],
+  			heading: [
+  				'var(--font-heading)',
+  				'Sora',
+  				'sans-serif'
+  			],
+  			body: [
+  				'var(--font-body)',
   				'Inter',
   				'sans-serif'
   			],
   			mono: [
+  				'var(--font-mono)',
   				'JetBrains Mono',
   				'Fira Code',
   				'monospace'
+  			],
+  			sora: [
+  				'var(--font-heading)',
+  				'Sora',
+  				'sans-serif'
   			]
   		},
   		keyframes: {

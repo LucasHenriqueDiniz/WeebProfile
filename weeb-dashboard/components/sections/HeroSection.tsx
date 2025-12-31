@@ -345,35 +345,6 @@ export function HeroSection({ title, ctaPrimary }: HeroSectionProps) {
                 </span>
               </h1>
 
-              <div className="space-y-2">
-                <p className="text-sm sm:text-base text-muted-foreground max-w-xl leading-relaxed">
-                  Generate stunning stat cards from your nerd life — GitHub, Anime, Steam, Books, Music and more.
-                </p>
-                <ul className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground/80">
-                  <li className="flex items-center gap-1.5">
-                    <span
-                      className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"
-                      aria-hidden="true"
-                    />
-                    <span>Simple & Easy</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span
-                      className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-pink-500 to-cyan-500"
-                      aria-hidden="true"
-                    />
-                    <span>No Actions</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span
-                      className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500"
-                      aria-hidden="true"
-                    />
-                    <span>Just click & embed</span>
-                  </li>
-                </ul>
-              </div>
-
               {/* Supported Platforms */}
               <div className="flex flex-wrap items-center gap-1.5 pt-1" role="list" aria-label="Supported platforms">
                 {SUPPORTED_PLATFORMS.map((name) => (
@@ -390,7 +361,7 @@ export function HeroSection({ title, ctaPrimary }: HeroSectionProps) {
                     {name}
                   </motion.span>
                 ))}
-                <span className="text-[10px] text-muted-foreground/70 ml-1">+ more soon</span>
+                <Link href="/plugins" className="text-[10px] text-muted-foreground/70 ml-1">+{Object.keys(PLUGINS_METADATA).length} plugins available</Link>
               </div>
 
               {/* CTA Buttons - Enhanced */}

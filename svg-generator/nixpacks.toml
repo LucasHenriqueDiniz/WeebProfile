@@ -2,7 +2,7 @@
 # Railway uses Nixpacks by default, but this file provides explicit configuration
 
 [phases.setup]
-nixPkgs = ["nodejs_20", "pnpm"]
+nixPkgs = ["nodejs", "pnpm"]
 
 [phases.install]
 cmds = [

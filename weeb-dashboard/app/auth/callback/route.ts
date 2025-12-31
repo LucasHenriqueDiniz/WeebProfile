@@ -32,7 +32,7 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code")
   const error = requestUrl.searchParams.get("error")
   const errorDescription = requestUrl.searchParams.get("error_description")
-  const next = requestUrl.searchParams.get("next") || "/login"
+  const next = requestUrl.searchParams.get("next") || "/dashboard" // Changed to /dashboard
 
   if (error) {
     console.error("OAuth error:", error, errorDescription)

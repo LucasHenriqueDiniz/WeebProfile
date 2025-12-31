@@ -46,6 +46,7 @@
     "validate-previews": "tsx scripts/validate-previews.ts --warn-only",
     "generate-metadata": "tsx scripts/generate-metadata.ts",
     "generate-types": "tsx scripts/generate-types.ts",
+    "generate-preview-images": "tsx scripts/generate-preview-images.ts",
     "generate-section-previews": "tsx scripts/generate-section-previews.ts",
     "generate-tailwind-css": "tsx scripts/generate-tailwind-css.ts",
     "generate-style-index": "tsx scripts/generate-style-index.ts",

@@ -159,53 +159,6 @@ export function getSectionPreview(plugin: string, section: string, style: "defau
   return header + pluginEntries.join('\n\n') + '\n' + footer
 }
 
-/**
- * Copia previews para public/previews/ do dashboard
- */
-function copyPreviewsToPublic(pluginsData: Map<string, Array<{ section: string; hasPreview: boolean }>>) {
-  const PUBLIC_PREVIEWS_DIR = path.join(DASHBOARD_DIR, 'public', 'previews')
-  
-  // Criar diretório se não existir
-  if (!fs.existsSync(PUBLIC_PREVIEWS_DIR)) {
-    fs.mkdirSync(PUBLIC_PREVIEWS_DIR, { recursive: true })
-  }
-  
-  let copiedCount = 0
-  let skippedCount = 0
-  
-  for (const [pluginName, sections] of pluginsData) {
-    for (const { section, hasPreview } of sections) {
-      if (!hasPreview) continue
-      
-      const sourceFile = path.join(PLUGINS_DIR, pluginName, 'previews', `${pluginName}_${section}.svg`)
-      const targetDir = path.join(PUBLIC_PREVIEWS_DIR, pluginName, 'default')
-      const targetFile = path.join(targetDir, `${section}.svg`)
-      
-      // Criar diretório de destino se não existir
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true })
-      }
-      
-      // Copiar arquivo se existir
-      if (fs.existsSync(sourceFile)) {
-        try {
-          fs.copyFileSync(sourceFile, targetFile)
-          copiedCount++
-        } catch (error) {
-          console.warn(`⚠️  Erro ao copiar ${sourceFile}:`, error)
-        }
-      } else {
-        skippedCount++
-      }
-    }
-  }
-  
-  console.log(`\n📁 Previews copiados para public/previews/:`)
-  console.log(`   Copiados: ${copiedCount}`)
-  if (skippedCount > 0) {
-    console.log(`   Pulados (não encontrados): ${skippedCount}`)
-  }
-}
 
 /**
  * Main
@@ -245,8 +198,7 @@ async function main() {
   
   fs.writeFileSync(OUTPUT_FILE, content, 'utf-8')
   
-  // Copiar previews para public/previews/
-  copyPreviewsToPublic(pluginsData)
+  // Previews ficam no weeb-plugins, não são copiados para o dashboard
   
   // Estatísticas
   let totalSections = 0

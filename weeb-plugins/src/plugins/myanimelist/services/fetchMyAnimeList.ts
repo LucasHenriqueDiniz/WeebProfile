@@ -51,8 +51,8 @@ export async function fetchMyAnimeListData(
   // Modo desenvolvimento - retornar dados mock
   if (dev) {
     const mockData = getMockMyAnimeListData()
-    // Retornar dados mock com URLs diretas (não converter para base64)
-    return mockData
+    // Converter URLs de imagens para base64 para funcionar nos previews (Playwright bloqueia requisições externas)
+    return (await convertImageUrlsToBase64(mockData)) as MyAnimeListData
   }
 
   // Modo produção - buscar dados reais da API

@@ -112,6 +112,6 @@ export function getSectionPreview(plugin: string, section: string, style: "defau
   const previewPath = pluginPreviews[section]
   if (!previewPath) return null
 
-  // Usar caminho estático: arquivos estão em public/previews/
-  return `/previews/${previewPath}`
+  // Usar rota API que serve previews do weeb-plugins
+  return `/api/preview/${previewPath}`
 }

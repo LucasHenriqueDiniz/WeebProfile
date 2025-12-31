@@ -10,31 +10,14 @@ interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
-const navItems = [
-  {
-    label: "My SVGs",
-    href: "/dashboard",
-  },
-  {
-    label: "Create New",
-    href: "/dashboard/new",
-  },
-  {
-    label: "Settings",
-    href: "/dashboard/settings",
-  },
-]
-
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
-  // Não mostrar sidebar no wizard
+  // Não mostrar sidebar no wizard (WizardShell já renderiza o header)
   if (pathname === "/dashboard/new" || pathname?.match(/^\/dashboard\/[^/]+\/edit$/)) {
     return <>{children}</>
   }
-
-  const currentPageTitle = navItems.find((item) => item.href === pathname)?.label || "Dashboard"
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -42,6 +25,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <Sidebar 
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)}
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
       {/* Main Content */}
@@ -49,9 +33,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Header */}
         <Header
           variant="dashboard"
-          title={currentPageTitle}
           showSidebarToggle={true}
           onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+          isSidebarOpen={isSidebarOpen}
         />
 
         {/* Content */}
@@ -59,9 +43,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="flex-1 overflow-auto"
+          className="flex-1 overflow-auto bg-muted/20 border-t border-border/50"
         >
-          {children}
+          <div className="min-h-full">
+            {children}
+          </div>
         </motion.div>
       </div>
     </div>

@@ -1,14 +1,24 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/hooks/useAuth"
-import { Plus, Edit2, Trash2, Copy, Loader2, ExternalLink, Zap, RefreshCw, Search, Filter, ArrowUpDown, Image as ImageIcon } from "lucide-react"
-import { motion } from "framer-motion"
+import LoadingScreen from "@/components/loading/LoadingScreen"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Select,
   SelectContent,
@@ -16,11 +26,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import Link from "next/link"
+import { useAuth } from "@/hooks/useAuth"
+import { useToast } from "@/hooks/use-toast"
+import { ApiException, svgApi } from "@/lib/api"
 import type { Svg } from "@/lib/db/schema"
-import { svgApi, ApiException } from "@/lib/api"
 import { useSvgStore } from "@/stores/svg-store"
-import LoadingScreen from "@/components/loading/LoadingScreen"
+import { motion } from "framer-motion"
+import { ArrowUpDown, Copy, Edit2, ExternalLink, Filter, Image as ImageIcon, Loader2, MoreVertical, Plus, RefreshCw, Trash2 } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
 
 const styleColors: Record<string, string> = {
   default: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
@@ -33,12 +48,22 @@ type FilterStatus = "all" | "completed" | "generating" | "pending"
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast } = useToast()
   const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [generatingId, setGeneratingId] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all")
   const [sortBy, setSortBy] = useState<SortOption>("newest")
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [svgToDelete, setSvgToDelete] = useState<string | null>(null)
+
+  // Calcular contadores e flags de UI
+  const total = svgs.length
+  const readyCount = svgs.filter(s => s.status === "completed").length
+  const generatingCount = svgs.filter(s => s.status === "generating").length
+
+  const showAdvancedControls = total > 6
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -54,25 +79,37 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading])
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja deletar esta imagem?")) {
-      return
-    }
+  const handleDeleteClick = (id: string) => {
+    setSvgToDelete(id)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!svgToDelete) return
 
     try {
-      setDeletingId(id)
-      await svgApi.delete(id)
-      // Remover do store
-      removeSvg(id)
+      setDeletingId(svgToDelete)
+      await svgApi.delete(svgToDelete)
+      removeSvg(svgToDelete)
+      toast({
+        title: "SVG deletado",
+        description: "A imagem foi removida com sucesso.",
+      })
     } catch (error) {
       console.error("Error deleting SVG:", error)
       const errorMessage =
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
           : "Erro ao deletar imagem"
-      alert(errorMessage)
+      toast({
+        title: "Erro ao deletar",
+        description: errorMessage,
+        variant: "destructive",
+      })
     } finally {
       setDeletingId(null)
+      setSvgToDelete(null)
+      setDeleteDialogOpen(false)
     }
   }
 
@@ -80,16 +117,21 @@ export default function DashboardPage() {
     const url = `${window.location.origin}/api/svg/${svg.id}`
     const markdown = `![${svg.name}](${url})`
     await navigator.clipboard.writeText(markdown)
-    alert("Markdown copiado para a área de transferência!\n\nCole no seu README.md do GitHub.")
+    toast({
+      title: "Markdown copiado!",
+      description: "Cole no seu README.md do GitHub.",
+    })
   }
 
   const handleForceGenerate = async (svg: Svg) => {
     try {
       setGeneratingId(svg.id)
       await svgApi.generate(svg.id, true) // force = true
-      // Atualizar status no store
       updateSvg(svg.id, { status: "generating" })
-      // Recarregar após um delay para pegar o status atualizado
+      toast({
+        title: "Geração iniciada",
+        description: "A imagem está sendo gerada. Isso pode levar alguns minutos.",
+      })
       setTimeout(() => {
         fetchSvgs(true) // force refresh
       }, 2000)
@@ -98,7 +140,11 @@ export default function DashboardPage() {
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
           : "Não foi possível iniciar a geração"
-      alert(errorMessage)
+      toast({
+        title: "Erro ao gerar",
+        description: errorMessage,
+        variant: "destructive",
+      })
     } finally {
       setGeneratingId(null)
     }
@@ -118,17 +164,6 @@ export default function DashboardPage() {
   // Filtrar e ordenar SVGs
   const filteredAndSortedSvgs = useMemo(() => {
     let filtered = [...svgs]
-
-    // Filtrar por busca
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(
-        (svg) =>
-          svg.name.toLowerCase().includes(query) ||
-          svg.slug?.toLowerCase().includes(query) ||
-          svg.id.toLowerCase().includes(query)
-      )
-    }
 
     // Filtrar por status
     if (statusFilter !== "all") {
@@ -152,7 +187,7 @@ export default function DashboardPage() {
     })
 
     return filtered
-  }, [svgs, searchQuery, statusFilter, sortBy])
+  }, [svgs, statusFilter, sortBy])
 
 
   // Só mostrar loading se não tiver dados e estiver carregando
@@ -166,7 +201,7 @@ export default function DashboardPage() {
 
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto bg-background">
 
       {/* Header */}
       <motion.div
@@ -175,14 +210,24 @@ export default function DashboardPage() {
         transition={{ duration: 0.2 }}
         className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
       >
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             My SVGs
           </h1>
-          <p className="text-muted-foreground mt-1.5 text-sm">
-            {filteredAndSortedSvgs.length} of {svgs.length} SVG
-            {svgs.length !== 1 ? "s" : ""}
-          </p>
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <Badge variant="outline">{total} total</Badge>
+            {readyCount > 0 && (
+              <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 border-0">
+                Ready • {readyCount}
+              </Badge>
+            )}
+            {generatingCount > 0 && (
+              <Badge className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-0 gap-1">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Generating • {generatingCount}
+              </Badge>
+            )}
+          </div>
         </div>
         <Button asChild size="lg" className="gap-2 shadow-sm">
           <Link href="/dashboard/new">
@@ -192,90 +237,44 @@ export default function DashboardPage() {
         </Button>
       </motion.div>
 
-      {/* Filters and Search */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05, duration: 0.2 }}
-        className="flex flex-col sm:flex-row gap-3"
-      >
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by name, slug, or ID..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <div className="relative w-full sm:w-[180px]">
-          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
-            <SelectTrigger className="w-full pl-9">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="generating">Generating</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="relative w-full sm:w-[180px]">
-          <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
-          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-            <SelectTrigger className="w-full pl-9">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-              <SelectItem value="name">Name (A-Z)</SelectItem>
-              <SelectItem value="status">Status</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </motion.div>
-
-      {/* Stats Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.2 }}
-        className="grid md:grid-cols-3 gap-4"
-      >
-        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground font-medium">Total SVGs</p>
-              <p className="text-2xl md:text-3xl font-bold">{svgs.length}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20 hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground font-medium">Active</p>
-              <p className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400">
-                {svgs.filter(s => s.status === "completed").length}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border-yellow-500/20 hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground font-medium">Generating</p>
-              <p className="text-2xl md:text-3xl font-bold text-yellow-600 dark:text-yellow-400">
-                {svgs.filter(s => s.status === "generating").length}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+      {/* Filters - apenas quando houver muitos SVGs */}
+      {showAdvancedControls && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05, duration: 0.2 }}
+          className="flex flex-col sm:flex-row gap-3"
+        >
+          <div className="relative w-full sm:w-[180px]">
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
+              <SelectTrigger className="w-full pl-9">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="generating">Generating</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="relative w-full sm:w-[180px]">
+            <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+              <SelectTrigger className="w-full pl-9">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="oldest">Oldest First</SelectItem>
+                <SelectItem value="name">Name (A-Z)</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </motion.div>
+      )}
 
       {/* SVGs List */}
       {filteredAndSortedSvgs.length > 0 ? (
@@ -295,17 +294,37 @@ export default function DashboardPage() {
               <Card className="hover:shadow-lg hover:shadow-primary/5 hover:border-primary/50 transition-all group h-full flex flex-col border-border/50">
                 <CardContent className="p-5 flex flex-col flex-1">
                   {/* Preview Image */}
-                  {svg.storageUrl && svg.status === "completed" ? (
-                    <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/30 shadow-sm">
+                  {svg.storageUrl && svg.status === "completed" && !imageErrors.has(svg.id) ? (
+                    <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/30 shadow-sm relative group">
                       <img
-                        src={svg.storageUrl}
+                        src={`${svg.storageUrl}?t=${svg.updatedAt || Date.now()}`}
                         alt={svg.name}
-                        className="w-full h-auto object-contain"
+                        className="w-full h-auto object-contain transition-opacity"
                         loading="lazy"
                         onError={(e) => {
+                          setImageErrors(prev => new Set(prev).add(svg.id))
                           e.currentTarget.style.display = "none"
                         }}
+                        onLoad={(e) => {
+                          // Remover erro se a imagem carregar com sucesso
+                          setImageErrors(prev => {
+                            const next = new Set(prev)
+                            next.delete(svg.id)
+                            return next
+                          })
+                        }}
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    </div>
+                  ) : imageErrors.has(svg.id) || (svg.storageUrl && svg.status === "completed") ? (
+                    <div className="mb-4 rounded-lg border border-border bg-gradient-to-br from-purple-500/10 to-pink-500/10 aspect-video flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5" />
+                      <img
+                        src="/sora/sora-head.png"
+                        alt="Sora - Error loading image"
+                        className="w-16 h-16 object-contain opacity-60 mb-2 relative z-10"
+                      />
+                      <p className="text-xs text-muted-foreground relative z-10">Image not available</p>
                     </div>
                   ) : (
                     <div className="mb-4 rounded-lg border border-border bg-muted/30 aspect-video flex items-center justify-center shadow-sm">
@@ -379,62 +398,66 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-1.5 mt-4 pt-4 border-t border-border/50">
+                  <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="flex-1 text-xs"
+                      onClick={() => handleCopyUrl(svg)}
+                    >
+                      <Copy className="w-3.5 h-3.5 mr-1.5" />
+                      Copy Markdown
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 text-xs"
+                      className="text-xs"
                       onClick={() => router.push(`/dashboard/${svg.id}`)}
                     >
                       <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
                       View
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={() => handleCopyUrl(svg)}
-                      title="Copy URL"
-                    >
-                      <Copy className="w-3.5 h-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={() => router.push(`/dashboard/${svg.id}/edit`)}
-                      title="Edit"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={() => handleForceGenerate(svg)}
-                      disabled={generatingId === svg.id || svg.status === "generating"}
-                      title="Force Generate"
-                    >
-                      {generatingId === svg.id ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <RefreshCw className="w-3.5 h-3.5" />
-                      )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                      onClick={() => handleDelete(svg.id)}
-                      disabled={deletingId === svg.id}
-                      title="Delete"
-                    >
-                      {deletingId === svg.id ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Trash2 className="w-3.5 h-3.5" />
-                      )}
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                        >
+                          <MoreVertical className="w-3.5 h-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => router.push(`/dashboard/${svg.id}/edit`)}>
+                          <Edit2 className="w-4 h-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleForceGenerate(svg)}
+                          disabled={generatingId === svg.id || svg.status === "generating"}
+                        >
+                          {generatingId === svg.id ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <RefreshCw className="w-4 h-4 mr-2" />
+                          )}
+                          Force Generate
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteClick(svg.id)}
+                          disabled={deletingId === svg.id}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          {deletingId === svg.id ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4 mr-2" />
+                          )}
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </CardContent>
               </Card>
@@ -469,25 +492,61 @@ export default function DashboardPage() {
           transition={{ delay: 0.15, duration: 0.2 }}
           className="text-center py-16 md:py-20"
         >
-          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-muted/50 mb-6">
-            <Search className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
+          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 mb-6">
+            <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
           </div>
           <h3 className="text-xl md:text-2xl font-bold mb-2">No results found</h3>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-            Try adjusting your search or filter criteria
+            Try adjusting your filter criteria
           </p>
           <Button
             variant="outline"
             size="lg"
             onClick={() => {
-              setSearchQuery("")
               setStatusFilter("all")
             }}
           >
-            Clear Filters
+            Clear Filter
           </Button>
         </motion.div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Deletar SVG</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja deletar esta imagem? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false)
+                setSvgToDelete(null)
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={deletingId !== null}
+            >
+              {deletingId ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deletando...
+                </>
+              ) : (
+                "Deletar"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

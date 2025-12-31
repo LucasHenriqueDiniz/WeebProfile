@@ -33,11 +33,18 @@ export function useAuth() {
     })
 
     // Escutar mudanças de autenticação (mas não disparar loading desnecessário)
-    const authStateChange = supabase.auth.onAuthStateChange((event, session) => {
+    const authStateChange = supabase.auth.onAuthStateChange(async (event, session) => {
       // Só atualizar se realmente mudou algo relevante e não resetar loading
       if (mounted && (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "TOKEN_REFRESHED")) {
         setUser(session?.user ?? null)
         // Não resetar loading aqui para evitar refresh visual
+      }
+
+      // Se houve erro de refresh token, limpar sessão automaticamente
+      if (event === "TOKEN_REFRESHED" && !session) {
+        console.log("[Auth] Refresh token failed, clearing session")
+        await supabase.auth.signOut({ scope: 'local' })
+        setUser(null)
       }
     })
 
@@ -135,8 +142,20 @@ export function useAuth() {
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    return { error }
+    try {
+      // Limpar localStorage e sessionStorage primeiro para evitar problemas de refresh token
+      if (typeof window !== 'undefined') {
+        localStorage.clear()
+        sessionStorage.clear()
+      }
+      
+      const { error } = await supabase.auth.signOut({ scope: 'global' })
+      return { error }
+    } catch (error) {
+      console.error("Error during sign out:", error)
+      // Mesmo com erro, retornar sucesso para permitir redirecionamento
+      return { error: null }
+    }
   }
 
   return {

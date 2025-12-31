@@ -35,19 +35,19 @@ const DefaultProfile = ({ data, size }: { data: GithubData['user']; size: 'half'
           className="rounded-full pb-0.5"
         />
         <div>
-          <h2 className="text-lg font-semibold">{data.name}</h2>
-          <p className="text-default-text text-sm">@{data.login}</p>
+          <h2 className="text-lg font-semibold text-default-text">{data.name}</h2>
+          <p className="text-default-muted text-sm">@{data.login}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 mb-3 text-base half:text-sm">
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 truncate">
-            <FaGithub className="text-default-text" />
+          <div className="flex flex-row items-center gap-2 truncate text-default-text">
+            <FaGithub className="text-default-muted" />
             <span>Joined {years} years ago</span>
           </div>
-          <div className="flex items-center gap-2 truncate">
-            <FaUserFriends className="text-default-text" />
+          <div className="flex flex-row items-center gap-2 truncate text-default-text">
+            <FaUserFriends className="text-default-muted" />
             <span>{abbreviateNumber(data.followers)} followers</span>
           </div>
         </div>

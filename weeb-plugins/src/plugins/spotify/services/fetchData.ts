@@ -9,6 +9,7 @@ import type { EssentialPluginConfig } from '../../shared/types/base'
 import { getMockSpotifyData } from './mock-data'
 import { requireToken } from '../../shared/utils/api'
 import { ConfigError } from '../../shared/utils/errors'
+import { urlToBase64 } from '../../../utils/image-to-base64'
 import {
   getAccessTokenFromRefreshToken,
   fetchProfile,
@@ -34,7 +35,9 @@ export async function fetchSpotifyData(
 ): Promise<SpotifyData> {
   // Development mode - return mock data
   if (dev) {
-    return getMockSpotifyData()
+    const mockData = getMockSpotifyData()
+    // Converter URLs de imagens para base64 para funcionar nos previews (Playwright bloqueia requisições externas)
+    return await convertImageUrlsToBase64(mockData)
   }
 
   // Get refresh token from essential config
@@ -115,4 +118,32 @@ export async function fetchSpotifyData(
     topArtistsPeriod: getPeriodLabel(top_artists_period),
     topTracksPeriod: getPeriodLabel(top_tracks_period),
   }
+}
+
+/**
+ * Converte URLs de imagens para base64 recursivamente
+ */
+async function convertImageUrlsToBase64(data: any): Promise<any> {
+  if (Array.isArray(data)) {
+    return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
+  }
+
+  if (data && typeof data === 'object') {
+    const result: any = {}
+    for (const [key, value] of Object.entries(data)) {
+      if (
+        (key === 'image' || key === 'avatar' || key === 'avatarUrl') &&
+        typeof value === 'string' &&
+        (value.startsWith('http://') || value.startsWith('https://'))
+      ) {
+        // Converter URL para base64
+        result[key] = await urlToBase64(value)
+      } else {
+        result[key] = await convertImageUrlsToBase64(value)
+      }
+    }
+    return result
+  }
+
+  return data
 }

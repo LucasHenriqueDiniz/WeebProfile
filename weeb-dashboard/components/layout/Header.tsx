@@ -6,15 +6,13 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import {
   Github,
   Menu,
+  PanelLeft,
   Sparkles,
   X,
-  Eye,
-  EyeOff,
   Home,
   Settings,
   LogOut,
-  User,
-  Image as ImageIcon,
+  ArrowLeft,
   ChevronRight,
 } from "lucide-react"
 import Link from "next/link"
@@ -30,23 +28,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 interface HeaderProps {
   className?: string
-  variant?: "home" | "dashboard" | "wizard"
-  title?: string
-  description?: string
+  variant?: "home" | "dashboard"
   showSidebarToggle?: boolean
   onSidebarToggle?: () => void
-  showPreview?: boolean
-  onTogglePreview?: () => void
-  stats?: {
-    style: string
-    theme: string
-    plugins: number
-    sections: number
-  }
+  isSidebarOpen?: boolean
 }
 
 // Avatar component - simple implementation
@@ -64,13 +53,9 @@ const AvatarFallback = ({ className, children }: { className?: string; children:
 export function Header({
   className,
   variant,
-  title,
-  stats,
-  description,
   showSidebarToggle,
   onSidebarToggle,
-  showPreview,
-  onTogglePreview,
+  isSidebarOpen,
 }: HeaderProps) {
   const pathname = usePathname()
   const router = useRouter()
@@ -83,7 +68,6 @@ export function Header({
     variant ||
     (() => {
       if (pathname === "/") return "home"
-      if (pathname === "/dashboard/new" || pathname?.match(/^\/dashboard\/[^/]+\/edit$/)) return "wizard"
       if (pathname?.startsWith("/dashboard")) return "dashboard"
       return "home"
     })()
@@ -91,11 +75,9 @@ export function Header({
   const { scrollY } = useScroll()
 
   const headerBg = useTransform(scrollY, [0, 100], ["rgba(2, 6, 23, 0)", "rgba(2, 6, 23, 0.8)"])
-
   const headerBorder = useTransform(scrollY, [0, 100], ["rgba(148, 163, 184, 0)", "rgba(148, 163, 184, 0.1)"])
 
   const navigation = [
-    { name: "Plugins", href: "/plugins" },
     { name: "Templates", href: "/templates" },
     { name: "Docs", href: "/docs" },
   ]
@@ -104,6 +86,8 @@ export function Header({
     await signOut()
     router.push("/login")
   }
+
+  const isWizardPage = pathname === "/dashboard/new" || pathname?.match(/^\/dashboard\/[^/]+\/edit$/)
 
   // Home variant
   if (detectedVariant === "home") {
@@ -118,13 +102,18 @@ export function Header({
         <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <motion.div className="relative" whileHover={{ rotate: 180 }} transition={{ duration: 0.3 }}>
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-pink-500/30">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 blur-md opacity-50 -z-10" />
+            <motion.div 
+              className="relative" 
+              whileHover={{ scale: 1.05 }} 
+              transition={{ duration: 0.2 }}
+            >
+              <img
+                src="/sora/sora-head.png"
+                alt="Sora"
+                className="w-8 h-8 object-contain drop-shadow-lg"
+              />
             </motion.div>
-            <span className="text-xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="text-xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent font-sora">
               WeebProfile
             </span>
           </Link>
@@ -165,13 +154,27 @@ export function Header({
                 <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-auto px-2 py-1.5 gap-2">
-                      <Avatar className="h-8 w-8">
+                      <Avatar className="h-8 w-8 ring-2 ring-primary/20">
                         <AvatarImage
-                          src={user.user_metadata?.avatar_url}
-                          alt={user.user_metadata?.user_name || user.email || "User"}
+                          src={user.user_metadata?.avatar_url || user.user_metadata?.picture || "/sora/sora-head.png"}
+                          alt={user.user_metadata?.user_name || user.user_metadata?.full_name || "User"}
                         />
-                        <AvatarFallback>
-                          <User className="w-4 h-4" />
+                        <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500">
+                          <img 
+                            src="/sora/sora-head.png" 
+                            alt="Sora" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement
+                              target.style.display = 'none'
+                              if (target.parentElement) {
+                                target.parentElement.innerHTML = user.user_metadata?.user_name?.charAt(0)?.toUpperCase() ||
+                                  user.user_metadata?.full_name?.charAt(0)?.toUpperCase() ||
+                                  user.email?.charAt(0)?.toUpperCase() ||
+                                  "?"
+                              }
+                            }}
+                          />
                         </AvatarFallback>
                       </Avatar>
                     </Button>
@@ -261,186 +264,112 @@ export function Header({
     )
   }
 
-  // Dashboard variant
-  if (detectedVariant === "dashboard") {
-    return (
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between px-6">
-          {/* Left */}
-          <div className="flex items-center gap-4">
-            {showSidebarToggle && onSidebarToggle && (
-              <Button variant="ghost" size="icon" onClick={onSidebarToggle} className="h-9 w-9">
-                <Menu className="w-5 h-5" />
-              </Button>
-            )}
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold text-sm">W</span>
-              </div>
-              <span className="font-bold text-lg">WeebProfile</span>
-            </div>
-
-            {title && (
-              <>
-                <div className="h-6 w-px bg-border" />
-                <div>
-                  {title && <h1 className="text-lg font-semibold">{title}</h1>}
-                  {description && <p className="text-sm text-muted-foreground">{description}</p>}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Right */}
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <div className="h-6 w-px bg-border" />
-
-            {user && (
-              <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-auto px-2 py-1.5 gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={user.user_metadata?.avatar_url}
-                        alt={user.user_metadata?.user_name || user.email || "User"}
-                      />
-                      <AvatarFallback>
-                        <User className="w-4 h-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="hidden sm:block text-left">
-                      <div className="text-sm font-medium">
-                        {user.user_metadata?.user_name || user.email?.split("@")[0] || "Usuário"}
-                      </div>
-                      {user.user_metadata?.user_name && user.email && (
-                        <div className="text-xs text-muted-foreground">{user.email}</div>
-                      )}
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push("/dashboard")}>
-                    <Home className="w-4 h-4 mr-2" />
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push("/dashboard/settings")}>
-                    <Settings className="w-4 h-4 mr-2" />
-                    Configurações
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sair
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </div>
-      </header>
-    )
-  }
-
-  // Wizard variant
-  if (detectedVariant === "wizard") {
-    return (
-      <nav className="border-b px-6 py-3 flex items-center justify-between bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+  // Dashboard variant (works with or without sidebar)
+  return (
+    <header className="sticky top-0 z-40 border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 shadow-sm">
+      <div className="flex h-16 items-center justify-between px-4 md:px-6">
         {/* Left */}
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">W</span>
-          </div>
-          <span className="font-bold text-lg">WeebProfile</span>
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Sidebar toggle - only show if sidebar is available */}
+          {showSidebarToggle && onSidebarToggle && !isWizardPage && (
+            <>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={onSidebarToggle} 
+                className="h-9 w-9 hover:bg-muted/80 transition-colors"
+              >
+                {isSidebarOpen ? (
+                  <Menu className="w-5 h-5" />
+                ) : (
+                  <PanelLeft className="w-5 h-5" />
+                )}
+              </Button>
+              <div className="h-6 w-px bg-border/50" />
+            </>
+          )}
+          
+          {/* Back button for wizard pages */}
+          {isWizardPage && (
+            <>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => router.push("/dashboard")} 
+                className="h-9 w-9 hover:bg-muted/80 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <div className="h-6 w-px bg-border/50" />
+            </>
+          )}
+
+          {/* Logo */}
+          <Link href="/dashboard" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+            <img
+              src="/sora/sora-head.png"
+              alt="Sora"
+              className="w-8 h-8 object-contain drop-shadow-lg"
+            />
+            <span className="font-bold text-lg font-sora">WeebProfile</span>
+          </Link>
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-4">
-          {/* Stats */}
-          {stats && (
-            <div className="hidden md:flex items-center gap-4 text-xs">
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Style:</span>
-                <span className="font-semibold capitalize">{stats.style}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Theme:</span>
-                <span className="font-semibold capitalize">{stats.theme}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Plugins:</span>
-                <span className="font-semibold">{stats.plugins}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Sections:</span>
-                <span className="font-semibold">{stats.sections}</span>
-              </div>
-            </div>
-          )}
-
-          {onTogglePreview && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onTogglePreview}
-              className={cn(showPreview && "bg-primary/10 text-primary")}
-              title={showPreview ? "Ocultar Preview" : "Mostrar Preview"}
-            >
-              {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </Button>
-          )}
-
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          <div className="h-6 w-px bg-border"></div>
+          <div className="h-6 w-px bg-border/50" />
 
           {user && (
             <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-auto px-2 py-1.5 gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={user.user_metadata?.avatar_url}
-                      alt={user.user_metadata?.user_name || user.email || "User"}
-                    />
-                    <AvatarFallback>
-                      <User className="w-4 h-4" />
-                    </AvatarFallback>
-                  </Avatar>
+                <Button variant="ghost" className="h-auto px-2 py-1.5 gap-2.5 hover:bg-muted/80 transition-colors">
+                  <div className="relative">
+                    <Avatar className="h-9 w-9 ring-2 ring-primary/20 shadow-md">
+                      <AvatarImage
+                        src={user.user_metadata?.avatar_url || user.user_metadata?.picture}
+                        alt={user.user_metadata?.user_name || user.user_metadata?.full_name || "User"}
+                      />
+                      <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-sm font-bold shadow-lg">
+                        {user.user_metadata?.user_name?.charAt(0)?.toUpperCase() ||
+                          user.user_metadata?.full_name?.charAt(0)?.toUpperCase() ||
+                          user.email?.charAt(0)?.toUpperCase() ||
+                          "?"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background shadow-sm" />
+                  </div>
                   <div className="hidden sm:block text-left">
-                    <div className="text-sm font-medium">
-                      {user.user_metadata?.user_name || user.email?.split("@")[0] || "Usuário"}
+                    <div className="text-sm font-semibold">
+                      {user.user_metadata?.user_name || user.user_metadata?.full_name || user.email?.split("@")[0] || "Usuário"}
                     </div>
                     {user.user_metadata?.user_name && user.email && (
-                      <div className="text-xs text-muted-foreground">{user.email}</div>
+                      <div className="text-xs text-muted-foreground leading-tight">
+                        {user.email}
+                      </div>
                     )}
                   </div>
-                  <ChevronRight className="w-3 h-3 rotate-90 text-muted-foreground" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground hidden sm:block rotate-[-90deg]" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {user.user_metadata?.user_name || user.email?.split("@")[0] || "Usuário"}
-                    </p>
-                    {user.user_metadata?.user_name && user.email && (
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                    )}
-                  </div>
+                <DropdownMenuLabel className="flex flex-col gap-0.5">
+                  <span className="text-sm font-semibold">Minha Conta</span>
+                  <span className="text-xs text-muted-foreground font-normal">
+                    {user.email}
+                  </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                <DropdownMenuItem onClick={() => router.push("/dashboard")} className="cursor-pointer">
                   <Home className="w-4 h-4 mr-2" />
                   Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem disabled>
+                <DropdownMenuItem onClick={() => router.push("/dashboard/settings")} className="cursor-pointer">
                   <Settings className="w-4 h-4 mr-2" />
                   Configurações
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer focus:text-destructive">
                   <LogOut className="w-4 h-4 mr-2" />
                   Sair
                 </DropdownMenuItem>
@@ -448,9 +377,7 @@ export function Header({
             </DropdownMenu>
           )}
         </div>
-      </nav>
-    )
-  }
-
-  return null
+      </div>
+    </header>
+  )
 }

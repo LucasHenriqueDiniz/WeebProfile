@@ -55,7 +55,7 @@ export function WizardShell({ stats, preview, footer, children }: WizardShellPro
       </div>
 
       {/* Top Navigation */}
-      <Header variant="wizard" stats={stats} />
+      <Header variant="dashboard" />
 
       {/* Main Content - Split Layout */}
       <div className="flex-1 flex overflow-hidden">
@@ -88,10 +88,10 @@ export function WizardShell({ stats, preview, footer, children }: WizardShellPro
                         {preview}
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center h-full" style={{ width: `${contentWidth}px` }}>
-                        <div className="text-center space-y-2">
+                      <div className="flex items-center justify-center h-full w-full" style={{ width: `${contentWidth}px` }}>
+                        <div className="text-center space-y-2 px-4">
                           <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-                            <Package className="h-4 w-4 mr-2" />
+                            <Package className="h-4 w-4" />
                             Habilite pelo menos um plugin e selecione seções para ver o preview
                           </p>
                         </div>

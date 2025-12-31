@@ -6,6 +6,7 @@ import { getMockLastFmData } from "./mock-data"
 import { fetchLastFmDataFromApi } from "./fetchLastFmApi"
 import { requireApiKey } from "../../shared/utils/api"
 import { ConfigError } from "../../shared/utils/errors"
+import { urlToBase64 } from "../../../utils/image-to-base64"
 
 /**
  * Busca dados do LastFM
@@ -42,12 +43,14 @@ export async function fetchLastFmData(
 
   // Modo desenvolvimento - retornar dados mock
   if (dev) {
-    return getMockLastFmData({
+    const mockData = getMockLastFmData({
       recent_tracks_max: sectionConfig.recent_tracks_max || 5,
       top_artists_max: sectionConfig.top_artists_max || 10,
       top_albums_max: sectionConfig.top_albums_max || 10,
       top_tracks_max: sectionConfig.top_tracks_max || 10,
     })
+    // Converter URLs de imagens para base64 para funcionar nos previews (Playwright bloqueia requisições externas)
+    return await convertImageUrlsToBase64(mockData)
   }
 
   // Validar API key
@@ -70,4 +73,32 @@ export async function fetchLastFmData(
     top_tracks_period: sectionConfig.top_tracks_period || "overall",
     sections: config.sections,
   })
+}
+
+/**
+ * Converte URLs de imagens para base64 recursivamente
+ */
+async function convertImageUrlsToBase64(data: any): Promise<any> {
+  if (Array.isArray(data)) {
+    return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
+  }
+
+  if (data && typeof data === 'object') {
+    const result: any = {}
+    for (const [key, value] of Object.entries(data)) {
+      if (
+        key === 'image' &&
+        typeof value === 'string' &&
+        (value.startsWith('http://') || value.startsWith('https://'))
+      ) {
+        // Converter URL para base64
+        result[key] = await urlToBase64(value)
+      } else {
+        result[key] = await convertImageUrlsToBase64(value)
+      }
+    }
+    return result
+  }
+
+  return data
 }

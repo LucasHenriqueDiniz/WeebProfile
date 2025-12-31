@@ -209,11 +209,11 @@
   justify-content: center;
 }
 
-/* When inside col-span-2, container should take full width/height including gap */
+/* When inside col-span-2, container should take full width/height including gap 
 #svg-main .col-span-2 .image-square-container-200 {
   width: 100%;
   height: 100%;
-}
+}*/
 
 #svg-main .image-square-container-50 img,
 #svg-main .image-square-container-60 img,
@@ -867,6 +867,10 @@
 
 #svg-main .shrink-0 {
   flex-shrink: 0
+}
+
+#svg-main .transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
 }
 
 #svg-main .select-none {
@@ -1548,6 +1552,10 @@
 
 #svg-main .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .backdrop-filter {
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)
 }
 
 #svg-main .transition-all {
