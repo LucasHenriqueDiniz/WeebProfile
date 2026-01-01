@@ -142,7 +142,7 @@ export async function fetchCodeforcesData(
   }
 
   if (!config.username || typeof config.username !== 'string' || config.username.trim() === '') {
-    throw new Error('Codeforces username (handle) is required')
+    throw new Error('Codeforces username (handle) is required. Please configure your username in the plugin settings.')
   }
 
   const handle = config.username.trim()

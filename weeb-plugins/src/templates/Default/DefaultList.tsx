@@ -20,17 +20,17 @@ function ListItem({ right, center, left, image }: ListItemProps): React.ReactEle
         </div>
       )}
       <div className="flex flex-col w-full h-full justify-evenly overflow-hidden">
-        <div className="font-semibold text-lg text-default-highlight truncate flex items-center">
+        <div className="font-semibold text-lg text-default-highlight truncate">
           {rightContent}
         </div>
         <div className="flex justify-between items-baseline gap-2">
           {center && (
-            <div className="text-sm text-default-muted truncate flex items-center">
+            <div className="text-sm text-default-muted truncate">
               {centerContent}
             </div>
           )}
           {left && (
-            <div className="text-sm text-default-muted truncate w-fit ml-auto flex items-center">
+            <div className="text-sm text-default-muted truncate w-fit ml-auto">
               {leftContent}
             </div>
           )}

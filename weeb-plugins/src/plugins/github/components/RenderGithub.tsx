@@ -35,7 +35,7 @@ export function RenderGithub({
   style = "default",
   size = "half",
 }: RenderGithubProps): React.ReactElement {
-  if (!config.enabled || config.sections.length === 0) {
+  if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
   }
 

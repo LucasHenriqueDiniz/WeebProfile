@@ -1,7 +1,3 @@
-/**
- * PercentageBar - Barra de progresso para estilo default
- */
-
 import React from 'react'
 import { FaCheck } from 'react-icons/fa'
 import { FiClock } from 'react-icons/fi'
@@ -46,7 +42,7 @@ export function PercentageBar({ current, total, status }: PercentageBarProps): R
       <span
         className={`${
           isCompleted || isPlanTo ? 'flex items-center justify-center' : 'flex items-center justify-end'
-        } ${getStatusColor(status)} text-shadow text-center rounded-2xl text-sm`}
+        } ${getStatusColor(status)} text-shadow text-center rounded-2xl text-sm text-white`}
         style={{ width: `${isCompleted || isPlanTo ? 100 : percentage > 15 ? percentage : 15}%` }}
       >
         {isPlanTo ? (
@@ -54,7 +50,7 @@ export function PercentageBar({ current, total, status }: PercentageBarProps): R
         ) : isCompleted ? (
           <FaCheck />
         ) : (
-          <span className="pr-2 font-bold">{current ? `${percentage.toFixed(0)}%` : '?'}</span>
+          <span className="pr-2 font-bold text-white">{current ? `${percentage.toFixed(0)}%` : '?'}</span>
         )}
       </span>
       {percentage < 97 && !isPlanTo && (

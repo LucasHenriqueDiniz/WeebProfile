@@ -22,7 +22,7 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
   }
 
   const hideTitle = config.exercises_hide_title || false
-  const title = config.exercises_title || 'Top Exercises'
+  const title = config.exercises_title || 'Most Performed Exercises'
   const maxExercises = config.exercises_max || 5
   const weightUnit = config.weight_unit || 'kg'
   const show1RM = config.exercises_show_1rm !== false

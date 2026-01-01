@@ -21,7 +21,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
   }
 
   const hideTitle = config.statistics_hide_title || false
-  const title = config.statistics_title || 'Statistics'
+  const title = config.statistics_title || 'Fitness Statistics'
   const weightUnit = config.weight_unit || 'kg'
   const stats = data.statistics
 

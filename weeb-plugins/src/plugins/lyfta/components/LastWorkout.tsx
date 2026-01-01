@@ -29,7 +29,7 @@ export function LastWorkout({ data, config, style = 'default', size = 'half' }: 
   }
 
   const hideTitle = config.last_workout_hide_title || false
-  const title = config.last_workout_title || 'Last Workout'
+  const title = config.last_workout_title || 'Latest Workout Session'
   const weightUnit = config.weight_unit || 'kg'
   const showBodyWeight = config.last_workout_show_body_weight !== false
   const maxExercises = config.last_workout_max_exercises || 5

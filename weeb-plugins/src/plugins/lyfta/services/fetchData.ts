@@ -4,7 +4,7 @@
 
 import type { LyftaConfig, LyftaData } from '../types'
 import { getMockLyftaData } from './mock-data'
-import { urlToBase64 } from '../../../utils/image-to-base64'
+import { urlToBase64, IMAGE_OPTIMIZATION } from '../../../utils/image-to-base64'
 
 const BASE_URL = 'https://my.lyfta.app'
 
@@ -54,7 +54,7 @@ export async function fetchLyftaData(
             // If exercise_image is a URL, convert to base64
             if (exerciseImage && !exerciseImage.startsWith('data:') && exerciseImage.startsWith('http')) {
               try {
-                exerciseImage = await urlToBase64(exerciseImage)
+                exerciseImage = await urlToBase64(exerciseImage, 15000, IMAGE_OPTIMIZATION)
               } catch (error) {
                 console.error('Failed to convert exercise image to base64:', error)
               }
@@ -94,7 +94,7 @@ export async function fetchLyftaData(
 
         if (imageName && !imageName.startsWith('data:') && imageName.startsWith('http')) {
           try {
-            imageName = await urlToBase64(imageName)
+            imageName = await urlToBase64(imageName, 15000, IMAGE_OPTIMIZATION)
           } catch (error) {
             console.error('Failed to convert exercise data image to base64:', error)
           }
@@ -263,8 +263,8 @@ async function convertImageUrlsToBase64(data: any): Promise<any> {
         typeof value === 'string' &&
         (value.startsWith('http://') || value.startsWith('https://'))
       ) {
-        // Converter URL para base64
-        result[key] = await urlToBase64(value)
+        // Converter URL para base64 com otimização (imagens pequenas)
+        result[key] = await urlToBase64(value, 15000, IMAGE_OPTIMIZATION)
       } else {
         result[key] = await convertImageUrlsToBase64(value)
       }

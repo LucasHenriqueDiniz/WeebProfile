@@ -23,7 +23,7 @@ interface ReputationProps {
 
 export function Reputation({ reputation, reputationChange, config, style = 'default', size = 'half' }: ReputationProps): React.ReactElement {
   const hideTitle = config.nonEssential?.reputation_hide_title || false
-  const title = config.nonEssential?.reputation_title || 'Reputation'
+  const title = config.nonEssential?.reputation_title || 'Stack Overflow Reputation'
 
   const changeText = reputationChange >= 0 
     ? `+${abbreviateNumber(reputationChange)}`

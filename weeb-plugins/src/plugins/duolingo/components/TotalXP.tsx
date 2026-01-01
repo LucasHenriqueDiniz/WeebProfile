@@ -24,7 +24,7 @@ interface TotalXPProps {
 
 export function TotalXP({ totalXP, config, style = 'default', size = 'half' }: TotalXPProps): React.ReactElement {
   const hideTitle = config.nonEssential?.total_xp_hide_title ?? false
-  const title = config.nonEssential?.total_xp_title || 'Total XP'
+  const title = config.nonEssential?.total_xp_title || 'Language Learning XP'
 
   return (
     <section id="duolingo-total-xp">

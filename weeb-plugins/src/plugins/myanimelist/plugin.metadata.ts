@@ -1,9 +1,9 @@
 /**
  * MyAnimeList Plugin Metadata
- * 
+ *
  * This file defines all sections, configurations and options for the MyAnimeList plugin.
  * It is used to automatically generate the centralized metadata.ts file.
- * 
+ *
  * DO NOT edit metadata.ts manually - it is automatically generated from this file.
  */
 
@@ -260,7 +260,7 @@ export const myanimelistPluginMetadata = {
           key: "character_favorites_list_style",
           label: "List style",
           type: "select" as const,
-          defaultValue: "compact",
+          defaultValue: "simple",
           options: [
             { value: "simple", label: "Simple (Image grid)" },
             { value: "compact", label: "Compact (Compact list)" },
@@ -305,7 +305,7 @@ export const myanimelistPluginMetadata = {
           key: "people_favorites_list_style",
           label: "List style",
           type: "select" as const,
-          defaultValue: "compact",
+          defaultValue: "simple",
           options: [
             { value: "simple", label: "Simple (Image grid)" },
             { value: "compact", label: "Compact (Compact list)" },
@@ -355,4 +355,3 @@ export const myanimelistPluginMetadata = {
     username: "example",
   },
 }
-

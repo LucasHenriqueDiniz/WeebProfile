@@ -151,11 +151,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         svg: updatedSvg,
       })
     } catch (error) {
-        // Atualizar status para "failed"
+        // Salvar mensagem de erro
+        const errorMessage = error instanceof Error ? error.message : "Unknown error"
+
+        // Atualizar status para "failed" e salvar erro
         await db
           .update(svgs)
           .set({
             status: "failed",
+            lastError: errorMessage,
           })
           .where(eq(svgs.id, id))
 
@@ -163,7 +167,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       return NextResponse.json(
         {
           error: "Failed to generate SVG",
-          message: error instanceof Error ? error.message : "Unknown error",
+          message: errorMessage,
         },
         { status: 500 }
       )

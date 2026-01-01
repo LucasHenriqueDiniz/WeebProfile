@@ -23,7 +23,7 @@ interface RatingRankProps {
 
 export function RatingRank({ rating, rank, config, style = 'default', size = 'half' }: RatingRankProps): React.ReactElement {
   const hideTitle = config.nonEssential?.rating_rank_hide_title || false
-  const title = config.nonEssential?.rating_rank_title || 'Rating & Rank'
+  const title = config.nonEssential?.rating_rank_title || 'Codeforces Rating & Rank'
 
   return (
     <section id="codeforces-rating-rank">

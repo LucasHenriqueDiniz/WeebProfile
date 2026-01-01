@@ -21,7 +21,7 @@ export function CurrentlyPlaying({ data, config, style = 'default', size = 'half
     return <></>
   }
 
-  const title = config.currently_playing_title || 'Now Playing'
+  const title = config.currently_playing_title || 'Currently Playing'
   const hideTitle = config.currently_playing_hide_title || false
 
   return (

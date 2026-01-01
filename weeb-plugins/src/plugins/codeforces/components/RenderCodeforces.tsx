@@ -1,13 +1,10 @@
-/**
- * Renderizador principal do Plugin Codeforces
- */
-
 import React from 'react'
 import type { CodeforcesConfig, CodeforcesData } from '../types'
 import { RatingRank } from './RatingRank'
 import { ContestsParticipated } from './ContestsParticipated'
 import { ProblemsSolved } from './ProblemsSolved'
 import { RecentSubmissions } from './RecentSubmissions'
+import { PluginError } from '../../../components/PluginError'
 
 interface RenderCodeforcesProps {
   config: CodeforcesConfig
@@ -22,8 +19,19 @@ export function RenderCodeforces({
   style = 'default',
   size = 'half',
 }: RenderCodeforcesProps): React.ReactElement {
-  if (!config.enabled || config.sections.length === 0) {
+  if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
+  }
+
+  // Verificar se há erro nos dados
+  if ((data as any)._error) {
+    return <PluginError
+      pluginName="Codeforces"
+      error={(data as any)._error}
+      errorType="config"
+      style={style}
+      compact={true}
+    />
   }
 
   const sections = config.sections
@@ -100,6 +108,9 @@ export function RenderCodeforces({
     </section>
   )
 }
+
+
+
 
 
 

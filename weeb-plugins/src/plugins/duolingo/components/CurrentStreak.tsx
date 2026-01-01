@@ -51,7 +51,7 @@ function getStreakIntensity(streak: number): 'low' | 'medium' | 'high' | 'legend
 
 export function CurrentStreak({ streak, config, style = 'default', size = 'half' }: CurrentStreakProps): React.ReactElement {
   const hideTitle = config.nonEssential?.current_streak_hide_title ?? true
-  const title = config.nonEssential?.current_streak_title || 'Current Streak'
+  const title = config.nonEssential?.current_streak_title || 'Learning Streak'
   const intensity = getStreakIntensity(streak)
   const message = getStreakMessage(streak)
   const gradient = getStreakGradient(intensity)

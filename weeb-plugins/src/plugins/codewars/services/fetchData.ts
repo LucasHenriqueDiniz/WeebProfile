@@ -69,7 +69,7 @@ export async function fetchCodewarsData(
   }
 
   if (!config.username || typeof config.username !== 'string' || config.username.trim() === '') {
-    throw new Error('Codewars username is required')
+    throw new Error('Codewars username is required. Please configure your username in the plugin settings.')
   }
 
   const username = config.username.trim()

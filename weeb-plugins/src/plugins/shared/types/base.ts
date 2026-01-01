@@ -23,17 +23,19 @@ export interface NonEssentialPluginConfig {
 
 /**
  * Configuração base de um plugin
- * 
+ *
  * Separa claramente:
  * - enabled: se o plugin está ativo
  * - sections: quais seções estão habilitadas
  * - essential: credenciais sensíveis (vem do essentialConfigs do perfil)
  * - nonEssential: preferências do usuário (vem do pluginsConfig)
+ * - previewMode: se está em modo preview (não converte imagens para base64)
  */
 export interface BasePluginConfig {
   enabled: boolean
   sections: string[]
   essential?: EssentialPluginConfig
   nonEssential?: NonEssentialPluginConfig
+  previewMode?: boolean
 }
 

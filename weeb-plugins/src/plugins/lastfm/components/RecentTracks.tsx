@@ -27,7 +27,7 @@ export function RecentTracks({ data, interval, config, style = 'default', size =
     return <></>
   }
 
-  const title = config.recent_tracks_title || 'Recent Tracks'
+  const title = config.recent_tracks_title || 'Recent Music Tracks'
   const hideTitle = config.recent_tracks_hide_title || false
   const hideIntervals = config.hide_intervals || false
   // Validar e limitar maxItems (máximo 50, mínimo 1)
@@ -60,7 +60,7 @@ export function RecentTracks({ data, interval, config, style = 'default', size =
       <RenderBasedOnStyle
         style={style}
         defaultComponent={
-          <>
+          <div className="pb-2">
             {!hideTitle && (
               <DefaultTitle
                 title={title}
@@ -69,7 +69,7 @@ export function RecentTracks({ data, interval, config, style = 'default', size =
               />
             )}
             <DefaultList data={listItems} />
-          </>
+          </div>
         }
         terminalComponent={
           <>
@@ -89,4 +89,3 @@ export function RecentTracks({ data, interval, config, style = 'default', size =
     </section>
   )
 }
-

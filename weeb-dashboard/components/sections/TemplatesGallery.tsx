@@ -58,7 +58,7 @@ function TemplateCard({ name, description, preview, platforms, style, theme, ind
       if (pluginId) {
         plugins[pluginId] = {
           enabled: true,
-          sections: ["profile", "activity"], // Default sections
+          sections: [], // Começar sem seções - o render deve lidar com isso
         }
         pluginsOrder.push(pluginId)
       }

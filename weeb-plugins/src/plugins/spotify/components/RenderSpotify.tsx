@@ -1,7 +1,3 @@
-/**
- * Main rendering component for the Spotify plugin
- */
-
 import React from 'react'
 import type { SpotifyConfig, SpotifyData } from '../types'
 import { RecentTracks } from './RecentTracks'
@@ -24,7 +20,7 @@ export function RenderSpotify({
   style = 'default',
   size = 'half',
 }: RenderSpotifyProps): React.ReactElement {
-  if (!config.enabled || config.sections.length === 0) {
+  if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
   }
 

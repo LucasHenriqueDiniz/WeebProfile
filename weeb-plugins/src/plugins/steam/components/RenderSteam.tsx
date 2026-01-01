@@ -22,7 +22,7 @@ export function RenderSteam({
   size = 'half',
 }: RenderSteamProps): React.ReactElement {
   // If not enabled or no data, return empty
-  if (!config.enabled || !data ||  config.sections.length === 0) {
+  if (!config.enabled || !data || !config.sections || config.sections.length === 0) {
     return <></>
   }
 

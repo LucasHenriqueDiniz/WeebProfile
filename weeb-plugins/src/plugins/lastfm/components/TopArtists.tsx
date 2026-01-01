@@ -41,7 +41,7 @@ export function TopArtists({ data, interval, config, style = 'default', size = '
       size={size}
       displayStyle={displayStyle}
       sectionId="lastfm-top-artists"
-      sectionName="Top Artists"
+      sectionName="Top Music Artists"
       icon={MdOutlinePersonOutline}
       terminalLabels={{
         rightText: 'Artist',

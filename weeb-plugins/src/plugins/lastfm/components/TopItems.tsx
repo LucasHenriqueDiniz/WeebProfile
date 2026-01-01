@@ -89,7 +89,7 @@ export function TopItems({
         <RenderBasedOnStyle
           style={style}
           defaultComponent={
-            <>
+            <div className="pb-2">
               {!hideTitle && (
                 <DefaultTitle
                   title={title}
@@ -98,7 +98,7 @@ export function TopItems({
                 />
               )}
               <DefaultList data={listItems} />
-            </>
+            </div>
           }
           terminalComponent={
             <>
@@ -125,7 +125,7 @@ export function TopItems({
         <RenderBasedOnStyle
           style={style}
           defaultComponent={
-            <>
+            <div className="pb-2">
               {!hideTitle && (
                 <DefaultTitle
                   title={title}
@@ -134,7 +134,7 @@ export function TopItems({
                 />
               )}
               <DefaultImageGrid data={gridItems} />
-            </>
+            </div>
           }
           terminalComponent={
             <>
@@ -166,7 +166,7 @@ export function TopItems({
       <RenderBasedOnStyle
         style={style}
         defaultComponent={
-          <>
+          <div className="pb-2">
             {!hideTitle && (
               <DefaultTitle
                 title={title}
@@ -175,7 +175,7 @@ export function TopItems({
               />
             )}
             <DefaultGrid data={gridItems} size={size} />
-          </>
+          </div>
         }
         terminalComponent={
           <>

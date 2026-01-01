@@ -31,7 +31,7 @@ export function TopArtists({ data, interval, config, style = 'default', size = '
     return <></>
   }
 
-  const title = config.top_artists_title || 'Top Artists'
+  const title = config.top_artists_title || 'Top Played Artists'
   const hideTitle = config.top_artists_hide_title || false
   const displayStyle = config.top_artists_style || 'default'
   const maxItems = config.top_artists_max || 10

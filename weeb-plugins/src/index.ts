@@ -13,6 +13,9 @@ export * from "./templates/index"
 // Types
 export * from "./types/index"
 
+// Components
+export { PluginError } from "./components/PluginError"
+
 // Utils
 export * from "./utils/number"
 export * from "./utils/pseudo-commands"

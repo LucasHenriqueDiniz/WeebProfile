@@ -31,7 +31,7 @@ export function TopTracks({ data, interval, config, style = 'default', size = 'h
     return <></>
   }
 
-  const title = config.top_tracks_title || 'Top Tracks'
+  const title = config.top_tracks_title || 'Top Played Tracks'
   const hideTitle = config.top_tracks_hide_title || false
   const displayStyle = config.top_tracks_style || 'default'
   const maxItems = config.top_tracks_max || 10

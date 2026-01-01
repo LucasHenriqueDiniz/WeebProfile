@@ -2,34 +2,39 @@
  * Serviço principal para buscar dados do MyAnimeList
  */
 
-import type { MyAnimeListConfig, MyAnimeListData } from '../types'
-import { getMockMyAnimeListData } from './mock-data'
-import { fetchFullProfile } from './profile'
-import { fetchFavorites } from './favorites'
-import { transformLastUpdates } from './last-updates'
-import { transformStatistics } from './statistics'
-import { urlToBase64 } from '../../../utils/image-to-base64'
+import type { MyAnimeListConfig, MyAnimeListData } from "../types"
+import { getMockMyAnimeListData } from "./mock-data"
+import { fetchFullProfile } from "./profile"
+import { fetchFavorites } from "./favorites"
+import { transformLastUpdates } from "./last-updates"
+import { transformStatistics } from "./statistics"
+import { urlToBase64 } from "../../../utils/image-to-base64"
 
 /**
  * Converte URLs de imagens para base64 recursivamente (para dados mock)
  */
-async function convertImageUrlsToBase64(data: any): Promise<any> {
+async function convertImageUrlsToBase64(data: any, previewMode = false): Promise<any> {
   if (Array.isArray(data)) {
     return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
   }
 
-  if (data && typeof data === 'object') {
+  if (data && typeof data === "object") {
     const result: any = {}
     for (const [key, value] of Object.entries(data)) {
       if (
-        key === 'image' &&
-        typeof value === 'string' &&
-        (value.startsWith('http://') || value.startsWith('https://'))
+        key === "image" &&
+        typeof value === "string" &&
+        (value.startsWith("http://") || value.startsWith("https://"))
       ) {
-        // Converter URL para base64
-        result[key] = await urlToBase64(value)
+        // Em modo preview, manter URLs originais
+        if (previewMode) {
+          result[key] = value
+        } else {
+          // Converter URL para base64
+          result[key] = await urlToBase64(value)
+        }
       } else {
-        result[key] = await convertImageUrlsToBase64(value)
+        result[key] = await convertImageUrlsToBase64(value, previewMode)
       }
     }
     return result
@@ -46,23 +51,19 @@ async function convertImageUrlsToBase64(data: any): Promise<any> {
  */
 export async function fetchMyAnimeListData(
   config: MyAnimeListConfig,
-  dev = false
+  dev = false,
+  essentialConfig?: any,
+  previewMode = false
 ): Promise<MyAnimeListData> {
-  // Modo desenvolvimento - retornar dados mock
-  if (dev) {
-    const mockData = getMockMyAnimeListData()
-    // Converter URLs de imagens para base64 para funcionar nos previews (Playwright bloqueia requisições externas)
-    return (await convertImageUrlsToBase64(mockData)) as MyAnimeListData
-  }
-
-  // Modo produção - buscar dados reais da API
-  if (!config.username) {
-    throw new Error('No username provided for MyAnimeList plugin')
-  }
-
-  console.log(`[MyAnimeList] Fetching data for user: ${config.username}`)
+  console.log(`[MyAnimeList] Fetching data for user: ${config.username || "mock"}`)
 
   try {
+    // Validar que tem username configurado
+    if (!config.username || typeof config.username !== "string" || config.username.trim() === "") {
+      throw new Error("MyAnimeList username is required. Please configure your username in the plugin settings.")
+    }
+
+    // Buscar dados reais da API
     // Buscar perfil completo
     const profile = await fetchFullProfile(config.username)
 
@@ -86,9 +87,7 @@ export async function fetchMyAnimeListData(
     return data
   } catch (error) {
     console.error(`[MyAnimeList] Error fetching data:`, error)
-    // Em caso de erro, retornar dados mock como fallback
-    const mockData = getMockMyAnimeListData()
-    return (await convertImageUrlsToBase64(mockData)) as MyAnimeListData
+    // Em caso de erro, relançar para que seja tratado pelo componente de erro
+    throw error
   }
 }
-

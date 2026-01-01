@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { Loader2 } from "lucide-react"
@@ -18,12 +18,13 @@ export default function EditSvgPage() {
   const params = useParams()
   const { getSvg, getSvgSync } = useSvgStore()
   const svgId = params.id as string
-  
+
   // Tentar pegar do cache imediatamente
   const cachedSvg = getSvgSync(svgId)
   const [loading, setLoading] = useState(!cachedSvg)
   const [hasLoaded, setHasLoaded] = useState(false)
-  const { reset, setBasicInfo, setPluginConfig, setStyle, setSize, setTheme, setHideTerminalEmojis, setHideTerminalHeader, setHideTerminalCommand, setCustomCss, reorderPlugins } = useWizardStore()
+  const hasResetRef = useRef(false)
+  const { reset, resetForEdit, setBasicInfo, setPluginConfig, setStyle, setSize, setTheme, setHideTerminalEmojis, setHideTerminalHeader, setHideTerminalCommand, setCustomCss, reorderPlugins, plugins, pluginsOrder } = useWizardStore()
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -33,20 +34,41 @@ export default function EditSvgPage() {
 
     // Só carregar uma vez
     if (user && svgId && !hasLoaded) {
-      loadSvg()
+      // Reset store first, then load data
+      if (!hasResetRef.current) {
+        resetForEdit()
+        hasResetRef.current = true
+      }
+
+      // Small delay to ensure reset has completed
+      setTimeout(() => {
+        loadSvg()
+      }, 50)
     } else if (cachedSvg && !hasLoaded) {
-      // Se tem cache, carregar dados imediatamente
-      loadSvgData(cachedSvg)
-      setHasLoaded(true)
-      setLoading(false)
+      // Se tem cache, reset first then load data
+      if (!hasResetRef.current) {
+        console.log("🔄 EDIT PAGE: Calling resetForEdit() for cached SVG")
+        resetForEdit()
+        console.log("🔄 EDIT PAGE: resetForEdit() completed for cached SVG")
+        hasResetRef.current = true
+      }
+
+      // Small delay to ensure reset has completed
+      setTimeout(() => {
+        console.log("🔄 EDIT PAGE: About to call loadSvgData() with cached SVG")
+        loadSvgData(cachedSvg)
+        setHasLoaded(true)
+        setLoading(false)
+      }, 50)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading, svgId])
 
+
   const loadSvg = async () => {
     // Verificar cache novamente (pode ter mudado)
     let svg: Svg | null = getSvgSync(svgId)
-    
+
     try {
       // Se não tem cache, buscar
       if (!svg) {
@@ -85,31 +107,33 @@ export default function EditSvgPage() {
   }
 
   const loadSvgData = (svg: Svg) => {
-
     // Carregar dados no wizard store
     setBasicInfo(svg.name, svg.id, false) // Usar ID como slug temporário
     setStyle(svg.style as "default" | "terminal")
     setSize(svg.size as "half" | "full")
     setTheme(svg.theme || "default")
-    
+
     // Read terminal configs from pluginsConfig
     const terminalConfigs = getTerminalConfigs(svg.pluginsConfig as Record<string, any>)
     setHideTerminalEmojis(terminalConfigs.hideTerminalEmojis)
     setHideTerminalHeader(terminalConfigs.hideTerminalHeader)
     setHideTerminalCommand(terminalConfigs.hideTerminalCommand)
-    
+
     setCustomCss(svg.customCss || "")
 
     // Carregar plugins config
     if (svg.pluginsConfig && typeof svg.pluginsConfig === "object") {
       const pluginsConfig = svg.pluginsConfig as Record<string, any>
-      
+
       // Processar plugins dinamicamente
       // Extrair nomes de plugins do pluginsConfig (chaves que começam com PLUGIN_)
       const pluginNames = Object.keys(pluginsConfig)
-        .filter(key => key.startsWith("PLUGIN_") && !key.includes("_"))
+        .filter(key => {
+          const parts = key.split('_');
+          return key.startsWith("PLUGIN_") && parts.length === 2;
+        })
         .map(key => key.replace("PLUGIN_", "").toLowerCase())
-      
+
       pluginNames.forEach((pluginName) => {
         const enabled = pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}`] === true
         const username = pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}_USERNAME`] || ""
@@ -122,11 +146,11 @@ export default function EditSvgPage() {
           sections,
         })
       })
+    }
 
-      // Carregar ordem dos plugins
-      if (svg.pluginsOrder) {
-        reorderPlugins(svg.pluginsOrder.split(","))
-      }
+    // Carregar ordem dos plugins
+    if (svg.pluginsOrder) {
+      reorderPlugins(svg.pluginsOrder.split(","))
     }
   }
 

@@ -11,7 +11,7 @@ import type {
   FullMangaFavorite,
 } from '../types'
 import { jikanGet, limiter } from './api-client'
-import { urlToBase64 } from '../../../utils/image-to-base64'
+import { urlToBase64, IMAGE_OPTIMIZATION } from '../../../utils/image-to-base64'
 import type { MalProfileResponse } from './profile'
 import type { MyAnimeListConfig } from '../types'
 
@@ -39,7 +39,8 @@ export async function getBasicFavorites(
     mangaMax: number
     charactersMax: number
     peopleMax: number
-  }
+  },
+  config: { previewMode?: boolean }
 ): Promise<BasicFavorites> {
   const favorites = profile.favorites || { anime: [], manga: [], characters: [], people: [] }
 
@@ -58,13 +59,18 @@ export async function getBasicFavorites(
 
     let imageBase64 = ''
     if (image) {
-      try {
-        console.log(`  [${index + 1}/${animeList.length}] Convertendo imagem: ${item.title}`)
-        imageBase64 = await urlToBase64(image)
-        console.log(`  ✅ Imagem convertida: ${item.title}`)
-      } catch (error: any) {
-        console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
-        imageBase64 = ''
+      if (config.previewMode) {
+        // Em modo preview, usar URLs originais sem conversão
+        imageBase64 = image
+      } else {
+        try {
+          console.log(`  [${index + 1}/${animeList.length}] Convertendo imagem: ${item.title}`)
+          imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
+          console.log(`  ✅ Imagem convertida: ${item.title}`)
+        } catch (error: any) {
+          console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
+          imageBase64 = ''
+        }
       }
     }
 
@@ -92,13 +98,18 @@ export async function getBasicFavorites(
 
     let imageBase64 = ''
     if (image) {
-      try {
-        console.log(`  [${index + 1}/${mangaList.length}] Convertendo imagem: ${item.title}`)
-        imageBase64 = await urlToBase64(image)
-        console.log(`  ✅ Imagem convertida: ${item.title}`)
-      } catch (error: any) {
-        console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
-        imageBase64 = ''
+      if (config.previewMode) {
+        // Em modo preview, usar URLs originais sem conversão
+        imageBase64 = image
+      } else {
+        try {
+          console.log(`  [${index + 1}/${mangaList.length}] Convertendo imagem: ${item.title}`)
+          imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
+          console.log(`  ✅ Imagem convertida: ${item.title}`)
+        } catch (error: any) {
+          console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
+          imageBase64 = ''
+        }
       }
     }
 
@@ -126,7 +137,7 @@ export async function getBasicFavorites(
     if (image) {
       try {
         console.log(`  [${index + 1}/${charactersList.length}] Convertendo imagem: ${item.name}`)
-        imageBase64 = await urlToBase64(image)
+        imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
         console.log(`  ✅ Imagem convertida: ${item.name}`)
       } catch (error: any) {
         console.warn(`  ⚠️  Erro ao converter imagem de ${item.name}:`, error.message)
@@ -156,7 +167,7 @@ export async function getBasicFavorites(
     if (image) {
       try {
         console.log(`  [${index + 1}/${peopleList.length}] Convertendo imagem: ${item.name}`)
-        imageBase64 = await urlToBase64(image)
+        imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
         console.log(`  ✅ Imagem convertida: ${item.name}`)
       } catch (error: any) {
         console.warn(`  ⚠️  Erro ao converter imagem de ${item.name}:`, error.message)
@@ -184,7 +195,8 @@ export async function getBasicFavorites(
  */
 export async function getFullFavorites(
   basicFavorites: BasicFavorites,
-  sections: string[]
+  sections: string[],
+  config: { previewMode?: boolean }
 ): Promise<FullFavorites> {
   const fullFavorites: FullFavorites = {
     anime: [],
@@ -362,10 +374,10 @@ export async function fetchFavorites(
       mangaMax: maxFavorites,
       charactersMax: maxFavorites,
       peopleMax: maxFavorites,
-    })
+    }, { previewMode: config.previewMode })
     console.log(`✅ Favoritos básicos processados`)
 
-    const fullFavorites = await getFullFavorites(basicFavorites, config.sections || [])
+    const fullFavorites = await getFullFavorites(basicFavorites, config.sections || [], { previewMode: config.previewMode })
 
     return {
       basic: basicFavorites,

@@ -26,7 +26,7 @@ export function CompletedKata({ data, config, style = 'default', size = 'half' }
   }
 
   const hideTitle = config.nonEssential?.completed_kata_hide_title || false
-  const title = config.nonEssential?.completed_kata_title || 'Completed Kata'
+  const title = config.nonEssential?.completed_kata_title || 'Completed Coding Challenges'
   const maxItems = config.nonEssential?.completed_kata_max || 5
 
   const limitedData = data.slice(0, maxItems)

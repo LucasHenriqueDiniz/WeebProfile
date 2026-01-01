@@ -26,7 +26,7 @@ export function RecentWorkouts({
   }
 
   const hideTitle = config.recent_workouts_hide_title || false
-  const title = config.recent_workouts_title || 'Recent Workouts'
+  const title = config.recent_workouts_title || 'Recent Fitness Workouts'
   const maxWorkouts = config.workouts_max || 4
   const weightUnit = config.weight_unit || 'kg'
   const workouts = data.workoutSummaries.slice(0, maxWorkouts)

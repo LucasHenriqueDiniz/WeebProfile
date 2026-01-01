@@ -6,6 +6,7 @@ import { LastUpdates } from "./LastUpdates"
 import { SimpleStatistics } from "./SimpleStatistics"
 import { Statistics } from "./Statistics"
 import { StatisticsHorizontalBar } from "./StatisticsHorizontalBar"
+import { PluginError } from '../../../components/PluginError'
 
 interface RenderMyAnimeListProps {
   config: MyAnimeListConfig
@@ -22,8 +23,19 @@ export function RenderMyAnimeList({
   size = "half",
   hideTerminalEmojis = false,
 }: RenderMyAnimeListProps): React.ReactElement {
-  if (!config.enabled || config.sections.length === 0) {
+  if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
+  }
+
+  // Verificar se há erro nos dados
+  if ((data as any)._error) {
+    return <PluginError
+      pluginName="MyAnimeList"
+      error={(data as any)._error}
+      errorType="config"
+      style={style}
+      compact={true}
+    />
   }
 
   const sections = config.sections

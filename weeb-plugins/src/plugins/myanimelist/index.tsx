@@ -21,8 +21,8 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
     sections: [],
     username: '',
   } as PluginConfig & MyAnimeListConfig,
-  fetchData: async (config: PluginConfig & MyAnimeListConfig, dev = false, essentialConfig?) => {
-    return await fetchMyAnimeListData(config as MyAnimeListConfig, dev) as PluginData & MyAnimeListData
+  fetchData: async (config: PluginConfig & MyAnimeListConfig, dev = false, essentialConfig?, previewMode = false) => {
+    return await fetchMyAnimeListData(config as MyAnimeListConfig, dev, essentialConfig, previewMode) as PluginData & MyAnimeListData
   },
   render: (config: PluginConfig & MyAnimeListConfig, data: PluginData & MyAnimeListData) => {
     const style = ((config as any).style || 'default') as 'default' | 'terminal'

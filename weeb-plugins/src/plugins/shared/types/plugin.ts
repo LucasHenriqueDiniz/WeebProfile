@@ -26,16 +26,18 @@ export interface Plugin<TConfig extends BasePluginConfig = BasePluginConfig, TDa
   
   /**
    * Função para buscar dados do plugin
-   * 
+   *
    * @param config - Configuração do plugin (inclui enabled, sections, nonEssential)
    * @param dev - Se true, retorna dados mock
    * @param essentialConfig - Configurações essenciais (API keys, tokens) vindas do perfil
+   * @param previewMode - Se true, otimiza para preview (ex: não converte imagens para base64)
    * @returns Dados do plugin
    */
   fetchData: (
     config: TConfig,
     dev?: boolean,
-    essentialConfig?: EssentialPluginConfig
+    essentialConfig?: EssentialPluginConfig,
+    previewMode?: boolean
   ) => Promise<TData>
   
   /**

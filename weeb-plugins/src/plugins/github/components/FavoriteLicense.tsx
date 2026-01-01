@@ -55,7 +55,7 @@ export function FavoriteLicense({
   style,
   size,
 }: FavoriteLicenseProps): React.ReactElement {
-  const title = config.favorite_license_title || 'Favorite License'
+  const title = config.favorite_license_title || 'Most Used License'
   const hideTitle = config.favorite_license_hide_title || false
 
   // Usar total dos dados ou estimar se não disponível

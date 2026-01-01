@@ -53,7 +53,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
   }
 
   const hideTitle = config.statistics_hide_title || false
-  const title = config.statistics_title || 'Statistics'
+  const title = config.statistics_title || 'Gaming Statistics'
   const showFeatured = config.statistics_show_featured !== false // Default: true
   const stats = data.statistics
   const activeGames = data.games.filter((g) => (g.playtime_2weeks || 0) > 0)

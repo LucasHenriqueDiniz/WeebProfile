@@ -151,7 +151,7 @@ export function LastUpdates({
   
   let allUpdates = array.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
-  const title = config.last_activity_title || 'Last Activity'
+  const title = config.last_activity_title || 'Recent Anime Activity'
   const maxItems = config.last_activity_max ?? 6
 
   if (maxItems && allUpdates.length > maxItems) {

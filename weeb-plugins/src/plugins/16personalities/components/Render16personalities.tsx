@@ -1,7 +1,3 @@
-/**
- * Main rendering component for the 16personalities plugin
- */
-
 import React from 'react'
 import { FaBrain, FaExternalLinkAlt } from 'react-icons/fa'
 import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
@@ -9,6 +5,7 @@ import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import { PluginError } from '../../../components/PluginError'
 import type { Personality16Config, Personality16Data } from '../types'
 
 interface RenderPersonality16Props {
@@ -69,9 +66,34 @@ export function RenderPersonality16({
   style = 'default',
   size = 'half',
 }: RenderPersonality16Props): React.ReactElement {
-  // If not enabled or no data, return empty
-  if (!config.enabled || !data) {
-    return <div></div>
+  if (!config.enabled || !config.sections || config.sections.length === 0) {
+    return <></>
+  }
+
+  // Validar URL do 16personalities
+  if (config.personality_url) {
+    const urlPattern = /16personalities\.com\/.*\/([A-Z]{4})[\/-]/i
+    const match = config.personality_url.match(urlPattern)
+    if (!match) {
+      return <PluginError
+        pluginName="16Personalities"
+        error="Invalid 16Personalities URL. Please provide a valid personality test result URL."
+        errorType="config"
+        style={style}
+        compact={true}
+      />
+    }
+  }
+
+  // Verificar se há erro nos dados
+  if ((data as any)._error) {
+    return <PluginError
+      pluginName="16Personalities"
+      error={(data as any)._error}
+      errorType="config"
+      style={style}
+      compact={true}
+    />
   }
 
   const title = config.personality_title || 'Personality'

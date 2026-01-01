@@ -22,7 +22,7 @@ interface BadgesProps {
 
 export function Badges({ badges, config, style = 'default', size = 'half' }: BadgesProps): React.ReactElement {
   const hideTitle = config.nonEssential?.badges_hide_title || false
-  const title = config.nonEssential?.badges_title || 'Badges'
+  const title = config.nonEssential?.badges_title || 'Stack Overflow Badges'
 
   const totalBadges = badges.gold + badges.silver + badges.bronze
 

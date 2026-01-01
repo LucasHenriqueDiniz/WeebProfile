@@ -41,7 +41,7 @@ export function TopGames({
   }
 
   const hideTitle = config.top_games_hide_title || false
-  const title = config.top_games_title || 'Top Games'
+  const title = config.top_games_title || 'Most Played Games'
   const maxGames = config.top_games_max || 5
   const displayStyle = config.top_games_style || 'list'
 

@@ -16,6 +16,9 @@ interface WizardProps {
 export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
   const ctrl = useWizardController({ isEditMode, editSvgId })
 
+  // Pass isEditMode to wizard store to control persistence
+  // This will be handled in the store initialization
+
   return (
     <WizardShell stats={ctrl.stats} preview={<LivePreview />} footer={<WizardFooter {...ctrl.footerProps} />}>
       <WizardTabs activeTab={ctrl.activeTab} onTabChange={ctrl.setActiveTab}>

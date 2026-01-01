@@ -60,7 +60,7 @@ export function useMockPluginData({ plugins }: UseMockPluginDataProps): {
                 console.warn(`Plugin "${pluginName}" not found`)
                 return
               }
-              return plugin.fetchData(pluginConfig as any, true) // dev=true para dados mock
+              return plugin.fetchData(pluginConfig as any, true, undefined, true) // dev=true para dados mock + previewMode=true
             })
             .then((pluginData) => {
               if (pluginData) {

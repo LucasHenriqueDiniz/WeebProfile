@@ -23,7 +23,7 @@ interface RankHonorProps {
 
 export function RankHonor({ rank, honor, config, style = 'default', size = 'half' }: RankHonorProps): React.ReactElement {
   const hideTitle = config.nonEssential?.rank_honor_hide_title || false
-  const title = config.nonEssential?.rank_honor_title || 'Rank & Honor'
+  const title = config.nonEssential?.rank_honor_title || 'Codewars Rank & Honor'
 
   return (
     <section id="codewars-rank-honor">

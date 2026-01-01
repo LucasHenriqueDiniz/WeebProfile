@@ -13,6 +13,7 @@ import Image from "next/image"
 import { svgApi, ApiException } from "@/lib/api"
 import { useSvgStore } from "@/stores/svg-store"
 import LoadingScreen from "@/components/loading/LoadingScreen"
+import { SvgViewSkeleton } from "@/components/sections/TemplateCardSkeleton"
 
 export default function SvgViewPage() {
   const params = useParams()
@@ -201,9 +202,14 @@ export default function SvgViewPage() {
 
   const cooldownRemaining = getCooldownRemaining()
 
-  // Só mostrar loading se não tiver dados e estiver carregando
+  // Só mostrar loading completo se não tiver dados em cache e estiver carregando inicialmente
   if (authLoading || (loading && !svg && !urlFromQuery)) {
     return <LoadingScreen />
+  }
+
+  // Mostrar skeleton se estiver carregando dados mas tiver cache
+  if (loading && svg) {
+    return <SvgViewSkeleton />
   }
 
   if (!svg && !urlFromQuery) {
@@ -233,7 +239,7 @@ export default function SvgViewPage() {
 
   return (
     <div className="p-6 md:p-8 lg:p-10">
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Status Badge e Botão de Forçar Geração */}
         {svg && (
@@ -274,7 +280,7 @@ export default function SvgViewPage() {
             </Button>
           </div>
         )}
-        
+
         {/* Cooldown Warning */}
         {svg && cooldownRemaining !== null && cooldownRemaining > 0 && (
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 text-sm text-yellow-700 dark:text-yellow-400">
@@ -282,127 +288,150 @@ export default function SvgViewPage() {
           </div>
         )}
 
-        {/* Image Preview */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Preview da Imagem</CardTitle>
-            <CardDescription>Use o código markdown abaixo no seu README do GitHub</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {imageUrl ? (
-              <div className="border rounded-lg p-4 bg-muted/50 flex items-center justify-center">
-                <img
-                  key={`${svg?.id}-${svg?.lastGeneratedAt || Date.now()}`} // Force re-render quando lastGeneratedAt mudar
-                  src={imageUrl}
-                  alt={svg?.name || "Profile SVG"}
-                  className="max-w-full h-auto"
-                  style={{ maxHeight: "600px" }}
-                  onError={(e) => {
-                    // Se a imagem não carregar, mostrar mensagem
-                    const target = e.currentTarget
-                    target.style.display = "none"
-                    const parent = target.parentElement
-                    if (parent) {
-                      parent.innerHTML = `
-                        <div class="flex flex-col items-center justify-center p-8">
-                          <p class="text-muted-foreground mb-2">Erro ao carregar imagem</p>
-                          <p class="text-sm text-muted-foreground">A imagem pode estar sendo gerada ainda. Aguarde alguns segundos.</p>
-                        </div>
-                      `
-                    }
-                  }}
-                />
-              </div>
-            ) : svg?.status === "failed" ? (
-              <div className="border rounded-lg p-12 bg-destructive/10 flex flex-col items-center justify-center">
-                <p className="text-destructive font-medium mb-2">Erro ao gerar imagem</p>
-                <p className="text-sm text-muted-foreground text-center mb-4">
-                  Houve um problema ao gerar sua imagem SVG. Tente gerar novamente.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    try {
-                      setGenerating(true)
-                      await svgApi.generate(svgId, false)
-                      updateSvg(svgId, { status: "generating" })
-                      setSvg({ ...svg, status: "generating" })
-                      toast({
-                        title: "Gerando...",
-                        description: "A imagem está sendo gerada novamente",
-                      })
-      // Recarregar após um delay com force para pegar dados atualizados
-      setTimeout(() => {
-        loadSvg(true) // force refresh
-      }, 2000)
-                    } catch (error) {
-                      const errorMessage =
-                        error instanceof ApiException
-                          ? error.data.message || error.data.error || error.message
-                          : "Não foi possível iniciar a geração"
-                      toast({
-                        title: "Erro",
-                        description: errorMessage,
-                        variant: "destructive",
-                      })
-                    } finally {
-                      setGenerating(false)
-                    }
-                  }}
-                  disabled={generating}
-                >
-                  {generating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Gerando...
-                    </>
-                  ) : (
-                    "Tentar Novamente"
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <div className="border rounded-lg p-12 bg-muted/50 flex flex-col items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-2">
-                  {svg?.status === "generating" ? "Gerando imagem..." : "Aguardando geração..."}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Isso pode levar alguns segundos. A página será atualizada automaticamente.
-                </p>
-              </div>
-            )}
+        {/* Layout Desktop: PREVIEW | DADOS */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* PREVIEW Column */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Preview da Imagem</CardTitle>
+                <CardDescription>Use o código markdown abaixo no seu README do GitHub</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {imageUrl ? (
+                  <div className="border rounded-lg p-4 bg-muted/50 flex items-center justify-center">
+                    <img
+                      key={`${svg?.id}-${svg?.lastGeneratedAt || Date.now()}`} // Force re-render quando lastGeneratedAt mudar
+                      src={imageUrl}
+                      alt={svg?.name || "Profile SVG"}
+                      className="max-w-full h-auto"
+                      style={{ maxHeight: "400px" }}
+                      onError={(e) => {
+                        // Se a imagem não carregar, mostrar mensagem
+                        const target = e.currentTarget
+                        target.style.display = "none"
+                        const parent = target.parentElement
+                        if (parent) {
+                          parent.innerHTML = `
+                            <div class="flex flex-col items-center justify-center p-8">
+                              <p class="text-muted-foreground mb-2">Erro ao carregar imagem</p>
+                              <p class="text-sm text-muted-foreground">A imagem pode estar sendo gerada ainda. Aguarde alguns segundos.</p>
+                            </div>
+                          `
+                        }
+                      }}
+                    />
+                  </div>
+                ) : svg?.status === "failed" ? (
+                  <div className="border rounded-lg p-12 bg-destructive/10 flex flex-col items-center justify-center">
+                    <p className="text-destructive font-medium mb-2">Erro ao gerar imagem</p>
+                    {svg.lastError && (
+                      <div className="text-sm text-destructive/80 mb-4 p-3 bg-destructive/5 rounded border border-destructive/20 max-w-md">
+                        <p className="font-medium mb-1">Detalhes do erro:</p>
+                        <p className="text-xs break-words">{svg.lastError}</p>
+                      </div>
+                    )}
+                    <p className="text-sm text-muted-foreground text-center mb-4">
+                      Houve um problema ao gerar sua imagem SVG. Tente gerar novamente.
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={async () => {
+                        try {
+                          setGenerating(true)
+                          await svgApi.generate(svgId, false)
+                          updateSvg(svgId, { status: "generating" })
+                          setSvg({ ...svg, status: "generating" })
+                          toast({
+                            title: "Gerando...",
+                            description: "A imagem está sendo gerada novamente",
+                          })
+          // Recarregar após um delay com force para pegar dados atualizados
+          setTimeout(() => {
+            loadSvg(true) // force refresh
+          }, 2000)
+                        } catch (error) {
+                          const errorMessage =
+                            error instanceof ApiException
+                              ? error.data.message || error.data.error || error.message
+                              : "Não foi possível iniciar a geração"
+                          toast({
+                            title: "Erro",
+                            description: errorMessage,
+                            variant: "destructive",
+                          })
+                        } finally {
+                          setGenerating(false)
+                        }
+                      }}
+                      disabled={generating}
+                    >
+                      {generating ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Gerando...
+                        </>
+                      ) : (
+                        "Tentar Novamente"
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="border rounded-lg p-12 bg-muted/50 flex flex-col items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground mb-2">
+                      {svg?.status === "generating" ? "Gerando imagem..." : "Aguardando geração..."}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Isso pode levar alguns segundos. A página será atualizada automaticamente.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
+          {/* DADOS Column */}
+          <div className="space-y-6">
             {/* Markdown Code */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Código Markdown</label>
-                <Button variant="outline" size="sm" onClick={handleCopyMarkdown}>
-                  {copied ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copiar
-                    </>
-                  )}
-                </Button>
-              </div>
-              <pre className="p-4 bg-muted rounded-md font-mono text-sm overflow-x-auto">
-                {markdownCode}
-              </pre>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Código Markdown</CardTitle>
+                <CardDescription>Copie e cole no seu README.md do GitHub</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">Markdown</label>
+                  <Button variant="outline" size="sm" onClick={handleCopyMarkdown}>
+                    {copied ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                        Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copiar
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <pre className="p-4 bg-muted rounded-md font-mono text-sm overflow-x-auto">
+                  {markdownCode}
+                </pre>
+              </CardContent>
+            </Card>
 
             {/* URL */}
             {imageUrl && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">URL da Imagem</label>
+              <Card>
+                <CardHeader>
+                  <CardTitle>URL da Imagem</CardTitle>
+                  <CardDescription>Link direto para a imagem SVG</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={handleCopyUrl}>
+                    <Button variant="outline" size="sm" onClick={handleCopyUrl} className="flex-1">
                       <Copy className="w-4 h-4 mr-2" />
                       Copiar URL
                     </Button>
@@ -410,19 +439,20 @@ export default function SvgViewPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => window.open(imageUrl, "_blank")}
+                      className="flex-1"
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       Abrir
                     </Button>
                   </div>
-                </div>
-                <div className="p-3 bg-muted rounded-md">
-                  <code className="text-sm break-all">{imageUrl}</code>
-                </div>
-              </div>
+                  <div className="p-3 bg-muted rounded-md">
+                    <code className="text-sm break-all">{imageUrl}</code>
+                  </div>
+                </CardContent>
+              </Card>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Info */}
         {svg && (

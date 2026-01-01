@@ -41,7 +41,7 @@ export function TopTracks({ data, interval, config, style = 'default', size = 'h
       size={size}
       displayStyle={displayStyle}
       sectionId="lastfm-top-tracks"
-      sectionName="Top Tracks"
+      sectionName="Top Music Tracks"
       icon={AiOutlineTrophy}
       terminalLabels={{
         rightText: 'Track',

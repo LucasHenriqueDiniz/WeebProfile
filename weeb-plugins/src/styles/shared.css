@@ -272,10 +272,6 @@
   height: 50px
 }
 
-#svg-main .h-\[60px\] {
-  height: 60px
-}
-
 #svg-main .h-\[75px\] {
   height: 75px
 }
@@ -364,8 +360,8 @@
   width: 0.7rem
 }
 
-#svg-main .w-\[60px\] {
-  width: 60px
+#svg-main .w-\[50px\] {
+  width: 50px
 }
 
 #svg-main .w-auto {
@@ -397,6 +393,10 @@
   max-width: 100%
 }
 
+#svg-main .max-w-md {
+  max-width: 28rem
+}
+
 #svg-main .flex-1 {
   flex: 1 1 0%
 }
@@ -421,6 +421,10 @@
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none
+}
+
+#svg-main .resize {
+  resize: both
 }
 
 #svg-main .grid-flow-col {
@@ -690,8 +694,38 @@
   border-style: solid
 }
 
+#svg-main .border-blue-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(191 219 254 / var(--tw-border-opacity, 1))
+}
+
+#svg-main .border-gray-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-border-opacity, 1))
+}
+
+#svg-main .border-orange-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(254 215 170 / var(--tw-border-opacity, 1))
+}
+
+#svg-main .border-red-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(254 202 202 / var(--tw-border-opacity, 1))
+}
+
+#svg-main .border-red-500 {
+  --tw-border-opacity: 1;
+  border-color: rgb(239 68 68 / var(--tw-border-opacity, 1))
+}
+
 #svg-main .border-white\/30 {
   border-color: rgb(255 255 255 / 0.3)
+}
+
+#svg-main .border-yellow-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(254 240 138 / var(--tw-border-opacity, 1))
 }
 
 #svg-main .bg-black {
@@ -711,6 +745,16 @@
   background-color: rgb(0 0 0 / 0.7)
 }
 
+#svg-main .bg-blue-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1))
+}
+
+#svg-main .bg-gray-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1))
+}
+
 #svg-main .bg-gray-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1))
@@ -721,9 +765,23 @@
   background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1))
 }
 
+#svg-main .bg-orange-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 247 237 / var(--tw-bg-opacity, 1))
+}
+
 #svg-main .bg-red-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1))
+}
+
+#svg-main .bg-red-950\/20 {
+  background-color: rgb(69 10 10 / 0.2)
+}
+
+#svg-main .bg-yellow-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1))
 }
 
 #svg-main .fill-yellow-500 {
@@ -795,6 +853,11 @@
   padding-bottom: 0.25rem
 }
 
+#svg-main .py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem
+}
+
 #svg-main .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem
@@ -807,6 +870,10 @@
 
 #svg-main .pb-0\.5 {
   padding-bottom: 0.125rem
+}
+
+#svg-main .pb-2 {
+  padding-bottom: 0.5rem
 }
 
 #svg-main .pl-1 {
@@ -961,6 +1028,10 @@
   letter-spacing: -0.05em
 }
 
+#svg-main .tracking-wide {
+  letter-spacing: 0.025em
+}
+
 #svg-main .tracking-wider {
   letter-spacing: 0.05em
 }
@@ -970,9 +1041,34 @@
   color: rgb(59 130 246 / var(--tw-text-opacity, 1))
 }
 
+#svg-main .text-blue-600 {
+  --tw-text-opacity: 1;
+  color: rgb(37 99 235 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-blue-700 {
+  --tw-text-opacity: 1;
+  color: rgb(29 78 216 / var(--tw-text-opacity, 1))
+}
+
 #svg-main .text-gray-300 {
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-gray-600 {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-gray-700 {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-gray-800 {
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1))
 }
 
 #svg-main .text-green-500 {
@@ -990,6 +1086,36 @@
   color: rgb(249 115 22 / var(--tw-text-opacity, 1))
 }
 
+#svg-main .text-orange-600 {
+  --tw-text-opacity: 1;
+  color: rgb(234 88 12 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-orange-700 {
+  --tw-text-opacity: 1;
+  color: rgb(194 65 12 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-orange-800 {
+  --tw-text-opacity: 1;
+  color: rgb(154 52 18 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-red-200 {
+  --tw-text-opacity: 1;
+  color: rgb(254 202 202 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-red-300 {
+  --tw-text-opacity: 1;
+  color: rgb(252 165 165 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-red-400 {
+  --tw-text-opacity: 1;
+  color: rgb(248 113 113 / var(--tw-text-opacity, 1))
+}
+
 #svg-main .text-red-500 {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity, 1))
@@ -998,6 +1124,16 @@
 #svg-main .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-red-700 {
+  --tw-text-opacity: 1;
+  color: rgb(185 28 28 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-red-800 {
+  --tw-text-opacity: 1;
+  color: rgb(153 27 27 / var(--tw-text-opacity, 1))
 }
 
 #svg-main .text-white {
@@ -1024,6 +1160,21 @@
 #svg-main .text-yellow-500 {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-yellow-600 {
+  --tw-text-opacity: 1;
+  color: rgb(202 138 4 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-yellow-700 {
+  --tw-text-opacity: 1;
+  color: rgb(161 98 7 / var(--tw-text-opacity, 1))
+}
+
+#svg-main .text-yellow-800 {
+  --tw-text-opacity: 1;
+  color: rgb(133 77 14 / var(--tw-text-opacity, 1))
 }
 
 #svg-main .no-underline {
@@ -1150,14 +1301,6 @@
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
 }
 
-#svg-main.half .half\:mb-1\.5 {
-  margin-bottom: 0.375rem
-}
-
-#svg-main.half .half\:mb-2 {
-  margin-bottom: 0.5rem
-}
-
 #svg-main.half .half\:line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
@@ -1193,10 +1336,6 @@
   height: 1.5rem
 }
 
-#svg-main.half .half\:h-\[50px\] {
-  height: 50px
-}
-
 #svg-main.half .half\:min-h-\[100px\] {
   min-height: 100px
 }
@@ -1227,10 +1366,6 @@
 
 #svg-main.half .half\:w-6 {
   width: 1.5rem
-}
-
-#svg-main.half .half\:w-\[50px\] {
-  width: 50px
 }
 
 #svg-main.half .half\:grid-cols-10 {

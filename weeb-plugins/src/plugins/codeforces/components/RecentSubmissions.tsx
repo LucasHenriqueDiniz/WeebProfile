@@ -26,7 +26,7 @@ export function RecentSubmissions({ data, config, style = 'default', size = 'hal
   }
 
   const hideTitle = config.nonEssential?.recent_submissions_hide_title || false
-  const title = config.nonEssential?.recent_submissions_title || 'Recent Submissions'
+  const title = config.nonEssential?.recent_submissions_title || 'Recent Code Submissions'
   const maxItems = config.nonEssential?.recent_submissions_max || 5
 
   const limitedData = data.slice(0, maxItems)

@@ -56,7 +56,7 @@ export async function fetchDuolingoData(
 
   // Validar username
   if (!config.username || typeof config.username !== 'string' || config.username.trim() === '') {
-    throw new Error('Duolingo username is required')
+    throw new Error('Duolingo username is required. Please configure your username in the plugin settings.')
   }
 
   const username = config.username.trim()

@@ -1,6 +1,7 @@
 "use client"
 
 import LoadingScreen from "@/components/loading/LoadingScreen"
+import { SvgCardSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -190,7 +191,7 @@ export default function DashboardPage() {
   }, [svgs, statusFilter, sortBy])
 
 
-  // Só mostrar loading se não tiver dados e estiver carregando
+  // Só mostrar loading completo se não tiver dados e estiver carregando inicialmente
   if (authLoading || (svgsLoading && svgs.length === 0)) {
     return <LoadingScreen />
   }
@@ -277,13 +278,14 @@ export default function DashboardPage() {
       )}
 
       {/* SVGs List */}
-      {filteredAndSortedSvgs.length > 0 ? (
+      {filteredAndSortedSvgs.length > 0 || svgsLoading ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
+          {/* Show actual SVGs */}
           {filteredAndSortedSvgs.map((svg, index) => (
             <motion.div
               key={svg.id}
@@ -355,12 +357,14 @@ export default function DashboardPage() {
                             ? "default"
                             : svg.status === "generating"
                             ? "secondary"
+                            : svg.status === "failed"
+                            ? "destructive"
                             : "outline"
                         }
                         className="gap-1"
                       >
                         {svg.status === "generating" && <Loader2 className="w-3 h-3 animate-spin" />}
-                        {svg.status === "completed" ? "Ready" : svg.status}
+                        {svg.status === "completed" ? "Ready" : svg.status === "failed" ? "Error" : svg.status}
                       </Badge>
                       <Badge
                         variant="outline"
@@ -463,8 +467,17 @@ export default function DashboardPage() {
               </Card>
             </motion.div>
           ))}
+
+          {/* Show skeletons when loading more data */}
+          {svgsLoading && filteredAndSortedSvgs.length > 0 && (
+            <>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <SvgCardSkeleton key={`loading-${index}`} index={filteredAndSortedSvgs.length + index} />
+              ))}
+            </>
+          )}
         </motion.div>
-      ) : svgs.length === 0 ? (
+      ) : svgs.length === 0 && !svgsLoading ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -5,9 +5,8 @@
  */
 
 import React from "react"
-import { PluginManager } from "@weeb/weeb-plugins/plugins"
+import { PluginManager, PluginError } from "@weeb/weeb-plugins"
 import type { SvgConfig } from "../types/index.js"
-import { PluginError } from "../components/PluginError.js"
 
 /**
  * Resultado da renderização de plugins
@@ -69,7 +68,8 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           pluginsData[name] = data
         } catch (error) {
           console.error(`Error fetching data for plugin ${name}:`, error)
-          pluginsErrors[name] = error instanceof Error ? error : new Error(String(error))
+          const err = error instanceof Error ? error : new Error(String(error))
+          pluginsErrors[name] = err
         }
       }
     })

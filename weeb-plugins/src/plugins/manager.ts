@@ -88,13 +88,14 @@ export class PluginManager {
     name: string,
     config: Plugin["config"],
     dev = false,
-    essentialConfig?: EssentialPluginConfig
+    essentialConfig?: EssentialPluginConfig,
+    previewMode = false
   ): Promise<PluginData> {
     const plugin = this.get(name)
     if (!plugin) {
       throw new Error(`Plugin ${name} not found`)
     }
-    return await plugin.fetchData(config, dev, essentialConfig)
+    return await plugin.fetchData(config, dev, essentialConfig, previewMode)
   }
 
   /**
@@ -103,7 +104,8 @@ export class PluginManager {
   public async fetchAllPluginsData(
     pluginsConfig: Record<string, Plugin["config"]>,
     dev = false,
-    essentialConfigs?: Record<string, EssentialPluginConfig>
+    essentialConfigs?: Record<string, EssentialPluginConfig>,
+    previewMode = false
   ): Promise<Record<string, PluginData>> {
     const activePlugins = this.getActivePlugins()
     const results: Record<string, PluginData> = {}
@@ -115,7 +117,7 @@ export class PluginManager {
           try {
             // Obter essentialConfig específico do plugin (se disponível)
             const essentialConfig = essentialConfigs?.[name]
-            const data = await plugin.fetchData(config, dev, essentialConfig)
+            const data = await plugin.fetchData(config, dev, essentialConfig, previewMode)
             results[name] = data
           } catch (error) {
             console.error(`Error fetching data for plugin ${name}:`, error)

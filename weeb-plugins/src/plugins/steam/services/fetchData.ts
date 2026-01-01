@@ -4,6 +4,7 @@
 
 import type { SteamConfig, SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from '../types'
 import { getMockSteamData } from './mock-data'
+import { urlToBase64, IMAGE_OPTIMIZATION } from '../../../utils/image-to-base64'
 
 const STEAM_API_BASE = 'https://api.steampowered.com'
 const STEAM_STORE_API = 'https://store.steampowered.com/api'
@@ -14,8 +15,11 @@ export async function fetchSteamData(
   apiKey?: string,
   steamId?: string
 ): Promise<SteamData> {
-  if (dev || !apiKey || !steamId) {
-    return await getMockSteamData()
+  // Always attempt to fetch real data if apiKey and steamId provided
+  if (!apiKey || !steamId) {
+    console.log('[Steam] No API key or Steam ID provided, using mock data')
+    const mockData = getMockSteamData()
+    return (await convertImageUrlsToBase64(mockData)) as SteamData
   }
 
   try {
@@ -74,8 +78,10 @@ export async function fetchSteamData(
     }
   } catch (error) {
     console.error('Error fetching Steam data:', error)
-    // Fallback to mock data on error
-    return await getMockSteamData()
+    // Fallback to mock data on error, with image conversion
+    console.log('[Steam] Using mock data as fallback')
+    const mockData = getMockSteamData()
+    return (await convertImageUrlsToBase64(mockData)) as SteamData
   }
 }
 
@@ -106,5 +112,30 @@ function calculateStatistics(games: SteamGame[]): SteamStatistics {
     favoriteGame,
     topGames,
   }
+}
+
+async function convertImageUrlsToBase64(data: any): Promise<any> {
+  if (Array.isArray(data)) {
+    return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
+  }
+
+  if (data && typeof data === 'object') {
+    const result: any = {}
+    for (const [key, value] of Object.entries(data)) {
+      if (
+        (key === 'avatar' || key === 'avatarmedium' || key === 'avatarfull' || key === 'header_image') &&
+        typeof value === 'string' &&
+        (value.startsWith('http://') || value.startsWith('https://'))
+      ) {
+        // Converter URL para base64 com otimização
+        result[key] = await urlToBase64(value, 15000, IMAGE_OPTIMIZATION)
+      } else {
+        result[key] = await convertImageUrlsToBase64(value)
+      }
+    }
+    return result
+  }
+
+  return data
 }
 

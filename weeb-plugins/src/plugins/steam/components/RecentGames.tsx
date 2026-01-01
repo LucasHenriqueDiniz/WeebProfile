@@ -39,7 +39,7 @@ export function RecentGames({
   }
 
   const hideTitle = config.recent_games_hide_title || false
-  const title = config.recent_games_title || 'Recent Games'
+  const title = config.recent_games_title || 'Recently Played Games'
   const maxGames = config.recent_games_max || 5
   const displayStyle = config.recent_games_style || 'list'
 

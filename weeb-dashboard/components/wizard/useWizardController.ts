@@ -1,12 +1,12 @@
 /**
  * Wizard Controller Hook
- * 
+ *
  * Extracts all business logic from Wizard component.
  * Returns computed values, handlers, and props for child components.
  */
 
 import { useRouter } from "next/navigation"
-import { useMemo, useState, useCallback } from "react"
+import { useMemo, useState, useCallback, useEffect, useRef } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
@@ -25,7 +25,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
   const router = useRouter()
   const { toast } = useToast()
   const [isSaving, setIsSaving] = useState(false)
-  
+  const hasResetRef = useRef(false)
+
   // UX 2: Use persisted UI state for activeTab
   const { activeTab, setActiveTab } = useWizardUIState()
 
@@ -44,12 +45,20 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     customThemeColors,
     setBasicInfo,
     reset,
+    resetForEdit,
   } = useWizardStore()
+
+  // Reset store when entering edit mode to avoid loading persisted data
+  useEffect(() => {
+    if (isEditMode) {
+      reset()
+    }
+  }, [isEditMode, reset])
 
   // Computed values using canonical selectors
   const enabledPlugins = useMemo(() => {
     const enabled = selectEnabledPluginNames({ plugins, pluginsOrder })
-    debugWizard('Enabled plugins:', enabled)
+    debugWizard("Enabled plugins:", enabled)
     return enabled
   }, [plugins, pluginsOrder])
 
@@ -201,7 +210,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         hideTerminalHeader,
         hideTerminalCommand,
       })
-      
+
       const svgData: any = {
         name: autoName,
         style,
@@ -285,8 +294,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
           : error instanceof Error
-          ? error.message
-          : `Erro ao ${isEditMode ? "atualizar" : "criar"} imagem`
+            ? error.message
+            : `Erro ao ${isEditMode ? "atualizar" : "criar"} imagem`
 
       toast({
         title: "Erro",

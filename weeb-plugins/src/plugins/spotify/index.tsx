@@ -41,8 +41,8 @@ export const spotifyPlugin: Plugin<SpotifyConfig, PluginData & SpotifyData> = {
   /**
    * Fetches plugin data
    */
-  fetchData: async (config: SpotifyConfig, dev = false, essentialConfig) => {
-    return await fetchSpotifyData(config, dev, essentialConfig) as PluginData & SpotifyData
+  fetchData: async (config: SpotifyConfig, dev = false, essentialConfig, previewMode = false) => {
+    return await fetchSpotifyData(config, dev, essentialConfig, previewMode) as PluginData & SpotifyData
   },
   
   /**

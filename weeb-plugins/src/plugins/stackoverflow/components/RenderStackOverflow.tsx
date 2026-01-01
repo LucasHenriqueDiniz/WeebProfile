@@ -1,7 +1,3 @@
-/**
- * Renderizador principal do Plugin Stack Overflow
- */
-
 import React from 'react'
 import type { StackOverflowConfig, StackOverflowData } from '../types'
 import { Reputation } from './Reputation'
@@ -22,7 +18,7 @@ export function RenderStackOverflow({
   style = 'default',
   size = 'half',
 }: RenderStackOverflowProps): React.ReactElement {
-  if (!config.enabled || config.sections.length === 0) {
+  if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
   }
 
@@ -100,6 +96,9 @@ export function RenderStackOverflow({
     </section>
   )
 }
+
+
+
 
 
 

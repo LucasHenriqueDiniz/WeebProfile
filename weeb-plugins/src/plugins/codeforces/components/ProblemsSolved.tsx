@@ -23,7 +23,7 @@ interface ProblemsSolvedProps {
 
 export function ProblemsSolved({ total, byDifficulty, config, style = 'default', size = 'half' }: ProblemsSolvedProps): React.ReactElement {
   const hideTitle = config.nonEssential?.problems_solved_hide_title || false
-  const title = config.nonEssential?.problems_solved_title || 'Problems Solved'
+  const title = config.nonEssential?.problems_solved_title || 'Programming Problems Solved'
 
   const difficultyOrder = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
   const sortedDifficulties = Object.entries(byDifficulty)

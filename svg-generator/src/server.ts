@@ -121,6 +121,14 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   const url = new URL(req.url || "/", `http://${req.headers.host}`)
   const pathname = url.pathname
 
+  // Test route - allow GET
+  if (pathname === "/test") {
+    console.log("Test route reached!")
+    res.writeHead(200, { "Content-Type": "text/plain" })
+    res.end("SVG Generator is running!")
+    return
+  }
+
   // Handle cron endpoint
   if (pathname === "/api/cron/generate-svgs" && req.method === "POST") {
     await handleCronRequest(req, res, url)

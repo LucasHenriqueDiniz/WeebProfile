@@ -28,7 +28,7 @@ export function TagsExpertise({ data, config, style = 'default', size = 'half' }
   }
 
   const hideTitle = config.nonEssential?.tags_expertise_hide_title || false
-  const title = config.nonEssential?.tags_expertise_title || 'Tags Expertise'
+  const title = config.nonEssential?.tags_expertise_title || 'Programming Expertise'
   const maxItems = config.nonEssential?.tags_expertise_max || 5
 
   const limitedData = data.slice(0, maxItems)

@@ -1,9 +1,3 @@
-/**
- * Renderizador principal do Plugin LastFM
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
 import React from 'react'
 import type { LastFmConfig, LastFmData } from '../types'
 import { RecentTracks } from './RecentTracks'
@@ -12,6 +6,7 @@ import { TopArtists } from './TopArtists'
 import { TopAlbums } from './TopAlbums'
 import { TopTracks } from './TopTracks'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import { PluginError } from '../../../components/PluginError'
 
 interface RenderLastFmProps {
   config: LastFmConfig
@@ -26,8 +21,19 @@ export function RenderLastFm({
   style = 'default',
   size = 'half',
 }: RenderLastFmProps): React.ReactElement {
-  if (!config.enabled || config.sections.length === 0) {
+  if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
+  }
+
+  // Verificar se há erro nos dados
+  if ((data as any)._error) {
+    return <PluginError
+      pluginName="LastFM"
+      error={(data as any)._error}
+      errorType="config"
+      style={style}
+      compact={true}
+    />
   }
 
   const sections = config.sections
@@ -158,7 +164,7 @@ export function RenderLastFm({
       }
       default:
         return (
-          <div key={section} className="text-muted">
+          <div key={section} className="text-default-muted">
             Section &quot;{section}&quot; not yet implemented
           </div>
         )

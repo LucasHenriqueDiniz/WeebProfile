@@ -25,7 +25,7 @@ export function RecentTracks({ data, config, style = 'default', size = 'half' }:
     return <></>
   }
 
-  const title = config.recent_tracks_title || 'Recent Tracks'
+  const title = config.recent_tracks_title || 'Recently Played Tracks'
   const hideTitle = config.recent_tracks_hide_title || false
   const rawMaxItems = config.recent_tracks_max || 10
   const maxItems = Math.max(1, Math.min(50, rawMaxItems))

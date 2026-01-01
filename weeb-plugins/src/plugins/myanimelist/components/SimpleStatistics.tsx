@@ -30,7 +30,7 @@ export function SimpleStatistics({
     return <></>
   }
 
-  const title = config.statistics_simple_title || 'Simple Statistics'
+  const title = config.statistics_simple_title || 'Anime & Manga Statistics'
   const hideTitle = config.statistics_simple_hide_title || false
 
   const TotalDays = data.anime.days_watched + data.manga.days_read
