@@ -48,10 +48,10 @@ export async function fetchLastFmData(
       console.log(`[LastFM] Using mock data (dev mode or missing config)`)
 
       const mockData = getMockLastFmData({
-        recent_tracks_max: config.recent_tracks_max || 10,
-        top_artists_max: config.top_artists_max || 10,
-        top_albums_max: config.top_albums_max || 10,
-        top_tracks_max: config.top_tracks_max || 10,
+        recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,
+        top_artists_max: config.nonEssential?.top_artists_max || 10,
+        top_albums_max: config.nonEssential?.top_albums_max || 10,
+        top_tracks_max: config.nonEssential?.top_tracks_max || 10,
       })
 
       console.log(`[LastFM] Mock data generated:`, {
@@ -84,10 +84,10 @@ export async function fetchLastFmData(
     console.log(`[LastFM] API integration not yet implemented, using mock data`)
 
     const mockData = getMockLastFmData({
-      recent_tracks_max: config.recent_tracks_max || 10,
-      top_artists_max: config.top_artists_max || 10,
-      top_albums_max: config.top_albums_max || 10,
-      top_tracks_max: config.top_tracks_max || 10,
+      recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,
+      top_artists_max: config.nonEssential?.top_artists_max || 10,
+      top_albums_max: config.nonEssential?.top_albums_max || 10,
+      top_tracks_max: config.nonEssential?.top_tracks_max || 10,
     })
 
     // Converter URLs de imagens para base64 para que o Playwright possa carregá-las

@@ -68,7 +68,7 @@ export async function fetchMyAnimeListData(
     const profile = await fetchFullProfile(config.username)
 
     // Buscar favoritos (básicos e completos)
-    const favorites = await fetchFavorites(profile, config)
+    const favorites = await fetchFavorites(profile, config, previewMode)
 
     // Transformar últimas atualizações
     const lastUpdates = await transformLastUpdates(profile, config)

@@ -364,7 +364,8 @@ export async function getFullFavorites(
  */
 export async function fetchFavorites(
   profile: MalProfileResponse,
-  config: MyAnimeListConfig
+  config: MyAnimeListConfig,
+  previewMode = false
 ): Promise<{ basic: BasicFavorites; full: FullFavorites }> {
   try {
     console.log(`📥 Processando favoritos básicos...`)
@@ -374,10 +375,10 @@ export async function fetchFavorites(
       mangaMax: maxFavorites,
       charactersMax: maxFavorites,
       peopleMax: maxFavorites,
-    }, { previewMode: config.previewMode })
+    }, { previewMode })
     console.log(`✅ Favoritos básicos processados`)
 
-    const fullFavorites = await getFullFavorites(basicFavorites, config.sections || [], { previewMode: config.previewMode })
+    const fullFavorites = await getFullFavorites(basicFavorites, config.sections || [], { previewMode })
 
     return {
       basic: basicFavorites,
