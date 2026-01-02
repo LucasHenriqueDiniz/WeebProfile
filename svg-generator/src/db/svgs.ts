@@ -56,7 +56,7 @@ export async function claimDueSvgs(limit: number = 50): Promise<SvgRow[]> {
     FROM svgs
     WHERE next_regeneration_at IS NOT NULL
       AND next_regeneration_at <= now()
-      AND status IN ('completed', 'error', 'pending')
+      AND status IN ('completed', 'error', 'pending', 'failed')
       AND is_paused = false
     ORDER BY next_regeneration_at ASC
     LIMIT ${limit}
@@ -85,7 +85,7 @@ export async function checkHasMoreSvgs(): Promise<boolean> {
     FROM svgs
     WHERE next_regeneration_at IS NOT NULL
       AND next_regeneration_at <= now()
-      AND status IN ('completed', 'error', 'pending')
+      AND status IN ('completed', 'error', 'pending', 'failed')
       AND is_paused = false
   `
 
