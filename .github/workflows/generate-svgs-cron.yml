@@ -31,10 +31,10 @@ jobs:
             -H "Authorization: Bearer ${CRON_SECRET}" \
             "${RAILWAY_URL}/api/cron/debug" || echo '{"totalSvgs":0,"dueSvgs":0,"pausedSvgs":0,"futureSvgs":0,"hasMore":false}')
 
-          TOTAL=$(echo "$STATS" | grep -o '"totalSvgs":[0-9]*' | cut -d':' -f2)
-          DUE=$(echo "$STATS" | grep -o '"dueSvgs":[0-9]*' | cut -d':' -f2)
-          PAUSED=$(echo "$STATS" | grep -o '"pausedSvgs":[0-9]*' | cut -d':' -f2)
-          FUTURE=$(echo "$STATS" | grep -o '"futureSvgs":[0-9]*' | cut -d':' -f2)
+          TOTAL=$(echo "$STATS" | grep -o '"totalSvgs":"[0-9]*"' | cut -d'"' -f4)
+          DUE=$(echo "$STATS" | grep -o '"dueSvgs":"[0-9]*"' | cut -d'"' -f4)
+          PAUSED=$(echo "$STATS" | grep -o '"pausedSvgs":"[0-9]*"' | cut -d'"' -f4)
+          FUTURE=$(echo "$STATS" | grep -o '"futureSvgs":"[0-9]*"' | cut -d'"' -f4)
 
           echo "📈 Total SVGs: ${TOTAL:-0}"
           echo "⏰ Due for regeneration: ${DUE:-0}"
