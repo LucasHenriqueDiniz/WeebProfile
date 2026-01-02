@@ -30,11 +30,11 @@ jobs:
           echo "🔗 Railway URL: ${RAILWAY_URL}"
           echo "🔑 CRON_SECRET configured: $([ -n "$CRON_SECRET" ] && echo "YES" || echo "NO")"
 
-          STATS=$(curl -v -fsS --max-time 30 \
-            -H "Authorization: Bearer ${CRON_SECRET}" \
-            "${RAILWAY_URL}/api/cron/debug" 2>&1 || echo '{"totalSvgs":0,"dueSvgs":0,"pausedSvgs":0,"futureSvgs":0,"hasMore":false}')
+          # Try without auth first (debug endpoint might not require it)
+          STATS=$(curl -s --max-time 10 \
+            "${RAILWAY_URL}/api/cron/debug" 2>/dev/null || echo '{"totalSvgs":0,"dueSvgs":0,"pausedSvgs":0,"futureSvgs":0,"hasMore":false}')
 
-          echo "📄 Raw response: $STATS"
+          echo "📄 Response: $STATS"
 
           TOTAL=$(echo "$STATS" | grep -o '"totalSvgs":"[0-9]*"' | cut -d'"' -f4)
           DUE=$(echo "$STATS" | grep -o '"dueSvgs":"[0-9]*"' | cut -d'"' -f4)
