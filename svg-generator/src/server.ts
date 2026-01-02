@@ -82,6 +82,72 @@ async function handleCronRequest(req: IncomingMessage, res: ServerResponse, url:
   }
 }
 
+async function handleDebugRequest(req: IncomingMessage, res: ServerResponse) {
+  try {
+    // Import here to avoid circular dependencies
+    const { checkHasMoreSvgs } = await import("./db/svgs.js")
+
+    const hasMore = await checkHasMoreSvgs()
+
+    // Get count of due SVGs
+    const sql = (await import("postgres")).default
+    const dbUrl = process.env.DATABASE_URL
+    if (!dbUrl) {
+      res.writeHead(500, { "Content-Type": "application/json" })
+      res.end(JSON.stringify({ error: "DATABASE_URL not configured" }))
+      return
+    }
+
+    const db = sql(dbUrl, {
+      max: 1,
+      ssl: dbUrl.includes("supabase") ? "require" : false,
+    })
+
+    const dueSvgs = await db`
+      SELECT COUNT(*) as count
+      FROM svgs
+      WHERE next_regeneration_at IS NOT NULL
+        AND next_regeneration_at <= now()
+        AND status IN ('completed', 'error', 'pending')
+        AND is_paused = false
+    `
+
+    const totalSvgs = await db`
+      SELECT COUNT(*) as count FROM svgs
+    `
+
+    const pausedSvgs = await db`
+      SELECT COUNT(*) as count FROM svgs WHERE is_paused = true
+    `
+
+    const futureSvgs = await db`
+      SELECT COUNT(*) as count FROM svgs
+      WHERE next_regeneration_at IS NOT NULL
+        AND next_regeneration_at > now()
+        AND is_paused = false
+    `
+
+    await db.end()
+
+    res.writeHead(200, { "Content-Type": "application/json" })
+    res.end(JSON.stringify({
+      totalSvgs: totalSvgs[0]?.count || 0,
+      dueSvgs: dueSvgs[0]?.count || 0,
+      pausedSvgs: pausedSvgs[0]?.count || 0,
+      futureSvgs: futureSvgs[0]?.count || 0,
+      hasMore,
+      timestamp: new Date().toISOString()
+    }))
+  } catch (error) {
+    console.error("❌ [DEBUG] Error:", error)
+    res.writeHead(500, { "Content-Type": "application/json" })
+    res.end(JSON.stringify({
+      error: "Failed to get debug info",
+      message: error instanceof Error ? error.message : "Unknown error"
+    }))
+  }
+}
+
 interface GenerateRequest {
   style?: string
   size?: string
@@ -132,6 +198,12 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   // Handle cron endpoint
   if (pathname === "/api/cron/generate-svgs" && req.method === "POST") {
     await handleCronRequest(req, res, url)
+    return
+  }
+
+  // Debug endpoint to check due SVGs
+  if (pathname === "/api/cron/debug" && req.method === "GET") {
+    await handleDebugRequest(req, res)
     return
   }
 

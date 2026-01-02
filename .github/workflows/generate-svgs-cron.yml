@@ -25,28 +25,81 @@ jobs:
             exit 1
           fi
 
-          echo "🔄 Starting regeneration loop..."
+          # Get initial stats
+          echo "📊 Checking SVG status..."
+          STATS=$(curl -fsS --max-time 30 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${RAILWAY_URL}/api/cron/debug" || echo '{"totalSvgs":0,"dueSvgs":0,"pausedSvgs":0,"futureSvgs":0,"hasMore":false}')
+
+          TOTAL=$(echo "$STATS" | grep -o '"totalSvgs":[0-9]*' | cut -d':' -f2)
+          DUE=$(echo "$STATS" | grep -o '"dueSvgs":[0-9]*' | cut -d':' -f2)
+          PAUSED=$(echo "$STATS" | grep -o '"pausedSvgs":[0-9]*' | cut -d':' -f2)
+          FUTURE=$(echo "$STATS" | grep -o '"futureSvgs":[0-9]*' | cut -d':' -f2)
+
+          echo "📈 Total SVGs: ${TOTAL:-0}"
+          echo "⏰ Due for regeneration: ${DUE:-0}"
+          echo "⏸️  Paused: ${PAUSED:-0}"
+          echo "📅 Future regeneration: ${FUTURE:-0}"
+
+          if [ "${DUE:-0}" -eq 0 ]; then
+            echo "✅ No SVGs due for regeneration, exiting"
+            exit 0
+          fi
+
+          echo ""
+          echo "🔄 Starting regeneration loop... (${DUE:-0} SVGs to process)"
+
+          PROCESSED=0
+          START_TIME=$(date +%s)
 
           # Loop até não haver mais SVGs para processar
           for i in {1..20}; do
             echo "📦 Run $i"
-            
+
+            # Calculate elapsed time
+            CURRENT_TIME=$(date +%s)
+            ELAPSED=$((CURRENT_TIME - START_TIME))
+            ELAPSED_MIN=$((ELAPSED / 60))
+            ELAPSED_SEC=$((ELAPSED % 60))
+
+            echo "⏱️  Elapsed: ${ELAPSED_MIN}m ${ELAPSED_SEC}s | Processed so far: ${PROCESSED}"
+
             RES=$(curl -fsS --retry 5 --retry-all-errors --max-time 420 \
               -X POST \
               -H "Authorization: Bearer ${CRON_SECRET}" \
               -H "Content-Type: application/json" \
-              "${RAILWAY_URL}/api/cron/generate-svgs?limit=50&timeboxMs=360000" || echo '{"hasMore":false}')
-            
+              "${RAILWAY_URL}/api/cron/generate-svgs?limit=50&timeboxMs=360000" || echo '{"hasMore":false,"claimed":0,"generated":0,"skipped":0,"failed":0}')
+
+            # Extract stats from response
+            CLAIMED=$(echo "$RES" | grep -o '"claimed":[0-9]*' | cut -d':' -f2)
+            GENERATED=$(echo "$RES" | grep -o '"generated":[0-9]*' | cut -d':' -f2)
+            SKIPPED=$(echo "$RES" | grep -o '"skipped":[0-9]*' | cut -d':' -f2)
+            FAILED=$(echo "$RES" | grep -o '"failed":[0-9]*' | cut -d':' -f2)
+
+            if [ "${CLAIMED:-0}" -gt 0 ]; then
+              PROCESSED=$((PROCESSED + GENERATED))
+              echo "📊 This run: ${CLAIMED} claimed, ${GENERATED} generated, ${SKIPPED} skipped, ${FAILED} failed"
+            fi
+
             echo "$RES"
-            
+
             # Se o endpoint indicar que não há mais trabalho, sai
             if echo "$RES" | grep -q '"hasMore":false'; then
               echo "✅ No more SVGs to process, exiting loop"
               break
             fi
-            
+
             # Pequena pausa entre requests
             sleep 5
           done
 
-          echo "✅ Regeneration loop completed"
+          # Final summary
+          END_TIME=$(date +%s)
+          TOTAL_TIME=$((END_TIME - START_TIME))
+          TOTAL_MIN=$((TOTAL_TIME / 60))
+          TOTAL_SEC=$((TOTAL_TIME % 60))
+
+          echo ""
+          echo "🎉 Regeneration completed!"
+          echo "📈 Total processed: ${PROCESSED} SVGs"
+          echo "⏱️  Total time: ${TOTAL_MIN}m ${TOTAL_SEC}s"
