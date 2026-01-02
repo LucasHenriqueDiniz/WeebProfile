@@ -27,9 +27,14 @@ jobs:
 
           # Get initial stats
           echo "📊 Checking SVG status..."
-          STATS=$(curl -fsS --max-time 30 \
+          echo "🔗 Railway URL: ${RAILWAY_URL}"
+          echo "🔑 CRON_SECRET configured: $([ -n "$CRON_SECRET" ] && echo "YES" || echo "NO")"
+
+          STATS=$(curl -v -fsS --max-time 30 \
             -H "Authorization: Bearer ${CRON_SECRET}" \
-            "${RAILWAY_URL}/api/cron/debug" || echo '{"totalSvgs":0,"dueSvgs":0,"pausedSvgs":0,"futureSvgs":0,"hasMore":false}')
+            "${RAILWAY_URL}/api/cron/debug" 2>&1 || echo '{"totalSvgs":0,"dueSvgs":0,"pausedSvgs":0,"futureSvgs":0,"hasMore":false}')
+
+          echo "📄 Raw response: $STATS"
 
           TOTAL=$(echo "$STATS" | grep -o '"totalSvgs":"[0-9]*"' | cut -d'"' -f4)
           DUE=$(echo "$STATS" | grep -o '"dueSvgs":"[0-9]*"' | cut -d'"' -f4)
