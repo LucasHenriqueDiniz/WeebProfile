@@ -1,5 +1,10 @@
 /**
- * Metadata do Plugin Codeforces
+ * Codeforces Plugin Metadata
+ *
+ * This file defines all sections, configurations and options for the Codeforces plugin.
+ * It's used to automatically generate the centralized metadata.ts.
+ *
+ * DO NOT edit metadata.ts manually - it's automatically generated from this file.
  */
 
 export const codeforcesPluginMetadata = {
@@ -33,7 +38,7 @@ export const codeforcesPluginMetadata = {
     {
       id: "contests_participated",
       name: "Contests Participated",
-      description: "Display number of contests participated",
+      description: "Display the number of contests you've participated in",
       configOptions: [
         {
           key: "contests_participated_hide_title",
@@ -52,7 +57,7 @@ export const codeforcesPluginMetadata = {
     {
       id: "problems_solved",
       name: "Problems Solved",
-      description: "Display problems solved by difficulty",
+      description: "Display the number of problems solved by difficulty",
       configOptions: [
         {
           key: "problems_solved_hide_title",
@@ -71,7 +76,7 @@ export const codeforcesPluginMetadata = {
     {
       id: "recent_submissions",
       name: "Recent Submissions",
-      description: "Display recent submissions",
+      description: "Display your recent problem submissions",
       configOptions: [
         {
           key: "recent_submissions_hide_title",
@@ -89,12 +94,12 @@ export const codeforcesPluginMetadata = {
           key: "recent_submissions_max",
           label: "Maximum submissions",
           type: "number" as const,
-          defaultValue: 5,
+          defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
           description: "Maximum 50 submissions",
-          tooltip: "Número máximo de submissões recentes que serão exibidas. Mostra as submissões mais recentes do seu perfil.",
+          tooltip: "Maximum number of recent submissions to display. Submissions are ordered by most recent.",
         },
       ],
     },
@@ -102,25 +107,6 @@ export const codeforcesPluginMetadata = {
   exampleConfig: {
     enabled: true,
     username: "example",
-    sections: ["rating_rank", "contests_participated", "problems_solved", "recent_submissions"],
-  },
-  defaultConfig: {
-    enabled: false,
-    sections: ["rating_rank"],
-    username: "",
-  },
-  fieldDefaults: {
-    username: "example",
+    sections: ["rating_rank", "contests_participated", "problems_solved"],
   },
 }
-
-
-
-
-
-
-
-
-
-
-

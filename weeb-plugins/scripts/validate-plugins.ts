@@ -1,27 +1,27 @@
 #!/usr/bin/env tsx
 /**
  * Plugin validation script for build time
- * 
+ *
  * Validates:
  * - All registered plugins have an entry in PLUGINS_METADATA
- * - essentialConfigKeys from individual plugins match essentialConfigKeysMetadata
+ * - essentialConfigKeys from individual plugins match essentialConfigKeysMetadata/requiredSecretsMetadata
  * - Icons exist in ICON_REGISTRY
  * - Categories are valid
  * - Sections are valid
  */
 
-import { PLUGINS_METADATA, type PluginMetadata, type PluginCategory } from '../src/plugins/metadata.js'
-import { githubPlugin } from '../src/plugins/github/index.js'
-import { lastFmPlugin } from '../src/plugins/lastfm/index.js'
-import { myAnimeListPlugin } from '../src/plugins/myanimelist/index.js'
-import { PluginManager } from '../src/plugins/manager.js'
-import { existsSync } from 'fs'
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { PLUGINS_METADATA, type PluginMetadata, type PluginCategory } from "../src/plugins/metadata.js"
+import { githubPlugin } from "../src/plugins/github/index.js"
+import { lastFmPlugin } from "../src/plugins/lastfm/index.js"
+import { myAnimeListPlugin } from "../src/plugins/myanimelist/index.js"
+import { PluginManager } from "../src/plugins/manager.js"
+import { existsSync } from "fs"
+import { join, dirname } from "path"
+import { fileURLToPath } from "url"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const PLUGINS_DIR = join(__dirname, '../src/plugins')
+const PLUGINS_DIR = join(__dirname, "../src/plugins")
 
 // Import ICON_REGISTRY from weeb-dashboard (or create a local one)
 // For now, we'll only validate if icon is a non-empty string
@@ -34,7 +34,7 @@ pluginManager.register(lastFmPlugin)
 pluginManager.register(myAnimeListPlugin)
 
 // Valid categories
-const VALID_CATEGORIES: PluginCategory[] = ['coding', 'music', 'anime', 'gaming']
+const VALID_CATEGORIES: PluginCategory[] = ["coding", "music", "anime", "gaming"]
 
 interface ValidationError {
   plugin: string
@@ -53,8 +53,8 @@ for (const pluginName of registeredPlugins) {
   if (!metadataPlugins.includes(pluginName)) {
     errors.push({
       plugin: pluginName,
-      field: 'metadata',
-      message: `Plugin "${pluginName}" is registered but has no entry in PLUGINS_METADATA`
+      field: "metadata",
+      message: `Plugin "${pluginName}" is registered but has no entry in PLUGINS_METADATA`,
     })
   }
 }
@@ -65,27 +65,31 @@ for (const pluginName of metadataPlugins) {
   if (!plugin) {
     warnings.push({
       plugin: pluginName,
-      field: 'registration',
-      message: `Plugin "${pluginName}" has metadata but is not registered in PluginManager`
+      field: "registration",
+      message: `Plugin "${pluginName}" has metadata but is not registered in PluginManager`,
     })
   }
 }
 
-// 3. Validate essentialConfigKeys vs essentialConfigKeysMetadata
+// 3. Validate essentialConfigKeys vs essentialConfigKeysMetadata/requiredSecretsMetadata
 for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
   const plugin = pluginManager.get(pluginName)
   if (!plugin) continue
 
   const pluginKeys = plugin.essentialConfigKeys || []
-  const metadataKeys = metadata.essentialConfigKeysMetadata.map(m => m.key)
+  // Use essentialConfigKeysMetadata (current format)
+  // Type assertion needed because TypeScript doesn't know about requiredSecretsMetadata yet
+  const metadataAny = metadata as any
+  const secretsMetadata = metadataAny.essentialConfigKeysMetadata || metadataAny.requiredSecretsMetadata || []
+  const metadataKeys = secretsMetadata.map((m: any) => m.key)
 
   // Check if all plugin keys are in metadata
   for (const key of pluginKeys) {
     if (!metadataKeys.includes(key)) {
       warnings.push({
         plugin: pluginName,
-        field: 'essentialConfigKeys',
-        message: `Key "${key}" is in essentialConfigKeys but not in essentialConfigKeysMetadata`
+        field: "essentialConfigKeys",
+        message: `Key "${key}" is in essentialConfigKeys but not in essentialConfigKeysMetadata/requiredSecretsMetadata`,
       })
     }
   }
@@ -96,8 +100,8 @@ for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
     if (!pluginKeys.includes(key)) {
       warnings.push({
         plugin: pluginName,
-        field: 'essentialConfigKeys',
-        message: `Key "${key}" is in metadata but not in plugin essentialConfigKeys (this is expected if using only metadata)`
+        field: "essentialConfigKeys",
+        message: `Key "${key}" is in metadata but not in plugin essentialConfigKeys (this is expected if using only metadata)`,
       })
     }
   }
@@ -105,11 +109,11 @@ for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
 
 // 4. Validate icons (check if it's a non-empty string)
 for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
-  if (!metadata.icon || typeof metadata.icon !== 'string' || metadata.icon.trim() === '') {
+  if (!metadata.icon || typeof metadata.icon !== "string" || metadata.icon.trim() === "") {
     errors.push({
       plugin: pluginName,
-      field: 'icon',
-      message: `Icon must be a non-empty string`
+      field: "icon",
+      message: `Icon must be a non-empty string`,
     })
   }
 }
@@ -119,46 +123,46 @@ for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
   if (!VALID_CATEGORIES.includes(metadata.category)) {
     errors.push({
       plugin: pluginName,
-      field: 'category',
-      message: `Category "${metadata.category}" is not valid. Valid categories: ${VALID_CATEGORIES.join(', ')}`
+      field: "category",
+      message: `Category "${metadata.category}" is not valid. Valid categories: ${VALID_CATEGORIES.join(", ")}`,
     })
   }
 }
 
 // 6. Validate sections
 for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
-  if (!metadata.sections || metadata.sections.length === 0) {
+  if (!metadata.sections || !Array.isArray(metadata.sections) || metadata.sections.length < 1) {
     errors.push({
       plugin: pluginName,
-      field: 'sections',
-      message: `Plugin must have at least one section defined`
+      field: "sections",
+      message: `Plugin must have at least one section defined`,
     })
   } else {
     // Validate that sections have unique id
-    const sectionIds = metadata.sections.map(s => s.id)
+    const sectionIds = metadata.sections.map((s) => s.id)
     const uniqueIds = new Set(sectionIds)
     if (sectionIds.length !== uniqueIds.size) {
       errors.push({
         plugin: pluginName,
-        field: 'sections',
-        message: `Sections have duplicate IDs`
+        field: "sections",
+        message: `Sections have duplicate IDs`,
       })
     }
 
     // Validate that each section has id and name
     for (const section of metadata.sections) {
-      if (!section.id || typeof section.id !== 'string' || section.id.trim() === '') {
+      if (!section.id || typeof section.id !== "string" || section.id.trim() === "") {
         errors.push({
           plugin: pluginName,
-          field: 'sections',
-          message: `Section must have a valid id (non-empty)`
+          field: "sections",
+          message: `Section must have a valid id (non-empty)`,
         })
       }
-      if (!section.name || typeof section.name !== 'string' || section.name.trim() === '') {
+      if (!section.name || typeof section.name !== "string" || section.name.trim() === "") {
         errors.push({
           plugin: pluginName,
-          field: 'sections',
-          message: `Section must have a valid name (non-empty)`
+          field: "sections",
+          message: `Section must have a valid name (non-empty)`,
         })
       }
     }
@@ -170,63 +174,67 @@ for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
   if (!metadata.name || metadata.name !== pluginName) {
     errors.push({
       plugin: pluginName,
-      field: 'name',
-      message: `Metadata.name must be equal to the key name ("${pluginName}")`
+      field: "name",
+      message: `Metadata.name must be equal to the key name ("${pluginName}")`,
     })
   }
 
-  if (!metadata.displayName || typeof metadata.displayName !== 'string') {
+  if (!metadata.displayName || typeof metadata.displayName !== "string") {
     errors.push({
       plugin: pluginName,
-      field: 'displayName',
-      message: `displayName deve ser uma string não vazia`
+      field: "displayName",
+      message: `displayName deve ser uma string não vazia`,
     })
   }
 
-  if (!metadata.description || typeof metadata.description !== 'string') {
+  if (!metadata.description || typeof metadata.description !== "string") {
     errors.push({
       plugin: pluginName,
-      field: 'description',
-      message: `description must be a non-empty string`
+      field: "description",
+      message: `description must be a non-empty string`,
     })
   }
 
   if (!Array.isArray(metadata.requiredFields)) {
     errors.push({
       plugin: pluginName,
-      field: 'requiredFields',
-      message: `requiredFields must be an array`
+      field: "requiredFields",
+      message: `requiredFields must be an array`,
     })
   }
 
-  if (!Array.isArray(metadata.essentialConfigKeysMetadata)) {
+  // Validate essentialConfigKeysMetadata or requiredSecretsMetadata
+  // Type assertion needed because TypeScript doesn't know about requiredSecretsMetadata yet
+  const metadataAny = metadata as any
+  const secretsMetadata = metadataAny.essentialConfigKeysMetadata || metadataAny.requiredSecretsMetadata
+  if (secretsMetadata !== undefined && !Array.isArray(secretsMetadata)) {
     errors.push({
       plugin: pluginName,
-      field: 'essentialConfigKeysMetadata',
-      message: `essentialConfigKeysMetadata must be an array`
+      field: "essentialConfigKeysMetadata/requiredSecretsMetadata",
+      message: `essentialConfigKeysMetadata/requiredSecretsMetadata must be an array if defined`,
     })
-  } else {
-    // Validate essentialConfigKeysMetadata structure
-    for (const keyMetadata of metadata.essentialConfigKeysMetadata) {
-      if (!keyMetadata.key || typeof keyMetadata.key !== 'string') {
+  } else if (Array.isArray(secretsMetadata)) {
+    // Validate secretsMetadata structure
+    for (const keyMetadata of secretsMetadata) {
+      if (!keyMetadata.key || typeof keyMetadata.key !== "string") {
         errors.push({
           plugin: pluginName,
-          field: 'essentialConfigKeysMetadata',
-          message: `essentialConfigKeysMetadata[].key must be a non-empty string`
+          field: "essentialConfigKeysMetadata/requiredSecretsMetadata",
+          message: `essentialConfigKeysMetadata/requiredSecretsMetadata[].key must be a non-empty string`,
         })
       }
-      if (!keyMetadata.label || typeof keyMetadata.label !== 'string') {
+      if (!keyMetadata.label || typeof keyMetadata.label !== "string") {
         errors.push({
           plugin: pluginName,
-          field: 'essentialConfigKeysMetadata',
-          message: `essentialConfigKeysMetadata[].label must be a non-empty string`
+          field: "essentialConfigKeysMetadata/requiredSecretsMetadata",
+          message: `essentialConfigKeysMetadata/requiredSecretsMetadata[].label must be a non-empty string`,
         })
       }
-      if (!keyMetadata.type || !['text', 'password', 'oauth'].includes(keyMetadata.type)) {
+      if (!keyMetadata.type || !["text", "password", "oauth"].includes(keyMetadata.type)) {
         errors.push({
           plugin: pluginName,
-          field: 'essentialConfigKeysMetadata',
-          message: `essentialConfigKeysMetadata[].type must be "text", "password", or "oauth"`
+          field: "essentialConfigKeysMetadata/requiredSecretsMetadata",
+          message: `essentialConfigKeysMetadata/requiredSecretsMetadata[].type must be "text", "password", or "oauth"`,
         })
       }
     }
@@ -238,8 +246,8 @@ for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
 
 // Report warnings first
 if (warnings.length > 0) {
-  console.warn('\n⚠️  Validation warnings:\n')
-  warnings.forEach(warning => {
+  console.warn("\n⚠️  Validation warnings:\n")
+  warnings.forEach((warning) => {
     console.warn(`  Plugin: ${warning.plugin}`)
     console.warn(`  Field: ${warning.field}`)
     console.warn(`  Warning: ${warning.message}\n`)
@@ -248,18 +256,17 @@ if (warnings.length > 0) {
 
 // Report errors
 if (errors.length > 0) {
-  console.error('\n❌ Validation errors found:\n')
-  errors.forEach(error => {
+  console.error("\n❌ Validation errors found:\n")
+  errors.forEach((error) => {
     console.error(`  Plugin: ${error.plugin}`)
     console.error(`  Field: ${error.field}`)
     console.error(`  Error: ${error.message}\n`)
   })
   process.exit(1)
 } else {
-  console.log('✅ All plugins are valid!')
+  console.log("✅ All plugins are valid!")
   if (warnings.length > 0) {
     console.log(`⚠️  ${warnings.length} warning(s) found (see above)`)
   }
   process.exit(0)
 }
-

@@ -7,10 +7,11 @@ import { urlToBase64 } from "../../../utils/image-to-base64"
 /**
  * Converte URLs de imagens para base64 recursivamente
  * Necessário para que o Playwright possa carregar as imagens durante a medição de altura
+ * Em modo preview, mantém URLs originais sem conversão
  */
-async function convertImageUrlsToBase64(data: any): Promise<any> {
+async function convertImageUrlsToBase64(data: any, previewMode = false): Promise<any> {
   if (Array.isArray(data)) {
-    return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
+    return Promise.all(data.map((item) => convertImageUrlsToBase64(item, previewMode)))
   }
 
   if (data && typeof data === 'object') {
@@ -21,10 +22,15 @@ async function convertImageUrlsToBase64(data: any): Promise<any> {
         typeof value === 'string' &&
         (value.startsWith('http://') || value.startsWith('https://'))
       ) {
-        // Converter URL para base64
-        result[key] = await urlToBase64(value)
+        // Em modo preview, manter URLs originais
+        if (previewMode) {
+          result[key] = value
+        } else {
+          // Converter URL para base64
+          result[key] = await urlToBase64(value)
+        }
       } else {
-        result[key] = await convertImageUrlsToBase64(value)
+        result[key] = await convertImageUrlsToBase64(value, previewMode)
       }
     }
     return result
@@ -39,13 +45,14 @@ async function convertImageUrlsToBase64(data: any): Promise<any> {
 export async function fetchLastFmData(
   config: LastFmConfig,
   dev = false,
-  essentialConfig?: any
+  essentialConfig?: any,
+  previewMode = false
 ): Promise<LastFmData> {
 
   try {
     // Em modo dev ou preview, retornar dados mock
-    if (dev || !essentialConfig?.apiKey || !essentialConfig?.username) {
-      console.log(`[LastFM] Using mock data (dev mode or missing config)`)
+    if (dev || previewMode || !essentialConfig?.apiKey || !essentialConfig?.username) {
+      console.log(`[LastFM] Using mock data (dev mode, preview mode, or missing config)`)
 
       const mockData = getMockLastFmData({
         recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,
@@ -62,9 +69,15 @@ export async function fetchLastFmData(
         statistics: typeof mockData.statistics
       })
 
+      // Em modo preview, manter URLs originais (não converter para base64)
+      if (previewMode) {
+        console.log(`[LastFM] Preview mode: keeping image URLs as-is (no base64 conversion)`)
+        return mockData
+      }
+
       // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
       console.log(`[LastFM] Converting image URLs to base64...`)
-      const dataWithBase64Images = await convertImageUrlsToBase64(mockData)
+      const dataWithBase64Images = await convertImageUrlsToBase64(mockData, previewMode)
       console.log(`[LastFM] Image conversion completed`)
 
       return dataWithBase64Images
@@ -90,9 +103,15 @@ export async function fetchLastFmData(
       top_tracks_max: config.nonEssential?.top_tracks_max || 10,
     })
 
+    // Em modo preview, manter URLs originais (não converter para base64)
+    if (previewMode) {
+      console.log(`[LastFM] Preview mode: keeping image URLs as-is (no base64 conversion)`)
+      return mockData
+    }
+
     // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
     console.log(`[LastFM] Converting image URLs to base64...`)
-    const dataWithBase64Images = await convertImageUrlsToBase64(mockData)
+    const dataWithBase64Images = await convertImageUrlsToBase64(mockData, previewMode)
     console.log(`[LastFM] Image conversion completed`)
 
     return dataWithBase64Images

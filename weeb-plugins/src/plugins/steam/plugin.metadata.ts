@@ -87,6 +87,7 @@ export const steamPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 games",
+          tooltip: "Maximum number of recent games to display. Games are ordered by most recently played.",
         },
         {
           key: "recent_games_style",
@@ -127,6 +128,7 @@ export const steamPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 games",
+          tooltip: "Maximum number of top games to display. Games are ordered by total playtime (most played first).",
         },
         {
           key: "top_games_style",
@@ -145,14 +147,6 @@ export const steamPluginMetadata = {
   exampleConfig: {
     enabled: true,
     sections: ["statistics", "recent_games", "top_games"],
-  },
-  defaultConfig: {
-    enabled: false,
-    sections: ["statistics"],
-    steamId: "",
-  },
-  fieldDefaults: {
-    steamId: "76561198000000000",
   },
 }
 

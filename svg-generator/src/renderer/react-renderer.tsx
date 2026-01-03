@@ -5,8 +5,9 @@
  */
 
 import React from "react"
-import { PluginManager, PluginError } from "@weeb/weeb-plugins"
+import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import type { SvgConfig } from "../types/index.js"
+import { PluginError } from "../components/PluginError.js"
 
 /**
  * Resultado da renderização de plugins
@@ -61,15 +62,17 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
       const pluginConfig = pluginsConfig[name]
       if (pluginConfig && pluginConfig.enabled) {
         try {
-          const essentialConfig = essentialConfigs[name]
+          // CRÍTICO: essentialConfigs está normalizado com lowercase (ver essential-configs.ts)
+          const pluginNameLower = name.toLowerCase()
+          const essentialConfig = essentialConfigs[pluginNameLower]
+          console.log(`🔍 [RENDER] Plugin ${name}: essentialConfig keys:`, essentialConfig ? Object.keys(essentialConfig) : "none")
           // Usar config.dev explicitamente (já vem normalizado do normalizeConfig)
           const useDev = config.dev === true
           const data = await plugin.fetchData(pluginConfig, useDev, essentialConfig)
           pluginsData[name] = data
         } catch (error) {
           console.error(`Error fetching data for plugin ${name}:`, error)
-          const err = error instanceof Error ? error : new Error(String(error))
-          pluginsErrors[name] = err
+          pluginsErrors[name] = error instanceof Error ? error : new Error(String(error))
         }
       }
     })

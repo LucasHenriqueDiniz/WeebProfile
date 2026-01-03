@@ -1,11 +1,14 @@
 /**
  * Hook para gerenciar profile e essential configs
- * Usa o profile-store para cache e evitar fetches desnecessários
+ * 
+ * REFACTORED: Now uses wizard-bootstrap-store instead of fetching.
+ * Data is bootstrapped once on mount, this hook just reads from store.
+ * 
+ * Maintains backward compatibility with existing components.
  */
 
-import { useEffect, useState, useMemo, useRef } from "react"
-import { useAuth } from "./useAuth"
-import { useProfileStore } from "@/stores/profile-store"
+import { useMemo } from "react"
+import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 
 interface ProfileConfigData {
   profile: {
@@ -18,94 +21,37 @@ interface ProfileConfigData {
 }
 
 export function useProfileConfig(enabledPlugins: string[]): ProfileConfigData {
-  const { user } = useAuth()
-  const { profile, profileLoading, fetchProfile, getEssentialConfigs } = useProfileStore()
-  const [essentialConfigs, setEssentialConfigs] = useState<Record<string, Record<string, boolean>>>({})
-  const [missingConfigs, setMissingConfigs] = useState<Array<{ pluginName: string; missingKeys: Array<{ key: string; label: string }> }>>([])
-  const [loading, setLoading] = useState(false)
+  const { profile, secretsPresence, missingSecrets, loading, error } = useWizardBootstrapStore()
   
-  // Criar chave estável e ordenada para evitar re-renders desnecessários
-  const enabledPluginsKey = useMemo(() => {
-    return [...enabledPlugins].sort().join(",")
-  }, [enabledPlugins])
-  
-  // Usar ref para rastrear se já carregamos os dados iniciais
-  const hasLoadedInitialData = useRef(false)
-  const lastEnabledPluginsKey = useRef<string>("")
-
-  useEffect(() => {
-    // Não fazer queries se não houver usuário autenticado
-    if (!user) {
-      setEssentialConfigs({})
-      setMissingConfigs([])
-      hasLoadedInitialData.current = false
-      return
-    }
-
-    // Se a chave não mudou, não fazer nova query
-    if (hasLoadedInitialData.current && lastEnabledPluginsKey.current === enabledPluginsKey) {
-      return
-    }
+  // Transform secretsPresence to essentialConfigs format (backward compatibility)
+  const essentialConfigs = useMemo(() => {
+    const result: Record<string, Record<string, boolean>> = {}
     
-    // Reset flag when plugins change to force refresh
-    if (lastEnabledPluginsKey.current !== enabledPluginsKey) {
-      hasLoadedInitialData.current = false
-    }
-
-    const loadData = async () => {
-      try {
-        // Buscar profile apenas uma vez ou se não tiver dados em cache
-        // O store já tem lógica de cache, então não precisa forçar
-        if (!hasLoadedInitialData.current || !profile) {
-          await fetchProfile()
-        }
-
-        // Buscar essential configs se houver plugins habilitados
-        if (enabledPlugins.length > 0) {
-          setLoading(true)
-          try {
-            const result = await getEssentialConfigs(enabledPlugins)
-            setEssentialConfigs(result.essentialConfigs)
-            setMissingConfigs(result.missingConfigs)
-            lastEnabledPluginsKey.current = enabledPluginsKey
-            hasLoadedInitialData.current = true
-          } catch (error: any) {
-            // Tratar erros de autenticação
-            if (error?.status === 401 || error?.message?.includes("Unauthorized")) {
-              console.warn("Unauthorized: User session may have expired")
-              setEssentialConfigs({})
-              setMissingConfigs([])
-            } else {
-              console.error("Error loading essential configs:", error)
-            }
-          } finally {
-            setLoading(false)
-          }
-        } else {
-          setEssentialConfigs({})
-          setMissingConfigs([])
-          lastEnabledPluginsKey.current = enabledPluginsKey
-          hasLoadedInitialData.current = true
-        }
-      } catch (error: any) {
-        // Tratar erros de autenticação no fetchProfile também
-        if (error?.status === 401 || error?.message?.includes("Unauthorized")) {
-          console.warn("Unauthorized: User session may have expired")
-        } else {
-          console.error("Error loading profile:", error)
+    // Filter to only enabled plugins
+    for (const pluginName of enabledPlugins) {
+      const pluginPresence = secretsPresence[pluginName]
+      if (pluginPresence) {
+        result[pluginName] = {}
+        for (const [key, presence] of Object.entries(pluginPresence)) {
+          result[pluginName]![key] = presence.exists
         }
       }
     }
-
-    loadData()
-  }, [user, enabledPluginsKey, enabledPlugins, fetchProfile, getEssentialConfigs, profile])
+    
+    return result
+  }, [secretsPresence, enabledPlugins])
+  
+  // Filter missingSecrets to only enabled plugins
+  const filteredMissingConfigs = useMemo(() => {
+    return missingSecrets.filter(({ pluginName }) => enabledPlugins.includes(pluginName))
+  }, [missingSecrets, enabledPlugins])
 
   return {
     profile,
     essentialConfigs,
-    missingConfigs,
-    loading: profileLoading || loading,
-    error: null, // Store gerencia erros internamente
+    missingConfigs: filteredMissingConfigs,
+    loading,
+    error,
   }
 }
 

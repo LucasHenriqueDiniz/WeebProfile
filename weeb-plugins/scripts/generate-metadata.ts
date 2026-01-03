@@ -64,12 +64,11 @@ interface PluginMetadataPartial {
   essentialConfigKeysMetadata: Array<{
     key: string
     label: string
-    type: 'text' | 'password' | 'oauth'
+    type: 'text' | 'password'
     placeholder?: string
     description?: string
     helpUrl?: string
     docKey?: string
-    oauthProvider?: 'spotify'
   }>
   sections: Array<{
     id: string
@@ -86,36 +85,23 @@ interface PluginMetadataPartial {
       description?: string
       placeholder?: string
       required?: boolean
-      options?: Array<{ value: string; label: string }>
-      helpUrl?: string
       tooltip?: string
-      docUrl?: string
+      options?: Array<{ value: string; label: string }>
     }>
   }>
   globalConfigOptions?: Array<{
     key: string
     label: string
-    type: 'number' | 'boolean' | 'string' | 'select' | 'array'
+    type: 'number' | 'boolean' | 'string' | 'select'
     defaultValue?: any
     min?: number
     max?: number
     step?: number
     description?: string
-    placeholder?: string
-    required?: boolean
-    options?: Array<{ value: string; label: string }>
-    helpUrl?: string
     tooltip?: string
-    docUrl?: string
+    options?: Array<{ value: string; label: string }>
   }>
   exampleConfig?: Record<string, any>
-  defaultConfig?: {
-    enabled?: boolean
-    sections?: string[]
-    username?: string
-    [key: string]: any
-  }
-  fieldDefaults?: Record<string, any>
 }
 
 function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): string[] {
@@ -327,15 +313,6 @@ export interface EssentialConfigKeyMetadata {
 }
 
 /**
- * Helper fields for configuration options (tooltip, helpUrl, docUrl)
- */
-export type ConfigOptionHelpFields = {
-  tooltip?: string
-  helpUrl?: string
-  docUrl?: string
-}
-
-/**
  * Configuration option for a section
  */
 export interface SectionConfigOption {
@@ -349,10 +326,8 @@ export interface SectionConfigOption {
   description?: string
   placeholder?: string
   required?: boolean
-  options?: { value: string; label: string }[]
   tooltip?: string
-  helpUrl?: string
-  docUrl?: string
+  options?: { value: string; label: string }[]
 }
 
 /**
@@ -380,20 +355,6 @@ export interface PluginMetadata {
   sections: PluginSection[]
   globalConfigOptions?: SectionConfigOption[] // Global configuration options (apply to all sections)
   exampleConfig?: Record<string, any>
-  /**
-   * Configuração padrão do plugin
-   * Usado quando plugin é adicionado pela primeira vez
-   */
-  defaultConfig?: {
-    enabled?: boolean
-    sections?: string[]
-    username?: string
-    [key: string]: any
-  }
-  /**
-   * Valores padrão para campos específicos
-   */
-  fieldDefaults?: Record<string, any>
 }
 
 /**
@@ -449,20 +410,14 @@ export const PLUGINS_METADATA = {
             if (opt.required !== undefined) {
               optStr += `,\n          required: ${opt.required}`
             }
+            if (opt.tooltip) {
+              optStr += `,\n          tooltip: ${JSON.stringify(opt.tooltip)}`
+            }
             if (opt.options && Array.isArray(opt.options)) {
               const optionsStr = opt.options.map(o => 
                 `            { value: ${JSON.stringify(o.value)}, label: ${JSON.stringify(o.label)} }`
               ).join(',\n')
               optStr += `,\n          options: [\n${optionsStr}\n          ]`
-            }
-            if (opt.helpUrl) {
-              optStr += `,\n          helpUrl: ${JSON.stringify(opt.helpUrl)}`
-            }
-            if (opt.tooltip) {
-              optStr += `,\n          tooltip: ${JSON.stringify(opt.tooltip)}`
-            }
-            if (opt.docUrl) {
-              optStr += `,\n          docUrl: ${JSON.stringify(opt.docUrl)}`
             }
             
             optStr += '\n        }'
@@ -527,6 +482,9 @@ export const PLUGINS_METADATA = {
           if (opt.required !== undefined) {
             optStr += `,\n          required: ${opt.required}`
           }
+          if (opt.tooltip) {
+            optStr += `,\n          tooltip: ${JSON.stringify(opt.tooltip)}`
+          }
           if (opt.options && Array.isArray(opt.options)) {
             const optionsStr = opt.options.map(o => 
               `            { value: ${JSON.stringify(o.value)}, label: ${JSON.stringify(o.label)} }`
@@ -541,7 +499,7 @@ export const PLUGINS_METADATA = {
         globalConfigOptionsStr = `,\n    globalConfigOptions: [\n${globalOptionsStr}\n    ]`
       }
       
-      // Formatar exampleConfig, defaultConfig e fieldDefaults
+      // Formatar exampleConfig
       const formatObject = (obj: any, indent: number) => {
         if (!obj || Object.keys(obj).length === 0) return '{}'
         const lines = JSON.stringify(obj, null, 2).split('\n')
@@ -566,51 +524,11 @@ ${essentialMetadataStr}
 ${sectionsStr}
     ]${globalConfigOptionsStr},
     exampleConfig: ${formatObject(metadata.exampleConfig, 4)},
-    defaultConfig: ${formatObject(metadata.defaultConfig, 4)},
-    fieldDefaults: ${formatObject(metadata.fieldDefaults, 4)},
   },`
     })
     .join('\n\n')
 
   const footer = `} as const satisfies Record<string, PluginMetadata>
-
-/**
- * Lista de plugins desabilitados
- * 
- * Plugins listados aqui não aparecerão na UI e serão filtrados
- * de todas as listas de plugins disponíveis.
- * 
- * Motivos comuns para desabilitar:
- * - Limitações da API (ex: Spotify tem limite de 25 usuários)
- * - APIs deprecadas ou não funcionais
- * - Plugins em desenvolvimento que não devem ser expostos ainda
- */
-export const DISABLED_PLUGINS: string[] = [
-  'spotify', // Desabilitado devido a limitações da API do Spotify (limite de 25 usuários pré-aprovados)
-] as const
-
-/**
- * Verifica se um plugin está desabilitado
- */
-export function isPluginDisabled(pluginName: string): boolean {
-  return DISABLED_PLUGINS.includes(pluginName)
-}
-
-/**
- * Retorna apenas os plugins habilitados (filtra os desabilitados)
- */
-export function getEnabledPlugins(): string[] {
-  return Object.keys(PLUGINS_METADATA).filter(name => !isPluginDisabled(name))
-}
-
-/**
- * Retorna apenas os metadados de plugins habilitados
- */
-export function getEnabledPluginsMetadata(): PluginMetadata[] {
-  return Object.values(PLUGINS_METADATA).filter(
-    (plugin) => !isPluginDisabled(plugin.name)
-  )
-}
 
 /**
  * Helper functions para trabalhar com metadata
@@ -621,8 +539,6 @@ export function getPluginMetadata(pluginName: string): PluginMetadata | undefine
 }
 
 export function getAllPluginsMetadata(): PluginMetadata[] {
-  // Nota: Esta função retorna TODOS os plugins, incluindo desabilitados
-  // Use getEnabledPluginsMetadata() se precisar apenas dos habilitados
   return Object.values(PLUGINS_METADATA)
 }
 

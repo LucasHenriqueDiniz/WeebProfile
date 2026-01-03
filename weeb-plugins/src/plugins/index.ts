@@ -13,20 +13,15 @@ export { steamPlugin } from "./steam/index"
 // Export centralized metadata
 export {
   getAllPluginsMetadata,
-  DISABLED_PLUGINS,
-  getEnabledPlugins,
-  getEnabledPluginsMetadata,
   getPluginCategory,
   getPluginMetadata,
   getPluginsByCategory,
   getPluginsGroupedByCategory,
   getSectionConfigOptions,
-  isPluginDisabled,
   isValidCategory,
   isValidPluginMetadata,
   isValidPluginName,
   PLUGINS_METADATA,
-  type ConfigOptionHelpFields,
   type EssentialConfigKeyMetadata,
   type PluginCategory,
   type PluginMetadata,
@@ -34,13 +29,15 @@ export {
   type SectionConfigOption,
 } from "./metadata"
 
+// Export config option types
+export type { ConfigOptionHelpFields } from "./config-option-types"
+
 // Export plugin tags system
 export { getAllTags, getPluginsByTag, getPluginTags, hasPluginTag, PLUGIN_TAGS, type PluginTag } from "./tags"
-export { spotifyPlugin } from './spotify/index'
-export { duolingoPlugin } from './duolingo/index'
-export { codewarsPlugin } from './codewars/index'
-export { codeforcesPlugin } from './codeforces/index'
-export { stackoverflowPlugin } from './stackoverflow/index'
+export { duolingoPlugin } from "./duolingo/index"
+export { codewarsPlugin } from "./codewars/index"
+export { codeforcesPlugin } from "./codeforces/index"
+export { stackoverflowPlugin } from "./stackoverflow/index"
 
 // Export Plugin Registry (class)
 export {

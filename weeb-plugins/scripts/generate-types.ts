@@ -41,7 +41,11 @@ const sectionsByPlugin = Object.entries(PLUGINS_METADATA)
 // Generate essentialConfigKeys types per plugin
 const essentialKeysByPlugin = Object.entries(PLUGINS_METADATA)
   .map(([name, metadata]) => {
-    const keys = metadata.essentialConfigKeysMetadata.map((m) => `"${m.key}"`).join(" | ")
+    // Use essentialConfigKeysMetadata (current format)
+    // Type assertion needed because TypeScript doesn't know about requiredSecretsMetadata yet
+    const metadataAny = metadata as any
+    const secretsMetadata = metadataAny.essentialConfigKeysMetadata || metadataAny.requiredSecretsMetadata || []
+    const keys = secretsMetadata.map((m: any) => `"${m.key}"`).join(" | ")
     const keyNotation = needsBracketNotation(name) ? `[${JSON.stringify(name)}]` : name
     return `  ${keyNotation}: ${keys || "never"}`
   })
@@ -117,4 +121,3 @@ export function isValidCategory(category: string): category is PluginCategory {
 
 writeFileSync(outputPath, generatedTypes, "utf-8")
 console.log(`✅ Types generated at ${outputPath}`)
-

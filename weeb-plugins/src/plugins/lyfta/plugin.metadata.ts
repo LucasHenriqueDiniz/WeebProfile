@@ -92,6 +92,7 @@ export const lyftaPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 workouts",
+          tooltip: "Maximum number of recent workouts to display. Workouts are ordered by most recent.",
         },
       ],
     },
@@ -121,6 +122,7 @@ export const lyftaPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 exercises",
+          tooltip: "Maximum number of exercises to display. Exercises are ordered by total volume (highest volume first).",
         },
         {
           key: "exercises_show_1rm",
@@ -239,10 +241,5 @@ export const lyftaPluginMetadata = {
     enabled: true,
     sections: ["overview", "last_workout", "exercises", "recent_workouts"],
   },
-  defaultConfig: {
-    enabled: false,
-    sections: ["statistics"],
-  },
-  fieldDefaults: {},
 }
 

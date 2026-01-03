@@ -346,12 +346,4 @@ export const myanimelistPluginMetadata = {
     username: "example",
     sections: ["statistics", "last_activity"],
   },
-  defaultConfig: {
-    enabled: false,
-    sections: ["statistics"],
-    username: "",
-  },
-  fieldDefaults: {
-    username: "example",
-  },
 }

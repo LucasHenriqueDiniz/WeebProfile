@@ -25,9 +25,12 @@ export const profiles = pgTable(
  * 
  * Sensitive data stored separately with restrictive RLS.
  * Frontend cannot read, only write (via API route using service_role).
+ * 
+ * NOTE: Table was renamed from essential_configs to plugin_secrets in the database.
+ * This schema definition uses plugin_secrets to match the actual table name.
  */
 export const essentialConfigs = pgTable(
-  "essential_configs",
+  "plugin_secrets",
   {
     id: uuid("id").defaultRandom().primaryKey(),
     userId: text("user_id").notNull(), // FK to profiles.user_id
@@ -42,6 +45,30 @@ export const essentialConfigs = pgTable(
     pluginKeyIdx: index("idx_essential_configs_plugin_key").on(table.plugin, table.key),
     userIdPluginKeyUnique: unique("idx_essential_configs_user_plugin_key_unique")
       .on(table.userId, table.plugin, table.key), // One value per (userId, plugin, key)
+  })
+)
+
+/**
+ * Plugin configurations table (non-sensitive, reusable per user)
+ * 
+ * Stores reusable plugin configurations like username that apply to all SVGs of a user.
+ * These are merged with svgs.plugins_config during SVG generation.
+ */
+export const pluginConfig = pgTable(
+  "plugin_config",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id").notNull(),
+    plugin: text("plugin").notNull(),
+    config: jsonb("config").notNull().default({}),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdIdx: index("idx_plugin_config_user_id").on(table.userId),
+    pluginIdx: index("idx_plugin_config_plugin").on(table.plugin),
+    userPluginUnique: unique("idx_plugin_config_user_plugin_unique")
+      .on(table.userId, table.plugin), // One config per (userId, plugin)
   })
 )
 
@@ -152,5 +179,8 @@ export const templateLikes = pgTable(
 
 export type TemplateLike = typeof templateLikes.$inferSelect
 export type NewTemplateLike = typeof templateLikes.$inferInsert
+
+export type PluginConfig = typeof pluginConfig.$inferSelect
+export type NewPluginConfig = typeof pluginConfig.$inferInsert
 
 

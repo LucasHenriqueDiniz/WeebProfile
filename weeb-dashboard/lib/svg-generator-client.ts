@@ -136,11 +136,28 @@ export async function generateSvgViaHttpService(config: GenerateSvgRequest): Pro
         const error = await response.json().catch(() => ({ error: "Unknown error" }))
         console.error(`📤 [CLIENT] Error response:`, error)
 
+        // DB unreachable errors (503) are NOT retryable - it's a configuration/network issue
+        if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "SUPABASE_DB_DNS_FAILED")) {
+          const dbError = new Error(error.message || "Generator não conseguiu acessar o banco de dados")
+          ;(dbError as any).code = error.code
+          ;(dbError as any).details = error.details
+          ;(dbError as any).retryable = false // Don't retry DB connection errors
+          throw dbError
+        }
+
         // Treat 5xx errors as potentially retryable (server might be starting)
         if (response.status >= 500 && response.status < 600) {
           const retryableError = new Error(error.error || error.message || `HTTP ${response.status}`)
           ;(retryableError as any).code = "HTTP_" + response.status
           throw retryableError
+        }
+
+        // Propagate structured errors (e.g., MISSING_REQUIRED_CONFIG)
+        if (error.code || error.missing) {
+          const structuredError = new Error(error.message || error.error || `HTTP ${response.status}`)
+          ;(structuredError as any).code = error.code
+          ;(structuredError as any).missing = error.missing
+          throw structuredError
         }
 
         throw new Error(error.error || error.message || `HTTP ${response.status}`)

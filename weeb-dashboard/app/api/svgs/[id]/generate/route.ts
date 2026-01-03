@@ -89,7 +89,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       })
 
       // Converter configuração do Supabase para formato do svg-generator
-      const { plugins, pluginsOrder } = convertSvgToPluginsConfig(svg)
+      const { plugins, pluginsOrder } = await convertSvgToPluginsConfig(svg)
       
       console.log(`🔍 [GENERATE] Converted plugins:`, JSON.stringify(plugins, null, 2))
       console.log(`🔍 [GENERATE] Plugins order:`, pluginsOrder)
@@ -150,24 +150,48 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         success: true,
         svg: updatedSvg,
       })
-    } catch (error) {
-        // Salvar mensagem de erro
-        const errorMessage = error instanceof Error ? error.message : "Unknown error"
-
-        // Atualizar status para "failed" e salvar erro
-        await db
-          .update(svgs)
-          .set({
-            status: "failed",
-            lastError: errorMessage,
-          })
-          .where(eq(svgs.id, id))
+    } catch (error: any) {
+      // Atualizar status para "failed"
+      await db
+        .update(svgs)
+        .set({
+          status: "failed",
+          lastError: error?.message || "Unknown error",
+        })
+        .where(eq(svgs.id, id))
 
       console.error("Error generating SVG:", error)
+      
+      // Check if it's a structured error from svg-generator
+      if (error?.code === "MISSING_REQUIRED_SECRETS" || error?.error === "MISSING_REQUIRED_CONFIG") {
+        return NextResponse.json(
+          {
+            error: "MISSING_REQUIRED_CONFIG",
+            code: "MISSING_REQUIRED_SECRETS",
+            message: error.message || "Missing required secrets or fields for enabled plugins",
+            missing: error.missing || [],
+          },
+          { status: 400 }
+        )
+      }
+      
+      // DB unreachable error - not a user error, it's a system/infrastructure issue
+      if (error?.code === "DATABASE_UNREACHABLE" || error?.code === "SUPABASE_DB_DNS_FAILED") {
+        return NextResponse.json(
+          {
+            error: "Database unreachable",
+            code: error.code,
+            message: error.message || "Generator não conseguiu acessar o banco de dados. Verifique DATABASE_URL e conectividade.",
+            details: error.details,
+          },
+          { status: 503 }
+        )
+      }
+      
       return NextResponse.json(
         {
           error: "Failed to generate SVG",
-          message: errorMessage,
+          message: error instanceof Error ? error.message : "Unknown error",
         },
         { status: 500 }
       )

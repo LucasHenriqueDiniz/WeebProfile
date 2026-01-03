@@ -1,9 +1,9 @@
 /**
- * Metadata do Plugin Duolingo
- * 
+ * Duolingo Plugin Metadata
+ *
  * This file defines all sections, configurations and options for the Duolingo plugin.
  * It's used to automatically generate the centralized metadata.ts.
- * 
+ *
  * DO NOT edit metadata.ts manually - it's automatically generated from this file.
  * 
  * WARNING: This plugin uses an unofficial Duolingo API that may break if Duolingo changes their structure.
@@ -82,7 +82,7 @@ export const duolingoPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 languages",
-          tooltip: "Número máximo de idiomas que serão exibidos. Os idiomas são ordenados por XP total (maior XP primeiro).",
+          tooltip: "Maximum number of languages that will be displayed. Languages are ordered by total XP (highest XP first).",
         },
         {
           key: "languages_learning_hide_languages",
@@ -90,7 +90,7 @@ export const duolingoPluginMetadata = {
           type: "array" as const,
           defaultValue: [],
           description: "List of language names to hide (e.g., Japanese, French)",
-          tooltip: "Lista de nomes de idiomas que você quer ocultar da exibição. Digite o nome exato do idioma (ex: 'Japanese', 'French', 'Spanish') e pressione Enter para adicionar.",
+          tooltip: "List of language names you want to hide from display. Type the exact language name (e.g., 'Japanese', 'French', 'Spanish') and press Enter to add.",
         },
       ],
     },
@@ -100,13 +100,4 @@ export const duolingoPluginMetadata = {
     username: "example",
     sections: ["current_streak", "total_xp", "languages_learning"],
   },
-  defaultConfig: {
-    enabled: false,
-    sections: ["current_streak"],
-    username: "",
-  },
-  fieldDefaults: {
-    username: "example",
-  },
 }
-

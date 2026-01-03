@@ -81,15 +81,6 @@ export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
     people_favorites: "myanimelist/default/people_favorites.svg",
   },
 
-  spotify: {
-    recent_tracks: "spotify/default/recent_tracks.svg",
-    top_artists: "spotify/default/top_artists.svg",
-    top_tracks: "spotify/default/top_tracks.svg",
-    currently_playing: "spotify/default/currently_playing.svg",
-    playlists: "spotify/default/playlists.svg",
-    profile: "spotify/default/profile.svg",
-  },
-
   stackoverflow: {
     reputation: "stackoverflow/default/reputation.svg",
     badges: "stackoverflow/default/badges.svg",

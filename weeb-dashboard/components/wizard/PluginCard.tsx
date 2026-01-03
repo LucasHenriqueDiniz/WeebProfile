@@ -18,6 +18,8 @@ import { SectionConfigDialog } from "./SectionConfigDialog"
 import { cn } from "@/lib/utils"
 import { getSectionPreview } from "@/lib/config/section-previews"
 import { PluginStatusBadge } from "./ValidationIndicator"
+import { PluginConfigStatus } from "./PluginConfigStatus"
+import { SecretInput } from "./SecretInput"
 import type { PluginConfig } from "@/stores/wizard-store"
 
 interface PluginCardProps {
@@ -32,6 +34,7 @@ interface PluginCardProps {
   savingConfigs: Set<string>
   savedConfigs: Set<string>
   essentialConfigs: Record<string, Record<string, any>>
+  secretsPresence?: Record<string, Record<string, { exists: boolean; updatedAt?: string }>>
   style: string
   missingConfigs: Array<{ plugin: string; field: string; label: string }>
   onToggleExpanded: (pluginName: string) => void
@@ -53,6 +56,7 @@ export const PluginCard = React.memo(function PluginCard({
   savingConfigs,
   savedConfigs,
   essentialConfigs,
+  secretsPresence,
   style,
   missingConfigs,
   onToggleExpanded,
@@ -111,25 +115,11 @@ export const PluginCard = React.memo(function PluginCard({
 
   if (!metadata) return null
 
-  const missingEssential =
-    state.enabled &&
-    metadata.requiredFields.some((field) => {
-      const value = (state as any)[field]
-      if (typeof value === 'string') return !value.trim()
-      return !value
-    })
-
   const activeSectionCount = state.sections?.length || 0
   const pluginMissingConfigs = missingConfigs.filter(m => m.plugin === plugin.name)
   
-  // Verificar também requiredFields ao determinar se está faltando configuração
-  const hasMissingRequiredFields = state.enabled && metadata.requiredFields.some((field) => {
-    const value = (state as any)[field]
-    if (typeof value === 'string') return !value.trim()
-    return !value
-  })
-  
-  const hasMissingRequired = (pluginMissingConfigs.length > 0 || hasMissingRequiredFields) && state.enabled
+  // Use missingConfigs from canonical selector (already filtered by enabled && sections.length > 0)
+  const hasMissingRequired = pluginMissingConfigs.length > 0 && state.enabled
   
   // Auto-expand essential configs if missing and enabled
   useEffect(() => {
@@ -296,27 +286,50 @@ export const PluginCard = React.memo(function PluginCard({
                   const hasOAuth = metadata.essentialConfigKeysMetadata?.some(
                     (keyMeta: { type: string }) => keyMeta.type === "oauth"
                   )
-                  return hasOAuth ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Badge variant="outline" className="text-[10px] font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800">
-                            OAuth
-                          </Badge>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">Este plugin requer conexão OAuth</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : null
+                  // API Key tag should only show for password type (tokens/keys), not text (usernames)
+                  const hasApiKey = metadata.essentialConfigKeysMetadata?.some(
+                    (keyMeta: { type: string }) => keyMeta.type === "password"
+                  )
+                  
+                  return (
+                    <>
+                      {hasOAuth && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge variant="outline" className="text-[10px] font-medium bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                                OAuth
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">Este plugin requer conexão OAuth</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                      {hasApiKey && !hasOAuth && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge variant="outline" className="text-[10px] font-medium bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800">
+                                API Key
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">Este plugin requer API Key ou Token</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                    </>
+                  )
                 })()}
                 {state.enabled && (
-                  <PluginStatusBadge
-                    isValid={!missingEssential && activeSectionCount > 0}
-                    hasConfig={!missingEssential}
-                    sectionsCount={activeSectionCount}
-                    totalSections={metadata.sections.length}
+                  <PluginConfigStatus
+                    pluginName={plugin.name}
+                    pluginConfig={state}
+                    missingConfigs={missingConfigs}
+                    secretsPresence={secretsPresence?.[plugin.name]}
                   />
                 )}
               </div>
@@ -357,8 +370,8 @@ export const PluginCard = React.memo(function PluginCard({
           </button>
         </div>
 
-        {/* Quick Actions Bar - Show when enabled */}
-        {state.enabled && (
+        {/* Quick Actions Bar - Show when enabled but NOT expanded (to avoid duplication) */}
+        {state.enabled && !isExpanded && (
           <div className="flex items-center justify-between gap-3 mb-3 pt-2 border-t border-border">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{activeSectionCount}/{metadata.sections.length} seções</span>
@@ -379,170 +392,6 @@ export const PluginCard = React.memo(function PluginCard({
                 {metadata.sections.every(s => state.sections?.includes(s.id)) ? "Desmarcar todas" : "Selecionar todas"}
               </Button>
             </div>
-          </div>
-        )}
-
-        {/* Essential Configs Banner - Show when enabled and missing */}
-        {state.enabled && hasMissingRequired && (
-          <div className="mb-4 p-4 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50">
-            <div className="flex items-start gap-2 mb-2">
-              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-amber-900 dark:text-amber-200 mb-1">
-                  Configuração obrigatória necessária
-                </p>
-                <button
-                  onClick={handleToggleEssentialConfigs}
-                  className="text-xs text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 font-medium underline"
-                  aria-label={showEssentialConfigs ? "Ocultar campos obrigatórios" : "Mostrar campos obrigatórios"}
-                >
-                  {showEssentialConfigs ? "Ocultar" : "Mostrar"} campos obrigatórios
-                </button>
-              </div>
-            </div>
-            
-            {showEssentialConfigs && (
-              <div className="mt-3 space-y-2 pt-2 border-t border-amber-200 dark:border-amber-900/50">
-                {essentialConfigsList.map((configKeyMeta) => {
-                  const configKey = configKeyMeta as { key: string; label: string; type: "text" | "password" | "oauth"; placeholder?: string; description?: string; helpUrl?: string; tooltip?: string; oauthProvider?: string }
-                  const configKeyStr = `${plugin.name}.${configKey.key}`
-                  const isUnlocked = unlockedConfigs.has(configKeyStr)
-                  
-                  // Get value from local state first (for immediate UI updates), fallback to global state
-                  const localValue = localInputValues[`essential.${configKey.key}`]
-                  const value = localValue !== undefined ? localValue : ((state as any)[configKey.key] || "")
-                  
-                  // Check if locked: only lock if value exists AND is marked as configured in DB
-                  // Don't lock if value is empty - user should be able to edit empty fields
-                  const isConfiguredInDb = essentialConfigs[plugin.name]?.[configKey.key] === true
-                  const isConfiguredInState = value && typeof value === 'string' && value.trim().length > 0
-                  
-                  // Lock only if:
-                  // 1. For essentialConfigKeys: configured in DB AND not unlocked
-                  // 2. For requiredFields: configured in state AND not unlocked
-                  // BUT: Never lock if value is empty (user should be able to edit)
-                  const isLocked = !value || value.trim().length === 0
-                    ? false // Never lock empty fields
-                    : hasEssentialConfigs 
-                      ? (isConfiguredInDb && !isUnlocked)
-                      : (isConfiguredInState && !isUnlocked)
-                  
-                  const isSaving = savingConfigs.has(configKeyStr)
-                  const isSaved = savedConfigs.has(configKeyStr)
-                  
-                  // Check if missing: either in missingConfigs OR not configured in state (for requiredFields)
-                  const isMissingInEssential = pluginMissingConfigs.some(m => m.field === configKey.key)
-                  const isMissingInState = !hasEssentialConfigs && (!value || (typeof value === 'string' && !value.trim()))
-                  const isMissing = isMissingInEssential || isMissingInState
-
-                  if (configKey.type === "oauth") {
-                    return (
-                      <div key={configKey.key} className="space-y-1">
-                        <Label className="text-xs font-medium">{configKey.label}</Label>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full h-8 text-xs justify-start border-amber-300 dark:border-amber-800"
-                          onClick={() => {
-                            const currentPath = window.location.pathname + window.location.search
-                            window.location.href = `/api/auth/${configKey.oauthProvider || "spotify"}/authorize?returnTo=${encodeURIComponent(currentPath)}`
-                          }}
-                        >
-                          <Music className="h-3 w-3 mr-2" />
-                          Connect {configKey.oauthProvider || "OAuth"} Account
-                          <ExternalLink className="h-3 w-3 ml-auto" />
-                        </Button>
-                        {configKey.description && (
-                          <p className="text-xs text-muted-foreground">{configKey.description}</p>
-                        )}
-                      </div>
-                    )
-                  }
-
-                  return (
-                    <div key={configKey.key} className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <Label className={cn(
-                          "text-xs font-medium",
-                          isMissing && "text-amber-900 dark:text-amber-200"
-                        )}>
-                          {configKey.label} {isMissing && <span className="text-destructive">*</span>}
-                        </Label>
-                        {configKey.tooltip && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <HelpCircle className="w-3 h-3 text-muted-foreground hover:text-primary transition-colors cursor-help" />
-                              </TooltipTrigger>
-                              <TooltipContent side="top" className="max-w-xs">
-                                <p className="text-xs">{configKey.tooltip}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                        {configKey.helpUrl && (
-                          <a
-                            href={configKey.helpUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:text-primary/80 transition-colors"
-                            onClick={(e) => e.stopPropagation()}
-                            aria-label={`Ajuda para ${configKey.label}`}
-                          >
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="relative flex-1">
-                          <Input
-                            type={configKey.type}
-                            className={cn(
-                              "h-8 text-xs pr-8",
-                              isLocked && "bg-muted/50 text-muted-foreground italic cursor-not-allowed",
-                              isMissing && "border-amber-400 dark:border-amber-700 focus-visible:ring-amber-500"
-                            )}
-                            placeholder={configKey.placeholder || `Enter ${configKey.key}...`}
-                            value={isLocked ? "**** locked" : value}
-                            disabled={isLocked || isSaving}
-                            onChange={(e) => handleEssentialChange(configKey.key, e.target.value)}
-                            aria-label={configKey.label}
-                            aria-required={isMissing}
-                          />
-                          {isLocked && (
-                            <Lock className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                          )}
-                          {isSaving && (
-                            <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-primary animate-spin" />
-                          )}
-                          {isSaved && !isSaving && (
-                            <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-green-600" />
-                          )}
-                        </div>
-                        {isLocked && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleUnlock(configKey.key)}
-                            className="h-8 text-xs"
-                            aria-label={`Desbloquear ${configKey.label}`}
-                          >
-                            <Unlock className="h-3 w-3 mr-1" />
-                            Unlock
-                          </Button>
-                        )}
-                      </div>
-                      {configKey.description && (
-                        <p className="text-xs text-muted-foreground">{configKey.description}</p>
-                      )}
-                      {isMissing && (
-                        <p className="text-xs text-destructive font-medium">{configKey.label} é obrigatório</p>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            )}
           </div>
         )}
 
@@ -622,10 +471,25 @@ export const PluginCard = React.memo(function PluginCard({
           <div className="mt-3 space-y-4 pt-3 px-1 border-t border-border">
             {/* Essential configs - Full section when expanded */}
             {hasEssentialConfigs && (
-              <div className="space-y-2">
+              <div className={cn(
+                "space-y-2 p-3 rounded-lg border transition-colors",
+                pluginMissingConfigs.length > 0 
+                  ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/50" 
+                  : "bg-muted/30 border-border"
+              )}>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-foreground flex items-center gap-2">
-                    <Zap className="h-3 w-3" />
+                  <p className={cn(
+                    "text-xs font-semibold flex items-center gap-2",
+                    pluginMissingConfigs.length > 0 
+                      ? "text-amber-900 dark:text-amber-200" 
+                      : "text-foreground"
+                  )}>
+                    {pluginMissingConfigs.length > 0 && (
+                      <AlertCircle className="h-3 w-3 text-amber-600 dark:text-amber-500" />
+                    )}
+                    {pluginMissingConfigs.length === 0 && (
+                      <Zap className="h-3 w-3" />
+                    )}
                     Configurações obrigatórias
                   </p>
                   {pluginMissingConfigs.length > 0 && (
@@ -638,7 +502,9 @@ export const PluginCard = React.memo(function PluginCard({
                   const configKey = configKeyMeta as { key: string; label: string; type: "text" | "password" | "oauth"; placeholder?: string; description?: string; helpUrl?: string; tooltip?: string; oauthProvider?: string }
                   const configKeyStr = `${plugin.name}.${configKey.key}`
                   const isUnlocked = unlockedConfigs.has(configKeyStr)
-                  const isLocked = essentialConfigs[plugin.name]?.[configKey.key] === true && !isUnlocked
+                  // Get presence info from secretsPresence (source of truth)
+                  const secretPresence = secretsPresence?.[plugin.name]?.[configKey.key]
+                  const exists = secretPresence?.exists || false
                   // Get value from local state first (for immediate UI updates), fallback to global state
                   const localValue = localInputValues[`essential.${configKey.key}`]
                   const value = localValue !== undefined ? localValue : ((state as any)[configKey.key] || "")
@@ -670,67 +536,28 @@ export const PluginCard = React.memo(function PluginCard({
                     )
                   }
 
+                  // Get presence info from secretsPresence (already calculated above)
+                  const updatedAt = secretPresence?.updatedAt
+                  
                   return (
                     <div key={configKey.key} className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <Label className={cn(
-                          "text-xs font-medium",
-                          isMissing && "text-destructive"
-                        )}>
-                          {configKey.label}
-                        </Label>
-                        {configKey.helpUrl && (
-                          <a
-                            href={configKey.helpUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:text-primary/80 transition-colors"
-                            onClick={(e) => e.stopPropagation()}
-                            aria-label={`Ajuda para ${configKey.label}`}
-                          >
-                            <HelpCircle className="w-3 h-3" />
-                          </a>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="relative flex-1">
-                          <Input
-                            type={configKey.type}
-                            className={cn(
-                              "h-8 text-xs pr-8",
-                              isLocked && "bg-muted/50 text-muted-foreground italic cursor-not-allowed",
-                              isMissing && "border-destructive focus-visible:ring-destructive"
-                            )}
-                            placeholder={configKey.placeholder || `Enter ${configKey.key}...`}
-                            value={isLocked ? "**** locked" : value}
-                            disabled={isLocked || isSaving}
-                            onChange={(e) => handleEssentialChange(configKey.key, e.target.value)}
-                            aria-label={configKey.label}
-                            aria-required={isMissing}
-                          />
-                          {isLocked && (
-                            <Lock className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                          )}
-                          {isSaving && (
-                            <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-primary animate-spin" />
-                          )}
-                          {isSaved && !isSaving && (
-                            <CheckCircle2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-green-600" />
-                          )}
-                        </div>
-                        {isLocked && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleUnlock(configKey.key)}
-                            className="h-8 text-xs"
-                            aria-label={`Desbloquear ${configKey.label}`}
-                          >
-                            <Unlock className="h-3 w-3 mr-1" />
-                            Unlock
-                          </Button>
-                        )}
-                      </div>
+                      <SecretInput
+                        plugin={plugin.name}
+                        key={configKey.key}
+                        label={configKey.label}
+                        realValue={value}
+                        exists={exists}
+                        updatedAt={updatedAt}
+                        onChange={(newValue) => handleEssentialChange(configKey.key, newValue)}
+                        onUnlock={() => handleUnlock(configKey.key)}
+                        unlocked={isUnlocked}
+                        saving={isSaving}
+                        saved={isSaved}
+                        isMissing={isMissing}
+                        helpUrl={configKey.helpUrl}
+                        placeholder={configKey.placeholder}
+                        type={configKey.type === "password" ? "password" : "text"}
+                      />
                       {configKey.description && (
                         <p className="text-xs text-muted-foreground">{configKey.description}</p>
                       )}
@@ -743,12 +570,41 @@ export const PluginCard = React.memo(function PluginCard({
               </div>
             )}
 
-            {/* Required fields (fallback) - This should not appear if essentialConfigsList is used */}
-            {(!hasEssentialConfigs && essentialConfigsList.length === 0) && metadata.requiredFields.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-foreground">
-                  Required for data fetching
-                </p>
+            {/* Required fields (non-sensitive) - Show when there are requiredFields but no essentialConfigs */}
+            {!hasEssentialConfigs && metadata.requiredFields.length > 0 && (() => {
+              const missingRequiredFields = pluginMissingConfigs.filter(m => 
+                (metadata.requiredFields as string[]).includes(m.field)
+              )
+              const hasMissing = missingRequiredFields.length > 0
+              
+              return (
+              <div key="required-fields" className={cn(
+                "space-y-2 p-3 rounded-lg border transition-colors",
+                hasMissing
+                  ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/50" 
+                  : "bg-muted/30 border-border"
+              )}>
+                <div className="flex items-center justify-between">
+                  <p className={cn(
+                    "text-xs font-semibold flex items-center gap-2",
+                    hasMissing
+                      ? "text-amber-900 dark:text-amber-200" 
+                      : "text-foreground"
+                  )}>
+                    {hasMissing && (
+                      <AlertCircle className="h-3 w-3 text-amber-600 dark:text-amber-500" />
+                    )}
+                    {!hasMissing && (
+                      <Zap className="h-3 w-3" />
+                    )}
+                    Campos obrigatórios (não sensíveis)
+                  </p>
+                  {hasMissing && (
+                    <Badge variant="destructive" className="text-[10px]">
+                      {missingRequiredFields.length} faltando
+                    </Badge>
+                  )}
+                </div>
                 {metadata.requiredFields.map((field) => {
                   // Get value from local state first (for immediate UI updates), fallback to global state
                   const localValue = localInputValues[`required.${field}`]
@@ -756,11 +612,25 @@ export const PluginCard = React.memo(function PluginCard({
                   const isMissing = pluginMissingConfigs.some(m => m.field === field) || (!value || (typeof value === 'string' && !value.trim()))
                   
                   // Try to find metadata for this field in section configOptions
-                  let fieldMetadata: any = {}
+                  let fieldMetadata: any = {
+                    key: field,
+                    label: field === "username" ? "Duolingo Username" : field.replace(/([A-Z])/g, " $1").trim(),
+                    type: "text" as const,
+                  }
+                  
+                  // Search in all sections for configOptions that match this field
                   for (const section of metadata.sections || []) {
                     const configOption = section.configOptions?.find((opt: any) => opt.key === field)
                     if (configOption) {
-                      fieldMetadata = configOption
+                      fieldMetadata = {
+                        ...fieldMetadata,
+                        label: configOption.label || fieldMetadata.label,
+                        placeholder: (configOption as any).placeholder,
+                        description: (configOption as any).description,
+                        tooltip: (configOption as any).tooltip,
+                        helpUrl: (configOption as any).helpUrl,
+                        required: (configOption as any).required,
+                      }
                       break
                     }
                   }
@@ -769,10 +639,10 @@ export const PluginCard = React.memo(function PluginCard({
                     <div key={field} className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Label className={cn(
-                          "text-xs font-medium capitalize",
+                          "text-xs font-medium",
                           isMissing && "text-destructive"
                         )}>
-                          {fieldMetadata.label || field.replace(/([A-Z])/g, " $1").trim()} {isMissing && <span className="text-destructive">*</span>}
+                          {fieldMetadata.label} {isMissing && <span className="text-destructive">*</span>}
                         </Label>
                         {fieldMetadata.tooltip && (
                           <TooltipProvider>
@@ -793,7 +663,7 @@ export const PluginCard = React.memo(function PluginCard({
                             rel="noopener noreferrer"
                             className="text-primary hover:text-primary/80 transition-colors"
                             onClick={(e) => e.stopPropagation()}
-                            aria-label={`Ajuda para ${fieldMetadata.label || field}`}
+                            aria-label={`Ajuda para ${fieldMetadata.label}`}
                           >
                             <ExternalLink className="w-3 h-3" />
                           </a>
@@ -814,20 +684,21 @@ export const PluginCard = React.memo(function PluginCard({
                         placeholder={fieldMetadata.placeholder || `Enter ${field}...`}
                         value={value}
                         onChange={(e) => handleRequiredFieldChange(field, e.target.value)}
-                        aria-label={fieldMetadata.label || field}
+                        aria-label={fieldMetadata.label}
                         aria-required={isMissing}
                       />
                       {fieldMetadata.description && (
                         <p className="text-xs text-muted-foreground">{fieldMetadata.description}</p>
                       )}
                       {isMissing && (
-                        <p className="text-xs text-destructive font-medium">{fieldMetadata.label || field} é obrigatório</p>
+                        <p className="text-xs text-destructive font-medium">{fieldMetadata.label} é obrigatório</p>
                       )}
                     </div>
                   )
                 })}
               </div>
-            )}
+              )
+            })()}
 
             {/* Sections - Enhanced with previews */}
             <div className="space-y-2">

@@ -34,8 +34,8 @@ export const lastFmPlugin: Plugin<LastFmConfig, PluginData & LastFmData> = {
   /**
    * Fetches LastFM data
    */
-  fetchData: async (config: LastFmConfig, dev = false, essentialConfig) => {
-    return await fetchLastFmData(config, dev, essentialConfig) as PluginData & LastFmData
+  fetchData: async (config: LastFmConfig, dev = false, essentialConfig?, previewMode = false) => {
+    return await fetchLastFmData(config, dev, essentialConfig, previewMode) as PluginData & LastFmData
   },
   
   /**

@@ -39,7 +39,7 @@ export function validateConfig(config: Partial<SvgConfig>): config is SvgConfig 
  * Normalizes configuration (applies defaults)
  */
 export function normalizeConfig(config: Partial<SvgConfig>): SvgConfig {
-  return {
+  const normalized: SvgConfig = {
     style: config.style || "default",
     size: config.size || "half",
     plugins: config.plugins || {},
@@ -51,5 +51,15 @@ export function normalizeConfig(config: Partial<SvgConfig>): SvgConfig {
     hideTerminalHeader: config.hideTerminalHeader || false,
     primaryColor: config.primaryColor || "#ff7a00",
     dev: config.dev ?? false,
+    essentialConfigs: config.essentialConfigs, // CRÍTICO: Preservar essentialConfigs (secrets/tokens)
   }
+  
+  // Debug: log essentialConfigs keys if present
+  if (normalized.essentialConfigs && Object.keys(normalized.essentialConfigs).length > 0) {
+    console.log(`✅ [NORMALIZE] EssentialConfigs preserved:`, Object.keys(normalized.essentialConfigs).map(plugin => 
+      `${plugin}: [${Object.keys(normalized.essentialConfigs![plugin] || {}).join(", ")}]`
+    ).join(", "))
+  }
+  
+  return normalized
 }

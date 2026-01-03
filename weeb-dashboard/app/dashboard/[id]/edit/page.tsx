@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { Loader2 } from "lucide-react"
 import { Wizard } from "@/components/wizard/Wizard"
 import { useWizardStore } from "@/stores/wizard-store"
 import { useSvgStore } from "@/stores/svg-store"
+import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import type { Svg } from "@/lib/db/schema"
 import { ApiException } from "@/lib/api"
 import LoadingScreen from "@/components/loading/LoadingScreen"
@@ -17,14 +18,14 @@ export default function EditSvgPage() {
   const router = useRouter()
   const params = useParams()
   const { getSvg, getSvgSync } = useSvgStore()
+  const { pluginConfigs, bootstrap } = useWizardBootstrapStore()
   const svgId = params.id as string
-
+  
   // Tentar pegar do cache imediatamente
   const cachedSvg = getSvgSync(svgId)
   const [loading, setLoading] = useState(!cachedSvg)
   const [hasLoaded, setHasLoaded] = useState(false)
-  const hasResetRef = useRef(false)
-  const { reset, resetForEdit, setBasicInfo, setPluginConfig, setStyle, setSize, setTheme, setHideTerminalEmojis, setHideTerminalHeader, setHideTerminalCommand, setCustomCss, reorderPlugins, plugins, pluginsOrder } = useWizardStore()
+  const { reset, setBasicInfo, setPluginConfig, setStyle, setSize, setTheme, setHideTerminalEmojis, setHideTerminalHeader, setHideTerminalCommand, setCustomCss, reorderPlugins } = useWizardStore()
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -32,43 +33,32 @@ export default function EditSvgPage() {
       return
     }
 
+    // Bootstrap plugin configs if not already loaded
+    if (user && !pluginConfigs || Object.keys(pluginConfigs).length === 0) {
+      bootstrap()
+    }
+
     // Só carregar uma vez
     if (user && svgId && !hasLoaded) {
-      // Reset store first, then load data
-      if (!hasResetRef.current) {
-        resetForEdit()
-        hasResetRef.current = true
-      }
-
-      // Small delay to ensure reset has completed
+      // Small delay to ensure wizard store reset has completed
       setTimeout(() => {
         loadSvg()
-      }, 50)
+      }, 100)
     } else if (cachedSvg && !hasLoaded) {
-      // Se tem cache, reset first then load data
-      if (!hasResetRef.current) {
-        console.log("🔄 EDIT PAGE: Calling resetForEdit() for cached SVG")
-        resetForEdit()
-        console.log("🔄 EDIT PAGE: resetForEdit() completed for cached SVG")
-        hasResetRef.current = true
-      }
-
-      // Small delay to ensure reset has completed
+      // Se tem cache, carregar dados imediatamente (with small delay for reset)
       setTimeout(() => {
-        console.log("🔄 EDIT PAGE: About to call loadSvgData() with cached SVG")
         loadSvgData(cachedSvg)
         setHasLoaded(true)
         setLoading(false)
-      }, 50)
+      }, 100)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading, svgId])
 
-
   const loadSvg = async () => {
     // Verificar cache novamente (pode ter mudado)
     let svg: Svg | null = getSvgSync(svgId)
-
+    
     try {
       // Se não tem cache, buscar
       if (!svg) {
@@ -112,45 +102,45 @@ export default function EditSvgPage() {
     setStyle(svg.style as "default" | "terminal")
     setSize(svg.size as "half" | "full")
     setTheme(svg.theme || "default")
-
+    
     // Read terminal configs from pluginsConfig
     const terminalConfigs = getTerminalConfigs(svg.pluginsConfig as Record<string, any>)
     setHideTerminalEmojis(terminalConfigs.hideTerminalEmojis)
     setHideTerminalHeader(terminalConfigs.hideTerminalHeader)
     setHideTerminalCommand(terminalConfigs.hideTerminalCommand)
-
+    
     setCustomCss(svg.customCss || "")
 
     // Carregar plugins config
+    // New format: { "github": { enabled: true, sections: [...] }, ... }
+    // Username comes from plugin_config (loaded separately via bootstrap store)
     if (svg.pluginsConfig && typeof svg.pluginsConfig === "object") {
       const pluginsConfig = svg.pluginsConfig as Record<string, any>
-
-      // Processar plugins dinamicamente
-      // Extrair nomes de plugins do pluginsConfig (chaves que começam com PLUGIN_)
-      const pluginNames = Object.keys(pluginsConfig)
-        .filter(key => {
-          const parts = key.split('_');
-          return key.startsWith("PLUGIN_") && parts.length === 2;
-        })
-        .map(key => key.replace("PLUGIN_", "").toLowerCase())
-
-      pluginNames.forEach((pluginName) => {
-        const enabled = pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}`] === true
-        const username = pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}_USERNAME`] || ""
-        const sectionsStr = pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}_SECTIONS`] || ""
-        const sections = sectionsStr ? sectionsStr.split(",").filter(Boolean) : []
-
-        setPluginConfig(pluginName, {
-          enabled,
-          username,
-          sections,
-        })
+      
+      // Get plugin configs from bootstrap store (reusable: username, etc.)
+      const { pluginConfigs: userPluginConfigs } = useWizardBootstrapStore.getState()
+      
+      // Process plugins in new format (no PLUGIN_ prefix)
+      Object.keys(pluginsConfig).forEach((pluginName) => {
+        const pluginConfig = pluginsConfig[pluginName]
+        if (pluginConfig && typeof pluginConfig === "object") {
+          // Merge user config (username) with SVG config (enabled, sections)
+          const userConfig = userPluginConfigs[pluginName] || {}
+          
+          setPluginConfig(pluginName, {
+            enabled: pluginConfig.enabled === true,
+            sections: Array.isArray(pluginConfig.sections) ? pluginConfig.sections : [],
+            sectionConfigs: pluginConfig.sectionConfigs || {},
+            // Apply username from plugin_config (reusable)
+            ...(userConfig.username ? { username: userConfig.username } : {}),
+          })
+        }
       })
-    }
 
-    // Carregar ordem dos plugins
-    if (svg.pluginsOrder) {
-      reorderPlugins(svg.pluginsOrder.split(","))
+      // Carregar ordem dos plugins
+      if (svg.pluginsOrder) {
+        reorderPlugins(svg.pluginsOrder.split(","))
+      }
     }
   }
 

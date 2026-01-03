@@ -1,10 +1,18 @@
 /**
  * Utility to fetch essential configs from Supabase
- * 
+ *
  * svg-generator uses DATABASE_URL to access essential_configs directly,
  * without going through the frontend (maximum security).
- * 
+ *
  * Configure DATABASE_URL in .env file or environment variables.
+ *
+ * IMPORTANT: Use Supavisor (pooler) connection for better reliability:
+ * - Format: postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-1-us-east-2.pooler.supabase.com:6543/postgres
+ * - Port 6543 = Transaction mode (recommended for serverless/edge)
+ * - Port 5432 = Direct connection (only works with IPv6 or IPv4 Add-On)
+ *
+ * Get pooler connection string from:
+ * Supabase Dashboard > Settings > Database > Connection string > Connection pooling (Transaction mode)
  */
 
 import postgres from "postgres"
@@ -17,14 +25,16 @@ config({ path: resolve(process.cwd(), ".env") })
 if (!process.env.DATABASE_URL) {
   throw new Error(
     "DATABASE_URL environment variable is not set. " +
-    "Configure it in .env file or environment variables. " +
-    "Get it from: Supabase Dashboard > Settings > Database > Connection string > URI"
+      "Configure it in .env file or environment variables. " +
+      "Get it from: Supabase Dashboard > Settings > Database > Connection string > URI"
   )
 }
 
 const sql = postgres(process.env.DATABASE_URL, {
   max: 1,
   ssl: process.env.DATABASE_URL.includes("supabase") ? "require" : false,
+  connect_timeout: 10, // 10 seconds timeout
+  idle_timeout: 20,
 })
 
 /**
@@ -32,14 +42,16 @@ const sql = postgres(process.env.DATABASE_URL, {
  * Supports any plugin without hardcoding
  */
 export interface EssentialConfigs {
-  [pluginName: string]: {
-    [key: string]: string | undefined
-  } | undefined
+  [pluginName: string]:
+    | {
+        [key: string]: string | undefined
+      }
+    | undefined
 }
 
 /**
  * Fetches essential configs for a user directly from Supabase
- * 
+ *
  * @param userId - User ID
  * @returns Essential configs organized by plugin
  */
@@ -49,28 +61,76 @@ export async function getUserEssentialConfigs(userId: string): Promise<Essential
   }
 
   try {
-    // Fetch configs from essential_configs table
+    // Fetch configs from plugin_secrets table (renamed from essential_configs)
     const configs = await sql`
       SELECT plugin, key, value
-      FROM essential_configs
+      FROM plugin_secrets
       WHERE user_id = ${userId}
     `
 
     // Convert configs array to EssentialConfigs format
+    // CRÍTICO: Normalizar plugin e key para lowercase para consistência com validação
     const result: EssentialConfigs = {}
-    
+
     for (const config of configs) {
-      if (!result[config.plugin]) {
-        result[config.plugin] = {}
+      const pluginName = (config.plugin || "").toLowerCase()
+      const key = (config.key || "").toLowerCase()
+
+      if (!pluginName || !key) continue
+
+      if (!result[pluginName]) {
+        result[pluginName] = {}
       }
-      result[config.plugin]![config.key] = config.value
+      result[pluginName]![key] = config.value
+    }
+
+    // Debug: log what was found
+    if (Object.keys(result).length > 0) {
+      console.log(
+        `✅ [DB] Essential configs loaded:`,
+        Object.keys(result)
+          .map((plugin) => `${plugin}: [${Object.keys(result[plugin] || {}).join(", ")}]`)
+          .join(", ")
+      )
     }
 
     return result
   } catch (error) {
     console.error(`Error fetching essential configs for user ${userId}:`, error)
-    // Return empty object on error (don't break generation)
-    return {}
+    // Re-throw error so caller can handle it appropriately (503 vs missing secrets)
+    throw error
   }
 }
 
+/**
+ * Fetches reusable plugin configs (username, etc) from plugin_config table
+ * These are user-level configs that apply to all SVGs of a user
+ *
+ * @param userId - User ID
+ * @returns Plugin configs organized by plugin name
+ */
+export async function getUserPluginConfigs(userId: string): Promise<Record<string, Record<string, any>>> {
+  if (!userId) {
+    return {}
+  }
+
+  try {
+    const configs = await sql`
+      SELECT plugin, config
+      FROM plugin_config
+      WHERE user_id = ${userId}
+    `
+
+    const result: Record<string, Record<string, any>> = {}
+
+    for (const config of configs) {
+      result[config.plugin.toLowerCase()] = config.config as Record<string, any>
+    }
+
+    return result
+  } catch (error) {
+    console.error(`Error fetching plugin configs for user ${userId}:`, error)
+    // Re-throw error so caller can handle it appropriately (503 vs missing secrets)
+    throw error
+  }
+}

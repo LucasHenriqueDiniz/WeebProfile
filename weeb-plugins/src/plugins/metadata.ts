@@ -32,15 +32,6 @@ export interface EssentialConfigKeyMetadata {
 }
 
 /**
- * Helper fields for configuration options (tooltip, helpUrl, docUrl)
- */
-export type ConfigOptionHelpFields = {
-  tooltip?: string
-  helpUrl?: string
-  docUrl?: string
-}
-
-/**
  * Configuration option for a section
  */
 export interface SectionConfigOption {
@@ -54,10 +45,8 @@ export interface SectionConfigOption {
   description?: string
   placeholder?: string
   required?: boolean
-  options?: { value: string; label: string }[]
   tooltip?: string
-  helpUrl?: string
-  docUrl?: string
+  options?: { value: string; label: string }[]
 }
 
 /**
@@ -85,20 +74,6 @@ export interface PluginMetadata {
   sections: PluginSection[]
   globalConfigOptions?: SectionConfigOption[] // Global configuration options (apply to all sections)
   exampleConfig?: Record<string, any>
-  /**
-   * Configuração padrão do plugin
-   * Usado quando plugin é adicionado pela primeira vez
-   */
-  defaultConfig?: {
-    enabled?: boolean
-    sections?: string[]
-    username?: string
-    [key: string]: any
-  }
-  /**
-   * Valores padrão para campos específicos
-   */
-  fieldDefaults?: Record<string, any>
 }
 
 /**
@@ -128,14 +103,13 @@ export const PLUGINS_METADATA = {
         configOptions: [
         {
           key: "personality_url",
-          label: "Result URL",
+          label: "16Personalities Result URL",
           type: "string",
           defaultValue: "",
           description: "Paste your 16Personalities test result URL to automatically detect your type",
           placeholder: "https://www.16personalities.com/br/resultados/enfj-t/m/...",
           required: true,
-          helpUrl: "https://www.16personalities.com/free-personality-test",
-          tooltip: "Faça o quiz em https://www.16personalities.com/free-personality-test e copie o resultado (ex: https://www.16personalities.com/br/resultados/enfj-t/m/4lyvq4j0t)"
+          tooltip: "Paste the full URL from your 16Personalities test results page. The plugin will automatically extract your personality type from the URL."
         },
         {
           key: "personality_hide_title",
@@ -173,14 +147,6 @@ export const PLUGINS_METADATA = {
       ],
       "personality_url": "https://www.16personalities.com/br/resultados/enfj-t/m/example"
     },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "personality"
-      ],
-      "personality_url": ""
-    },
-    fieldDefaults: {},
   },
 
   codeforces: {
@@ -217,7 +183,7 @@ export const PLUGINS_METADATA = {
       {
         id: "contests_participated",
         name: "Contests Participated",
-        description: "Display number of contests participated",
+        description: "Display the number of contests you've participated in",
         configOptions: [
         {
           key: "contests_participated_hide_title",
@@ -236,7 +202,7 @@ export const PLUGINS_METADATA = {
       {
         id: "problems_solved",
         name: "Problems Solved",
-        description: "Display problems solved by difficulty",
+        description: "Display the number of problems solved by difficulty",
         configOptions: [
         {
           key: "problems_solved_hide_title",
@@ -255,7 +221,7 @@ export const PLUGINS_METADATA = {
       {
         id: "recent_submissions",
         name: "Recent Submissions",
-        description: "Display recent submissions",
+        description: "Display your recent problem submissions",
         configOptions: [
         {
           key: "recent_submissions_hide_title",
@@ -273,12 +239,12 @@ export const PLUGINS_METADATA = {
           key: "recent_submissions_max",
           label: "Maximum submissions",
           type: "number",
-          defaultValue: 5,
+          defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
           description: "Maximum 50 submissions",
-          tooltip: "Número máximo de submissões recentes que serão exibidas. Mostra as submissões mais recentes do seu perfil."
+          tooltip: "Maximum number of recent submissions to display. Submissions are ordered by most recent."
         }
         ]
       }
@@ -289,28 +255,17 @@ export const PLUGINS_METADATA = {
       "sections": [
         "rating_rank",
         "contests_participated",
-        "problems_solved",
-        "recent_submissions"
+        "problems_solved"
       ]
-    },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "rating_rank"
-      ],
-      "username": ""
-    },
-    fieldDefaults: {
-      "username": "example"
     },
   },
 
   codewars: {
     name: "codewars",
     displayName: "Codewars",
-    description: "Show your Codewars coding statistics",
+    description: "Show your Codewars kata solving statistics",
     category: "coding",
-    icon: "Code",
+    icon: "Swords",
     requiredFields: ["username"],
     essentialConfigKeys: [],
     essentialConfigKeysMetadata: [
@@ -320,7 +275,7 @@ export const PLUGINS_METADATA = {
       {
         id: "rank_honor",
         name: "Rank & Honor",
-        description: "Display your current rank (kyu/dan) and honor points",
+        description: "Display your current rank and honor points",
         configOptions: [
         {
           key: "rank_honor_hide_title",
@@ -339,7 +294,7 @@ export const PLUGINS_METADATA = {
       {
         id: "completed_kata",
         name: "Completed Kata",
-        description: "Display completed kata with difficulty",
+        description: "Display your recently completed kata",
         configOptions: [
         {
           key: "completed_kata_hide_title",
@@ -357,19 +312,19 @@ export const PLUGINS_METADATA = {
           key: "completed_kata_max",
           label: "Maximum kata",
           type: "number",
-          defaultValue: 5,
+          defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
           description: "Maximum 50 kata",
-          tooltip: "Número máximo de kata completados que serão exibidos na seção. Valores maiores podem aumentar o tempo de carregamento."
+          tooltip: "Maximum number of completed kata to display. Kata are ordered by most recently completed."
         }
         ]
       },
       {
         id: "languages_proficiency",
         name: "Languages Proficiency",
-        description: "Display proficiency by programming language",
+        description: "Display your proficiency in different programming languages",
         configOptions: [
         {
           key: "languages_proficiency_hide_title",
@@ -387,19 +342,19 @@ export const PLUGINS_METADATA = {
           key: "languages_proficiency_max",
           label: "Maximum languages",
           type: "number",
-          defaultValue: 5,
+          defaultValue: 10,
           min: 1,
           max: 20,
           step: 1,
           description: "Maximum 20 languages",
-          tooltip: "Número máximo de linguagens de programação que serão exibidas, ordenadas por proficiência (maior XP primeiro)."
+          tooltip: "Maximum number of languages to display. Languages are ordered by score (highest score first)."
         }
         ]
       },
       {
         id: "leaderboard_position",
         name: "Leaderboard Position",
-        description: "Display your position in the leaderboard",
+        description: "Display your position on the global leaderboard",
         configOptions: [
         {
           key: "leaderboard_position_hide_title",
@@ -422,19 +377,8 @@ export const PLUGINS_METADATA = {
       "sections": [
         "rank_honor",
         "completed_kata",
-        "languages_proficiency",
-        "leaderboard_position"
+        "languages_proficiency"
       ]
-    },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "rank_honor"
-      ],
-      "username": ""
-    },
-    fieldDefaults: {
-      "username": "example"
     },
   },
 
@@ -514,7 +458,7 @@ export const PLUGINS_METADATA = {
           max: 20,
           step: 1,
           description: "Maximum 20 languages",
-          tooltip: "Número máximo de idiomas que serão exibidos. Os idiomas são ordenados por XP total (maior XP primeiro)."
+          tooltip: "Maximum number of languages that will be displayed. Languages are ordered by total XP (highest XP first)."
         },
         {
           key: "languages_learning_hide_languages",
@@ -522,7 +466,7 @@ export const PLUGINS_METADATA = {
           type: "array",
           defaultValue: [],
           description: "List of language names to hide (e.g., Japanese, French)",
-          tooltip: "Lista de nomes de idiomas que você quer ocultar da exibição. Digite o nome exato do idioma (ex: 'Japanese', 'French', 'Spanish') e pressione Enter para adicionar."
+          tooltip: "List of language names you want to hide from display. Type the exact language name (e.g., 'Japanese', 'French', 'Spanish') and press Enter to add."
         }
         ]
       }
@@ -536,22 +480,12 @@ export const PLUGINS_METADATA = {
         "languages_learning"
       ]
     },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "current_streak"
-      ],
-      "username": ""
-    },
-    fieldDefaults: {
-      "username": "example"
-    },
   },
 
   github: {
     name: "github",
     displayName: "GitHub",
-    description: "Mostre suas estatísticas do GitHub",
+    description: "Show your GitHub statistics",
     category: "coding",
     icon: "Github",
     requiredFields: ["username"],
@@ -571,7 +505,7 @@ export const PLUGINS_METADATA = {
       {
         id: "profile",
         name: "Profile",
-        description: "Perfil do usuário com avatar e estatísticas básicas",
+        description: "User profile with avatar and basic statistics",
         configOptions: [
         {
           key: "profile_hide_title",
@@ -596,17 +530,17 @@ export const PLUGINS_METADATA = {
       {
         id: "activity",
         name: "Activity",
-        description: "Estatísticas de atividade (commits, PRs, issues)",
+        description: "Activity statistics (commits, PRs, issues)",
         configOptions: [
         {
           key: "activity_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "activity_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Activity"
         }
@@ -615,92 +549,90 @@ export const PLUGINS_METADATA = {
       {
         id: "repositories",
         name: "Repositories",
-        description: "Lista de repositórios",
+        description: "List of repositories",
         configOptions: [
         {
           key: "repositories_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "repositories_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Repositories"
         },
         {
           key: "repositories_use_private",
-          label: "Incluir repositórios privados",
+          label: "Include private repositories",
           type: "boolean",
-          defaultValue: false,
-          tooltip: "Se ativado, inclui repositórios privados na lista. Requer que o token GitHub tenha permissão 'repo' para acessar repositórios privados."
+          defaultValue: false
         },
         {
           key: "repositories_max",
-          label: "Máximo de repositórios",
+          label: "Maximum repositories",
           type: "number",
           defaultValue: 5,
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 repositórios",
-          tooltip: "Número máximo de repositórios que serão exibidos. Os repositórios são ordenados por estrelas (mais estrelados primeiro)."
+          description: "Maximum 20 repositories",
+          tooltip: "Maximum number of repositories to display. Repositories are ordered by stars (most starred first)."
         }
         ]
       },
       {
         id: "favorite_languages",
         name: "Favorite Languages",
-        description: "Linguagens de programação mais usadas",
+        description: "Most used programming languages",
         configOptions: [
         {
           key: "favorite_languages_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "favorite_languages_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Favorite Languages"
         },
         {
           key: "favorite_languages_max_languages",
-          label: "Máximo de linguagens",
+          label: "Maximum languages",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 linguagens",
-          tooltip: "Número máximo de linguagens de programação que serão exibidas. As linguagens são ordenadas por quantidade de código (mais código primeiro)."
+          description: "Maximum 20 languages",
+          tooltip: "Maximum number of programming languages to display. Languages are ordered by total bytes of code (most used first)."
         },
         {
           key: "favorite_languages_ignore_languages",
           label: "Ignorar linguagens",
           type: "string",
           defaultValue: "",
-          description: "Lista de linguagens separadas por vírgula para ignorar",
-          tooltip: "Lista de linguagens que você quer ignorar na exibição. Separe por vírgula (ex: 'HTML, CSS, Markdown'). Linguagens ignoradas não aparecerão na lista."
+          description: "Lista de linguagens separadas por vírgula para ignorar"
         }
         ]
       },
       {
         id: "favorite_license",
         name: "Favorite License",
-        description: "Licença mais usada nos repositórios",
+        description: "Most used license in repositories",
         configOptions: [
         {
           key: "favorite_license_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "favorite_license_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Favorite License"
         }
@@ -709,74 +641,74 @@ export const PLUGINS_METADATA = {
       {
         id: "calendar",
         name: "Calendar",
-        description: "Calendário de contribuições",
+        description: "Contribution calendar",
         configOptions: [
         {
           key: "calendar_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "calendar_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Calendar"
         },
         {
           key: "calendar_years",
-          label: "Anos",
+          label: "Years",
           type: "string",
           defaultValue: "",
-          description: "Lista de anos separados por vírgula (ex: '2023,2024'). Deixe vazio para ano atual",
-          tooltip: "Anos do calendário de contribuições a serem exibidos. Separe múltiplos anos por vírgula (ex: '2023,2024'). Deixe vazio para mostrar apenas o ano atual."
+          description: "Comma-separated list of years (e.g., '2023,2024'). Leave empty for current year",
+          tooltip: "Specify which years to display in the contribution calendar. If empty, only the current year is shown."
         }
         ]
       },
       {
         id: "code_habits",
         name: "Code Habits",
-        description: "Hábitos de código (horários, dias da semana)",
+        description: "Code habits (hours, days of the week)",
         configOptions: [
         {
           key: "code_habits_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "code_habits_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Code Habits"
         },
         {
           key: "code_habits_hide_languages",
-          label: "Ocultar linguagens",
+          label: "Hide languages",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "code_habits_hide_stats",
-          label: "Ocultar estatísticas",
+          label: "Hide statistics",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "code_habits_hide_weekdays",
-          label: "Ocultar dias da semana",
+          label: "Hide weekdays",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "code_habits_hide_hours",
-          label: "Ocultar horários",
+          label: "Hide hours",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "code_habits_hide_footer",
-          label: "Ocultar rodapé",
+          label: "Hide footer",
           type: "boolean",
           defaultValue: false
         }
@@ -785,77 +717,77 @@ export const PLUGINS_METADATA = {
       {
         id: "starred_repositories",
         name: "Starred Repositories",
-        description: "Repositórios favoritados (starred)",
+        description: "Starred repositories",
         configOptions: [
         {
           key: "starred_repositories_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "starred_repositories_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Starred Repositories"
         },
         {
           key: "starred_repositories_max",
-          label: "Máximo de repositórios",
+          label: "Maximum repositories",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 repositórios",
-          tooltip: "Número máximo de repositórios favoritados (starred) que serão exibidos. Os repositórios são ordenados por data de favoritação (mais recentes primeiro)."
+          description: "Maximum 50 repositories",
+          tooltip: "Maximum number of starred repositories to display. Repositories are ordered by most recently starred."
         }
         ]
       },
       {
         id: "gists",
         name: "Gists",
-        description: "Gists públicos do usuário",
+        description: "User's public gists",
         configOptions: [
         {
           key: "gists_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "gists_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Gists"
         },
         {
           key: "gists_max",
-          label: "Máximo de gists",
+          label: "Maximum gists",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 gists",
-          tooltip: "Número máximo de gists públicos que serão exibidos. Os gists são ordenados por data de criação (mais recentes primeiro)."
+          description: "Maximum 50 gists",
+          tooltip: "Maximum number of gists to display. Gists are ordered by most recently created."
         }
         ]
       },
       {
         id: "stargazers",
         name: "Stargazers",
-        description: "Total de estrelas recebidas nos repositórios",
+        description: "Total stars received on repositories",
         configOptions: [
         {
           key: "stargazers_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "stargazers_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Stargazers"
         }
@@ -864,17 +796,17 @@ export const PLUGINS_METADATA = {
       {
         id: "top_repositories",
         name: "Top Repositories",
-        description: "Repositórios com mais estrelas (alias para stargazers)",
+        description: "Repositories with most stars (alias for stargazers)",
         configOptions: [
         {
           key: "stargazers_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "stargazers_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Top Repositories"
         }
@@ -883,142 +815,144 @@ export const PLUGINS_METADATA = {
       {
         id: "star_lists",
         name: "Star Lists",
-        description: "Listas de repositórios favoritados organizados",
+        description: "Organized lists of starred repositories",
         configOptions: [
         {
           key: "star_lists_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "star_lists_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Star Lists"
         },
         {
           key: "star_lists_max",
-          label: "Máximo de listas",
+          label: "Maximum lists",
           type: "number",
           defaultValue: 1,
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 listas",
-          tooltip: "Número máximo de listas de repositórios favoritados que serão exibidas. As listas são ordenadas por data de criação (mais recentes primeiro)."
+          description: "Maximum 20 lists",
+          tooltip: "Maximum number of star lists to display. Lists are ordered by most recently created."
         }
         ]
       },
       {
         id: "notable_contributions",
         name: "Notable Contributions",
-        description: "Contribuições notáveis em repositórios",
+        description: "Notable contributions to repositories",
         configOptions: [
         {
           key: "notable_contributions_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "notable_contributions_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Notable Contributions"
         },
         {
           key: "notable_contributions_max",
-          label: "Máximo de contribuições",
+          label: "Maximum contributions",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 contribuições",
-          tooltip: "Número máximo de contribuições notáveis que serão exibidas. Mostra suas contribuições mais importantes em repositórios open source."
+          description: "Maximum 50 contributions",
+          tooltip: "Maximum number of notable contributions to display. Contributions are ordered by most recent."
         }
         ]
       },
       {
         id: "recent_activity",
         name: "Recent Activity",
-        description: "Atividades recentes do usuário",
+        description: "User's recent activity",
         configOptions: [
         {
           key: "recent_activity_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "recent_activity_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Recent Activity"
         },
         {
           key: "recent_activity_max",
-          label: "Máximo de atividades",
+          label: "Maximum activities",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 atividades",
-          tooltip: "Número máximo de atividades recentes que serão exibidas. Mostra commits, PRs, issues e outras atividades do seu perfil GitHub."
+          description: "Maximum 50 activities",
+          tooltip: "Maximum number of recent activities to display. Activities are ordered by most recent."
         }
         ]
       },
       {
         id: "introduction",
         name: "Introduction",
-        description: "Introdução do perfil do usuário",
+        description: "User profile introduction",
         configOptions: [
         {
           key: "introduction_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "introduction_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Introduction"
         },
         {
           key: "introduction_custom_text",
-          label: "Texto customizado",
+          label: "Custom text",
           type: "string",
           defaultValue: "",
-          description: "Texto personalizado a ser exibido antes da bio"
+          description: "Custom text to display before the bio",
+          tooltip: "Optional custom text that will be displayed before the user's bio. Leave empty to only show the bio."
         }
         ]
       },
       {
         id: "featured_repositories",
         name: "Featured Repositories",
-        description: "Repositórios em destaque (requer URL do repositório)",
+        description: "Featured repositories (requires repository URL)",
         configOptions: [
         {
           key: "featured_repositories_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "featured_repositories_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Featured Repositories"
         },
         {
           key: "featured_repositories_urls",
-          label: "URLs dos repositórios",
+          label: "Repository URLs",
           type: "string",
           defaultValue: "",
-          description: "URLs separadas por vírgula (ex: 'owner/repo1,owner/repo2'). Limite de 20 repositórios."
+          description: "Comma-separated repository URLs (e.g., 'owner/repo1,owner/repo2'). Maximum 20 repositories.",
+          tooltip: "Enter repository URLs in the format 'owner/repo'. Separate multiple repositories with commas. Maximum 20 repositories can be featured."
         }
         ]
       },
@@ -1029,26 +963,26 @@ export const PLUGINS_METADATA = {
         configOptions: [
         {
           key: "sponsorships_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "sponsorships_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Sponsorships"
         },
         {
           key: "sponsorships_max",
-          label: "Máximo de sponsorships",
+          label: "Maximum sponsorships",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 sponsorships",
-          tooltip: "Número máximo de patrocínios que você faz que serão exibidos. Mostra os desenvolvedores/organizações que você patrocina no GitHub."
+          description: "Maximum 50 sponsorships",
+          tooltip: "Maximum number of sponsorships to display. Sponsorships are ordered by most recent."
         }
         ]
       },
@@ -1059,51 +993,52 @@ export const PLUGINS_METADATA = {
         configOptions: [
         {
           key: "sponsors_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "sponsors_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Sponsors"
         },
         {
           key: "sponsors_max",
-          label: "Máximo de sponsors",
+          label: "Maximum sponsors",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 sponsors",
-          tooltip: "Número máximo de patrocinadores que você tem que serão exibidos. Mostra as pessoas/organizações que patrocinam você no GitHub."
+          description: "Maximum 50 sponsors",
+          tooltip: "Maximum number of sponsors to display. Sponsors are ordered by most recent."
         }
         ]
       },
       {
         id: "people",
         name: "People",
-        description: "Pessoas relacionadas (followers, contributors, etc)",
+        description: "Related people (followers, contributors, etc)",
         configOptions: [
         {
           key: "people_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "people_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "People"
         },
         {
           key: "people_type",
-          label: "Tipo",
+          label: "Type",
           type: "select",
           defaultValue: "profile",
+          tooltip: "Select 'Profile' to show user followers, or 'Repository' to show repository-specific people (requires repository field).",
           options: [
             { value: "profile", label: "Profile (followers)" },
             { value: "repository", label: "Repository (contributors, stargazers, watchers, sponsors)" }
@@ -1111,58 +1046,60 @@ export const PLUGINS_METADATA = {
         },
         {
           key: "people_repository",
-          label: "Repositório (apenas para tipo repository)",
+          label: "Repository (only for repository type)",
           type: "string",
           defaultValue: "",
-          description: "Formato: owner/repo (ex: 'octocat/Hello-World')"
+          description: "Format: owner/repo (e.g., 'octocat/Hello-World')",
+          tooltip: "Required when type is 'repository'. Enter the repository in the format 'owner/repo'."
         },
         {
           key: "people_max",
-          label: "Máximo de pessoas",
+          label: "Maximum people",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 pessoas",
-          tooltip: "Número máximo de pessoas que você segue que serão exibidas. Mostra desenvolvedores que você segue no GitHub."
+          description: "Maximum 50 people",
+          tooltip: "Maximum number of people to display. People are ordered by most recent interaction."
         }
         ]
       },
       {
         id: "repository_contributors",
         name: "Repository Contributors",
-        description: "Contribuidores de um repositório",
+        description: "Contributors to a repository",
         configOptions: [
         {
           key: "repository_contributors_hide_title",
-          label: "Ocultar título",
+          label: "Hide title",
           type: "boolean",
           defaultValue: false
         },
         {
           key: "repository_contributors_title",
-          label: "Título",
+          label: "Title",
           type: "string",
           defaultValue: "Contributors"
         },
         {
           key: "repository_contributors_repository",
-          label: "Repositório",
+          label: "Repository",
           type: "string",
           defaultValue: "",
-          description: "Formato: owner/repo (ex: 'octocat/Hello-World')"
+          description: "Format: owner/repo (e.g., 'octocat/Hello-World')",
+          tooltip: "Enter the repository in the format 'owner/repo'. This field is required."
         },
         {
           key: "repository_contributors_max",
-          label: "Máximo de contribuidores",
+          label: "Maximum contributors",
           type: "number",
           defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
-          description: "Máximo 50 contribuidores",
-          tooltip: "Número máximo de contribuidores que serão exibidos. Mostra os principais contribuidores dos seus repositórios (ordenados por número de commits)."
+          description: "Maximum 50 contributors",
+          tooltip: "Maximum number of contributors to display. Contributors are ordered by total contributions (most contributions first)."
         }
         ]
       }
@@ -1174,16 +1111,6 @@ export const PLUGINS_METADATA = {
         "profile",
         "activity"
       ]
-    },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "profile"
-      ],
-      "username": ""
-    },
-    fieldDefaults: {
-      "username": "octocat"
     },
   },
 
@@ -1241,8 +1168,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 músicas",
-          tooltip: "Número máximo de músicas recentes que serão exibidas. Mostra as últimas músicas que você escutou no LastFM."
+          description: "Maximum 20 tracks",
+          tooltip: "Maximum number of recent tracks to display. Tracks are ordered by most recently played."
         }
         ]
       },
@@ -1296,8 +1223,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 artistas",
-          tooltip: "Número máximo de artistas que serão exibidos. Valores maiores podem aumentar o tempo de carregamento."
+          description: "Maximum 20 artists",
+          tooltip: "Maximum number of top artists to display. Artists are ordered by total play count (most played first)."
         },
         {
           key: "top_artists_style",
@@ -1308,8 +1235,7 @@ export const PLUGINS_METADATA = {
             { value: "grid", label: "Grid" },
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" }
-          ],
-          tooltip: "Grid: exibe os artistas em formato de grade com imagens de perfil.\nList: exibe os artistas em formato de lista compacta."
+          ]
         },
         {
           key: "top_artists_period",
@@ -1323,8 +1249,7 @@ export const PLUGINS_METADATA = {
             { value: "3month", label: "Last 3 months" },
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" }
-          ],
-          tooltip: "Período de tempo para calcular os artistas mais ouvidos. 'All time' mostra seus artistas mais ouvidos de todos os tempos."
+          ]
         }
         ]
       },
@@ -1353,26 +1278,27 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Máximo 20 álbuns",
-          tooltip: "Número máximo de álbuns que serão exibidos. Valores maiores podem aumentar o tempo de carregamento."
+          description: "Maximum 20 albums",
+          tooltip: "Maximum number of top albums to display. Albums are ordered by total play count (most played first)."
         },
         {
           key: "top_albums_style",
           label: "Display style",
           type: "select",
           defaultValue: "grid",
+          tooltip: "Choose how to display the albums: Grid shows album covers in a grid layout, List shows a compact list format.",
           options: [
             { value: "grid", label: "Grid" },
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" }
-          ],
-          tooltip: "Grid: exibe os álbuns em formato de grade com capas de álbum.\nList: exibe os álbuns em formato de lista compacta."
+          ]
         },
         {
           key: "top_albums_period",
           label: "Period",
           type: "select",
           defaultValue: "overall",
+          tooltip: "Select the time period for top albums. 'All time' shows your most played albums ever, while other options show recent activity.",
           options: [
             { value: "overall", label: "All time" },
             { value: "7day", label: "Last 7 days" },
@@ -1380,8 +1306,7 @@ export const PLUGINS_METADATA = {
             { value: "3month", label: "Last 3 months" },
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" }
-          ],
-          tooltip: "Período de tempo para calcular os álbuns mais ouvidos. 'All time' mostra seus álbuns mais ouvidos de todos os tempos."
+          ]
         }
         ]
       },
@@ -1410,26 +1335,26 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 tracks",
-          tooltip: "Número máximo de faixas que serão exibidas. Valores maiores podem aumentar o tempo de carregamento."
+          description: "Maximum 20 tracks"
         },
         {
           key: "top_tracks_style",
           label: "Display style",
           type: "select",
           defaultValue: "grid",
+          tooltip: "Choose how to display the tracks: Grid shows track artwork in a grid layout, List shows a compact list format.",
           options: [
             { value: "grid", label: "Grid" },
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" }
-          ],
-          tooltip: "Grid: exibe as faixas em formato de grade com capas de álbum.\nList: exibe as faixas em formato de lista compacta."
+          ]
         },
         {
           key: "top_tracks_period",
           label: "Period",
           type: "select",
           defaultValue: "overall",
+          tooltip: "Select the time period for top tracks. 'All time' shows your most played tracks ever, while other options show recent activity.",
           options: [
             { value: "overall", label: "All time" },
             { value: "7day", label: "Last 7 days" },
@@ -1437,8 +1362,7 @@ export const PLUGINS_METADATA = {
             { value: "3month", label: "Last 3 months" },
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" }
-          ],
-          tooltip: "Período de tempo para calcular as faixas mais ouvidas. 'All time' mostra suas faixas mais ouvidas de todos os tempos."
+          ]
         }
         ]
       }
@@ -1450,16 +1374,6 @@ export const PLUGINS_METADATA = {
         "recent_tracks",
         "top_artists"
       ]
-    },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "recent_tracks"
-      ],
-      "username": ""
-    },
-    fieldDefaults: {
-      "username": "exemplo"
     },
   },
 
@@ -1548,7 +1462,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 workouts"
+          description: "Maximum 20 workouts",
+          tooltip: "Maximum number of recent workouts to display. Workouts are ordered by most recent."
         }
         ]
       },
@@ -1577,7 +1492,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 exercises"
+          description: "Maximum 20 exercises",
+          tooltip: "Maximum number of exercises to display. Exercises are ordered by total volume (highest volume first)."
         },
         {
           key: "exercises_show_1rm",
@@ -1701,13 +1617,6 @@ export const PLUGINS_METADATA = {
         "recent_workouts"
       ]
     },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "statistics"
-      ]
-    },
-    fieldDefaults: {},
   },
 
   myanimelist: {
@@ -2055,259 +1964,14 @@ export const PLUGINS_METADATA = {
         "last_activity"
       ]
     },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "statistics"
-      ],
-      "username": ""
-    },
-    fieldDefaults: {
-      "username": "example"
-    },
-  },
-
-  spotify: {
-    name: "spotify",
-    displayName: "Spotify",
-    description: "Show your Spotify music statistics",
-    category: "music",
-    icon: "Music",
-    requiredFields: [],
-    essentialConfigKeys: [],
-    essentialConfigKeysMetadata: [
-
-    ],
-    sections: [
-      {
-        id: "recent_tracks",
-        name: "Recent Tracks",
-        description: "Recently played tracks",
-        configOptions: [
-        {
-          key: "recent_tracks_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false
-        },
-        {
-          key: "recent_tracks_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Recent Tracks"
-        },
-        {
-          key: "recent_tracks_max",
-          label: "Maximum tracks",
-          type: "number",
-          defaultValue: 10,
-          min: 1,
-          max: 50,
-          step: 1,
-          description: "Maximum 50 tracks",
-          tooltip: "Número máximo de faixas recentes que serão exibidas. Mostra as últimas músicas que você tocou no Spotify."
-        }
-        ]
-      },
-      {
-        id: "top_artists",
-        name: "Top Artists",
-        description: "Most listened artists",
-        configOptions: [
-        {
-          key: "top_artists_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false
-        },
-        {
-          key: "top_artists_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Top Artists"
-        },
-        {
-          key: "top_artists_max",
-          label: "Maximum artists",
-          type: "number",
-          defaultValue: 10,
-          min: 1,
-          max: 50,
-          step: 1,
-          description: "Maximum 50 artists",
-          tooltip: "Número máximo de artistas que serão exibidos. Valores maiores podem aumentar o tempo de carregamento."
-        },
-        {
-          key: "top_artists_style",
-          label: "Display style",
-          type: "select",
-          defaultValue: "default",
-          options: [
-            { value: "grid", label: "Grid" },
-            { value: "list", label: "List" },
-            { value: "default", label: "Default" }
-          ],
-          tooltip: "Grid: exibe os artistas em formato de grade com imagens de perfil.\nList: exibe os artistas em formato de lista compacta.\nDefault: usa o estilo padrão do tema."
-        },
-        {
-          key: "top_artists_period",
-          label: "Period",
-          type: "select",
-          defaultValue: "medium_term",
-          options: [
-            { value: "short_term", label: "Last 4 weeks" },
-            { value: "medium_term", label: "Last 6 months" },
-            { value: "long_term", label: "All time" }
-          ],
-          tooltip: "Período de tempo para calcular os artistas mais ouvidos.\nLast 4 weeks: últimas 4 semanas\nLast 6 months: últimos 6 meses\nAll time: todos os tempos"
-        }
-        ]
-      },
-      {
-        id: "top_tracks",
-        name: "Top Tracks",
-        description: "Most listened tracks",
-        configOptions: [
-        {
-          key: "top_tracks_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false
-        },
-        {
-          key: "top_tracks_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Top Tracks"
-        },
-        {
-          key: "top_tracks_max",
-          label: "Maximum tracks",
-          type: "number",
-          defaultValue: 10,
-          min: 1,
-          max: 50,
-          step: 1,
-          description: "Maximum 50 tracks",
-          tooltip: "Número máximo de faixas que serão exibidas. Valores maiores podem aumentar o tempo de carregamento."
-        },
-        {
-          key: "top_tracks_style",
-          label: "Display style",
-          type: "select",
-          defaultValue: "default",
-          options: [
-            { value: "grid", label: "Grid" },
-            { value: "list", label: "List" },
-            { value: "default", label: "Default" }
-          ],
-          tooltip: "Grid: exibe as faixas em formato de grade com capas de álbum.\nList: exibe as faixas em formato de lista compacta.\nDefault: usa o estilo padrão do tema."
-        },
-        {
-          key: "top_tracks_period",
-          label: "Period",
-          type: "select",
-          defaultValue: "medium_term",
-          options: [
-            { value: "short_term", label: "Last 4 weeks" },
-            { value: "medium_term", label: "Last 6 months" },
-            { value: "long_term", label: "All time" }
-          ],
-          tooltip: "Período de tempo para calcular as faixas mais ouvidas.\nLast 4 weeks: últimas 4 semanas\nLast 6 months: últimos 6 meses\nAll time: todos os tempos"
-        }
-        ]
-      },
-      {
-        id: "currently_playing",
-        name: "Currently Playing",
-        description: "Track currently playing",
-        configOptions: [
-        {
-          key: "currently_playing_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false
-        },
-        {
-          key: "currently_playing_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Now Playing"
-        }
-        ]
-      },
-      {
-        id: "playlists",
-        name: "Playlists",
-        description: "User playlists",
-        configOptions: [
-        {
-          key: "playlists_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false
-        },
-        {
-          key: "playlists_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Playlists"
-        },
-        {
-          key: "playlists_max",
-          label: "Maximum playlists",
-          type: "number",
-          defaultValue: 10,
-          min: 1,
-          max: 50,
-          step: 1,
-          description: "Maximum 50 playlists",
-          tooltip: "Número máximo de playlists que serão exibidas. Mostra suas playlists públicas e privadas (se autorizado)."
-        }
-        ]
-      },
-      {
-        id: "profile",
-        name: "Profile",
-        description: "User profile information",
-        configOptions: [
-        {
-          key: "profile_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false
-        },
-        {
-          key: "profile_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Profile"
-        }
-        ]
-      }
-    ],
-    exampleConfig: {
-      "enabled": true,
-      "sections": [
-        "recent_tracks",
-        "top_artists"
-      ]
-    },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "recent_tracks"
-      ]
-    },
-    fieldDefaults: {},
   },
 
   stackoverflow: {
     name: "stackoverflow",
     displayName: "Stack Overflow",
-    description: "Show your Stack Overflow statistics and expertise",
+    description: "Show your Stack Overflow reputation and activity statistics",
     category: "coding",
-    icon: "Code",
+    icon: "MessageSquareQuestion",
     requiredFields: ["userId"],
     essentialConfigKeys: [],
     essentialConfigKeysMetadata: [
@@ -2317,7 +1981,7 @@ export const PLUGINS_METADATA = {
       {
         id: "reputation",
         name: "Reputation",
-        description: "Display your reputation and recent change",
+        description: "Display your current reputation and reputation change",
         configOptions: [
         {
           key: "reputation_hide_title",
@@ -2336,7 +2000,7 @@ export const PLUGINS_METADATA = {
       {
         id: "badges",
         name: "Badges",
-        description: "Display your badges (gold, silver, bronze)",
+        description: "Display your badge counts (gold, silver, bronze)",
         configOptions: [
         {
           key: "badges_hide_title",
@@ -2355,7 +2019,7 @@ export const PLUGINS_METADATA = {
       {
         id: "answers_questions",
         name: "Answers & Questions",
-        description: "Display total answers and questions",
+        description: "Display your total answers and questions count",
         configOptions: [
         {
           key: "answers_questions_hide_title",
@@ -2367,20 +2031,21 @@ export const PLUGINS_METADATA = {
           key: "answers_questions_title",
           label: "Title",
           type: "string",
-          defaultValue: "Stack Overflow Activity"
+          defaultValue: "Answers & Questions"
         },
         {
           key: "answers_questions_hide_questions",
-          label: "Hide questions",
+          label: "Hide questions count",
           type: "boolean",
-          defaultValue: false
+          defaultValue: false,
+          description: "Only show answers count"
         }
         ]
       },
       {
         id: "tags_expertise",
         name: "Tags Expertise",
-        description: "Display top tags by score",
+        description: "Display your top tags by score",
         configOptions: [
         {
           key: "tags_expertise_hide_title",
@@ -2398,11 +2063,12 @@ export const PLUGINS_METADATA = {
           key: "tags_expertise_max",
           label: "Maximum tags",
           type: "number",
-          defaultValue: 5,
+          defaultValue: 10,
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 tags"
+          description: "Maximum 20 tags",
+          tooltip: "Maximum number of tags to display. Tags are ordered by score (highest score first)."
         }
         ]
       }
@@ -2413,19 +2079,8 @@ export const PLUGINS_METADATA = {
       "sections": [
         "reputation",
         "badges",
-        "answers_questions",
-        "tags_expertise"
+        "answers_questions"
       ]
-    },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "reputation"
-      ],
-      "userId": ""
-    },
-    fieldDefaults: {
-      "userId": "123456"
     },
   },
 
@@ -2509,7 +2164,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 games"
+          description: "Maximum 20 games",
+          tooltip: "Maximum number of recent games to display. Games are ordered by most recently played."
         },
         {
           key: "recent_games_style",
@@ -2549,7 +2205,8 @@ export const PLUGINS_METADATA = {
           min: 1,
           max: 20,
           step: 1,
-          description: "Maximum 20 games"
+          description: "Maximum 20 games",
+          tooltip: "Maximum number of top games to display. Games are ordered by total playtime (most played first)."
         },
         {
           key: "top_games_style",
@@ -2573,56 +2230,8 @@ export const PLUGINS_METADATA = {
         "top_games"
       ]
     },
-    defaultConfig: {
-      "enabled": false,
-      "sections": [
-        "statistics"
-      ],
-      "steamId": ""
-    },
-    fieldDefaults: {
-      "steamId": "76561198000000000"
-    },
   },
 } as const satisfies Record<string, PluginMetadata>
-
-/**
- * Lista de plugins desabilitados
- * 
- * Plugins listados aqui não aparecerão na UI e serão filtrados
- * de todas as listas de plugins disponíveis.
- * 
- * Motivos comuns para desabilitar:
- * - Limitações da API (ex: Spotify tem limite de 25 usuários)
- * - APIs deprecadas ou não funcionais
- * - Plugins em desenvolvimento que não devem ser expostos ainda
- */
-export const DISABLED_PLUGINS: string[] = [
-  'spotify', // Desabilitado devido a limitações da API do Spotify (limite de 25 usuários pré-aprovados)
-] as const
-
-/**
- * Verifica se um plugin está desabilitado
- */
-export function isPluginDisabled(pluginName: string): boolean {
-  return DISABLED_PLUGINS.includes(pluginName)
-}
-
-/**
- * Retorna apenas os plugins habilitados (filtra os desabilitados)
- */
-export function getEnabledPlugins(): string[] {
-  return Object.keys(PLUGINS_METADATA).filter(name => !isPluginDisabled(name))
-}
-
-/**
- * Retorna apenas os metadados de plugins habilitados
- */
-export function getEnabledPluginsMetadata(): PluginMetadata[] {
-  return Object.values(PLUGINS_METADATA).filter(
-    (plugin) => !isPluginDisabled(plugin.name)
-  )
-}
 
 /**
  * Helper functions para trabalhar com metadata
@@ -2633,8 +2242,6 @@ export function getPluginMetadata(pluginName: string): PluginMetadata | undefine
 }
 
 export function getAllPluginsMetadata(): PluginMetadata[] {
-  // Nota: Esta função retorna TODOS os plugins, incluindo desabilitados
-  // Use getEnabledPluginsMetadata() se precisar apenas dos habilitados
   return Object.values(PLUGINS_METADATA)
 }
 

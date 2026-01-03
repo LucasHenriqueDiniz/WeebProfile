@@ -21,14 +21,14 @@ export const personality16PluginMetadata = {
       configOptions: [
         {
           key: "personality_url",
-          label: "Result URL",
+          label: "16Personalities Result URL",
           type: "string" as const,
           defaultValue: "",
           placeholder: "https://www.16personalities.com/br/resultados/enfj-t/m/...",
           description: "Paste your 16Personalities test result URL to automatically detect your type",
           required: true,
-          helpUrl: "https://www.16personalities.com/free-personality-test",
-          tooltip: "Faça o quiz em https://www.16personalities.com/free-personality-test e copie o resultado (ex: https://www.16personalities.com/br/resultados/enfj-t/m/4lyvq4j0t)",
+          helpUrl: "https://www.16personalities.com/br/resultados/enfj-t/m/...",
+          tooltip: "Paste the full URL from your 16Personalities test results page. The plugin will automatically extract your personality type from the URL.",
         },
         {
           key: "personality_hide_title",
@@ -64,10 +64,4 @@ export const personality16PluginMetadata = {
     sections: ["personality"],
     personality_url: "https://www.16personalities.com/br/resultados/enfj-t/m/example",
   },
-  defaultConfig: {
-    enabled: false,
-    sections: ["personality"],
-    personality_url: "",
-  },
-  fieldDefaults: {},
 }

@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { Wizard } from "@/components/wizard/Wizard"
 import { useWizardStore } from "@/stores/wizard-store"
+import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
@@ -13,6 +14,7 @@ export default function NewSvgPage() { // Updated
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { reset, plugins, pluginsOrder } = useWizardStore()
+  const { bootstrap, initialized } = useWizardBootstrapStore()
   const hasResetRef = useRef(false)
   const [showResumeDialog, setShowResumeDialog] = useState(false)
 
@@ -22,6 +24,13 @@ export default function NewSvgPage() { // Updated
     const enabledPlugins = Object.values(plugins).filter(p => p.enabled)
     return enabledPlugins.length > 0 || pluginsOrder.length > 0
   }, [plugins, pluginsOrder])
+
+  // Bootstrap wizard data once on mount
+  useEffect(() => {
+    if (user && !authLoading && !initialized) {
+      bootstrap()
+    }
+  }, [user, authLoading, initialized, bootstrap])
 
   useEffect(() => {
     if (!authLoading && !user) {

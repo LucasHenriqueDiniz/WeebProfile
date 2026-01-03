@@ -14,54 +14,33 @@ export function applyPluginDefaults(
   config: Partial<PluginConfig> = {},
   userDefaults?: Record<string, any>
 ): PluginConfig {
-  // Acessa o metadata de forma genérica para funcionar com qualquer plugin
-  // Usa Record<string, any> para ser compatível com qualquer plugin novo
-  const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
-  if (!metadata) {
-    return {
-      enabled: false,
-      sections: [],
-      ...config,
-    } as PluginConfig
-  }
-
-  const defaultConfig = metadata.defaultConfig || {}
-
-  // Mesclar defaults na ordem: metadata defaults -> user defaults -> config fornecido
-  const enabled = config.enabled ?? userDefaults?.enabled ?? defaultConfig.enabled ?? false
+  // Hardcoded defaults: all plugins start disabled with no sections
+  const enabled = config.enabled ?? userDefaults?.enabled ?? false
   
   return {
-    ...defaultConfig,
     ...userDefaults,
     ...config,
-    // Garantir que enabled e sections tenham valores padrão se não foram fornecidos
-    // Se plugin está desligado, não deve ter sections
+    // All plugins start disabled by default
     enabled,
+    // If disabled, no sections. If enabled, use provided sections or empty array
     sections: enabled 
-      ? (config.sections ?? userDefaults?.sections ?? defaultConfig.sections ?? [])
+      ? (config.sections ?? userDefaults?.sections ?? [])
       : [],
-    // Garantir que sectionConfigs e fields existam
-    sectionConfigs: config.sectionConfigs ?? userDefaults?.sectionConfigs ?? defaultConfig.sectionConfigs ?? {},
-    fields: config.fields ?? userDefaults?.fields ?? defaultConfig.fields ?? {},
+    // Ensure sectionConfigs and fields exist
+    sectionConfigs: config.sectionConfigs ?? userDefaults?.sectionConfigs ?? {},
+    fields: config.fields ?? userDefaults?.fields ?? {},
   } as PluginConfig
 }
 
 /**
  * Obtém default para um campo específico
- * Funciona automaticamente com qualquer plugin novo adicionado
+ * Returns undefined since fieldDefaults/defaultConfig were removed
+ * This function is kept for backwards compatibility but always returns undefined
  */
 export function getPluginFieldDefault(pluginName: string, fieldName: string): any {
-  // Acessa o metadata de forma genérica para funcionar com qualquer plugin
-  // Usa Record<string, any> para ser compatível com qualquer plugin novo
-  const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
-  if (!metadata) return undefined
-
-  // Acessa fieldDefaults e defaultConfig de forma segura
-  // fieldDefaults é opcional e pode não existir em todos os plugins
-  const fieldDefaults = metadata.fieldDefaults as Record<string, any> | undefined
-  const defaultConfig = metadata.defaultConfig as Record<string, any> | undefined
-  
-  return fieldDefaults?.[fieldName] || defaultConfig?.[fieldName]
+  // fieldDefaults and defaultConfig were removed from metadata
+  // This function is kept for backwards compatibility
+  return undefined
 }
 
 

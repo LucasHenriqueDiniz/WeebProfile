@@ -6,16 +6,46 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./plugins": "./dist/plugins/index.js",
-    "./plugins/metadata": "./dist/plugins/metadata.js",
-    "./plugins/manager": "./dist/plugins/manager.js",
-    "./plugins/tags": "./dist/plugins/tags.js",
-    "./styles": "./dist/styles/index.js",
-    "./styles/server": "./dist/styles/server.js",
-    "./themes": "./dist/themes/index.js",
-    "./themes/theme-utils": "./dist/themes/theme-utils.js",
-    "./templates": "./dist/templates/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./plugins": {
+      "types": "./dist/plugins/index.d.ts",
+      "default": "./dist/plugins/index.js"
+    },
+    "./plugins/metadata": {
+      "types": "./dist/plugins/metadata.d.ts",
+      "default": "./dist/plugins/metadata.js"
+    },
+    "./plugins/manager": {
+      "types": "./dist/plugins/manager.d.ts",
+      "default": "./dist/plugins/manager.js"
+    },
+    "./plugins/tags": {
+      "types": "./dist/plugins/tags.d.ts",
+      "default": "./dist/plugins/tags.js"
+    },
+    "./styles": {
+      "types": "./dist/styles/index.d.ts",
+      "default": "./dist/styles/index.js"
+    },
+    "./styles/server": {
+      "types": "./dist/styles/server.d.ts",
+      "default": "./dist/styles/server.js"
+    },
+    "./themes": {
+      "types": "./dist/themes/index.d.ts",
+      "default": "./dist/themes/index.js"
+    },
+    "./themes/theme-utils": {
+      "types": "./dist/themes/theme-utils.d.ts",
+      "default": "./dist/themes/theme-utils.js"
+    },
+    "./templates": {
+      "types": "./dist/templates/index.d.ts",
+      "default": "./dist/templates/index.js"
+    }
   },
   "dependencies": {
     "@octokit/graphql": "^8.1.1",

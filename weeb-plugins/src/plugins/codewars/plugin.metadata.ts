@@ -1,12 +1,17 @@
 /**
- * Metadata do Plugin Codewars
+ * Codewars Plugin Metadata
+ *
+ * This file defines all sections, configurations and options for the Codewars plugin.
+ * It's used to automatically generate the centralized metadata.ts.
+ *
+ * DO NOT edit metadata.ts manually - it's automatically generated from this file.
  */
 
 export const codewarsPluginMetadata = {
   displayName: "Codewars",
-  description: "Show your Codewars coding statistics",
+  description: "Show your Codewars kata solving statistics",
   category: "coding" as const,
-  icon: "Code",
+  icon: "Swords",
   requiredFields: ["username"],
   essentialConfigKeys: [],
   essentialConfigKeysMetadata: [],
@@ -14,7 +19,7 @@ export const codewarsPluginMetadata = {
     {
       id: "rank_honor",
       name: "Rank & Honor",
-      description: "Display your current rank (kyu/dan) and honor points",
+      description: "Display your current rank and honor points",
       configOptions: [
         {
           key: "rank_honor_hide_title",
@@ -33,7 +38,7 @@ export const codewarsPluginMetadata = {
     {
       id: "completed_kata",
       name: "Completed Kata",
-      description: "Display completed kata with difficulty",
+      description: "Display your recently completed kata",
       configOptions: [
         {
           key: "completed_kata_hide_title",
@@ -51,19 +56,19 @@ export const codewarsPluginMetadata = {
           key: "completed_kata_max",
           label: "Maximum kata",
           type: "number" as const,
-          defaultValue: 5,
+          defaultValue: 10,
           min: 1,
           max: 50,
           step: 1,
           description: "Maximum 50 kata",
-          tooltip: "Número máximo de kata completados que serão exibidos na seção. Valores maiores podem aumentar o tempo de carregamento.",
+          tooltip: "Maximum number of completed kata to display. Kata are ordered by most recently completed.",
         },
       ],
     },
     {
       id: "languages_proficiency",
       name: "Languages Proficiency",
-      description: "Display proficiency by programming language",
+      description: "Display your proficiency in different programming languages",
       configOptions: [
         {
           key: "languages_proficiency_hide_title",
@@ -81,19 +86,19 @@ export const codewarsPluginMetadata = {
           key: "languages_proficiency_max",
           label: "Maximum languages",
           type: "number" as const,
-          defaultValue: 5,
+          defaultValue: 10,
           min: 1,
           max: 20,
           step: 1,
           description: "Maximum 20 languages",
-          tooltip: "Número máximo de linguagens de programação que serão exibidas, ordenadas por proficiência (maior XP primeiro).",
+          tooltip: "Maximum number of languages to display. Languages are ordered by score (highest score first).",
         },
       ],
     },
     {
       id: "leaderboard_position",
       name: "Leaderboard Position",
-      description: "Display your position in the leaderboard",
+      description: "Display your position on the global leaderboard",
       configOptions: [
         {
           key: "leaderboard_position_hide_title",
@@ -113,25 +118,6 @@ export const codewarsPluginMetadata = {
   exampleConfig: {
     enabled: true,
     username: "example",
-    sections: ["rank_honor", "completed_kata", "languages_proficiency", "leaderboard_position"],
-  },
-  defaultConfig: {
-    enabled: false,
-    sections: ["rank_honor"],
-    username: "",
-  },
-  fieldDefaults: {
-    username: "example",
+    sections: ["rank_honor", "completed_kata", "languages_proficiency"],
   },
 }
-
-
-
-
-
-
-
-
-
-
-

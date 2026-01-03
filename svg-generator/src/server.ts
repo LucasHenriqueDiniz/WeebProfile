@@ -21,8 +21,9 @@ import type { IncomingMessage, ServerResponse } from "node:http"
 import { URL } from "node:url"
 import { generateSvg, validateConfig, normalizeConfig } from "./index.js"
 import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
-import { getUserEssentialConfigs } from "./db/essential-configs.js"
+import { getUserEssentialConfigs, getUserPluginConfigs } from "./db/essential-configs.js"
 import { processRegenerationBatch } from "./cron/regeneration-worker.js"
+import { validateRequiredConfig } from "./validation/validate-required-config.js"
 
 // Railway uses PORT, but also supports SVG_GENERATOR_PORT for local development
 const PORT = process.env.PORT || process.env.SVG_GENERATOR_PORT || 3001
@@ -245,10 +246,57 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     // Fetch essential configs from Supabase if userId provided
     // This ensures frontend never accesses sensitive data in production
     let essentialConfigs: Record<string, any> = {}
+    let userPluginConfigs: Record<string, Record<string, any>> = {}
+    let dbConnectionError = false
+    
     if (requestDataTyped.userId) {
       console.log(`🔐 [SERVER] Fetching essential configs for userId: ${requestDataTyped.userId}`)
-      essentialConfigs = await getUserEssentialConfigs(requestDataTyped.userId)
-      console.log(`✅ [SERVER] Essential configs found for plugins:`, Object.keys(essentialConfigs))
+      try {
+        essentialConfigs = await getUserEssentialConfigs(requestDataTyped.userId)
+        console.log(`✅ [SERVER] Essential configs found for plugins:`, Object.keys(essentialConfigs))
+      } catch (error: any) {
+        console.error(`❌ [SERVER] Error fetching essential configs:`, error)
+        dbConnectionError = true
+        
+        // Detectar erro de DNS especificamente
+        const isDnsError = error?.code === "ENOENT" || error?.syscall === "getaddrinfo"
+        if (isDnsError) {
+          console.error(`❌ [SERVER] DNS resolution failed for database hostname`)
+        }
+      }
+      
+      // Fetch reusable plugin configs (username, etc) from plugin_config table
+      console.log(`🔐 [SERVER] Fetching plugin configs for userId: ${requestDataTyped.userId}`)
+      try {
+        userPluginConfigs = await getUserPluginConfigs(requestDataTyped.userId)
+        console.log(`✅ [SERVER] Plugin configs found for plugins:`, Object.keys(userPluginConfigs))
+        if (Object.keys(userPluginConfigs).length === 0 && !dbConnectionError) {
+          console.log(`⚠️ [SERVER] No plugin configs found in database. Username may come from request instead.`)
+        }
+      } catch (error: any) {
+        console.error(`❌ [SERVER] Error fetching plugin configs:`, error)
+        dbConnectionError = true
+        
+        // Detectar erro de DNS especificamente
+        const isDnsError = error?.code === "ENOENT" || error?.syscall === "getaddrinfo"
+        if (isDnsError) {
+          console.error(`❌ [SERVER] DNS resolution failed for database hostname`)
+        }
+      }
+      
+      if (dbConnectionError) {
+        console.error(`❌ [SERVER] Database connection failed. Cannot verify secrets.`)
+        // Retornar erro explícito: DB inacessível ≠ missing secrets
+        // Isso evita "missing secret fantasma" quando na verdade não conseguiu verificar
+        res.writeHead(503, { "Content-Type": "application/json" })
+        res.end(JSON.stringify({
+          error: "DATABASE_UNREACHABLE",
+          code: "SUPABASE_DB_DNS_FAILED",
+          message: "Generator não conseguiu acessar o banco de dados. Verifique DATABASE_URL e conectividade.",
+          details: "Não foi possível verificar secrets/configs no banco. Isso pode ser problema de DNS, rede ou configuração de DATABASE_URL."
+        }))
+        return
+      }
     } else if ((requestDataTyped as any).essentialConfigs) {
       // Allow essentialConfigs only for tests (test page)
       // In production, always use userId
@@ -266,12 +314,20 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
         console.log(`🔧 [SERVER] Processing plugin: ${pluginName}`, JSON.stringify(pluginConfig, null, 2))
         if (pluginConfig && typeof pluginConfig === "object" && "enabled" in pluginConfig) {
           const typedPluginConfig = pluginConfig as any
+          
+          // Get reusable configs from plugin_config table (username, etc)
+          const userConfig = userPluginConfigs[pluginName.toLowerCase()] || {}
+          
+          // Merge: userConfig (reusable) + pluginConfig (SVG-specific)
+          // userConfig has username, etc that apply to all SVGs (from plugin_config table)
+          // pluginConfig has enabled, sections, sectionConfigs that are specific to this SVG
+          // IMPORTANT: pluginConfig may also have username if dashboard already merged it
+          // Order: userConfig first (database), then pluginConfig (request) - request overrides if present
           plugins[pluginName] = {
-            enabled: typedPluginConfig.enabled === true,
-            sections: typedPluginConfig.sections || [],
+            ...userConfig, // username, etc (reutilizáveis de plugin_config - do banco)
             ...Object.keys(typedPluginConfig).reduce(
               (acc, key) => {
-                // Include all properties except enabled and sections (already handled above)
+                // Include all properties except enabled and sections (will be handled below)
                 if (key !== "enabled" && key !== "sections") {
                   acc[key] = typedPluginConfig[key]
                 }
@@ -279,8 +335,11 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
               },
               {} as Record<string, any>
             ),
+            // enabled and sections come from SVG-specific config (request), not from reusable config
+            enabled: typedPluginConfig.enabled === true,
+            sections: typedPluginConfig.sections || [],
           }
-          console.log(`🔧 [SERVER] ✅ Plugin ${pluginName} added:`, JSON.stringify(plugins[pluginName], null, 2))
+          console.log(`🔧 [SERVER] ✅ Plugin ${pluginName} added (merged with userConfig):`, JSON.stringify(plugins[pluginName], null, 2))
 
           // Username can come from plugin config or be optional depending on plugin
           // Don't add hardcoded defaults - let plugin decide
@@ -332,6 +391,24 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       mappedTerminalTheme: config.terminalTheme,
     })
 
+    // Validate required secrets and fields
+    console.log("✅ [SERVER] Validating required configs...")
+    const requiredConfigValidation = validateRequiredConfig(config.plugins, essentialConfigs)
+    
+    if (!requiredConfigValidation.isValid) {
+      console.error("❌ [SERVER] Missing required configs:", JSON.stringify(requiredConfigValidation.missing, null, 2))
+      
+      // Return structured error
+      res.writeHead(400, { "Content-Type": "application/json" })
+      res.end(JSON.stringify({
+        error: "MISSING_REQUIRED_CONFIG",
+        code: "MISSING_REQUIRED_SECRETS",
+        message: "Missing required secrets or fields for enabled plugins",
+        missing: requiredConfigValidation.missing,
+      }))
+      return
+    }
+
     // Validate and normalize
     console.log("✅ [SERVER] Validating config...")
     console.log("✅ [SERVER] Config plugins:", JSON.stringify(config.plugins, null, 2))
@@ -365,6 +442,9 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     }
 
     console.log("✅ [SERVER] Config validated successfully")
+    console.log("🔍 [SERVER] EssentialConfigs before normalize:", essentialConfigs ? Object.keys(essentialConfigs).map(plugin => 
+      `${plugin}: [${Object.keys(essentialConfigs[plugin] || {}).join(", ")}]`
+    ).join(", ") : "none")
 
     const normalizedConfig = normalizeConfig(config)
     const includeDebug = requestData.debug === true || requestData.mock === true

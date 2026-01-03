@@ -7,7 +7,6 @@ import { myAnimeListPlugin } from "./myanimelist/index"
 import type { EssentialPluginConfig } from "./shared/types/base"
 import type { Plugin } from "./shared/types/plugin"
 import { steamPlugin } from "./steam/index"
-import { spotifyPlugin } from './spotify/index'
 import { duolingoPlugin } from './duolingo/index'
 import { codewarsPlugin } from './codewars/index'
 import { codeforcesPlugin } from './codeforces/index'
@@ -26,7 +25,6 @@ export class PluginManager {
     this.register(personality16Plugin)
     this.register(lyftaPlugin)
     this.register(steamPlugin)
-    this.register(spotifyPlugin)
     this.register(duolingoPlugin)
     this.register(codewarsPlugin)
     this.register(codeforcesPlugin)

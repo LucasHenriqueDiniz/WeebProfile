@@ -20,10 +20,11 @@ import {
 } from "@/components/ui/tooltip"
 import { useAuth } from "@/hooks/useAuth"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
+import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { useWizardStore } from "@/stores/wizard-store"
-import { selectEnabledPluginNames } from "@/stores/wizard-selectors"
+import { selectEnabledPluginNames, selectMissingConfigs } from "@/stores/wizard-selectors"
 import { AlertCircle, Search, X, Check, Lock, Unlock, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
 import { useMemo, useState, useEffect, useCallback, useRef, useDeferredValue } from "react"
 import { useShallow } from "zustand/react/shallow"
@@ -36,6 +37,7 @@ import { getSectionPreview } from "@/lib/config/section-previews"
 import { getPluginTags, getAllTags, type PluginTag } from "@/lib/config/plugin-tags"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
+import { usePluginConfigAutoSave } from "@/hooks/usePluginConfigAutoSave"
 import { EmptyState } from "./EmptyState"
 import { PluginCard } from "./PluginCard"
 
@@ -97,32 +99,35 @@ export function PluginConfiguration() {
     }, 200)
   }, [toggleExpanded])
 
-  // Use new hook for profile config
-  const { profile, essentialConfigs, missingConfigs: rawMissingConfigs } = useProfileConfig(enabledPlugins)
+  // Use new hook for profile config (now uses bootstrap store)
+  const { profile, essentialConfigs } = useProfileConfig(enabledPlugins)
   
-  // Force refresh when plugins are enabled/disabled
+  // Get secrets presence and plugin configs from bootstrap store (no fetching here)
+  const { secretsPresence, missingSecrets, refreshSecretsPresence, pluginConfigs, refreshPluginConfigs, updateSecretsPresenceOptimistic } = useWizardBootstrapStore()
+  
+  // Auto-save usernames to plugin_config when edited
+  usePluginConfigAutoSave()
+  
+  // Force refresh when plugins are enabled/disabled (removed - no longer needed)
   const prevEnabledPluginsRef = useRef<string[]>([])
   useEffect(() => {
     const prevEnabled = prevEnabledPluginsRef.current
     const currentEnabled = enabledPlugins
     
-    // If plugins changed, force refresh
+    // If plugins changed, no need to fetch - data already bootstrapped
     if (prevEnabled.join(",") !== currentEnabled.join(",")) {
       prevEnabledPluginsRef.current = currentEnabled
       // The useProfileConfig hook will automatically update when enabledPlugins changes
     }
   }, [enabledPlugins])
   
-  // Transform missingConfigs to the format expected by PluginCard
+  // Missing configs validation - use canonical selector that espelha backend criteria
   const missingConfigs = useMemo(() => {
-    return rawMissingConfigs.flatMap(({ pluginName, missingKeys }) =>
-      missingKeys.map((key) => ({
-        plugin: pluginName,
-        field: key.key,
-        label: key.label || key.key,
-      }))
+    return selectMissingConfigs(
+      { plugins, pluginsOrder },
+      { missingSecrets }
     )
-  }, [rawMissingConfigs])
+  }, [plugins, pluginsOrder, missingSecrets])
   
   // Update store with missing configs status
   useEffect(() => {
@@ -141,28 +146,20 @@ export function PluginConfiguration() {
     }
   }, [])
 
-  // Apply username from profile when it loads (only once)
+  // Apply username from plugin_config when it loads (only once)
   useEffect(() => {
-    if (!enabledPlugins.includes('github')) return
-    
-    const currentUsername = plugins.github?.username
-    const profileUsername = profile?.username
-    
-    // Only update if username is different and not already set
-    if (profileUsername && currentUsername !== profileUsername) {
-      setPluginRequiredField('github', 'username', profileUsername)
-    } else if (!currentUsername && !profileUsername && user?.user_metadata) {
-      const usernameFromAuth =
-        user.user_metadata.user_name ||
-        user.user_metadata.preferred_username ||
-        user.user_metadata.login
+    // Apply usernames from plugin_config to wizard store for all enabled plugins
+    enabledPlugins.forEach((pluginName) => {
+      const pluginConfig = pluginConfigs[pluginName]
+      const currentUsername = plugins[pluginName]?.username
       
-      if (usernameFromAuth) {
-        setPluginRequiredField('github', 'username', usernameFromAuth)
+      // If plugin_config has username and wizard store doesn't, apply it
+      if (pluginConfig?.username && currentUsername !== pluginConfig.username) {
+        setPluginRequiredField(pluginName, 'username', pluginConfig.username)
       }
-    }
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.username, enabledPlugins.join(",")])
+  }, [pluginConfigs, enabledPlugins.join(",")])
 
   // Group plugins by category
   const groupedPlugins = useMemo(() => getPluginsGroupedByCategory(), [])
@@ -272,6 +269,10 @@ export function PluginConfiguration() {
       // Se foi desbloqueado, salvar via API
       if (isUnlocked && value.trim()) {
         setSavingConfigs((prev) => new Set(prev).add(configKey))
+        
+        // Optimistic update: atualizar UI imediatamente antes de salvar
+        updateSecretsPresenceOptimistic(plugin, key)
+        
         try {
           await profileApi.updateEssentialConfig(plugin, key, value)
           setSavedConfigs((prev) => new Set(prev).add(configKey))
@@ -287,8 +288,11 @@ export function PluginConfiguration() {
               return next
             })
           }, 2000)
+          // Se sucesso, não precisa refresh - optimistic update já está correto
         } catch (error) {
           console.error("Error saving essential config:", error)
+          // Se erro, refresh para sincronizar com servidor
+          await refreshSecretsPresence()
           toast({
             title: "Erro ao salvar",
             description: "Não foi possível salvar a configuração",
@@ -547,6 +551,7 @@ export function PluginConfiguration() {
                   savingConfigs={savingConfigs}
                   savedConfigs={savedConfigs}
                   essentialConfigs={essentialConfigs}
+                  secretsPresence={secretsPresence}
                   missingConfigs={missingConfigs}
                   style={style}
                   onToggleExpanded={togglePluginExpanded}
@@ -577,6 +582,7 @@ export function PluginConfiguration() {
         unlockDialog={unlockDialog}
         setUnlockDialog={setUnlockDialog}
         confirmUnlock={confirmUnlock}
+        refreshSecretsPresence={refreshSecretsPresence}
       />
     </div>
   )
@@ -589,6 +595,7 @@ export function PluginConfigurationFooter({
   unlockDialog,
   setUnlockDialog,
   confirmUnlock,
+  refreshSecretsPresence,
 }: {
   showProfileModal: boolean
   setShowProfileModal: (open: boolean) => void
@@ -596,6 +603,7 @@ export function PluginConfigurationFooter({
   unlockDialog: { plugin: string; key: string } | null
   setUnlockDialog: (dialog: { plugin: string; key: string } | null) => void
   confirmUnlock: () => void
+  refreshSecretsPresence: () => Promise<void>
 }) {
   return (
     <>
@@ -604,7 +612,8 @@ export function PluginConfigurationFooter({
         onOpenChange={setShowProfileModal}
         enabledPlugins={enabledPlugins}
         onSave={async () => {
-          // Reload will happen automatically via useProfileConfig hook
+          // Refresh secrets presence after saving
+          await refreshSecretsPresence()
         }}
       />
 

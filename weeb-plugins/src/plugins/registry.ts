@@ -45,7 +45,9 @@ export class PluginRegistry {
 
     // Validate essentialConfigKeys (optional - may be deprecated)
     const pluginKeys = plugin.essentialConfigKeys || []
-    const metadataKeys = metadata.essentialConfigKeysMetadata.map((m) => m.key)
+    // Use essentialConfigKeysMetadata (current format) or requiredSecretsMetadata (new format) if available
+    const secretsMetadata = metadata.essentialConfigKeysMetadata || (metadata as any).requiredSecretsMetadata || []
+    const metadataKeys = secretsMetadata.map((m: any) => m.key)
 
     const missingInMetadata = pluginKeys.filter((k) => !metadataKeys.includes(k))
     if (missingInMetadata.length > 0) {

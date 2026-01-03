@@ -124,7 +124,8 @@ export function HeroSection({ title, ctaPrimary }: HeroSectionProps) {
     const configs: Record<string, { sections: string[]; sectionConfigs?: Record<string, any> }> = {}
     Object.keys(PLUGINS_METADATA).forEach((pluginId) => {
       const metadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
-      const defaultSections = metadata?.defaultConfig?.sections || []
+      // defaultConfig was removed - all plugins start with empty sections
+      const defaultSections: string[] = []
       configs[pluginId] = {
         sections: defaultSections.length > 0 ? defaultSections : [],
         sectionConfigs: {},
@@ -245,7 +246,8 @@ export function HeroSection({ title, ctaPrimary }: HeroSectionProps) {
     selectedSources.forEach((pluginId) => {
       const pluginConfig = pluginConfigs[pluginId] || {}
       const pluginMetadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
-      const defaultSections = pluginMetadata?.defaultConfig?.sections || []
+      // defaultConfig was removed - all plugins start with empty sections
+      const defaultSections: string[] = []
       const sections =
         pluginConfig.sections && pluginConfig.sections.length > 0 ? pluginConfig.sections : defaultSections
 

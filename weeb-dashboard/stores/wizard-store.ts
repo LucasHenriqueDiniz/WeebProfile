@@ -4,7 +4,7 @@ import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 // Temporary implementations
 const getPluginMetadata = (name: string) => (PLUGINS_METADATA as Record<string, any>)[name] || {}
-const getEnabledPlugins = (config?: any) => Object.keys(config || {}).filter(name => config?.[name]?.enabled)
+const getEnabledPlugins = (config?: any) => Object.keys(config || {}).filter((name) => config?.[name]?.enabled)
 import { applyPluginDefaults } from "@/lib/config/plugin-defaults"
 
 export interface PluginConfig {
@@ -78,20 +78,20 @@ export interface WizardState {
 /**
  * Gera plugins inicial dinamicamente de PLUGINS_METADATA
  * Usa defaults da metadata de cada plugin
- * GitHub é ativado por padrão com profile + activity
+ * NENHUM plugin é ativado por padrão - usuário escolhe
  */
 function generateInitialPlugins(userDefaults?: Record<string, any>): Record<string, PluginConfig> {
   const plugins: Record<string, PluginConfig> = {}
   Object.keys(PLUGINS_METADATA as Record<string, any>).forEach((pluginName) => {
-    if (pluginName === 'github') {
-      // GitHub ativado por padrão com profile + activity
-      plugins[pluginName] = applyPluginDefaults(pluginName, {
-        enabled: true,
-        sections: ['profile', 'activity'],
-      }, userDefaults)
-    } else {
-      plugins[pluginName] = applyPluginDefaults(pluginName, {}, userDefaults)
-    }
+    // Todos os plugins começam desativados
+    plugins[pluginName] = applyPluginDefaults(
+      pluginName,
+      {
+        enabled: false,
+        sections: [],
+      },
+      userDefaults
+    )
   })
   return plugins
 }
@@ -133,7 +133,7 @@ const initialState = {
   customThemeColors: {},
   previewUrl: null,
   pluginsHaveMissingEssentialConfigs: false,
-          currentStep: 1,
+  currentStep: 1,
   isValid: {
     step1: false, // Plugins - precisa ter pelo menos um plugin habilitado
     step2: false,
@@ -161,7 +161,7 @@ function migratePluginConfig(pluginConfig: any): PluginConfig {
 
   for (const key of allKeys) {
     // Skip standard fields
-    if (['enabled', 'username', 'sections'].includes(key)) {
+    if (["enabled", "username", "sections"].includes(key)) {
       continue
     }
 
@@ -200,19 +200,19 @@ function migratePluginConfig(pluginConfig: any): PluginConfig {
  */
 function ensureAllPlugins(plugins: Record<string, any>): Record<string, PluginConfig> {
   const allPlugins: Record<string, PluginConfig> = {}
-  
+
   // Migrate existing plugins
   Object.keys(plugins).forEach((pluginName) => {
     allPlugins[pluginName] = migratePluginConfig(plugins[pluginName])
   })
-  
+
   // Add any missing plugins from metadata (apenas habilitados)
   getEnabledPlugins().forEach((pluginName) => {
     if (!allPlugins[pluginName]) {
       allPlugins[pluginName] = applyPluginDefaults(pluginName, {})
     }
   })
-  
+
   return allPlugins
 }
 
@@ -245,7 +245,6 @@ export const useWizardStore = create<WizardState>()(
 
       setPluginConfig: (plugin, config) => {
         const currentConfig = get().plugins[plugin] || {}
-
         // Apply defaults only for missing fields, preserving existing values
         const defaults = applyPluginDefaults(plugin, {}, undefined)
 
@@ -256,13 +255,19 @@ export const useWizardStore = create<WizardState>()(
           ...currentConfig,
           ...config,
           // Preserve sections unless explicitly clearing or disabling
-          sections: config.sections !== undefined
-            ? config.sections
-            : (currentConfig.sections !== undefined ? currentConfig.sections : defaults.sections || []),
+          sections:
+            config.sections !== undefined
+              ? config.sections
+              : currentConfig.sections !== undefined
+                ? currentConfig.sections
+                : defaults.sections || [],
           // Preserve enabled unless explicitly set
-          enabled: config.enabled !== undefined
-            ? config.enabled
-            : (currentConfig.enabled !== undefined ? currentConfig.enabled : defaults.enabled ?? false),
+          enabled:
+            config.enabled !== undefined
+              ? config.enabled
+              : currentConfig.enabled !== undefined
+                ? currentConfig.enabled
+                : (defaults.enabled ?? false),
         }
 
         // Se plugin está sendo desligado, limpar todas as sections
@@ -276,38 +281,37 @@ export const useWizardStore = create<WizardState>()(
             [plugin]: newConfig,
           },
         })
-
         get().validateStep(1) // Step 1: Plugins
       },
 
       togglePlugin: (plugin) => {
         const state = get()
         let current = state.plugins[plugin]
-        
+
         // If plugin doesn't exist, initialize it
         if (!current) {
           current = applyPluginDefaults(plugin, {})
           state.setPluginConfig(plugin, current)
         }
-        
+
         const newEnabled = !current.enabled
-        
+
         // Sempre começar sem sections - o usuário deve escolher quais quer ativar
         let newSections: string[] = []
         if (newEnabled) {
           // Manter sections existentes se o plugin já estava configurado antes
-            newSections = current.sections || []
+          newSections = current.sections || []
         }
-        
-        get().setPluginConfig(plugin, { 
+
+        get().setPluginConfig(plugin, {
           enabled: newEnabled,
-          sections: newSections
+          sections: newSections,
         })
-        
+
         // Se está ativando, mover para o topo da lista
         if (newEnabled) {
           const currentOrder = state.pluginsOrder || []
-          const newOrder = [plugin, ...currentOrder.filter(p => p !== plugin)]
+          const newOrder = [plugin, ...currentOrder.filter((p) => p !== plugin)]
           set({ pluginsOrder: newOrder })
         }
       },
@@ -325,7 +329,7 @@ export const useWizardStore = create<WizardState>()(
       setSectionConfig: (plugin, sectionId, config) => {
         const current = get().plugins[plugin] || applyPluginDefaults(plugin, {})
         const currentSection = current.sectionConfigs?.[sectionId] || {}
-        
+
         get().setPluginConfig(plugin, {
           sectionConfigs: {
             ...(current.sectionConfigs || {}),
@@ -402,11 +406,9 @@ export const useWizardStore = create<WizardState>()(
       },
 
       resetForEdit: () => {
-        const newPlugins = generateInitialPluginsForEdit()
-
         set({
           ...initialState,
-          plugins: newPlugins,
+          plugins: generateInitialPluginsForEdit(),
           pluginsOrder: [],
         })
       },
@@ -424,22 +426,23 @@ export const useWizardStore = create<WizardState>()(
               break
             }
 
-            isValid = entries.every(([name, cfg]) => {
-              const meta = getPluginMetadata(name)
-              if (!meta) return true
+            isValid =
+              entries.every(([name, cfg]) => {
+                const meta = getPluginMetadata(name)
+                if (!meta) return true
 
-              // precisa pelo menos 1 seção
-              if (cfg.sections.length === 0) return false
+                // precisa pelo menos 1 seção
+                if (cfg.sections.length === 0) return false
 
-              // requiredFields (ex: "username", "personality_url", etc)
-              const requiredOk = meta.requiredFields.every((field: string) => {
-                const value = cfg[field as keyof PluginConfig]
-                if (typeof value === 'string') return !!value.trim()
-                return !!value
-              })
+                // requiredFields (ex: "username", "personality_url", etc)
+                const requiredOk = meta.requiredFields.every((field: string) => {
+                  const value = cfg[field as keyof PluginConfig]
+                  if (typeof value === "string") return !!value.trim()
+                  return !!value
+                })
 
-              return requiredOk
-            }) && !state.pluginsHaveMissingEssentialConfigs
+                return requiredOk
+              }) && !state.pluginsHaveMissingEssentialConfigs
             break
           }
           case 2:
@@ -512,9 +515,8 @@ export const useWizardStore = create<WizardState>()(
         // IMPORTANT: Only add missing plugins, never reset existing ones
         if (state && state.plugins) {
           // Only add missing plugins, preserve existing ones completely
-          const hasMissingPlugins = getEnabledPlugins()
-            .some(pluginName => !state.plugins[pluginName])
-          
+          const hasMissingPlugins = getEnabledPlugins().some((pluginName) => !state.plugins[pluginName])
+
           if (hasMissingPlugins) {
             // Only add missing plugins, don't touch existing ones
             const updatedPlugins = { ...state.plugins }
@@ -524,11 +526,11 @@ export const useWizardStore = create<WizardState>()(
               }
             })
             state.plugins = updatedPlugins
-            
+
             // Merge pluginsOrder to include new plugins while preserving order
             const existingOrder = state.pluginsOrder || []
             const allPluginsOrder = generateInitialPluginsOrder()
-            const newPlugins = allPluginsOrder.filter(p => !existingOrder.includes(p))
+            const newPlugins = allPluginsOrder.filter((p) => !existingOrder.includes(p))
             state.pluginsOrder = [...existingOrder, ...newPlugins]
           }
         }
@@ -536,4 +538,3 @@ export const useWizardStore = create<WizardState>()(
     }
   )
 )
-

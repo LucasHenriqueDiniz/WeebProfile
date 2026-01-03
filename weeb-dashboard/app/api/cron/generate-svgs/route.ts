@@ -87,7 +87,7 @@ export async function GET(request: Request) {
           .where(eq(svgs.id, svg.id))
 
         // Converter configuração do Supabase para formato do svg-generator
-        const pluginsConfig = convertSvgToPluginsConfig(svg)
+        const { plugins: pluginsConfig, pluginsOrder: pluginsOrderFromConvert } = await convertSvgToPluginsConfig(svg)
 
         // Preparar request para o svg-generator HTTP service
         // O svg-generator vai buscar essential configs do Supabase usando userId
@@ -96,7 +96,7 @@ export async function GET(request: Request) {
           style: svg.style || 'default',
           size: svg.size || 'half',
           plugins: pluginsConfig,
-          pluginsOrder: svg.pluginsOrder?.split(',') || [],
+          pluginsOrder: pluginsOrderFromConvert || svg.pluginsOrder?.split(',') || [],
           customCss: svg.customCss || undefined,
           theme: svg.theme || undefined,
           hideTerminalEmojis: terminalConfigs.hideTerminalEmojis,

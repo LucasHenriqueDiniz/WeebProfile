@@ -15,7 +15,7 @@ import { urlToBase64 } from "../../../utils/image-to-base64"
  */
 async function convertImageUrlsToBase64(data: any, previewMode = false): Promise<any> {
   if (Array.isArray(data)) {
-    return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
+    return Promise.all(data.map((item) => convertImageUrlsToBase64(item, previewMode)))
   }
 
   if (data && typeof data === "object") {
@@ -58,7 +58,21 @@ export async function fetchMyAnimeListData(
   console.log(`[MyAnimeList] Fetching data for user: ${config.username || "mock"}`)
 
   try {
-    // Validar que tem username configurado
+    // Em modo dev ou preview, retornar dados mock sem validar username
+    if (dev || previewMode) {
+      console.log(`[MyAnimeList] Using mock data (dev mode or preview mode)`)
+      const mockData = getMockMyAnimeListData()
+      
+      // Em modo preview, manter URLs originais (não converter para base64)
+      if (previewMode) {
+        return mockData
+      }
+      
+      // Converter URLs de imagens para base64 apenas quando não estiver em modo preview
+      return await convertImageUrlsToBase64(mockData, previewMode)
+    }
+
+    // Validar que tem username configurado apenas quando não estiver em modo dev/preview
     if (!config.username || typeof config.username !== "string" || config.username.trim() === "") {
       throw new Error("MyAnimeList username is required. Please configure your username in the plugin settings.")
     }

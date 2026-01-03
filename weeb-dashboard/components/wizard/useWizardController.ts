@@ -1,6 +1,6 @@
 /**
  * Wizard Controller Hook
- *
+ * 
  * Extracts all business logic from Wizard component.
  * Returns computed values, handlers, and props for child components.
  */
@@ -9,8 +9,9 @@ import { useRouter } from "next/navigation"
 import { useMemo, useState, useCallback, useEffect, useRef } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"
+import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
-import { selectEnabledPluginNames, selectPluginsWithSections, selectTotalSections } from "@/stores/wizard-selectors"
+import { selectEnabledPluginNames, selectPluginsWithSections, selectTotalSections, selectMissingConfigs } from "@/stores/wizard-selectors"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ApiException, svgApi } from "@/lib/api"
 import { debugWizard } from "@/lib/debug"
@@ -49,6 +50,15 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
   } = useWizardStore()
 
   // Reset store when entering edit mode to avoid loading persisted data
+  // This must happen before any data loading
+  useEffect(() => {
+    if (isEditMode && !hasResetRef.current) {
+      resetForEdit() // Use edit mode reset (no plugins enabled by default)
+      hasResetRef.current = true
+    }
+  }, [isEditMode, resetForEdit])
+
+  // Reset store when entering edit mode to avoid loading persisted data
   useEffect(() => {
     if (isEditMode) {
       reset()
@@ -58,7 +68,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
   // Computed values using canonical selectors
   const enabledPlugins = useMemo(() => {
     const enabled = selectEnabledPluginNames({ plugins, pluginsOrder })
-    debugWizard("Enabled plugins:", enabled)
+    debugWizard('Enabled plugins:', enabled)
     return enabled
   }, [plugins, pluginsOrder])
 
@@ -70,49 +80,16 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     return selectPluginsWithSections({ plugins, pluginsOrder })
   }, [plugins, pluginsOrder])
 
-  // Missing configs validation
+  // Get secrets presence from bootstrap store (no fetching here)
+  const { missingSecrets: bootstrapMissingSecrets } = useWizardBootstrapStore()
+
+  // Missing configs validation - use canonical selector that espelha backend criteria
   const missingConfigs = useMemo(() => {
-    const missing: Array<{ plugin: string; field: string; label: string }> = []
-
-    enabledPlugins.forEach((pluginName) => {
-      const plugin = plugins[pluginName]
-      if (!plugin?.enabled) return
-
-      const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
-      if (!metadata) return
-
-      // Check requiredFields
-      metadata.requiredFields.forEach((field) => {
-        const value = (plugin as any)[field]
-        const isEmpty = typeof value === "string" ? !value.trim() : !value
-        if (isEmpty) {
-          missing.push({
-            plugin: pluginName,
-            field,
-            label: field.replace(/([A-Z])/g, " $1").trim(),
-          })
-        }
-      })
-
-      // Check essentialConfigKeysMetadata if exists
-      if (metadata.essentialConfigKeysMetadata) {
-        metadata.essentialConfigKeysMetadata.forEach((configKeyMeta: any) => {
-          const configKey = configKeyMeta.key
-          const value = (plugin as any)[configKey]
-          const isEmpty = typeof value === "string" ? !value.trim() : !value
-          if (isEmpty) {
-            missing.push({
-              plugin: pluginName,
-              field: configKey,
-              label: configKeyMeta.label || configKey.replace(/([A-Z])/g, " $1").trim(),
-            })
-          }
-        })
-      }
-    })
-
-    return missing
-  }, [enabledPlugins, plugins])
+    return selectMissingConfigs(
+      { plugins, pluginsOrder },
+      { missingSecrets: bootstrapMissingSecrets }
+    )
+  }, [plugins, pluginsOrder, bootstrapMissingSecrets])
 
   const hasMissingEssential = missingConfigs.length > 0
 
@@ -130,45 +107,79 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
 
     setIsSaving(true)
     try {
-      // Prepare pluginsConfig in the format expected by the API
-      const pluginsConfig: Record<string, any> = {
-        // Add customThemeColors only if theme is custom
-        ...(theme === "custom" && Object.keys(customThemeColors).length > 0 ? { customThemeColors } : {}),
-      }
+      // 1. Separate reusable configs (username) from SVG-specific configs (enabled, sections, sectionConfigs)
+      const pluginConfigsToSave: Record<string, Record<string, any>> = {} // For plugin_config table
+      const svgPluginsConfig: Record<string, any> = {} // For svgs.plugins_config (no username)
 
-      // Only include enabled plugins with sections in config (plugins without sections won't render anything)
+      // Only include enabled plugins with sections in config
       pluginsOrder.forEach((pluginName) => {
         const plugin = plugins[pluginName]
-        // Only include if enabled AND has sections (for serialization)
+        // Only include if enabled AND has sections
         if (plugin?.enabled && plugin.sections && plugin.sections.length > 0) {
-          pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}`] = true
-
-          // Add requiredFields dynamically
           const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
+          
+          // Extract username (reusable) - save to plugin_config
+          if (plugin.username) {
+            if (!pluginConfigsToSave[pluginName]) {
+              pluginConfigsToSave[pluginName] = {}
+            }
+            pluginConfigsToSave[pluginName].username = plugin.username
+          }
+
+          // Extract other requiredFields (reusable) - save to plugin_config
           if (metadata?.requiredFields) {
             metadata.requiredFields.forEach((field: string) => {
               const value = (plugin as any)[field]
-              if (value) {
-                pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}_${field.toUpperCase()}`] = value
+              if (value && field !== "username") { // username already handled
+                if (!pluginConfigsToSave[pluginName]) {
+                  pluginConfigsToSave[pluginName] = {}
+                }
+                pluginConfigsToSave[pluginName][field] = value
               }
             })
           }
 
-          pluginsConfig[`PLUGIN_${pluginName.toUpperCase()}_SECTIONS`] = plugin.sections.join(",")
-
-          // Add other plugin-specific configs (not requiredFields)
-          Object.keys(plugin).forEach((key) => {
-            if (key !== "enabled" && key !== "sections" && key !== "sectionConfigs" && key !== "fields") {
-              // Skip requiredFields that were already added
-              const isRequiredField = metadata?.requiredFields?.includes(key)
-              if (!isRequiredField) {
-                const envKey = `PLUGIN_${pluginName.toUpperCase()}_${key.toUpperCase()}`
-                pluginsConfig[envKey] = (plugin as any)[key]
-              }
-            }
-          })
+          // SVG-specific configs (enabled, sections, sectionConfigs) - save to svgs.plugins_config
+          svgPluginsConfig[pluginName] = {
+            enabled: true,
+            sections: plugin.sections,
+            ...(plugin.sectionConfigs && Object.keys(plugin.sectionConfigs).length > 0
+              ? { sectionConfigs: plugin.sectionConfigs }
+              : {}),
+          }
         }
       })
+
+      // 2. Save reusable configs (username, etc.) to plugin_config
+      if (Object.keys(pluginConfigsToSave).length > 0) {
+        try {
+          await fetch("/api/plugin-config", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ configs: pluginConfigsToSave }),
+          })
+          // Refresh plugin configs in bootstrap store
+          const { refreshPluginConfigs } = useWizardBootstrapStore.getState()
+          await refreshPluginConfigs()
+        } catch (error) {
+          console.error("Error saving plugin configs:", error)
+          // Don't fail the whole operation, but log the error
+        }
+      }
+
+      // 3. Prepare pluginsConfig for SVG (includes customThemeColors and terminal configs)
+      const finalPluginsConfig = setTerminalConfigs(
+        {
+          ...svgPluginsConfig,
+          // Add customThemeColors only if theme is custom
+          ...(theme === "custom" && Object.keys(customThemeColors).length > 0 ? { customThemeColors } : {}),
+        },
+        {
+          hideTerminalEmojis,
+          hideTerminalHeader,
+          hideTerminalCommand,
+        }
+      )
 
       // Validate that at least one enabled plugin has sections before creating
       if (pluginsWithSections.length === 0) {
@@ -203,14 +214,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
       const currentOrderFiltered = pluginsOrder.filter((name) => enabledPluginNames.includes(name))
       const isOrderCustomized = JSON.stringify(enabledPluginsOrdered) !== JSON.stringify(currentOrderFiltered)
 
-      // 1. Create/Update SVG
-      // Merge terminal configs into pluginsConfig
-      const finalPluginsConfig = setTerminalConfigs(pluginsConfig, {
-        hideTerminalEmojis,
-        hideTerminalHeader,
-        hideTerminalCommand,
-      })
-
+      // 4. Create/Update SVG (pluginsConfig now only has SVG-specific configs, no username)
       const svgData: any = {
         name: autoName,
         style,
@@ -273,10 +277,31 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
           })
           router.push(`/dashboard/${svgId}`)
         }
-      } catch (generateError) {
+      } catch (generateError: any) {
         // Reset wizard store even with error (only in creation mode)
         if (!isEditMode) {
           reset()
+        }
+
+        // Check if it's a missing config error
+        if (generateError?.code === "MISSING_REQUIRED_SECRETS" || generateError?.code === "MISSING_REQUIRED_CONFIG") {
+          const missing = generateError?.missing || []
+          const missingList = missing
+            .map((m: any) => {
+              const secrets = m.missingSecrets?.map((s: any) => s.label || s.key).join(", ") || ""
+              const fields = m.missingFields?.map((f: any) => f.label || f.field).join(", ") || ""
+              const parts = [secrets, fields].filter(Boolean)
+              return `${m.pluginName}: ${parts.join(", ")}`
+            })
+            .join("; ")
+
+          toast({
+            title: "Configuração obrigatória faltando",
+            description: `Configure os seguintes campos: ${missingList}`,
+            variant: "destructive",
+          })
+          // Don't redirect - let user fix the config
+          return
         }
 
         // If generation fails, still redirect (page will show error)
@@ -294,8 +319,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
           : error instanceof Error
-            ? error.message
-            : `Erro ao ${isEditMode ? "atualizar" : "criar"} imagem`
+          ? error.message
+          : `Erro ao ${isEditMode ? "atualizar" : "criar"} imagem`
 
       toast({
         title: "Erro",
