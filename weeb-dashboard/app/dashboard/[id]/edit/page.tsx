@@ -18,7 +18,7 @@ export default function EditSvgPage() {
   const router = useRouter()
   const params = useParams()
   const { getSvg, getSvgSync } = useSvgStore()
-  const { pluginConfigs, bootstrap } = useWizardBootstrapStore()
+  const { bootstrap } = useWizardBootstrapStore()
   const svgId = params.id as string
   
   // Tentar pegar do cache imediatamente
@@ -33,8 +33,8 @@ export default function EditSvgPage() {
       return
     }
 
-    // Bootstrap plugin configs if not already loaded
-    if (user && !pluginConfigs || Object.keys(pluginConfigs).length === 0) {
+    // Bootstrap secrets presence (for validation)
+    if (user) {
       bootstrap()
     }
 
@@ -103,8 +103,9 @@ export default function EditSvgPage() {
     setSize(svg.size as "half" | "full")
     setTheme(svg.theme || "default")
     
-    // Read terminal configs from pluginsConfig
-    const terminalConfigs = getTerminalConfigs(svg.pluginsConfig as Record<string, any>)
+    // Read terminal configs from ui_config (not plugins_config)
+    const uiConfig = (svg as any).uiConfig || {}
+    const terminalConfigs = getTerminalConfigs(uiConfig)
     setHideTerminalEmojis(terminalConfigs.hideTerminalEmojis)
     setHideTerminalHeader(terminalConfigs.hideTerminalHeader)
     setHideTerminalCommand(terminalConfigs.hideTerminalCommand)
@@ -112,27 +113,28 @@ export default function EditSvgPage() {
     setCustomCss(svg.customCss || "")
 
     // Carregar plugins config
-    // New format: { "github": { enabled: true, sections: [...] }, ... }
-    // Username comes from plugin_config (loaded separately via bootstrap store)
+    // Format: { "github": { enabled: true, sections: [...], username: "..." }, ... }
+    // Username now comes directly from svgs.plugins_config (no more plugin_config dependency)
     if (svg.pluginsConfig && typeof svg.pluginsConfig === "object") {
       const pluginsConfig = svg.pluginsConfig as Record<string, any>
       
-      // Get plugin configs from bootstrap store (reusable: username, etc.)
-      const { pluginConfigs: userPluginConfigs } = useWizardBootstrapStore.getState()
-      
-      // Process plugins in new format (no PLUGIN_ prefix)
+      // Process plugins - username is now inside pluginsConfig[pluginName]
       Object.keys(pluginsConfig).forEach((pluginName) => {
         const pluginConfig = pluginsConfig[pluginName]
         if (pluginConfig && typeof pluginConfig === "object") {
-          // Merge user config (username) with SVG config (enabled, sections)
-          const userConfig = userPluginConfigs[pluginName] || {}
-          
           setPluginConfig(pluginName, {
             enabled: pluginConfig.enabled === true,
             sections: Array.isArray(pluginConfig.sections) ? pluginConfig.sections : [],
             sectionConfigs: pluginConfig.sectionConfigs || {},
-            // Apply username from plugin_config (reusable)
-            ...(userConfig.username ? { username: userConfig.username } : {}),
+            // Username and other requiredFields are now directly in pluginsConfig
+            ...(pluginConfig.username && { username: pluginConfig.username }),
+            // Include any other requiredFields that might be in the config
+            ...Object.keys(pluginConfig).reduce((acc, key) => {
+              if (key !== "enabled" && key !== "sections" && key !== "sectionConfigs" && pluginConfig[key]) {
+                acc[key] = pluginConfig[key]
+              }
+              return acc
+            }, {} as Record<string, any>),
           })
         }
       })

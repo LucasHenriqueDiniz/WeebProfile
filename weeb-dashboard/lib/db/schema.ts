@@ -49,28 +49,11 @@ export const essentialConfigs = pgTable(
 )
 
 /**
- * Plugin configurations table (non-sensitive, reusable per user)
+ * Plugin configurations table (LEGACY - REMOVED)
  * 
- * Stores reusable plugin configurations like username that apply to all SVGs of a user.
- * These are merged with svgs.plugins_config during SVG generation.
+ * Plugin configs (username, etc) are now stored directly in svgs.plugins_config.
+ * This table has been migrated and dropped.
  */
-export const pluginConfig = pgTable(
-  "plugin_config",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    userId: text("user_id").notNull(),
-    plugin: text("plugin").notNull(),
-    config: jsonb("config").notNull().default({}),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-  },
-  (table) => ({
-    userIdIdx: index("idx_plugin_config_user_id").on(table.userId),
-    pluginIdx: index("idx_plugin_config_plugin").on(table.plugin),
-    userPluginUnique: unique("idx_plugin_config_user_plugin_unique")
-      .on(table.userId, table.plugin), // One config per (userId, plugin)
-  })
-)
 
 /**
  * Generated SVGs table
@@ -87,7 +70,8 @@ export const svgs = pgTable(
     theme: text("theme").default("default"), // Unified theme field (replaces terminalTheme and defaultTheme)
     customCss: text("custom_css"),
     pluginsOrder: text("plugins_order"), // Order will be generated dynamically from PLUGINS_METADATA (null = alphabetical order)
-    pluginsConfig: jsonb("plugins_config").notNull().default({}), // Terminal configs (hideTerminalEmojis, hideTerminalHeader, hideTerminalCommand) are stored here
+    pluginsConfig: jsonb("plugins_config").notNull().default({}), // Plugin-specific configs (enabled, sections, username, etc)
+    uiConfig: jsonb("ui_config").notNull().default({}), // Global UI flags (hideTerminalEmojis, hideTerminalHeader, hideTerminalCommand, customThemeColors)
     storagePath: text("storage_path"),
     storageUrl: text("storage_url"),
     status: text("status").notNull().default("pending"),
@@ -133,7 +117,8 @@ export const templates = pgTable(
     theme: text("theme").default("default"),
     customCss: text("custom_css"),
     pluginsOrder: text("plugins_order"), // Order will be generated dynamically (null = alphabetical order)
-    pluginsConfig: jsonb("plugins_config").notNull().default({}), // Terminal configs (hideTerminalEmojis, hideTerminalHeader, hideTerminalCommand) are stored here
+    pluginsConfig: jsonb("plugins_config").notNull().default({}), // Plugin-specific configs (enabled, sections, username, etc)
+    uiConfig: jsonb("ui_config").notNull().default({}), // Global UI flags (hideTerminalEmojis, hideTerminalHeader, hideTerminalCommand, customThemeColors)
     isPublic: boolean("is_public").default(false).notNull(), // Whether template is publicly available
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
@@ -179,8 +164,5 @@ export const templateLikes = pgTable(
 
 export type TemplateLike = typeof templateLikes.$inferSelect
 export type NewTemplateLike = typeof templateLikes.$inferInsert
-
-export type PluginConfig = typeof pluginConfig.$inferSelect
-export type NewPluginConfig = typeof pluginConfig.$inferInsert
 
 

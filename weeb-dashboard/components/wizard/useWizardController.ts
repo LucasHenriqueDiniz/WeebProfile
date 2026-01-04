@@ -107,9 +107,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
 
     setIsSaving(true)
     try {
-      // 1. Separate reusable configs (username) from SVG-specific configs (enabled, sections, sectionConfigs)
-      const pluginConfigsToSave: Record<string, Record<string, any>> = {} // For plugin_config table
-      const svgPluginsConfig: Record<string, any> = {} // For svgs.plugins_config (no username)
+      // 1. Build plugins_config (only plugin-specific configs: enabled, sections, username, requiredFields)
+      const svgPluginsConfig: Record<string, any> = {}
 
       // Only include enabled plugins with sections in config
       pluginsOrder.forEach((pluginName) => {
@@ -118,68 +117,50 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         if (plugin?.enabled && plugin.sections && plugin.sections.length > 0) {
           const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
           
-          // Extract username (reusable) - save to plugin_config
-          if (plugin.username) {
-            if (!pluginConfigsToSave[pluginName]) {
-              pluginConfigsToSave[pluginName] = {}
-            }
-            pluginConfigsToSave[pluginName].username = plugin.username
+          // Build plugin config with all non-sensitive fields
+          const pluginConfig: Record<string, any> = {
+            enabled: true,
+            sections: plugin.sections,
           }
 
-          // Extract other requiredFields (reusable) - save to plugin_config
+          // Add username if exists
+          if (plugin.username) {
+            pluginConfig.username = plugin.username
+          }
+
+          // Add other requiredFields (non-sensitive) if they exist
           if (metadata?.requiredFields) {
             metadata.requiredFields.forEach((field: string) => {
               const value = (plugin as any)[field]
-              if (value && field !== "username") { // username already handled
-                if (!pluginConfigsToSave[pluginName]) {
-                  pluginConfigsToSave[pluginName] = {}
-                }
-                pluginConfigsToSave[pluginName][field] = value
+              if (value && typeof value === 'string' && value.trim()) {
+                pluginConfig[field] = value.trim()
               }
             })
           }
 
-          // SVG-specific configs (enabled, sections, sectionConfigs) - save to svgs.plugins_config
-          svgPluginsConfig[pluginName] = {
-            enabled: true,
-            sections: plugin.sections,
-            ...(plugin.sectionConfigs && Object.keys(plugin.sectionConfigs).length > 0
-              ? { sectionConfigs: plugin.sectionConfigs }
-              : {}),
+          // Add sectionConfigs if they exist
+          if (plugin.sectionConfigs && Object.keys(plugin.sectionConfigs).length > 0) {
+            pluginConfig.sectionConfigs = plugin.sectionConfigs
           }
+
+          svgPluginsConfig[pluginName] = pluginConfig
         }
       })
 
-      // 2. Save reusable configs (username, etc.) to plugin_config
-      if (Object.keys(pluginConfigsToSave).length > 0) {
-        try {
-          await fetch("/api/plugin-config", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ configs: pluginConfigsToSave }),
-          })
-          // Refresh plugin configs in bootstrap store
-          const { refreshPluginConfigs } = useWizardBootstrapStore.getState()
-          await refreshPluginConfigs()
-        } catch (error) {
-          console.error("Error saving plugin configs:", error)
-          // Don't fail the whole operation, but log the error
-        }
-      }
-
-      // 3. Prepare pluginsConfig for SVG (includes customThemeColors and terminal configs)
-      const finalPluginsConfig = setTerminalConfigs(
-        {
-          ...svgPluginsConfig,
-          // Add customThemeColors only if theme is custom
-          ...(theme === "custom" && Object.keys(customThemeColors).length > 0 ? { customThemeColors } : {}),
-        },
+      // 2. Build ui_config (only global flags: hideTerminal*, customThemeColors)
+      const uiConfig = setTerminalConfigs(
+        {},
         {
           hideTerminalEmojis,
           hideTerminalHeader,
           hideTerminalCommand,
         }
       )
+
+      // Add customThemeColors if theme is custom
+      if (theme === "custom" && Object.keys(customThemeColors).length > 0) {
+        uiConfig.customThemeColors = customThemeColors
+      }
 
       // Validate that at least one enabled plugin has sections before creating
       if (pluginsWithSections.length === 0) {
@@ -214,19 +195,15 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
       const currentOrderFiltered = pluginsOrder.filter((name) => enabledPluginNames.includes(name))
       const isOrderCustomized = JSON.stringify(enabledPluginsOrdered) !== JSON.stringify(currentOrderFiltered)
 
-      // 4. Create/Update SVG (pluginsConfig now only has SVG-specific configs, no username)
+      // 3. Create/Update SVG (pluginsConfig has plugins only, uiConfig has global flags)
       const svgData: any = {
         name: autoName,
         style,
         size,
         theme,
         customCss: customCss || null,
-        customThemeColors: theme === "custom" ? customThemeColors : undefined,
-        pluginsConfig: finalPluginsConfig,
-        // Terminal configs are passed separately for API compatibility (will be merged on server)
-        hideTerminalEmojis,
-        hideTerminalHeader,
-        hideTerminalCommand,
+        pluginsConfig: svgPluginsConfig,
+        uiConfig: uiConfig,
       }
 
       // Only include pluginsOrder if customized (not alphabetical default)
@@ -375,3 +352,4 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     footerProps,
   }
 }
+

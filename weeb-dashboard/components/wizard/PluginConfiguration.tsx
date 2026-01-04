@@ -37,7 +37,6 @@ import { getSectionPreview } from "@/lib/config/section-previews"
 import { getPluginTags, getAllTags, type PluginTag } from "@/lib/config/plugin-tags"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
-import { usePluginConfigAutoSave } from "@/hooks/usePluginConfigAutoSave"
 import { EmptyState } from "./EmptyState"
 import { PluginCard } from "./PluginCard"
 
@@ -102,11 +101,11 @@ export function PluginConfiguration() {
   // Use new hook for profile config (now uses bootstrap store)
   const { profile, essentialConfigs } = useProfileConfig(enabledPlugins)
   
-  // Get secrets presence and plugin configs from bootstrap store (no fetching here)
-  const { secretsPresence, missingSecrets, refreshSecretsPresence, pluginConfigs, refreshPluginConfigs, updateSecretsPresenceOptimistic } = useWizardBootstrapStore()
+  // Get secrets presence from bootstrap store (no fetching here)
+  const { secretsPresence, missingSecrets, refreshSecretsPresence, updateSecretsPresenceOptimistic } = useWizardBootstrapStore()
   
-  // Auto-save usernames to plugin_config when edited
-  usePluginConfigAutoSave()
+  // Username is now saved directly in svgs.plugins_config when user saves SVG
+  // No more auto-save or bootstrap of plugin_config needed
   
   // Force refresh when plugins are enabled/disabled (removed - no longer needed)
   const prevEnabledPluginsRef = useRef<string[]>([])
@@ -146,20 +145,8 @@ export function PluginConfiguration() {
     }
   }, [])
 
-  // Apply username from plugin_config when it loads (only once)
-  useEffect(() => {
-    // Apply usernames from plugin_config to wizard store for all enabled plugins
-    enabledPlugins.forEach((pluginName) => {
-      const pluginConfig = pluginConfigs[pluginName]
-      const currentUsername = plugins[pluginName]?.username
-      
-      // If plugin_config has username and wizard store doesn't, apply it
-      if (pluginConfig?.username && currentUsername !== pluginConfig.username) {
-        setPluginRequiredField(pluginName, 'username', pluginConfig.username)
-      }
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pluginConfigs, enabledPlugins.join(",")])
+  // Username is now loaded directly from svgs.plugins_config in edit mode
+  // No need to apply from plugin_config bootstrap store anymore
 
   // Group plugins by category
   const groupedPlugins = useMemo(() => getPluginsGroupedByCategory(), [])
@@ -242,72 +229,88 @@ export function PluginConfiguration() {
     setUnlockDialog(null)
   }
 
-  // Debounce timers for each input
-  const debounceTimersRef = useRef<Record<string, NodeJS.Timeout>>({})
+  // Apenas atualiza estado local (sem save, sem debounce)
+  const handleEssentialConfigChange = (plugin: string, key: string, value: string) => {
+    // Atualizar estado local imediatamente (para UI responsiva)
+    setPluginRequiredField(plugin, key, value)
+  }
 
-  const handleEssentialConfigChange = async (plugin: string, key: string, value: string) => {
+  // Salva no servidor (chamado pelo botão Salvar)
+  const handleEssentialConfigSave = async (plugin: string, key: string, value: string) => {
     const configKey = `${plugin}.${key}`
     const isUnlocked = unlockedConfigs.has(configKey)
-    const isLocked = essentialConfigs[plugin]?.[key] === true && !isUnlocked
-
-    // Se está locked e não foi desbloqueado, não permitir edição
-    if (isLocked) {
-      handleUnlockConfig(plugin, key)
+    // Verificar se o secret existe usando secretsPresence (source of truth)
+    const exists = secretsPresence?.[plugin]?.[key]?.exists || false
+    
+    console.log(`💾 [SAVE] Tentando salvar ${configKey}:`, {
+      isUnlocked,
+      exists,
+      valueLength: value.length,
+      valuePreview: value.substring(0, 10) + "..."
+    })
+    
+    // Se não está unlocked E existe, não pode salvar (precisa desbloquear primeiro)
+    // Se não existe, pode salvar direto (campo novo está automaticamente unlocked)
+    // IMPORTANTE: Se não existe, considerar como unlocked (campo novo)
+    const canSave = !exists || isUnlocked
+    if (!canSave) {
+      console.warn(`⚠️ [SAVE] Campo ${configKey} está locked. Precisa desbloquear primeiro.`)
+      toast({
+        title: "Campo bloqueado",
+        description: "Clique em 'Editar' para desbloquear o campo antes de salvar",
+        variant: "destructive",
+      })
       return
     }
-
-    // Clear existing debounce timer for this input
-    if (debounceTimersRef.current[configKey]) {
-      clearTimeout(debounceTimersRef.current[configKey])
+    
+    if (!value.trim()) {
+      console.warn(`⚠️ [SAVE] Valor vazio para ${configKey}`)
+      toast({
+        title: "Valor vazio",
+        description: "Digite um valor antes de salvar",
+        variant: "destructive",
+      })
+      return
     }
+    
+    console.log(`✅ [SAVE] Salvando ${configKey} com valor:`, value.substring(0, 10) + "...")
 
-    // Atualizar localmente imediatamente (para UI responsiva)
-    setPluginRequiredField(plugin, key, value)
-
-    // Debounce API calls and preview updates (500ms)
-    debounceTimersRef.current[configKey] = setTimeout(async () => {
-      // Se foi desbloqueado, salvar via API
-      if (isUnlocked && value.trim()) {
-        setSavingConfigs((prev) => new Set(prev).add(configKey))
-        
-        // Optimistic update: atualizar UI imediatamente antes de salvar
-        updateSecretsPresenceOptimistic(plugin, key)
-        
-        try {
-          await profileApi.updateEssentialConfig(plugin, key, value)
-          setSavedConfigs((prev) => new Set(prev).add(configKey))
-          toast({
-            title: "Configuração salva",
-            description: `${key} foi atualizado com sucesso`,
-          })
-          // Remover indicador de salvo após 2 segundos
-          setTimeout(() => {
-            setSavedConfigs((prev) => {
-              const next = new Set(prev)
-              next.delete(configKey)
-              return next
-            })
-          }, 2000)
-          // Se sucesso, não precisa refresh - optimistic update já está correto
-        } catch (error) {
-          console.error("Error saving essential config:", error)
-          // Se erro, refresh para sincronizar com servidor
-          await refreshSecretsPresence()
-          toast({
-            title: "Erro ao salvar",
-            description: "Não foi possível salvar a configuração",
-            variant: "destructive",
-          })
-        } finally {
-          setSavingConfigs((prev) => {
-            const next = new Set(prev)
-            next.delete(configKey)
-            return next
-          })
-        }
-      }
-      delete debounceTimersRef.current[configKey]
-    }, 500)
+    setSavingConfigs((prev) => new Set(prev).add(configKey))
+    
+    // Optimistic update: atualizar UI imediatamente antes de salvar
+    updateSecretsPresenceOptimistic(plugin, key)
+    
+    try {
+      await profileApi.updateEssentialConfig(plugin, key, value)
+      setSavedConfigs((prev) => new Set(prev).add(configKey))
+      toast({
+        title: "Configuração salva",
+        description: `${key} foi atualizado com sucesso`,
+      })
+      // Remover indicador de salvo após 2 segundos
+      setTimeout(() => {
+        setSavedConfigs((prev) => {
+          const next = new Set(prev)
+          next.delete(configKey)
+          return next
+        })
+      }, 2000)
+    } catch (error) {
+      console.error("Error saving essential config:", error)
+      // Se erro, refresh para sincronizar com servidor
+      await refreshSecretsPresence()
+      toast({
+        title: "Erro ao salvar",
+        description: "Não foi possível salvar a configuração",
+        variant: "destructive",
+      })
+    } finally {
+      setSavingConfigs((prev) => {
+        const next = new Set(prev)
+        next.delete(configKey)
+        return next
+      })
+    }
   }
 
   // Preview stats
@@ -558,6 +561,7 @@ export function PluginConfiguration() {
                   onTogglePlugin={togglePlugin}
                   onToggleSection={toggleSection}
                   onEssentialConfigChange={handleEssentialConfigChange}
+                  onEssentialConfigSave={handleEssentialConfigSave}
                   onUnlockConfig={handleUnlockConfig}
                   onSetPluginRequiredField={setPluginRequiredField}
                   onSetSectionConfig={setSectionConfig}

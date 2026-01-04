@@ -16,12 +16,11 @@
     "paths": {
       "@/*": ["./src/*"],
       "@weeb-plugins/*": ["../weeb-plugins/src/*"],
-      "@weeb/weeb-plugins/*": ["../weeb-plugins/src/*"]
+      "@weeb/weeb-plugins/*": ["../weeb-plugins/src/*"],
+      "@weeb/svg-generator": ["../svg-generator/src/index.ts"],
+      "@weeb/svg-generator/*": ["../svg-generator/src/*"]
     }
   },
   "include": ["src/**/*", "server/**/*"],
   "exclude": ["node_modules", "dist", "lib"]
 }
-
-
-

@@ -110,6 +110,7 @@ export async function POST(request: Request) {
       customCss,
       pluginsOrder,
       pluginsConfig,
+      uiConfig,
       isPublic = false,
     } = body
 
@@ -117,12 +118,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    // Merge terminal configs into pluginsConfig
-    const finalPluginsConfig = setTerminalConfigs(pluginsConfig || {}, {
-      hideTerminalEmojis,
-      hideTerminalHeader,
-      hideTerminalCommand,
-    })
+    // Build uiConfig: merge provided uiConfig with legacy hideTerminal* flags if present
+    let finalUiConfig = { ...(uiConfig || {}) }
+    if (hideTerminalEmojis !== undefined || hideTerminalHeader !== undefined || hideTerminalCommand !== undefined) {
+      finalUiConfig = setTerminalConfigs(finalUiConfig, {
+        hideTerminalEmojis,
+        hideTerminalHeader,
+        hideTerminalCommand,
+      })
+    }
 
     const [newTemplate] = await db
       .insert(templates)
@@ -136,7 +140,8 @@ export async function POST(request: Request) {
         theme: theme || "default",
         customCss: customCss || null,
         pluginsOrder: pluginsOrder || null, // null means use alphabetical order
-        pluginsConfig: finalPluginsConfig,
+        pluginsConfig: pluginsConfig || {},
+        uiConfig: finalUiConfig,
         isPublic: isPublic || false,
       })
       .returning()

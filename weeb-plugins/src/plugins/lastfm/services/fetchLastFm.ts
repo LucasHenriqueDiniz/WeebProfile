@@ -92,26 +92,34 @@ export async function fetchLastFmData(
       throw new Error('LastFM username is required. Please add your LastFM username to the configuration.')
     }
 
-    // TODO: Implementar chamada real da API LastFM
-    // Por enquanto, retornar dados mock até a API estar implementada
-    console.log(`[LastFM] API integration not yet implemented, using mock data`)
-
-    const mockData = getMockLastFmData({
-      recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,
-      top_artists_max: config.nonEssential?.top_artists_max || 10,
-      top_albums_max: config.nonEssential?.top_albums_max || 10,
-      top_tracks_max: config.nonEssential?.top_tracks_max || 10,
-    })
+    // Chamar API real do LastFM
+    console.log(`[LastFM] Fetching real data from LastFM API for user: ${essentialConfig.username}`)
+    const { fetchLastFmDataFromApi } = await import('./fetchLastFmApi.js')
+    
+    const apiData = await fetchLastFmDataFromApi(
+      essentialConfig.apiKey,
+      essentialConfig.username,
+      {
+        recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,
+        top_artists_max: config.nonEssential?.top_artists_max || 10,
+        top_albums_max: config.nonEssential?.top_albums_max || 10,
+        top_tracks_max: config.nonEssential?.top_tracks_max || 10,
+        top_artists_period: config.nonEssential?.top_artists_period || 'overall',
+        top_albums_period: config.nonEssential?.top_albums_period || 'overall',
+        top_tracks_period: config.nonEssential?.top_tracks_period || 'overall',
+        sections: config.sections || [],
+      }
+    )
 
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
       console.log(`[LastFM] Preview mode: keeping image URLs as-is (no base64 conversion)`)
-      return mockData
+      return apiData
     }
 
     // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
     console.log(`[LastFM] Converting image URLs to base64...`)
-    const dataWithBase64Images = await convertImageUrlsToBase64(mockData, previewMode)
+    const dataWithBase64Images = await convertImageUrlsToBase64(apiData, previewMode)
     console.log(`[LastFM] Image conversion completed`)
 
     return dataWithBase64Images

@@ -4,11 +4,11 @@ import PluginSelector from './components/PluginSelector'
 import SectionSelector from './components/SectionSelector'
 import ReactPreview from './components/ReactPreview'
 import SvgPreview from './components/SvgPreview'
-import HeightDebug from './components/HeightDebug'
 import CssClasses from './components/CssClasses'
 import SectionConfig from './components/SectionConfig'
+import ElementInspector, { type InspectedElement } from './components/ElementInspector'
 
-type Tab = 'react' | 'svg' | 'height' | 'classes'
+type Tab = 'react' | 'svg' | 'classes'
 
 function App() {
   const [plugins, setPlugins] = useState<Plugin[]>([])
@@ -25,6 +25,10 @@ function App() {
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [sectionConfig, setSectionConfig] = useState<Record<string, any>>({})
+  const [previewBackground, setPreviewBackground] = useState<'light' | 'dark'>('dark')
+  const [inspectedElement, setInspectedElement] = useState<InspectedElement | null>(null)
+  const [inspectMode, setInspectMode] = useState(false)
+  const [hoveredSelector, setHoveredSelector] = useState<string | null>(null)
 
   // Generate previews - use ref to always get latest sectionConfig without causing re-renders
   const sectionConfigRef = useRef(sectionConfig)
@@ -118,6 +122,23 @@ function App() {
     loadPlugins()
   }, [serverConnected])
 
+  // Update section automatically when plugin changes
+  useEffect(() => {
+    if (plugins.length === 0) return
+    const currentPlugin = plugins.find((p) => p.name === selectedPlugin)
+    if (currentPlugin && currentPlugin.sections.length > 0) {
+      const firstSection = currentPlugin.sections[0]?.id
+      if (firstSection) {
+        // Check if current section exists in new plugin, otherwise use first section
+        const sectionExists = currentPlugin.sections.some(s => s.id === selectedSection)
+        if (!sectionExists) {
+          setSelectedSection(firstSection)
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPlugin, plugins])
+
   // Reset section config when plugin or section changes
   useEffect(() => {
     setSectionConfig({})
@@ -159,8 +180,11 @@ function App() {
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '20px' }}>
       <header style={{ marginBottom: '20px', padding: '20px', background: '#161b22', borderRadius: '8px', border: '1px solid #30363d' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h1 style={{ fontSize: '24px', margin: 0, color: '#58a6ff' }}>🔍 Weeb Debug Tool</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div>
+            <h1 style={{ fontSize: '28px', margin: 0, color: '#58a6ff', fontWeight: '700', letterSpacing: '-0.5px', marginBottom: '4px' }}>🔍 Weeb Debug Tool</h1>
+            <p style={{ fontSize: '13px', color: '#8b949e', margin: 0 }}>Visualize and inspect plugin sections in real-time</p>
+          </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div
@@ -308,38 +332,40 @@ function App() {
       </header>
 
       <div style={{ marginBottom: '20px' }}>
-        <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #30363d' }}>
-          {(['react', 'svg', 'height', 'classes'] as Tab[]).map((tab) => {
-            const icons: Record<Tab, string> = {
-              react: '⚛️',
-              svg: '🖼️',
-              height: '📏',
-              classes: '🎨',
-            }
-            const labels: Record<Tab, string> = {
-              react: 'React Preview',
-              svg: 'SVG Preview',
-              height: 'Height Debug',
-              classes: 'CSS Classes',
-            }
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #30363d', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {(['react', 'svg', 'classes'] as Tab[]).map((tab) => {
+              const icons: Record<Tab, string> = {
+                react: '⚛️',
+                svg: '🖼️',
+                classes: '🎨',
+              }
+              const labels: Record<Tab, string> = {
+                react: 'React Preview',
+                svg: 'SVG Preview',
+                classes: 'CSS Classes',
+              }
             return (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab)
+                  setInspectedElement(null) // Close inspector when switching tabs
+                }}
                 style={{
-                  padding: '12px 24px',
+                  padding: '10px 20px',
                   background: activeTab === tab ? '#1c2128' : 'transparent',
                   border: 'none',
                   color: activeTab === tab ? '#58a6ff' : '#8b949e',
                   fontSize: '14px',
-                  fontWeight: '500',
-                  borderBottom: `2px solid ${activeTab === tab ? '#58a6ff' : 'transparent'}`,
-                  marginBottom: '-2px',
+                  fontWeight: activeTab === tab ? '600' : '500',
+                  borderRadius: '6px',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '8px',
+                  position: 'relative',
                 }}
                 onMouseOver={(e) => {
                   if (activeTab !== tab) {
@@ -354,17 +380,111 @@ function App() {
                   }
                 }}
               >
-                <span>{icons[tab]}</span>
+                <span style={{ fontSize: '16px' }}>{icons[tab]}</span>
                 <span>{labels[tab]}</span>
+                {activeTab === tab && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: '-2px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '60%',
+                      height: '2px',
+                      background: '#58a6ff',
+                      borderRadius: '2px',
+                    }}
+                  />
+                )}
               </button>
             )
           })}
+          </div>
+          {(activeTab === 'react' || activeTab === 'svg') && (
+            <>
+              <button
+                onClick={() => {
+                  setInspectMode(!inspectMode)
+                  if (inspectMode) {
+                    setInspectedElement(null)
+                    setHoveredSelector(null)
+                  }
+                }}
+                style={{
+                  padding: '8px 16px',
+                  background: inspectMode ? '#1a472a' : '#21262d',
+                  border: `1px solid ${inspectMode ? '#238636' : '#30363d'}`,
+                  borderRadius: '4px',
+                  color: inspectMode ? '#3fb950' : '#c9d1d9',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  transition: 'all 0.2s',
+                }}
+                onMouseOver={(e) => {
+                  if (!inspectMode) {
+                    e.currentTarget.style.background = '#30363d'
+                    e.currentTarget.style.borderColor = '#484f58'
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!inspectMode) {
+                    e.currentTarget.style.background = '#21262d'
+                    e.currentTarget.style.borderColor = '#30363d'
+                  }
+                }}
+              >
+                <span>{inspectMode ? '✅' : '🔍'}</span>
+                <span>{inspectMode ? 'Inspecting' : 'Inspect'}</span>
+              </button>
+              <button
+                onClick={() => setPreviewBackground(previewBackground === 'dark' ? 'light' : 'dark')}
+                style={{
+                  padding: '8px 16px',
+                  background: '#21262d',
+                  border: '1px solid #30363d',
+                  borderRadius: '4px',
+                  color: '#c9d1d9',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  transition: 'all 0.2s',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#30363d'
+                  e.currentTarget.style.borderColor = '#484f58'
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = '#21262d'
+                  e.currentTarget.style.borderColor = '#30363d'
+                }}
+              >
+                <span>{previewBackground === 'dark' ? '🌙' : '☀️'}</span>
+                <span>{previewBackground === 'dark' ? 'Dark' : 'Light'}</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
 
       <div>
         {activeTab === 'react' && reactData && (
-          <ReactPreview html={reactData.html} css={reactData.css} />
+          <ReactPreview 
+            html={reactData.html} 
+            css={reactData.css} 
+            background={previewBackground}
+            onElementClick={inspectMode ? setInspectedElement : undefined}
+            inspectedSelector={inspectedElement?.selector || null}
+            inspectMode={inspectMode}
+            hoveredSelector={hoveredSelector}
+            onElementHover={inspectMode ? setHoveredSelector : undefined}
+          />
         )}
         {activeTab === 'react' && !reactData && !loading && (
           <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '40px', textAlign: 'center' }}>
@@ -372,28 +492,21 @@ function App() {
           </div>
         )}
         {activeTab === 'svg' && svgData && (
-          <SvgPreview svg={svgData.svg} height={svgData.height} width={svgData.width} />
+          <SvgPreview 
+            svg={svgData.svg} 
+            height={svgData.height} 
+            width={svgData.width} 
+            background={previewBackground}
+            onElementClick={inspectMode ? setInspectedElement : undefined}
+            inspectedSelector={inspectedElement?.selector || null}
+            inspectMode={inspectMode}
+            hoveredSelector={hoveredSelector}
+            onElementHover={inspectMode ? setHoveredSelector : undefined}
+          />
         )}
         {activeTab === 'svg' && !svgData && !loading && (
           <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '40px', textAlign: 'center' }}>
             <p style={{ color: '#8b949e' }}>No SVG preview available. Click Refresh to generate.</p>
-          </div>
-        )}
-        {activeTab === 'height' && svgData && reactData && (
-          <HeightDebug 
-            svg={svgData.svg} 
-            reactHtml={reactData.html} 
-            svgHeight={svgData.height}
-            plugin={selectedPlugin}
-            section={selectedSection}
-            style={style}
-            size={size}
-            sectionConfig={sectionConfig}
-          />
-        )}
-        {activeTab === 'height' && (!svgData || !reactData) && !loading && (
-          <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', padding: '40px', textAlign: 'center' }}>
-            <p style={{ color: '#8b949e' }}>Both SVG and React previews are required for height debugging. Click Refresh to generate.</p>
           </div>
         )}
         {activeTab === 'classes' && reactData && (
@@ -405,6 +518,9 @@ function App() {
           </div>
         )}
       </div>
+
+      {/* Element Inspector */}
+      <ElementInspector element={inspectedElement} onClose={() => setInspectedElement(null)} />
     </div>
   )
 }

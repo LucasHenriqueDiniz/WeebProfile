@@ -95,9 +95,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       console.log(`🔍 [GENERATE] Plugins order:`, pluginsOrder)
 
       // Preparar request para o svg-generator HTTP service
-      // O svg-generator vai buscar essential configs do Supabase usando userId
+      // O svg-generator vai buscar apenas essential configs (secrets) do Supabase usando userId
       // pluginsOrder já vem convertido com ordem alfabética se null/empty
-      const terminalConfigs = getTerminalConfigs(svg.pluginsConfig as Record<string, any>)
+      const uiConfig = (svg as any).uiConfig || {}
+      const terminalConfigs = getTerminalConfigs(uiConfig)
       const requestConfig = {
         style: svg.style || 'default',
         size: svg.size || 'half',
@@ -108,8 +109,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         hideTerminalEmojis: terminalConfigs.hideTerminalEmojis,
         hideTerminalHeader: terminalConfigs.hideTerminalHeader,
         hideTerminalCommand: terminalConfigs.hideTerminalCommand,
-        customThemeColors: (svg.pluginsConfig as any)?.customThemeColors || undefined,
-        userId: user.id, // Passar userId para svg-generator buscar essential configs
+        customThemeColors: uiConfig.customThemeColors || undefined,
+        userId: user.id, // Passar userId para svg-generator buscar apenas secrets (essential configs)
         mock: false, // Sempre usar dados reais em produção
       }
 

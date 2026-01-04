@@ -1,20 +1,20 @@
 /**
- * Helper functions to read/write terminal configs from pluginsConfig JSONB
+ * Helper functions to read/write terminal configs from ui_config JSONB
  * 
- * These configs were moved from individual columns to pluginsConfig for better DB efficiency.
+ * These configs are now stored in ui_config (separate from plugins_config).
  */
 
-type PluginsConfig = Record<string, any>
+type UiConfig = Record<string, any>
 
 /**
- * Get terminal configs from pluginsConfig
+ * Get terminal configs from ui_config
  */
-export function getTerminalConfigs(pluginsConfig: PluginsConfig | null | undefined): {
+export function getTerminalConfigs(uiConfig: UiConfig | null | undefined): {
   hideTerminalEmojis: boolean
   hideTerminalHeader: boolean
   hideTerminalCommand: boolean
 } {
-  const config = pluginsConfig || {}
+  const config = uiConfig || {}
   return {
     hideTerminalEmojis: config.hideTerminalEmojis ?? false,
     hideTerminalHeader: config.hideTerminalHeader ?? false,
@@ -23,17 +23,17 @@ export function getTerminalConfigs(pluginsConfig: PluginsConfig | null | undefin
 }
 
 /**
- * Set terminal configs in pluginsConfig
+ * Set terminal configs in ui_config
  */
 export function setTerminalConfigs(
-  pluginsConfig: PluginsConfig | null | undefined,
+  uiConfig: UiConfig | null | undefined,
   configs: {
     hideTerminalEmojis?: boolean
     hideTerminalHeader?: boolean
     hideTerminalCommand?: boolean
   }
-): PluginsConfig {
-  const current = pluginsConfig || {}
+): UiConfig {
+  const current = uiConfig || {}
   return {
     ...current,
     ...(configs.hideTerminalEmojis !== undefined && { hideTerminalEmojis: configs.hideTerminalEmojis }),

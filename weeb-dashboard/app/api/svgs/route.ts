@@ -50,15 +50,16 @@ export async function POST(request: Request) {
         const {
           name,
           pluginsConfig = {},
+          uiConfig = {},
           style = "default",
           size = "half",
           theme = "default",
-          hideTerminalEmojis = false,
-          hideTerminalHeader = false,
-          hideTerminalCommand = false,
           customCss,
-          customThemeColors,
           pluginsOrder,
+          // Legacy support: if hideTerminal* are passed, merge into uiConfig
+          hideTerminalEmojis,
+          hideTerminalHeader,
+          hideTerminalCommand,
         } = body
 
         if (!name) {
@@ -86,18 +87,15 @@ export async function POST(request: Request) {
           .replace(/^-+|-+$/g, "")
         const slug = `${slugBase}-${Date.now().toString(36)}`
 
-        // Incluir customThemeColors e terminal configs no pluginsConfig
-        const finalPluginsConfig = setTerminalConfigs(
-          {
-            ...pluginsConfig,
-            ...(customThemeColors && Object.keys(customThemeColors).length > 0 && { customThemeColors }),
-          },
-          {
+        // Build uiConfig: merge provided uiConfig with legacy hideTerminal* flags if present
+        let finalUiConfig = { ...uiConfig }
+        if (hideTerminalEmojis !== undefined || hideTerminalHeader !== undefined || hideTerminalCommand !== undefined) {
+          finalUiConfig = setTerminalConfigs(finalUiConfig, {
             hideTerminalEmojis,
             hideTerminalHeader,
             hideTerminalCommand,
-          }
-        )
+          })
+        }
 
         const [newSvg] = await db
           .insert(svgs)
@@ -105,7 +103,8 @@ export async function POST(request: Request) {
             userId: user.id,
             slug, // Slug ainda é necessário para compatibilidade, mas não será usado na URL
             name,
-            pluginsConfig: finalPluginsConfig,
+            pluginsConfig: pluginsConfig, // Only plugins, no flags
+            uiConfig: finalUiConfig, // Global flags
             style,
             size,
             theme,

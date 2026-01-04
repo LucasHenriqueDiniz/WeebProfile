@@ -40,7 +40,8 @@ interface PluginCardProps {
   onToggleExpanded: (pluginName: string) => void
   onTogglePlugin: (pluginName: string) => void
   onToggleSection: (pluginName: string, sectionId: string) => void
-  onEssentialConfigChange: (plugin: string, key: string, value: string) => Promise<void>
+  onEssentialConfigChange: (plugin: string, key: string, value: string) => void  // Apenas atualiza estado local
+  onEssentialConfigSave: (plugin: string, key: string, value: string) => Promise<void>  // Salva no servidor
   onUnlockConfig: (plugin: string, key: string) => void
   onSetPluginRequiredField: (plugin: string, field: string, value: string) => void
   onSetSectionConfig: (plugin: string, sectionId: string, config: any) => void
@@ -63,6 +64,7 @@ export const PluginCard = React.memo(function PluginCard({
   onTogglePlugin,
   onToggleSection,
   onEssentialConfigChange,
+  onEssentialConfigSave,
   onUnlockConfig,
   onSetPluginRequiredField,
   onSetSectionConfig,
@@ -150,20 +152,32 @@ export const PluginCard = React.memo(function PluginCard({
 
   const handleEssentialChange = useCallback((key: string, value: string) => {
     const inputKey = `essential.${key}`
-    // Mark as typing
-    isTypingRef.current.add(inputKey)
-    // Update local state immediately for responsive UI
+    // Apenas atualizar estado local (sem save)
     setLocalInputValues(prev => ({
       ...prev,
       [inputKey]: value
     }))
-    // Clear typing flag after debounce
-    setTimeout(() => {
-      isTypingRef.current.delete(inputKey)
-    }, 500)
-    // Then update global state (debounced in parent)
-    return onEssentialConfigChange(plugin.name, key, value)
+    // Atualizar estado global também (para validação/display)
+    onEssentialConfigChange(plugin.name, key, value)
   }, [plugin.name, onEssentialConfigChange])
+  
+  const handleEssentialSave = useCallback(async (key: string) => {
+    const inputKey = `essential.${key}`
+    const value = localInputValues[inputKey] ?? ((state as any)[key] || "")
+    console.log(`🔘 [PluginCard] handleEssentialSave para ${plugin.name}.${key}:`, {
+      inputKey,
+      localValue: localInputValues[inputKey],
+      stateValue: (state as any)[key],
+      finalValue: value,
+      valueLength: value.length
+    })
+    if (!value.trim()) {
+      console.warn(`⚠️ [PluginCard] Valor vazio para ${plugin.name}.${key}`)
+      return
+    }
+    console.log(`✅ [PluginCard] Chamando onEssentialConfigSave para ${plugin.name}.${key}`)
+    await onEssentialConfigSave(plugin.name, key, value)
+  }, [plugin.name, onEssentialConfigSave, localInputValues, state])
 
   const handleUnlock = useCallback((key: string) => {
     onUnlockConfig(plugin.name, key)
@@ -543,12 +557,12 @@ export const PluginCard = React.memo(function PluginCard({
                     <div key={configKey.key} className="space-y-1">
                       <SecretInput
                         plugin={plugin.name}
-                        key={configKey.key}
                         label={configKey.label}
                         realValue={value}
                         exists={exists}
                         updatedAt={updatedAt}
                         onChange={(newValue) => handleEssentialChange(configKey.key, newValue)}
+                        onSave={() => handleEssentialSave(configKey.key)}
                         onUnlock={() => handleUnlock(configKey.key)}
                         unlocked={isUnlocked}
                         saving={isSaving}

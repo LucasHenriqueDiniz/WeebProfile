@@ -1,62 +1,38 @@
 import { Svg } from "@/lib/db/schema"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { createHash } from "crypto"
-import { getUserPluginConfigs } from "./config/plugin-config"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 /**
  * Converte a configuração do SVG do Supabase para o formato esperado pelo svg-generator
  * 
- * Faz merge de:
- * 1. plugin_config (user-level, reutilizável: username)
- * 2. svgs.plugins_config (svg-specific: enabled, sections, sectionConfigs)
+ * Username e outros configs não-sensíveis agora vêm diretamente de svgs.plugins_config.
+ * Não há mais necessidade de buscar plugin_config.
  */
 export async function convertSvgToPluginsConfig(svg: Svg): Promise<Record<string, any>> {
   console.log(`🔄 [CONVERT] Starting conversion for SVG ${svg.id}`)
   
-  // 1. Get reusable user-level configs (e.g., username)
-  const userPluginConfigs = await getUserPluginConfigs(svg.userId)
-  console.log(`🔄 [CONVERT] User plugin configs:`, JSON.stringify(userPluginConfigs, null, 2))
-  
-  // 2. Get SVG-specific configs (enabled, sections, sectionConfigs)
+  // Get plugins config - username and other non-sensitive configs are already included
   const svgPluginsConfig = (svg.pluginsConfig || {}) as Record<string, any>
   console.log(`🔄 [CONVERT] SVG plugins config:`, JSON.stringify(svgPluginsConfig, null, 2))
   
-  // 3. Merge: user configs (base) + svg configs (overrides)
-  // CRÍTICO: Filtrar apenas plugins válidos (usar PLUGINS_METADATA)
-  // hideTerminalEmojis, hideTerminalHeader, hideTerminalCommand são flags globais, NÃO plugins
+  // Filter only valid plugins (using PLUGINS_METADATA)
   const validPluginNames = new Set(Object.keys(PLUGINS_METADATA))
-  const mergedPlugins: Record<string, any> = {}
+  const validPlugins: Record<string, any> = {}
   
-  // Start with user configs (reusable: username, etc.) - apenas plugins válidos
-  for (const [pluginName, userConfig] of Object.entries(userPluginConfigs)) {
-    if (validPluginNames.has(pluginName)) {
-      mergedPlugins[pluginName] = { ...userConfig }
-    }
-  }
-  
-  // Apply SVG-specific overrides (enabled, sections, sectionConfigs) - apenas plugins válidos
-  for (const [pluginName, svgConfig] of Object.entries(svgPluginsConfig)) {
-    // Ignorar flags globais (hideTerminal*, customThemeColors, etc)
+  for (const [pluginName, pluginConfig] of Object.entries(svgPluginsConfig)) {
+    // Skip if not a valid plugin name (could be legacy flags or invalid data)
     if (!validPluginNames.has(pluginName)) {
       continue
     }
-    
-    if (!mergedPlugins[pluginName]) {
-      mergedPlugins[pluginName] = {}
-    }
-    // Merge: user config (base) + svg config (overrides)
-    mergedPlugins[pluginName] = {
-      ...mergedPlugins[pluginName],
-      ...svgConfig,
-    }
+    validPlugins[pluginName] = pluginConfig
   }
   
-  console.log(`🔄 [CONVERT] Merged plugins:`, JSON.stringify(mergedPlugins, null, 2))
+  console.log(`🔄 [CONVERT] Valid plugins:`, JSON.stringify(validPlugins, null, 2))
   
-  // 4. Filter only enabled plugins with at least one section
+  // Filter only enabled plugins with at least one section
   const enabledPlugins: Record<string, any> = {}
-  for (const [pluginName, plugin] of Object.entries(mergedPlugins)) {
+  for (const [pluginName, plugin] of Object.entries(validPlugins)) {
     const isEnabled = plugin.enabled === true
     const hasSections = plugin.sections && Array.isArray(plugin.sections) && plugin.sections.length > 0
     
@@ -72,7 +48,7 @@ export async function convertSvgToPluginsConfig(svg: Svg): Promise<Record<string
   
   console.log(`🔄 [CONVERT] Final enabled plugins:`, JSON.stringify(enabledPlugins, null, 2))
   
-  // 5. Return in format expected by svg-generator
+  // Return in format expected by svg-generator
   const result = {
     plugins: enabledPlugins,
     pluginsOrder: svg.pluginsOrder?.split(",").filter(Boolean) || [],

@@ -103,34 +103,10 @@ export async function getUserEssentialConfigs(userId: string): Promise<Essential
 }
 
 /**
- * Fetches reusable plugin configs (username, etc) from plugin_config table
- * These are user-level configs that apply to all SVGs of a user
- *
- * @param userId - User ID
- * @returns Plugin configs organized by plugin name
+ * LEGACY: getUserPluginConfigs REMOVED
+ * 
+ * Plugin configs (username, etc) are now stored directly in svgs.plugins_config.
+ * The generator receives complete config in the request - no need to fetch from database.
+ * 
+ * This function has been removed as part of the refactoring to eliminate plugin_config table.
  */
-export async function getUserPluginConfigs(userId: string): Promise<Record<string, Record<string, any>>> {
-  if (!userId) {
-    return {}
-  }
-
-  try {
-    const configs = await sql`
-      SELECT plugin, config
-      FROM plugin_config
-      WHERE user_id = ${userId}
-    `
-
-    const result: Record<string, Record<string, any>> = {}
-
-    for (const config of configs) {
-      result[config.plugin.toLowerCase()] = config.config as Record<string, any>
-    }
-
-    return result
-  } catch (error) {
-    console.error(`Error fetching plugin configs for user ${userId}:`, error)
-    // Re-throw error so caller can handle it appropriately (503 vs missing secrets)
-    throw error
-  }
-}

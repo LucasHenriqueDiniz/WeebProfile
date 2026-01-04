@@ -91,7 +91,8 @@ export async function GET(request: Request) {
 
         // Preparar request para o svg-generator HTTP service
         // O svg-generator vai buscar essential configs do Supabase usando userId
-        const terminalConfigs = getTerminalConfigs(svg.pluginsConfig as Record<string, any>)
+        const uiConfig = (svg as any).uiConfig || {}
+        const terminalConfigs = getTerminalConfigs(uiConfig)
         const requestConfig = {
           style: svg.style || 'default',
           size: svg.size || 'half',
@@ -102,7 +103,7 @@ export async function GET(request: Request) {
           hideTerminalEmojis: terminalConfigs.hideTerminalEmojis,
           hideTerminalHeader: terminalConfigs.hideTerminalHeader,
           hideTerminalCommand: terminalConfigs.hideTerminalCommand,
-          customThemeColors: (svg.pluginsConfig as any)?.customThemeColors || undefined,
+          customThemeColors: uiConfig.customThemeColors || undefined,
           userId: svg.userId, // Passar userId para svg-generator buscar essential configs
           mock: false, // Sempre usar dados reais
         }

@@ -33,19 +33,9 @@ interface MissingSecret {
   missingKeys: Array<{ key: string; label: string }>
 }
 
-interface UserPluginConfig {
-  [pluginName: string]: {
-    username?: string
-    [key: string]: any
-  }
-}
-
 interface WizardBootstrapState {
   // Non-sensitive config
   profile: ProfileData | null
-  
-  // Plugin configs (reusable user-level: username, etc.)
-  pluginConfigs: UserPluginConfig
   
   // Secrets presence only (no values) - for ALL plugins, not just enabled
   secretsPresence: SecretsPresence
@@ -62,14 +52,12 @@ interface WizardBootstrapState {
   // Actions
   bootstrap: () => Promise<void>
   refreshSecretsPresence: () => Promise<void>
-  refreshPluginConfigs: () => Promise<void>
   updateSecretsPresenceOptimistic: (plugin: string, key: string) => void
   reset: () => void
 }
 
 export const useWizardBootstrapStore = create<WizardBootstrapState>((set, get) => ({
   profile: null,
-  pluginConfigs: {},
   secretsPresence: {},
   missingSecrets: [],
   loading: false,
@@ -113,18 +101,8 @@ export const useWizardBootstrapStore = create<WizardBootstrapState>((set, get) =
         
         const presenceData = await presenceResponse.json()
         
-        // Fetch plugin configs (reusable user-level: username, etc.)
-        const configResponse = await fetch(`/api/plugin-config`)
-        
-        if (!configResponse.ok) {
-          throw new Error(`Failed to fetch plugin configs: ${configResponse.statusText}`)
-        }
-        
-        const configData = await configResponse.json()
-        
         set({
           profile: profileData.profile || null,
-          pluginConfigs: configData.configs || {},
           secretsPresence: presenceData.presence || {},
           missingSecrets: presenceData.missingSecrets || [],
           initialized: true,
@@ -173,26 +151,6 @@ export const useWizardBootstrapStore = create<WizardBootstrapState>((set, get) =
     }
   },
 
-  refreshPluginConfigs: async () => {
-    try {
-      const configResponse = await fetch(`/api/plugin-config`)
-      
-      if (!configResponse.ok) {
-        throw new Error(`Failed to refresh plugin configs: ${configResponse.statusText}`)
-      }
-      
-      const configData = await configResponse.json()
-      
-      set({
-        pluginConfigs: configData.configs || {},
-      })
-    } catch (error) {
-      console.error("Error refreshing plugin configs:", error)
-      // Don't set error state here - just log it
-      // The UI can still use stale data
-    }
-  },
-
   updateSecretsPresenceOptimistic: (plugin: string, key: string) => {
     set((state) => {
       const newPresence = { ...state.secretsPresence }
@@ -225,7 +183,6 @@ export const useWizardBootstrapStore = create<WizardBootstrapState>((set, get) =
   reset: () => {
     set({
       profile: null,
-      pluginConfigs: {},
       secretsPresence: {},
       missingSecrets: [],
       loading: false,

@@ -14,7 +14,6 @@ import { fileURLToPath } from 'url'
 import pluginsRouter from './routes/plugins.js'
 import generateReactRouter from './routes/generate-react.js'
 import { generateSvgRoute } from './routes/generate-svg.js'
-import { heightCalculationRoute } from './routes/height-calculation.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -30,7 +29,6 @@ app.use(express.json())
 app.use('/api/plugins', pluginsRouter)
 app.use('/api/generate-react', generateReactRouter)
 app.post('/api/generate-svg', generateSvgRoute)
-app.post('/api/height-calculation', heightCalculationRoute)
 
 // Health check with server start time for detecting restarts
 const serverStartTime = Date.now()
@@ -53,7 +51,6 @@ app.get('/', (req, res) => {
       plugins: '/api/plugins',
       generateReact: '/api/generate-react',
       generateSvg: '/api/generate-svg',
-      heightCalculation: '/api/height-calculation',
     },
   })
 })

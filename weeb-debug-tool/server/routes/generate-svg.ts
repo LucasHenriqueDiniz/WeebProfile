@@ -8,8 +8,8 @@
 import { Request, Response } from 'express'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { generateSvg } from '@weeb/svg-generator'
-import { normalizeConfig } from '@weeb/svg-generator'
+import { generateSvg } from '../../../svg-generator/src/generator/svg-generator.js'
+import { normalizeConfig } from '../../../svg-generator/src/config/config-loader.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

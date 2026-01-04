@@ -28,6 +28,34 @@ export interface RenderPluginsResult {
 export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsResult> {
   const pluginManager = PluginManager.getInstance()
 
+  // Helper function to flatten sectionConfigs
+  // Achatamento de sectionConfigs: sectionConfigs[sectionId][optionKey] -> optionKey (no nível raiz)
+  // Ex: sectionConfigs.exercises.exercises_max -> exercises_max
+  function flattenSectionConfigs(pluginConfig: any): any {
+    if (!pluginConfig?.sectionConfigs) {
+      return pluginConfig
+    }
+
+    const { sectionConfigs, fields, ...rest } = pluginConfig
+    const flattened: any = { ...rest }
+
+    // Achatamento de sectionConfigs: sectionConfigs[sectionId][optionKey] -> optionKey
+    if (sectionConfigs && typeof sectionConfigs === "object") {
+      Object.values(sectionConfigs).forEach((sectionConfig: any) => {
+        if (sectionConfig && typeof sectionConfig === "object") {
+          Object.assign(flattened, sectionConfig)
+        }
+      })
+    }
+
+    // Adicionar fields também no nível raiz
+    if (fields && typeof fields === "object") {
+      Object.assign(flattened, fields)
+    }
+
+    return flattened
+  }
+
   // Preparar configuração de plugins no formato esperado pelo PluginManager
   // Incluir style e size para os plugins usarem
   // Totalmente dinâmico - itera sobre todos os plugins disponíveis
@@ -35,11 +63,13 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
 
   for (const [pluginName, pluginConfig] of Object.entries(config.plugins)) {
     if (pluginConfig) {
+      // CRÍTICO: Achatamento dos sectionConfigs antes de passar para os plugins
+      const flattenedConfig = flattenSectionConfigs(pluginConfig)
       pluginsConfig[pluginName] = {
         style: config.style,
         size: config.size,
         hideTerminalEmojis: config.hideTerminalEmojis,
-        ...pluginConfig,
+        ...flattenedConfig,
         enabled: pluginConfig.enabled,
       }
     }
@@ -63,9 +93,37 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
       if (pluginConfig && pluginConfig.enabled) {
         try {
           // CRÍTICO: essentialConfigs está normalizado com lowercase (ver essential-configs.ts)
+          // Mas plugins esperam camelCase (apiKey, steamId, etc)
           const pluginNameLower = name.toLowerCase()
-          const essentialConfig = essentialConfigs[pluginNameLower]
-          console.log(`🔍 [RENDER] Plugin ${name}: essentialConfig keys:`, essentialConfig ? Object.keys(essentialConfig) : "none")
+          const essentialConfigLowercase = essentialConfigs[pluginNameLower]
+          console.log(`🔍 [RENDER] Plugin ${name}: essentialConfig keys (lowercase):`, essentialConfigLowercase ? Object.keys(essentialConfigLowercase) : "none")
+          
+          // Normalizar essentialConfig para camelCase (plugins esperam camelCase)
+          // Mapear chaves conhecidas: apikey -> apiKey, steamid -> steamId, username -> username, pat -> pat
+          const essentialConfig: any = {}
+          if (essentialConfigLowercase) {
+            Object.entries(essentialConfigLowercase).forEach(([key, value]) => {
+              // Mapear chaves conhecidas para camelCase
+              const keyMap: Record<string, string> = {
+                'apikey': 'apiKey',
+                'steamid': 'steamId',
+                'username': 'username',
+                'pat': 'pat',
+              }
+              const camelKey = keyMap[key.toLowerCase()] || key
+              essentialConfig[camelKey] = value
+            })
+          }
+          
+          // CRÍTICO: Alguns plugins (ex: LastFM) podem ter username em plugin_config (reutilizável)
+          // mas também precisam dele em essentialConfig. Se não está em essentialConfig, pegar do pluginConfig
+          if (name.toLowerCase() === 'lastfm' && !essentialConfig.username && pluginConfig.username) {
+            essentialConfig.username = pluginConfig.username
+            console.log(`🔍 [RENDER] Plugin ${name}: username from pluginConfig:`, pluginConfig.username)
+          }
+          
+          console.log(`🔍 [RENDER] Plugin ${name}: essentialConfig keys (camelCase):`, essentialConfig ? Object.keys(essentialConfig) : "none")
+          
           // Usar config.dev explicitamente (já vem normalizado do normalizeConfig)
           const useDev = config.dev === true
           const data = await plugin.fetchData(pluginConfig, useDev, essentialConfig)

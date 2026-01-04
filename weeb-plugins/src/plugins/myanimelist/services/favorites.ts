@@ -369,12 +369,12 @@ export async function fetchFavorites(
 ): Promise<{ basic: BasicFavorites; full: FullFavorites }> {
   try {
     console.log(`📥 Processando favoritos básicos...`)
-    const maxFavorites = config.favorites_max ?? 20
+    // Usar limites específicos por tipo, com fallback para favorites_max ou 20
     const basicFavorites = await getBasicFavorites(profile, {
-      animeMax: maxFavorites,
-      mangaMax: maxFavorites,
-      charactersMax: maxFavorites,
-      peopleMax: maxFavorites,
+      animeMax: config.anime_favorites_max ?? config.favorites_max ?? 20,
+      mangaMax: config.manga_favorites_max ?? config.favorites_max ?? 20,
+      charactersMax: config.character_favorites_max ?? config.favorites_max ?? 20,
+      peopleMax: config.people_favorites_max ?? config.favorites_max ?? 20,
     }, { previewMode })
     console.log(`✅ Favoritos básicos processados`)
 

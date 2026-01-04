@@ -67,7 +67,6 @@ export function RenderMyAnimeList({
         )
       case "statistics_simple":
         return (
-          <div key="statistics_simple" style={{ border: '2px solid red', padding: '10px', margin: '5px' }}>
             <SimpleStatistics
               data={data.statistics}
               config={config}
@@ -75,7 +74,7 @@ export function RenderMyAnimeList({
               size={size}
               hideTerminalEmojis={hideTerminalEmojis}
             />
-          </div>
+       
         )
       case "anime_bar":
         return (
@@ -101,16 +100,15 @@ export function RenderMyAnimeList({
         )
       case "anime_favorites":
         return (
-          <div key="anime_favorites" style={{ border: '2px solid blue', padding: '10px', margin: '5px' }}>
-            <FavoritesList
-              data={data.favorites_full.anime}
-              type="anime"
-              config={config}
-              style={style}
-              size={size}
-              listStyle={config.anime_favorites_list_style || "detailed"}
-            />
-          </div>
+          <FavoritesList
+            key="anime_favorites"
+            data={data.favorites_full.anime}
+            type="anime"
+            config={config}
+            style={style}
+            size={size}
+            listStyle={config.anime_favorites_list_style || "detailed"}
+          />
         )
       case "manga_favorites":
         return (
@@ -138,16 +136,15 @@ export function RenderMyAnimeList({
         )
       case "character_favorites":
         return (
-          <div key="character_favorites" style={{ border: '2px solid green', padding: '10px', margin: '5px' }}>
-            <FavoritesList
-              data={data.favorites.characters}
-              type="characters"
-              config={config}
-              style={style}
-              size={size}
-              listStyle={config.character_favorites_list_style || "compact"}
-            />
-          </div>
+          <FavoritesList
+            key="character_favorites"
+            data={data.favorites.characters}
+            type="characters"
+            config={config}
+            style={style}
+            size={size}
+            listStyle={config.character_favorites_list_style || "compact"}
+          />
         )
       default:
         return (

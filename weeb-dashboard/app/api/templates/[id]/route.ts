@@ -92,16 +92,20 @@ export async function PUT(
       customCss,
       pluginsOrder,
       pluginsConfig,
+      uiConfig,
       isPublic,
     } = body
 
-    // Merge terminal configs into pluginsConfig
-    const updatedPluginsConfig = pluginsConfig !== undefined ? pluginsConfig : existingTemplate.pluginsConfig
-    const finalPluginsConfig = setTerminalConfigs(updatedPluginsConfig, {
-      hideTerminalEmojis,
-      hideTerminalHeader,
-      hideTerminalCommand,
-    })
+    // Build uiConfig: merge provided uiConfig with legacy hideTerminal* flags if present
+    const existingUiConfig = (existingTemplate as any).uiConfig || {}
+    let finalUiConfig = uiConfig !== undefined ? uiConfig : existingUiConfig
+    if (hideTerminalEmojis !== undefined || hideTerminalHeader !== undefined || hideTerminalCommand !== undefined) {
+      finalUiConfig = setTerminalConfigs(finalUiConfig, {
+        hideTerminalEmojis,
+        hideTerminalHeader,
+        hideTerminalCommand,
+      })
+    }
 
     const [updatedTemplate] = await db
       .update(templates)
@@ -113,7 +117,8 @@ export async function PUT(
         theme: theme !== undefined ? theme : existingTemplate.theme,
         customCss: customCss !== undefined ? customCss : existingTemplate.customCss,
         pluginsOrder: pluginsOrder !== undefined ? pluginsOrder : existingTemplate.pluginsOrder,
-        pluginsConfig: finalPluginsConfig,
+        pluginsConfig: pluginsConfig !== undefined ? pluginsConfig : existingTemplate.pluginsConfig,
+        uiConfig: finalUiConfig,
         isPublic: isPublic !== undefined ? isPublic : existingTemplate.isPublic,
       })
       .where(eq(templates.id, id))
