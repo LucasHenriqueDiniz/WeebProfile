@@ -10,6 +10,7 @@ import { renderToString } from 'react-dom/server'
 import React from 'react'
 import { normalizeConfig } from '../../../svg-generator/src/config/config-loader.js'
 import { renderPlugins } from '../utils/render-plugins.js'
+import { injectDebugIds } from '../utils/inject-debug-ids.js'
 
 const router = Router()
 
@@ -90,9 +91,16 @@ ${themeVariablesCss}
       </div>
     </div>`
 
+    // Inject debug IDs for element matching
+    const reactHtmlWithDebugIds = injectDebugIds(reactHtml, plugin, section)
+
+    // Generate debug version for cache invalidation
+    const debugVersion = Date.now()
+
     res.json({
-      html: reactHtml,
+      html: reactHtmlWithDebugIds,
       css: fullCSS,
+      debugVersion,
     })
   } catch (error) {
     console.error('❌ Error generating React HTML:', error)

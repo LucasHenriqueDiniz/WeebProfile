@@ -13,14 +13,17 @@
   "dependencies": {
     "@weeb/svg-generator": "workspace:*",
     "@weeb/weeb-plugins": "workspace:*",
+    "cheerio": "^1.1.2",
     "chokidar": "^3.6.0",
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@types/cheerio": "^1.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^20.11.18",
@@ -35,4 +38,3 @@
     "vite": "^6.0.1"
   }
 }
-

@@ -4,15 +4,13 @@
  * New layout with TopBar, PreviewSplit, and InspectorPanel
  */
 
-import { useEffect, useCallback, useRef, useState, useMemo } from 'react'
+import { useEffect, useCallback, useRef, useState } from 'react'
 import { api, type Plugin } from './lib/api'
 import TopBar from './components/TopBar/TopBar'
 import PreviewSplit from './components/workspace/PreviewSplit'
 import InspectorPanel from './components/inspector/InspectorPanel'
-import ConfigPanel from './components/config/ConfigPanel'
 import { useDebugStore } from './store/debugStore'
 import type { StyleSnapshot } from './lib/iframe/iframeProtocol'
-import { extractCssVarNames } from './lib/css/extractCssVars'
 
 function App() {
   const {
@@ -21,7 +19,6 @@ function App() {
     style,
     size,
     dev,
-    sectionConfig,
     uiPreferences,
     selectedDebugId,
     hoveredDebugId,
@@ -43,7 +40,6 @@ function App() {
   
   const [reactSnapshot, setReactSnapshot] = useState<StyleSnapshot | null>(null)
   const [svgSnapshot, setSvgSnapshot] = useState<StyleSnapshot | null>(null)
-  const [configOpen, setConfigOpen] = useState(false)
 
   // Generate previews
   const generatePreviews = useCallback(async () => {
@@ -58,7 +54,6 @@ function App() {
         section,
         style,
         size,
-        sectionConfig,
       })
 
       // Generate SVG using the HTML with debug IDs
@@ -67,7 +62,6 @@ function App() {
         section,
         style,
         size,
-        sectionConfig,
         html: reactResult.html, // Pass HTML with debug IDs
         css: reactResult.css, // Pass CSS
       })
@@ -86,7 +80,7 @@ function App() {
     } finally {
       setLoading(false)
     }
-  }, [plugin, section, style, size, sectionConfig, setLastOutputs, incrementRenderVersion])
+  }, [plugin, section, style, size, setLastOutputs, incrementRenderVersion])
 
   // Generate previews ref for server restart detection
   const generatePreviewsRef = useRef(generatePreviews)
@@ -143,7 +137,7 @@ function App() {
     if (plugin && section && serverConnected) {
       generatePreviews()
     }
-  }, [plugin, section, style, size, dev, sectionConfig, serverConnected])
+  }, [plugin, section, style, size, dev, serverConnected])
 
   // Handle element selection from React preview
   const handleReactElementSelect = useCallback((snapshot: StyleSnapshot | null) => {
@@ -263,42 +257,32 @@ function App() {
         onRegenerate={generatePreviews}
         onCopySvg={handleCopySvg}
         onCopyHtml={handleCopyHtml}
-        onToggleConfig={() => setConfigOpen(!configOpen)}
-        configOpen={configOpen}
       />
 
       {/* Main Content */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative' }}>
-        {/* Config Panel (left side) */}
-        {configOpen && <ConfigPanel onClose={() => setConfigOpen(false)} />}
-
-        {/* Workspace (with margin for inspector and config) */}
+        {/* Workspace (with margin for inspector) */}
         <div
           style={{
             flex: 1,
-            marginLeft: configOpen ? '400px' : 0,
             marginRight: reactSnapshot || svgSnapshot ? '400px' : 0,
-            transition: 'margin-left 0.2s, margin-right 0.2s',
+            transition: 'margin-right 0.2s',
             overflow: 'hidden',
           }}
         >
-          {lastOutputs ? (() => {
-            const cssVarNames = extractCssVarNames(lastOutputs.css)
-            return (
-              <PreviewSplit
-                reactHtml={lastOutputs.html}
-                reactCss={lastOutputs.css}
-                svg={lastOutputs.svg}
-                background={uiPreferences.previewBackground}
-                onReactElementSelect={handleReactElementSelect}
-                onSvgElementSelect={undefined}
-                selectedDebugId={uiPreferences.syncSelectionEnabled ? selectedDebugId : undefined}
-                hoveredDebugId={uiPreferences.showHighlights ? hoveredDebugId : undefined}
-                onElementHover={handleElementHover}
-                cssVarNames={cssVarNames}
-              />
-            )
-          })() : loading ? (
+          {lastOutputs ? (
+            <PreviewSplit
+              reactHtml={lastOutputs.html}
+              reactCss={lastOutputs.css}
+              svg={lastOutputs.svg}
+              background={uiPreferences.previewBackground}
+              onReactElementSelect={handleReactElementSelect}
+              onSvgElementSelect={handleSvgElementSelect}
+              selectedDebugId={uiPreferences.syncSelectionEnabled ? selectedDebugId : undefined}
+              hoveredDebugId={uiPreferences.showHighlights ? hoveredDebugId : undefined}
+              onElementHover={handleElementHover}
+            />
+          ) : loading ? (
             <div
               style={{
                 width: '100%',
