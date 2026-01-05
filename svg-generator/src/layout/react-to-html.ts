@@ -65,59 +65,32 @@ export async function reactToHtml(
     .map(([key, value]) => `  ${key}: ${value};`)
     .join('\n')
 
-  // Build complete HTML document
+  // Build HTML content for #svg-main (skeleton HTML is already loaded in pool)
+  // The skeleton has #svg-main, we just need to inject the content and CSS
   // IMPORTANTE: A estrutura precisa ser igual ao SVG final para o CSS funcionar
   // O CSS usa #svg-main como seletor base, então precisamos ter #svg-main como wrapper
   // O PluginStyles já foi renderizado no htmlContent e cria <div class="default-container"> ou <div class="terminal-container">
   // Esse div precisa estar dentro de #svg-main para o CSS funcionar
-  const html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      width: ${width}px;
-      margin: 0;
-      padding: 0;
-      font-family: Poppins, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    #measure-root {
-      width: ${width}px;
-      margin: 0;
-      padding: 0;
-    }
+  // The #svg-main in skeleton will have classes and styles applied via evaluate
+  const html = htmlContent
+
+  // Build complete CSS (will be injected into #weeb-css in skeleton)
+  // Include theme variables as CSS custom properties on #svg-main
+  const themeVarsCss = themeVariablesCss
+    ? `#svg-main {\n${themeVariablesCss}\n}`
+    : ''
+  
+  const css = `
     #svg-main {
-      width: ${width}px;
+      width: var(--w, ${width}px);
       margin: 0;
       padding: 0;
       display: flex;
       flex-direction: column;
-${themeVariablesCss}
     }
+    ${themeVarsCss}
     ${completeCSS}
     ${config.customCss || ''}
-  </style>
-</head>
-<body style="margin: 0; padding: 0;">
-  <div id="measure-root" style="width: ${width}px; margin: 0; padding: 0;">
-    <div id="svg-main" class="${config.size || 'half'} ${config.style || 'default'} flex flex-col relative" style="width: ${width}px; margin: 0; padding: 0;">
-      ${htmlContent}
-    </div>
-  </div>
-</body>
-</html>`
-
-  const css = `
-    #measure-root {
-      width: ${width}px;
-    }
-    ${completeCSS}
   `
 
   return { html, css }

@@ -61,6 +61,8 @@ export async function generateSvgRoute(req: Request, res: Response) {
         const height = await measureHeight({
           html: providedHtml,
           width,
+          size,
+          style,
           timeoutMs: 5000,
         })
         

@@ -75,6 +75,14 @@ const GENRE_STYLES: Record<string, { icon: React.ReactElement; color: string }> 
   Erotica: { icon: <FaFire size={10} />, color: "#dc2626" },
   Hentai: { icon: <FaBan size={10} />, color: "#991b1b" },
   Suspense: { icon: <FaGhost size={10} />, color: "#7c2d12" },
+  "Shoujo Ai": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
+  "Shounen Ai": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
+  "Yaoi": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
+  "Yuri": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
+  "Harem": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
+  "Isekai": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
+  "Magic": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
+  "Martial Arts": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
 }
 
 // Helper function to get genre style
@@ -107,8 +115,8 @@ function EnhancedGenreTag({ genre }: { genre: string }): React.ReactElement {
   const style = getGenreStyle(genre)
   return (
     <span
-      className="genre-tag text-[10px] px-1.5 py-0.5 rounded border flex items-center gap-1 border-default-highlight/30 border-solid"
-      style={{ backgroundColor: `${style.color}15`, color: style.color }}
+      className="genre-tag text-[10px] px-1.5 py-0.5 rounded border flex items-center gap-1 border-solid"
+      style={{ backgroundColor: `${style.color}15`, color: style.color, borderColor: `${style.color}50` }}
     >
       <span className="flex" style={{ color: style.color }}>
         {style.icon}
@@ -200,8 +208,8 @@ function DefaultCompactFavorite({
   const name = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
-    <div className="h-[50px] flex rounded-lg overflow-hidden border border-default-highlight/30 border-solid bg-default-surface/50 hover:bg-default-surface/80 transition-colors">
-      <div className="w-10 bg-default-highlight text-base font-bold flex items-center justify-center text-default-surface flex-shrink-0">
+    <div className="h-[50px] flex rounded-lg overflow-hidden border border-default-highlight-50 border-solid bg-default-surface/50 hover:bg-default-surface/80 transition-colors">
+      <div className="w-10 bg-default-highlight text-sm text-center text-white font-bold flex items-center justify-center text-default-surface flex-shrink-0">
         {index + 1}
       </div>
       <div className="flex items-center pl-3 pr-2 text-sm font-semibold truncate w-full text-default-text leading-none min-w-0">
@@ -255,6 +263,13 @@ function DefaultDetailedFavorite({
   const genres = isHalf ? allGenres.slice(0, 4) : allGenres
   const status = favorite.status
   const popularity = favorite.popularity
+  
+  const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
+  const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
+  
+  // Only show episodes/chapters if they exist and are greater than 0
+  const showEpisodes = animeEpisodes != null && animeEpisodes > 0
+  const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
     <div className="flex h-[120px] overflow-hidden gap-4">
@@ -275,19 +290,19 @@ function DefaultDetailedFavorite({
               {popularity}
             </span>
           )}
-          {type === "anime" && (favorite as FullAnimeFavorite).episodes && (
+          {showEpisodes && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaVideo size={14} className="text-default-highlight" />
-              {(favorite as FullAnimeFavorite).episodes}
+              {animeEpisodes}
             </span>
           )}
-          {type === "manga" && (favorite as FullMangaFavorite).chapters && (
+          {showChapters && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaBook size={14} className="text-default-highlight" />
-              {(favorite as FullMangaFavorite).chapters}
+              {mangaChapters}
             </span>
           )}
-          {release_year && (
+          {release_year != null && release_year > 0 && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaCalendar size={14} className="text-default-highlight" />
               {release_year}
@@ -308,9 +323,11 @@ function DefaultDetailedFavorite({
             <EnhancedGenreTag key={genre} genre={genre} />
           ))}
         </div>
-        <div className="w-full overflow-hidden mt-1">
-          <span className="synopsis-text line-clamp-2 text-default-muted leading-tight">{synopsis}</span>
-        </div>
+        {synopsis && (
+          <div className="w-full overflow-hidden mt-1">
+            <span className="synopsis-text line-clamp-2 text-default-muted leading-tight">{synopsis}</span>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -333,6 +350,13 @@ function TerminalDetailedFavorite({
   const genres = favorite.genres?.map((genre) => genre.name) || []
   const status = favorite.status
   const popularity = favorite.popularity
+  
+  const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
+  const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
+  
+  // Only show episodes/chapters if they exist and are greater than 0
+  const showEpisodes = animeEpisodes != null && animeEpisodes > 0
+  const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
     <div className="mt-[0.5rem]">
@@ -340,17 +364,17 @@ function TerminalDetailedFavorite({
       <div className="flex gap-4 items-baseline">
         {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
         {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
-        {type === "anime" && (favorite as FullAnimeFavorite).episodes && (
+        {showEpisodes && (
           <span className="text-default-muted font-bold truncate">
-            🎞️ {(favorite as FullAnimeFavorite).episodes} EP&apos;s
+            🎞️ {animeEpisodes} EP&apos;s
           </span>
         )}
-        {type === "manga" && (favorite as FullMangaFavorite).chapters && (
+        {showChapters && (
           <span className="text-default-muted font-bold truncate">
-            📚 {(favorite as FullMangaFavorite).chapters} ch&apos;s
+            📚 {mangaChapters} ch&apos;s
           </span>
         )}
-        {release_year && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
+        {release_year != null && release_year > 0 && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
           <span
             className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}
@@ -364,9 +388,11 @@ function TerminalDetailedFavorite({
           <TerminalTag genre={genre} key={genre} />
         ))}
       </div>
-      <div className="w-full overflow-hidden mt-2">
-        <span className="synopsis-text line-clamp-2 truncate">{synopsis}</span>
-      </div>
+      {synopsis && (
+        <div className="w-full overflow-hidden mt-2">
+          <span className="synopsis-text line-clamp-2 truncate">{synopsis}</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -394,6 +420,13 @@ function DefaultMinimalFavorite({
   const genres = isHalf ? allGenres.slice(0, 4) : allGenres
   const status = favorite.status
   const popularity = favorite.popularity
+  
+  const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
+  const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
+  
+  // Only show episodes/chapters if they exist and are greater than 0
+  const showEpisodes = animeEpisodes != null && animeEpisodes > 0
+  const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
     <div className="flex h-[75px] overflow-hidden gap-2">
@@ -414,19 +447,19 @@ function DefaultMinimalFavorite({
               {popularity}
             </span>
           )}
-          {type === "anime" && (favorite as FullAnimeFavorite).episodes && (
+          {showEpisodes && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaVideo size={10} className="text-default-highlight" />
-              {(favorite as FullAnimeFavorite).episodes}
+              {animeEpisodes}
             </span>
           )}
-          {type === "manga" && (favorite as FullMangaFavorite).chapters && (
+          {showChapters && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaBook size={10} className="text-default-highlight" />
-              {(favorite as FullMangaFavorite).chapters}
+              {mangaChapters}
             </span>
           )}
-          {release_year && (
+          {release_year != null && release_year > 0 && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaCalendar size={10} className="text-default-highlight" />
               {release_year}
@@ -468,6 +501,13 @@ function TerminalMinimalFavorite({
   const genres = favorite.genres?.map((genre) => genre.name) || []
   const status = favorite.status
   const popularity = favorite.popularity
+  
+  const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
+  const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
+  
+  // Only show episodes/chapters if they exist and are greater than 0
+  const showEpisodes = animeEpisodes != null && animeEpisodes > 0
+  const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
     <div className="mt-[0.5rem]">
@@ -475,17 +515,17 @@ function TerminalMinimalFavorite({
       <div className="flex gap-4 items-baseline">
         {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
         {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
-        {type === "anime" && (favorite as FullAnimeFavorite).episodes && (
+        {showEpisodes && (
           <span className="text-default-muted font-bold truncate">
-            🎞️ {(favorite as FullAnimeFavorite).episodes} EP&apos;s
+            🎞️ {animeEpisodes} EP&apos;s
           </span>
         )}
-        {type === "manga" && (favorite as FullMangaFavorite).chapters && (
+        {showChapters && (
           <span className="text-default-muted font-bold truncate">
-            📚 {(favorite as FullMangaFavorite).chapters} ch&apos;s
+            📚 {mangaChapters} ch&apos;s
           </span>
         )}
-        {release_year && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
+        {release_year != null && release_year > 0 && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
           <span
             className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}

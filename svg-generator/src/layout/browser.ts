@@ -7,10 +7,9 @@
  * Prefers system-installed browsers (msedge/chrome) via channels.
  */
 
-import { chromium, type Browser, type BrowserContext } from 'playwright-core'
+import { chromium, type Browser } from 'playwright-core'
 
 let browserInstance: Browser | null = null
-let browserContext: BrowserContext | null = null
 
 /**
  * Get the browser channel from environment or default
@@ -65,6 +64,15 @@ export async function getBrowser(): Promise<Browser> {
         '--disable-extensions',
         '--no-sandbox',
         '--disable-setuid-sandbox',
+        '--disable-background-networking',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding',
+        '--disable-default-apps',
+        '--disable-sync',
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--metrics-recording-only',
+        '--mute-audio',
       ],
     })
 
@@ -75,7 +83,6 @@ export async function getBrowser(): Promise<Browser> {
       console.log('[Browser] 🛑 Shutting down browser...')
       browserInstance?.close().catch(console.error)
       browserInstance = null
-      browserContext = null
     }
 
     process.once('SIGINT', shutdown)
@@ -90,38 +97,9 @@ export async function getBrowser(): Promise<Browser> {
 }
 
 /**
- * Get or create a browser context (reused across measurements)
- */
-export async function getBrowserContext(): Promise<BrowserContext> {
-  if (browserContext) {
-    return browserContext
-  }
-
-  const browser = await getBrowser()
-  browserContext = await browser.newContext({
-    viewport: { width: 1920, height: 1080 },
-    deviceScaleFactor: 1,
-    // Otimizações para medição de altura (economiza memória e recursos)
-    ignoreHTTPSErrors: true,
-    javaScriptEnabled: true, // Necessário para medir scrollHeight
-    bypassCSP: true,
-    // Desabilitar recursos desnecessários para medição
-    locale: 'en-US',
-    timezoneId: 'UTC',
-  })
-
-  console.log('[Browser] ✅ Browser context created')
-  return browserContext
-}
-
-/**
  * Close browser instance (for cleanup/testing)
  */
 export async function closeBrowser(): Promise<void> {
-  if (browserContext) {
-    await browserContext.close().catch(console.error)
-    browserContext = null
-  }
   if (browserInstance) {
     await browserInstance.close().catch(console.error)
     browserInstance = null

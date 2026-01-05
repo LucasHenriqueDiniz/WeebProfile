@@ -37,12 +37,15 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
   console.log('[SVG Generator] 📏 Measuring height with Playwright...')
   
   // Converter React para HTML
-  const { html } = await reactToHtml(pluginsContent, config, width)
+  const { html, css } = await reactToHtml(pluginsContent, config, width)
   
   // Medir altura com Playwright
   const height = await measureHeight({
     html,
+    css,
     width,
+    size: config.size,
+    style: config.style,
     timeoutMs: 5000,
   })
   

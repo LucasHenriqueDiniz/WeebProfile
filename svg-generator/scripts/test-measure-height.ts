@@ -115,8 +115,9 @@ async function main() {
     // Optional: Save screenshot for debugging
     if (process.env.SAVE_SCREENSHOT === '1') {
       try {
-        const { getBrowserContext } = await import('../src/layout/browser.js')
-        const context = await getBrowserContext()
+        const { getBrowser } = await import('../src/layout/browser.js')
+        const browser = await getBrowser()
+        const context = await browser.newContext()
         const page = await context.newPage()
         
         await page.setViewportSize({ width: TEST_WIDTH, height: height + 100 })
@@ -128,6 +129,7 @@ async function main() {
         
         await page.screenshot({ path: screenshotPath, fullPage: true })
         await page.close()
+        await context.close()
         
         console.log(`📸 Screenshot saved: ${screenshotPath}`)
       } catch (screenshotError) {
