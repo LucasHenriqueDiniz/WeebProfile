@@ -7,6 +7,7 @@
 
 import defaultStyle from './default/index'
 import terminalStyle from './terminal/index'
+import { getFontCssClient, getFontsForStyle } from '../fonts/index.js'
 
 export interface StyleDefinition {
   name: string
@@ -37,6 +38,7 @@ export function getStyle(name: string): StyleDefinition | undefined {
 
 /**
  * Get CSS for a style
+ * Includes @font-face declarations for client-side rendering
  */
 export function getStyleCSS(styleName: string): string {
   const style = styleRegistry[styleName]
@@ -49,7 +51,26 @@ export function getStyleCSS(styleName: string): string {
     }
     return defaultStyle.getCSS()
   }
-  return style.getCSS()
+  
+  // Get base CSS
+  const baseCSS = style.getCSS()
+  
+  // Add @font-face declarations for client-side rendering
+  // Use relative URLs that will be resolved by the consuming application
+  try {
+    const fontIds = getFontsForStyle(styleName)
+    if (fontIds.length > 0) {
+      // Use API route URL - dashboard serves fonts via /api/fonts
+      // Other apps can configure their own baseUrl
+      const fontCSS = getFontCssClient(fontIds, '/api/fonts')
+      return [fontCSS, baseCSS].filter(Boolean).join('\n\n')
+    }
+  } catch (error) {
+    // If fonts module is not available (shouldn't happen), just return base CSS
+    console.warn('[Styles] Could not load font CSS for client:', error)
+  }
+  
+  return baseCSS
 }
 
 /**

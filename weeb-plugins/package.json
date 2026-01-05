@@ -34,6 +34,10 @@
       "types": "./dist/styles/server.d.ts",
       "default": "./dist/styles/server.js"
     },
+    "./fonts/server": {
+      "types": "./dist/fonts/server.d.ts",
+      "default": "./dist/fonts/server.js"
+    },
     "./themes": {
       "types": "./dist/themes/index.d.ts",
       "default": "./dist/themes/index.js"
@@ -70,7 +74,7 @@
     "typescript": "^5.4.0"
   },
   "scripts": {
-    "build": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && tsup && pnpm copy-shared-css && pnpm verify-no-relative-imports",
+    "build": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && tsup && pnpm copy-shared-css && pnpm copy-fonts-assets && pnpm verify-no-relative-imports",
     "clean": "tsx scripts/clean-compiled-files.ts",
     "validate": "tsx scripts/validate-plugins.ts",
     "validate-previews": "tsx scripts/validate-previews.ts --warn-only",
@@ -83,6 +87,7 @@
     "generate-duolingo-assets": "tsx scripts/generate-duolingo-assets.ts",
     "verify-no-relative-imports": "node scripts/verify-no-relative-imports.js",
     "copy-shared-css": "tsx scripts/copy-shared-css.ts",
+    "copy-fonts-assets": "tsx scripts/copy-fonts-assets.ts",
     "dev": "tsc --watch --project tsconfig.dev.json",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",

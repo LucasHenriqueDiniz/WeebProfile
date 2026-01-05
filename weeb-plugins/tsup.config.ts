@@ -9,6 +9,7 @@ export default defineConfig({
     'plugins/tags': 'src/plugins/tags.ts',
     'styles/index': 'src/styles/index.ts',
     'styles/server': 'src/styles/server.ts',
+    'fonts/server': 'src/fonts/index.ts',
     'themes/index': 'src/themes/index.ts',
     'themes/theme-utils': 'src/themes/theme-utils.ts',
     'templates/index': 'src/templates/index.ts',

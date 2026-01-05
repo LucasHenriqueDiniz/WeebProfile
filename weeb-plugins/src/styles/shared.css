@@ -995,6 +995,10 @@
   text-transform: capitalize
 }
 
+#svg-main .italic {
+  font-style: italic
+}
+
 #svg-main .tabular-nums {
   --tw-numeric-spacing: tabular-nums;
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)

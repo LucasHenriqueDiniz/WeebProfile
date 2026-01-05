@@ -69,7 +69,7 @@ router.post('/', async (req: Request, res: Response) => {
       throw error
     }
     
-    const completeCSS = stylesModule.getCompleteCSS(style, { [plugin]: { enabled: true } })
+    const completeCSS = await stylesModule.getCompleteCSS(style, { [plugin]: { enabled: true } })
     const theme = normalizedConfig.defaultTheme || 'default'
     const themeVariables = themeUtilsModule.getDefaultThemeVariables(theme, (normalizedConfig as any).customThemeColors)
     const themeVariablesCss = Object.entries(themeVariables)

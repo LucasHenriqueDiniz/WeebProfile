@@ -82,6 +82,26 @@ function getGenreStyle(genreName: string): { icon: React.ReactElement; color: st
   return GENRE_STYLES[genreName] || { icon: <FaStar size={10} />, color: "var(--default-color-muted)" }
 }
 
+// Helper function to get status class for favorites
+// Maps publication status to MAL status classes
+function getFavoriteStatusClass(status: string): string {
+  switch (status) {
+    case "Finished Airing":
+    case "Finished":
+      return "completed"
+    case "Currently Airing":
+      return "watching"
+    case "Publishing":
+      return "reading"
+    case "Not yet aired":
+      return "plan-to-watch"
+    case "Not yet published":
+      return "plan-to-read"
+    default:
+      return "watching"
+  }
+}
+
 // Enhanced genre tag component with icon and color
 function EnhancedGenreTag({ genre }: { genre: string }): React.ReactElement {
   const style = getGenreStyle(genre)
@@ -116,7 +136,7 @@ interface FavoritesListProps {
 }
 
 // ============================================================================
-// SIMPLE STYLE - Grid de imagens
+// SIMPLE STYLE - Image grid
 // ============================================================================
 
 function SimpleFavoriteImage({
@@ -166,7 +186,7 @@ function RenderSimpleFavorites({
 }
 
 // ============================================================================
-// COMPACT STYLE - Lista compacta (50px altura)
+// COMPACT STYLE - Compact list
 // ============================================================================
 
 function DefaultCompactFavorite({
@@ -212,7 +232,7 @@ function TerminalCompactFavorite({
 }
 
 // ============================================================================
-// DETAILED STYLE - Lista completa com summary (120px altura)
+// DETAILED STYLE - Complete list with summary
 // ============================================================================
 
 function DefaultDetailedFavorite({
@@ -274,10 +294,10 @@ function DefaultDetailedFavorite({
             </span>
           )}
           {status && (
-            <span className={`font-semibold flex items-center gap-1 text-[12px] half:hidden`}>
+            <span className={`font-semibold flex items-center gap-1 text-[12px] text-mal-${getFavoriteStatusClass(status)} half:hidden`}>
               <GoDotFill
                 size={14}
-                className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "completed" : "watching"}`}
+                className={`text-mal-${getFavoriteStatusClass(status)}`}
               />
               {status}
             </span>
@@ -333,7 +353,7 @@ function TerminalDetailedFavorite({
         {release_year && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
           <span
-            className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "completed" : "watching"} font-bold half:hidden truncate`}
+            className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}
           >
             ● {status}
           </span>
@@ -352,7 +372,7 @@ function TerminalDetailedFavorite({
 }
 
 // ============================================================================
-// MINIMAL STYLE - Lista sem summary (75px altura)
+// MINIMAL STYLE - List without summary
 // ============================================================================
 
 function DefaultMinimalFavorite({
@@ -413,10 +433,10 @@ function DefaultMinimalFavorite({
             </span>
           )}
           {status && (
-            <span className={`font-semibold flex items-center gap-1 text-[12px] half:hidden`}>
+            <span className={`font-semibold flex items-center gap-1 text-[12px] text-mal-${getFavoriteStatusClass(status)} half:hidden`}>
               <GoDotFill
                 size={10}
-                className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "completed" : "watching"}`}
+                className={`text-mal-${getFavoriteStatusClass(status)}`}
               />
               {status}
             </span>
@@ -468,7 +488,7 @@ function TerminalMinimalFavorite({
         {release_year && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
           <span
-            className={`text-mal-${status === "Finished Airing" || status === "Finished" ? "completed" : "watching"} font-bold half:hidden truncate`}
+            className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}
           >
             ● {status}
           </span>
@@ -500,8 +520,8 @@ export function FavoritesList({
     return <></>
   }
 
-  // Limitar baseado na configuração (padrão 20)
-  // Usar max específico da seção ou fallback para favorites_max global ou padrão 20
+  // Limit based on configuration (default 20)
+  // Use specific max for section or fallback to favorites_max global or default 20
   let MAX_ITEMS = 20
   if (type === "anime" && config.anime_favorites_max !== undefined) {
     MAX_ITEMS = config.anime_favorites_max
@@ -516,7 +536,7 @@ export function FavoritesList({
   }
   const displayData = data.slice(0, MAX_ITEMS)
 
-  // Obter configurações baseadas no tipo
+  // Get configurations based on type
   const getConfig = () => {
     switch (type) {
       case "anime":
@@ -550,7 +570,7 @@ export function FavoritesList({
   const isHalf = size === "half"
   const hideOverlay = config.favorites_hide_overlay ?? false
 
-  // Renderizar baseado no estilo de lista
+  // Render based on list style
   const renderContent = () => {
     switch (listStyle) {
       case "simple":
@@ -574,7 +594,7 @@ export function FavoritesList({
         )
 
       case "detailed":
-        // Apenas anime e manga suportam detailed
+        // Only anime and manga support detailed
         if (type !== "anime" && type !== "manga") {
           return (
             <>
@@ -608,7 +628,7 @@ export function FavoritesList({
         )
 
       case "minimal":
-        // Apenas anime e manga suportam minimal
+        // Only anime and manga support minimal
         if (type !== "anime" && type !== "manga") {
           return (
             <>
@@ -695,8 +715,8 @@ export function FavoritesList({
           </>
         )
 
-      case "detailed":
-        // Apenas anime e manga suportam detailed
+        case "detailed":
+          // Only anime and manga support detailed
         if (type !== "anime" && type !== "manga") {
           return (
             <>
@@ -740,7 +760,7 @@ export function FavoritesList({
         )
 
       case "minimal":
-        // Apenas anime e manga suportam minimal
+        // Only anime and manga support minimal
         if (type !== "anime" && type !== "manga") {
           return (
             <>

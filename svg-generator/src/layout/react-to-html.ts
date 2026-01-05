@@ -39,8 +39,8 @@ export async function reactToHtml(
   // Render React element to HTML string
   const htmlContent = renderToString(wrappedElement)
 
-  // Load CSS
-  const completeCSS = getCompleteCSS(config.style || 'default', config.plugins || {})
+  // Load CSS (includes fonts + style + plugins + shared)
+  const completeCSS = await getCompleteCSS(config.style || 'default', config.plugins || {})
 
   // Get theme variables
   const { getDefaultThemeVariables } = await import('@weeb/weeb-plugins/themes/theme-utils')

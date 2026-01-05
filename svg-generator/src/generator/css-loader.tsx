@@ -12,9 +12,9 @@ import { getCompleteCSS } from '@weeb/weeb-plugins/styles/server'
  * Carrega todos os arquivos CSS e retorna como JSX
  */
 export async function loadCss(config: SvgConfig): Promise<React.ReactElement> {
-  // Load complete CSS from weeb-plugins (includes style + plugins + shared CSS)
+  // Load complete CSS from weeb-plugins (includes fonts + style + plugins + shared CSS)
   // This is the only source of CSS - all styles come from weeb-plugins
-  const completeCSS = getCompleteCSS(config.style, config.plugins)
+  const completeCSS = await getCompleteCSS(config.style, config.plugins)
   
   if (process.env.DEBUG_CSS) {
     console.log('[CSS Loader] ✅ CSS loaded successfully!')

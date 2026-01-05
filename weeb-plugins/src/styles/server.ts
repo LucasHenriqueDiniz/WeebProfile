@@ -11,6 +11,7 @@ import { getActivePluginsCSS } from "./plugins"
 import { readFileSync, existsSync } from "fs"
 import { resolve, dirname } from "path"
 import { fileURLToPath } from "url"
+import { getFontCss, getFontsForStyle } from "../fonts/index.js"
 
 // Get current directory (ES module compatible)
 const __filename = fileURLToPath(import.meta.url)
@@ -52,13 +53,17 @@ export function getAllStyleCSS(styleName: string): string {
 }
 
 /**
- * Get complete CSS for rendering (style + plugins + shared)
- * Server-only: uses getSharedCSS which requires Node.js
+ * Get complete CSS for rendering (fonts + style + plugins + shared)
+ * Server-only: uses getSharedCSS and font loading which require Node.js
  */
-export function getCompleteCSS(styleName: string, plugins?: Record<string, any>): string {
+export async function getCompleteCSS(styleName: string, plugins?: Record<string, any>): Promise<string> {
   const styleCSS = getStyleCSS(styleName)
   const sharedCSS = getSharedCSS()
   const pluginsCSS = plugins ? getActivePluginsCSS(plugins) : ""
+  
+  // Carregar fontes para o estilo
+  const fontIds = getFontsForStyle(styleName)
+  const fontCSS = fontIds.length > 0 ? await getFontCss(fontIds) : ""
 
-  return [styleCSS, pluginsCSS, sharedCSS].filter(Boolean).join("\n")
+  return [fontCSS, styleCSS, pluginsCSS, sharedCSS].filter(Boolean).join("\n")
 }
