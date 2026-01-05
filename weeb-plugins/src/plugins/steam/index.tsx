@@ -19,13 +19,10 @@ export const steamPlugin: Plugin<PluginConfig & SteamConfig, PluginData & SteamD
     enabled: false,
     sections: [],
   } as PluginConfig & SteamConfig,
-  fetchData: async (config: PluginConfig & SteamConfig, dev = false, essentialConfig?: EssentialPluginConfig) => {
+  fetchData: async (config: PluginConfig & SteamConfig, dev = false, essentialConfig?: EssentialPluginConfig, previewMode = false) => {
     const apiKey = essentialConfig?.apiKey
     const steamId = essentialConfig?.steamId
-    if (!dev && (!apiKey || !steamId)) {
-      throw new Error('Steam API Key and Steam ID are required. Please configure them in your profile settings.')
-    }
-    return await fetchSteamData(config as SteamConfig, dev, apiKey, steamId) as PluginData & SteamData
+    return await fetchSteamData(config as SteamConfig, dev, apiKey, steamId, previewMode) as PluginData & SteamData
   },
   render: (config: PluginConfig & SteamConfig, data: PluginData & SteamData) => {
     // Extrair style e size do config (vem do SvgConfig)

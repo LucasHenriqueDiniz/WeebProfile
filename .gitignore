@@ -45,3 +45,4 @@ pnpm-debug.log*
 # Cursor
 /.cursor
 .cursorrules
+/.vscode

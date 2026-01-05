@@ -11,12 +11,26 @@ const BASE_URL = 'https://my.lyfta.app'
 export async function fetchLyftaData(
   config: LyftaConfig,
   dev: boolean,
-  apiKey?: string
+  apiKey?: string,
+  previewMode = false
 ): Promise<LyftaData> {
-  if (dev || !apiKey) {
+  // Em modo dev ou preview, retornar dados mock
+  if (dev || previewMode) {
+    console.log('[Lyfta] Using mock data (dev mode or preview mode)')
     const mockData = await getMockLyftaData()
+    
+    // Em modo preview, manter URLs originais (não converter para base64)
+    if (previewMode) {
+      return mockData
+    }
+    
     // Converter URLs de imagens para base64 para funcionar nos previews (Playwright bloqueia requisições externas)
-    return await convertImageUrlsToBase64(mockData)
+    return await convertImageUrlsToBase64(mockData, previewMode)
+  }
+
+  // Validar que tem apiKey configurado quando não estiver em modo dev/preview
+  if (!apiKey) {
+    throw new Error('Lyfta API Key is required. Please configure it in your profile settings.')
   }
 
   try {
@@ -116,7 +130,14 @@ export async function fetchLyftaData(
   } catch (error) {
     console.error('Error fetching Lyfta data:', error)
     // Fallback to mock data on error
-    return await getMockLyftaData()
+    const mockData = await getMockLyftaData()
+    
+    // Em modo preview, manter URLs originais (não converter para base64)
+    if (previewMode) {
+      return mockData
+    }
+    
+    return await convertImageUrlsToBase64(mockData, previewMode)
   }
 }
 
@@ -250,9 +271,9 @@ function calculateStatistics(workouts: any[]): any {
 /**
  * Converte URLs de imagens para base64 recursivamente
  */
-async function convertImageUrlsToBase64(data: any): Promise<any> {
+async function convertImageUrlsToBase64(data: any, previewMode = false): Promise<any> {
   if (Array.isArray(data)) {
-    return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
+    return Promise.all(data.map((item) => convertImageUrlsToBase64(item, previewMode)))
   }
 
   if (data && typeof data === 'object') {
@@ -263,10 +284,15 @@ async function convertImageUrlsToBase64(data: any): Promise<any> {
         typeof value === 'string' &&
         (value.startsWith('http://') || value.startsWith('https://'))
       ) {
-        // Converter URL para base64 com otimização (imagens pequenas)
-        result[key] = await urlToBase64(value, 15000, IMAGE_OPTIMIZATION)
+        // Em modo preview, manter URLs originais
+        if (previewMode) {
+          result[key] = value
+        } else {
+          // Converter URL para base64 com otimização (imagens pequenas)
+          result[key] = await urlToBase64(value, 15000, IMAGE_OPTIMIZATION)
+        }
       } else {
-        result[key] = await convertImageUrlsToBase64(value)
+        result[key] = await convertImageUrlsToBase64(value, previewMode)
       }
     }
     return result

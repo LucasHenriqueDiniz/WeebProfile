@@ -64,26 +64,26 @@ export function TopGames({
             {!hideTitle && <DefaultTitle title={title} icon={<FaTrophy />} />}
 
             {displayStyle === 'compact' ? (
-              <div className="grid grid-cols-5 gap-2.5 half:gap-2">
+              <div className="grid grid-cols-4 gap-3 half:grid-cols-3 half:gap-2.5">
                 {topGames.map((game) => (
                   <div
                     key={game.appid}
-                    className="flex flex-col items-center gap-1.5 half:gap-1 group"
+                    className="flex flex-col items-center gap-2 half:gap-1.5 group"
                   >
                     {game.header_image && (
-                      <div className="relative w-full aspect-video overflow-hidden rounded-lg border border-default-border/50 group-hover:border-default-highlight/50 transition-all shadow-sm group-hover:shadow-md">
+                      <div className="relative w-full aspect-video overflow-hidden rounded-lg border-2 border-default-border/60 group-hover:border-default-highlight transition-all shadow-md group-hover:shadow-lg">
                         <img
                           src={game.header_image}
                           alt={game.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                       </div>
                     )}
-                    <div className="text-center w-full">
-                      <p className="text-[10px] font-bold text-default-foreground truncate w-full leading-tight mb-0.5">
+                    <div className="text-center w-full px-1">
+                      <p className="text-xs half:text-[11px] font-bold text-default-text truncate w-full leading-tight mb-1">
                         {game.name}
                       </p>
-                      <p className="text-[9px] text-default-muted font-medium">
+                      <p className="text-[11px] half:text-[10px] text-default-highlight font-semibold">
                         {formatPlaytime(game.playtime_forever)}
                       </p>
                     </div>
@@ -91,14 +91,14 @@ export function TopGames({
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col gap-2.5 half:gap-2">
+              <div className="flex flex-col gap-3 half:gap-2.5">
                 {topGames.map((game) => {
                   const gameIconUrl = getSteamImageUrl(game)
                   
                   return (
                     <div
                       key={game.appid}
-                      className="relative overflow-hidden rounded-xl border border-default-border/50 min-h-[80px] half:min-h-[70px]"
+                      className="relative overflow-hidden rounded-xl border border-default-border/50 min-h-[80px] half:min-h-[70px] group hover:border-default-highlight/50 transition-all"
                     >
                       {/* Background com blur */}
                       {game.header_image && (
@@ -107,29 +107,34 @@ export function TopGames({
                           style={{
                             backgroundImage: `url(${game.header_image})`,
                             backgroundSize: 'cover',
-                            backgroundPosition: 'top',
-                            filter: 'blur(1px)',
+                            backgroundPosition: 'center',
+                            filter: 'blur(2px)',
                           }}
                         />
                       )}
-                      <div className="absolute inset-0 bg-black/70" />
+                      <div 
+                        className="absolute inset-0"
+                        style={{
+                          background: 'linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.9))',
+                        }}
+                      />
                       
                       {/* Conteúdo */}
                       <div className="relative flex items-center gap-3 px-4 py-3 half:px-3 half:py-2.5 h-full">
                         {gameIconUrl && (
-                          <div className="relative w-12 h-12 half:w-10 half:h-10 flex-shrink-0 overflow-hidden rounded border-2 border-white/30 bg-black/20">
+                          <div className="relative w-14 h-14 half:w-12 half:h-12 flex-shrink-0 overflow-hidden rounded-lg border-2 border-white/50 bg-black/40 shadow-xl p-1">
                             <img
                               src={gameIconUrl}
                               alt={`${game.name} icon`}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover rounded"
                             />
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm half:text-xs font-bold text-white truncate mb-0.5 drop-shadow-lg">
+                          <p className="text-sm half:text-xs font-bold text-white truncate mb-1">
                             {game.name}
                           </p>
-                          <p className="text-xs half:text-[10px] text-white/90 font-semibold drop-shadow">
+                          <p className="text-xs half:text-[11px] text-white font-semibold">
                             {formatPlaytime(game.playtime_forever)} total
                           </p>
                         </div>

@@ -19,12 +19,9 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
     enabled: false,
     sections: [],
   } as PluginConfig & LyftaConfig,
-  fetchData: async (config: PluginConfig & LyftaConfig, dev = false, essentialConfig?: EssentialPluginConfig) => {
+  fetchData: async (config: PluginConfig & LyftaConfig, dev = false, essentialConfig?: EssentialPluginConfig, previewMode = false) => {
     const apiKey = essentialConfig?.apiKey
-    if (!dev && !apiKey) {
-      throw new Error('Lyfta API Key is required. Please configure it in your profile settings.')
-    }
-    return await fetchLyftaData(config as LyftaConfig, dev, apiKey) as PluginData & LyftaData
+    return await fetchLyftaData(config as LyftaConfig, dev, apiKey, previewMode) as PluginData & LyftaData
   },
   render: (config: PluginConfig & LyftaConfig, data: PluginData & LyftaData) => {
     // Extrair style e size do config (vem do SvgConfig)

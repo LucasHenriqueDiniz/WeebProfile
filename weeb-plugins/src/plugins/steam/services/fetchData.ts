@@ -13,13 +13,26 @@ export async function fetchSteamData(
   config: SteamConfig,
   dev: boolean,
   apiKey?: string,
-  steamId?: string
+  steamId?: string,
+  previewMode = false
 ): Promise<SteamData> {
-  // Always attempt to fetch real data if apiKey and steamId provided
+  // Em modo dev ou preview, retornar dados mock
+  if (dev || previewMode) {
+    console.log('[Steam] Using mock data (dev mode or preview mode)')
+    const mockData = await getMockSteamData()
+    
+    // Em modo preview, manter URLs originais (não converter para base64)
+    if (previewMode) {
+      return mockData
+    }
+    
+    // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
+    return (await convertImageUrlsToBase64(mockData, previewMode)) as SteamData
+  }
+
+  // Validar que tem credenciais configuradas quando não estiver em modo dev/preview
   if (!apiKey || !steamId) {
-    console.log('[Steam] No API key or Steam ID provided, using mock data')
-    const mockData = getMockSteamData()
-    return (await convertImageUrlsToBase64(mockData)) as SteamData
+    throw new Error('Steam API Key and Steam ID are required. Please configure them in your profile settings.')
   }
 
   try {
@@ -71,17 +84,36 @@ export async function fetchSteamData(
     // Calculate statistics
     const statistics = calculateStatistics(gamesWithRecent)
 
-    return {
+    const apiData: SteamData = {
       playerSummary,
       games: gamesWithRecent,
       statistics,
     }
+
+    // Em modo preview, manter URLs originais (não converter para base64)
+    if (previewMode) {
+      console.log('[Steam] Preview mode: keeping image URLs as-is (no base64 conversion)')
+      return apiData
+    }
+
+    // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
+    console.log('[Steam] Converting image URLs to base64...')
+    const dataWithBase64Images = await convertImageUrlsToBase64(apiData, previewMode)
+    console.log('[Steam] Image conversion completed')
+
+    return dataWithBase64Images
   } catch (error) {
     console.error('Error fetching Steam data:', error)
     // Fallback to mock data on error, with image conversion
     console.log('[Steam] Using mock data as fallback')
-    const mockData = getMockSteamData()
-    return (await convertImageUrlsToBase64(mockData)) as SteamData
+    const mockData = await getMockSteamData()
+    
+    // Em modo preview, manter URLs originais (não converter para base64)
+    if (previewMode) {
+      return mockData
+    }
+    
+    return (await convertImageUrlsToBase64(mockData, previewMode)) as SteamData
   }
 }
 
@@ -114,9 +146,9 @@ function calculateStatistics(games: SteamGame[]): SteamStatistics {
   }
 }
 
-async function convertImageUrlsToBase64(data: any): Promise<any> {
+async function convertImageUrlsToBase64(data: any, previewMode = false): Promise<any> {
   if (Array.isArray(data)) {
-    return Promise.all(data.map((item) => convertImageUrlsToBase64(item)))
+    return Promise.all(data.map((item) => convertImageUrlsToBase64(item, previewMode)))
   }
 
   if (data && typeof data === 'object') {
@@ -127,10 +159,15 @@ async function convertImageUrlsToBase64(data: any): Promise<any> {
         typeof value === 'string' &&
         (value.startsWith('http://') || value.startsWith('https://'))
       ) {
-        // Converter URL para base64 com otimização
-        result[key] = await urlToBase64(value, 15000, IMAGE_OPTIMIZATION)
+        // Em modo preview, manter URLs originais
+        if (previewMode) {
+          result[key] = value
+        } else {
+          // Converter URL para base64 com otimização
+          result[key] = await urlToBase64(value, 15000, IMAGE_OPTIMIZATION)
+        }
       } else {
-        result[key] = await convertImageUrlsToBase64(value)
+        result[key] = await convertImageUrlsToBase64(value, previewMode)
       }
     }
     return result

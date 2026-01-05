@@ -51,8 +51,8 @@ export async function fetchLastFmData(
 
   try {
     // Em modo dev ou preview, retornar dados mock
-    if (dev || previewMode || !essentialConfig?.apiKey || !essentialConfig?.username) {
-      console.log(`[LastFM] Using mock data (dev mode, preview mode, or missing config)`)
+    if (dev || previewMode) {
+      console.log(`[LastFM] Using mock data (dev mode or preview mode)`)
 
       const mockData = getMockLastFmData({
         recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,
@@ -83,7 +83,7 @@ export async function fetchLastFmData(
       return dataWithBase64Images
     }
 
-    // Validar configurações essenciais apenas quando não estiver em modo dev
+    // Validar configurações essenciais apenas quando não estiver em modo dev/preview
     if (!essentialConfig?.apiKey) {
       throw new Error('LastFM API key is required. Please add your LastFM API key to the configuration.')
     }
