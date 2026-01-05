@@ -656,12 +656,49 @@ export const PLUGINS_METADATA = {
           defaultValue: "Calendar"
         },
         {
-          key: "calendar_years",
-          label: "Years",
-          type: "string",
-          defaultValue: "",
-          description: "Comma-separated list of years (e.g., '2023,2024'). Leave empty for current year",
-          tooltip: "Specify which years to display in the contribution calendar. If empty, only the current year is shown."
+          key: "calendar_year_mode",
+          label: "Year Mode",
+          type: "select",
+          defaultValue: "current_year",
+          description: "Which year(s) to display in the contribution calendar",
+          tooltip: "Select which year(s) to display: Last Year (previous year), Current Year (this year), or Full (multiple years up to max).",
+          options: [
+            { value: "last_year", label: "Last Year" },
+            { value: "current_year", label: "Current Year" },
+            { value: "last_6_months", label: "Last 6 Months" },
+            { value: "full", label: "Full (Multiple Years)" }
+          ]
+        },
+        {
+          key: "calendar_full_max_years",
+          label: "Max Years (Full Mode)",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          description: "Maximum number of years to fetch when using 'full' mode",
+          tooltip: "When calendar_year_mode is 'full', this sets the maximum number of years to fetch (starting from current year going back)."
+        },
+        {
+          key: "calendar_hide_legends",
+          label: "Hide Contribution Legend",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide the contribution level legend (Less, No contributions, etc.)"
+        },
+        {
+          key: "calendar_hide_weeks",
+          label: "Hide Weekday Labels",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide weekday labels (Sun, Mon, Tue, etc.) on the left side"
+        },
+        {
+          key: "calendar_hide_months",
+          label: "Hide Month Labels",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide month labels (Jan, Feb, Mar, etc.) on the top"
         }
         ]
       },

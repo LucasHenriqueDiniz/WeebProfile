@@ -94,3 +94,4 @@ export function PluginStatusBadge({ isValid, hasConfig, sectionsCount, totalSect
 
 
 
+

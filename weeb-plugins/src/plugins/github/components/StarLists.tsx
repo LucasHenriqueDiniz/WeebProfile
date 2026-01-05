@@ -26,7 +26,7 @@ const DefaultStarLists = ({ data, max }: { data: GithubData['starLists']; max: n
   return (
     <div className="flex flex-col gap-4">
       {lists.map((list, index) => (
-        <div key={index} className="p-3 rounded-lg border border-default-border hover:border-default-highlight hover:bg-default-hover transition-all duration-200">
+        <div key={index} className="p-3 rounded-lg border border-default-border">
           <h4 className="font-semibold text-base text-default-text mb-2">{list.name}</h4>
           {list.description && (
             <p className="text-sm text-default-muted mb-3 line-clamp-2">{list.description}</p>
@@ -38,7 +38,7 @@ const DefaultStarLists = ({ data, max }: { data: GithubData['starLists']; max: n
                 href={repo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-default-link hover:text-default-highlight hover:underline transition-colors flex items-center gap-2"
+                className="text-sm text-default-link flex items-center gap-2"
               >
                 <span className="truncate">{repo.nameWithOwner}</span>
                 <span className="text-default-muted flex-shrink-0">⭐ {abbreviateNumber(repo.stargazerCount)}</span>

@@ -134,6 +134,18 @@
   border-color: var(--default-color-highlight) !important;
 }
 
+#svg-main .border-default-border {
+  border-color: color-mix(in srgb, var(--default-color-muted) 30%, transparent) !important;
+}
+
+#svg-main .hover\:bg-default-hover:hover {
+  background-color: color-mix(in srgb, var(--default-color-highlight) 10%, transparent) !important;
+}
+
+#svg-main .hover\:border-default-highlight:hover {
+  border-color: var(--default-color-highlight) !important;
+}
+
 #svg-main .fill-default-highlight {
   fill: var(--default-color-highlight) !important;
 }

@@ -48,7 +48,11 @@ export interface GithubConfig {
   top_repositories_hide_title?: boolean
   top_repositories_max?: number
   // Novas seções
-  calendar_years?: string
+  calendar_year_mode?: "last_year" | "current_year" | "full" | "last_6_months"
+  calendar_hide_legends?: boolean
+  calendar_hide_weeks?: boolean
+  calendar_hide_months?: boolean
+  calendar_full_max_years?: number
   star_lists_hide_title?: boolean
   star_lists_title?: string
   star_lists_max?: number

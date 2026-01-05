@@ -58,16 +58,16 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData['notableC
           href={contribution.repositoryUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-start gap-3 p-4 rounded-lg border border-default-border hover:border-default-highlight hover:bg-default-hover transition-all duration-200 group h-[100px]"
+          className="flex items-start gap-3 p-4 rounded-lg border border-default-border h-[100px]"
         >
           <div className="flex-shrink-0 mt-0.5">
-            <div className="p-2 rounded-md bg-default-muted/10 group-hover:bg-default-muted/20 transition-colors">
+            <div className="p-2 rounded-md bg-default-muted/10">
               {getIcon(contribution.type)}
             </div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="font-semibold text-base text-default-text truncate group-hover:text-default-highlight transition-colors">
+              <span className="font-semibold text-base text-default-text truncate">
                 {contribution.repository}
               </span>
             </div>

@@ -30,11 +30,11 @@ const DefaultFeaturedRepositories = ({ data }: { data: GithubData['featuredRepos
           href={repo.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-start gap-3 p-4 rounded-lg border border-default-border hover:border-default-highlight hover:bg-default-hover transition-all duration-200 group h-[120px]"
+          className="flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px]"
         >
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="font-semibold text-base text-default-text truncate group-hover:text-default-highlight transition-colors">
+              <span className="font-semibold text-base text-default-text truncate">
                 {repo.nameWithOwner}
               </span>
               {repo.primaryLanguage && (

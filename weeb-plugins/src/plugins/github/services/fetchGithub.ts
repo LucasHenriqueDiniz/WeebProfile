@@ -1,57 +1,59 @@
-/**
- * Serviço de fetch de dados do GitHub
- * 
- * Migrado do source original, adaptado para source-v2
- */
-
-import { graphql } from '@octokit/graphql'
-import { Octokit } from '@octokit/rest'
-import { GraphqlResponseError } from '@octokit/graphql'
-import type { GithubConfig, GithubData, ContributionWeek } from '../types'
-import { SECTION_QUERIES, FOLLOWERS_QUERY, REPOSITORY_STARGAZERS_QUERY, REPOSITORY_CONTRIBUTORS_QUERY, FEATURED_REPOSITORIES_QUERY, RECENT_ACTIVITY_QUERY } from './queries'
-import { getMockGithubData } from './mock-data'
-import { urlToBase64 } from '../../../utils/image-to-base64'
+import { graphql } from "@octokit/graphql"
+import { Octokit } from "@octokit/rest"
+import { GraphqlResponseError } from "@octokit/graphql"
+import type { GithubConfig, GithubData, ContributionWeek } from "../types"
+import {
+  SECTION_QUERIES,
+  FOLLOWERS_QUERY,
+  REPOSITORY_STARGAZERS_QUERY,
+  REPOSITORY_CONTRIBUTORS_QUERY,
+  FEATURED_REPOSITORIES_QUERY,
+  RECENT_ACTIVITY_QUERY,
+} from "./queries"
+import { getMockGithubData } from "./mock-data"
+import { urlToBase64 } from "../../../utils/image-to-base64"
 
 // Mapeamento de seções para permissões necessárias
 const SECTION_PERMISSIONS: Record<string, string[]> = {
-  stargazers: ['read:user'],
-  top_repositories: ['read:user'],
-  star_lists: ['read:user'],
-  sponsors: ['read:user'],
-  sponsorships: ['read:user'],
-  featured_repositories: ['read:user', 'public_repo'],
-  repository_contributors: ['read:user', 'public_repo'],
-  people: ['read:user', 'followers'],
+  stargazers: ["read:user"],
+  top_repositories: ["read:user"],
+  star_lists: ["read:user"],
+  sponsors: ["read:user"],
+  sponsorships: ["read:user"],
+  featured_repositories: ["read:user", "public_repo"],
+  repository_contributors: ["read:user", "public_repo"],
+  people: ["read:user", "followers"],
 }
 
 // Função helper para detectar erros de permissão
 function isPermissionError(error: any): boolean {
   if (error instanceof GraphqlResponseError) {
-    return error.errors?.some((e: any) => 
-      e.type === 'FORBIDDEN' || 
-      e.message?.includes('permission') ||
-      e.message?.includes('insufficient_scope') ||
-      e.message?.includes('Resource not accessible')
-    ) || false
+    return (
+      error.errors?.some(
+        (e: any) =>
+          e.type === "FORBIDDEN" ||
+          e.message?.includes("permission") ||
+          e.message?.includes("insufficient_scope") ||
+          e.message?.includes("Resource not accessible")
+      ) || false
+    )
   }
-  
-  const errorMessage = error?.message || error?.toString() || ''
+
+  const errorMessage = error?.message || error?.toString() || ""
   return (
-    errorMessage.includes('FORBIDDEN') ||
-    errorMessage.includes('permission') ||
-    errorMessage.includes('insufficient_scope') ||
-    errorMessage.includes('Resource not accessible') ||
-    errorMessage.includes('Bad credentials')
+    errorMessage.includes("FORBIDDEN") ||
+    errorMessage.includes("permission") ||
+    errorMessage.includes("insufficient_scope") ||
+    errorMessage.includes("Resource not accessible") ||
+    errorMessage.includes("Bad credentials")
   )
 }
 
 // Função helper para obter mensagem de erro de permissão
 function getPermissionErrorMessage(section: string): string {
   const permissions = SECTION_PERMISSIONS[section] || []
-  const permissionList = permissions.length > 0 
-    ? permissions.join(', ')
-    : 'permissões específicas'
-  
+  const permissionList = permissions.length > 0 ? permissions.join(", ") : "permissões específicas"
+
   return `A seção "${section}" requer ${permissionList}. Verifique se seu Classic Token tem as permissões necessárias.`
 }
 
@@ -155,7 +157,7 @@ interface GraphQLResponse {
 
 /**
  * Busca dados do GitHub
- * 
+ *
  * @param config - Configuração do plugin
  * @param dev - Modo desenvolvimento (usa dados mock, ignora token)
  * @param pat - GitHub Classic Token do usuário (obrigatório em produção)
@@ -176,16 +178,13 @@ export async function fetchGithubData(
   // Classic Token must be configured by user
   // Don't use environment variables - this doesn't work for multi-tenant
   if (!pat) {
-    throw new Error(
-      'GitHub Classic Token is required. ' +
-      'Please configure it in your profile settings.'
-    )
+    throw new Error("GitHub Classic Token is required. " + "Please configure it in your profile settings.")
   }
-  
+
   const githubToken = pat
 
   if (!username) {
-    throw new Error('GitHub username is required')
+    throw new Error("GitHub username is required")
   }
 
   const data: Partial<GithubData> = {}
@@ -206,13 +205,13 @@ export async function fetchGithubData(
     for (const section of sections) {
       try {
         // Code habits uses REST API, not GraphQL
-        if (section === 'code_habits') {
+        if (section === "code_habits") {
           data.codeHabits = await processCodeHabitsData(rest, username)
           continue
         }
 
         // Gists pode usar REST API como fallback
-        if (section === 'gists') {
+        if (section === "gists") {
           try {
             await processGistsData(graphqlClient, rest, username, data)
           } catch (error: any) {
@@ -224,18 +223,18 @@ export async function fetchGithubData(
         }
 
         // People precisa de lógica especial (profile ou repository)
-        if (section === 'people') {
+        if (section === "people") {
           try {
             await processPeopleData(graphqlClient, config, data)
           } catch (error: any) {
             console.warn(`Error fetching people:`, error.message)
-            data.people = { type: config.people_type || 'profile', totalCount: 0, nodes: [] }
+            data.people = { type: config.people_type || "profile", totalCount: 0, nodes: [] }
           }
           continue
         }
 
         // Repository Contributors precisa de repositório específico
-        if (section === 'repository_contributors') {
+        if (section === "repository_contributors") {
           try {
             await processRepositoryContributorsData(graphqlClient, rest, config, data)
           } catch (error: any) {
@@ -246,7 +245,7 @@ export async function fetchGithubData(
         }
 
         // Featured Repositories precisa de URLs dos repositórios
-        if (section === 'featured_repositories') {
+        if (section === "featured_repositories") {
           try {
             await processFeaturedRepositoriesData(graphqlClient, config, data)
           } catch (error: any) {
@@ -257,13 +256,24 @@ export async function fetchGithubData(
         }
 
         // Star Lists - por enquanto retornar vazio (precisa de API específica)
-        if (section === 'star_lists') {
+        if (section === "star_lists") {
           data.starLists = []
           continue
         }
 
+        // Recent Activity - usa REST Events API
+        if (section === "recent_activity") {
+          try {
+            await processRecentActivityData(rest, username, config, data)
+          } catch (error: any) {
+            console.warn(`Error fetching recent activity:`, error.message)
+            data.recentActivity = []
+          }
+          continue
+        }
+
         // Notable Contributions - processar de commitContributionsByRepository
-        if (section === 'notable_contributions') {
+        if (section === "notable_contributions") {
           try {
             await processNotableContributionsData(graphqlClient, username, config, data)
           } catch (error: any) {
@@ -281,27 +291,28 @@ export async function fetchGithubData(
 
         // Preparar variáveis da query
         const variables: any = { login: username }
-        
+
         // Para repositories, usar privacy (enum RepositoryPrivacy)
-        if (section === 'repositories' || section === 'favorite_license') {
+        if (section === "repositories" || section === "favorite_license") {
           // Se não especificado, buscar apenas públicos (ou todos se o token tiver permissão)
-          variables.privacy = config.repositories_use_private ? undefined : 'PUBLIC'
+          variables.privacy = config.repositories_use_private ? undefined : "PUBLIC"
         }
-        
+
         const result = await graphqlClient<GraphQLResponse>(query, variables)
 
         // Process data based on section
         switch (section) {
-          case 'profile':
+          case "profile":
             if (!result.user.name || !result.user.login || !result.user.avatarUrl || !result.user.createdAt) {
-              throw new Error('Missing required user data')
+              throw new Error("Missing required user data")
             }
             // Convert avatarUrl to base64 to work in SVGs
-            const avatarUrlBase64 = result.user.avatarUrl && 
-              (result.user.avatarUrl.startsWith('http://') || result.user.avatarUrl.startsWith('https://'))
-              ? await urlToBase64(result.user.avatarUrl)
-              : result.user.avatarUrl
-            
+            const avatarUrlBase64 =
+              result.user.avatarUrl &&
+              (result.user.avatarUrl.startsWith("http://") || result.user.avatarUrl.startsWith("https://"))
+                ? await urlToBase64(result.user.avatarUrl)
+                : result.user.avatarUrl
+
             data.user = {
               name: result.user.name,
               login: result.user.login,
@@ -311,39 +322,38 @@ export async function fetchGithubData(
               following: result.user.following?.totalCount || 0,
               repositories: { totalCount: result.user.repositories?.nodes?.length || 0 },
               contributionCalendar: {
-                totalContributions:
-                  result.user.contributionsCollection?.contributionCalendar?.totalContributions || 0,
+                totalContributions: result.user.contributionsCollection?.contributionCalendar?.totalContributions || 0,
                 weeks: result.user.contributionsCollection?.contributionCalendar?.weeks || [],
               },
               repositoriesContributedTo: result.user.repositoriesContributedTo?.totalCount || 0,
             }
             break
 
-          case 'favorite_languages':
+          case "favorite_languages":
             data.languages = processLanguagesData(result)
             break
 
-          case 'activity':
+          case "activity":
             data.activity = processActivityData(result)
             break
 
-          case 'calendar':
+          case "calendar":
             await processCalendarData(graphqlClient, username, config, data)
             break
 
-          case 'repositories':
+          case "repositories":
             data.repositories = processRepositoriesData(result)
             break
 
-          case 'favorite_license':
+          case "favorite_license":
             data.favoriteLicense = processFavoriteLicenseData(result)
             break
 
-          case 'starred_repositories':
+          case "starred_repositories":
             data.starredRepositories = processStarredRepositoriesData(result)
             break
 
-          case 'top_repositories':
+          case "top_repositories":
             data.topRepositories = processTopRepositoriesData(result)
             // Calcular stargazers total
             if (data.topRepositories) {
@@ -355,7 +365,7 @@ export async function fetchGithubData(
             }
             break
 
-          case 'introduction':
+          case "introduction":
             data.introduction = {
               bio: result.user.bio || undefined,
               location: result.user.location || undefined,
@@ -365,43 +375,27 @@ export async function fetchGithubData(
             }
             break
 
-          case 'recent_activity':
-            // Processar atividades recentes
-            const activities: GithubData['recentActivity'] = []
-            const commitContributions = result.user.contributionsCollection?.commitContributionsByRepository || []
-            commitContributions.forEach((contribution: any) => {
-              if (contribution.contributions.totalCount > 0) {
-                activities.push({
-                  type: 'commit',
-                  title: `${contribution.contributions.totalCount} commits`,
-                  repository: contribution.repository.nameWithOwner,
-                  url: contribution.repository.url,
-                  date: new Date().toISOString(), // TODO: pegar data real
-                })
-              }
-            })
-            data.recentActivity = activities.slice(0, config.recent_activity_max || 10)
-            break
-
-          case 'sponsorships':
+          case "sponsorships":
             const sponsorships = result.user.sponsorshipsAsSponsor
             const sponsorshipsNodes = await Promise.all(
               (sponsorships?.nodes || []).map(async (sponsorship: any) => {
-                const avatarUrl = sponsorship.sponsorable?.avatarUrl || ''
-                const avatarUrlBase64 = avatarUrl && 
-                  (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
-                  ? await urlToBase64(avatarUrl)
-                  : avatarUrl
+                const avatarUrl = sponsorship.sponsorable?.avatarUrl || ""
+                const avatarUrlBase64 =
+                  avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
+                    ? await urlToBase64(avatarUrl)
+                    : avatarUrl
                 return {
                   sponsorable: {
-                    login: sponsorship.sponsorable?.login || '',
+                    login: sponsorship.sponsorable?.login || "",
                     name: sponsorship.sponsorable?.name || null,
                     avatarUrl: avatarUrlBase64 || avatarUrl,
                   },
-                  tier: sponsorship.tier ? {
-                    name: sponsorship.tier.name,
-                    monthlyPriceInDollars: sponsorship.tier.monthlyPriceInDollars,
-                  } : null,
+                  tier: sponsorship.tier
+                    ? {
+                        name: sponsorship.tier.name,
+                        monthlyPriceInDollars: sponsorship.tier.monthlyPriceInDollars,
+                      }
+                    : null,
                 }
               })
             )
@@ -411,17 +405,17 @@ export async function fetchGithubData(
             }
             break
 
-          case 'sponsors':
+          case "sponsors":
             const sponsors = result.user.sponsors
             const sponsorsNodes = await Promise.all(
               (sponsors?.nodes || []).map(async (sponsor: any) => {
-                const avatarUrl = sponsor.avatarUrl || ''
-                const avatarUrlBase64 = avatarUrl && 
-                  (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
-                  ? await urlToBase64(avatarUrl)
-                  : avatarUrl
+                const avatarUrl = sponsor.avatarUrl || ""
+                const avatarUrlBase64 =
+                  avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
+                    ? await urlToBase64(avatarUrl)
+                    : avatarUrl
                 return {
-                  login: sponsor.login || '',
+                  login: sponsor.login || "",
                   name: sponsor.name || null,
                   avatarUrl: avatarUrlBase64 || avatarUrl,
                   tier: null, // TODO: pegar tier do sponsor
@@ -437,7 +431,7 @@ export async function fetchGithubData(
       } catch (sectionError: any) {
         // Log erro mas continua processando outras seções
         console.warn(`Error processing section "${section}":`, sectionError.message)
-        
+
         // Se for erro de permissão/escopo, definir dados vazios e mostrar aviso
         if (isPermissionError(sectionError)) {
           const permissionMessage = getPermissionErrorMessage(section)
@@ -445,47 +439,47 @@ export async function fetchGithubData(
           console.warn(`Section "${section}" será pulada devido a permissões insuficientes.`)
           // Definir dados vazios para evitar quebra
           switch (section) {
-            case 'starred_repositories':
+            case "starred_repositories":
               data.starredRepositories = { totalCount: 0, nodes: [] }
               break
-            case 'gists':
+            case "gists":
               data.gists = { totalCount: 0, nodes: [] }
               break
-            case 'top_repositories':
+            case "top_repositories":
               data.topRepositories = []
               data.stargazers = { totalCount: 0, repositories: [] }
               break
-            case 'introduction':
+            case "introduction":
               data.introduction = undefined
               break
-            case 'recent_activity':
+            case "recent_activity":
               data.recentActivity = []
               break
-            case 'sponsorships':
+            case "sponsorships":
               data.sponsorships = { totalCount: 0, nodes: [] }
               break
-            case 'sponsors':
+            case "sponsors":
               data.sponsors = { totalCount: 0, nodes: [] }
               break
-            case 'star_lists':
+            case "star_lists":
               data.starLists = []
               break
-            case 'notable_contributions':
+            case "notable_contributions":
               data.notableContributions = []
               break
-            case 'featured_repositories':
+            case "featured_repositories":
               data.featuredRepositories = []
               break
-            case 'people':
-              data.people = { type: config.people_type || 'profile', totalCount: 0, nodes: [] }
+            case "people":
+              data.people = { type: config.people_type || "profile", totalCount: 0, nodes: [] }
               break
-            case 'repository_contributors':
+            case "repository_contributors":
               data.repositoryContributors = []
               break
           }
         } else {
           // Para outros erros, re-throw apenas se for seção crítica
-          if (section === 'profile') {
+          if (section === "profile") {
             throw sectionError
           }
         }
@@ -502,7 +496,7 @@ export async function fetchGithubData(
 /**
  * Processa dados de linguagens
  */
-function processLanguagesData(result: GraphQLResponse): GithubData['languages'] {
+function processLanguagesData(result: GraphQLResponse): GithubData["languages"] {
   const languagesMap = new Map<string, { color: string; size: number }>()
 
   result.user.repositories?.nodes.forEach((repo: any) => {
@@ -532,15 +526,13 @@ function processLanguagesData(result: GraphQLResponse): GithubData['languages'] 
 /**
  * Processa dados de atividade
  */
-function processActivityData(result: GraphQLResponse): GithubData['activity'] {
+function processActivityData(result: GraphQLResponse): GithubData["activity"] {
   const { user } = result
   return {
     totalCommitContributions: user.contributionsCollection?.totalCommitContributions || 0,
-    totalRepositoriesWithContributedCommits:
-      user.contributionsCollection?.totalRepositoriesWithContributedCommits || 0,
+    totalRepositoriesWithContributedCommits: user.contributionsCollection?.totalRepositoriesWithContributedCommits || 0,
     totalPullRequestContributions: user.contributionsCollection?.totalPullRequestContributions || 0,
-    totalPullRequestReviewContributions:
-      user.contributionsCollection?.totalPullRequestReviewContributions || 0,
+    totalPullRequestReviewContributions: user.contributionsCollection?.totalPullRequestReviewContributions || 0,
     totalIssueContributions: user.contributionsCollection?.totalIssueContributions || 0,
     restrictedContributionsCount: user.contributionsCollection?.restrictedContributionsCount || 0,
     repositoriesContributedTo: user.repositoriesContributedTo?.totalCount || 0,
@@ -559,7 +551,7 @@ function processActivityData(result: GraphQLResponse): GithubData['activity'] {
 /**
  * Processa dados de repositórios
  */
-function processRepositoriesData(result: GraphQLResponse): GithubData['repositories'] {
+function processRepositoriesData(result: GraphQLResponse): GithubData["repositories"] {
   const repositories =
     result.user.repositories?.nodes.map((repo: any) => ({
       name: repo.name,
@@ -586,7 +578,7 @@ function processRepositoriesData(result: GraphQLResponse): GithubData['repositor
 /**
  * Processa dados de licença favorita
  */
-function processFavoriteLicenseData(result: GraphQLResponse): GithubData['favoriteLicense'] {
+function processFavoriteLicenseData(result: GraphQLResponse): GithubData["favoriteLicense"] {
   const repositories = result.user.repositories?.nodes || []
   const total = repositories.length || 0
   const licenses = repositories.filter((repo: any) => repo.licenseInfo).map((repo: any) => repo.licenseInfo.name)
@@ -596,7 +588,7 @@ function processFavoriteLicenseData(result: GraphQLResponse): GithubData['favori
     licenseCount.set(license, (licenseCount.get(license) || 0) + 1)
   })
 
-  let favoriteLicense = 'No License'
+  let favoriteLicense = "No License"
   let maxCount = 0
 
   licenseCount.forEach((count, license) => {
@@ -616,7 +608,7 @@ function processFavoriteLicenseData(result: GraphQLResponse): GithubData['favori
 /**
  * Processa dados de repositórios favoritados
  */
-function processStarredRepositoriesData(result: GraphQLResponse): GithubData['starredRepositories'] {
+function processStarredRepositoriesData(result: GraphQLResponse): GithubData["starredRepositories"] {
   const starred = result.user.starredRepositories
   if (!starred) {
     return { totalCount: 0, nodes: [] }
@@ -648,7 +640,7 @@ async function processGistsData(
 ): Promise<void> {
   const query = SECTION_QUERIES.gists
   const result = await graphqlClient<GraphQLResponse>(query, { login: username })
-  
+
   const gists = result.user.gists
   if (!gists) {
     data.gists = { totalCount: 0, nodes: [] }
@@ -658,7 +650,7 @@ async function processGistsData(
   data.gists = {
     totalCount: gists.totalCount || 0,
     nodes: (gists.nodes || []).map((gist: any) => ({
-      name: gist.name || 'Untitled',
+      name: gist.name || "Untitled",
       description: gist.description,
       url: gist.url,
       files: (gist.files || []).map((file: any) => ({
@@ -674,11 +666,7 @@ async function processGistsData(
 /**
  * Processa dados de gists (REST API fallback)
  */
-async function processGistsDataRest(
-  rest: Octokit,
-  username: string,
-  data: Partial<GithubData>
-): Promise<void> {
+async function processGistsDataRest(rest: Octokit, username: string, data: Partial<GithubData>): Promise<void> {
   try {
     const response = await rest.gists.listForUser({
       username,
@@ -688,7 +676,7 @@ async function processGistsDataRest(
     data.gists = {
       totalCount: response.data.length,
       nodes: response.data.map((gist) => ({
-        name: Object.keys(gist.files || {})[0] || 'Untitled',
+        name: Object.keys(gist.files || {})[0] || "Untitled",
         description: gist.description,
         url: gist.html_url,
         files: Object.values(gist.files || {}).map((file: any) => ({
@@ -700,7 +688,7 @@ async function processGistsDataRest(
       })),
     }
   } catch (error) {
-    console.warn('Error fetching gists via REST API:', error)
+    console.warn("Error fetching gists via REST API:", error)
     data.gists = { totalCount: 0, nodes: [] }
   }
 }
@@ -708,7 +696,7 @@ async function processGistsDataRest(
 /**
  * Processa dados de top repositórios
  */
-function processTopRepositoriesData(result: GraphQLResponse): GithubData['topRepositories'] {
+function processTopRepositoriesData(result: GraphQLResponse): GithubData["topRepositories"] {
   const topRepos = result.user.topRepositories
   if (!topRepos || !topRepos.nodes) {
     return []
@@ -738,16 +726,30 @@ async function processCalendarData(
   config: GithubConfig,
   data: Partial<GithubData>
 ): Promise<void> {
-  const yearsConfig = config.calendar_years || 'current'
-  
+  const yearMode = config.calendar_year_mode || "current_year"
+  const maxYears = config.calendar_full_max_years || 5
+  const currentYear = new Date().getFullYear()
+
   // Determinar quais anos buscar
   let yearsToFetch: number[] = []
-  if (yearsConfig === 'current') {
-    yearsToFetch = [new Date().getFullYear()]
+  if (yearMode === "current_year") {
+    yearsToFetch = [currentYear]
+  } else if (yearMode === "last_year") {
+    yearsToFetch = [currentYear - 1]
+  } else if (yearMode === "last_6_months") {
+    // Para last_6_months, buscar o ano atual (vamos filtrar depois)
+    yearsToFetch = [currentYear]
+  } else if (yearMode === "full") {
+    // Buscar até maxYears anos, começando do ano atual e indo para trás
+    for (let i = 0; i < maxYears; i++) {
+      const year = currentYear - i
+      if (year >= 2000) {
+        yearsToFetch.push(year)
+      }
+    }
   } else {
-    // Parse anos separados por vírgula (ex: "2023,2024")
-    const years = yearsConfig.split(',').map(y => parseInt(y.trim())).filter(y => !isNaN(y) && y > 2000 && y <= new Date().getFullYear())
-    yearsToFetch = years.length > 0 ? years : [new Date().getFullYear()]
+    // Fallback para current_year
+    yearsToFetch = [currentYear]
   }
 
   const query = SECTION_QUERIES.calendar
@@ -759,7 +761,7 @@ async function processCalendarData(
   for (const year of yearsToFetch) {
     const fromDate = new Date(`${year}-01-01T00:00:00Z`)
     const toDate = new Date(`${year}-12-31T23:59:59Z`)
-    
+
     try {
       const result = await graphqlClient<GraphQLResponse>(query, {
         login: username,
@@ -771,10 +773,10 @@ async function processCalendarData(
       if (calendar) {
         const yearContributions = calendar.totalContributions || 0
         const yearWeeks = calendar.weeks || []
-        
+
         totalContributions += yearContributions
         allWeeks = [...allWeeks, ...yearWeeks]
-        
+
         calendarYears.push({
           year,
           totalContributions: yearContributions,
@@ -791,7 +793,7 @@ async function processCalendarData(
     const currentYear = new Date().getFullYear()
     const fromDate = new Date(`${currentYear}-01-01T00:00:00Z`)
     const toDate = new Date(`${currentYear}-12-31T23:59:59Z`)
-    
+
     try {
       const result = await graphqlClient<GraphQLResponse>(query, {
         login: username,
@@ -803,24 +805,56 @@ async function processCalendarData(
       data.calendar = {
         totalContributions: calendar?.totalContributions || 0,
         weeks: calendar?.weeks || [],
-        years: calendar ? [{
-          year: currentYear,
-          totalContributions: calendar.totalContributions || 0,
-          weeks: calendar.weeks || [],
-        }] : undefined,
+        years: calendar
+          ? [
+              {
+                year: currentYear,
+                totalContributions: calendar.totalContributions || 0,
+                weeks: calendar.weeks || [],
+              },
+            ]
+          : undefined,
       }
     } catch (error) {
-      console.warn('Error fetching default calendar:', error)
+      console.warn("Error fetching default calendar:", error)
       data.calendar = {
         totalContributions: 0,
         weeks: [],
       }
     }
   } else {
+    let finalWeeks = allWeeks
+    let finalTotalContributions = totalContributions
+
+    // Se last_6_months, filtrar semanas para mostrar apenas últimos 6 meses
+    if (yearMode === "last_6_months") {
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      sixMonthsAgo.setHours(0, 0, 0, 0)
+
+      // Filtrar semanas que têm pelo menos um dia dentro dos últimos 6 meses
+      finalWeeks = allWeeks.filter((week) => {
+        return week.contributionDays.some((day) => {
+          const dayDate = new Date(day.date)
+          return dayDate >= sixMonthsAgo
+        })
+      })
+
+      // Recalcular totalContributions baseado nas semanas filtradas
+      finalTotalContributions = 0
+      finalWeeks.forEach((week) => {
+        week.contributionDays.forEach((day) => {
+          finalTotalContributions += day.contributionCount || 0
+        })
+      })
+    }
+
     data.calendar = {
-      totalContributions,
-      weeks: allWeeks,
-      years: calendarYears.length > 1 ? calendarYears : undefined,
+      totalContributions: finalTotalContributions,
+      weeks: finalWeeks,
+      // Para last_6_months, não setar years (sempre undefined)
+      // Para full mode com múltiplos anos, setar years
+      years: yearMode === "last_6_months" ? undefined : calendarYears.length > 1 ? calendarYears : undefined,
     }
   }
 }
@@ -833,10 +867,10 @@ async function processPeopleData(
   config: GithubConfig,
   data: Partial<GithubData>
 ): Promise<void> {
-  const peopleType = config.people_type || 'profile'
+  const peopleType = config.people_type || "profile"
   const max = config.people_max || 10
 
-  if (peopleType === 'profile') {
+  if (peopleType === "profile") {
     // Buscar followers
     const query = FOLLOWERS_QUERY
     const result = await graphqlClient<GraphQLResponse>(query, {
@@ -847,20 +881,20 @@ async function processPeopleData(
     const followers = result.user.followers
     const followersNodes = await Promise.all(
       (followers?.nodes || []).map(async (follower: any) => {
-        const avatarUrl = follower.avatarUrl || ''
-        const avatarUrlBase64 = avatarUrl && 
-          (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
-          ? await urlToBase64(avatarUrl)
-          : avatarUrl
+        const avatarUrl = follower.avatarUrl || ""
+        const avatarUrlBase64 =
+          avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
+            ? await urlToBase64(avatarUrl)
+            : avatarUrl
         return {
-          login: follower.login || '',
+          login: follower.login || "",
           name: follower.name || null,
           avatarUrl: avatarUrlBase64 || avatarUrl,
         }
       })
     )
     data.people = {
-      type: 'profile',
+      type: "profile",
       totalCount: followers?.totalCount || 0,
       nodes: followersNodes,
     }
@@ -868,13 +902,13 @@ async function processPeopleData(
     // Buscar people do repositório (contributors, stargazers, watchers)
     const repo = config.people_repository
     if (!repo) {
-      data.people = { type: 'repository', totalCount: 0, nodes: [] }
+      data.people = { type: "repository", totalCount: 0, nodes: [] }
       return
     }
 
-    const [owner, repoName] = repo.split('/')
+    const [owner, repoName] = repo.split("/")
     if (!owner || !repoName) {
-      data.people = { type: 'repository', totalCount: 0, nodes: [] }
+      data.people = { type: "repository", totalCount: 0, nodes: [] }
       return
     }
 
@@ -889,20 +923,20 @@ async function processPeopleData(
     const stargazers = result.repository?.stargazers
     const stargazersNodes = await Promise.all(
       (stargazers?.nodes || []).map(async (person: any) => {
-        const avatarUrl = person.avatarUrl || ''
-        const avatarUrlBase64 = avatarUrl && 
-          (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
-          ? await urlToBase64(avatarUrl)
-          : avatarUrl
+        const avatarUrl = person.avatarUrl || ""
+        const avatarUrlBase64 =
+          avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
+            ? await urlToBase64(avatarUrl)
+            : avatarUrl
         return {
-          login: person.login || '',
+          login: person.login || "",
           name: person.name || null,
           avatarUrl: avatarUrlBase64 || avatarUrl,
         }
       })
     )
     data.people = {
-      type: 'repository',
+      type: "repository",
       totalCount: stargazers?.totalCount || 0,
       nodes: stargazersNodes,
     }
@@ -924,7 +958,7 @@ async function processRepositoryContributorsData(
     return
   }
 
-  const [owner, repoName] = repo.split('/')
+  const [owner, repoName] = repo.split("/")
   if (!owner || !repoName) {
     data.repositoryContributors = []
     return
@@ -940,11 +974,11 @@ async function processRepositoryContributorsData(
 
     data.repositoryContributors = await Promise.all(
       response.data.map(async (contributor: any) => {
-        const avatarUrl = contributor.avatar_url || ''
-        const avatarUrlBase64 = avatarUrl && 
-          (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
-          ? await urlToBase64(avatarUrl)
-          : avatarUrl
+        const avatarUrl = contributor.avatar_url || ""
+        const avatarUrlBase64 =
+          avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
+            ? await urlToBase64(avatarUrl)
+            : avatarUrl
         return {
           login: contributor.login,
           name: contributor.name || null,
@@ -963,7 +997,10 @@ async function processRepositoryContributorsData(
       })
 
       const history = result.repository?.defaultBranchRef?.target?.history?.nodes || []
-      const contributorsMap = new Map<string, { login: string; name: string | null; avatarUrl: string; contributions: number }>()
+      const contributorsMap = new Map<
+        string,
+        { login: string; name: string | null; avatarUrl: string; contributions: number }
+      >()
 
       history.forEach((commit: any) => {
         const user = commit.author?.user
@@ -975,7 +1012,7 @@ async function processRepositoryContributorsData(
         const current = contributorsMap.get(login) || {
           login,
           name: user.name || null,
-          avatarUrl: user.avatarUrl || '',
+          avatarUrl: user.avatarUrl || "",
           contributions: 0,
         }
 
@@ -988,14 +1025,14 @@ async function processRepositoryContributorsData(
       const contributorsArray = Array.from(contributorsMap.values())
         .sort((a, b) => b.contributions - a.contributions)
         .slice(0, config.repository_contributors_max || 10)
-      
+
       data.repositoryContributors = await Promise.all(
         contributorsArray.map(async (contributor) => {
-          const avatarUrl = contributor.avatarUrl || ''
-          const avatarUrlBase64 = avatarUrl && 
-            (avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://'))
-            ? await urlToBase64(avatarUrl)
-            : avatarUrl
+          const avatarUrl = contributor.avatarUrl || ""
+          const avatarUrlBase64 =
+            avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
+              ? await urlToBase64(avatarUrl)
+              : avatarUrl
           return {
             ...contributor,
             avatarUrl: avatarUrlBase64 || avatarUrl,
@@ -1003,7 +1040,7 @@ async function processRepositoryContributorsData(
         })
       )
     } catch (graphqlError) {
-      console.warn('Error fetching repository contributors (both REST and GraphQL failed):', graphqlError)
+      console.warn("Error fetching repository contributors (both REST and GraphQL failed):", graphqlError)
       data.repositoryContributors = []
     }
   }
@@ -1023,13 +1060,16 @@ async function processFeaturedRepositoriesData(
     return
   }
 
-  const repoList = urls.split(',').map((url) => url.trim()).filter(Boolean)
-  const featuredRepos: GithubData['featuredRepositories'] = []
+  const repoList = urls
+    .split(",")
+    .map((url) => url.trim())
+    .filter(Boolean)
+  const featuredRepos: GithubData["featuredRepositories"] = []
 
   // Processar cada URL (até 20 URLs são permitidas)
   // Se uma URL estiver quebrada/inválida, ela é ignorada e o processo continua
   for (const repoUrl of repoList.slice(0, 20)) {
-    const [owner, repoName] = repoUrl.split('/')
+    const [owner, repoName] = repoUrl.split("/")
     if (!owner || !repoName) {
       console.warn(`Invalid repository URL format: ${repoUrl}. Expected format: owner/repo`)
       continue
@@ -1055,10 +1095,12 @@ async function processFeaturedRepositoriesData(
           issuesCount: repo.issues?.totalCount,
           pullRequestsCount: repo.pullRequests?.totalCount,
           primaryLanguage: repo.primaryLanguage || null,
-          license: repo.licenseInfo ? {
-            name: repo.licenseInfo.name,
-            spdxId: repo.licenseInfo.spdxId,
-          } : null,
+          license: repo.licenseInfo
+            ? {
+                name: repo.licenseInfo.name,
+                spdxId: repo.licenseInfo.spdxId,
+              }
+            : null,
         })
       } else {
         console.warn(`Repository not found: ${repoUrl}`)
@@ -1085,7 +1127,7 @@ async function processNotableContributionsData(
   const query = RECENT_ACTIVITY_QUERY
   const result = await graphqlClient<GraphQLResponse>(query, { login: username })
 
-  const contributions: GithubData['notableContributions'] = []
+  const contributions: GithubData["notableContributions"] = []
   const commitContributions = result.user.contributionsCollection?.commitContributionsByRepository || []
 
   commitContributions.forEach((contribution: any) => {
@@ -1094,7 +1136,7 @@ async function processNotableContributionsData(
         repository: contribution.repository.nameWithOwner,
         repositoryUrl: contribution.repository.url,
         contributions: contribution.contributions.totalCount,
-        type: 'commits',
+        type: "commits",
       })
     }
   })
@@ -1105,9 +1147,246 @@ async function processNotableContributionsData(
 }
 
 /**
+ * Processa dados de Recent Activity usando REST Events API
+ */
+async function processRecentActivityData(
+  rest: Octokit,
+  username: string,
+  config: GithubConfig,
+  data: Partial<GithubData>
+): Promise<void> {
+  const max = config.recent_activity_max || 10
+  const activities: GithubData["recentActivity"] = []
+
+  try {
+    // Fetch user's public events (últimos 30 dias, aproximadamente 3 páginas)
+    const events: any[] = []
+    for (let page = 1; page <= 3; page++) {
+      try {
+        const response = await rest.activity.listPublicEventsForUser({
+          username,
+          per_page: 100,
+          page,
+        })
+        events.push(...response.data)
+        // Se retornou menos de 100, não há mais páginas
+        if (response.data.length < 100) break
+      } catch (error) {
+        // Se erro 404 ou similar, usuário não tem eventos públicos
+        break
+      }
+    }
+
+    // Filtrar apenas eventos do próprio usuário e dos últimos 30 dias
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const userEvents = events.filter(
+      (event) =>
+        event.actor?.login?.toLowerCase() === username.toLowerCase() &&
+        event.created_at &&
+        new Date(event.created_at) > thirtyDaysAgo
+    )
+
+    // Mapear eventos para atividades
+    for (const event of userEvents.slice(0, max * 2)) {
+      // Limitar para ter margem ao filtrar
+      try {
+        const repoName = event.repo?.name || ""
+        const repoUrl = event.repo?.url ? `https://github.com/${event.repo.name}` : ""
+        const createdAt = event.created_at
+
+        switch (event.type) {
+          case "PushEvent": {
+            // Push com commits
+            const payload = event.payload as any
+            const commits = payload.commits || []
+            const commitsCount = commits.length
+
+            // Se só tem 1 commit, usar a mensagem do commit
+            // Se tem vários, usar formato "X commits"
+            let title: string
+            if (commitsCount === 1 && commits[0]?.message) {
+              title = commits[0].message.split("\n")[0] // Primeira linha
+              if (title.length > 80) {
+                title = title.substring(0, 77) + "..."
+              }
+            } else {
+              title = `${commitsCount} commit${commitsCount > 1 ? "s" : ""}`
+            }
+
+            // Tentar pegar stats do push (pode não estar disponível)
+            let filesChanged:
+              | {
+                  files: number
+                  additions: number
+                  deletions: number
+                }
+              | undefined
+            if (payload.size) {
+              // A API pode retornar size (additions + deletions)
+              // Mas não temos breakdown exato sem fazer requests adicionais
+              filesChanged = {
+                files: 0,
+                additions: payload.size > 0 ? payload.size : 0,
+                deletions: 0,
+              }
+            }
+
+            // Link: se 1 commit, link do commit; se vários, link do compare
+            let url = repoUrl
+            if (commitsCount === 1 && commits[0]?.sha) {
+              url = `${repoUrl}/commit/${commits[0].sha}`
+            } else if (commitsCount > 1 && payload.before && payload.head) {
+              url = `${repoUrl}/compare/${payload.before}...${payload.head}`
+            }
+
+            activities.push({
+              type: "commit",
+              title,
+              repository: repoName,
+              url,
+              date: createdAt,
+              filesChanged,
+            })
+            break
+          }
+
+          case "PullRequestEvent": {
+            const payload = event.payload as any
+            const pr = payload.pull_request
+            const action = payload.action
+
+            if (!pr) break
+
+            let type: "pr" | "merged" = "pr"
+            if (action === "closed" && pr.merged) {
+              type = "merged"
+            } else if (action !== "opened" && action !== "closed") {
+              // Ignorar outros actions (synchronize, etc)
+              break
+            }
+
+            const title = pr.title || `PR #${pr.number}`
+            const prNumber = pr.number
+            const url = pr.html_url || `${repoUrl}/pull/${prNumber}`
+
+            activities.push({
+              type,
+              title: type === "merged" ? `#${prNumber} ${title}` : title,
+              repository: repoName,
+              url,
+              date: createdAt,
+              filesChanged:
+                pr.additions && pr.deletions
+                  ? {
+                      files: pr.changed_files || 0,
+                      additions: pr.additions,
+                      deletions: pr.deletions,
+                    }
+                  : undefined,
+            })
+            break
+          }
+
+          case "IssuesEvent": {
+            const payload = event.payload as any
+            const issue = payload.issue
+            const action = payload.action
+
+            if (!issue || (action !== "opened" && action !== "closed")) break
+
+            const title = issue.title || `Issue #${issue.number}`
+            const issueNumber = issue.number
+            const url = issue.html_url || `${repoUrl}/issues/${issueNumber}`
+
+            activities.push({
+              type: "issue",
+              title: `#${issueNumber} ${title}`,
+              repository: repoName,
+              url,
+              date: createdAt,
+            })
+            break
+          }
+
+          case "IssueCommentEvent": {
+            const payload = event.payload as any
+            const comment = payload.comment
+            const issue = payload.issue
+
+            if (!comment || !issue) break
+
+            const issueNumber = issue.number
+            const isPR = issue.pull_request !== undefined
+            const url = comment.html_url || issue.html_url || `${repoUrl}/${isPR ? "pull" : "issues"}/${issueNumber}`
+
+            activities.push({
+              type: "comment",
+              title: isPR ? `Commented on PR #${issueNumber}` : `Commented on issue #${issueNumber}`,
+              repository: repoName,
+              url,
+              date: createdAt,
+            })
+            break
+          }
+
+          case "CreateEvent": {
+            const payload = event.payload as any
+            const refType = payload.ref_type
+
+            if (refType === "branch") {
+              const ref = payload.ref
+              activities.push({
+                type: "branch",
+                title: ref || "Created new branch",
+                repository: repoName,
+                url: `${repoUrl}/tree/${ref || ""}`,
+                date: createdAt,
+              })
+            }
+            // Ignorar outros tipos (tag, repository)
+            break
+          }
+
+          case "PullRequestReviewEvent": {
+            const payload = event.payload as any
+            const review = payload.review
+            const pr = payload.pull_request
+
+            if (!review || !pr) break
+
+            const prNumber = pr.number
+            const reviewState = review.state
+            const url = review.html_url || pr.html_url || `${repoUrl}/pull/${prNumber}`
+
+            activities.push({
+              type: "comment",
+              title: `Reviewed PR #${prNumber}`,
+              repository: repoName,
+              url,
+              date: createdAt,
+            })
+            break
+          }
+        }
+      } catch (error) {
+        // Ignorar eventos que falharam ao processar
+        console.warn(`Error processing event:`, error)
+      }
+    }
+
+    // Ordenar por data (mais recente primeiro) e limitar
+    activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    data.recentActivity = activities.slice(0, max)
+  } catch (error) {
+    console.error("Error processing recent activity:", error)
+    data.recentActivity = []
+  }
+}
+
+/**
  * Processa dados de code habits (usa REST API)
  */
-async function processCodeHabitsData(rest: Octokit, login: string, days = 90): Promise<GithubData['codeHabits']> {
+async function processCodeHabitsData(rest: Octokit, login: string, days = 90): Promise<GithubData["codeHabits"]> {
   const commitsByDay: Record<string, number> = {}
   const commitsByHour: Record<number, number> = {}
   let totalCommits = 0
@@ -1130,15 +1409,17 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
 
     // Filter only user's PushEvents
     const commits = events
-      .filter(({ type }) => type === 'PushEvent')
+      .filter(({ type }) => type === "PushEvent")
       .filter(({ actor }) => actor.login?.toLowerCase() === login.toLowerCase())
-      .filter(({ created_at }) => created_at && new Date(created_at) > new Date(Date.now() - days * 24 * 60 * 60 * 1000))
+      .filter(
+        ({ created_at }) => created_at && new Date(created_at) > new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+      )
 
     // Process commits
     for (const event of commits) {
       if (!event.created_at) continue
       const date = new Date(event.created_at)
-      const day = date.toLocaleDateString('en-US', { weekday: 'long' })
+      const day = date.toLocaleDateString("en-US", { weekday: "long" })
       const hour = date.getHours()
 
       commitsByDay[day] = (commitsByDay[day] || 0) + 1
@@ -1161,7 +1442,7 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
       analyzedCommits: totalCommits,
     }
   } catch (error) {
-    console.error('Error processing code habits:', error)
+    console.error("Error processing code habits:", error)
     return {
       commitsByHour: {},
       commitsByDay: {},

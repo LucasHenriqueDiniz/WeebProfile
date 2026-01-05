@@ -40,3 +40,4 @@ COMMENT ON FUNCTION get_plugin_secrets_presence IS
   'Returns presence (exists + updated_at) of plugin secrets for a user. Never returns secret values.';
 
 
+

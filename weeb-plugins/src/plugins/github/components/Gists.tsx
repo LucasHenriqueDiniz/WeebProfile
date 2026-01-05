@@ -26,16 +26,16 @@ const DefaultGists = ({
             href={gist.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-start gap-3 p-4 rounded-lg border border-default-border hover:border-default-highlight hover:bg-default-hover transition-all duration-200 group h-[120px]"
+            className="flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px]"
           >
             <div className="flex-shrink-0 mt-0.5">
-              <div className="p-2 rounded-md bg-default-muted/10 group-hover:bg-default-muted/20 transition-colors">
-                <FaFileCode className="text-default-muted group-hover:text-default-highlight transition-colors" size={18} />
+              <div className="p-2 rounded-md bg-default-muted/10">
+                <FaFileCode className="text-default-muted" size={18} />
               </div>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <span className="font-semibold text-base text-default-text truncate group-hover:text-default-highlight transition-colors">
+                <span className="font-semibold text-base text-default-text truncate">
                   {gist.name}
                 </span>
                 {gist.stargazerCount > 0 && (

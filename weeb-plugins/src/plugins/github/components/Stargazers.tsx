@@ -32,17 +32,26 @@ const DefaultStargazers = ({
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-3">
+      <div className="flex flex-col gap-4">
         {reposToShow.map((repo, index) => (
           <div
             key={index}
-            className="flex items-center justify-between p-3 rounded-lg border border-default-border"
+            className="flex items-center justify-between p-4 rounded-lg border border-default-border"
           >
-            <span className="font-semibold text-default-text">
-              {repo.name}
-            </span>
-            <div className="flex items-center gap-1 text-default-muted">
-              <FaStar className="text-yellow-500" />
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="flex-shrink-0">
+                <div className="p-2 rounded-md bg-default-muted/10">
+                  <FaStar className="text-yellow-500" size={18} />
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-base text-default-text truncate">
+                  {repo.name}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 text-default-muted flex-shrink-0">
+              <FaStar className="text-yellow-500 fill-yellow-500" size={14} />
               <span className="text-sm font-medium">
                 {abbreviateNumber(repo.stargazerCount)}
               </span>
