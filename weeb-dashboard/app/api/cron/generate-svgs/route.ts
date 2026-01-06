@@ -1,9 +1,9 @@
 /**
  * CRON Job - Gerar SVGs pendentes
- * 
+ *
  * Esta rota é chamada periodicamente (via Vercel Cron ou GitHub Actions)
  * para gerar SVGs que precisam ser atualizados.
- * 
+ *
  * Configurar no vercel.json:
  * {
  *   "crons": [{
@@ -24,7 +24,7 @@ import { getTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 /**
  * GET /api/cron/generate-svgs - Executar cron job
- * 
+ *
  * Busca SVGs que precisam ser gerados/atualizados e processa em lote.
  */
 
@@ -32,14 +32,14 @@ export async function GET(request: Request) {
   // Verificar se é uma requisição autorizada (Vercel Cron ou secret)
   const authHeader = request.headers.get("authorization")
   const cronSecret = env.cronSecret
-  
+
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
   try {
     const now = new Date()
-    
+
     // Buscar SVGs que precisam ser gerados:
     // 1. Status "pending" (primeira geração)
     // 2. Status "failed" (tentativa anterior falhou)
@@ -78,6 +78,8 @@ export async function GET(request: Request) {
     // Processar cada SVG
     for (const svg of svgsToGenerate) {
       try {
+        console.log(`🔄 [CRON] Starting generation for SVG ${svg.id} (${svg.name})`)
+
         // Atualizar status para "generating"
         await db
           .update(svgs)
@@ -94,10 +96,10 @@ export async function GET(request: Request) {
         const uiConfig = (svg as any).uiConfig || {}
         const terminalConfigs = getTerminalConfigs(uiConfig)
         const requestConfig = {
-          style: svg.style || 'default',
-          size: svg.size || 'half',
+          style: svg.style || "default",
+          size: svg.size || "half",
           plugins: pluginsConfig,
-          pluginsOrder: pluginsOrderFromConvert || svg.pluginsOrder?.split(',') || [],
+          pluginsOrder: pluginsOrderFromConvert || svg.pluginsOrder?.split(",") || [],
           customCss: svg.customCss || undefined,
           theme: svg.theme || undefined,
           hideTerminalEmojis: terminalConfigs.hideTerminalEmojis,
@@ -109,7 +111,9 @@ export async function GET(request: Request) {
         }
 
         // Gerar SVG via HTTP service (svg-generator busca essential configs)
+        console.log(`📤 [CRON] Calling svg-generator service for SVG ${svg.id}...`)
         const result = await generateSvgViaHttpService(requestConfig)
+        console.log(`✅ [CRON] SVG ${svg.id} generated successfully, size: ${result.width}x${result.height}`)
         const svgContent = result.svg
 
         // Salvar no Supabase Storage
@@ -117,6 +121,10 @@ export async function GET(request: Request) {
 
         // Calcular hash dos dados
         const dataHash = generateDataHash(svg)
+
+        // Calcular próxima regeneração (24 horas a partir de agora)
+        const nextRegenerationAt = new Date(now)
+        nextRegenerationAt.setHours(nextRegenerationAt.getHours() + 24)
 
         // Atualizar SVG com resultado
         await db
@@ -127,24 +135,57 @@ export async function GET(request: Request) {
             storageUrl: url,
             dataHash,
             lastGeneratedAt: now,
+            nextRegenerationAt,
             forceRegenerate: false,
+            failCount: 0, // Reset fail count on success
+            lastError: null, // Clear error on success
           })
           .where(eq(svgs.id, svg.id))
 
         results.success++
       } catch (error) {
-        // Atualizar status para "failed"
+        // Extrair mensagem de erro detalhada
+        let errorMessage = "Unknown error"
+        let errorCode: string | undefined
+        let errorDetails: any = undefined
+
+        if (error instanceof Error) {
+          errorMessage = error.message
+          errorCode = (error as any).code
+          errorDetails = (error as any).details || (error as any).missing
+        } else if (typeof error === "string") {
+          errorMessage = error
+        }
+
+        // Construir mensagem de erro completa
+        let fullErrorMessage = errorMessage
+        if (errorCode) {
+          fullErrorMessage = `[${errorCode}] ${errorMessage}`
+        }
+        if (errorDetails) {
+          fullErrorMessage += ` | Details: ${JSON.stringify(errorDetails)}`
+        }
+
+        // Atualizar status para "failed" com detalhes do erro
+        const [updatedSvg] = await db.select().from(svgs).where(eq(svgs.id, svg.id)).limit(1)
+
         await db
           .update(svgs)
           .set({
             status: "failed",
+            lastError: fullErrorMessage,
+            failCount: (updatedSvg?.failCount || 0) + 1,
           })
           .where(eq(svgs.id, svg.id))
 
-        const errorMessage = error instanceof Error ? error.message : "Unknown error"
         results.failed++
-        results.errors.push(`${svg.id}: ${errorMessage}`)
-        console.error(`Error generating SVG ${svg.id}:`, error)
+        results.errors.push(`${svg.id}: ${fullErrorMessage}`)
+        console.error(`❌ [CRON] Error generating SVG ${svg.id}:`, {
+          error: errorMessage,
+          code: errorCode,
+          details: errorDetails,
+          stack: error instanceof Error ? error.stack : undefined,
+        })
       }
     }
 
@@ -164,4 +205,3 @@ export async function GET(request: Request) {
     )
   }
 }
-
