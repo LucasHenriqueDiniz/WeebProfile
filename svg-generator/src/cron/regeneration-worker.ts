@@ -64,55 +64,28 @@ async function saveSvgToStorage(svgId: string, svgContent: string): Promise<{ pa
 /**
  * Converts SVG row to config format for svg-generator
  * Uses the same logic as convertSvgToPluginsConfig in the dashboard
+ * 
+ * plugins_config is now stored in direct format: { "github": { enabled: true, sections: [...], ... }, ... }
+ * No longer uses PLUGIN_* prefix format
  */
 function convertSvgToConfig(svg: SvgRow): any {
-  const plugins: Record<string, any> = {}
-  const pluginsConfig = svg.plugins_config || {}
-
-  // Convert pluginsConfig to format expected by svg-generator
-  // Same logic as convertSvgToPluginsConfig in dashboard
-  for (const [key, value] of Object.entries(pluginsConfig)) {
-    if (key.startsWith("PLUGIN_")) {
-      const pluginKey = key.replace("PLUGIN_", "").toLowerCase()
-      
-      // If it's a boolean (plugin enabled/disabled) - ex: PLUGIN_GITHUB = true
-      if (typeof value === "boolean" && !key.includes("_", 7)) { // 7 = "PLUGIN_".length
-        const pluginName = pluginKey
-        if (!plugins[pluginName]) {
-          plugins[pluginName] = { enabled: value }
-        } else {
-          plugins[pluginName].enabled = value
-        }
-      } else {
-        // Extract plugin name and property - ex: PLUGIN_GITHUB_USERNAME
-        const parts = pluginKey.split("_")
-        const pluginName = parts[0]
-        const property = parts.slice(1).join("_")
-
-        if (!plugins[pluginName]) {
-          plugins[pluginName] = { enabled: false } // Default to disabled if not explicitly set
-        }
-
-        if (property === "username") {
-          plugins[pluginName].username = value
-        } else if (property === "sections") {
-          plugins[pluginName].sections = typeof value === "string" ? value.split(",").filter(Boolean) : (Array.isArray(value) ? value.filter(Boolean) : [])
-        } else if (property) {
-          // Other plugin properties
-          plugins[pluginName][property] = value
-        }
-      }
-    }
-  }
+  const svgPluginsConfig = (svg.plugins_config || {}) as Record<string, any>
+  const svgUiConfig = (svg.ui_config || {}) as Record<string, any>
 
   // Filter only enabled plugins with at least one section
+  // Same logic as convertSvgToPluginsConfig in dashboard
   const enabledPlugins: Record<string, any> = {}
-  for (const [pluginName, plugin] of Object.entries(plugins)) {
-    const isEnabled = plugin.enabled === true
-    const hasSections = plugin.sections && Array.isArray(plugin.sections) && plugin.sections.length > 0
-    
+  for (const [pluginName, pluginConfig] of Object.entries(svgPluginsConfig)) {
+    // Skip non-plugin keys (like hideTerminalEmojis, customThemeColors, etc)
+    if (typeof pluginConfig !== "object" || pluginConfig === null || Array.isArray(pluginConfig)) {
+      continue
+    }
+
+    const isEnabled = pluginConfig.enabled === true
+    const hasSections = pluginConfig.sections && Array.isArray(pluginConfig.sections) && pluginConfig.sections.length > 0
+
     if (isEnabled && hasSections) {
-      enabledPlugins[pluginName] = plugin
+      enabledPlugins[pluginName] = pluginConfig
     }
   }
 
@@ -125,10 +98,11 @@ function convertSvgToConfig(svg: SvgRow): any {
     pluginsOrder = Object.keys(enabledPlugins).sort()
   }
 
-  // Extract terminal configs from pluginsConfig
-  const hideTerminalEmojis = pluginsConfig.hideTerminalEmojis || false
-  const hideTerminalHeader = pluginsConfig.hideTerminalHeader || false
-  const hideTerminalCommand = pluginsConfig.hideTerminalCommand || false
+  // Extract terminal configs from ui_config (moved from plugins_config)
+  const hideTerminalEmojis = svgUiConfig.hideTerminalEmojis || false
+  const hideTerminalHeader = svgUiConfig.hideTerminalHeader || false
+  const hideTerminalCommand = svgUiConfig.hideTerminalCommand || false
+  const customThemeColors = svgUiConfig.customThemeColors || undefined
 
   return {
     style: svg.style || "default",
@@ -142,7 +116,7 @@ function convertSvgToConfig(svg: SvgRow): any {
     hideTerminalEmojis,
     hideTerminalHeader,
     hideTerminalCommand,
-    customThemeColors: pluginsConfig.customThemeColors || undefined,
+    customThemeColors,
   }
 }
 
@@ -188,7 +162,14 @@ export async function processRegenerationBatch(
         const essentialConfigs = await getUserEssentialConfigs(svg.user_id)
 
         // Convert SVG to config
+        console.log(`🔄 [REGEN] Converting SVG ${svg.id} to config...`)
+        console.log(`🔄 [REGEN] SVG plugins_config:`, JSON.stringify(svg.plugins_config, null, 2))
+        console.log(`🔄 [REGEN] SVG ui_config:`, JSON.stringify(svg.ui_config, null, 2))
+        
         const baseConfig = convertSvgToConfig(svg)
+        console.log(`🔄 [REGEN] Converted config plugins:`, JSON.stringify(baseConfig.plugins, null, 2))
+        console.log(`🔄 [REGEN] Converted config pluginsOrder:`, baseConfig.pluginsOrder)
+        
         const config = {
           ...baseConfig,
           essentialConfigs,
@@ -196,9 +177,25 @@ export async function processRegenerationBatch(
         }
 
         // Validate config
+        console.log(`🔄 [REGEN] Validating config for SVG ${svg.id}...`)
         if (!validateConfig(config)) {
+          // Log detailed validation failure
+          const hasEnabledPlugin = Object.values(config.plugins || {}).some(
+            (plugin: any) =>
+              plugin?.enabled === true && plugin.sections && Array.isArray(plugin.sections) && plugin.sections.length > 0
+          )
+          console.error(`❌ [REGEN] Config validation failed for SVG ${svg.id}`)
+          console.error(`❌ [REGEN] Has enabled plugin:`, hasEnabledPlugin)
+          console.error(`❌ [REGEN] Plugins details:`, Object.entries(config.plugins || {}).map(([name, plugin]: [string, any]) => ({
+            name,
+            enabled: plugin?.enabled,
+            sections: plugin?.sections,
+            sectionsCount: Array.isArray(plugin?.sections) ? plugin.sections.length : 0,
+          })))
           throw new Error("Invalid configuration")
         }
+        
+        console.log(`✅ [REGEN] Config validated successfully for SVG ${svg.id}`)
 
         const normalizedConfig = normalizeConfig(config)
 
