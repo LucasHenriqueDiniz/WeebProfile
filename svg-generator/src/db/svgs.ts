@@ -31,6 +31,7 @@ export interface SvgRow {
   custom_css: string | null
   plugins_order: string | null
   plugins_config: any
+  ui_config: any | null
   storage_path: string | null
   storage_url: string | null
   status: string

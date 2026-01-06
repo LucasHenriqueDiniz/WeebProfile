@@ -118,7 +118,7 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 #svg-main .border-default-highlight {
   border-color: var(--default-color-highlight) !important;
 }
-  
+
 #svg-main .border-default-highlight-50 {
   border-color: color-mix(in srgb, var(--default-color-highlight) 50%, transparent) !important;
 }

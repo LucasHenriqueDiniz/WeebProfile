@@ -16,6 +16,8 @@
  * 4. Usar Satori com height: undefined para calcular altura dinamicamente
  */
 
+// This file is not currently used - satori may not be installed
+// @ts-expect-error - satori may not be installed, this file is not currently used
 import satori from 'satori'
 import type { SvgConfig, SvgGenerationResult } from '../types/index'
 import { calculateSvgWidth } from './height-calculator'
@@ -137,7 +139,7 @@ export async function generateSvgWithSatori(config: SvgConfig): Promise<SvgGener
   }
 
   // Adicionar debug info se necessário
-  if (config.debug || config.dev) {
+  if (config.dev) {
     result._debug = {
       pluginsData,
       pluginsErrors: Object.fromEntries(
