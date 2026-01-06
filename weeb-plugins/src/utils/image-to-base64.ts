@@ -33,8 +33,8 @@ async function loadSharp(): Promise<any | null> {
   // Tentar carregar Sharp usando import dinâmico (ES modules)
   try {
     const sharpModule = await import("sharp")
-    // Sharp pode ser exportado como default ou named export
-    return sharpModule.default || sharpModule.sharp || sharpModule
+    // Sharp é exportado como default
+    return sharpModule.default || sharpModule
   } catch {
     return null
   }
