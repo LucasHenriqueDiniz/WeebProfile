@@ -1,10 +1,17 @@
 /**
  * Regeneration Worker
- * 
+ *
  * Processes SVGs for automatic regeneration with timebox and batch limits
  */
 
-import { claimDueSvgs, updateSvgAfterGeneration, updateSvgAfterSkip, updateSvgAfterError, checkHasMoreSvgs, type SvgRow } from "../db/svgs.js"
+import {
+  claimDueSvgs,
+  updateSvgAfterGeneration,
+  updateSvgAfterSkip,
+  updateSvgAfterError,
+  checkHasMoreSvgs,
+  type SvgRow,
+} from "../db/svgs.js"
 import { getUserEssentialConfigs } from "../db/essential-configs.js"
 import { generateSvg, normalizeConfig, validateConfig } from "../index.js"
 import { normalizePayloadForHash, calculatePayloadHash } from "../utils/regeneration.js"
@@ -64,7 +71,7 @@ async function saveSvgToStorage(svgId: string, svgContent: string): Promise<{ pa
 /**
  * Converts SVG row to config format for svg-generator
  * Uses the same logic as convertSvgToPluginsConfig in the dashboard
- * 
+ *
  * plugins_config is now stored in direct format: { "github": { enabled: true, sections: [...], ... }, ... }
  * No longer uses PLUGIN_* prefix format
  */
@@ -82,7 +89,8 @@ function convertSvgToConfig(svg: SvgRow): any {
     }
 
     const isEnabled = pluginConfig.enabled === true
-    const hasSections = pluginConfig.sections && Array.isArray(pluginConfig.sections) && pluginConfig.sections.length > 0
+    const hasSections =
+      pluginConfig.sections && Array.isArray(pluginConfig.sections) && pluginConfig.sections.length > 0
 
     if (isEnabled && hasSections) {
       enabledPlugins[pluginName] = pluginConfig
@@ -111,8 +119,8 @@ function convertSvgToConfig(svg: SvgRow): any {
     pluginsOrder,
     customCss: svg.custom_css || undefined,
     theme: svg.theme || undefined,
-    terminalTheme: svg.style === "terminal" ? (svg.theme || "default") : undefined,
-    defaultTheme: svg.style === "default" ? (svg.theme || "default") : undefined,
+    terminalTheme: svg.style === "terminal" ? svg.theme || "default" : undefined,
+    defaultTheme: svg.style === "default" ? svg.theme || "default" : undefined,
     hideTerminalEmojis,
     hideTerminalHeader,
     hideTerminalCommand,
@@ -126,7 +134,14 @@ function convertSvgToConfig(svg: SvgRow): any {
 export async function processRegenerationBatch(
   limit: number = 50,
   timeboxMs: number = 360000
-): Promise<{ claimed: number; generated: number; skipped: number; failed: number; durationMs: number; hasMore: boolean }> {
+): Promise<{
+  claimed: number
+  generated: number
+  skipped: number
+  failed: number
+  durationMs: number
+  hasMore: boolean
+}> {
   const startTime = Date.now()
   const results = {
     claimed: 0,
@@ -165,11 +180,11 @@ export async function processRegenerationBatch(
         console.log(`🔄 [REGEN] Converting SVG ${svg.id} to config...`)
         console.log(`🔄 [REGEN] SVG plugins_config:`, JSON.stringify(svg.plugins_config, null, 2))
         console.log(`🔄 [REGEN] SVG ui_config:`, JSON.stringify(svg.ui_config, null, 2))
-        
+
         const baseConfig = convertSvgToConfig(svg)
         console.log(`🔄 [REGEN] Converted config plugins:`, JSON.stringify(baseConfig.plugins, null, 2))
         console.log(`🔄 [REGEN] Converted config pluginsOrder:`, baseConfig.pluginsOrder)
-        
+
         const config = {
           ...baseConfig,
           essentialConfigs,
@@ -182,19 +197,25 @@ export async function processRegenerationBatch(
           // Log detailed validation failure
           const hasEnabledPlugin = Object.values(config.plugins || {}).some(
             (plugin: any) =>
-              plugin?.enabled === true && plugin.sections && Array.isArray(plugin.sections) && plugin.sections.length > 0
+              plugin?.enabled === true &&
+              plugin.sections &&
+              Array.isArray(plugin.sections) &&
+              plugin.sections.length > 0
           )
           console.error(`❌ [REGEN] Config validation failed for SVG ${svg.id}`)
           console.error(`❌ [REGEN] Has enabled plugin:`, hasEnabledPlugin)
-          console.error(`❌ [REGEN] Plugins details:`, Object.entries(config.plugins || {}).map(([name, plugin]: [string, any]) => ({
-            name,
-            enabled: plugin?.enabled,
-            sections: plugin?.sections,
-            sectionsCount: Array.isArray(plugin?.sections) ? plugin.sections.length : 0,
-          })))
+          console.error(
+            `❌ [REGEN] Plugins details:`,
+            Object.entries(config.plugins || {}).map(([name, plugin]: [string, any]) => ({
+              name,
+              enabled: plugin?.enabled,
+              sections: plugin?.sections,
+              sectionsCount: Array.isArray(plugin?.sections) ? plugin.sections.length : 0,
+            }))
+          )
           throw new Error("Invalid configuration")
         }
-        
+
         console.log(`✅ [REGEN] Config validated successfully for SVG ${svg.id}`)
 
         const normalizedConfig = normalizeConfig(config)
@@ -250,4 +271,3 @@ export async function processRegenerationBatch(
     }
   }
 }
-
