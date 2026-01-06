@@ -22,19 +22,21 @@ export const IMAGE_OPTIMIZATION = {
 
 /**
  * Verifica se estamos no contexto do svg-generator (onde Sharp está disponível)
+ * E carrega o sharp de forma assíncrona usando import dinâmico
  */
-function isSvgGeneratorContext(): boolean {
+async function loadSharp(): Promise<any | null> {
   // Verificar se estamos em um ambiente Node.js
   if (typeof process === "undefined" || !process.versions || !process.versions.node) {
-    return false
+    return null
   }
 
-  // Verificar se Sharp está disponível (foi instalado no svg-generator)
+  // Tentar carregar Sharp usando import dinâmico (ES modules)
   try {
-    require("sharp")
-    return true
+    const sharpModule = await import("sharp")
+    // Sharp pode ser exportado como default ou named export
+    return sharpModule.default || sharpModule.sharp || sharpModule
   } catch {
-    return false
+    return null
   }
 }
 
@@ -70,25 +72,30 @@ export async function urlToBase64(
     const arrayBuffer = await response.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    // Se estamos no contexto do svg-generator e temos opções de otimização,
-    // tentar usar Sharp para otimizar a imagem
-    if (isSvgGeneratorContext() && options) {
+    // Se temos opções de otimização, tentar usar Sharp para otimizar a imagem
+    if (options) {
       try {
-        // Tentar otimizar com Sharp diretamente
-        const sharp = require("sharp")
-        const optimizedBuffer = await sharp(buffer)
-          .resize(options.maxWidth || 200, options.maxHeight || 200, {
-            fit: "inside",
-            withoutEnlargement: true,
-          })
-          .jpeg({ quality: options.quality || 70, mozjpeg: true })
-          .toBuffer()
+        // Tentar carregar Sharp usando import dinâmico
+        const sharp = await loadSharp()
+        if (sharp && typeof sharp === "function") {
+          const optimizedBuffer = await sharp(buffer)
+            .resize(options.maxWidth || 200, options.maxHeight || 200, {
+              fit: "inside",
+              withoutEnlargement: true,
+            })
+            .jpeg({ quality: options.quality || 70, mozjpeg: true })
+            .toBuffer()
 
-        const base64 = optimizedBuffer.toString("base64")
-        const contentType = response.headers.get("content-type") || "image/jpeg"
-        return `data:${contentType};base64,${base64}`
+          const base64 = optimizedBuffer.toString("base64")
+          const contentType = response.headers.get("content-type") || "image/jpeg"
+          return `data:${contentType};base64,${base64}`
+        }
       } catch (error) {
-        console.warn(`⚠️  Falha ao otimizar imagem, usando versão original:`, error)
+        // Silenciosamente usar versão original se Sharp não estiver disponível ou falhar
+        // Só logar se for um erro inesperado (não relacionado a Sharp não estar disponível)
+        if (error instanceof Error && !error.message.includes("Cannot find module")) {
+          console.warn(`⚠️  Falha ao otimizar imagem, usando versão original:`, error)
+        }
       }
     }
 
