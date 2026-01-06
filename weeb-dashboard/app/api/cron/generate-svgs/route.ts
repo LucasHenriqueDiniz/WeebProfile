@@ -15,7 +15,7 @@
 
 import { db } from "@/lib/db"
 import { svgs } from "@/lib/db/schema"
-import { eq, or, lte, isNull } from "drizzle-orm"
+import { eq, or, lte, isNull, and, sql } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { convertSvgToPluginsConfig, generateDataHash, saveSvgToStorage } from "@/lib/svg-generator"
 import { generateSvgViaHttpService } from "@/lib/svg-generator-client"
@@ -41,22 +41,41 @@ export async function GET(request: Request) {
     const now = new Date()
 
     // Buscar SVGs que precisam ser gerados:
-    // 1. Status "pending" (primeira geração)
-    // 2. Status "failed" (tentativa anterior falhou)
-    // 3. forceRegenerate = true (regeneração forçada)
-    // 4. lastGeneratedAt is null (nunca gerado)
-    // 5. lastGeneratedAt < 24h ago (atualização periódica)
+    // 1. Status "pending" (primeira geração) - não pausados
+    // 2. Status "failed" (tentativa anterior falhou) - não pausados
+    // 3. forceRegenerate = true (regeneração forçada) - não pausados
+    // 4. next_regeneration_at <= now() (regeneração agendada) - status completed/error/pending, não pausados
+    // 5. Legacy: next_regeneration_at IS NULL AND (lastGeneratedAt IS NULL OR lastGeneratedAt < 24h ago) - não pausados
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
     const svgsToGenerate = await db
       .select()
       .from(svgs)
       .where(
-        or(
-          eq(svgs.status, "pending"),
-          eq(svgs.status, "failed"),
-          eq(svgs.forceRegenerate, true),
-          isNull(svgs.lastGeneratedAt),
-          lte(svgs.lastGeneratedAt, twentyFourHoursAgo)
+        and(
+          eq(svgs.isPaused, false), // Não processar SVGs pausados
+          or(
+            // Casos prioritários (não dependem de next_regeneration_at)
+            eq(svgs.status, "pending"),
+            eq(svgs.status, "failed"),
+            eq(svgs.forceRegenerate, true),
+            // Regeneração agendada (alinhado com debug endpoint)
+            // Nota: debug endpoint usa 'error', mas o dashboard usa 'failed' - incluímos ambos para compatibilidade
+            and(
+              or(
+                eq(svgs.status, "completed"),
+                eq(svgs.status, "failed"), // Status usado pelo dashboard
+                eq(svgs.status, "error"), // Status usado pelo debug endpoint (compatibilidade)
+                eq(svgs.status, "pending")
+              ),
+              sql`${svgs.nextRegenerationAt} IS NOT NULL`, // next_regeneration_at IS NOT NULL
+              lte(svgs.nextRegenerationAt, now) // next_regeneration_at <= now()
+            ),
+            // Legacy: SVGs antigos sem next_regeneration_at
+            and(
+              isNull(svgs.nextRegenerationAt),
+              or(isNull(svgs.lastGeneratedAt), lte(svgs.lastGeneratedAt, twentyFourHoursAgo))
+            )
+          )
         )
       )
       .limit(50) // Processar no máximo 50 por execução
