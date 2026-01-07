@@ -31,7 +31,7 @@
     "watch:previews": "tsx scripts/watch-previews.ts",
     "watch:previews:all": "tsx scripts/watch-previews.ts --all",
     "serve:previews": "tsx scripts/serve-previews.ts",
-    "postinstall": "npx playwright@latest install chromium --with-deps || echo 'Playwright install failed, continuing...'"
+    "postinstall": "if [ -n \"$VERCEL\" ]; then echo 'Skipping Playwright install on Vercel (not needed)'; else npx playwright@latest install chromium --with-deps || echo 'Playwright install failed, continuing...'; fi"
   },
     "dependencies": {
       "@supabase/supabase-js": "^2.81.1",

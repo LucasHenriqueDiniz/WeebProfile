@@ -109,7 +109,16 @@ async function handleDebugRequest(req: IncomingMessage, res: ServerResponse) {
       FROM svgs
       WHERE next_regeneration_at IS NOT NULL
         AND next_regeneration_at <= now()
-        AND status IN ('completed', 'error', 'pending')
+        AND (
+          status IN ('completed', 'error', 'pending', 'failed')
+          OR (
+            status = 'generating'
+            AND (
+              last_error IS NOT NULL
+              OR updated_at < now() - INTERVAL '30 minutes'
+            )
+          )
+        )
         AND is_paused = false
     `
 
