@@ -68,11 +68,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       }
     }
 
-    // Atualizar status para "generating"
+    // Atualizar status para "generating" e definir force_regenerate se necessário
     await db
       .update(svgs)
       .set({
         status: "generating",
+        forceRegenerate: force, // Set force_regenerate if force=true
       })
       .where(eq(svgs.id, id))
 

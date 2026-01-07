@@ -135,6 +135,7 @@ export async function updateSvgAfterGeneration(
       last_payload_hash = ${payloadHash},
       fail_count = 0,
       last_error = NULL,
+      force_regenerate = false,
       updated_at = now()
     WHERE id = ${svgId}
   `
@@ -151,6 +152,7 @@ export async function updateSvgAfterSkip(svgId: string, payloadHash: string): Pr
       next_regeneration_at = now() + INTERVAL '24 hours',
       last_payload_hash = ${payloadHash},
       status = 'completed',
+      force_regenerate = false,
       updated_at = now()
     WHERE id = ${svgId}
   `

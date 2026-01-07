@@ -138,9 +138,19 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
             })
           }
 
-          // Add sectionConfigs if they exist
+          // Add sectionConfigs if they exist - only include configs for active sections
           if (plugin.sectionConfigs && Object.keys(plugin.sectionConfigs).length > 0) {
-            pluginConfig.sectionConfigs = plugin.sectionConfigs
+            const activeSectionConfigs: Record<string, any> = {}
+            // Only include sectionConfigs for sections that are actually enabled
+            plugin.sections.forEach((sectionName) => {
+              if (plugin.sectionConfigs[sectionName]) {
+                activeSectionConfigs[sectionName] = plugin.sectionConfigs[sectionName]
+              }
+            })
+            // Only add if there are active section configs
+            if (Object.keys(activeSectionConfigs).length > 0) {
+              pluginConfig.sectionConfigs = activeSectionConfigs
+            }
           }
 
           svgPluginsConfig[pluginName] = pluginConfig

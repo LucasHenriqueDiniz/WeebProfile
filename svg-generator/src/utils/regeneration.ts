@@ -33,7 +33,22 @@ export function normalizePayloadForHash(svg: any, pluginsConfig: any): any {
         // Include all other config fields (username, etc) but exclude timestamps/IDs
         for (const [key, value] of Object.entries(pluginConfig as any)) {
           if (key !== "enabled" && key !== "sections" && key !== "lastGeneratedAt") {
-            normalizedPlugin[key] = value
+            // Filter sectionConfigs to only include configs for active sections
+            if (key === "sectionConfigs" && value && typeof value === "object") {
+              const activeSectionConfigs: Record<string, any> = {}
+              const activeSections = normalizedPlugin.sections || []
+              for (const sectionName of activeSections) {
+                if ((value as any)[sectionName]) {
+                  activeSectionConfigs[sectionName] = (value as any)[sectionName]
+                }
+              }
+              // Only include if there are active section configs
+              if (Object.keys(activeSectionConfigs).length > 0) {
+                normalizedPlugin[key] = activeSectionConfigs
+              }
+            } else {
+              normalizedPlugin[key] = value
+            }
           }
         }
 

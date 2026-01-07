@@ -224,12 +224,17 @@ export async function processRegenerationBatch(
         const payload = normalizePayloadForHash(svg, normalizedConfig.plugins)
         const payloadHash = calculatePayloadHash(payload)
 
-        // Check if hash matches (skip rendering)
-        if (svg.last_payload_hash && svg.last_payload_hash === payloadHash) {
+        // Check if hash matches (skip rendering) - unless force_regenerate is true
+        if (!svg.force_regenerate && svg.last_payload_hash && svg.last_payload_hash === payloadHash) {
           console.log(`⏭️  [REGEN] Skipping ${svg.id} (hash unchanged)`)
           await updateSvgAfterSkip(svg.id, payloadHash)
           results.skipped++
           continue
+        }
+
+        // If force_regenerate was true, log it
+        if (svg.force_regenerate) {
+          console.log(`🔄 [REGEN] Force regenerating ${svg.id} (force_regenerate=true)`)
         }
 
         // Generate SVG
