@@ -27,7 +27,7 @@ query userProfile($login: String!) {
         }
       }
     }
-    repositoriesContributedTo {
+    repositoriesContributedTo(includeUserRepositories: true) {
       totalCount
     }
   }

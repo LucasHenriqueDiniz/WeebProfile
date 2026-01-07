@@ -1455,16 +1455,17 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
     }
 
     // Filter only user's PushEvents
-    const commits = events
+    const pushEvents = events
       .filter(({ type }) => type === "PushEvent")
       .filter(({ actor }) => actor.login?.toLowerCase() === login.toLowerCase())
       .filter(
         ({ created_at }) => created_at && new Date(created_at) > new Date(Date.now() - days * 24 * 60 * 60 * 1000)
       )
 
-    // Process commits
-    for (const event of commits) {
-      if (!event.created_at) continue
+    // Collect all commit SHAs from push events (limit to last 500 commits for performance)
+    const commitShas: Array<{ repo: string; owner: string; sha: string }> = []
+    for (const event of pushEvents) {
+      if (!event.created_at || !event.payload?.commits) continue
       const date = new Date(event.created_at)
       const day = date.toLocaleDateString("en-US", { weekday: "long" })
       const hour = date.getHours()
@@ -1473,20 +1474,103 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
       commitsByHour[hour] = (commitsByHour[hour] || 0) + 1
       totalCommits++
 
-      // TODO: Process commit details if needed
-      // For now, just count commits
+      // Extract repo info and commit SHAs
+      const repo = (event as any).repo?.name
+      const payload = (event as any).payload
+      if (repo && payload?.commits) {
+        const [owner, repoName] = repo.split("/")
+        if (owner && repoName) {
+          for (const commit of payload.commits) {
+            if (commit?.sha && commitShas.length < 500) {
+              commitShas.push({ owner, repo: repoName, sha: commit.sha })
+            }
+          }
+        }
+      }
     }
+
+    // Calculate commit statistics from actual commit data
+    let totalFilesChanged = 0
+    let totalChanges = 0
+    let largestCommit = 0
+    let analyzedCommitsCount = 0
+    let rateLimitHit = false
+
+    // Process commits in batches to avoid rate limits
+    const batchSize = 20
+    for (let i = 0; i < commitShas.length; i += batchSize) {
+      // Se rate limit foi atingido, parar e usar o que já foi coletado
+      if (rateLimitHit) {
+        console.warn(`⚠️ [GitHub CodeHabits] Rate limit atingido. Usando ${analyzedCommitsCount} commits já analisados de ${commitShas.length} total.`)
+        break
+      }
+
+      const batch = commitShas.slice(i, i + batchSize)
+      const commitPromises = batch.map(async ({ owner, repo, sha }) => {
+        try {
+          const commitResponse = await rest.repos.getCommit({
+            owner,
+            repo,
+            ref: sha,
+          })
+
+          const commit = commitResponse.data
+          const stats = commit.stats
+          const files = commit.files || []
+
+          if (stats) {
+            const changes = stats.additions + stats.deletions
+            totalChanges += changes
+            totalFilesChanged += stats.total || files.length
+            largestCommit = Math.max(largestCommit, changes)
+            analyzedCommitsCount++
+          }
+        } catch (error: any) {
+          // Detectar rate limit especificamente
+          const isRateLimit =
+            error.status === 429 ||
+            error.response?.status === 429 ||
+            error.message?.toLowerCase().includes("rate limit") ||
+            error.message?.toLowerCase().includes("api rate limit")
+
+          if (isRateLimit) {
+            rateLimitHit = true
+            const resetTime = error.response?.headers?.["x-ratelimit-reset"]
+              ? new Date(parseInt(error.response.headers["x-ratelimit-reset"]) * 1000).toISOString()
+              : "desconhecido"
+            console.warn(
+              `⚠️ [GitHub CodeHabits] Rate limit atingido ao buscar commit ${sha} de ${owner}/${repo}. Reset em: ${resetTime}`
+            )
+            return // Para este commit, mas continua processando os outros do batch
+          }
+
+          // Ignore outros erros (private repo, deleted commit, etc.)
+          if (process.env.DEBUG_GITHUB === "1") {
+            console.warn(`Failed to fetch commit ${sha} from ${owner}/${repo}:`, error.message)
+          }
+        }
+      })
+
+      await Promise.all(commitPromises)
+
+      // Pequeno delay entre batches para evitar rate limits
+      if (i + batchSize < commitShas.length && !rateLimitHit) {
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      }
+    }
+
+    const averageChangesPerCommit = analyzedCommitsCount > 0 ? Math.round(totalChanges / analyzedCommitsCount) : 0
 
     return {
       commitsByHour,
       commitsByDay,
       languages,
       commitStats: {
-        averageChangesPerCommit: 0, // TODO: Calculate based on commits
-        totalFilesChanged: 0, // TODO: Calculate based on commits
-        largestCommit: 0, // TODO: Calculate based on commits
+        averageChangesPerCommit,
+        totalFilesChanged,
+        largestCommit,
       },
-      analyzedCommits: totalCommits,
+      analyzedCommits: analyzedCommitsCount || totalCommits,
     }
   } catch (error) {
     console.error("Error processing code habits:", error)
