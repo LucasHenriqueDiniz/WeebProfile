@@ -50,6 +50,10 @@ export interface SvgRow {
 /**
  * Claims due SVGs for regeneration using FOR UPDATE SKIP LOCKED
  * Returns up to limit SVGs that need regeneration
+ * 
+ * Includes 'generating' status SVGs that:
+ * - Have an error (failed generation)
+ * - Have been stuck for more than 30 minutes (likely crashed/abandoned)
  */
 export async function claimDueSvgs(limit: number = 50): Promise<SvgRow[]> {
   const result = await sql<SvgRow[]>`
@@ -57,20 +61,29 @@ export async function claimDueSvgs(limit: number = 50): Promise<SvgRow[]> {
     FROM svgs
     WHERE next_regeneration_at IS NOT NULL
       AND next_regeneration_at <= now()
-      AND status IN ('completed', 'error', 'pending', 'failed')
+      AND (
+        status IN ('completed', 'error', 'pending', 'failed')
+        OR (
+          status = 'generating'
+          AND (
+            last_error IS NOT NULL
+            OR updated_at < now() - INTERVAL '30 minutes'
+          )
+        )
+      )
       AND is_paused = false
     ORDER BY next_regeneration_at ASC
     LIMIT ${limit}
     FOR UPDATE SKIP LOCKED
   `
 
-  // Update status to 'generating' for claimed SVGs (if not already generating)
+  // Update status to 'generating' for claimed SVGs
   if (result.length > 0) {
     const ids = result.map((r) => r.id)
     await sql`
       UPDATE svgs
       SET status = 'generating', updated_at = now()
-      WHERE id = ANY(${ids}) AND status != 'generating'
+      WHERE id = ANY(${ids})
     `
   }
 
@@ -86,7 +99,16 @@ export async function checkHasMoreSvgs(): Promise<boolean> {
     FROM svgs
     WHERE next_regeneration_at IS NOT NULL
       AND next_regeneration_at <= now()
-      AND status IN ('completed', 'error', 'pending', 'failed')
+      AND (
+        status IN ('completed', 'error', 'pending', 'failed')
+        OR (
+          status = 'generating'
+          AND (
+            last_error IS NOT NULL
+            OR updated_at < now() - INTERVAL '30 minutes'
+          )
+        )
+      )
       AND is_paused = false
   `
 
@@ -128,6 +150,7 @@ export async function updateSvgAfterSkip(svgId: string, payloadHash: string): Pr
       last_generated_at = now(),
       next_regeneration_at = now() + INTERVAL '24 hours',
       last_payload_hash = ${payloadHash},
+      status = 'completed',
       updated_at = now()
     WHERE id = ${svgId}
   `

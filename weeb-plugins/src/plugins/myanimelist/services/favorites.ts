@@ -9,11 +9,11 @@ import type {
   BasicPeopleFavorite,
   FullAnimeFavorite,
   FullMangaFavorite,
-} from '../types'
-import { jikanGet, limiter } from './api-client'
-import { urlToBase64, IMAGE_OPTIMIZATION } from '../../../utils/image-to-base64'
-import type { MalProfileResponse } from './profile'
-import type { MyAnimeListConfig } from '../types'
+} from "../types"
+import { jikanGet, limiter } from "./api-client"
+import { urlToBase64, IMAGE_OPTIMIZATION } from "../../../utils/image-to-base64"
+import type { MalProfileResponse } from "./profile"
+import type { MyAnimeListConfig } from "../types"
 
 export interface BasicFavorites {
   anime: BasicAnimeFavorite[]
@@ -45,141 +45,147 @@ export async function getBasicFavorites(
   const favorites = profile.favorites || { anime: [], manga: [], characters: [], people: [] }
 
   // Processar em sequência para evitar sobrecarga
+  // Só processar se o limite for maior que 0 (seção ativada)
   const animeResults = []
-  const animeList = (favorites.anime || []).slice(0, limits.animeMax)
-  for (let index = 0; index < animeList.length; index++) {
-    const item = animeList[index]
-    if (!item) continue
-    const image =
-      item.images?.jpg?.image_url ||
-      item.images?.jpg?.large_image_url ||
-      item.images?.jpg?.small_image_url ||
-      item.images?.webp?.image_url ||
-      ''
+  if (limits.animeMax > 0) {
+    const animeList = (favorites.anime || []).slice(0, limits.animeMax)
+    for (let index = 0; index < animeList.length; index++) {
+      const item = animeList[index]
+      if (!item) continue
+      const image =
+        item.images?.jpg?.image_url ||
+        item.images?.jpg?.large_image_url ||
+        item.images?.jpg?.small_image_url ||
+        item.images?.webp?.image_url ||
+        ""
 
-    let imageBase64 = ''
-    if (image) {
-      if (config.previewMode) {
-        // Em modo preview, usar URLs originais sem conversão
-        imageBase64 = image
-      } else {
-        try {
-          console.log(`  [${index + 1}/${animeList.length}] Convertendo imagem: ${item.title}`)
-          imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
-          console.log(`  ✅ Imagem convertida: ${item.title}`)
-        } catch (error: any) {
-          console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
-          imageBase64 = ''
+      let imageBase64 = ""
+      if (image) {
+        if (config.previewMode) {
+          // Em modo preview, usar URLs originais sem conversão
+          imageBase64 = image
+        } else {
+          try {
+            console.log(`  [${index + 1}/${animeList.length}] Convertendo imagem: ${item.title}`)
+            imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
+            console.log(`  ✅ Imagem convertida: ${item.title}`)
+          } catch (error: any) {
+            console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
+            imageBase64 = ""
+          }
         }
       }
-    }
 
-    animeResults.push({
-      mal_id: item.mal_id,
-      title: item.title,
-      image: imageBase64,
-      start_year: item.start_year || 0,
-      type: item.type || 'TV',
-    })
+      animeResults.push({
+        mal_id: item.mal_id,
+        title: item.title,
+        image: imageBase64,
+        start_year: item.start_year || 0,
+        type: item.type || "TV",
+      })
+    }
   }
 
   // Processar manga em sequência
+  // Só processar se o limite for maior que 0 (seção ativada)
   const mangaResults = []
-  const mangaList = (favorites.manga || []).slice(0, limits.mangaMax)
-  for (let index = 0; index < mangaList.length; index++) {
-    const item = mangaList[index]
-    if (!item) continue
-    const image =
-      item.images?.jpg?.image_url ||
-      item.images?.jpg?.large_image_url ||
-      item.images?.jpg?.small_image_url ||
-      item.images?.webp?.image_url ||
-      ''
+  if (limits.mangaMax > 0) {
+    const mangaList = (favorites.manga || []).slice(0, limits.mangaMax)
+    for (let index = 0; index < mangaList.length; index++) {
+      const item = mangaList[index]
+      if (!item) continue
+      const image =
+        item.images?.jpg?.image_url ||
+        item.images?.jpg?.large_image_url ||
+        item.images?.jpg?.small_image_url ||
+        item.images?.webp?.image_url ||
+        ""
 
-    let imageBase64 = ''
-    if (image) {
-      if (config.previewMode) {
-        // Em modo preview, usar URLs originais sem conversão
-        imageBase64 = image
-      } else {
-        try {
-          console.log(`  [${index + 1}/${mangaList.length}] Convertendo imagem: ${item.title}`)
-          imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
-          console.log(`  ✅ Imagem convertida: ${item.title}`)
-        } catch (error: any) {
-          console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
-          imageBase64 = ''
+      let imageBase64 = ""
+      if (image) {
+        if (config.previewMode) {
+          // Em modo preview, usar URLs originais sem conversão
+          imageBase64 = image
+        } else {
+          try {
+            console.log(`  [${index + 1}/${mangaList.length}] Convertendo imagem: ${item.title}`)
+            imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
+            console.log(`  ✅ Imagem convertida: ${item.title}`)
+          } catch (error: any) {
+            console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
+            imageBase64 = ""
+          }
         }
       }
-    }
 
-    mangaResults.push({
-      mal_id: item.mal_id,
-      title: item.title,
-      image: imageBase64,
-      start_year: item.start_year || 0,
-      type: item.type || 'Manga',
-    })
+      mangaResults.push({
+        mal_id: item.mal_id,
+        title: item.title,
+        image: imageBase64,
+        start_year: item.start_year || 0,
+        type: item.type || "Manga",
+      })
+    }
   }
 
   // Processar characters em sequência
+  // Só processar se o limite for maior que 0 (seção ativada)
   const charactersResults = []
-  const charactersList = (favorites.characters || []).slice(0, limits.charactersMax)
-  for (let index = 0; index < charactersList.length; index++) {
-    const item = charactersList[index]
-    if (!item) continue
-    const image =
-      item.images?.jpg?.image_url ||
-      item.images?.webp?.image_url ||
-      ''
+  if (limits.charactersMax > 0) {
+    const charactersList = (favorites.characters || []).slice(0, limits.charactersMax)
+    for (let index = 0; index < charactersList.length; index++) {
+      const item = charactersList[index]
+      if (!item) continue
+      const image = item.images?.jpg?.image_url || item.images?.webp?.image_url || ""
 
-    let imageBase64 = ''
-    if (image) {
-      try {
-        console.log(`  [${index + 1}/${charactersList.length}] Convertendo imagem: ${item.name}`)
-        imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
-        console.log(`  ✅ Imagem convertida: ${item.name}`)
-      } catch (error: any) {
-        console.warn(`  ⚠️  Erro ao converter imagem de ${item.name}:`, error.message)
-        imageBase64 = ''
+      let imageBase64 = ""
+      if (image) {
+        try {
+          console.log(`  [${index + 1}/${charactersList.length}] Convertendo imagem: ${item.name}`)
+          imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
+          console.log(`  ✅ Imagem convertida: ${item.name}`)
+        } catch (error: any) {
+          console.warn(`  ⚠️  Erro ao converter imagem de ${item.name}:`, error.message)
+          imageBase64 = ""
+        }
       }
-    }
 
-    charactersResults.push({
-      mal_id: item.mal_id,
-      name: item.name,
-      image: imageBase64,
-    })
+      charactersResults.push({
+        mal_id: item.mal_id,
+        name: item.name,
+        image: imageBase64,
+      })
+    }
   }
 
   // Processar people em sequência
+  // Só processar se o limite for maior que 0 (seção ativada)
   const peopleResults = []
-  const peopleList = (favorites.people || []).slice(0, limits.peopleMax)
-  for (let index = 0; index < peopleList.length; index++) {
-    const item = peopleList[index]
-    if (!item) continue
-    const image =
-      item.images?.jpg?.image_url ||
-      item.images?.webp?.image_url ||
-      ''
+  if (limits.peopleMax > 0) {
+    const peopleList = (favorites.people || []).slice(0, limits.peopleMax)
+    for (let index = 0; index < peopleList.length; index++) {
+      const item = peopleList[index]
+      if (!item) continue
+      const image = item.images?.jpg?.image_url || item.images?.webp?.image_url || ""
 
-    let imageBase64 = ''
-    if (image) {
-      try {
-        console.log(`  [${index + 1}/${peopleList.length}] Convertendo imagem: ${item.name}`)
-        imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
-        console.log(`  ✅ Imagem convertida: ${item.name}`)
-      } catch (error: any) {
-        console.warn(`  ⚠️  Erro ao converter imagem de ${item.name}:`, error.message)
-        imageBase64 = ''
+      let imageBase64 = ""
+      if (image) {
+        try {
+          console.log(`  [${index + 1}/${peopleList.length}] Convertendo imagem: ${item.name}`)
+          imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
+          console.log(`  ✅ Imagem convertida: ${item.name}`)
+        } catch (error: any) {
+          console.warn(`  ⚠️  Erro ao converter imagem de ${item.name}:`, error.message)
+          imageBase64 = ""
+        }
       }
-    }
 
-    peopleResults.push({
-      mal_id: item.mal_id,
-      name: item.name,
-      image: imageBase64,
-    })
+      peopleResults.push({
+        mal_id: item.mal_id,
+        name: item.name,
+        image: imageBase64,
+      })
+    }
   }
 
   return {
@@ -206,13 +212,13 @@ export async function getFullFavorites(
   }
 
   // Buscar dados completos de anime se necessário
-  if (sections.includes('anime_favorites')) {
+  if (sections.includes("anime_favorites")) {
     console.log(`📥 Processando favoritos completos de anime (${basicFavorites.anime.length} itens)...`)
     const animeFullResults = []
     for (let index = 0; index < basicFavorites.anime.length; index++) {
       const item = basicFavorites.anime[index]
       if (!item) continue
-      
+
       try {
         console.log(`  [${index + 1}/${basicFavorites.anime.length}] Buscando dados completos: ${item.title}`)
         const response = await limiter.schedule(() =>
@@ -246,11 +252,11 @@ export async function getFullFavorites(
           start_year: item.start_year,
           type: item.type,
           episodes: response.data.episodes ?? null,
-          synopsis: response.data.synopsis || '',
+          synopsis: response.data.synopsis || "",
           score: response.data.score || 0,
           popularity: response.data.popularity || 0,
           rank: response.data.rank || 0,
-          status: response.data.status || '',
+          status: response.data.status || "",
           year: response.data.year ?? response.data.aired?.prop?.from?.year ?? null,
           genres,
         })
@@ -265,11 +271,11 @@ export async function getFullFavorites(
           start_year: item.start_year,
           type: item.type,
           episodes: null,
-          synopsis: '',
+          synopsis: "",
           score: 0,
           popularity: 0,
           rank: 0,
-          status: '',
+          status: "",
           year: item.start_year,
           genres: [],
         })
@@ -280,13 +286,13 @@ export async function getFullFavorites(
   }
 
   // Buscar dados completos de manga se necessário
-  if (sections.includes('manga_favorites')) {
+  if (sections.includes("manga_favorites")) {
     console.log(`📥 Processando favoritos completos de manga (${basicFavorites.manga.length} itens)...`)
     const mangaFullResults = []
     for (let index = 0; index < basicFavorites.manga.length; index++) {
       const item = basicFavorites.manga[index]
       if (!item) continue
-      
+
       try {
         console.log(`  [${index + 1}/${basicFavorites.manga.length}] Buscando dados completos: ${item.title}`)
         const response = await limiter.schedule(() =>
@@ -321,12 +327,12 @@ export async function getFullFavorites(
           start_year: item.start_year,
           type: item.type,
           chapters: response.data.chapters ?? null,
-          synopsis: response.data.synopsis || '',
+          synopsis: response.data.synopsis || "",
           score: response.data.score || 0,
           popularity: response.data.popularity || 0,
           rank: response.data.rank || 0,
           volumes: response.data.volumes ?? null,
-          status: response.data.status || '',
+          status: response.data.status || "",
           year: response.data.year ?? response.data.published?.prop?.from?.year ?? null,
           genres,
         })
@@ -341,12 +347,12 @@ export async function getFullFavorites(
           start_year: item.start_year,
           type: item.type,
           chapters: null,
-          synopsis: '',
+          synopsis: "",
           score: 0,
           popularity: 0,
           rank: 0,
           volumes: null,
-          status: '',
+          status: "",
           year: item.start_year,
           genres: [],
         })
@@ -368,14 +374,28 @@ export async function fetchFavorites(
   previewMode = false
 ): Promise<{ basic: BasicFavorites; full: FullFavorites }> {
   try {
-    console.log(`📥 Processando favoritos básicos...`)
+    const sections = config.sections || []
+
+    // Determinar quais tipos de favoritos precisam ser processados baseado nas seções ativadas
+    const needsAnime = sections.includes("anime_favorites")
+    const needsManga = sections.includes("manga_favorites")
+    const needsCharacters = sections.includes("character_favorites")
+    const needsPeople = sections.includes("people_favorites")
+
+    console.log(`📥 Processando favoritos básicos... (seções ativadas: ${sections.join(", ") || "nenhuma"})`)
+
     // Usar limites específicos por tipo, com fallback para favorites_max ou 20
-    const basicFavorites = await getBasicFavorites(profile, {
-      animeMax: config.anime_favorites_max ?? config.favorites_max ?? 20,
-      mangaMax: config.manga_favorites_max ?? config.favorites_max ?? 20,
-      charactersMax: config.character_favorites_max ?? config.favorites_max ?? 20,
-      peopleMax: config.people_favorites_max ?? config.favorites_max ?? 20,
-    }, { previewMode })
+    // Se a seção não estiver ativada, usar limite 0 para não processar
+    const basicFavorites = await getBasicFavorites(
+      profile,
+      {
+        animeMax: needsAnime ? (config.anime_favorites_max ?? config.favorites_max ?? 20) : 0,
+        mangaMax: needsManga ? (config.manga_favorites_max ?? config.favorites_max ?? 20) : 0,
+        charactersMax: needsCharacters ? (config.character_favorites_max ?? config.favorites_max ?? 20) : 0,
+        peopleMax: needsPeople ? (config.people_favorites_max ?? config.favorites_max ?? 20) : 0,
+      },
+      { previewMode }
+    )
     console.log(`✅ Favoritos básicos processados`)
 
     const fullFavorites = await getFullFavorites(basicFavorites, config.sections || [], { previewMode })
@@ -385,7 +405,7 @@ export async function fetchFavorites(
       full: fullFavorites,
     }
   } catch (error) {
-    console.error('Error fetching favorites:', error)
+    console.error("Error fetching favorites:", error)
     // Retornar favoritos vazios em caso de erro
     return {
       basic: { anime: [], manga: [], characters: [], people: [] },
@@ -393,4 +413,3 @@ export async function fetchFavorites(
     }
   }
 }
-

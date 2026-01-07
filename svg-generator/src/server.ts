@@ -225,16 +225,16 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
 
     // Log for debug
     const requestDataTyped = requestData as GenerateRequest & { essentialConfigs?: Record<string, any> }
-    console.log("📥 [SERVER] Recebido:", {
-      mock: requestDataTyped.mock,
-      dev: requestDataTyped.dev,
+    const enabledPlugins = Object.keys(requestDataTyped.plugins || {}).filter(
+      (key) => requestDataTyped.plugins[key]?.enabled
+    )
+    console.log("📥 [SERVER] Request:", {
+      plugins: enabledPlugins,
+      order: requestDataTyped.pluginsOrder,
+      style: requestDataTyped.style,
+      size: requestDataTyped.size,
       hasUserId: !!requestDataTyped.userId,
-      hasEssentialConfigs: !!(requestDataTyped as any).essentialConfigs,
-      plugins: Object.keys(requestDataTyped.plugins || {}),
     })
-    console.log("📥 [SERVER] Plugins detalhado:", JSON.stringify(requestDataTyped.plugins, null, 2))
-    console.log("📥 [SERVER] Plugins order:", requestDataTyped.pluginsOrder)
-    console.log("📥 [SERVER] Style:", requestDataTyped.style, "Size:", requestDataTyped.size)
 
     // Validar configuração básica
     if (!requestDataTyped.style || !requestDataTyped.size) {
@@ -375,7 +375,10 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
 
     // Validate and normalize
     console.log("✅ [SERVER] Validating config...")
-    console.log("✅ [SERVER] Config plugins:", JSON.stringify(config.plugins, null, 2))
+    const configPlugins = Object.keys(config.plugins || {}).filter(
+      (key) => config.plugins[key]?.enabled
+    )
+    console.log("✅ [SERVER] Config validated - plugins:", configPlugins.join(', '))
 
     if (!validateConfig(config)) {
       // Specifically check if there are enabled plugins

@@ -178,12 +178,12 @@ export async function processRegenerationBatch(
 
         // Convert SVG to config
         console.log(`🔄 [REGEN] Converting SVG ${svg.id} to config...`)
-        console.log(`🔄 [REGEN] SVG plugins_config:`, JSON.stringify(svg.plugins_config, null, 2))
-        console.log(`🔄 [REGEN] SVG ui_config:`, JSON.stringify(svg.ui_config, null, 2))
 
         const baseConfig = convertSvgToConfig(svg)
-        console.log(`🔄 [REGEN] Converted config plugins:`, JSON.stringify(baseConfig.plugins, null, 2))
-        console.log(`🔄 [REGEN] Converted config pluginsOrder:`, baseConfig.pluginsOrder)
+        const enabledPlugins = Object.keys(baseConfig.plugins).filter((key) => baseConfig.plugins[key]?.enabled)
+        console.log(
+          `🔄 [REGEN] Enabled plugins: ${enabledPlugins.join(", ")} | Order: ${baseConfig.pluginsOrder.join(", ")}`
+        )
 
         const config = {
           ...baseConfig,
