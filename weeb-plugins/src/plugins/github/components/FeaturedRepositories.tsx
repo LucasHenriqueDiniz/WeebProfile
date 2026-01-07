@@ -17,7 +17,7 @@ interface FeaturedRepositoriesProps {
   size: 'half' | 'full'
 }
 
-const DefaultFeaturedRepositories = ({ data }: { data: GithubData['featuredRepositories'] }) => {
+const DefaultFeaturedRepositories = ({ data, size }: { data: GithubData['featuredRepositories']; size: 'half' | 'full' }) => {
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No featured repositories</div>
   }
@@ -49,7 +49,7 @@ const DefaultFeaturedRepositories = ({ data }: { data: GithubData['featuredRepos
                   {repo.primaryLanguage.name}
                 </span>
               )}
-              {repo.license && (
+              {repo.license && size !== 'half' && (
                 <span className="text-xs px-2 py-0.5 rounded-full bg-default-muted/10 text-default-muted border border-default-border/50 flex-shrink-0">
                   {repo.license.spdxId || repo.license.name}
                 </span>
@@ -116,7 +116,7 @@ export function GithubFeaturedRepositories({ data, config, style, size }: Featur
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaStar />} />}
-            <DefaultFeaturedRepositories data={data} />
+            <DefaultFeaturedRepositories data={data} size={size} />
           </>
         }
         terminalComponent={
