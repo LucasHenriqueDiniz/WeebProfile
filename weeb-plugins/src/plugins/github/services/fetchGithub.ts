@@ -35,7 +35,7 @@ function normalizeRepoUrl(repoUrl: string): { owner: string; repo: string } | nu
   // Se já está no formato owner/repo
   if (!trimmed.includes("://")) {
     const parts = trimmed.split("/").filter(Boolean)
-    if (parts.length >= 2) {
+    if (parts.length >= 2 && parts[0] && parts[1]) {
       return {
         owner: parts[0],
         repo: parts[1],
@@ -50,7 +50,7 @@ function normalizeRepoUrl(repoUrl: string): { owner: string; repo: string } | nu
     // Aceita github.com ou www.github.com
     if (url.hostname === "github.com" || url.hostname === "www.github.com") {
       const pathParts = url.pathname.split("/").filter(Boolean)
-      if (pathParts.length >= 2) {
+      if (pathParts.length >= 2 && pathParts[0] && pathParts[1]) {
         return {
           owner: pathParts[0],
           repo: pathParts[1],

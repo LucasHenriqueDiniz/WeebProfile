@@ -40,7 +40,10 @@ async function waitStableLayout(page: Page, timeoutMs: number): Promise<void> {
       if (timeoutValue <= 0) {
         return Promise.reject(new Error("timeout"))
       }
-      return Promise.race([p, new Promise<T>((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutValue))])
+      return Promise.race([
+        p,
+        new Promise<T>((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutValue)),
+      ])
     }
 
     // fonts
@@ -187,8 +190,9 @@ export async function measureHeight(options: MeasureHeightOptions): Promise<numb
   } catch (error) {
     const duration = Date.now() - startTime
     const errorMessage = error instanceof Error ? error.message : String(error)
-    const isPageCrashed = errorMessage.includes("crashed") || errorMessage.includes("Target crashed") || errorMessage.includes("closed")
-    
+    const isPageCrashed =
+      errorMessage.includes("crashed") || errorMessage.includes("Target crashed") || errorMessage.includes("closed")
+
     console.error(`[MeasureHeight] ❌ Measurement failed after ${duration}ms:`, errorMessage)
 
     // Se erro de acquire timeout, retornar 503
