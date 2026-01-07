@@ -25,6 +25,45 @@ const SECTION_PERMISSIONS: Record<string, string[]> = {
   people: ["read:user", "followers"],
 }
 
+/**
+ * Normaliza uma URL de repositório do GitHub para o formato owner/repo
+ * Aceita tanto "owner/repo" quanto "https://github.com/owner/repo"
+ */
+function normalizeRepoUrl(repoUrl: string): { owner: string; repo: string } | null {
+  const trimmed = repoUrl.trim()
+  
+  // Se já está no formato owner/repo
+  if (!trimmed.includes("://")) {
+    const parts = trimmed.split("/").filter(Boolean)
+    if (parts.length >= 2) {
+      return {
+        owner: parts[0],
+        repo: parts[1],
+      }
+    }
+    return null
+  }
+  
+  // Se é uma URL completa, extrair owner/repo
+  try {
+    const url = new URL(trimmed)
+    // Aceita github.com ou www.github.com
+    if (url.hostname === "github.com" || url.hostname === "www.github.com") {
+      const pathParts = url.pathname.split("/").filter(Boolean)
+      if (pathParts.length >= 2) {
+        return {
+          owner: pathParts[0],
+          repo: pathParts[1],
+        }
+      }
+    }
+  } catch {
+    // URL inválida, tentar parse manual
+  }
+  
+  return null
+}
+
 // Função helper para detectar erros de permissão
 function isPermissionError(error: any): boolean {
   if (error instanceof GraphqlResponseError) {
@@ -906,11 +945,14 @@ async function processPeopleData(
       return
     }
 
-    const [owner, repoName] = repo.split("/")
-    if (!owner || !repoName) {
+    const normalized = normalizeRepoUrl(repo)
+    if (!normalized) {
+      console.warn(`Invalid repository URL format: ${repo}. Expected format: owner/repo or https://github.com/owner/repo`)
       data.people = { type: "repository", totalCount: 0, nodes: [] }
       return
     }
+    
+    const { owner, repo: repoName } = normalized
 
     // Por padrão, buscar stargazers
     const query = REPOSITORY_STARGAZERS_QUERY
@@ -958,11 +1000,14 @@ async function processRepositoryContributorsData(
     return
   }
 
-  const [owner, repoName] = repo.split("/")
-  if (!owner || !repoName) {
+  const normalized = normalizeRepoUrl(repo)
+  if (!normalized) {
+    console.warn(`Invalid repository URL format: ${repo}. Expected format: owner/repo or https://github.com/owner/repo`)
     data.repositoryContributors = []
     return
   }
+  
+  const { owner, repo: repoName } = normalized
 
   try {
     // Usar REST API (mais confiável para contributors)
@@ -1069,11 +1114,13 @@ async function processFeaturedRepositoriesData(
   // Processar cada URL (até 20 URLs são permitidas)
   // Se uma URL estiver quebrada/inválida, ela é ignorada e o processo continua
   for (const repoUrl of repoList.slice(0, 20)) {
-    const [owner, repoName] = repoUrl.split("/")
-    if (!owner || !repoName) {
-      console.warn(`Invalid repository URL format: ${repoUrl}. Expected format: owner/repo`)
+    const normalized = normalizeRepoUrl(repoUrl)
+    if (!normalized) {
+      console.warn(`Invalid repository URL format: ${repoUrl}. Expected format: owner/repo or https://github.com/owner/repo`)
       continue
     }
+    
+    const { owner, repo: repoName } = normalized
 
     try {
       const query = FEATURED_REPOSITORIES_QUERY

@@ -185,18 +185,42 @@ export class MeasurePool {
    * Release a worker back to the pool
    */
   async release(worker: MeasureWorker): Promise<void> {
-    // Clean page before releasing
-    await worker.page.evaluate(() => {
-      const svgMain = document.getElementById('svg-main')
-      if (svgMain) {
-        svgMain.innerHTML = ''
+    // Verificar se a página ainda está válida
+    if (worker.page.isClosed()) {
+      console.warn('[MeasurePool] ⚠️ Worker page is closed, discarding worker')
+      // Não adicionar de volta ao pool - o worker está inválido
+      // Tentar fechar o contexto também
+      try {
+        await worker.context.close().catch(() => {})
+      } catch {
+        // Ignore errors ao fechar contexto já fechado
       }
+      return
+    }
 
-      const cssEl = document.getElementById('weeb-css')
-      if (cssEl) {
-        cssEl.textContent = ''
+    // Clean page before releasing
+    try {
+      await worker.page.evaluate(() => {
+        const svgMain = document.getElementById('svg-main')
+        if (svgMain) {
+          svgMain.innerHTML = ''
+        }
+
+        const cssEl = document.getElementById('weeb-css')
+        if (cssEl) {
+          cssEl.textContent = ''
+        }
+      })
+    } catch (error) {
+      // Se a página crashou durante cleanup, descartar o worker
+      console.warn('[MeasurePool] ⚠️ Page crashed during cleanup, discarding worker:', error)
+      try {
+        await worker.context.close().catch(() => {})
+      } catch {
+        // Ignore errors ao fechar contexto
       }
-    })
+      return
+    }
 
     // Add back to pool
     this.idle.push(worker)

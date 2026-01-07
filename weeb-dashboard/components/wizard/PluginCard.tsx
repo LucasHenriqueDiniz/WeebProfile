@@ -845,6 +845,7 @@ export const PluginCard = React.memo(function PluginCard({
     prevProps.state.sections?.length === nextProps.state.sections?.length &&
     prevProps.isExpanded === nextProps.isExpanded &&
     prevProps.state.sections?.join(',') === nextProps.state.sections?.join(',') &&
+    JSON.stringify(prevProps.state.sectionConfigs) === JSON.stringify(nextProps.state.sectionConfigs) &&
     JSON.stringify(prevProps.essentialConfigs) === JSON.stringify(nextProps.essentialConfigs) &&
     prevProps.expandedPlugins.has(prevProps.plugin.name) === nextProps.expandedPlugins.has(nextProps.plugin.name) &&
     prevProps.unlockedConfigs.size === nextProps.unlockedConfigs.size &&
