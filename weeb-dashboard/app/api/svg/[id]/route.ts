@@ -42,11 +42,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const svgContent = await data.text()
 
     // Retornar SVG com headers apropriados
+    // Cache reduzido para permitir atualizações mais rápidas no GitHub
+    // O cache-busting via query params (v=timestamp) garante que novas versões sejam buscadas
     return new NextResponse(svgContent, {
       headers: {
         "Content-Type": "image/svg+xml",
-        "Cache-Control": "public, max-age=3600, s-maxage=3600", // Cache por 1 hora
-        "CDN-Cache-Control": "public, max-age=86400", // Cache no CDN por 1 dia
+        "Cache-Control": "public, max-age=60, s-maxage=60", // Cache por 1 minuto (reduzido de 1 hora)
+        "CDN-Cache-Control": "public, max-age=300", // Cache no CDN por 5 minutos (reduzido de 1 dia)
       },
     })
   } catch (error) {

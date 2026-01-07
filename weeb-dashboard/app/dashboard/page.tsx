@@ -32,6 +32,7 @@ import { useToast } from "@/hooks/use-toast"
 import { ApiException, svgApi } from "@/lib/api"
 import type { Svg } from "@/lib/db/schema"
 import { useSvgStore } from "@/stores/svg-store"
+import { generateMarkdown } from "@/lib/utils/markdown"
 import { motion } from "framer-motion"
 import { ArrowUpDown, Copy, Edit2, ExternalLink, Filter, Image as ImageIcon, Loader2, MoreVertical, Plus, RefreshCw, Trash2 } from "lucide-react"
 import Link from "next/link"
@@ -115,8 +116,14 @@ export default function DashboardPage() {
   }
 
   const handleCopyUrl = async (svg: Svg) => {
-    const url = `${window.location.origin}/api/svg/${svg.id}`
-    const markdown = `![${svg.name}](${url})`
+    // Usar storageUrl se disponível, caso contrário usar a API route
+    const url = svg.storageUrl || `${window.location.origin}/api/svg/${svg.id}`
+    const markdown = generateMarkdown({
+      name: svg.name,
+      url,
+      size: (svg.size as 'half' | 'full') || 'half',
+      lastGeneratedAt: svg.lastGeneratedAt,
+    })
     await navigator.clipboard.writeText(markdown)
     toast({
       title: "Markdown copiado!",

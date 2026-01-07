@@ -14,6 +14,7 @@ import { svgApi, ApiException } from "@/lib/api"
 import { useSvgStore } from "@/stores/svg-store"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { SvgViewSkeleton } from "@/components/sections/TemplateCardSkeleton"
+import { generateMarkdown } from "@/lib/utils/markdown"
 
 export default function SvgViewPage() {
   const params = useParams()
@@ -109,9 +110,15 @@ export default function SvgViewPage() {
 
   const handleCopyMarkdown = async () => {
     const url = svg?.storageUrl || urlFromQuery
-    if (!url) return
+    if (!url || !svg) return
 
-    const markdown = `![${svg?.name || "Profile"}](${url})`
+    const markdown = generateMarkdown({
+      name: svg.name || "Profile",
+      url,
+      size: (svg.size as 'half' | 'full') || 'half',
+      lastGeneratedAt: svg.lastGeneratedAt,
+    })
+
     try {
       await navigator.clipboard.writeText(markdown)
       setCopied(true)
@@ -235,7 +242,16 @@ export default function SvgViewPage() {
   const imageUrl = baseImageUrl 
     ? `${baseImageUrl}${baseImageUrl.includes('?') ? '&' : '?'}t=${svg?.lastGeneratedAt ? new Date(svg.lastGeneratedAt).getTime() : Date.now()}`
     : null
-  const markdownCode = `![${svg?.name || "Profile"}](${baseImageUrl || imageUrl})`
+  
+  // Gerar markdown usando o helper (inclui cache-busting e formato correto por tamanho)
+  const markdownCode = svg && baseImageUrl
+    ? generateMarkdown({
+        name: svg.name || "Profile",
+        url: baseImageUrl,
+        size: (svg.size as 'half' | 'full') || 'half',
+        lastGeneratedAt: svg.lastGeneratedAt,
+      })
+    : `![${svg?.name || "Profile"}](${baseImageUrl || imageUrl})`
 
   return (
     <div className="p-6 md:p-8 lg:p-10">
