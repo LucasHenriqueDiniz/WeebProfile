@@ -289,11 +289,11 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.2 }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
       >
         {/* Show loading skeletons if loading and no data */}
         {svgsLoading && svgs.length === 0 ? (
-          Array.from({ length: 6 }).map((_, index) => (
+          Array.from({ length: 3 }).map((_, index) => (
             <SvgCardSkeleton key={`skeleton-${index}`} index={index} />
           ))
         ) : filteredAndSortedSvgs.length > 0 ? (
