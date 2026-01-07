@@ -71,6 +71,10 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
   color: var(--default-color-muted-light) !important;
 }
 
+#svg-main .text-default-muted\\/70 {
+  color: color-mix(in srgb, var(--default-color-muted) 70%, transparent) !important;
+}
+
 #svg-main .text-default-highlight {
   color: var(--default-color-highlight) !important;
 }
@@ -107,6 +111,10 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
   background-color: var(--default-color-muted) !important;
 }
 
+#svg-main .bg-default-muted\\/10 {
+  background-color: color-mix(in srgb, var(--default-color-muted) 10%, transparent) !important;
+}
+
 #svg-main .bg-default-muted\\/20 {
   background-color: color-mix(in srgb, var(--default-color-muted) 20%, transparent) !important;
 }
@@ -125,6 +133,10 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 
 #svg-main .border-default-border {
   border-color: color-mix(in srgb, var(--default-color-muted) 30%, transparent) !important;
+}
+
+#svg-main .border-default-border\\/50 {
+  border-color: color-mix(in srgb, var(--default-color-muted) 50%, transparent) !important;
 }
 
 #svg-main .hover\\:bg-default-hover:hover {

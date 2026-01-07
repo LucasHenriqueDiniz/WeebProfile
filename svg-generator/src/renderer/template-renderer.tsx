@@ -51,13 +51,14 @@ export function createSvgContainer(props: SvgContainerProps): React.ReactElement
       data-terminal-theme={terminalTheme}
       data-default-theme={defaultTheme}
     >
-      {cssDefs}
       <foreignObject width="100%" height="100%">
         <div
           // @ts-expect-error -- xmlns attributes required for SVG foreignObject
           xmlns="http://www.w3.org/1999/xhtml"
           xmlnsXlink="http://www.w3.org/1999/xlink"
         >
+          {/* CSS inside foreignObject for better compatibility with SVG viewers */}
+          {cssDefs}
           <PluginStyles
             style={style}
             terminalTheme={terminalTheme}

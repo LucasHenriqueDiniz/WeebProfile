@@ -198,8 +198,8 @@ export default function DashboardPage() {
   }, [svgs, statusFilter, sortBy])
 
 
-  // Só mostrar loading completo se não tiver dados e estiver carregando inicialmente
-  if (authLoading || (svgsLoading && svgs.length === 0)) {
+  // Só mostrar loading completo no primeiro carregamento quando não tiver usuário
+  if (authLoading) {
     return <LoadingScreen />
   }
 
@@ -207,16 +207,16 @@ export default function DashboardPage() {
     return null
   }
 
-
   return (
-    <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto bg-background">
+    <div className="w-full space-y-6 bg-background">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
 
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-border/50"
       >
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
@@ -285,15 +285,20 @@ export default function DashboardPage() {
       )}
 
       {/* SVGs List */}
-      {filteredAndSortedSvgs.length > 0 || svgsLoading ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
-        >
-          {/* Show actual SVGs */}
-          {filteredAndSortedSvgs.map((svg, index) => (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15, duration: 0.2 }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5"
+      >
+        {/* Show loading skeletons if loading and no data */}
+        {svgsLoading && svgs.length === 0 ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            <SvgCardSkeleton key={`skeleton-${index}`} index={index} />
+          ))
+        ) : filteredAndSortedSvgs.length > 0 ? (
+          /* Show actual SVGs */
+          filteredAndSortedSvgs.map((svg, index) => (
             <motion.div
               key={svg.id}
               initial={{ opacity: 0, y: 20 }}
@@ -473,62 +478,68 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </motion.div>
-          ))}
+          ))
+        ) : null}
 
-          {/* Show skeletons when loading more data */}
-          {svgsLoading && filteredAndSortedSvgs.length > 0 && (
-            <>
-              {Array.from({ length: 3 }).map((_, index) => (
-                <SvgCardSkeleton key={`loading-${index}`} index={filteredAndSortedSvgs.length + index} />
-              ))}
-            </>
-          )}
-        </motion.div>
-      ) : svgs.length === 0 && !svgsLoading ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15, duration: 0.2 }}
-          className="text-center py-16 md:py-20"
-        >
-          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
-            <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-          </div>
-          <h3 className="text-xl md:text-2xl font-bold mb-2">No SVGs yet</h3>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-            Create your first WeebProfile SVG to showcase your stats on GitHub
-          </p>
-          <Button asChild size="lg" className="gap-2 shadow-sm">
-            <Link href="/dashboard/new">
-              <Plus className="w-4 h-4" />
-              Create Your First SVG
-            </Link>
-          </Button>
-        </motion.div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15, duration: 0.2 }}
-          className="text-center py-16 md:py-20"
-        >
-          <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 mb-6">
-            <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
-          </div>
-          <h3 className="text-xl md:text-2xl font-bold mb-2">No results found</h3>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-            Try adjusting your filter criteria
-          </p>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => {
-              setStatusFilter("all")
-            }}
+        {/* Show skeletons when loading more data */}
+        {svgsLoading && filteredAndSortedSvgs.length > 0 && (
+          <>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SvgCardSkeleton key={`loading-${index}`} index={filteredAndSortedSvgs.length + index} />
+            ))}
+          </>
+        )}
+      </motion.div>
+
+      {/* Empty State */}
+      {filteredAndSortedSvgs.length === 0 && !svgsLoading && (
+        svgs.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15, duration: 0.2 }}
+            className="text-center py-16 md:py-20"
           >
-            Clear Filter
-          </Button>
-        </motion.div>
+            <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
+              <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-primary" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold mb-2">No SVGs yet</h3>
+            <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
+              Create your first WeebProfile SVG to showcase your stats on GitHub
+            </p>
+            <Button asChild size="lg" className="gap-2 shadow-sm">
+              <Link href="/dashboard/new">
+                <Plus className="w-4 h-4" />
+                Create Your First SVG
+              </Link>
+            </Button>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15, duration: 0.2 }}
+            className="text-center py-16 md:py-20"
+          >
+            <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 mb-6">
+              <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold mb-2">No results found</h3>
+            <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
+              Try adjusting your filter criteria
+            </p>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                setStatusFilter("all")
+                setSortBy("newest")
+              }}
+            >
+              Clear Filter
+            </Button>
+          </motion.div>
+        )
       )}
 
       {/* Delete Confirmation Dialog */}
@@ -567,6 +578,7 @@ export default function DashboardPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }

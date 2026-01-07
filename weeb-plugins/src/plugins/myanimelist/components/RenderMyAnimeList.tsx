@@ -67,14 +67,14 @@ export function RenderMyAnimeList({
         )
       case "statistics_simple":
         return (
-            <SimpleStatistics
-              data={data.statistics}
-              config={config}
-              style={style}
-              size={size}
-              hideTerminalEmojis={hideTerminalEmojis}
-            />
-       
+          <SimpleStatistics
+            key="statistics_simple"
+            data={data.statistics}
+            config={config}
+            style={style}
+            size={size}
+            hideTerminalEmojis={hideTerminalEmojis}
+          />
         )
       case "anime_bar":
         return (

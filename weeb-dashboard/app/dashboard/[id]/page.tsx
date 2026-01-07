@@ -6,7 +6,8 @@ import { useAuth } from "@/hooks/useAuth"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Copy, CheckCircle2, ExternalLink, Edit, RefreshCw } from "lucide-react"
+import { Loader2, Copy, CheckCircle2, ExternalLink, Edit, RefreshCw, ArrowLeft, Calendar, Image as ImageIcon, Code2, Link2 } from "lucide-react"
+import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -254,83 +255,139 @@ export default function SvgViewPage() {
     : `![${svg?.name || "Profile"}](${baseImageUrl || imageUrl})`
 
   return (
-    <div className="p-6 md:p-8 lg:p-10">
-      <div className="max-w-7xl mx-auto space-y-6">
-
-        {/* Status Badge e Botão de Forçar Geração */}
-        {svg && (
-          <div className="flex items-center justify-between gap-4">
-            <Badge
-              variant={
-                svg.status === "completed"
-                  ? "default"
-                  : svg.status === "generating"
-                  ? "secondary"
-                  : "destructive"
-              }
-            >
-              {svg.status === "completed"
-                ? "Concluída"
-                : svg.status === "generating"
-                ? "Gerando..."
-                : "Erro"}
-            </Badge>
+    <div className="w-full min-h-screen bg-background">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex items-center justify-between mb-6"
+        >
+          <div className="flex items-center gap-4">
             <Button
-              variant="outline"
-              size="sm"
-              onClick={handleForceGenerate}
-              disabled={generating || svg.status === "generating"}
-              className="gap-2"
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/dashboard")}
+              className="hover:bg-muted"
             >
-              {generating ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Gerando...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="w-4 h-4" />
-                  Forçar Geração
-                </>
-              )}
+              <ArrowLeft className="w-5 h-5" />
             </Button>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                {svg?.name || "SVG Preview"}
+              </h1>
+              {svg && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Created {new Date(svg.createdAt).toLocaleDateString("pt-BR", { 
+                    day: "numeric", 
+                    month: "long", 
+                    year: "numeric" 
+                  })}
+                </p>
+              )}
+            </div>
           </div>
-        )}
+          
+          {svg && (
+            <div className="flex items-center gap-3">
+              <Badge
+                variant={
+                  svg.status === "completed"
+                    ? "default"
+                    : svg.status === "generating"
+                    ? "secondary"
+                    : "destructive"
+                }
+                className="px-3 py-1"
+              >
+                {svg.status === "completed"
+                  ? "✓ Concluída"
+                  : svg.status === "generating"
+                  ? "⟳ Gerando..."
+                  : "✗ Erro"}
+              </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleForceGenerate}
+                disabled={generating || svg.status === "generating"}
+                className="gap-2"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Gerando...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    Regenerar
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </motion.div>
 
         {/* Cooldown Warning */}
         {svg && cooldownRemaining !== null && cooldownRemaining > 0 && (
-          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 text-sm text-yellow-700 dark:text-yellow-400">
-            ⏱️ Cooldown ativo: aguarde {cooldownRemaining} minuto(s) antes de gerar novamente. Use "Forçar Geração" para ignorar.
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-sm text-yellow-700 dark:text-yellow-400 mb-6 flex items-center gap-2"
+          >
+            <span className="text-lg">⏱️</span>
+            <span>Cooldown ativo: aguarde {cooldownRemaining} minuto(s) antes de gerar novamente. Use "Regenerar" para ignorar.</span>
+          </motion.div>
         )}
 
         {/* Layout Desktop: PREVIEW | DADOS */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {/* PREVIEW Column */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Preview da Imagem</CardTitle>
-                <CardDescription>Use o código markdown abaixo no seu README do GitHub</CardDescription>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* PREVIEW Column - Takes 2 columns on large screens */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1, duration: 0.3 }}
+            className="lg:col-span-2 space-y-6"
+          >
+            <Card className="border-2 shadow-lg">
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-primary" />
+                  <CardTitle className="text-xl">Preview</CardTitle>
+                </div>
+                <CardDescription>Visualização da sua imagem SVG</CardDescription>
               </CardHeader>
               <CardContent>
                 {imageUrl ? (
-                  <div className="border rounded-lg p-4 bg-muted/50 flex items-center justify-center">
-                    <img
-                      key={`${svg?.id}-${svg?.lastGeneratedAt || Date.now()}`} // Force re-render quando lastGeneratedAt mudar
+                  <div className="border-2 border-dashed border-border/50 rounded-xl p-6 md:p-8 bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center min-h-[400px] relative overflow-hidden">
+                    {/* Background pattern */}
+                    <div className="absolute inset-0 opacity-5" style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/svg%3E")`
+                    }} />
+                    <motion.img
+                      key={`${svg?.id}-${svg?.lastGeneratedAt || Date.now()}`}
                       src={imageUrl}
                       alt={svg?.name || "Profile SVG"}
-                      className="max-w-full h-auto"
-                      style={{ maxHeight: "400px" }}
+                      className="max-w-full h-auto rounded-lg shadow-2xl relative z-10"
+                      style={{ maxHeight: "500px" }}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3 }}
                       onError={(e) => {
-                        // Se a imagem não carregar, mostrar mensagem
                         const target = e.currentTarget
                         target.style.display = "none"
                         const parent = target.parentElement
                         if (parent) {
                           parent.innerHTML = `
-                            <div class="flex flex-col items-center justify-center p-8">
-                              <p class="text-muted-foreground mb-2">Erro ao carregar imagem</p>
+                            <div class="flex flex-col items-center justify-center p-8 text-center relative z-10">
+                              <div class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+                                <svg class="w-8 h-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                              </div>
+                              <p class="text-foreground font-medium mb-2">Erro ao carregar imagem</p>
                               <p class="text-sm text-muted-foreground">A imagem pode estar sendo gerada ainda. Aguarde alguns segundos.</p>
                             </div>
                           `
@@ -405,106 +462,144 @@ export default function SvgViewPage() {
                 )}
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
 
-          {/* DADOS Column */}
-          <div className="space-y-6">
+          {/* DADOS Column - Takes 1 column on large screens */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.3 }}
+            className="space-y-6"
+          >
             {/* Markdown Code */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Código Markdown</CardTitle>
-                <CardDescription>Copie e cole no seu README.md do GitHub</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            <Card className="border-2 shadow-lg">
+              <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium">Markdown</label>
-                  <Button variant="outline" size="sm" onClick={handleCopyMarkdown}>
+                  <div className="flex items-center gap-2">
+                    <Code2 className="w-5 h-5 text-primary" />
+                    <CardTitle className="text-xl">Markdown</CardTitle>
+                  </div>
+                  <Button 
+                    variant={copied ? "default" : "outline"} 
+                    size="sm" 
+                    onClick={handleCopyMarkdown}
+                    className="gap-2"
+                  >
                     {copied ? (
                       <>
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                        <CheckCircle2 className="w-4 h-4" />
                         Copiado!
                       </>
                     ) : (
                       <>
-                        <Copy className="w-4 h-4 mr-2" />
+                        <Copy className="w-4 h-4" />
                         Copiar
                       </>
                     )}
                   </Button>
                 </div>
-                <pre className="p-4 bg-muted rounded-md font-mono text-sm overflow-x-auto">
-                  {markdownCode}
-                </pre>
+                <CardDescription>Cole no seu README.md do GitHub</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="relative">
+                  <pre className="p-4 bg-muted/50 rounded-lg font-mono text-xs md:text-sm overflow-x-auto border border-border/50">
+                    <code className="text-foreground">{markdownCode}</code>
+                  </pre>
+                </div>
               </CardContent>
             </Card>
 
             {/* URL */}
             {imageUrl && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>URL da Imagem</CardTitle>
+              <Card className="border-2 shadow-lg">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-2">
+                    <Link2 className="w-5 h-5 text-primary" />
+                    <CardTitle className="text-xl">URL</CardTitle>
+                  </div>
                   <CardDescription>Link direto para a imagem SVG</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={handleCopyUrl} className="flex-1">
-                      <Copy className="w-4 h-4 mr-2" />
+                <CardContent className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleCopyUrl} 
+                      className="flex-1 gap-2"
+                    >
+                      <Copy className="w-4 h-4" />
                       Copiar URL
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => window.open(imageUrl, "_blank")}
-                      className="flex-1"
+                      className="flex-1 gap-2"
                     >
-                      <ExternalLink className="w-4 h-4 mr-2" />
+                      <ExternalLink className="w-4 h-4" />
                       Abrir
                     </Button>
                   </div>
-                  <div className="p-3 bg-muted rounded-md">
-                    <code className="text-sm break-all">{imageUrl}</code>
+                  <div className="p-3 bg-muted/50 rounded-lg border border-border/50">
+                    <code className="text-xs break-all text-foreground">{imageUrl}</code>
                   </div>
                 </CardContent>
               </Card>
             )}
-          </div>
-        </div>
 
-        {/* Info */}
-        {svg && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <div className="text-muted-foreground">Estilo</div>
-                  <div className="font-medium capitalize">{svg.style}</div>
-                </div>
-                <div>
-                  <div className="text-muted-foreground">Tamanho</div>
-                  <div className="font-medium capitalize">{svg.size}</div>
-                </div>
-                {svg.lastGeneratedAt && (
-                  <div>
-                    <div className="text-muted-foreground">Última geração</div>
-                    <div className="font-medium">
-                      {new Date(svg.lastGeneratedAt).toLocaleString("pt-BR")}
+            {/* Info Card - Moved here for better layout */}
+            {svg && (
+              <Card className="border-2 shadow-lg">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-primary" />
+                    <CardTitle className="text-xl">Informações</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground uppercase tracking-wide">Estilo</div>
+                        <div className="font-semibold capitalize">{svg.style || "default"}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground uppercase tracking-wide">Tamanho</div>
+                        <div className="font-semibold capitalize">{svg.size || "half"}</div>
+                      </div>
+                    </div>
+                    {svg.lastGeneratedAt && (
+                      <div className="space-y-1 pt-2 border-t border-border/50">
+                        <div className="text-xs text-muted-foreground uppercase tracking-wide">Última geração</div>
+                        <div className="font-semibold text-sm">
+                          {new Date(svg.lastGeneratedAt).toLocaleString("pt-BR", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </div>
+                      </div>
+                    )}
+                    <div className="space-y-1 pt-2 border-t border-border/50">
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide">Criado em</div>
+                      <div className="font-semibold text-sm">
+                        {new Date(svg.createdAt).toLocaleString("pt-BR", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric"
+                        })}
+                      </div>
                     </div>
                   </div>
-                )}
-                <div>
-                  <div className="text-muted-foreground">Criado em</div>
-                  <div className="font-medium">
-                    {new Date(svg.createdAt).toLocaleString("pt-BR")}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                </CardContent>
+              </Card>
+            )}
+          </motion.div>
         </div>
+
+      </div>
     </div>
   )
 }

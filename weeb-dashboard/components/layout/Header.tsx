@@ -29,13 +29,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+import { SidebarTrigger } from "@/components/ui/sidebar"
 
 interface HeaderProps {
   className?: string
   variant?: "home" | "dashboard"
   showSidebarToggle?: boolean
-  onSidebarToggle?: () => void
-  isSidebarOpen?: boolean
 }
 
 // Avatar component - simple implementation
@@ -54,8 +53,6 @@ export function Header({
   className,
   variant,
   showSidebarToggle,
-  onSidebarToggle,
-  isSidebarOpen,
 }: HeaderProps) {
   const pathname = usePathname()
   const router = useRouter()
@@ -271,20 +268,9 @@ export function Header({
         {/* Left */}
         <div className="flex items-center gap-3 md:gap-4">
           {/* Sidebar toggle - only show if sidebar is available */}
-          {showSidebarToggle && onSidebarToggle && !isWizardPage && (
+          {showSidebarToggle && !isWizardPage && (
             <>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={onSidebarToggle} 
-                className="h-9 w-9 hover:bg-muted/80 transition-colors"
-              >
-                {isSidebarOpen ? (
-                  <Menu className="w-5 h-5" />
-                ) : (
-                  <PanelLeft className="w-5 h-5" />
-                )}
-              </Button>
+              <SidebarTrigger className="h-9 w-9" />
               <div className="h-6 w-px bg-border/50" />
             </>
           )}
@@ -301,18 +287,18 @@ export function Header({
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div className="h-6 w-px bg-border/50" />
+              
+              {/* Logo only shown in wizard pages */}
+              <Link href="/dashboard" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+                <img
+                  src="/sora/sora-head.png"
+                  alt="Sora"
+                  className="w-8 h-8 object-contain drop-shadow-lg"
+                />
+                <span className="font-bold text-lg font-sora">WeebProfile</span>
+              </Link>
             </>
           )}
-
-          {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <img
-              src="/sora/sora-head.png"
-              alt="Sora"
-              className="w-8 h-8 object-contain drop-shadow-lg"
-            />
-            <span className="font-bold text-lg font-sora">WeebProfile</span>
-          </Link>
         </div>
 
         {/* Right */}
@@ -352,25 +338,39 @@ export function Header({
                   <ChevronRight className="w-4 h-4 text-muted-foreground hidden sm:block rotate-[-90deg]" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel className="flex flex-col gap-0.5">
+              <DropdownMenuContent 
+                align="end" 
+                side="bottom"
+                sideOffset={8}
+                className="w-64 rounded-lg border shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 origin-top"
+              >
+                <DropdownMenuLabel className="flex flex-col gap-1.5 px-3 py-2.5">
                   <span className="text-sm font-semibold">Minha Conta</span>
                   <span className="text-xs text-muted-foreground font-normal">
                     {user.email}
                   </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push("/dashboard")} className="cursor-pointer">
-                  <Home className="w-4 h-4 mr-2" />
+                <DropdownMenuItem 
+                  onClick={() => router.push("/dashboard")} 
+                  className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
+                >
+                  <Home className="w-4 h-4 mr-2.5" />
                   Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/dashboard/settings")} className="cursor-pointer">
-                  <Settings className="w-4 h-4 mr-2" />
+                <DropdownMenuItem 
+                  onClick={() => router.push("/dashboard/settings")} 
+                  className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
+                >
+                  <Settings className="w-4 h-4 mr-2.5" />
                   Configurações
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer focus:text-destructive">
-                  <LogOut className="w-4 h-4 mr-2" />
+                <DropdownMenuSeparator className="my-1" />
+                <DropdownMenuItem 
+                  onClick={handleSignOut} 
+                  className="text-destructive cursor-pointer focus:text-destructive px-3 py-2.5 rounded-md mx-1 transition-colors"
+                >
+                  <LogOut className="w-4 h-4 mr-2.5" />
                   Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
