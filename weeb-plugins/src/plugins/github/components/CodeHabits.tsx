@@ -144,19 +144,19 @@ const DefaultCodeHabits = ({
           <div className="grid grid-cols-3 gap-2">
             <div className="px-4 rounded-lg">
               <div className="text-2xl font-bold text-default-highlight text-center">
-                {data.commitStats.averageChangesPerCommit || 0}
+                {abbreviateNumber(data.commitStats.averageChangesPerCommit || 0)}
               </div>
               <div className="text-xs text-default-muted text-center">Avg. Changes per Commit</div>
             </div>
             <div className="px-4 rounded-lg">
               <div className="text-2xl font-bold text-default-highlight text-center">
-                {data.commitStats.totalFilesChanged || 0}
+                {abbreviateNumber(data.commitStats.totalFilesChanged || 0)}
               </div>
               <div className="text-xs text-default-muted text-center">Total Files Changed</div>
             </div>
             <div className="px-4 rounded-lg">
               <div className="text-2xl font-bold text-default-highlight text-center">
-                {data.commitStats.largestCommit || 0}
+                {abbreviateNumber(data.commitStats.largestCommit || 0)}
               </div>
               <div className="text-xs text-default-muted text-center">Largest Commit (changes)</div>
             </div>
@@ -269,10 +269,10 @@ const TerminalCodeHabits = ({
           <span className="text-terminal-muted my-1">Commit Statistics:</span>
           <TerminalLineWithDots
             title="Avg. Changes per Commit"
-            value={data.commitStats.averageChangesPerCommit.toString()}
+            value={abbreviateNumber(data.commitStats.averageChangesPerCommit || 0)}
           />
-          <TerminalLineWithDots title="Total Files Changed" value={data.commitStats.totalFilesChanged.toString()} />
-          <TerminalLineWithDots title="Largest Commit" value={data.commitStats.largestCommit.toString()} />
+          <TerminalLineWithDots title="Total Files Changed" value={abbreviateNumber(data.commitStats.totalFilesChanged || 0)} />
+          <TerminalLineWithDots title="Largest Commit" value={abbreviateNumber(data.commitStats.largestCommit || 0)} />
         </>
       )}
 

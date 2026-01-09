@@ -4,6 +4,10 @@
 
 /* We only need utilities, not base or components */
 
+.visible {
+  visibility: visible
+}
+
 .static {
   position: static
 }

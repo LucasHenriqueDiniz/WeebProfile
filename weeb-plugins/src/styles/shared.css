@@ -10,7 +10,11 @@
 
 /* We only need utilities, not base or components */
 
-.static {
+.visible {
+  visibility: visible
+}
+
+#svg-main .static {
   position: static
 }
 

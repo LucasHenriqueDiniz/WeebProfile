@@ -1459,21 +1459,45 @@ async function processCodeHabitsData(
   const fileTypes: Record<string, number> = {}
 
   try {
-    // Fetch user's public events
-    const pages = Math.ceil(days / 100)
-    const events = []
+    const startTime = Date.now()
+    // Fetch public events - using manual pagination for better control over date filtering
+    // According to GitHub Events API documentation, public events API returns events for public repos
+    // The payload may or may not include commits array, so we use compareCommits API when needed
+    // Note: Events API returns up to 300 events total, and events are returned in reverse chronological order
+    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+    const events: any[] = []
+    const maxPages = 3 // Events API returns max 300 events (3 pages of 100)
 
-    for (let page = 1; page <= pages; page++) {
+    for (let page = 1; page <= maxPages; page++) {
       try {
         const response = await rest.activity.listPublicEventsForUser({
           username: login,
           per_page: 100,
           page,
         })
-        events.push(...response.data)
         
-        // If we got less than 100 events, we've reached the end
-        if (response.data.length < 100) {
+        // Log response for debugging
+        if (process.env.DEBUG_GITHUB === "1" || (page === 1 && events.length === 0)) {
+          console.log(`[GitHub CodeHabits] Page ${page}: Got ${response.data.length} events`)
+        }
+        
+        // Filter events by date as we receive them (events are in reverse chronological order)
+        let allEventsRecent = true
+        for (const event of response.data) {
+          if (!event.created_at) continue
+          
+          const eventDate = new Date(event.created_at)
+          if (eventDate > cutoffDate) {
+            events.push(event)
+          } else {
+            // Events are in reverse chronological order, so if we hit an old event, we're done
+            allEventsRecent = false
+            break
+          }
+        }
+        
+        // If we found an old event or got less than 100 events, we've reached the end
+        if (!allEventsRecent || response.data.length < 100) {
           break
         }
       } catch (apiError: any) {
@@ -1504,17 +1528,64 @@ async function processCodeHabitsData(
     }
 
     // Log total events fetched for debugging
-    if (process.env.DEBUG_GITHUB === "1" || events.length === 0) {
-      console.log(`[GitHub CodeHabits] Fetched ${events.length} total events for ${login}`)
+    const eventsFetchTime = Date.now() - startTime
+    console.log(`[GitHub CodeHabits] Fetched ${events.length} total events for ${login} in ${eventsFetchTime}ms`)
+    if (events.length > 0) {
+      const eventTypes = [...new Set(events.map(e => e.type))]
+      const eventTypeCounts = eventTypes.reduce((acc, type) => {
+        acc[type] = events.filter(e => e.type === type).length
+        return acc
+      }, {} as Record<string, number>)
+      console.log(`[GitHub CodeHabits] Event types found:`, eventTypeCounts)
+      
+      // Log sample events for debugging
+      if (process.env.DEBUG_GITHUB === "1") {
+        console.log(`[GitHub CodeHabits] Sample events (first 3):`, events.slice(0, 3).map(e => ({
+          id: (e as any).id,
+          type: e.type,
+          actor: (e as any).actor?.login,
+          repo: (e as any).repo?.name,
+          created_at: (e as any).created_at,
+        })))
+      }
+    } else {
+      console.warn(`[GitHub CodeHabits] ⚠️ No events returned from API! This may indicate:`)
+      console.warn(`  - User has no public activity`)
+      console.warn(`  - API returned empty response`)
+      console.warn(`  - Rate limit or authentication issue`)
     }
     
     // Filter only user's PushEvents
-    const pushEvents = events
-      .filter(({ type }) => type === "PushEvent")
-      .filter(({ actor }) => actor.login?.toLowerCase() === login.toLowerCase())
-      .filter(
-        ({ created_at }) => created_at && new Date(created_at) > new Date(Date.now() - days * 24 * 60 * 60 * 1000)
-      )
+    // According to GitHub Events API:
+    // - Events have: id, type, actor, repo, payload, public, created_at
+    // - PushEvent type indicates a push to a repository
+    // - actor.login is the username who performed the action
+    let pushEvents = events
+      .filter((event) => {
+        // Type must be PushEvent
+        if (event.type !== "PushEvent") return false
+        
+        // Actor must match the requested user (case-insensitive)
+        const actorLogin = (event as any).actor?.login
+        if (!actorLogin || actorLogin.toLowerCase() !== login.toLowerCase()) return false
+        
+        // Must be within the time window
+        const createdAt = (event as any).created_at
+        if (!createdAt) return false
+        const eventDate = new Date(createdAt)
+        const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+        if (eventDate <= cutoffDate) return false
+        
+        return true
+      })
+    
+    // Limit to max 100 most recent PushEvents for performance
+    // Increased from 50 since processing is now much faster with parallelization
+    const MAX_PUSH_EVENTS = 100
+    if (pushEvents.length > MAX_PUSH_EVENTS) {
+      pushEvents = pushEvents.slice(0, MAX_PUSH_EVENTS)
+      console.log(`[GitHub CodeHabits] Limited to ${MAX_PUSH_EVENTS} most recent PushEvents for performance`)
+    }
     
     // Log push events for debugging
     if (process.env.DEBUG_GITHUB === "1" || pushEvents.length === 0) {
@@ -1526,52 +1597,249 @@ async function processCodeHabitsData(
         }, {} as Record<string, number>)
         console.log(`[GitHub CodeHabits] Event types found:`, eventTypes)
       }
-    }
-
-    // Collect all commit SHAs from push events (limit to last 500 commits for performance)
-    const commitShas: Array<{ repo: string; owner: string; sha: string }> = []
-    for (const event of pushEvents) {
-      if (!event.created_at || !event.payload?.commits) continue
-      const date = new Date(event.created_at)
-      const day = date.toLocaleDateString("en-US", { weekday: "long" })
-      const hour = date.getHours()
-
-      commitsByDay[day] = (commitsByDay[day] || 0) + 1
-      commitsByHour[hour] = (commitsByHour[hour] || 0) + 1
-      totalCommits++
-
-      // Extract repo info and commit SHAs
-      const repo = (event as any).repo?.name
-      const payload = (event as any).payload
-      if (repo && payload?.commits) {
-        const [owner, repoName] = repo.split("/")
-        if (owner && repoName) {
-          for (const commit of payload.commits) {
-            if (commit?.sha && commitShas.length < 500) {
-              commitShas.push({ owner, repo: repoName, sha: commit.sha })
-            }
-          }
-        }
+      if (pushEvents.length === 0) {
+        console.warn(`[GitHub CodeHabits] ⚠️ No push events found for ${login}. This may indicate:`)
+        console.warn(`  - User has no public commits in the last ${days} days`)
+        console.warn(`  - User's commits are in private repositories (not visible via public events API)`)
+        console.warn(`  - Token may not have 'public_repo' or 'repo' scope`)
       }
     }
 
+    // Collect all commit SHAs from push events (limit to last 500 commits for performance)
+    // According to GitHub Events API: PushEvent payload may not include commits array
+    // We need to fetch commits using the head/before SHAs via compareCommits API
+    const commitShas: Array<{ repo: string; owner: string; sha: string; date: Date }> = []
+    const MAX_COMMITS = 500 // Increased from 250 - processing is now optimized with parallelization
+    const MAX_TIME_MS = 30000 // 30 seconds max processing time (safety limit)
+    
+    console.log(`[GitHub CodeHabits] Processing ${pushEvents.length} PushEvents to collect commits...`)
+    const commitsCollectionStartTime = Date.now()
+    let totalCommitsFromCompare = 0
+    
+    // Helper function to process a single PushEvent and return commits
+    async function processPushEvent(event: any): Promise<Array<{ sha: string; owner: string; repo: string; date: Date }>> {
+      if (!event.created_at) return []
+      
+      // Extract repo info - format is "owner/repo"
+      const repo = (event as any).repo?.name
+      if (!repo) return []
+      
+      const [owner, repoName] = repo.split("/")
+      if (!owner || !repoName) return []
+      
+      const payload = (event as any).payload
+      const eventDate = new Date(event.created_at)
+      
+      // Check if payload has commits array (older API format - rarely used now)
+      let commits: Array<{ sha: string }> = []
+      if (payload?.commits && Array.isArray(payload.commits) && payload.commits.length > 0) {
+        // Old API format: commits array is present (uncommon in current API)
+        commits = payload.commits
+        if (process.env.DEBUG_GITHUB === "1") {
+          console.log(`[GitHub CodeHabits] PushEvent ${event.id} has commits array with ${commits.length} commits`)
+        }
+      } else if (payload?.head && payload?.before) {
+        // New API format: payload has head and before SHAs but no commits array
+        // According to GitHub Events API: PushEvent payload has head (newest) and before (oldest) SHAs
+        // We need to fetch commits between before and head using compareCommits API
+        // Note: If head === before, it's a force push with same SHA (no new commits)
+        if (payload.head === payload.before) {
+          // Force push with same SHA - no new commits, use head SHA as fallback (1 commit)
+          if (process.env.DEBUG_GITHUB === "1") {
+            console.log(`[GitHub CodeHabits] PushEvent ${(event as any).id}: head === before (force push with same SHA), using head SHA`)
+          }
+          commits = [{ sha: payload.head }]
+        } else {
+          // Fetch commits between before and head using compare API
+          // According to Octokit docs: compareCommits returns commits that are reachable from head but not from base
+          try {
+            const compareResponse = await rest.repos.compareCommits({
+              owner,
+              repo: repoName,
+              base: payload.before,
+              head: payload.head,
+            })
+            
+            // Extract commit SHAs from the comparison
+            // According to GitHub API: commits array contains all commits between base and head (in reverse chronological order)
+            const commitNodes = compareResponse.data.commits || []
+            commits = commitNodes.map((commit: any) => ({ sha: commit.sha }))
+            
+            if (process.env.DEBUG_GITHUB === "1" && commits.length > 0) {
+              console.log(`[GitHub CodeHabits] Compare API: ${owner}/${repoName} - ${commits.length} commits between ${payload.before.substring(0, 7)}..${payload.head.substring(0, 7)}`)
+            } else if (commits.length === 0) {
+              // Compare returned 0 commits - this might happen if commits are not in same branch
+              // Use head SHA as fallback (at least 1 commit)
+              if (process.env.DEBUG_GITHUB === "1") {
+                console.warn(`[GitHub CodeHabits] Compare API returned 0 commits for ${owner}/${repoName} (${payload.before.substring(0, 7)}..${payload.head.substring(0, 7)}) - using head SHA as fallback`)
+              }
+              commits = [{ sha: payload.head }]
+            }
+          } catch (compareError: any) {
+            // Handle errors according to GitHub API documentation
+            // 404: base or head was not found (deleted branch, commit not found)
+            // 422: No common ancestor between base and head
+            // 500: Internal server error
+            // Rate limit: Octokit handles this automatically, but we catch it here as fallback
+            if (compareError.status === 404) {
+              // Branch or commit not found - use head SHA as fallback (at least 1 commit)
+              if (process.env.DEBUG_GITHUB === "1") {
+                console.warn(`[GitHub CodeHabits] Compare API 404 for ${owner}/${repoName} (${payload.before.substring(0, 7)}..${payload.head.substring(0, 7)}) - branch/commit not found, using head SHA as fallback`)
+              }
+            } else if (compareError.status === 422) {
+              // No common ancestor - use head SHA as fallback
+              if (process.env.DEBUG_GITHUB === "1") {
+                console.warn(`[GitHub CodeHabits] Compare API 422 for ${owner}/${repoName} (${payload.before.substring(0, 7)}..${payload.head.substring(0, 7)}) - no common ancestor, using head SHA as fallback`)
+              }
+            } else {
+              // Other errors (rate limit, auth, etc.) - Octokit should handle rate limits automatically
+              console.warn(`[GitHub CodeHabits] Failed to compare commits for ${owner}/${repoName} (${payload.before.substring(0, 7)}..${payload.head.substring(0, 7)}): ${compareError.message} (status: ${compareError.status})`)
+            }
+            // Use head SHA as fallback (at least 1 commit)
+            commits = [{ sha: payload.head }]
+          }
+        }
+      } else if (payload?.head) {
+        // Fallback: use head SHA if available (at least 1 commit)
+        // This handles cases where before is missing
+        commits = [{ sha: payload.head }]
+      } else {
+        // No commit information available - skip this push event
+        if (process.env.DEBUG_GITHUB === "1") {
+          console.warn(`[GitHub CodeHabits] PushEvent ${(event as any).id} has no commit information (no head/before/commits)`)
+        }
+        return []
+      }
+      
+      // Return commits with metadata
+      return commits
+        .filter(commit => commit?.sha)
+        .map(commit => ({
+          sha: commit.sha,
+          owner,
+          repo: repoName,
+          date: eventDate,
+        }))
+    }
+    
+    // Process PushEvents in parallel batches for performance
+    const BATCH_SIZE = 18 // Process 18 PushEvents in parallel (safe for rate limits)
+    let earlyExit = false
+    
+    for (let i = 0; i < pushEvents.length && !earlyExit; i += BATCH_SIZE) {
+      // Check time limit
+      const elapsedTime = Date.now() - commitsCollectionStartTime
+      if (elapsedTime > MAX_TIME_MS) {
+        console.log(`[GitHub CodeHabits] Reached time limit of ${MAX_TIME_MS}ms, stopping early (processed ${i}/${pushEvents.length} PushEvents)`)
+        earlyExit = true
+        break
+      }
+      
+      // Check commits limit
+      if (commitShas.length >= MAX_COMMITS) {
+        console.log(`[GitHub CodeHabits] Reached limit of ${MAX_COMMITS} commits, stopping`)
+        earlyExit = true
+        break
+      }
+      
+      const batch = pushEvents.slice(i, i + BATCH_SIZE)
+      
+      // Process batch in parallel using Promise.allSettled to handle individual failures
+      const batchResults = await Promise.allSettled(
+        batch.map(event => processPushEvent(event))
+      )
+      
+      // Collect commits from successful batch results
+      for (const result of batchResults) {
+        if (result.status === 'fulfilled') {
+          const batchCommits = result.value
+          totalCommitsFromCompare += batchCommits.length
+          
+          for (const commit of batchCommits) {
+            if (commitShas.length >= MAX_COMMITS) {
+              earlyExit = true
+              break
+            }
+            
+            commitShas.push(commit)
+            
+            // Count commits by day and hour based on the push event time
+            const day = commit.date.toLocaleDateString("en-US", { weekday: "long" })
+            const hour = commit.date.getHours()
+            
+            commitsByDay[day] = (commitsByDay[day] || 0) + 1
+            commitsByHour[hour] = (commitsByHour[hour] || 0) + 1
+            totalCommits++
+          }
+          
+          if (earlyExit) break
+        } else {
+          // Log rejected promises but continue
+          if (process.env.DEBUG_GITHUB === "1") {
+            console.warn(`[GitHub CodeHabits] Failed to process PushEvent in batch:`, result.reason)
+          }
+        }
+      }
+      
+      // Small delay between batches to avoid rate limits (Octokit handles this, but extra safety)
+      if (i + BATCH_SIZE < pushEvents.length && !earlyExit) {
+        await new Promise((resolve) => setTimeout(resolve, 50))
+      }
+    }
+    
+    const commitsCollectionTime = Date.now() - commitsCollectionStartTime
+    const commitsTimeLimitReached = commitsCollectionTime >= MAX_TIME_MS
+    if (commitsTimeLimitReached) {
+      console.log(`[GitHub CodeHabits] Processed PushEvents until time limit reached, collected ${commitShas.length} commit SHAs (${totalCommitsFromCompare} via compare API) in ${commitsCollectionTime}ms`)
+    } else {
+      console.log(`[GitHub CodeHabits] Processed ${pushEvents.length} PushEvents in batches, collected ${commitShas.length} commit SHAs (${totalCommitsFromCompare} via compare API) in ${commitsCollectionTime}ms`)
+    }
+
     // Calculate commit statistics from actual commit data
+    // Optimize: Only analyze detailed stats for the most recent 200 commits (increased from 100)
+    // Older commits already have basic counts (day/hour) from push event timestamps
+    const MAX_DETAILED_ANALYSIS = 200
+    // Check remaining time for detailed analysis
+    const elapsedTimeBeforeAnalysis = Date.now() - startTime
+    const remainingTimeForAnalysis = MAX_TIME_MS - elapsedTimeBeforeAnalysis
+    
+    let commitsToAnalyze = commitShas.slice(0, Math.min(MAX_DETAILED_ANALYSIS, commitShas.length))
+    
+    // If we're running low on time, reduce commits to analyze
+    if (remainingTimeForAnalysis < 15000 && commitsToAnalyze.length > 100) {
+      commitsToAnalyze = commitShas.slice(0, 100)
+      console.log(`[GitHub CodeHabits] Reduced detailed analysis to 100 commits due to time constraints`)
+    }
+    
+    const remainingCommits = commitShas.length - commitsToAnalyze.length
+    
+    console.log(`[GitHub CodeHabits] Analyzing detailed stats for ${commitsToAnalyze.length} most recent commits${remainingCommits > 0 ? ` (${remainingCommits} older commits will use basic counts only)` : ''}`)
+    
     let totalFilesChanged = 0
     let totalChanges = 0
     let largestCommit = 0
     let analyzedCommitsCount = 0
     let rateLimitHit = false
+    const commitAnalysisStartTime = Date.now()
 
-    // Process commits in batches to avoid rate limits
+    // Process commits in batches to avoid rate limits (only detailed analysis commits)
     const batchSize = 20
-    for (let i = 0; i < commitShas.length; i += batchSize) {
+    for (let i = 0; i < commitsToAnalyze.length; i += batchSize) {
+      // Check time limit during analysis
+      const elapsedAnalysisTime = Date.now() - commitAnalysisStartTime
+      const totalElapsedTime = Date.now() - startTime
+      if (totalElapsedTime > MAX_TIME_MS) {
+        console.log(`[GitHub CodeHabits] Reached time limit during analysis, stopping early (analyzed ${analyzedCommitsCount}/${commitsToAnalyze.length} commits)`)
+        break
+      }
+      
       // Se rate limit foi atingido, parar e usar o que já foi coletado
       if (rateLimitHit) {
-        console.warn(`⚠️ [GitHub CodeHabits] Rate limit atingido. Usando ${analyzedCommitsCount} commits já analisados de ${commitShas.length} total.`)
+        console.warn(`⚠️ [GitHub CodeHabits] Rate limit atingido. Usando ${analyzedCommitsCount} commits já analisados de ${commitsToAnalyze.length} total.`)
         break
       }
 
-      const batch = commitShas.slice(i, i + batchSize)
+      const batch = commitsToAnalyze.slice(i, i + batchSize)
       const commitPromises = batch.map(async ({ owner, repo, sha }) => {
         try {
           const commitResponse = await rest.repos.getCommit({
@@ -1585,7 +1853,7 @@ async function processCodeHabitsData(
           const files = commit.files || []
 
           if (stats) {
-            const changes = stats.additions + stats.deletions
+            const changes = (stats.additions || 0) + (stats.deletions || 0)
             totalChanges += changes
             totalFilesChanged += stats.total || files.length
             largestCommit = Math.max(largestCommit, changes)
@@ -1620,12 +1888,42 @@ async function processCodeHabitsData(
       await Promise.all(commitPromises)
 
       // Pequeno delay entre batches para evitar rate limits
-      if (i + batchSize < commitShas.length && !rateLimitHit) {
+      if (i + batchSize < commitsToAnalyze.length && !rateLimitHit) {
         await new Promise((resolve) => setTimeout(resolve, 100))
       }
     }
+    
+    const commitAnalysisTime = Date.now() - commitAnalysisStartTime
+    console.log(`[GitHub CodeHabits] Analyzed ${analyzedCommitsCount} commits in detail in ${commitAnalysisTime}ms`)
 
+    // Scale statistics to account for commits not analyzed in detail
+    // Use average from analyzed commits as proxy for all commits
     const averageChangesPerCommit = analyzedCommitsCount > 0 ? Math.round(totalChanges / analyzedCommitsCount) : 0
+    
+    // If we analyzed fewer commits than total, scale the stats estimates
+    // This provides a more accurate picture while avoiding excessive API calls
+    if (analyzedCommitsCount > 0 && totalCommits > analyzedCommitsCount) {
+      const scalingFactor = totalCommits / analyzedCommitsCount
+      totalChanges = Math.round(totalChanges * scalingFactor)
+      totalFilesChanged = Math.round(totalFilesChanged * scalingFactor)
+    }
+
+    const totalProcessingTime = Date.now() - startTime
+    const timeLimitReached = totalProcessingTime >= MAX_TIME_MS
+    
+    // Log summary for debugging and performance tracking
+    if (process.env.DEBUG_GITHUB === "1" || totalCommits === 0) {
+      console.log(`[GitHub CodeHabits] Summary for ${login}:`)
+      console.log(`  - Total commits from push events: ${totalCommits}`)
+      console.log(`  - Commits analyzed in detail: ${analyzedCommitsCount} of ${commitsToAnalyze.length}`)
+      console.log(`  - Commit SHAs collected: ${commitShas.length}`)
+      console.log(`  - Commits by hour keys: ${Object.keys(commitsByHour).length}`)
+      console.log(`  - Commits by day keys: ${Object.keys(commitsByDay).length}`)
+      console.log(`  - Total processing time: ${totalProcessingTime}ms${timeLimitReached ? ` (time limit ${MAX_TIME_MS}ms reached)` : ''}`)
+    } else {
+      const timeLimitMsg = timeLimitReached ? ` (time limit reached)` : ''
+      console.log(`[GitHub CodeHabits] Completed processing in ${totalProcessingTime}ms${timeLimitMsg} (events: ${eventsFetchTime}ms, commits: ${commitsCollectionTime}ms, analysis: ${commitAnalysisTime}ms)`)
+    }
 
     const result = {
       commitsByHour,
@@ -1637,6 +1935,17 @@ async function processCodeHabitsData(
         largestCommit,
       },
       analyzedCommits: analyzedCommitsCount || totalCommits,
+    }
+
+    // Add warning if time limit was reached
+    if (timeLimitReached) {
+      return {
+        data: result,
+        warning: {
+          type: 'partial_data' as const,
+          message: 'Processing time limit reached. Data may be incomplete but represents a good sample.',
+        },
+      }
     }
 
     // Add warning if rate limit was hit
