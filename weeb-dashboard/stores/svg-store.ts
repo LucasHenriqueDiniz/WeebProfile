@@ -9,6 +9,7 @@ interface SvgStore {
   svgsLoading: boolean
   svgsError: Error | null
   lastFetchTime: number | null
+  _hasHydrated: boolean // Flag para saber se já reidratou do localStorage
 
   // SVG individual (cache por ID)
   svgCache: Record<string, { svg: Svg; timestamp: number }>
@@ -21,6 +22,7 @@ interface SvgStore {
   updateSvg: (id: string, updates: Partial<Svg>) => void
   removeSvg: (id: string) => void
   clearCache: () => void
+  setHasHydrated: (state: boolean) => void
 }
 
 const CACHE_MAX_AGE = 5 * 60 * 1000 // 5 minutos
@@ -32,17 +34,23 @@ export const useSvgStore = create<SvgStore>()(
       svgsLoading: false,
       svgsError: null,
       lastFetchTime: null,
+      _hasHydrated: false,
       svgCache: {},
       cacheMaxAge: CACHE_MAX_AGE,
+
+      setHasHydrated: (state: boolean) => {
+        set({ _hasHydrated: state })
+      },
 
       fetchSvgs: async (force = false) => {
         const state = get()
         
-        // Se não for forçado e já temos dados recentes (menos de 1 minuto), não buscar
+        // Se não for forçado e já temos dados recentes (menos de 5 minutos), não buscar
+        // Aumentar tempo de cache para evitar requests desnecessários
         if (!force && state.svgs.length > 0 && state.lastFetchTime) {
           const timeSinceLastFetch = Date.now() - state.lastFetchTime
-          if (timeSinceLastFetch < 60000) { // 1 minuto
-            return
+          if (timeSinceLastFetch < 5 * 60 * 1000) { // 5 minutos
+            return // Cache válido, não fazer fetch
           }
         }
 
@@ -67,6 +75,10 @@ export const useSvgStore = create<SvgStore>()(
             svgsError: error instanceof Error ? error : new Error("Unknown error"),
             svgsLoading: false,
           })
+          // Se tiver dados em cache e o fetch falhou, manter os dados antigos
+          if (!hasCachedData) {
+            set({ svgs: [] }) // Só limpar se não tinha dados antes
+          }
         }
       },
 
@@ -171,14 +183,15 @@ export const useSvgStore = create<SvgStore>()(
         svgs: state.svgs,
         svgCache: state.svgCache,
         lastFetchTime: state.lastFetchTime,
+        // _hasHydrated NÃO deve ser persistido - é apenas flag de runtime
       }),
-      // Limpar cache antigo na rehydratação
+      // Limpar apenas cache expirado na rehydratação, mas manter SVGs salvos
       onRehydrateStorage: () => (state) => {
         if (state) {
           const now = Date.now()
           const validCache: Record<string, { svg: Svg; timestamp: number }> = {}
           
-          // Manter apenas cache válido
+          // Manter apenas cache válido (mas não remover SVGs da lista - eles são dados reais)
           Object.entries(state.svgCache).forEach(([id, cached]) => {
             const age = now - cached.timestamp
             if (age < state.cacheMaxAge) {
@@ -186,17 +199,13 @@ export const useSvgStore = create<SvgStore>()(
             }
           })
 
-          // Limpar SVGs muito antigos da lista (mais de 1 hora)
-          // Usar lastGeneratedAt ou createdAt como fallback
-          const validSvgs = state.svgs.filter(svg => {
-            const timestamp = svg.lastGeneratedAt || svg.createdAt
-            if (!timestamp) return true
-            const timestampTime = new Date(timestamp).getTime()
-            return now - timestampTime < 60 * 60 * 1000 // 1 hora
-          })
-
+          // NÃO limpar SVGs da lista - eles são dados reais salvos do usuário
+          // Apenas limpar cache de SVGs individuais expirado
           state.svgCache = validCache
-          state.svgs = validSvgs
+          // state.svgs permanece intacto - são dados reais, não cache
+          
+          // Marcar como reidratado
+          state._hasHydrated = true
         }
       },
     }

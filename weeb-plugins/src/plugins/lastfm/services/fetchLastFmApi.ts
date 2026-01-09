@@ -326,6 +326,7 @@ async function fetchUserInfo(
 
 /**
  * Converte URLs de imagens para base64 recursivamente
+ * Adiciona fallback para Spotify quando imagens falham
  */
 async function convertImageUrlsToBase64(data: any): Promise<any> {
   if (Array.isArray(data)) {
@@ -340,8 +341,16 @@ async function convertImageUrlsToBase64(data: any): Promise<any> {
         typeof value === 'string' &&
         (value.startsWith('http://') || value.startsWith('https://'))
       ) {
-        // Converter URL para base64
-        result[key] = await urlToBase64(value)
+        // Converter URL para base64 com fallback para Spotify
+        // Extrair informações do contexto (artista, álbum, track) para fallback
+        const fallbackOptions = {
+          artistName: data.artist,
+          albumName: data.album,
+          trackName: data.track,
+        }
+        
+        // Tentar converter, com fallback automático para Spotify se falhar
+        result[key] = await urlToBase64(value, 15000, { maxWidth: 200, maxHeight: 200, quality: 70 }, fallbackOptions)
       } else {
         result[key] = await convertImageUrlsToBase64(value)
       }

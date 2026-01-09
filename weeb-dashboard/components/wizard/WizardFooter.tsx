@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils"
 import { AlertTriangle, Check } from "lucide-react"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
 
 interface WizardFooterProps {
   onFinish: () => void
@@ -26,12 +27,14 @@ export function WizardFooter({
   missingConfigs,
   canFinish,
 }: WizardFooterProps) {
+  const t = useTranslations('wizard.footer')
+  
   // UX 4: Better visual feedback for button states
   const getButtonText = () => {
-    if (isSaving) return "Gerando..."
-    if (hasMissingEssential) return "Configuração incompleta"
-    if (!canFinish) return "Habilite pelo menos um plugin"
-    return "Finalize"
+    if (isSaving) return t('generating')
+    if (hasMissingEssential) return t('incompleteConfig')
+    if (!canFinish) return t('enablePlugin')
+    return t('finish')
   }
 
   const getButtonVariant = () => {
@@ -50,10 +53,10 @@ export function WizardFooter({
             <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-amber-900 dark:text-amber-200">
-                {missingConfigs.length} {missingConfigs.length === 1 ? "configuração faltando" : "configurações faltando"}
+                {missingConfigs.length} {missingConfigs.length === 1 ? t('missingConfigs.singular') : t('missingConfigs.plural')}
               </p>
               <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
-                Preencha os campos obrigatórios para continuar
+                {t('missingConfigs.fillRequired')}
               </p>
             </div>
           </div>
@@ -101,7 +104,7 @@ export function WizardFooter({
           {hasMissingEssential && missingConfigs.length > 0 && (
             <TooltipContent side="top" className="max-w-sm">
               <div className="space-y-2">
-                <p className="font-semibold text-sm">Configurações faltando:</p>
+                <p className="font-semibold text-sm">{t('missingConfigs.title')}</p>
                 <ul className="text-xs space-y-1 list-disc list-inside">
                   {missingConfigs.slice(0, 5).map((missing, idx) => (
                     <li key={idx}>
@@ -109,7 +112,7 @@ export function WizardFooter({
                     </li>
                   ))}
                   {missingConfigs.length > 5 && (
-                    <li className="text-muted-foreground">+ {missingConfigs.length - 5} mais...</li>
+                    <li className="text-muted-foreground">+ {missingConfigs.length - 5} {t('missingConfigs.more')}</li>
                   )}
                 </ul>
               </div>

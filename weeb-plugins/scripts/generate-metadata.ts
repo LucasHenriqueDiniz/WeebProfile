@@ -19,6 +19,9 @@ const __dirname = dirname(__filename)
 
 const PLUGINS_DIR = path.join(__dirname, '../src/plugins')
 const OUTPUT_FILE = path.join(PLUGINS_DIR, 'metadata.ts')
+const DASHBOARD_MESSAGES_DIR = path.join(__dirname, '../../weeb-dashboard/messages')
+const PLUGINS_I18N_DIR = path.join(DASHBOARD_MESSAGES_DIR, 'plugins')
+const I18N_REQUEST_FILE = path.join(__dirname, '../../weeb-dashboard/i18n/request.ts')
 
 /**
  * Descobre automaticamente os plugins disponíveis
@@ -278,7 +281,419 @@ function stringifyValue(value: any, indent = 2): string {
   return JSON.stringify(value)
 }
 
-function generateMetadataFile(pluginsMetadata: Map<string, PluginMetadataPartial>): string {
+/**
+ * Generate deterministic i18n key based on plugin ID and path
+ */
+function generateI18nKey(pluginId: string, path: string[]): string {
+  return `plugins.${pluginId}.${path.join('.')}`
+}
+
+/**
+ * Extract all string fields from metadata for i18n
+ */
+interface ExtractedString {
+  value: string
+  key: string
+  path: string[]
+}
+
+interface ExtractedStrings {
+  displayName: ExtractedString
+  description: ExtractedString
+  essentialConfig: Record<string, Record<string, ExtractedString>>
+  sections: Record<string, {
+    name: ExtractedString
+    description?: ExtractedString
+    config: Record<string, Record<string, ExtractedString>>
+  }>
+}
+
+function extractStringFields(metadata: PluginMetadataPartial, pluginId: string): ExtractedStrings {
+  const extracted: ExtractedStrings = {
+    displayName: {
+      value: metadata.displayName,
+      key: generateI18nKey(pluginId, ['displayName']),
+      path: ['displayName']
+    },
+    description: {
+      value: metadata.description,
+      key: generateI18nKey(pluginId, ['description']),
+      path: ['description']
+    },
+    essentialConfig: {},
+    sections: {}
+  }
+
+  // Extract essential config keys metadata
+  metadata.essentialConfigKeysMetadata.forEach((meta) => {
+    extracted.essentialConfig[meta.key] = {}
+    if (meta.label) {
+      extracted.essentialConfig[meta.key].label = {
+        value: meta.label,
+        key: generateI18nKey(pluginId, ['essentialConfig', meta.key, 'label']),
+        path: ['essentialConfig', meta.key, 'label']
+      }
+    }
+    if (meta.placeholder) {
+      extracted.essentialConfig[meta.key].placeholder = {
+        value: meta.placeholder,
+        key: generateI18nKey(pluginId, ['essentialConfig', meta.key, 'placeholder']),
+        path: ['essentialConfig', meta.key, 'placeholder']
+      }
+    }
+    if (meta.description) {
+      extracted.essentialConfig[meta.key].description = {
+        value: meta.description,
+        key: generateI18nKey(pluginId, ['essentialConfig', meta.key, 'description']),
+        path: ['essentialConfig', meta.key, 'description']
+      }
+    }
+  })
+
+  // Extract sections
+  metadata.sections.forEach((section) => {
+    extracted.sections[section.id] = {
+      name: {
+        value: section.name,
+        key: generateI18nKey(pluginId, ['sections', section.id, 'name']),
+        path: ['sections', section.id, 'name']
+      },
+      config: {}
+    }
+
+    if (section.description) {
+      extracted.sections[section.id].description = {
+        value: section.description,
+        key: generateI18nKey(pluginId, ['sections', section.id, 'description']),
+        path: ['sections', section.id, 'description']
+      }
+    }
+
+    // Extract config options
+    section.configOptions?.forEach((option) => {
+      extracted.sections[section.id].config[option.key] = {}
+      
+      if (option.label) {
+        extracted.sections[section.id].config[option.key].label = {
+          value: option.label,
+          key: generateI18nKey(pluginId, ['sections', section.id, 'config', option.key, 'label']),
+          path: ['sections', section.id, 'config', option.key, 'label']
+        }
+      }
+      if (option.description) {
+        extracted.sections[section.id].config[option.key].description = {
+          value: option.description,
+          key: generateI18nKey(pluginId, ['sections', section.id, 'config', option.key, 'description']),
+          path: ['sections', section.id, 'config', option.key, 'description']
+        }
+      }
+      if (option.tooltip) {
+        extracted.sections[section.id].config[option.key].tooltip = {
+          value: option.tooltip,
+          key: generateI18nKey(pluginId, ['sections', section.id, 'config', option.key, 'tooltip']),
+          path: ['sections', section.id, 'config', option.key, 'tooltip']
+        }
+      }
+      if (option.placeholder) {
+        extracted.sections[section.id].config[option.key].placeholder = {
+          value: option.placeholder,
+          key: generateI18nKey(pluginId, ['sections', section.id, 'config', option.key, 'placeholder']),
+          path: ['sections', section.id, 'config', option.key, 'placeholder']
+        }
+      }
+      // For string editables, include defaultValue in i18n
+      if (option.type === 'string' && option.defaultValue && typeof option.defaultValue === 'string') {
+        extracted.sections[section.id].config[option.key].defaultValue = {
+          value: option.defaultValue,
+          key: generateI18nKey(pluginId, ['sections', section.id, 'config', option.key, 'defaultValue']),
+          path: ['sections', section.id, 'config', option.key, 'defaultValue']
+        }
+      }
+      // Extract select options
+      if (option.type === 'select' && option.options) {
+        option.options.forEach((opt) => {
+          if (!extracted.sections[section.id].config[option.key].options) {
+            extracted.sections[section.id].config[option.key].options = {} as any
+          }
+          (extracted.sections[section.id].config[option.key].options as any)[opt.value] = {
+            value: opt.label,
+            key: generateI18nKey(pluginId, ['sections', section.id, 'config', option.key, 'options', opt.value]),
+            path: ['sections', section.id, 'config', option.key, 'options', opt.value]
+          }
+        })
+      }
+    })
+  })
+
+  return extracted
+}
+
+/**
+ * Generate i18n JSON structure from extracted strings
+ */
+function generateI18nJson(extracted: ExtractedStrings, pluginId: string): any {
+  const json: any = {
+    displayName: extracted.displayName.value,
+    description: extracted.description.value
+  }
+
+  // Essential config
+  if (Object.keys(extracted.essentialConfig).length > 0) {
+    json.essentialConfig = {}
+    Object.entries(extracted.essentialConfig).forEach(([key, fields]) => {
+      json.essentialConfig[key] = {}
+      Object.entries(fields).forEach(([field, extracted]) => {
+        json.essentialConfig[key][field] = extracted.value
+      })
+    })
+  }
+
+  // Sections
+  if (Object.keys(extracted.sections).length > 0) {
+    json.sections = {}
+    Object.entries(extracted.sections).forEach(([sectionId, section]) => {
+      json.sections[sectionId] = {
+        name: section.name.value
+      }
+      if (section.description) {
+        json.sections[sectionId].description = section.description.value
+      }
+      if (Object.keys(section.config).length > 0) {
+        json.sections[sectionId].config = {}
+        Object.entries(section.config).forEach(([optionKey, fields]) => {
+          json.sections[sectionId].config[optionKey] = {}
+          Object.entries(fields).forEach(([field, extracted]) => {
+            if (field === 'options') {
+              // Handle options separately
+              json.sections[sectionId].config[optionKey].options = {}
+              Object.entries(extracted as any).forEach(([value, opt]) => {
+                json.sections[sectionId].config[optionKey].options[value] = (opt as ExtractedString).value
+              })
+            } else {
+              json.sections[sectionId].config[optionKey][field] = (extracted as ExtractedString).value
+            }
+          })
+        })
+      }
+    })
+  }
+
+  return json
+}
+
+/**
+ * Deep merge two objects, preserving existing values in target for PT/ES
+ */
+function deepMerge(target: any, source: any, preserveExisting: boolean): any {
+  const result = { ...target }
+
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      if (!result[key] || typeof result[key] !== 'object') {
+        result[key] = {}
+      }
+      result[key] = deepMerge(result[key], source[key], preserveExisting)
+    } else {
+      // Only overwrite if preserveExisting is false OR key doesn't exist in target
+      if (!preserveExisting || !(key in result)) {
+        result[key] = source[key]
+      }
+    }
+  }
+
+  return result
+}
+
+/**
+ * Sort object keys recursively for stable diffs
+ */
+function sortKeys(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(sortKeys)
+  }
+  if (obj && typeof obj === 'object') {
+    const sorted: any = {}
+    Object.keys(obj).sort().forEach(key => {
+      sorted[key] = sortKeys(obj[key])
+    })
+    return sorted
+  }
+  return obj
+}
+
+/**
+ * Write plugin i18n JSON to separate file: messages/plugins/{pluginId}/{locale}.json
+ */
+function writePluginI18nFile(locale: string, pluginId: string, pluginJson: any, prune: boolean = false): void {
+  // Create plugins directory structure if it doesn't exist
+  const pluginDir = path.join(PLUGINS_I18N_DIR, pluginId)
+  if (!fs.existsSync(pluginDir)) {
+    fs.mkdirSync(pluginDir, { recursive: true })
+  }
+  
+  const pluginFilePath = path.join(pluginDir, `${locale}.json`)
+  
+  // For EN: always update values (read existing to merge new keys)
+  // For PT/ES: preserve existing translations (merge intelligently)
+  const preserveExisting = locale !== 'en'
+  
+  let existingPlugin: any = {}
+  if (fs.existsSync(pluginFilePath)) {
+    try {
+      const content = fs.readFileSync(pluginFilePath, 'utf-8')
+      existingPlugin = JSON.parse(content)
+    } catch (error) {
+      console.warn(`⚠️  Error reading ${pluginFilePath}:`, error)
+    }
+  }
+  
+  let finalPluginJson: any
+  if (prune && locale === 'en') {
+    // For EN with prune, replace completely
+    finalPluginJson = sortKeys(pluginJson)
+  } else {
+    // Merge preserving existing translations for PT/ES, updating EN values
+    finalPluginJson = sortKeys(deepMerge(existingPlugin, pluginJson, preserveExisting))
+  }
+  
+  // Write the plugin-specific file
+  fs.writeFileSync(pluginFilePath, JSON.stringify(finalPluginJson, null, 2) + '\n', 'utf-8')
+  console.log(`✅ Generated messages/plugins/${pluginId}/${locale}.json`)
+}
+
+/**
+ * Enrich metadata with i18nKey objects
+ */
+interface EnrichedMetadata extends PluginMetadataPartial {
+  i18nKey?: {
+    displayName: string
+    description: string
+  }
+  essentialConfigKeysMetadata: Array<{
+    key: string
+    label: string
+    type: 'text' | 'password' | 'oauth'
+    placeholder?: string
+    description?: string
+    helpUrl?: string
+    docKey?: string
+    oauthProvider?: string
+    i18nKey?: {
+      label?: string
+      placeholder?: string
+      description?: string
+    }
+  }>
+  sections: Array<{
+    id: string
+    name: string
+    description?: string
+    i18nKey?: {
+      name: string
+      description?: string
+    }
+    configOptions?: Array<{
+      key: string
+      label: string
+      type: 'number' | 'boolean' | 'string' | 'select' | 'array'
+      defaultValue?: any
+      min?: number
+      max?: number
+      step?: number
+      description?: string
+      placeholder?: string
+      required?: boolean
+      tooltip?: string
+      options?: Array<{ value: string; label: string }>
+      i18nKey?: {
+        label?: string
+        description?: string
+        tooltip?: string
+        placeholder?: string
+        defaultValue?: string
+        options?: Record<string, string>
+      }
+    }>
+  }>
+}
+
+function enrichMetadataWithI18n(metadata: PluginMetadataPartial, pluginId: string, extracted: ExtractedStrings): EnrichedMetadata {
+  const enriched: EnrichedMetadata = {
+    ...metadata,
+    i18nKey: {
+      displayName: extracted.displayName.key,
+      description: extracted.description.key
+    },
+    essentialConfigKeysMetadata: metadata.essentialConfigKeysMetadata.map(meta => {
+      const i18nKey: any = {}
+      if (extracted.essentialConfig[meta.key]?.label) {
+        i18nKey.label = extracted.essentialConfig[meta.key].label.key
+      }
+      if (extracted.essentialConfig[meta.key]?.placeholder) {
+        i18nKey.placeholder = extracted.essentialConfig[meta.key].placeholder.key
+      }
+      if (extracted.essentialConfig[meta.key]?.description) {
+        i18nKey.description = extracted.essentialConfig[meta.key].description.key
+      }
+      return {
+        ...meta,
+        ...(Object.keys(i18nKey).length > 0 && { i18nKey })
+      }
+    }),
+    sections: metadata.sections.map(section => {
+      const sectionExtracted = extracted.sections[section.id]
+      if (!sectionExtracted) return section
+      
+      const sectionI18nKey: any = {
+        name: sectionExtracted.name.key
+      }
+      if (sectionExtracted.description) {
+        sectionI18nKey.description = sectionExtracted.description.key
+      }
+      
+      return {
+        ...section,
+        i18nKey: sectionI18nKey,
+        configOptions: section.configOptions?.map(option => {
+          const optionExtracted = sectionExtracted.config[option.key]
+          if (!optionExtracted) return option
+          
+          const optionI18nKey: any = {}
+          if (optionExtracted.label) {
+            optionI18nKey.label = optionExtracted.label.key
+          }
+          if (optionExtracted.description) {
+            optionI18nKey.description = optionExtracted.description.key
+          }
+          if (optionExtracted.tooltip) {
+            optionI18nKey.tooltip = optionExtracted.tooltip.key
+          }
+          if (optionExtracted.placeholder) {
+            optionI18nKey.placeholder = optionExtracted.placeholder.key
+          }
+          if (optionExtracted.defaultValue && option.type === 'string') {
+            optionI18nKey.defaultValue = optionExtracted.defaultValue.key
+          }
+          if (optionExtracted.options && option.type === 'select') {
+            optionI18nKey.options = {}
+            Object.entries(optionExtracted.options as any).forEach(([value, opt]: [string, any]) => {
+              optionI18nKey.options[value] = opt.key
+            })
+          }
+          
+          return {
+            ...option,
+            ...(Object.keys(optionI18nKey).length > 0 && { i18nKey: optionI18nKey })
+          }
+        })
+      }
+    })
+  }
+  
+  return enriched
+}
+
+function generateMetadataFile(pluginsMetadata: Map<string, PluginMetadataPartial>, enrichedMap: Map<string, EnrichedMetadata>): string {
   const header = `/**
  * Centralized metadata for all plugins
  * 
@@ -299,6 +714,18 @@ function generateMetadataFile(pluginsMetadata: Map<string, PluginMetadataPartial
 export type PluginCategory = "coding" | "music" | "anime" | "gaming"
 
 /**
+ * I18n key map for translatable fields
+ */
+export interface I18nKeyMap {
+  label?: string
+  description?: string
+  tooltip?: string
+  placeholder?: string
+  defaultValue?: string // For string editables only
+  options?: Record<string, string> // For select options
+}
+
+/**
  * Metadata for an essential configuration key (API key, token, etc)
  */
 export interface EssentialConfigKeyMetadata {
@@ -310,6 +737,11 @@ export interface EssentialConfigKeyMetadata {
   helpUrl?: string // Direct link to create/get token (e.g., https://github.com/settings/personal-access-tokens/new)
   docKey?: string // Key for future documentation (e.g., "github.pat")
   oauthProvider?: "spotify" // OAuth provider when type === "oauth"
+  i18nKey?: {
+    label?: string
+    placeholder?: string
+    description?: string
+  }
 }
 
 /**
@@ -328,6 +760,7 @@ export interface SectionConfigOption {
   required?: boolean
   tooltip?: string
   options?: { value: string; label: string }[]
+  i18nKey?: I18nKeyMap
 }
 
 /**
@@ -337,6 +770,10 @@ export interface PluginSection {
   id: string
   name: string
   description?: string
+  i18nKey?: {
+    name: string
+    description?: string
+  }
   configOptions?: SectionConfigOption[]
 }
 
@@ -355,6 +792,10 @@ export interface PluginMetadata {
   sections: PluginSection[]
   globalConfigOptions?: SectionConfigOption[] // Global configuration options (apply to all sections)
   exampleConfig?: Record<string, any>
+  i18nKey?: {
+    displayName: string
+    description: string
+  }
 }
 
 /**
@@ -377,16 +818,34 @@ export const PLUGINS_METADATA = {
 
   const plugins = Array.from(pluginsMetadata.entries())
     .map(([name, metadata]) => {
+      const enriched = enrichedMap.get(name)
+      if (!enriched) {
+        // Fallback to original metadata if enrichment failed
+        console.warn(`⚠️  No enriched metadata for ${name}, using original`)
+      }
+      const meta = enriched || metadata
+      
       // Gerar sections
-      const sectionsStr = metadata.sections.map(section => {
+      const sectionsStr = meta.sections.map((section, idx) => {
+        const originalSection = metadata.sections[idx]
         let sectionStr = `      {\n        id: ${JSON.stringify(section.id)},\n        name: ${JSON.stringify(section.name)}`
         
         if (section.description) {
           sectionStr += `,\n        description: ${JSON.stringify(section.description)}`
         }
         
+        // Add section i18nKey if available
+        if (section.i18nKey) {
+          sectionStr += `,\n        i18nKey: {\n          name: ${JSON.stringify(section.i18nKey.name)}`
+          if (section.i18nKey.description) {
+            sectionStr += `,\n          description: ${JSON.stringify(section.i18nKey.description)}`
+          }
+          sectionStr += '\n        }'
+        }
+        
         if (section.configOptions && section.configOptions.length > 0) {
-          const configOptionsStr = section.configOptions.map(opt => {
+          const configOptionsStr = section.configOptions.map((opt, optIdx) => {
+            const originalOpt = originalSection?.configOptions?.[optIdx]
             let optStr = `        {\n          key: ${JSON.stringify(opt.key)},\n          label: ${JSON.stringify(opt.label)},\n          type: ${JSON.stringify(opt.type)}`
             
             if (opt.defaultValue !== undefined) {
@@ -420,6 +879,35 @@ export const PLUGINS_METADATA = {
               optStr += `,\n          options: [\n${optionsStr}\n          ]`
             }
             
+            // Add i18nKey if available
+            if (opt.i18nKey) {
+              optStr += ',\n          i18nKey: {'
+              const i18nParts: string[] = []
+              if (opt.i18nKey.label) {
+                i18nParts.push(`\n            label: ${JSON.stringify(opt.i18nKey.label)}`)
+              }
+              if (opt.i18nKey.description) {
+                i18nParts.push(`\n            description: ${JSON.stringify(opt.i18nKey.description)}`)
+              }
+              if (opt.i18nKey.tooltip) {
+                i18nParts.push(`\n            tooltip: ${JSON.stringify(opt.i18nKey.tooltip)}`)
+              }
+              if (opt.i18nKey.placeholder) {
+                i18nParts.push(`\n            placeholder: ${JSON.stringify(opt.i18nKey.placeholder)}`)
+              }
+              if (opt.i18nKey.defaultValue) {
+                i18nParts.push(`\n            defaultValue: ${JSON.stringify(opt.i18nKey.defaultValue)}`)
+              }
+              if (opt.i18nKey.options && Object.keys(opt.i18nKey.options).length > 0) {
+                const optionsI18nStr = Object.entries(opt.i18nKey.options).map(([value, key]) =>
+                  `              ${JSON.stringify(value)}: ${JSON.stringify(key)}`
+                ).join(',\n')
+                i18nParts.push(`\n            options: {\n${optionsI18nStr}\n            }`)
+              }
+              optStr += i18nParts.join(',')
+              optStr += '\n          }'
+            }
+            
             optStr += '\n        }'
             return optStr
           }).join(',\n')
@@ -432,23 +920,40 @@ export const PLUGINS_METADATA = {
       }).join(',\n')
       
       // Gerar essentialConfigKeysMetadata
-      const essentialMetadataStr = metadata.essentialConfigKeysMetadata.map(meta => {
-        let metaStr = `        {\n          key: ${JSON.stringify(meta.key)},\n          label: ${JSON.stringify(meta.label)},\n          type: ${JSON.stringify(meta.type)}`
+      const essentialMetadataStr = meta.essentialConfigKeysMetadata.map((metaItem) => {
+        let metaStr = `        {\n          key: ${JSON.stringify(metaItem.key)},\n          label: ${JSON.stringify(metaItem.label)},\n          type: ${JSON.stringify(metaItem.type)}`
         
-        if (meta.placeholder) {
-          metaStr += `,\n          placeholder: ${JSON.stringify(meta.placeholder)}`
+        if (metaItem.placeholder) {
+          metaStr += `,\n          placeholder: ${JSON.stringify(metaItem.placeholder)}`
         }
-        if (meta.description) {
-          metaStr += `,\n          description: ${JSON.stringify(meta.description)}`
+        if (metaItem.description) {
+          metaStr += `,\n          description: ${JSON.stringify(metaItem.description)}`
         }
-        if (meta.helpUrl) {
-          metaStr += `,\n          helpUrl: ${JSON.stringify(meta.helpUrl)}`
+        if (metaItem.helpUrl) {
+          metaStr += `,\n          helpUrl: ${JSON.stringify(metaItem.helpUrl)}`
         }
-        if (meta.docKey) {
-          metaStr += `,\n          docKey: ${JSON.stringify(meta.docKey)}`
+        if (metaItem.docKey) {
+          metaStr += `,\n          docKey: ${JSON.stringify(metaItem.docKey)}`
         }
-        if (meta.oauthProvider) {
-          metaStr += `,\n          oauthProvider: ${JSON.stringify(meta.oauthProvider)}`
+        if (metaItem.oauthProvider) {
+          metaStr += `,\n          oauthProvider: ${JSON.stringify(metaItem.oauthProvider)}`
+        }
+        
+        // Add i18nKey if available
+        if (metaItem.i18nKey) {
+          metaStr += ',\n          i18nKey: {'
+          const i18nParts: string[] = []
+          if (metaItem.i18nKey.label) {
+            i18nParts.push(`\n            label: ${JSON.stringify(metaItem.i18nKey.label)}`)
+          }
+          if (metaItem.i18nKey.placeholder) {
+            i18nParts.push(`\n            placeholder: ${JSON.stringify(metaItem.i18nKey.placeholder)}`)
+          }
+          if (metaItem.i18nKey.description) {
+            i18nParts.push(`\n            description: ${JSON.stringify(metaItem.i18nKey.description)}`)
+          }
+          metaStr += i18nParts.join(',')
+          metaStr += '\n          }'
         }
         
         metaStr += '\n        }'
@@ -509,21 +1014,27 @@ export const PLUGINS_METADATA = {
       // Usar notação de colchetes se o nome começar com número ou tiver caracteres inválidos
       const keyNotation = needsBracketNotation(name) ? `[${JSON.stringify(name)}]` : name
       
+      // Add plugin-level i18nKey if available
+      let i18nKeyStr = ''
+      if (meta.i18nKey) {
+        i18nKeyStr = `,\n    i18nKey: {\n      displayName: ${JSON.stringify(meta.i18nKey.displayName)},\n      description: ${JSON.stringify(meta.i18nKey.description)}\n    }`
+      }
+      
       return `  ${keyNotation}: {
     name: ${JSON.stringify(name)},
-    displayName: ${JSON.stringify(metadata.displayName)},
-    description: ${JSON.stringify(metadata.description)},
-    category: ${JSON.stringify(metadata.category)},
-    icon: ${JSON.stringify(metadata.icon)},
-    requiredFields: ${JSON.stringify(metadata.requiredFields)},
-    essentialConfigKeys: ${JSON.stringify(metadata.essentialConfigKeys)},
+    displayName: ${JSON.stringify(meta.displayName)},
+    description: ${JSON.stringify(meta.description)},
+    category: ${JSON.stringify(meta.category)},
+    icon: ${JSON.stringify(meta.icon)},
+    requiredFields: ${JSON.stringify(meta.requiredFields)},
+    essentialConfigKeys: ${JSON.stringify(meta.essentialConfigKeys)},
     essentialConfigKeysMetadata: [
 ${essentialMetadataStr}
     ],
     sections: [
 ${sectionsStr}
-    ]${globalConfigOptionsStr},
-    exampleConfig: ${formatObject(metadata.exampleConfig, 4)},
+    ]${globalConfigOptionsStr}${i18nKeyStr},
+    exampleConfig: ${formatObject(meta.exampleConfig, 4)},
   },`
     })
     .join('\n\n')
@@ -631,6 +1142,9 @@ export function isValidPluginMetadata(obj: any): obj is PluginMetadata {
 async function main() {
   console.log('🔍 Generating metadata.ts from plugin.metadata.ts files...\n')
 
+  // Check for --prune flag
+  const prune = process.argv.includes('--prune')
+
   // Descobrir plugins automaticamente
   const PLUGINS = discoverPlugins()
   
@@ -642,12 +1156,29 @@ async function main() {
   console.log(`📦 Discovered ${PLUGINS.length} plugin(s): ${PLUGINS.join(', ')}\n`)
 
   const pluginsMetadata = new Map<string, PluginMetadataPartial>()
+  const enrichedMap = new Map<string, EnrichedMetadata>()
 
   for (const pluginName of PLUGINS) {
     console.log(`📦 Loading metadata for ${pluginName}...`)
     const metadata = await loadPluginMetadata(pluginName)
     if (metadata) {
       pluginsMetadata.set(pluginName, metadata)
+      
+      // Extract strings and enrich metadata with i18nKey
+      console.log(`  📝 Extracting i18n strings for ${pluginName}...`)
+      const extracted = extractStringFields(metadata, pluginName)
+      const enriched = enrichMetadataWithI18n(metadata, pluginName, extracted)
+      enrichedMap.set(pluginName, enriched)
+      
+      // Generate i18n JSON and write to separate plugin files
+      console.log(`  🌐 Generating i18n JSON for ${pluginName}...`)
+      const pluginJson = generateI18nJson(extracted, pluginName)
+      
+      // Write separate files for each locale
+      for (const locale of ['en', 'pt', 'es']) {
+        writePluginI18nFile(locale, pluginName, pluginJson, prune && locale === 'en')
+      }
+      
       console.log(`✅ Loaded ${pluginName} (${metadata.sections.length} sections)`)
     }
   }
@@ -658,11 +1189,50 @@ async function main() {
   }
 
   console.log(`\n📝 Generating metadata.ts with ${pluginsMetadata.size} plugins...`)
-  const content = generateMetadataFile(pluginsMetadata)
+  const content = generateMetadataFile(pluginsMetadata, enrichedMap)
   
   fs.writeFileSync(OUTPUT_FILE, content, 'utf-8')
   console.log(`✅ Generated ${OUTPUT_FILE}`)
+  
+  // Update i18n/request.ts with discovered plugin list
+  console.log(`\n📝 Updating i18n/request.ts with plugin list...`)
+  updateI18nRequestFile(Array.from(PLUGINS))
+  console.log(`✅ Updated i18n/request.ts`)
+  
   console.log(`\n✨ Done! Metadata generated for ${pluginsMetadata.size} plugins.`)
+}
+
+/**
+ * Update i18n/request.ts to include discovered plugin list
+ */
+function updateI18nRequestFile(pluginList: string[]): void {
+  if (!fs.existsSync(I18N_REQUEST_FILE)) {
+    console.warn(`⚠️  i18n/request.ts not found at ${I18N_REQUEST_FILE}`)
+    return
+  }
+  
+  try {
+    let content = fs.readFileSync(I18N_REQUEST_FILE, 'utf-8')
+    
+    // Sort plugin list for consistency
+    const sortedPlugins = [...pluginList].sort()
+    
+    // Find and replace the knownPlugins array
+    const pluginsArrayStr = sortedPlugins.map(p => `    '${p}'`).join(',\n')
+    const newPluginsArray = `[\n${pluginsArrayStr},\n  ]`
+    
+    // Use regex to find and replace the knownPlugins array
+    // Matches: const knownPlugins = [ ... (with newlines and spaces) ... ]
+    const pluginsArrayRegex = /const knownPlugins\s*=\s*\[[\s\S]*?\]/
+    if (pluginsArrayRegex.test(content)) {
+      content = content.replace(pluginsArrayRegex, `const knownPlugins = ${newPluginsArray}`)
+      fs.writeFileSync(I18N_REQUEST_FILE, content, 'utf-8')
+    } else {
+      console.warn(`⚠️  Could not find knownPlugins array in i18n/request.ts`)
+    }
+  } catch (error) {
+    console.warn(`⚠️  Error updating i18n/request.ts:`, error)
+  }
 }
 
 main().catch((error) => {

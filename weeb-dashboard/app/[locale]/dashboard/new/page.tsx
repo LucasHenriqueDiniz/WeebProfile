@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useMemo } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/routing"
 import { useAuth } from "@/hooks/useAuth"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { Wizard } from "@/components/wizard/Wizard"
@@ -9,8 +9,10 @@ import { useWizardStore } from "@/stores/wizard-store"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useTranslations } from "next-intl"
 
 export default function NewSvgPage() { // Updated
+  const t = useTranslations('wizard')
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { reset, plugins, pluginsOrder } = useWizardStore()
@@ -73,17 +75,17 @@ export default function NewSvgPage() { // Updated
       <Dialog open={showResumeDialog} onOpenChange={() => {}}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Continuar configuração anterior?</DialogTitle>
+            <DialogTitle>{t('resumeDialog.title')}</DialogTitle>
             <DialogDescription>
-              Detectamos que você tem uma configuração em andamento salva. Deseja continuar de onde parou ou começar do zero?
+              {t('resumeDialog.description')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={handleStartFresh}>
-              Começar do zero
+              {t('resumeDialog.startFresh')}
             </Button>
             <Button onClick={handleContinue}>
-              Continuar
+              {t('resumeDialog.continue')}
             </Button>
           </DialogFooter>
         </DialogContent>

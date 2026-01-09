@@ -10,6 +10,12 @@ export interface ImageOptimizationOptions {
   quality?: number
 }
 
+export interface ImageFallbackOptions {
+  artistName?: string
+  albumName?: string
+  trackName?: string
+}
+
 /**
  * Tamanhos pré-definidos para otimização de imagens
  */
@@ -44,11 +50,20 @@ async function loadSharp(): Promise<any | null> {
  * Converte uma URL de imagem para base64 usando fetch
  * Funciona tanto em Node.js quanto no browser
  * Suporte opcional a otimização de imagem
+ * @param imageUrl - URL da imagem
+ * @param timeout - Timeout em ms
+ * @param options - Opções de otimização
+ * @param fallbackOptions - Opções para fallback (artista/álbum para buscar no Spotify)
  */
 export async function urlToBase64(
   imageUrl: string,
   timeout = 15000,
-  options?: ImageOptimizationOptions
+  options?: ImageOptimizationOptions,
+  fallbackOptions?: {
+    artistName?: string
+    albumName?: string
+    trackName?: string
+  }
 ): Promise<string> {
   try {
     // Criar AbortController para timeout
@@ -64,6 +79,64 @@ export async function urlToBase64(
     })
 
     clearTimeout(timeoutId)
+
+    // Se a imagem falhou com 404 e temos opções de fallback, tentar Spotify
+    if (!response.ok && response.status === 404 && fallbackOptions?.artistName) {
+      try {
+        // Tentar buscar no Spotify usando fallback
+        const { getArtistImageFromSpotify } = await import('../plugins/lastfm/services/artistImageFallback')
+        const spotifyImageUrl = await getArtistImageFromSpotify(fallbackOptions.artistName)
+        if (spotifyImageUrl) {
+          // Tentar novamente com a URL do Spotify
+          const spotifyController = new AbortController()
+          const spotifyTimeoutId = setTimeout(() => spotifyController.abort(), timeout)
+          
+          const spotifyResponse = await fetch(spotifyImageUrl, {
+            signal: spotifyController.signal,
+            headers: {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            },
+          })
+          
+          clearTimeout(spotifyTimeoutId)
+          
+          if (spotifyResponse.ok) {
+            // Usar imagem do Spotify em vez da original
+            const arrayBuffer = await spotifyResponse.arrayBuffer()
+            const buffer = Buffer.from(arrayBuffer)
+            
+            // Aplicar otimização se necessário
+            if (options) {
+              try {
+                const sharp = await loadSharp()
+                if (sharp && typeof sharp === "function") {
+                  const optimizedBuffer = await sharp(buffer)
+                    .resize(options.maxWidth || 200, options.maxHeight || 200, {
+                      fit: "inside",
+                      withoutEnlargement: true,
+                    })
+                    .jpeg({ quality: options.quality || 70, mozjpeg: true })
+                    .toBuffer()
+
+                  const base64 = optimizedBuffer.toString("base64")
+                  const contentType = spotifyResponse.headers.get("content-type") || "image/jpeg"
+                  return `data:${contentType};base64,${base64}`
+                }
+              } catch (error) {
+                // Usar versão original se Sharp falhar
+              }
+            }
+            
+            const base64 = buffer.toString("base64")
+            const contentType = spotifyResponse.headers.get("content-type") || "image/jpeg"
+            return `data:${contentType};base64,${base64}`
+          }
+        }
+      } catch (fallbackError) {
+        // Se fallback falhar, continuar com erro original
+        console.warn(`    ⚠️  Fallback para Spotify falhou:`, fallbackError)
+      }
+    }
 
     if (!response.ok) {
       throw new Error(`Failed to fetch image: ${response.statusText} (${response.status})`)

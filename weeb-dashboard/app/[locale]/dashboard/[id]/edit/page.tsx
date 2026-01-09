@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useRouter } from "@/i18n/routing"
+import { useParams } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { Loader2 } from "lucide-react"
 import { Wizard } from "@/components/wizard/Wizard"
@@ -12,8 +13,10 @@ import type { Svg } from "@/lib/db/schema"
 import { ApiException } from "@/lib/api"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { getTerminalConfigs } from "@/lib/config/svg-config-helpers"
+import { useTranslations } from "next-intl"
 
 export default function EditSvgPage() {
+  const t = useTranslations('wizard')
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams()
@@ -88,7 +91,7 @@ export default function EditSvgPage() {
       const errorMessage =
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
-          : "Erro ao carregar imagem"
+          : t('error.loadingImage')
       alert(errorMessage)
       router.push("/dashboard")
     } finally {

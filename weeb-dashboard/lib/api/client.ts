@@ -23,7 +23,7 @@ export class ApiException extends Error {
 /**
  * Faz uma requisição HTTP e retorna os dados parseados
  * 
- * @param url - URL da requisição
+ * @param url - URL da requisição (relativa, será convertida para absoluta)
  * @param options - Opções do fetch
  * @returns Dados da resposta
  * @throws ApiException se a requisição falhar
@@ -32,13 +32,64 @@ export async function apiRequest<T = any>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-  })
+  // Converter URL relativa para absoluta se necessário
+  // Isso evita problemas com locale prefix nas rotas de API
+  // As rotas de API sempre começam com /api e devem usar URLs absolutas
+  let absoluteUrl = url.startsWith('http') 
+    ? url 
+    : url.startsWith('/api')
+    ? (typeof window !== 'undefined' 
+        ? `${window.location.origin}${url}`
+        : url) // No servidor, manter relativa (Next.js resolve corretamente)
+    : url
+
+  // Debug: log da URL que está sendo chamada
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.log('[API] Requesting:', absoluteUrl)
+  }
+
+  let response: Response
+  try {
+    response = await fetch(absoluteUrl, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+    })
+  } catch (error) {
+    // Se o fetch falhou completamente (ECONNREFUSED, network error, etc)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    const errorCode = (error as any)?.code || ""
+    
+    throw new ApiException(
+      0,
+      { 
+        error: "Network error", 
+        message: errorMessage,
+        code: errorCode
+      },
+      `Failed to fetch: ${errorMessage}`
+    )
+  }
+
+  // Verificar se a resposta é JSON antes de tentar parsear
+  const contentType = response.headers.get("content-type")
+  if (!contentType?.includes("application/json")) {
+    // Se não for JSON, pode ser HTML (erro 404, etc)
+    const text = await response.text()
+    console.error('[API] Non-JSON response received:', {
+      url: absoluteUrl,
+      status: response.status,
+      contentType,
+      preview: text.substring(0, 200)
+    })
+    throw new ApiException(
+      response.status,
+      { error: "Invalid response format", message: `Expected JSON but got ${contentType}` },
+      `API returned non-JSON response (status: ${response.status})`
+    )
+  }
 
   const data = await response.json()
 

@@ -209,19 +209,7 @@ export function PreviewRenderer({
     const enabledCount = Object.values(plugins).filter(p => p?.enabled).length
     const withSections = Object.values(plugins).filter(p => p?.enabled && p.sections?.length > 0).length
     
-    return (
-      <div
-        className="flex flex-col items-center justify-center gap-2 p-4"
-        style={{ width: `${width}px`, minHeight: "200px" }}
-      >
-        <div className="text-sm font-medium text-muted-foreground">Nenhum plugin renderizado</div>
-        <div className="text-xs text-muted-foreground/70 text-center">
-          Debug: {enabledCount} plugins habilitados, {withSections} com seções
-          <br />
-          Verifique o console para mais detalhes
-        </div>
-      </div>
-    )
+    return null
   }
 
   // Calcular altura: usar propHeight se fornecido, senão estimar

@@ -1,0 +1,136 @@
+{
+  "description": "Show your workout statistics from Lyfta",
+  "displayName": "Lyfta",
+  "essentialConfig": {
+    "apiKey": {
+      "description": "API Key from Lyfta (generate at https://my.lyfta.app/community/api)",
+      "label": "Lyfta API Key",
+      "placeholder": "your-api-key"
+    }
+  },
+  "sections": {
+    "exercises": {
+      "config": {
+        "exercises_compact": {
+          "description": "Hide avg/1RM, show only sessions count",
+          "label": "Compact mode"
+        },
+        "exercises_hide_images": {
+          "description": "Hide exercise images in the exercises list",
+          "label": "Hide exercise images"
+        },
+        "exercises_hide_title": {
+          "label": "Hide title"
+        },
+        "exercises_max": {
+          "description": "Maximum 20 exercises",
+          "label": "Maximum exercises",
+          "tooltip": "Maximum number of exercises to display. Exercises are ordered by total volume (highest volume first)."
+        },
+        "exercises_show_1rm": {
+          "description": "Display estimated one-rep max for each exercise",
+          "label": "Show estimated 1RM"
+        },
+        "exercises_title": {
+          "defaultValue": "Top Exercises",
+          "label": "Title"
+        }
+      },
+      "description": "Most performed exercises",
+      "name": "Exercises"
+    },
+    "last_workout": {
+      "config": {
+        "last_workout_compact": {
+          "description": "Hide set details, show only volume",
+          "label": "Compact mode"
+        },
+        "last_workout_hide_title": {
+          "label": "Hide title"
+        },
+        "last_workout_max_exercises": {
+          "description": "Maximum exercises to display",
+          "label": "Maximum exercises"
+        },
+        "last_workout_show_body_weight": {
+          "label": "Show body weight"
+        },
+        "last_workout_title": {
+          "defaultValue": "Last Workout",
+          "label": "Title"
+        }
+      },
+      "description": "Detailed view of the most recent workout",
+      "name": "Last Workout"
+    },
+    "overview": {
+      "config": {
+        "overview_hide_title": {
+          "label": "Hide title"
+        },
+        "overview_period_days": {
+          "description": "Number of days to include in overview",
+          "label": "Period (days)"
+        },
+        "overview_show_duration": {
+          "label": "Show total duration"
+        },
+        "overview_show_volume": {
+          "label": "Show total volume"
+        },
+        "overview_show_weekly_avg": {
+          "label": "Show weekly average"
+        },
+        "overview_title": {
+          "defaultValue": "Overview",
+          "label": "Title"
+        }
+      },
+      "description": "General workout summary for a period",
+      "name": "Overview"
+    },
+    "recent_workouts": {
+      "config": {
+        "recent_workouts_hide_title": {
+          "label": "Hide title"
+        },
+        "recent_workouts_title": {
+          "defaultValue": "Recent Workouts",
+          "label": "Title"
+        },
+        "workouts_max": {
+          "description": "Maximum 20 workouts",
+          "label": "Maximum workouts",
+          "tooltip": "Maximum number of recent workouts to display. Workouts are ordered by most recent."
+        }
+      },
+      "description": "Recently performed workouts",
+      "name": "Recent Workouts"
+    },
+    "statistics": {
+      "config": {
+        "statistics_hide_title": {
+          "label": "Hide title"
+        },
+        "statistics_period_days": {
+          "description": "Number of days for period stats",
+          "label": "Period (days)"
+        },
+        "statistics_title": {
+          "defaultValue": "Statistics",
+          "label": "Title"
+        },
+        "weight_unit": {
+          "description": "Unit to display weight values",
+          "label": "Weight unit",
+          "options": {
+            "kg": "Kilograms (kg)",
+            "lbs": "Pounds (lbs)"
+          }
+        }
+      },
+      "description": "General workout statistics",
+      "name": "Statistics"
+    }
+  }
+}

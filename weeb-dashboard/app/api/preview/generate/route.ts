@@ -33,18 +33,28 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error calling SVG generator service:", error)
     
-    // Se o serviço não estiver rodando, dar mensagem clara
-    if (error instanceof Error && (
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    
+    // Check if it's a Vercel timeout error (cold start do Railway)
+    const isVercelTimeout = 
+      errorMessage.includes("Vercel Runtime Timeout") ||
+      errorMessage.includes("Task timed out after") ||
+      errorMessage.includes("Function execution exceeded")
+    
+    // Se o serviço não estiver rodando ou for timeout, dar mensagem clara
+    if (isVercelTimeout || (error instanceof Error && (
       error.message.includes("ECONNREFUSED") ||
       error.message.includes("ECONNRESET") ||
       error.message.includes("timeout")
-    )) {
+    ))) {
       return NextResponse.json(
         {
-          error: "SVG Generator service not available",
+          error: "Service starting up",
+          code: isVercelTimeout ? "VERCEL_TIMEOUT" : "SERVICE_UNAVAILABLE",
           message:
-            "The service may be starting up. Please try again in a few seconds.",
-          details: error.message,
+            "O serviço de geração está acordando. Por favor, aguarde alguns segundos e tente novamente.",
+          details: errorMessage,
+          retryable: true,
         },
         { status: 503 }
       )

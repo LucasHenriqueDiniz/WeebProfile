@@ -1,6 +1,9 @@
-import LoadingScreen from "@/components/loading/LoadingScreen"
+import SimpleLoading from "@/components/loading/SimpleLoading"
 
 export default function Loading() {
-  return <LoadingScreen />
+  // Use SimpleLoading for root-level loading.tsx because NextIntlClientProvider
+  // is not available at this level (it's in [locale]/layout.tsx)
+  // LoadingScreen with translations is used inside [locale] routes
+  return <SimpleLoading />
 }
 

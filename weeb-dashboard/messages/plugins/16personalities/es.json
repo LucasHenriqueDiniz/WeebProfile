@@ -1,0 +1,33 @@
+{
+  "description": "Muestra tu tipo de personalidad de 16Personalities con emoji y enlace",
+  "displayName": "16Personalities",
+  "sections": {
+    "personality": {
+      "config": {
+        "personality_hide_title": {
+          "label": "Ocultar título"
+        },
+        "personality_show_description": {
+          "description": "Mostrar una breve descripción del tipo de personalidad",
+          "label": "Mostrar descripción"
+        },
+        "personality_show_link": {
+          "description": "Mostrar enlace a la página del tipo de personalidad en 16Personalities",
+          "label": "Mostrar enlace"
+        },
+        "personality_title": {
+          "defaultValue": "Personalidad",
+          "label": "Título"
+        },
+        "personality_url": {
+          "description": "Pega la URL del resultado de tu prueba de 16Personalities para detectar automáticamente tu tipo",
+          "label": "URL del Resultado 16Personalities",
+          "placeholder": "https://www.16personalities.com/br/resultados/enfj-t/m/...",
+          "tooltip": "Pega la URL completa de la página de resultados de tu prueba de 16Personalities. El plugin extraerá automáticamente tu tipo de personalidad de la URL."
+        }
+      },
+      "description": "Mostrar tu tipo de personalidad de 16Personalities",
+      "name": "Personalidad"
+    }
+  }
+}

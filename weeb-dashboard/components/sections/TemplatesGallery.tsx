@@ -21,9 +21,12 @@ interface Template {
 
 interface TemplatesGalleryProps {
   templates: Template[]
-  title?: string
-  subtitle?: string
-  totalTemplatesCount?: number
+  title: string
+  subtitle: string
+  viewAll: string
+  useTemplate: string
+  exploreCount: string
+  exploreSubtitle: string
 }
 
 interface TemplateCardProps {
@@ -152,11 +155,15 @@ function TemplateCard({ name, description, preview, platforms, style, theme, ind
   )
 }
 
-export function TemplatesGallery({ templates, title, subtitle, totalTemplatesCount }: TemplatesGalleryProps) {
-  const displayTitle = title || "Feeling lazy?"
-  const displaySubtitle = subtitle || "Pick a template and customize it to match your vibe"
-  const templateCount = totalTemplatesCount || templates.length
-
+export function TemplatesGallery({ 
+  templates, 
+  title, 
+  subtitle, 
+  viewAll, 
+  useTemplate, 
+  exploreCount, 
+  exploreSubtitle 
+}: TemplatesGalleryProps) {
   return (
     <section className="container mx-auto px-4 py-16 md:py-24">
       <motion.div
@@ -166,9 +173,9 @@ export function TemplatesGallery({ templates, title, subtitle, totalTemplatesCou
         className="text-center mb-12"
       >
         <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-          {displayTitle}
+          {title}
         </h2>
-        <p className="text-lg text-muted-foreground">{displaySubtitle}</p>
+        <p className="text-lg text-muted-foreground">{subtitle}</p>
       </motion.div>
 
       <motion.div
@@ -223,13 +230,13 @@ export function TemplatesGallery({ templates, title, subtitle, totalTemplatesCou
                   </motion.div>
                   <div>
                     <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-                      Explore {templateCount}+ Templates
+                      {exploreCount}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Browse our full collection of pre-made templates
+                      {exploreSubtitle}
                     </p>
                     <div className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                      <span>View all</span>
+                      <span>{viewAll}</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>

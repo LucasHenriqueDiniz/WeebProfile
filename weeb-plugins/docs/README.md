@@ -9,6 +9,7 @@ This folder documents how to author **plugins**, **styles**, and related metadat
 - `plugins/creating-plugins.md` — end-to-end guide to create and implement a plugin
 - `plugins/create-plugin-script.md` — how to use the `pnpm create-plugin` scaffolder
 - `plugins/plugin-metadata.md` — how `src/plugins/metadata.ts` works and how to keep it in sync
+- `plugins/internationalization.md` — plugin metadata i18n system: how translations work, file structure, and translation workflow
 
 ### Styles
 

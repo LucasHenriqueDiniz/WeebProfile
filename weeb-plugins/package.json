@@ -78,6 +78,7 @@
     "clean": "tsx scripts/clean-compiled-files.ts",
     "validate": "tsx scripts/validate-plugins.ts",
     "validate-previews": "tsx scripts/validate-previews.ts --warn-only",
+    "check-translations": "tsx scripts/check-translations.ts",
     "generate-metadata": "tsx scripts/generate-metadata.ts",
     "generate-types": "tsx scripts/generate-types.ts",
     "generate-preview-images": "tsx scripts/generate-preview-images.ts",

@@ -1,0 +1,68 @@
+{
+  "description": "Show your Codewars kata solving statistics",
+  "displayName": "Codewars",
+  "sections": {
+    "completed_kata": {
+      "config": {
+        "completed_kata_hide_title": {
+          "label": "Hide title"
+        },
+        "completed_kata_max": {
+          "description": "Maximum 50 kata",
+          "label": "Maximum kata",
+          "tooltip": "Maximum number of completed kata to display. Kata are ordered by most recently completed."
+        },
+        "completed_kata_title": {
+          "defaultValue": "Completed Kata",
+          "label": "Title"
+        }
+      },
+      "description": "Display your recently completed kata",
+      "name": "Completed Kata"
+    },
+    "languages_proficiency": {
+      "config": {
+        "languages_proficiency_hide_title": {
+          "label": "Hide title"
+        },
+        "languages_proficiency_max": {
+          "description": "Maximum 20 languages",
+          "label": "Maximum languages",
+          "tooltip": "Maximum number of languages to display. Languages are ordered by score (highest score first)."
+        },
+        "languages_proficiency_title": {
+          "defaultValue": "Languages Proficiency",
+          "label": "Title"
+        }
+      },
+      "description": "Display your proficiency in different programming languages",
+      "name": "Languages Proficiency"
+    },
+    "leaderboard_position": {
+      "config": {
+        "leaderboard_position_hide_title": {
+          "label": "Hide title"
+        },
+        "leaderboard_position_title": {
+          "defaultValue": "Leaderboard Position",
+          "label": "Title"
+        }
+      },
+      "description": "Display your position on the global leaderboard",
+      "name": "Leaderboard Position"
+    },
+    "rank_honor": {
+      "config": {
+        "rank_honor_hide_title": {
+          "label": "Hide title"
+        },
+        "rank_honor_title": {
+          "defaultValue": "Rank & Honor",
+          "label": "Title"
+        }
+      },
+      "description": "Display your current rank and honor points",
+      "name": "Rank & Honor"
+    }
+  }
+}

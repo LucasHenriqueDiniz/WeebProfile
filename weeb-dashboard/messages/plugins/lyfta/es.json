@@ -1,0 +1,136 @@
+{
+  "description": "Muestra tus estadísticas de entrenamiento de Lyfta",
+  "displayName": "Lyfta",
+  "essentialConfig": {
+    "apiKey": {
+      "description": "Clave de API de Lyfta (genera en https://my.lyfta.app/community/api)",
+      "label": "Clave de API Lyfta",
+      "placeholder": "tu-clave-api"
+    }
+  },
+  "sections": {
+    "exercises": {
+      "config": {
+        "exercises_compact": {
+          "description": "Ocultar promedio/1RM, mostrar solo conteo de sesiones",
+          "label": "Modo compacto"
+        },
+        "exercises_hide_images": {
+          "description": "Ocultar imágenes de ejercicios en la lista de ejercicios",
+          "label": "Ocultar imágenes de ejercicios"
+        },
+        "exercises_hide_title": {
+          "label": "Ocultar título"
+        },
+        "exercises_max": {
+          "description": "Máximo de 20 ejercicios",
+          "label": "Máximo de ejercicios",
+          "tooltip": "Número máximo de ejercicios a mostrar. Los ejercicios se ordenan por volumen total (mayor volumen primero)."
+        },
+        "exercises_show_1rm": {
+          "description": "Mostrar máximo de una repetición estimado para cada ejercicio",
+          "label": "Mostrar 1RM estimado"
+        },
+        "exercises_title": {
+          "defaultValue": "Ejercicios Más Realizados",
+          "label": "Título"
+        }
+      },
+      "description": "Ejercicios más realizados",
+      "name": "Ejercicios"
+    },
+    "last_workout": {
+      "config": {
+        "last_workout_compact": {
+          "description": "Ocultar detalles de series, mostrar solo volumen",
+          "label": "Modo compacto"
+        },
+        "last_workout_hide_title": {
+          "label": "Ocultar título"
+        },
+        "last_workout_max_exercises": {
+          "description": "Número máximo de ejercicios a mostrar",
+          "label": "Máximo de ejercicios"
+        },
+        "last_workout_show_body_weight": {
+          "label": "Mostrar peso corporal"
+        },
+        "last_workout_title": {
+          "defaultValue": "Último Entrenamiento",
+          "label": "Título"
+        }
+      },
+      "description": "Vista detallada del entrenamiento más reciente",
+      "name": "Último Entrenamiento"
+    },
+    "overview": {
+      "config": {
+        "overview_hide_title": {
+          "label": "Ocultar título"
+        },
+        "overview_period_days": {
+          "description": "Número de días a incluir en la visión general",
+          "label": "Período (días)"
+        },
+        "overview_show_duration": {
+          "label": "Mostrar duración total"
+        },
+        "overview_show_volume": {
+          "label": "Mostrar volumen total"
+        },
+        "overview_show_weekly_avg": {
+          "label": "Mostrar promedio semanal"
+        },
+        "overview_title": {
+          "defaultValue": "Visión General",
+          "label": "Título"
+        }
+      },
+      "description": "Resumen general de entrenamientos para un período",
+      "name": "Visión General"
+    },
+    "recent_workouts": {
+      "config": {
+        "recent_workouts_hide_title": {
+          "label": "Ocultar título"
+        },
+        "recent_workouts_title": {
+          "defaultValue": "Entrenamientos Recientes",
+          "label": "Título"
+        },
+        "workouts_max": {
+          "description": "Máximo de 20 entrenamientos",
+          "label": "Máximo de entrenamientos",
+          "tooltip": "Número máximo de entrenamientos recientes a mostrar. Los entrenamientos se ordenan por más reciente."
+        }
+      },
+      "description": "Entrenamientos realizados recientemente",
+      "name": "Entrenamientos Recientes"
+    },
+    "statistics": {
+      "config": {
+        "statistics_hide_title": {
+          "label": "Ocultar título"
+        },
+        "statistics_period_days": {
+          "description": "Número de días para estadísticas del período",
+          "label": "Período (días)"
+        },
+        "statistics_title": {
+          "defaultValue": "Estadísticas",
+          "label": "Título"
+        },
+        "weight_unit": {
+          "description": "Unidad para mostrar valores de peso",
+          "label": "Unidad de peso",
+          "options": {
+            "kg": "Kilogramos (kg)",
+            "lbs": "Libras (lbs)"
+          }
+        }
+      },
+      "description": "Estadísticas generales de entrenamiento",
+      "name": "Estadísticas"
+    }
+  }
+}

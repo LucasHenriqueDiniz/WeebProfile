@@ -1,0 +1,409 @@
+{
+  "description": "Show your GitHub statistics",
+  "displayName": "GitHub",
+  "essentialConfig": {
+    "pat": {
+      "description": "Classic token is used to fetch data from GitHub API",
+      "label": "GitHub Classic Token",
+      "placeholder": "ghp_..."
+    }
+  },
+  "sections": {
+    "activity": {
+      "config": {
+        "activity_hide_title": {
+          "label": "Hide title"
+        },
+        "activity_title": {
+          "defaultValue": "Activity",
+          "label": "Title"
+        }
+      },
+      "description": "Activity statistics (commits, PRs, issues)",
+      "name": "Activity"
+    },
+    "calendar": {
+      "config": {
+        "calendar_full_max_years": {
+          "description": "Maximum number of years to fetch when using 'full' mode",
+          "label": "Max Years (Full Mode)",
+          "tooltip": "When calendar_year_mode is 'full', this sets the maximum number of years to fetch (starting from current year going back)."
+        },
+        "calendar_hide_legends": {
+          "description": "Hide the contribution level legend (Less, No contributions, etc.)",
+          "label": "Hide Contribution Legend"
+        },
+        "calendar_hide_months": {
+          "description": "Hide month labels (Jan, Feb, Mar, etc.) on the top",
+          "label": "Hide Month Labels"
+        },
+        "calendar_hide_title": {
+          "label": "Hide title"
+        },
+        "calendar_hide_weeks": {
+          "description": "Hide weekday labels (Sun, Mon, Tue, etc.) on the left side",
+          "label": "Hide Weekday Labels"
+        },
+        "calendar_title": {
+          "defaultValue": "Calendar",
+          "label": "Title"
+        },
+        "calendar_year_mode": {
+          "description": "Which year(s) to display in the contribution calendar",
+          "label": "Year Mode",
+          "options": {
+            "current_year": "Current Year",
+            "full": "Full (Multiple Years)",
+            "last_6_months": "Last 6 Months",
+            "last_year": "Last Year"
+          },
+          "tooltip": "Select which year(s) to display: Last Year (previous year), Current Year (this year), or Full (multiple years up to max)."
+        }
+      },
+      "description": "Contribution calendar",
+      "name": "Calendar"
+    },
+    "code_habits": {
+      "config": {
+        "code_habits_hide_footer": {
+          "label": "Hide footer"
+        },
+        "code_habits_hide_hours": {
+          "label": "Hide hours"
+        },
+        "code_habits_hide_languages": {
+          "label": "Hide languages"
+        },
+        "code_habits_hide_stats": {
+          "label": "Hide statistics"
+        },
+        "code_habits_hide_title": {
+          "label": "Hide title"
+        },
+        "code_habits_hide_weekdays": {
+          "label": "Hide weekdays"
+        },
+        "code_habits_title": {
+          "defaultValue": "Code Habits",
+          "label": "Title"
+        }
+      },
+      "description": "Code habits (hours, days of the week)",
+      "name": "Code Habits"
+    },
+    "favorite_languages": {
+      "config": {
+        "favorite_languages_hide_title": {
+          "label": "Hide title"
+        },
+        "favorite_languages_ignore_languages": {
+          "description": "Comma-separated list of languages to ignore",
+          "label": "Ignore languages"
+        },
+        "favorite_languages_max_languages": {
+          "description": "Maximum 20 languages",
+          "label": "Maximum languages",
+          "tooltip": "Maximum number of programming languages to display. Languages are ordered by total bytes of code (most used first)."
+        },
+        "favorite_languages_title": {
+          "defaultValue": "Favorite Languages",
+          "label": "Title"
+        }
+      },
+      "description": "Most used programming languages",
+      "name": "Favorite Languages"
+    },
+    "favorite_license": {
+      "config": {
+        "favorite_license_hide_title": {
+          "label": "Hide title"
+        },
+        "favorite_license_title": {
+          "defaultValue": "Favorite License",
+          "label": "Title"
+        }
+      },
+      "description": "Most used license in repositories",
+      "name": "Favorite License"
+    },
+    "featured_repositories": {
+      "config": {
+        "featured_repositories_hide_title": {
+          "label": "Hide title"
+        },
+        "featured_repositories_title": {
+          "defaultValue": "Featured Repositories",
+          "label": "Title"
+        },
+        "featured_repositories_urls": {
+          "description": "Comma-separated repository URLs (e.g., 'owner/repo1,owner/repo2'). Maximum 20 repositories.",
+          "label": "Repository URLs",
+          "tooltip": "Enter repository URLs in the format 'owner/repo'. Separate multiple repositories with commas. Maximum 20 repositories can be featured."
+        }
+      },
+      "description": "Featured repositories (requires repository URL)",
+      "name": "Featured Repositories"
+    },
+    "gists": {
+      "config": {
+        "gists_hide_title": {
+          "label": "Hide title"
+        },
+        "gists_max": {
+          "description": "Maximum 50 gists",
+          "label": "Maximum gists",
+          "tooltip": "Maximum number of gists to display. Gists are ordered by most recently created."
+        },
+        "gists_title": {
+          "defaultValue": "Gists",
+          "label": "Title"
+        }
+      },
+      "description": "User's public gists",
+      "name": "Gists"
+    },
+    "introduction": {
+      "config": {
+        "introduction_custom_text": {
+          "description": "Custom text to display before the bio",
+          "label": "Custom text",
+          "tooltip": "Optional custom text that will be displayed before the user's bio. Leave empty to only show the bio."
+        },
+        "introduction_hide_title": {
+          "label": "Hide title"
+        },
+        "introduction_title": {
+          "defaultValue": "Introduction",
+          "label": "Title"
+        }
+      },
+      "description": "User profile introduction",
+      "name": "Introduction"
+    },
+    "notable_contributions": {
+      "config": {
+        "notable_contributions_hide_title": {
+          "label": "Hide title"
+        },
+        "notable_contributions_max": {
+          "description": "Maximum 50 contributions",
+          "label": "Maximum contributions",
+          "tooltip": "Maximum number of notable contributions to display. Contributions are ordered by most recent."
+        },
+        "notable_contributions_title": {
+          "defaultValue": "Notable Contributions",
+          "label": "Title"
+        }
+      },
+      "description": "Notable contributions to repositories",
+      "name": "Notable Contributions"
+    },
+    "people": {
+      "config": {
+        "people_hide_title": {
+          "label": "Hide title"
+        },
+        "people_max": {
+          "description": "Maximum 50 people",
+          "label": "Maximum people",
+          "tooltip": "Maximum number of people to display. People are ordered by most recent interaction."
+        },
+        "people_repository": {
+          "description": "Format: owner/repo (e.g., 'octocat/Hello-World')",
+          "label": "Repository (only for repository type)",
+          "tooltip": "Required when type is 'repository'. Enter the repository in the format 'owner/repo'."
+        },
+        "people_title": {
+          "defaultValue": "People",
+          "label": "Title"
+        },
+        "people_type": {
+          "label": "Type",
+          "options": {
+            "profile": "Profile (followers)",
+            "repository": "Repository (contributors, stargazers, watchers, sponsors)"
+          },
+          "tooltip": "Select 'Profile' to show user followers, or 'Repository' to show repository-specific people (requires repository field)."
+        }
+      },
+      "description": "Related people (followers, contributors, etc)",
+      "name": "People"
+    },
+    "profile": {
+      "config": {
+        "profile_hide_avatar": {
+          "label": "Hide avatar"
+        },
+        "profile_hide_title": {
+          "label": "Hide title"
+        },
+        "profile_title": {
+          "defaultValue": "Profile",
+          "label": "Title"
+        }
+      },
+      "description": "User profile with avatar and basic statistics",
+      "name": "Profile"
+    },
+    "recent_activity": {
+      "config": {
+        "recent_activity_hide_title": {
+          "label": "Hide title"
+        },
+        "recent_activity_max": {
+          "description": "Maximum 50 activities",
+          "label": "Maximum activities",
+          "tooltip": "Maximum number of recent activities to display. Activities are ordered by most recent."
+        },
+        "recent_activity_title": {
+          "defaultValue": "Recent Activity",
+          "label": "Title"
+        }
+      },
+      "description": "User's recent activity",
+      "name": "Recent Activity"
+    },
+    "repositories": {
+      "config": {
+        "repositories_hide_title": {
+          "label": "Hide title"
+        },
+        "repositories_max": {
+          "description": "Maximum 20 repositories",
+          "label": "Maximum repositories",
+          "tooltip": "Maximum number of repositories to display. Repositories are ordered by stars (most starred first)."
+        },
+        "repositories_title": {
+          "defaultValue": "Repositories",
+          "label": "Title"
+        },
+        "repositories_use_private": {
+          "label": "Include private repositories"
+        }
+      },
+      "description": "List of repositories",
+      "name": "Repositories"
+    },
+    "repository_contributors": {
+      "config": {
+        "repository_contributors_hide_title": {
+          "label": "Hide title"
+        },
+        "repository_contributors_max": {
+          "description": "Maximum 50 contributors",
+          "label": "Maximum contributors",
+          "tooltip": "Maximum number of contributors to display. Contributors are ordered by total contributions (most contributions first)."
+        },
+        "repository_contributors_repository": {
+          "description": "Format: owner/repo (e.g., 'octocat/Hello-World')",
+          "label": "Repository",
+          "tooltip": "Enter the repository in the format 'owner/repo'. This field is required."
+        },
+        "repository_contributors_title": {
+          "defaultValue": "Contributors",
+          "label": "Title"
+        }
+      },
+      "description": "Contributors to a repository",
+      "name": "Repository Contributors"
+    },
+    "sponsors": {
+      "config": {
+        "sponsors_hide_title": {
+          "label": "Hide title"
+        },
+        "sponsors_max": {
+          "description": "Maximum 50 sponsors",
+          "label": "Maximum sponsors",
+          "tooltip": "Maximum number of sponsors to display. Sponsors are ordered by most recent."
+        },
+        "sponsors_title": {
+          "defaultValue": "Sponsors",
+          "label": "Title"
+        }
+      },
+      "description": "Sponsors do GitHub",
+      "name": "GitHub Sponsors"
+    },
+    "sponsorships": {
+      "config": {
+        "sponsorships_hide_title": {
+          "label": "Hide title"
+        },
+        "sponsorships_max": {
+          "description": "Maximum 50 sponsorships",
+          "label": "Maximum sponsorships",
+          "tooltip": "Maximum number of sponsorships to display. Sponsorships are ordered by most recent."
+        },
+        "sponsorships_title": {
+          "defaultValue": "Sponsorships",
+          "label": "Title"
+        }
+      },
+      "description": "Sponsorships do GitHub",
+      "name": "GitHub Sponsorships"
+    },
+    "star_lists": {
+      "config": {
+        "star_lists_hide_title": {
+          "label": "Hide title"
+        },
+        "star_lists_max": {
+          "description": "Maximum 20 lists",
+          "label": "Maximum lists",
+          "tooltip": "Maximum number of star lists to display. Lists are ordered by most recently created."
+        },
+        "star_lists_title": {
+          "defaultValue": "Star Lists",
+          "label": "Title"
+        }
+      },
+      "description": "Organized lists of starred repositories",
+      "name": "Star Lists"
+    },
+    "stargazers": {
+      "config": {
+        "stargazers_hide_title": {
+          "label": "Hide title"
+        },
+        "stargazers_title": {
+          "defaultValue": "Stargazers",
+          "label": "Title"
+        }
+      },
+      "description": "Total stars received on repositories",
+      "name": "Stargazers"
+    },
+    "starred_repositories": {
+      "config": {
+        "starred_repositories_hide_title": {
+          "label": "Hide title"
+        },
+        "starred_repositories_max": {
+          "description": "Maximum 50 repositories",
+          "label": "Maximum repositories",
+          "tooltip": "Maximum number of starred repositories to display. Repositories are ordered by most recently starred."
+        },
+        "starred_repositories_title": {
+          "defaultValue": "Starred Repositories",
+          "label": "Title"
+        }
+      },
+      "description": "Starred repositories",
+      "name": "Starred Repositories"
+    },
+    "top_repositories": {
+      "config": {
+        "stargazers_hide_title": {
+          "label": "Hide title"
+        },
+        "stargazers_title": {
+          "defaultValue": "Top Repositories",
+          "label": "Title"
+        }
+      },
+      "description": "Repositories with most stars (alias for stargazers)",
+      "name": "Top Repositories"
+    }
+  }
+}

@@ -21,6 +21,8 @@ import { PluginStatusBadge } from "./ValidationIndicator"
 import { PluginConfigStatus } from "./PluginConfigStatus"
 import { SecretInput } from "./SecretInput"
 import type { PluginConfig } from "@/stores/wizard-store"
+import { usePluginI18n } from "@/lib/plugins/i18n-helper"
+import { useTranslations } from "next-intl"
 
 interface PluginCardProps {
   plugin: {
@@ -71,6 +73,24 @@ export const PluginCard = React.memo(function PluginCard({
   onSetPluginSections,
 }: PluginCardProps) {
   const metadata = PLUGINS_METADATA[plugin.name as keyof typeof PLUGINS_METADATA]
+  const { tWithFallback } = usePluginI18n()
+  const t = useTranslations('wizard.plugins')
+  
+  // Helper to get translated section name/description
+  const getSectionName = useCallback((section: any) => {
+    if (section.i18nKey?.name) {
+      return tWithFallback(section.i18nKey.name.replace(/^plugins\./, ''), section.name)
+    }
+    return section.name
+  }, [tWithFallback])
+  
+  const getSectionDescription = useCallback((section: any) => {
+    if (!section.description) return undefined
+    if (section.i18nKey?.description) {
+      return tWithFallback(section.i18nKey.description.replace(/^plugins\./, ''), section.description)
+    }
+    return section.description
+  }, [tWithFallback])
   
   // Local state for input values to ensure immediate UI updates
   const [localInputValues, setLocalInputValues] = React.useState<Record<string, string>>({})
@@ -164,18 +184,9 @@ export const PluginCard = React.memo(function PluginCard({
   const handleEssentialSave = useCallback(async (key: string) => {
     const inputKey = `essential.${key}`
     const value = localInputValues[inputKey] ?? ((state as any)[key] || "")
-    console.log(`🔘 [PluginCard] handleEssentialSave para ${plugin.name}.${key}:`, {
-      inputKey,
-      localValue: localInputValues[inputKey],
-      stateValue: (state as any)[key],
-      finalValue: value,
-      valueLength: value.length
-    })
     if (!value.trim()) {
-      console.warn(`⚠️ [PluginCard] Valor vazio para ${plugin.name}.${key}`)
       return
     }
-    console.log(`✅ [PluginCard] Chamando onEssentialConfigSave para ${plugin.name}.${key}`)
     await onEssentialConfigSave(plugin.name, key, value)
   }, [plugin.name, onEssentialConfigSave, localInputValues, state])
 
@@ -289,7 +300,14 @@ export const PluginCard = React.memo(function PluginCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-0.5">
               <span className="text-sm font-semibold text-foreground">
-                {metadata.displayName}
+                {(() => {
+                  const meta = metadata as any
+                  if (meta.i18nKey?.displayName) {
+                    const i18nKey = meta.i18nKey.displayName.replace(/^plugins\./, '')
+                    return tWithFallback(i18nKey, metadata.displayName)
+                  }
+                  return metadata.displayName
+                })()}
               </span>
                 {state.enabled && (
                   <Badge variant="secondary" className="text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400">
@@ -348,7 +366,14 @@ export const PluginCard = React.memo(function PluginCard({
                 )}
               </div>
               <p className="text-xs text-muted-foreground line-clamp-1">
-                {metadata.description}
+                {(() => {
+                  const meta = metadata as any
+                  if (meta.i18nKey?.description) {
+                    const i18nKey = meta.i18nKey.description.replace(/^plugins\./, '')
+                    return tWithFallback(i18nKey, metadata.description)
+                  }
+                  return metadata.description
+                })()}
               </p>
             </div>
           
@@ -376,10 +401,10 @@ export const PluginCard = React.memo(function PluginCard({
             ) : state.enabled ? (
               <>
                 <AlertCircle className="h-3 w-3" />
-                <span>Sem seções</span>
+                <span>{t('noSections')}</span>
               </>
             ) : (
-              <span>Inativo</span>
+              <span>{t('inactive')}</span>
             )}
           </button>
         </div>
@@ -401,9 +426,9 @@ export const PluginCard = React.memo(function PluginCard({
                 size="sm"
                 onClick={handleSelectAllSections}
                 className="h-7 text-xs px-2"
-                aria-label={metadata.sections.every(s => state.sections?.includes(s.id)) ? "Desmarcar todas as seções" : "Selecionar todas as seções"}
+                aria-label={metadata.sections.every(s => state.sections?.includes(s.id)) ? t('deselectAllSections') : t('selectAllSections')}
               >
-                {metadata.sections.every(s => state.sections?.includes(s.id)) ? "Desmarcar todas" : "Selecionar todas"}
+                {metadata.sections.every(s => state.sections?.includes(s.id)) ? t('deselectAll') : t('selectAll')}
               </Button>
             </div>
           </div>
@@ -432,23 +457,23 @@ export const PluginCard = React.memo(function PluginCard({
                               ? "bg-primary/10 text-primary border-primary/30 shadow-sm"
                               : "bg-muted/50 text-muted-foreground border-border hover:bg-muted hover:border-primary/20"
                           )}
-                          aria-label={`${isSelected ? 'Desmarcar' : 'Selecionar'} seção ${section.name}`}
+                          aria-label={`${isSelected ? t('deselectSection') : t('selectSection')} ${getSectionName(section)}`}
                         >
                           {isSelected && <Check className="h-3 w-3" />}
-                          <span>{section.name}</span>
+                          <span>{getSectionName(section)}</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs p-3">
                         <div className="space-y-2">
-                          <p className="font-medium text-sm">{section.name}</p>
-                          {section.description && (
-                            <p className="text-xs text-muted-foreground">{section.description}</p>
+                          <p className="font-medium text-sm">{getSectionName(section)}</p>
+                          {getSectionDescription(section) && (
+                            <p className="text-xs text-muted-foreground">{getSectionDescription(section)}</p>
                           )}
                           {previewImage && (
                             <div className="mt-2 rounded-md overflow-hidden border border-border bg-background">
                               <img 
                                 src={previewImage} 
-                                alt={`${section.name} preview`}
+                                alt={`${getSectionName(section)} ${t('preview')}`}
                                 className="w-full h-auto max-h-32 object-contain"
                                 onError={(e) => {
                                   // Fallback para placeholder SVG inline
@@ -513,7 +538,7 @@ export const PluginCard = React.memo(function PluginCard({
                   )}
                 </div>
                 {metadata.essentialConfigKeysMetadata.map((configKeyMeta) => {
-                  const configKey = configKeyMeta as { key: string; label: string; type: "text" | "password" | "oauth"; placeholder?: string; description?: string; helpUrl?: string; tooltip?: string; oauthProvider?: string }
+                  const configKey = configKeyMeta as any
                   const configKeyStr = `${plugin.name}.${configKey.key}`
                   const isUnlocked = unlockedConfigs.has(configKeyStr)
                   // Get presence info from secretsPresence (source of truth)
@@ -525,11 +550,22 @@ export const PluginCard = React.memo(function PluginCard({
                   const isSaving = savingConfigs.has(configKeyStr)
                   const isSaved = savedConfigs.has(configKeyStr)
                   const isMissing = pluginMissingConfigs.some(m => m.field === configKey.key)
+                  
+                  // Get translated label/description/placeholder
+                  const configLabel = configKey.i18nKey?.label 
+                    ? tWithFallback(configKey.i18nKey.label.replace(/^plugins\./, ''), configKey.label)
+                    : configKey.label
+                  const configDescription = configKey.description && configKey.i18nKey?.description
+                    ? tWithFallback(configKey.i18nKey.description.replace(/^plugins\./, ''), configKey.description)
+                    : configKey.description
+                  const configPlaceholder = configKey.placeholder && configKey.i18nKey?.placeholder
+                    ? tWithFallback(configKey.i18nKey.placeholder.replace(/^plugins\./, ''), configKey.placeholder)
+                    : configKey.placeholder
 
                   if (configKey.type === "oauth") {
                     return (
                       <div key={configKey.key} className="space-y-1">
-                        <Label className="text-xs font-medium">{configKey.label}</Label>
+                        <Label className="text-xs font-medium">{configLabel}</Label>
                         <Button
                           variant="outline"
                           size="sm"
@@ -543,8 +579,8 @@ export const PluginCard = React.memo(function PluginCard({
                           Connect {configKey.oauthProvider || "OAuth"} Account
                           <ExternalLink className="h-3 w-3 ml-auto" />
                         </Button>
-                        {configKey.description && (
-                          <p className="text-xs text-muted-foreground">{configKey.description}</p>
+                        {configDescription && (
+                          <p className="text-xs text-muted-foreground">{configDescription}</p>
                         )}
                       </div>
                     )
@@ -557,7 +593,7 @@ export const PluginCard = React.memo(function PluginCard({
                     <div key={configKey.key} className="space-y-1">
                       <SecretInput
                         plugin={plugin.name}
-                        label={configKey.label}
+                        label={configLabel}
                         realValue={value}
                         exists={exists}
                         updatedAt={updatedAt}
@@ -569,14 +605,14 @@ export const PluginCard = React.memo(function PluginCard({
                         saved={isSaved}
                         isMissing={isMissing}
                         helpUrl={configKey.helpUrl}
-                        placeholder={configKey.placeholder}
+                        placeholder={configPlaceholder}
                         type={configKey.type === "password" ? "password" : "text"}
                       />
-                      {configKey.description && (
-                        <p className="text-xs text-muted-foreground">{configKey.description}</p>
+                      {configDescription && (
+                        <p className="text-xs text-muted-foreground">{configDescription}</p>
                       )}
                       {isMissing && (
-                        <p className="text-xs text-destructive font-medium">{configKey.label} é obrigatório</p>
+                        <p className="text-xs text-destructive font-medium">{configLabel} {t('requiredFields.required')}</p>
                       )}
                     </div>
                   )
@@ -611,11 +647,11 @@ export const PluginCard = React.memo(function PluginCard({
                     {!hasMissing && (
                       <Zap className="h-3 w-3" />
                     )}
-                    Campos obrigatórios (não sensíveis)
+                    {t('requiredFields.title')}
                   </p>
                   {hasMissing && (
                     <Badge variant="destructive" className="text-[10px]">
-                      {missingRequiredFields.length} faltando
+                      {missingRequiredFields.length} {t('missing')}
                     </Badge>
                   )}
                 </div>
@@ -705,7 +741,7 @@ export const PluginCard = React.memo(function PluginCard({
                         <p className="text-xs text-muted-foreground">{fieldMetadata.description}</p>
                       )}
                       {isMissing && (
-                        <p className="text-xs text-destructive font-medium">{fieldMetadata.label} é obrigatório</p>
+                        <p className="text-xs text-destructive font-medium">{fieldMetadata.label} {t('requiredFields.required')}</p>
                       )}
                     </div>
                   )
@@ -719,16 +755,16 @@ export const PluginCard = React.memo(function PluginCard({
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold text-foreground flex items-center gap-2">
                   <Sparkles className="h-3 w-3" />
-                  Seções disponíveis ({activeSectionCount}/{metadata.sections.length})
+                  {t('availableSections')} ({activeSectionCount}/{metadata.sections.length})
                 </p>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleSelectAllSections}
                   className="h-7 text-xs"
-                  aria-label={metadata.sections.every(s => state.sections?.includes(s.id)) ? "Desmarcar todas as seções" : "Selecionar todas as seções"}
+                  aria-label={metadata.sections.every(s => state.sections?.includes(s.id)) ? t('deselectAllSections') : t('selectAllSections')}
                 >
-                  {metadata.sections.every(s => state.sections?.includes(s.id)) ? "Desmarcar todas" : "Selecionar todas"}
+                  {metadata.sections.every(s => state.sections?.includes(s.id)) ? t('deselectAll') : t('selectAll')}
                 </Button>
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -760,10 +796,10 @@ export const PluginCard = React.memo(function PluginCard({
                                     checked={isSelected}
                                     onChange={() => handleSectionToggle(section.id)}
                                     onClick={(e) => e.stopPropagation()}
-                                    aria-label={`${isSelected ? 'Desmarcar' : 'Selecionar'} seção ${section.name}`}
+                                    aria-label={`${isSelected ? t('deselectSection') : t('selectSection')} ${getSectionName(section)}`}
                                   />
                                   {isSelected && <Check className="h-4 w-4 text-primary" />}
-                                  <span className="text-sm font-medium">{section.name}</span>
+                                  <span className="text-sm font-medium">{getSectionName(section)}</span>
                                 </div>
                                 {hasConfigs && isSelected && (
                                   <div onClick={(e) => e.stopPropagation()}>
@@ -786,7 +822,7 @@ export const PluginCard = React.memo(function PluginCard({
                                 >
                                   <img 
                                     src={previewImage} 
-                                    alt={`${section.name} preview`}
+                                    alt={`${getSectionName(section)} ${t('preview')}`}
                                     className="w-full h-auto max-h-24 object-contain pointer-events-none"
                                     draggable={false}
                                     onError={(e) => {
@@ -802,15 +838,15 @@ export const PluginCard = React.memo(function PluginCard({
                         </TooltipTrigger>
                         <TooltipContent side="top" className="max-w-xs p-3">
                           <div className="space-y-2">
-                            <p className="font-medium text-sm">{section.name}</p>
-                            {section.description && (
-                              <p className="text-xs text-muted-foreground">{section.description}</p>
+                            <p className="font-medium text-sm">{getSectionName(section)}</p>
+                            {getSectionDescription(section) && (
+                              <p className="text-xs text-muted-foreground">{getSectionDescription(section)}</p>
                             )}
                             {previewImage && (
                               <div className="mt-2 rounded-md overflow-hidden border border-border bg-background">
                                 <img 
                                   src={previewImage} 
-                                  alt={`${section.name} preview`}
+                                  alt={`${getSectionName(section)} ${t('preview')}`}
                                   className="w-full h-auto"
                                   onError={(e) => {
                                     // Fallback para placeholder SVG inline
@@ -822,7 +858,7 @@ export const PluginCard = React.memo(function PluginCard({
                             )}
                             {hasConfigs && (
                               <p className="text-xs text-primary mt-1 font-medium">
-                                ⚙️ Tem configurações disponíveis
+                                {t('hasConfigurations')}
                               </p>
                             )}
                           </div>

@@ -1,8 +1,8 @@
 "use client"
 
 import { useAuth } from "@/hooks/useAuth"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useRouter } from "@/i18n/routing"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { Button } from "@/components/ui/button"
@@ -11,10 +11,14 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { motion } from "framer-motion"
+import { useTranslations } from "next-intl"
+import { LanguageSelector } from "@/components/layout/LanguageSelector"
 
 export default function SettingsPage() {
+  const t = useTranslations('settings')
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const [languageSelectorOpen, setLanguageSelectorOpen] = useState(false)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -38,9 +42,9 @@ export default function SettingsPage() {
         transition={{ duration: 0.3 }}
       >
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold">Settings</h1>
+          <h1 className="text-3xl md:text-4xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your account settings and preferences
+            {t('description')}
           </p>
         </div>
       </motion.div>
@@ -54,14 +58,14 @@ export default function SettingsPage() {
         >
           <Card className="rounded-2xl border shadow-lg">
             <CardHeader>
-              <CardTitle>Profile</CardTitle>
+              <CardTitle>{t('profile.title')}</CardTitle>
               <CardDescription>
-                Update your profile information
+                {t('profile.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('profile.email')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -70,20 +74,20 @@ export default function SettingsPage() {
                   className="bg-muted"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Email cannot be changed
+                  {t('profile.emailCannotChange')}
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">{t('profile.username')}</Label>
                 <Input
                   id="username"
                   type="text"
-                  placeholder={user.user_metadata?.user_name || "Not set"}
+                  placeholder={user.user_metadata?.user_name || t('profile.username')}
                   defaultValue={user.user_metadata?.user_name || ""}
                 />
               </div>
               <Button className="w-full sm:w-auto">
-                Save Changes
+                {t('profile.saveChanges')}
               </Button>
             </CardContent>
           </Card>
@@ -97,20 +101,32 @@ export default function SettingsPage() {
         >
           <Card className="rounded-2xl border shadow-lg">
             <CardHeader>
-              <CardTitle>Appearance</CardTitle>
+              <CardTitle>{t('appearance.title')}</CardTitle>
               <CardDescription>
-                Customize the look and feel of the application
+                {t('appearance.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label>Theme</Label>
+                  <Label>{t('appearance.theme')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Switch between light and dark mode
+                    {t('appearance.themeDescription')}
                   </p>
                 </div>
                 <ThemeToggle />
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <Label>{t('appearance.language')}</Label>
+                  <p className="text-sm text-muted-foreground">
+                    {t('appearance.languageDescription')}
+                  </p>
+                </div>
+                <Button variant="outline" onClick={() => setLanguageSelectorOpen(true)}>
+                  {t('appearance.language')}
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -124,26 +140,27 @@ export default function SettingsPage() {
         >
           <Card className="rounded-2xl border shadow-lg">
             <CardHeader>
-              <CardTitle>Account</CardTitle>
+              <CardTitle>{t('account.title')}</CardTitle>
               <CardDescription>
-                Manage your account settings
+                {t('account.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Separator />
               <div className="space-y-2">
-                <Label>Danger Zone</Label>
+                <Label>{t('account.dangerZone')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Irreversible and destructive actions
+                  {t('account.dangerZoneDescription')}
                 </p>
                 <Button variant="destructive" className="w-full sm:w-auto">
-                  Delete Account
+                  {t('account.deleteAccount')}
                 </Button>
               </div>
             </CardContent>
           </Card>
         </motion.div>
       </div>
+      <LanguageSelector open={languageSelectorOpen} onOpenChange={setLanguageSelectorOpen} />
     </div>
   )
 }

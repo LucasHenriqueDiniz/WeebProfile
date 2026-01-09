@@ -1,0 +1,207 @@
+{
+  "description": "Exiba suas estatísticas de anime e mangá do MyAnimeList",
+  "displayName": "MyAnimeList",
+  "sections": {
+    "anime_bar": {
+      "config": {
+        "anime_bar_hide_title": {
+          "label": "Ocultar título"
+        },
+        "anime_bar_title": {
+          "defaultValue": "Estatísticas de Anime",
+          "label": "Título"
+        }
+      },
+      "description": "Gráfico de barras horizontal para estatísticas de anime",
+      "name": "Barra de Anime"
+    },
+    "anime_favorites": {
+      "config": {
+        "anime_favorites_hide_title": {
+          "label": "Ocultar título"
+        },
+        "anime_favorites_list_style": {
+          "description": "Escolha o estilo de exibição da lista",
+          "label": "Estilo de lista",
+          "options": {
+            "compact": "Compacto (Lista compacta)",
+            "detailed": "Detalhado (Lista completa com resumo)",
+            "minimal": "Mínimo (Lista sem resumo)",
+            "simple": "Simples (Grade de imagens)"
+          }
+        },
+        "anime_favorites_max": {
+          "description": "Número máximo de animes favoritos a exibir",
+          "label": "Máximo de itens"
+        },
+        "anime_favorites_title": {
+          "defaultValue": "Animes Favoritos",
+          "label": "Título"
+        },
+        "favorites_hide_overlay": {
+          "label": "Ocultar sobreposição (apenas estilo Simples)"
+        }
+      },
+      "description": "Animes favoritos com diferentes estilos de lista",
+      "name": "Animes Favoritos"
+    },
+    "character_favorites": {
+      "config": {
+        "character_favorites_hide_title": {
+          "label": "Ocultar título"
+        },
+        "character_favorites_list_style": {
+          "description": "Escolha o estilo de exibição da lista",
+          "label": "Estilo de lista",
+          "options": {
+            "compact": "Compacto (Lista compacta)",
+            "simple": "Simples (Grade de imagens)"
+          }
+        },
+        "character_favorites_max": {
+          "description": "Número máximo de personagens favoritos a exibir",
+          "label": "Máximo de itens"
+        },
+        "character_favorites_title": {
+          "defaultValue": "Personagens Favoritos",
+          "label": "Título"
+        },
+        "favorites_hide_overlay": {
+          "label": "Ocultar sobreposição (apenas estilo Simples)"
+        }
+      },
+      "description": "Personagens favoritos com diferentes estilos de lista",
+      "name": "Personagens Favoritos"
+    },
+    "last_activity": {
+      "config": {
+        "last_activity_hide_anime": {
+          "description": "Ocultar atualizações de anime da última atividade",
+          "label": "Ocultar anime"
+        },
+        "last_activity_hide_manga": {
+          "description": "Ocultar atualizações de mangá da última atividade",
+          "label": "Ocultar mangá"
+        },
+        "last_activity_hide_title": {
+          "label": "Ocultar título"
+        },
+        "last_activity_max": {
+          "description": "Número máximo de itens de atividade a exibir",
+          "label": "Máximo de itens"
+        },
+        "last_activity_title": {
+          "defaultValue": "Última Atividade",
+          "label": "Título"
+        }
+      },
+      "description": "Últimas atualizações de anime e mangá",
+      "name": "Última Atividade"
+    },
+    "manga_bar": {
+      "config": {
+        "manga_bar_hide_title": {
+          "label": "Ocultar título"
+        },
+        "manga_bar_title": {
+          "defaultValue": "Estatísticas de Mangá",
+          "label": "Título"
+        }
+      },
+      "description": "Gráfico de barras horizontal para estatísticas de mangá",
+      "name": "Barra de Mangá"
+    },
+    "manga_favorites": {
+      "config": {
+        "favorites_hide_overlay": {
+          "label": "Ocultar sobreposição (apenas estilo Simples)"
+        },
+        "manga_favorites_hide_title": {
+          "label": "Ocultar título"
+        },
+        "manga_favorites_list_style": {
+          "description": "Escolha o estilo de exibição da lista",
+          "label": "Estilo de lista",
+          "options": {
+            "compact": "Compacto (Lista compacta)",
+            "detailed": "Detalhado (Lista completa com resumo)",
+            "minimal": "Mínimo (Lista sem resumo)",
+            "simple": "Simples (Grade de imagens)"
+          }
+        },
+        "manga_favorites_max": {
+          "description": "Número máximo de mangás favoritos a exibir",
+          "label": "Máximo de itens"
+        },
+        "manga_favorites_title": {
+          "defaultValue": "Mangás Favoritos",
+          "label": "Título"
+        }
+      },
+      "description": "Mangás favoritos com diferentes estilos de lista",
+      "name": "Mangás Favoritos"
+    },
+    "people_favorites": {
+      "config": {
+        "favorites_hide_overlay": {
+          "label": "Ocultar sobreposição (apenas estilo Simples)"
+        },
+        "people_favorites_hide_title": {
+          "label": "Ocultar título"
+        },
+        "people_favorites_list_style": {
+          "description": "Escolha o estilo de exibição da lista",
+          "label": "Estilo de lista",
+          "options": {
+            "compact": "Compacto (Lista compacta)",
+            "simple": "Simples (Grade de imagens)"
+          }
+        },
+        "people_favorites_max": {
+          "description": "Número máximo de pessoas favoritas a exibir",
+          "label": "Máximo de itens"
+        },
+        "people_favorites_title": {
+          "defaultValue": "Pessoas Favoritas",
+          "label": "Título"
+        }
+      },
+      "description": "Pessoas favoritas (autores, diretores, etc) com diferentes estilos de lista",
+      "name": "Pessoas Favoritas"
+    },
+    "statistics": {
+      "config": {
+        "statistics_hide_title": {
+          "label": "Ocultar título"
+        },
+        "statistics_media": {
+          "label": "Tipo de mídia",
+          "options": {
+            "anime": "Apenas anime",
+            "both": "Ambos",
+            "manga": "Apenas mangá"
+          }
+        },
+        "statistics_title": {
+          "defaultValue": "Estatísticas",
+          "label": "Título"
+        }
+      },
+      "description": "Estatísticas gerais de anime e mangá",
+      "name": "Estatísticas"
+    },
+    "statistics_simple": {
+      "config": {
+        "statistics_simple_hide_title": {
+          "label": "Ocultar título"
+        },
+        "statistics_simple_title": {
+          "defaultValue": "Estatísticas",
+          "label": "Título"
+        }
+      },
+      "description": "Estatísticas simplificadas",
+      "name": "Estatísticas Simples"
+    }
+  }
+}

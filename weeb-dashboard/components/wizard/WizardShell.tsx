@@ -7,6 +7,8 @@ import { Package } from "lucide-react"
 import { selectPluginsWithSections } from "@/stores/wizard-selectors"
 import { useWizardStore } from "@/stores/wizard-store"
 import { LivePreview } from "./LivePreview"
+import { useTranslations } from "next-intl"
+import Image from "next/image"
 
 interface WizardShellProps {
   stats?: {
@@ -22,6 +24,7 @@ interface WizardShellProps {
 
 export function WizardShell({ stats, preview, footer, children }: WizardShellProps) {
   const { plugins, pluginsOrder, size } = useWizardStore()
+  const t = useTranslations('wizard.plugins')
 
   return (
     <div className="flex flex-col h-screen bg-background relative overflow-hidden">
@@ -82,19 +85,45 @@ export function WizardShell({ stats, preview, footer, children }: WizardShellPro
               <>
                 <div className="flex-1 overflow-y-auto scrollbar-hide pt-2" style={{ width: `${previewWidth}px` }}>
                   {/* SVG Preview - Responsive width */}
-                  <div className="bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 p-0 flex items-start justify-center mb-4" style={{ width: `${previewWidth}px` }}>
+                  <div className="bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 p-0 flex items-center justify-center mb-4 min-h-[400px]" style={{ width: `${previewWidth}px` }}>
                     {pluginsWithSections.length > 0 ? (
                       <div className="w-full flex justify-center h-full" style={{ width: `${contentWidth}px` }}>
                         {preview}
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center h-full w-full" style={{ width: `${contentWidth}px` }}>
-                        <div className="text-center space-y-2 px-4">
-                          <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-                            <Package className="h-4 w-4" />
-                            Habilite pelo menos um plugin e selecione seções para ver o preview
-                          </p>
-                        </div>
+                      <div className="flex flex-col items-center justify-center h-full w-full py-12" style={{ width: `${contentWidth}px` }}>
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5 }}
+                          className="flex flex-col items-center justify-center space-y-4 px-4"
+                        >
+                          <motion.div
+                            animate={{
+                              y: [0, -10, 0],
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                            className="relative"
+                          >
+                            <Image
+                              src="/sora/sora_main.png"
+                              alt="Sora"
+                              width={200}
+                              height={200}
+                              className="w-32 h-32 md:w-40 md:h-40 object-contain drop-shadow-[0_0_20px_rgba(56,189,248,0.3)]"
+                              draggable={false}
+                            />
+                          </motion.div>
+                          <div className="text-center space-y-2 max-w-sm">
+                            <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                              <span>{t('enablePluginToPreview')}</span>
+                            </p>
+                          </div>
+                        </motion.div>
                       </div>
                     )}
                   </div>

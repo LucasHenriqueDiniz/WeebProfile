@@ -1,6 +1,13 @@
 import type { NextConfig } from "next"
+import createNextIntlPlugin from "next-intl/plugin"
+
+// Explicit path to avoid ambiguity and Turbopack resolution issues
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
 
 const nextConfig: NextConfig = {
+  // Enable Turbopack configuration for next-intl alias resolution
+  // If this doesn't work, use `pnpm dev` (with --webpack) instead
+  turbopack: {},
   reactStrictMode: true,
   transpilePackages: ["@weeb/weeb-plugins"],
   serverExternalPackages: ["image-to-base64", "@weeb/svg-generator", "react-dom/server"],
@@ -37,6 +44,11 @@ const nextConfig: NextConfig = {
         source: "/previews/:path*",
         destination: "/api/preview/:path*",
       },
+      // Allow API routes to work with locale prefix
+      {
+        source: "/:locale(pt|en|es)/api/:path*",
+        destination: "/api/:path*",
+      },
     ]
   },
   env: {
@@ -48,4 +60,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+export default withNextIntl(nextConfig)

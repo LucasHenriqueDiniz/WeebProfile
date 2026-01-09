@@ -1,0 +1,63 @@
+{
+  "description": "Show your Codeforces competitive programming statistics",
+  "displayName": "Codeforces",
+  "sections": {
+    "contests_participated": {
+      "config": {
+        "contests_participated_hide_title": {
+          "label": "Hide title"
+        },
+        "contests_participated_title": {
+          "defaultValue": "Contests Participated",
+          "label": "Title"
+        }
+      },
+      "description": "Display the number of contests you've participated in",
+      "name": "Contests Participated"
+    },
+    "problems_solved": {
+      "config": {
+        "problems_solved_hide_title": {
+          "label": "Hide title"
+        },
+        "problems_solved_title": {
+          "defaultValue": "Problems Solved",
+          "label": "Title"
+        }
+      },
+      "description": "Display the number of problems solved by difficulty",
+      "name": "Problems Solved"
+    },
+    "rating_rank": {
+      "config": {
+        "rating_rank_hide_title": {
+          "label": "Hide title"
+        },
+        "rating_rank_title": {
+          "defaultValue": "Rating & Rank",
+          "label": "Title"
+        }
+      },
+      "description": "Display your current rating and rank",
+      "name": "Rating & Rank"
+    },
+    "recent_submissions": {
+      "config": {
+        "recent_submissions_hide_title": {
+          "label": "Hide title"
+        },
+        "recent_submissions_max": {
+          "description": "Maximum 50 submissions",
+          "label": "Maximum submissions",
+          "tooltip": "Maximum number of recent submissions to display. Submissions are ordered by most recent."
+        },
+        "recent_submissions_title": {
+          "defaultValue": "Recent Submissions",
+          "label": "Title"
+        }
+      },
+      "description": "Display your recent problem submissions",
+      "name": "Recent Submissions"
+    }
+  }
+}

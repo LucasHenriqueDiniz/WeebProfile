@@ -1,0 +1,63 @@
+{
+  "description": "Muestra tus estadísticas de programación competitiva de Codeforces",
+  "displayName": "Codeforces",
+  "sections": {
+    "contests_participated": {
+      "config": {
+        "contests_participated_hide_title": {
+          "label": "Ocultar título"
+        },
+        "contests_participated_title": {
+          "defaultValue": "Concursos Participados",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar el número de concursos en los que has participado",
+      "name": "Concursos Participados"
+    },
+    "problems_solved": {
+      "config": {
+        "problems_solved_hide_title": {
+          "label": "Ocultar título"
+        },
+        "problems_solved_title": {
+          "defaultValue": "Problemas Resueltos",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar el número de problemas resueltos por dificultad",
+      "name": "Problemas Resueltos"
+    },
+    "rating_rank": {
+      "config": {
+        "rating_rank_hide_title": {
+          "label": "Ocultar título"
+        },
+        "rating_rank_title": {
+          "defaultValue": "Rating y Rank",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tu rating y rank actuales",
+      "name": "Rating y Rank"
+    },
+    "recent_submissions": {
+      "config": {
+        "recent_submissions_hide_title": {
+          "label": "Ocultar título"
+        },
+        "recent_submissions_max": {
+          "description": "Máximo de 50 envíos",
+          "label": "Máximo de envíos",
+          "tooltip": "Número máximo de envíos recientes a mostrar. Los envíos se ordenan por más reciente."
+        },
+        "recent_submissions_title": {
+          "defaultValue": "Envíos Recientes",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tus envíos recientes de problemas",
+      "name": "Envíos Recientes"
+    }
+  }
+}

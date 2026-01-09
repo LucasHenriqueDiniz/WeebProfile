@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+import tailwindcssAnimate from "tailwindcss-animate"
 
 const config: Config = {
   darkMode: ["class"],
@@ -113,7 +114,7 @@ const config: Config = {
   	}
   },
   plugins: [
-    require("tailwindcss-animate"),
+    tailwindcssAnimate,
     // Plugin para suportar variantes half-mode e full-mode do source-v2
     // Baseado em source/plugins/@themes/themes.ts
     function ({ addVariant }: any) {

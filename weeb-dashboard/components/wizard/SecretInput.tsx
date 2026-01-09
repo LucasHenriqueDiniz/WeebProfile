@@ -73,22 +73,6 @@ export function SecretInput({
   const localValueNormalized = (localValue || "").trim()
   const hasChanges = !isLocked && localValueNormalized !== realValueNormalized && localValueNormalized !== ""
   
-  // Debug: log para verificar se o botão deveria aparecer
-  React.useEffect(() => {
-    if (!isLocked) {
-      console.log(`🔍 [SecretInput] ${label}:`, {
-        exists,
-        unlocked,
-        isLocked,
-        realValue: realValueNormalized,
-        localValue: localValueNormalized,
-        hasChanges,
-        shouldShowButton: !isLocked,
-        shouldDisable: !hasChanges && exists
-      })
-    }
-  }, [isLocked, exists, unlocked, realValueNormalized, localValueNormalized, hasChanges, label])
-  
   // CRÍTICO: Separar displayValue de realValue
   // displayValue é o que aparece (placeholder quando locked)
   // realValue é o que será salvo (nunca pode ser placeholder)
@@ -102,16 +86,7 @@ export function SecretInput({
   }
   
   const handleSave = async () => {
-    console.log(`🔘 [SecretInput] handleSave chamado para ${label}:`, {
-      isLocked,
-      saving,
-      hasChanges,
-      exists,
-      localValue: localValueNormalized.substring(0, 10) + "..."
-    })
-    
     if (isLocked || saving) {
-      console.warn(`⚠️ [SecretInput] Não pode salvar: isLocked=${isLocked}, saving=${saving}`)
       return
     }
     
@@ -119,20 +94,16 @@ export function SecretInput({
     // 1. Há mudanças (valor diferente do salvo)
     // 2. Campo não existe (campo novo) e tem valor
     if (!hasChanges && exists) {
-      console.warn(`⚠️ [SecretInput] Não há mudanças e campo já existe`)
       return
     }
     if (!hasChanges && !exists && localValueNormalized === "") {
-      console.warn(`⚠️ [SecretInput] Campo novo mas valor vazio`)
       return
     }
     
-    console.log(`✅ [SecretInput] Chamando onSave para ${label}`)
     try {
       await onSave()
-      console.log(`✅ [SecretInput] onSave concluído para ${label}`)
     } catch (error) {
-      console.error(`❌ [SecretInput] Erro ao salvar ${label}:`, error)
+      console.error(`Error saving ${label}:`, error)
     }
     // Após salvar, o realValue será atualizado pelo parent, então localValue será sincronizado
   }

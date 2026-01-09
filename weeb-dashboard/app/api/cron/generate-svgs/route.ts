@@ -15,7 +15,7 @@
 
 import { db } from "@/lib/db"
 import { svgs } from "@/lib/db/schema"
-import { eq, or, lte, isNull, and, sql } from "drizzle-orm"
+import { eq, or, lte, isNull, and, sql, lt } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { convertSvgToPluginsConfig, generateDataHash, saveSvgToStorage } from "@/lib/svg-generator"
 import { generateSvgViaHttpService } from "@/lib/svg-generator-client"
@@ -39,6 +39,40 @@ export async function GET(request: Request) {
 
   try {
     const now = new Date()
+
+    // PRIMEIRO: Limpar SVGs presos em "generating" há mais de 30 minutos
+    const STUCK_TIMEOUT_MINUTES = 30
+    const stuckTimeout = new Date(now.getTime() - STUCK_TIMEOUT_MINUTES * 60 * 1000)
+    
+    const stuckSvgs = await db
+      .select({ id: svgs.id, updatedAt: svgs.updatedAt })
+      .from(svgs)
+      .where(
+        and(
+          eq(svgs.status, "generating"),
+          lt(svgs.updatedAt, stuckTimeout)
+        )
+      )
+    
+    if (stuckSvgs.length > 0) {
+      console.log(`⚠️  [CRON] Encontrados ${stuckSvgs.length} SVG(s) presos em "generating". Resetando...`)
+      
+      for (const stuckSvg of stuckSvgs) {
+        const minutesStuck = stuckSvg.updatedAt
+          ? Math.ceil((now.getTime() - new Date(stuckSvg.updatedAt).getTime()) / (1000 * 60))
+          : 0
+        
+        await db
+          .update(svgs)
+          .set({
+            status: "pending",
+            lastError: `Geração interrompida (preso em generating há ${minutesStuck} minutos)`,
+          })
+          .where(eq(svgs.id, stuckSvg.id))
+        
+        console.log(`   ✅ SVG ${stuckSvg.id} resetado (preso há ${minutesStuck} minutos)`)
+      }
+    }
 
     // Buscar SVGs que precisam ser gerados:
     // 1. Status "pending" (primeira geração) - não pausados

@@ -35,9 +35,9 @@ import { useSvgStore } from "@/stores/svg-store"
 import { generateMarkdown } from "@/lib/utils/markdown"
 import { motion } from "framer-motion"
 import { ArrowUpDown, Copy, Edit2, ExternalLink, Filter, Image as ImageIcon, Loader2, MoreVertical, Plus, RefreshCw, Trash2 } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
+import { Link, useRouter } from "@/i18n/routing"
+import { useEffect, useMemo, useState, useRef } from "react"
+import { useTranslations } from "next-intl"
 
 const styleColors: Record<string, string> = {
   default: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
@@ -48,10 +48,11 @@ type SortOption = "newest" | "oldest" | "name" | "status"
 type FilterStatus = "all" | "completed" | "generating" | "pending"
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard')
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
-  const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
+  const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg, _hasHydrated, setHasHydrated } = useSvgStore()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [generatingId, setGeneratingId] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all")
@@ -67,19 +68,49 @@ export default function DashboardPage() {
 
   const showAdvancedControls = total > 6
 
+  // Ref para garantir que só fazemos fetch uma vez por montagem
+  const hasFetchedRef = useRef(false)
+
+  // Marcar como reidratado se ainda não foi marcado (fallback)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !_hasHydrated) {
+      // Aguardar um pouco para garantir que o zustand reidratou
+      const timer = setTimeout(() => {
+        setHasHydrated(true)
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [_hasHydrated, setHasHydrated])
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login")
       return
     }
 
-    // Buscar SVGs apenas se o usuário estiver disponível e não tiver dados em cache
-    // O store já gerencia cache, então só buscar se realmente necessário
-    if (user && svgs.length === 0 && !svgsLoading) {
-      fetchSvgs()
+    // Só fazer fetch quando:
+    // 1. Usuário está autenticado
+    // 2. Auth terminou de carregar
+    // 3. Store já foi reidratado (ou aguardou tempo suficiente)
+    // 4. Ainda não fez fetch nesta montagem
+    if (user && !authLoading && !hasFetchedRef.current) {
+      // Aguardar reidratação se ainda não aconteceu
+      if (!_hasHydrated) {
+        const timer = setTimeout(() => {
+          hasFetchedRef.current = true
+          // Mesmo que não tenha reidratado, tentar buscar (store pode estar vazio)
+          fetchSvgs()
+        }, 200)
+        return () => clearTimeout(timer)
+      }
+
+      hasFetchedRef.current = true
+      // Se já temos SVGs carregados do localStorage, o fetchSvgs vai verificar o cache
+      // e só fazer request se necessário (cache expirado ou forçado)
+      fetchSvgs() // Sem force - o store verifica cache internamente
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, authLoading])
+  }, [user, authLoading, _hasHydrated])
 
   const handleDeleteClick = (id: string) => {
     setSvgToDelete(id)
@@ -94,17 +125,17 @@ export default function DashboardPage() {
       await svgApi.delete(svgToDelete)
       removeSvg(svgToDelete)
       toast({
-        title: "SVG deletado",
-        description: "A imagem foi removida com sucesso.",
+        title: t('toast.svgDeleted'),
+        description: t('toast.deletedSuccess'),
       })
     } catch (error) {
       console.error("Error deleting SVG:", error)
       const errorMessage =
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
-          : "Erro ao deletar imagem"
+          : t('toast.errorDeletingMessage')
       toast({
-        title: "Erro ao deletar",
+        title: t('toast.errorDeleting'),
         description: errorMessage,
         variant: "destructive",
       })
@@ -126,30 +157,54 @@ export default function DashboardPage() {
     })
     await navigator.clipboard.writeText(markdown)
     toast({
-      title: "Markdown copiado!",
-      description: "Cole no seu README.md do GitHub.",
+      title: t('toast.markdownCopied'),
+      description: t('toast.markdownCopiedDescription'),
     })
   }
 
   const handleForceGenerate = async (svg: Svg) => {
     try {
       setGeneratingId(svg.id)
-      await svgApi.generate(svg.id, true) // force = true
-      updateSvg(svg.id, { status: "generating" })
+      updateSvg(svg.id, { status: "generating" }) // Atualizar imediatamente para mostrar estado
+      
+      const result = await svgApi.generate(svg.id, true) // force = true
+      
       toast({
-        title: "Geração iniciada",
-        description: "A imagem está sendo gerada. Isso pode levar alguns minutos.",
+        title: t('toast.generationStarted'),
+        description: t('toast.generationStartedDescription'),
       })
+      
+      // A geração é assíncrona, então fazer refresh imediato e depois novamente após delay
+      // Isso garante que pegamos o status atualizado quando a geração completar
+      fetchSvgs(true) // Refresh imediato para pegar status atualizado
+      
+      // Se o resultado já retornou com SVG completo, atualizar store
+      if (result.svg && result.svg.status === "completed") {
+        updateSvg(svg.id, {
+          status: result.svg.status,
+          storageUrl: result.svg.storageUrl,
+          lastGeneratedAt: result.svg.lastGeneratedAt,
+          updatedAt: result.svg.updatedAt || new Date().toISOString(),
+        })
+        // Forçar re-render da imagem removendo do erro set se estava lá
+        setImageErrors(prev => {
+          const next = new Set(prev)
+          next.delete(svg.id)
+          return next
+        })
+      }
+      
+      // Fazer refresh novamente após delay para garantir dados atualizados quando geração completar
       setTimeout(() => {
-        fetchSvgs(true) // force refresh
-      }, 2000)
+        fetchSvgs(true) // force refresh para pegar status final após geração
+      }, 5000) // Aumentar delay para dar tempo da geração completar
     } catch (error) {
       const errorMessage =
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
-          : "Não foi possível iniciar a geração"
+          : t('toast.errorGeneratingMessage')
       toast({
-        title: "Erro ao gerar",
+        title: t('toast.errorGenerating'),
         description: errorMessage,
         variant: "destructive",
       })
@@ -220,19 +275,19 @@ export default function DashboardPage() {
       >
         <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            My SVGs
+            {t('title')}
           </h1>
           <div className="flex flex-wrap items-center gap-2 mt-2">
-            <Badge variant="outline">{total} total</Badge>
+            <Badge variant="outline">{total} {t('total')}</Badge>
             {readyCount > 0 && (
               <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 border-0">
-                Ready • {readyCount}
+                {t('ready')} • {readyCount}
               </Badge>
             )}
             {generatingCount > 0 && (
               <Badge className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-0 gap-1">
                 <Loader2 className="w-3 h-3 animate-spin" />
-                Generating • {generatingCount}
+                {t('generating')} • {generatingCount}
               </Badge>
             )}
           </div>
@@ -240,7 +295,7 @@ export default function DashboardPage() {
         <Button asChild size="lg" className="gap-2 shadow-sm">
           <Link href="/dashboard/new">
             <Plus className="w-4 h-4" />
-            Create New
+            {t('createNew')}
           </Link>
         </Button>
       </motion.div>
@@ -257,13 +312,13 @@ export default function DashboardPage() {
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
             <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
               <SelectTrigger className="w-full pl-9">
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder={t('filterByStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="generating">Generating</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="all">{t('allStatus')}</SelectItem>
+                <SelectItem value="completed">{t('completed')}</SelectItem>
+                <SelectItem value="generating">{t('generating')}</SelectItem>
+                <SelectItem value="pending">{t('pending')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -271,13 +326,13 @@ export default function DashboardPage() {
             <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
             <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
               <SelectTrigger className="w-full pl-9">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder={t('sortBy')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
-                <SelectItem value="name">Name (A-Z)</SelectItem>
-                <SelectItem value="status">Status</SelectItem>
+                <SelectItem value="newest">{t('newestFirst')}</SelectItem>
+                <SelectItem value="oldest">{t('oldestFirst')}</SelectItem>
+                <SelectItem value="name">{t('nameAZ')}</SelectItem>
+                <SelectItem value="status">{t('status')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -311,10 +366,11 @@ export default function DashboardPage() {
                   {svg.storageUrl && svg.status === "completed" && !imageErrors.has(svg.id) ? (
                     <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/30 shadow-sm relative group">
                       <img
-                        src={`${svg.storageUrl}?t=${svg.updatedAt || Date.now()}`}
+                        src={`${svg.storageUrl}?v=${svg.lastGeneratedAt ? new Date(svg.lastGeneratedAt).getTime() : svg.updatedAt ? new Date(svg.updatedAt).getTime() : Date.now()}`}
                         alt={svg.name}
                         className="w-full h-auto object-contain transition-opacity"
                         loading="lazy"
+                        key={`img-${svg.id}-${svg.lastGeneratedAt ? new Date(svg.lastGeneratedAt).getTime() : svg.updatedAt ? new Date(svg.updatedAt).getTime() : Date.now()}`}
                         onError={(e) => {
                           setImageErrors(prev => new Set(prev).add(svg.id))
                           e.currentTarget.style.display = "none"
@@ -338,7 +394,7 @@ export default function DashboardPage() {
                         alt="Sora - Error loading image"
                         className="w-16 h-16 object-contain opacity-60 mb-2 relative z-10"
                       />
-                      <p className="text-xs text-muted-foreground relative z-10">Image not available</p>
+                      <p className="text-xs text-muted-foreground relative z-10">{t('imageNotAvailable')}</p>
                     </div>
                   ) : (
                     <div className="mb-4 rounded-lg border border-border bg-muted/30 aspect-video flex items-center justify-center shadow-sm">
@@ -376,7 +432,7 @@ export default function DashboardPage() {
                         className="gap-1"
                       >
                         {svg.status === "generating" && <Loader2 className="w-3 h-3 animate-spin" />}
-                        {svg.status === "completed" ? "Ready" : svg.status === "failed" ? "Error" : svg.status}
+                        {svg.status === "completed" ? t('status.ready') : svg.status === "failed" ? t('status.failed') : svg.status === "generating" ? t('status.generating') : t('status.pending')}
                       </Badge>
                       <Badge
                         variant="outline"
@@ -389,7 +445,7 @@ export default function DashboardPage() {
                     {/* Plugins */}
                     {svg.pluginsOrder && (
                       <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Plugins</p>
+                        <p className="text-xs text-muted-foreground">{t('plugins')}</p>
                         <div className="flex flex-wrap gap-1">
                           {svg.pluginsOrder.split(",").slice(0, 4).map((plugin) => (
                             <Badge key={plugin} variant="outline" className="text-xs">
@@ -408,7 +464,7 @@ export default function DashboardPage() {
                     {/* Last Updated */}
                     {svg.lastGeneratedAt && (
                       <p className="text-xs text-muted-foreground">
-                        Updated {new Date(svg.lastGeneratedAt).toLocaleDateString()}
+                        {t('updated')} {new Date(svg.lastGeneratedAt).toLocaleDateString()}
                       </p>
                     )}
                   </div>
@@ -422,7 +478,7 @@ export default function DashboardPage() {
                       onClick={() => handleCopyUrl(svg)}
                     >
                       <Copy className="w-3.5 h-3.5 mr-1.5" />
-                      Copy Markdown
+                      {t('copyMarkdown')}
                     </Button>
                     <Button
                       variant="outline"
@@ -431,7 +487,7 @@ export default function DashboardPage() {
                       onClick={() => router.push(`/dashboard/${svg.id}`)}
                     >
                       <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
-                      View
+                      {t('view')}
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -446,7 +502,7 @@ export default function DashboardPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => router.push(`/dashboard/${svg.id}/edit`)}>
                           <Edit2 className="w-4 h-4 mr-2" />
-                          Edit
+                          {t('edit')}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleForceGenerate(svg)}
@@ -457,7 +513,7 @@ export default function DashboardPage() {
                           ) : (
                             <RefreshCw className="w-4 h-4 mr-2" />
                           )}
-                          Force Generate
+                          {t('forceGenerate')}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
@@ -470,7 +526,7 @@ export default function DashboardPage() {
                           ) : (
                             <Trash2 className="w-4 h-4 mr-2" />
                           )}
-                          Delete
+                          {t('delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -503,14 +559,14 @@ export default function DashboardPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
               <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-primary" />
             </div>
-            <h3 className="text-xl md:text-2xl font-bold mb-2">No SVGs yet</h3>
+            <h3 className="text-xl md:text-2xl font-bold mb-2">{t('noSvgsYet')}</h3>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-              Create your first WeebProfile SVG to showcase your stats on GitHub
+              {t('noSvgsDescription')}
             </p>
             <Button asChild size="lg" className="gap-2 shadow-sm">
               <Link href="/dashboard/new">
                 <Plus className="w-4 h-4" />
-                Create Your First SVG
+                {t('createFirst')}
               </Link>
             </Button>
           </motion.div>
@@ -524,9 +580,9 @@ export default function DashboardPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 mb-6">
               <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
             </div>
-            <h3 className="text-xl md:text-2xl font-bold mb-2">No results found</h3>
+            <h3 className="text-xl md:text-2xl font-bold mb-2">{t('noResultsFound')}</h3>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-              Try adjusting your filter criteria
+              {t('noResultsDescription')}
             </p>
             <Button
               variant="outline"
@@ -536,7 +592,7 @@ export default function DashboardPage() {
                 setSortBy("newest")
               }}
             >
-              Clear Filter
+              {t('clearFilter')}
             </Button>
           </motion.div>
         )
@@ -546,9 +602,9 @@ export default function DashboardPage() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Deletar SVG</DialogTitle>
+            <DialogTitle>{t('deleteDialog.title')}</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja deletar esta imagem? Esta ação não pode ser desfeita.
+              {t('deleteDialog.description')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -559,7 +615,7 @@ export default function DashboardPage() {
                 setSvgToDelete(null)
               }}
             >
-              Cancelar
+              {t('deleteDialog.cancel')}
             </Button>
             <Button
               variant="destructive"
@@ -569,10 +625,10 @@ export default function DashboardPage() {
               {deletingId ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Deletando...
+                  {t('deleting')}
                 </>
               ) : (
-                "Deletar"
+                t('deleteDialog.confirm')
               )}
             </Button>
           </DialogFooter>

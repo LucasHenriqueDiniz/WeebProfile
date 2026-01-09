@@ -1,0 +1,68 @@
+{
+  "description": "Muestra tus estadísticas de resolución de kata de Codewars",
+  "displayName": "Codewars",
+  "sections": {
+    "completed_kata": {
+      "config": {
+        "completed_kata_hide_title": {
+          "label": "Ocultar título"
+        },
+        "completed_kata_max": {
+          "description": "Máximo de 50 kata",
+          "label": "Máximo de kata",
+          "tooltip": "Número máximo de kata completados a mostrar. Los kata se ordenan por más recientemente completados."
+        },
+        "completed_kata_title": {
+          "defaultValue": "Kata Completados",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tus kata completados recientemente",
+      "name": "Kata Completados"
+    },
+    "languages_proficiency": {
+      "config": {
+        "languages_proficiency_hide_title": {
+          "label": "Ocultar título"
+        },
+        "languages_proficiency_max": {
+          "description": "Máximo de 20 lenguajes",
+          "label": "Máximo de lenguajes",
+          "tooltip": "Número máximo de lenguajes a mostrar. Los lenguajes se ordenan por puntuación (mayor puntuación primero)."
+        },
+        "languages_proficiency_title": {
+          "defaultValue": "Competencia en Lenguajes",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tu competencia en diferentes lenguajes de programación",
+      "name": "Competencia en Lenguajes"
+    },
+    "leaderboard_position": {
+      "config": {
+        "leaderboard_position_hide_title": {
+          "label": "Ocultar título"
+        },
+        "leaderboard_position_title": {
+          "defaultValue": "Posición en el Ranking",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tu posición en el ranking global",
+      "name": "Posición en el Ranking"
+    },
+    "rank_honor": {
+      "config": {
+        "rank_honor_hide_title": {
+          "label": "Ocultar título"
+        },
+        "rank_honor_title": {
+          "defaultValue": "Rank y Honor",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tu rank actual y puntos de honor",
+      "name": "Rank y Honor"
+    }
+  }
+}

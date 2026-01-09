@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { SectionConfigDialog } from "@/components/wizard/SectionConfigDialog"
+import { usePluginI18n } from "@/lib/plugins/i18n-helper"
 
 interface SectionSelectorProps {
   pluginId: string
@@ -32,6 +33,7 @@ export function SectionSelector({
   onSectionConfigChange,
 }: SectionSelectorProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
+  const { tWithFallback } = usePluginI18n()
   
   const pluginMetadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
   if (!pluginMetadata) return null
@@ -39,6 +41,29 @@ export function SectionSelector({
   const allSections = pluginMetadata.sections || []
   const visibleSections = selectedSections.slice(0, 3)
   const remainingCount = Math.max(0, selectedSections.length - 3)
+  
+  const getSectionName = (section: any) => {
+    if (section.i18nKey?.name) {
+      return tWithFallback(section.i18nKey.name.replace(/^plugins\./, ''), section.name)
+    }
+    return section.name
+  }
+  
+  const getSectionDescription = (section: any) => {
+    if (!section.description) return undefined
+    if (section.i18nKey?.description) {
+      return tWithFallback(section.i18nKey.description.replace(/^plugins\./, ''), section.description)
+    }
+    return section.description
+  }
+  
+  const getPluginDisplayName = () => {
+    const metadata = pluginMetadata as any
+    if (metadata.i18nKey?.displayName) {
+      return tWithFallback(metadata.i18nKey.displayName.replace(/^plugins\./, ''), metadata.displayName)
+    }
+    return metadata.displayName
+  }
 
   const toggleSection = (sectionId: string) => {
     if (selectedSections.includes(sectionId)) {
@@ -60,7 +85,7 @@ export function SectionSelector({
             key={sectionId}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-primary/10 border border-primary/20 text-xs font-medium"
           >
-            <span className="text-foreground">{section.name}</span>
+            <span className="text-foreground">{getSectionName(section)}</span>
             <SectionConfigDialog
               plugin={pluginId}
               section={section}
@@ -88,7 +113,7 @@ export function SectionSelector({
             <DialogHeader>
               <DialogTitle>Select Sections</DialogTitle>
               <DialogDescription>
-                Choose which sections to display for {pluginMetadata.displayName}
+                Choose which sections to display for {getPluginDisplayName()}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-4">
@@ -111,11 +136,11 @@ export function SectionSelector({
                           htmlFor={`section-${section.id}`}
                           className="text-sm font-medium cursor-pointer"
                         >
-                          {section.name}
+                          {getSectionName(section)}
                         </Label>
-                        {section.description && (
+                        {getSectionDescription(section) && (
                           <p className="text-xs text-muted-foreground mt-1">
-                            {section.description}
+                            {getSectionDescription(section)}
                           </p>
                         )}
                       </div>
@@ -158,7 +183,7 @@ export function SectionSelector({
             <DialogHeader>
               <DialogTitle>Select Sections</DialogTitle>
               <DialogDescription>
-                Choose which sections to display for {pluginMetadata.displayName}
+                Choose which sections to display for {getPluginDisplayName()}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-4">
@@ -181,11 +206,11 @@ export function SectionSelector({
                           htmlFor={`section-${section.id}`}
                           className="text-sm font-medium cursor-pointer"
                         >
-                          {section.name}
+                          {getSectionName(section)}
                         </Label>
-                        {section.description && (
+                        {getSectionDescription(section) && (
                           <p className="text-xs text-muted-foreground mt-1">
-                            {section.description}
+                            {getSectionDescription(section)}
                           </p>
                         )}
                       </div>

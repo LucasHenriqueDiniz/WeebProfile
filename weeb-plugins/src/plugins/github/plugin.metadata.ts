@@ -143,10 +143,10 @@ export const githubPluginMetadata = {
         },
         {
           key: "favorite_languages_ignore_languages",
-          label: "Ignorar linguagens",
+          label: "Ignore languages",
           type: "string" as const,
           defaultValue: "",
-          description: "Lista de linguagens separadas por vírgula para ignorar",
+          description: "Comma-separated list of languages to ignore",
         },
       ],
     },

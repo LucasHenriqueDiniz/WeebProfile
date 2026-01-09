@@ -1,0 +1,166 @@
+{
+  "description": "Mostre suas estatísticas musicais do LastFM",
+  "displayName": "LastFM",
+  "essentialConfig": {
+    "apiKey": {
+      "description": "Chave de API do LastFM",
+      "label": "Chave de API LastFM",
+      "placeholder": "sua-chave-api"
+    },
+    "username": {
+      "description": "Seu nome de usuário do LastFM",
+      "label": "Nome de Usuário LastFM",
+      "placeholder": "seu-usuario"
+    }
+  },
+  "sections": {
+    "recent_tracks": {
+      "config": {
+        "recent_tracks_hide_title": {
+          "label": "Ocultar título"
+        },
+        "recent_tracks_max": {
+          "description": "Máximo de 20 faixas",
+          "label": "Máximo de faixas",
+          "tooltip": "Número máximo de faixas recentes a exibir. As faixas são ordenadas por mais recentemente tocadas."
+        },
+        "recent_tracks_title": {
+          "defaultValue": "Faixas Recentes",
+          "label": "Título"
+        }
+      },
+      "description": "Faixas ouvidas recentemente",
+      "name": "Faixas Recentes"
+    },
+    "statistics": {
+      "config": {
+        "statistics_hide_featured_track": {
+          "label": "Ocultar faixa em destaque"
+        },
+        "statistics_hide_title": {
+          "label": "Ocultar título"
+        },
+        "statistics_title": {
+          "defaultValue": "Estatísticas",
+          "label": "Título"
+        }
+      },
+      "description": "Estatísticas gerais do LastFM",
+      "name": "Estatísticas"
+    },
+    "top_albums": {
+      "config": {
+        "top_albums_hide_title": {
+          "label": "Ocultar título"
+        },
+        "top_albums_max": {
+          "description": "Máximo de 20 álbuns",
+          "label": "Máximo de álbuns",
+          "tooltip": "Número máximo de álbuns mais ouvidos a exibir. Os álbuns são ordenados por total de reproduções (mais tocados primeiro)."
+        },
+        "top_albums_period": {
+          "label": "Período",
+          "options": {
+            "12month": "Último ano",
+            "1month": "Último mês",
+            "3month": "Últimos 3 meses",
+            "6month": "Últimos 6 meses",
+            "7day": "Últimos 7 dias",
+            "overall": "Todo o tempo"
+          },
+          "tooltip": "Selecione o período para os álbuns mais ouvidos. 'Todo o tempo' mostra seus álbuns mais tocados de todos os tempos, enquanto outras opções mostram atividade recente."
+        },
+        "top_albums_style": {
+          "label": "Estilo de exibição",
+          "options": {
+            "default": "Padrão (Grade)",
+            "grid": "Grade",
+            "list": "Lista"
+          },
+          "tooltip": "Escolha como exibir os álbuns: Grade mostra as capas dos álbuns em um layout de grade, Lista mostra um formato de lista compacto."
+        },
+        "top_albums_title": {
+          "defaultValue": "Álbuns Mais Ouvidos",
+          "label": "Título"
+        }
+      },
+      "description": "Álbuns mais ouvidos",
+      "name": "Álbuns Mais Ouvidos"
+    },
+    "top_artists": {
+      "config": {
+        "top_artists_hide_title": {
+          "label": "Ocultar título"
+        },
+        "top_artists_max": {
+          "description": "Máximo de 20 artistas",
+          "label": "Máximo de artistas",
+          "tooltip": "Número máximo de artistas mais ouvidos a exibir. Os artistas são ordenados por total de reproduções (mais tocados primeiro)."
+        },
+        "top_artists_period": {
+          "label": "Período",
+          "options": {
+            "12month": "Último ano",
+            "1month": "Último mês",
+            "3month": "Últimos 3 meses",
+            "6month": "Últimos 6 meses",
+            "7day": "Últimos 7 dias",
+            "overall": "Todo o tempo"
+          }
+        },
+        "top_artists_style": {
+          "label": "Estilo de exibição",
+          "options": {
+            "default": "Padrão (Grade)",
+            "grid": "Grade",
+            "list": "Lista"
+          }
+        },
+        "top_artists_title": {
+          "defaultValue": "Artistas Mais Ouvidos",
+          "label": "Título"
+        }
+      },
+      "description": "Artistas mais ouvidos",
+      "name": "Artistas Mais Ouvidos"
+    },
+    "top_tracks": {
+      "config": {
+        "top_tracks_hide_title": {
+          "label": "Ocultar título"
+        },
+        "top_tracks_max": {
+          "description": "Máximo de 20 faixas",
+          "label": "Máximo de faixas"
+        },
+        "top_tracks_period": {
+          "label": "Período",
+          "options": {
+            "12month": "Último ano",
+            "1month": "Último mês",
+            "3month": "Últimos 3 meses",
+            "6month": "Últimos 6 meses",
+            "7day": "Últimos 7 dias",
+            "overall": "Todo o tempo"
+          },
+          "tooltip": "Selecione o período para as faixas mais ouvidas. 'Todo o tempo' mostra suas faixas mais tocadas de todos os tempos, enquanto outras opções mostram atividade recente."
+        },
+        "top_tracks_style": {
+          "label": "Estilo de exibição",
+          "options": {
+            "default": "Padrão (Grade)",
+            "grid": "Grade",
+            "list": "Lista"
+          },
+          "tooltip": "Escolha como exibir as faixas: Grade mostra a arte da faixa em um layout de grade, Lista mostra um formato de lista compacto."
+        },
+        "top_tracks_title": {
+          "defaultValue": "Faixas Mais Ouvidas",
+          "label": "Título"
+        }
+      },
+      "description": "Faixas mais ouvidas",
+      "name": "Faixas Mais Ouvidas"
+    }
+  }
+}

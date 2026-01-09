@@ -21,6 +21,8 @@ interface Feature {
 }
 
 interface FeaturesSectionProps {
+  title: string
+  subtitle: string
   features: Feature[]
 }
 
@@ -33,7 +35,7 @@ const iconMap: Record<string, LucideIcon> = {
   Shield,
 }
 
-export function ComparisonSection({ features }: FeaturesSectionProps) {
+export function ComparisonSection({ title, subtitle, features }: FeaturesSectionProps) {
   return (
     <section className="relative py-16 md:py-24 overflow-hidden">
       {/* Background decoration */}
@@ -48,11 +50,11 @@ export function ComparisonSection({ features }: FeaturesSectionProps) {
         >
           <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
             <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-              What makes it special
+              {title}
             </span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            Everything you need to create the perfect profile card, all in one place.
+            {subtitle}
           </p>
         </motion.div>
 

@@ -49,12 +49,14 @@ export function SimpleStatistics({
             <div className="flex flex-row mt-2 items-center h-full">
               <ul className="flex half:flex-col gap-1 w-full">
               <Stat
+                key="days-wasted"
                 title="Days Wasted"
                 value={TotalDays.toFixed(1)}
                 strong
                 icon={<FaCalendar className="text-default-highlight" />}
               />
               <Stat
+                key="mean-score"
                 title="Mean Score"
                 value={TotalMeanScore.toFixed(2)}
                 strong
@@ -63,6 +65,7 @@ export function SimpleStatistics({
               </ul>
               <ul className="flex half:flex-col gap-1 w-full">
               <Stat
+                key="chapters-read"
                 title="CH's Read"
                 value={abbreviateNumber(ChaptersRead)}
                 strong
@@ -70,6 +73,7 @@ export function SimpleStatistics({
                 smallInHalf
               />
               <Stat
+                key="episodes-watched"
                 title="EP's Watched"
                 value={abbreviateNumber(EpisodesWatched)}
                 strong

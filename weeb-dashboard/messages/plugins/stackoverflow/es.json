@@ -1,0 +1,67 @@
+{
+  "description": "Muestra tus estadísticas de reputación y actividad de Stack Overflow",
+  "displayName": "Stack Overflow",
+  "sections": {
+    "answers_questions": {
+      "config": {
+        "answers_questions_hide_questions": {
+          "description": "Mostrar solo conteo de respuestas",
+          "label": "Ocultar conteo de preguntas"
+        },
+        "answers_questions_hide_title": {
+          "label": "Ocultar título"
+        },
+        "answers_questions_title": {
+          "defaultValue": "Respuestas y Preguntas",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tu total de respuestas y preguntas",
+      "name": "Respuestas y Preguntas"
+    },
+    "badges": {
+      "config": {
+        "badges_hide_title": {
+          "label": "Ocultar título"
+        },
+        "badges_title": {
+          "defaultValue": "Insignias",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tus conteos de insignias (oro, plata, bronce)",
+      "name": "Insignias"
+    },
+    "reputation": {
+      "config": {
+        "reputation_hide_title": {
+          "label": "Ocultar título"
+        },
+        "reputation_title": {
+          "defaultValue": "Reputación",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tu reputación actual y cambio de reputación",
+      "name": "Reputación"
+    },
+    "tags_expertise": {
+      "config": {
+        "tags_expertise_hide_title": {
+          "label": "Ocultar título"
+        },
+        "tags_expertise_max": {
+          "description": "Máximo de 20 etiquetas",
+          "label": "Máximo de etiquetas",
+          "tooltip": "Número máximo de etiquetas a mostrar. Las etiquetas se ordenan por puntuación (mayor puntuación primero)."
+        },
+        "tags_expertise_title": {
+          "defaultValue": "Competencia en Etiquetas",
+          "label": "Título"
+        }
+      },
+      "description": "Mostrar tus principales etiquetas por puntuación",
+      "name": "Competencia en Etiquetas"
+    }
+  }
+}

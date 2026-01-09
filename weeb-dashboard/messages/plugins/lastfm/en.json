@@ -1,0 +1,166 @@
+{
+  "description": "Show your LastFM music statistics",
+  "displayName": "LastFM",
+  "essentialConfig": {
+    "apiKey": {
+      "description": "API Key from LastFM",
+      "label": "LastFM API Key",
+      "placeholder": "your-api-key"
+    },
+    "username": {
+      "description": "Your LastFM username",
+      "label": "LastFM Username",
+      "placeholder": "your-username"
+    }
+  },
+  "sections": {
+    "recent_tracks": {
+      "config": {
+        "recent_tracks_hide_title": {
+          "label": "Hide title"
+        },
+        "recent_tracks_max": {
+          "description": "Maximum 20 tracks",
+          "label": "Maximum tracks",
+          "tooltip": "Maximum number of recent tracks to display. Tracks are ordered by most recently played."
+        },
+        "recent_tracks_title": {
+          "defaultValue": "Recent Tracks",
+          "label": "Title"
+        }
+      },
+      "description": "Recent tracks listened",
+      "name": "Recent Tracks"
+    },
+    "statistics": {
+      "config": {
+        "statistics_hide_featured_track": {
+          "label": "Hide featured track"
+        },
+        "statistics_hide_title": {
+          "label": "Hide title"
+        },
+        "statistics_title": {
+          "defaultValue": "Statistics",
+          "label": "Title"
+        }
+      },
+      "description": "General statistics from LastFM",
+      "name": "Statistics"
+    },
+    "top_albums": {
+      "config": {
+        "top_albums_hide_title": {
+          "label": "Hide title"
+        },
+        "top_albums_max": {
+          "description": "Maximum 20 albums",
+          "label": "Maximum albums",
+          "tooltip": "Maximum number of top albums to display. Albums are ordered by total play count (most played first)."
+        },
+        "top_albums_period": {
+          "label": "Period",
+          "options": {
+            "12month": "Last year",
+            "1month": "Last month",
+            "3month": "Last 3 months",
+            "6month": "Last 6 months",
+            "7day": "Last 7 days",
+            "overall": "All time"
+          },
+          "tooltip": "Select the time period for top albums. 'All time' shows your most played albums ever, while other options show recent activity."
+        },
+        "top_albums_style": {
+          "label": "Display style",
+          "options": {
+            "default": "Default (Grid)",
+            "grid": "Grid",
+            "list": "List"
+          },
+          "tooltip": "Choose how to display the albums: Grid shows album covers in a grid layout, List shows a compact list format."
+        },
+        "top_albums_title": {
+          "defaultValue": "Top Albums",
+          "label": "Title"
+        }
+      },
+      "description": "Most listened albums",
+      "name": "Top Albums"
+    },
+    "top_artists": {
+      "config": {
+        "top_artists_hide_title": {
+          "label": "Hide title"
+        },
+        "top_artists_max": {
+          "description": "Maximum 20 artists",
+          "label": "Maximum artists",
+          "tooltip": "Maximum number of top artists to display. Artists are ordered by total play count (most played first)."
+        },
+        "top_artists_period": {
+          "label": "Period",
+          "options": {
+            "12month": "Last year",
+            "1month": "Last month",
+            "3month": "Last 3 months",
+            "6month": "Last 6 months",
+            "7day": "Last 7 days",
+            "overall": "All time"
+          }
+        },
+        "top_artists_style": {
+          "label": "Display style",
+          "options": {
+            "default": "Default (Grid)",
+            "grid": "Grid",
+            "list": "List"
+          }
+        },
+        "top_artists_title": {
+          "defaultValue": "Top Artists",
+          "label": "Title"
+        }
+      },
+      "description": "Most listened artists",
+      "name": "Top Artists"
+    },
+    "top_tracks": {
+      "config": {
+        "top_tracks_hide_title": {
+          "label": "Hide title"
+        },
+        "top_tracks_max": {
+          "description": "Maximum 20 tracks",
+          "label": "Maximum tracks"
+        },
+        "top_tracks_period": {
+          "label": "Period",
+          "options": {
+            "12month": "Last year",
+            "1month": "Last month",
+            "3month": "Last 3 months",
+            "6month": "Last 6 months",
+            "7day": "Last 7 days",
+            "overall": "All time"
+          },
+          "tooltip": "Select the time period for top tracks. 'All time' shows your most played tracks ever, while other options show recent activity."
+        },
+        "top_tracks_style": {
+          "label": "Display style",
+          "options": {
+            "default": "Default (Grid)",
+            "grid": "Grid",
+            "list": "List"
+          },
+          "tooltip": "Choose how to display the tracks: Grid shows track artwork in a grid layout, List shows a compact list format."
+        },
+        "top_tracks_title": {
+          "defaultValue": "Top Tracks",
+          "label": "Title"
+        }
+      },
+      "description": "Most listened tracks",
+      "name": "Top Tracks"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "description": "Display your 16Personalities type with emoji and link",
+  "displayName": "16Personalities",
+  "sections": {
+    "personality": {
+      "config": {
+        "personality_hide_title": {
+          "label": "Hide title"
+        },
+        "personality_show_description": {
+          "description": "Show a short description of the personality type",
+          "label": "Show description"
+        },
+        "personality_show_link": {
+          "description": "Show link to the personality type page on 16Personalities",
+          "label": "Show link"
+        },
+        "personality_title": {
+          "defaultValue": "Personality",
+          "label": "Title"
+        },
+        "personality_url": {
+          "description": "Paste your 16Personalities test result URL to automatically detect your type",
+          "label": "16Personalities Result URL",
+          "placeholder": "https://www.16personalities.com/br/resultados/enfj-t/m/...",
+          "tooltip": "Paste the full URL from your 16Personalities test results page. The plugin will automatically extract your personality type from the URL."
+        }
+      },
+      "description": "Display your 16Personalities personality type",
+      "name": "Personality"
+    }
+  }
+}

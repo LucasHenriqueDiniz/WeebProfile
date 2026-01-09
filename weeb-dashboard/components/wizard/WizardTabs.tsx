@@ -3,6 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Package, Palette } from "lucide-react"
 import { ReactNode } from "react"
+import { useTranslations } from "next-intl"
 
 interface WizardTabsProps {
   activeTab: "plugins" | "style"
@@ -11,6 +12,8 @@ interface WizardTabsProps {
 }
 
 export function WizardTabs({ activeTab, onTabChange, children }: WizardTabsProps) {
+  const t = useTranslations('wizard.tabs')
+  
   const handleTabChange = (value: string) => {
     const tab = value as "plugins" | "style"
     onTabChange(tab)
@@ -25,14 +28,14 @@ export function WizardTabs({ activeTab, onTabChange, children }: WizardTabsProps
             className="flex-1 rounded-lg border-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-4 py-2.5 font-medium transition-all"
           >
             <Package className="h-4 w-4 mr-2" />
-            Plugins
+            {t('plugins')}
           </TabsTrigger>
           <TabsTrigger
             value="style"
             className="flex-1 rounded-lg border-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary px-4 py-2.5 font-medium transition-all"
           >
             <Palette className="h-4 w-4 mr-2" />
-            Style
+            {t('style')}
           </TabsTrigger>
         </TabsList>
       </div>

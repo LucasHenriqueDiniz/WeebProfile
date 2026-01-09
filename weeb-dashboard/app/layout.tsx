@@ -51,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <body className={`${inter.variable} ${sora.variable} ${jetbrainsMono.variable} antialiased font-body`}>
         <ThemeProvider>
           <TooltipProvider>

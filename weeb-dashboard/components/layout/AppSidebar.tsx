@@ -1,8 +1,9 @@
 "use client"
 
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter, usePathname } from "@/i18n/routing"
 import { useEffect, useState } from "react"
 import { Home, Plus, Settings, LogOut, Image as ImageIcon, Check, Circle, FileImage, User } from "lucide-react"
+import { useTranslations } from "next-intl"
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +19,8 @@ import {
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSelector } from "./LanguageSelector"
+import { Languages } from "lucide-react"
 import { svgApi } from "@/lib/api"
 import { useWizardStore } from "@/stores/wizard-store"
 import { cn } from "@/lib/utils"
@@ -53,12 +56,15 @@ const wizardSteps = [
 ]
 
 export function AppSidebar() {
+  const tSidebar = useTranslations('wizard.sidebar')
+  const tHeader = useTranslations('header')
   const router = useRouter()
   const pathname = usePathname()
   const { user, signOut } = useAuth()
   const { currentStep } = useWizardStore()
   const [svgs, setSvgs] = useState<any[]>([])
   const [loadingSvgs, setLoadingSvgs] = useState(true)
+  const [languageSelectorOpen, setLanguageSelectorOpen] = useState(false)
   const isWizardPage = pathname === "/dashboard/new"
   const isEditPage = pathname?.match(/^\/dashboard\/[^/]+\/edit$/)
 
@@ -102,7 +108,7 @@ export function AppSidebar() {
       <SidebarContent>
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navegação</SidebarGroupLabel>
+          <SidebarGroupLabel>{tSidebar('navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -113,7 +119,7 @@ export function AppSidebar() {
                 >
                   <a href="/dashboard">
                     <Home />
-                    <span>Dashboard</span>
+                    <span>{tSidebar('dashboard')}</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -125,7 +131,7 @@ export function AppSidebar() {
                 >
                   <a href="/dashboard/new">
                     <Plus />
-                    <span>Criar Nova Imagem</span>
+                    <span>{tSidebar('createNewImage')}</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -136,7 +142,7 @@ export function AppSidebar() {
         {/* Wizard Steps - Only show when creating new image */}
         {isWizardPage && (
           <SidebarGroup>
-            <SidebarGroupLabel>Passos do Wizard</SidebarGroupLabel>
+            <SidebarGroupLabel>{tSidebar('wizardSteps')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {wizardSteps.map((step) => {
@@ -177,9 +183,12 @@ export function AppSidebar() {
                           )}
                         </div>
                         <div className="flex-1 text-left">
-                          <div className="text-xs text-muted-foreground">Passo {step.number}</div>
+                          <div className="text-xs text-muted-foreground">{tSidebar('step')} {step.number}</div>
                           <div className={cn("font-medium text-sm", isCurrent && "text-primary")}>
-                            {step.title}
+                            {step.title === "Básico" ? tSidebar('basic') : 
+                             step.title === "Estilo" ? tSidebar('style') :
+                             step.title === "Plugins" ? tSidebar('plugins') :
+                             step.title === "Preview" ? tSidebar('preview') : step.title}
                           </div>
                         </div>
                       </SidebarMenuButton>
@@ -195,14 +204,14 @@ export function AppSidebar() {
         {!isWizardPage && !isEditPage && (
           <SidebarGroup>
             <SidebarGroupLabel>
-              Imagens Criadas {svgs.length > 0 && `(${svgs.length})`}
+              {tSidebar('createdImages')} {svgs.length > 0 && `(${svgs.length})`}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               {loadingSvgs ? (
-                <div className="px-3 py-2 text-sm text-muted-foreground">Carregando...</div>
+                <div className="px-3 py-2 text-sm text-muted-foreground">{tSidebar('loading')}</div>
               ) : svgs.length === 0 ? (
                 <div className="px-3 py-2 text-sm text-muted-foreground">
-                  Nenhuma imagem criada
+                  {tSidebar('noImagesCreated')}
                 </div>
               ) : (
                 <SidebarMenu>
@@ -260,15 +269,19 @@ export function AppSidebar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+              <DropdownMenuLabel>{tHeader('myAccount')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push("/dashboard")}>
                 <Home className="w-4 h-4 mr-2" />
-                Dashboard
+                {tHeader('dashboard')}
               </DropdownMenuItem>
               <DropdownMenuItem disabled>
                 <Settings className="w-4 h-4 mr-2" />
-                Configurações
+                {tHeader('settings')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguageSelectorOpen(true)}>
+                <Languages className="w-4 h-4 mr-2" />
+                {tHeader('changeLanguage')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <div className="px-2 py-1.5">
@@ -277,15 +290,19 @@ export function AppSidebar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />
-                Sair
+                {tHeader('signOut')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
       </SidebarFooter>
+
+      {/* Language Selector Modal */}
+      <LanguageSelector open={languageSelectorOpen} onOpenChange={setLanguageSelectorOpen} />
     </Sidebar>
   )
 }
+
 
 
 

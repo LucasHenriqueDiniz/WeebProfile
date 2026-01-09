@@ -14,6 +14,9 @@ import { useToast } from "@/hooks/use-toast"
 import { profileApi, ApiException } from "@/lib/api"
 import { getMissingEssentialConfigs, getPluginEssentialConfigKeys } from "@/lib/config/plugin-essential-configs"
 import type { EssentialConfigs } from "@/lib/db/types"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { usePluginI18n } from "@/lib/plugins/i18n-helper"
+import { useTranslations } from "next-intl"
 
 interface ProfileConfigModalProps {
   open: boolean
@@ -28,6 +31,8 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
+  const { tWithFallback } = usePluginI18n()
+  const t = useTranslations('wizard.plugins.requiredFields')
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<{
@@ -113,8 +118,8 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
         .join(', ')
       
       toast({
-        title: "Campos obrigatórios",
-        description: `Por favor, preencha todos os campos obrigatórios: ${missingFieldsList}`,
+        title: t('title'),
+        description: `${t('fillAllDescription')}: ${missingFieldsList}`,
         variant: "destructive",
       })
       return
@@ -227,15 +232,37 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                   {enabledPlugins.map((pluginName) => {
                     const keys = getPluginEssentialConfigKeys(pluginName)
                     if (keys.length === 0) return null
+                    
+                    // Get plugin metadata for i18n
+                    const pluginMetadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA] as any
 
                     return (
                       <div key={pluginName} className="space-y-3 p-3 border rounded-md">
-                        <h4 className="text-sm font-medium capitalize">{pluginName}</h4>
+                        <h4 className="text-sm font-medium">
+                          {pluginMetadata?.i18nKey?.displayName
+                            ? tWithFallback(pluginMetadata.i18nKey.displayName.replace(/^plugins\./, ''), pluginMetadata?.displayName || pluginName)
+                            : pluginMetadata?.displayName || pluginName}
+                        </h4>
                         {keys.map((keyDef) => {
                           const isSet = isConfigSet(pluginName, keyDef.key)
                           const localValue = getLocalValue(pluginName, keyDef.key)
                           const showValue = localValue.length > 0 // Mostrar apenas se usuário digitou algo
                           const isOAuth = keyDef.type === "oauth"
+                          
+                          const essentialConfigMeta = pluginMetadata?.essentialConfigKeysMetadata?.find(
+                            (meta: any) => meta.key === keyDef.key
+                          )
+                          
+                          // Get translated values
+                          const configLabel = essentialConfigMeta?.i18nKey?.label
+                            ? tWithFallback(essentialConfigMeta.i18nKey.label.replace(/^plugins\./, ''), keyDef.label)
+                            : keyDef.label
+                          const configDescription = keyDef.description && essentialConfigMeta?.i18nKey?.description
+                            ? tWithFallback(essentialConfigMeta.i18nKey.description.replace(/^plugins\./, ''), keyDef.description)
+                            : keyDef.description
+                          const configPlaceholder = keyDef.placeholder && essentialConfigMeta?.i18nKey?.placeholder
+                            ? tWithFallback(essentialConfigMeta.i18nKey.placeholder.replace(/^plugins\./, ''), keyDef.placeholder)
+                            : keyDef.placeholder
                           
                           // Handler para iniciar OAuth
                           const handleOAuthConnect = () => {
@@ -248,7 +275,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                   <Label htmlFor={`${pluginName}-${keyDef.key}`}>
-                                    {keyDef.label} <span className="text-destructive">*</span>
+                                    {configLabel} <span className="text-destructive">*</span>
                                   </Label>
                                   {isSet && (
                                     <Badge variant="outline" className="text-xs gap-1">
@@ -306,7 +333,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                     placeholder={
                                       isSet 
                                         ? "Digite para alterar (valor atual não é exibido por segurança)"
-                                        : (keyDef.placeholder || `seu-${keyDef.key}`)
+                                        : (configPlaceholder || `seu-${keyDef.key}`)
                                     }
                                     className="font-mono"
                                   />
@@ -318,8 +345,8 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                 </>
                               )}
                               
-                              {keyDef.description && (
-                                <p className="text-xs text-muted-foreground">{keyDef.description}</p>
+                              {configDescription && (
+                                <p className="text-xs text-muted-foreground">{configDescription}</p>
                               )}
                             </div>
                           )

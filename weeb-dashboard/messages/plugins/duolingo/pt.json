@@ -1,0 +1,55 @@
+{
+  "description": "Mostre suas estatísticas de aprendizado do Duolingo",
+  "displayName": "Duolingo",
+  "sections": {
+    "current_streak": {
+      "config": {
+        "current_streak_hide_title": {
+          "label": "Ocultar título"
+        },
+        "current_streak_title": {
+          "defaultValue": "Sequência Atual",
+          "label": "Título"
+        }
+      },
+      "description": "Exibir sua sequência atual em dias",
+      "name": "Sequência do Duolingo"
+    },
+    "languages_learning": {
+      "config": {
+        "languages_learning_hide_languages": {
+          "description": "Lista de nomes de idiomas para ocultar (ex: Japonês, Francês)",
+          "label": "Ocultar idiomas",
+          "tooltip": "Lista de nomes de idiomas que você deseja ocultar da exibição. Digite o nome exato do idioma (ex: 'Japonês', 'Francês', 'Espanhol') e pressione Enter para adicionar."
+        },
+        "languages_learning_hide_title": {
+          "label": "Ocultar título"
+        },
+        "languages_learning_max": {
+          "description": "Máximo de 20 idiomas",
+          "label": "Máximo de idiomas",
+          "tooltip": "Número máximo de idiomas que serão exibidos. Os idiomas são ordenados por XP total (maior XP primeiro)."
+        },
+        "languages_learning_title": {
+          "defaultValue": "Idiomas Aprendendo",
+          "label": "Título"
+        }
+      },
+      "description": "Exibir idiomas que você está aprendendo com XP por idioma",
+      "name": "Idiomas Aprendendo"
+    },
+    "total_xp": {
+      "config": {
+        "total_xp_hide_title": {
+          "label": "Ocultar título"
+        },
+        "total_xp_title": {
+          "defaultValue": "XP Total",
+          "label": "Título"
+        }
+      },
+      "description": "Exibir seu XP total acumulado",
+      "name": "XP Total"
+    }
+  }
+}

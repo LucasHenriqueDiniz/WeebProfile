@@ -1,7 +1,6 @@
 "use client"
 
-import { useRouter, usePathname } from "next/navigation"
-import Link from "next/link"
+import { useRouter, usePathname, Link } from "@/i18n/routing"
 import {
   LayoutGrid,
   Plus,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,28 +32,30 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const navItems = [
-  {
-    label: "My SVGs",
-    href: "/dashboard",
-    icon: LayoutGrid,
-  },
-  {
-    label: "Create New",
-    href: "/dashboard/new",
-    icon: Plus,
-  },
-  {
-    label: "Settings",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
-]
-
 export function DashboardSidebar() {
+  const t = useTranslations('sidebar')
+  const tHeader = useTranslations('header')
   const router = useRouter()
   const pathname = usePathname()
   const { user, signOut } = useAuth()
+
+  const navItems = [
+    {
+      label: t('mySvgs'),
+      href: "/dashboard",
+      icon: LayoutGrid,
+    },
+    {
+      label: t('createNew'),
+      href: "/dashboard/new",
+      icon: Plus,
+    },
+    {
+      label: t('settings'),
+      href: "/dashboard/settings",
+      icon: Settings,
+    },
+  ]
 
   const handleSignOut = async () => {
     try {
@@ -87,12 +89,13 @@ export function DashboardSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">{t('navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
                 const Icon = item.icon
-                const isActive = pathname === item.href
+                // Pathname agora inclui locale (ex: /pt/dashboard), então verificar se termina com o href
+                const isActive = pathname === item.href || pathname?.endsWith(item.href)
 
                 return (
                   <SidebarMenuItem key={item.href}>
@@ -144,7 +147,7 @@ export function DashboardSidebar() {
                 </div>
                 <div className="group-data-[collapsible=icon]:hidden flex-1 min-w-0 text-left">
                   <div className="text-sm font-medium truncate">
-                    {user.user_metadata?.user_name || user.email?.split("@")[0] || "Usuário"}
+                    {user.user_metadata?.user_name || user.email?.split("@")[0] || t('user')}
                   </div>
                   {user.email && (
                     <div className="text-xs text-muted-foreground truncate">
@@ -162,7 +165,7 @@ export function DashboardSidebar() {
             >
               <DropdownMenuLabel className="flex flex-col gap-1.5 px-3 py-2.5">
                 <span className="text-sm font-semibold">
-                  {user.user_metadata?.user_name || user.email?.split("@")[0] || "Usuário"}
+                  {user.user_metadata?.user_name || user.email?.split("@")[0] || t('user')}
                 </span>
                 {user.email && (
                   <span className="text-xs text-muted-foreground font-normal">
@@ -176,7 +179,7 @@ export function DashboardSidebar() {
                 className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
               >
                 <Settings className="w-4 h-4 mr-2.5" />
-                Configurações
+                {tHeader('settings')}
               </DropdownMenuItem>
               <DropdownMenuSeparator className="my-1" />
               <DropdownMenuItem 
@@ -184,7 +187,7 @@ export function DashboardSidebar() {
                 className="text-destructive focus:text-destructive cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
               >
                 <LogOut className="w-4 h-4 mr-2.5" />
-                Sair
+                {tHeader('signOut')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

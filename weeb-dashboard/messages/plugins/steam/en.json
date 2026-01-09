@@ -1,0 +1,87 @@
+{
+  "description": "Show your Steam gaming statistics",
+  "displayName": "Steam",
+  "essentialConfig": {
+    "apiKey": {
+      "description": "API Key from Steam Web API",
+      "label": "Steam Web API Key",
+      "placeholder": "your-api-key"
+    },
+    "steamId": {
+      "description": "Your Steam ID64 (17 digits)",
+      "label": "Steam ID64",
+      "placeholder": "76561198000000000"
+    }
+  },
+  "sections": {
+    "recent_games": {
+      "config": {
+        "recent_games_hide_title": {
+          "label": "Hide title"
+        },
+        "recent_games_max": {
+          "description": "Maximum 20 games",
+          "label": "Maximum games",
+          "tooltip": "Maximum number of recent games to display. Games are ordered by most recently played."
+        },
+        "recent_games_style": {
+          "description": "Choose how games are displayed",
+          "label": "Display style",
+          "options": {
+            "compact": "Compact Grid (5 per row)",
+            "list": "List"
+          }
+        },
+        "recent_games_title": {
+          "defaultValue": "Recent Games",
+          "label": "Title"
+        }
+      },
+      "description": "Games played in the last 2 weeks",
+      "name": "Recent Games"
+    },
+    "statistics": {
+      "config": {
+        "statistics_hide_title": {
+          "label": "Hide title"
+        },
+        "statistics_show_featured": {
+          "description": "Show the 'Destaque recente' card with the most played game in the last 2 weeks",
+          "label": "Show featured game"
+        },
+        "statistics_title": {
+          "defaultValue": "Statistics",
+          "label": "Title"
+        }
+      },
+      "description": "General statistics from Steam",
+      "name": "Statistics"
+    },
+    "top_games": {
+      "config": {
+        "top_games_hide_title": {
+          "label": "Hide title"
+        },
+        "top_games_max": {
+          "description": "Maximum 20 games",
+          "label": "Maximum games",
+          "tooltip": "Maximum number of top games to display. Games are ordered by total playtime (most played first)."
+        },
+        "top_games_style": {
+          "description": "Choose how games are displayed",
+          "label": "Display style",
+          "options": {
+            "compact": "Compact Grid (5 per row)",
+            "list": "List"
+          }
+        },
+        "top_games_title": {
+          "defaultValue": "Top Games",
+          "label": "Title"
+        }
+      },
+      "description": "Most played games by total playtime",
+      "name": "Top Games"
+    }
+  }
+}

@@ -47,10 +47,37 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: "SVG not found" }, { status: 404 })
     }
 
+    // Verificar se o SVG está preso em "generating" há muito tempo (> 30 minutos)
+    // Isso pode acontecer se o servidor foi desligado durante a geração
+    let currentSvg = svg
+    if (svg.status === "generating" && svg.updatedAt) {
+      const updatedAt = new Date(svg.updatedAt)
+      const now = new Date()
+      const minutesSinceUpdate = (now.getTime() - updatedAt.getTime()) / (1000 * 60)
+      const STUCK_TIMEOUT_MINUTES = 30
+      
+      if (minutesSinceUpdate > STUCK_TIMEOUT_MINUTES) {
+        console.warn(`⚠️  SVG ${id} está preso em "generating" há ${Math.ceil(minutesSinceUpdate)} minutos. Resetando para "pending".`)
+        // Resetar para "pending" para permitir nova tentativa
+        const [updatedSvg] = await db
+          .update(svgs)
+          .set({
+            status: "pending",
+            lastError: `Geração interrompida (preso em generating há ${Math.ceil(minutesSinceUpdate)} minutos)`,
+          })
+          .where(eq(svgs.id, id))
+          .returning()
+        
+        if (updatedSvg) {
+          currentSvg = updatedSvg
+        }
+      }
+    }
+
     // Verificar cooldown (20 minutos) - apenas se não for forçado
     const COOLDOWN_MINUTES = 20
-    if (!force && svg.lastGeneratedAt) {
-      const lastGenerated = new Date(svg.lastGeneratedAt)
+    if (!force && currentSvg.lastGeneratedAt) {
+      const lastGenerated = new Date(currentSvg.lastGeneratedAt)
       const now = new Date()
       const minutesSinceLastGeneration = (now.getTime() - lastGenerated.getTime()) / (1000 * 60)
       
@@ -80,17 +107,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     try {
       console.log(`🔍 [GENERATE] Starting generation for SVG ${id} (force: ${force})`)
       console.log(`🔍 [GENERATE] SVG data:`, {
-        id: svg.id,
-        name: svg.name,
-        style: svg.style,
-        size: svg.size,
-        theme: svg.theme,
-        pluginsConfig: svg.pluginsConfig,
-        pluginsOrder: svg.pluginsOrder,
+        id: currentSvg.id,
+        name: currentSvg.name,
+        style: currentSvg.style,
+        size: currentSvg.size,
+        theme: currentSvg.theme,
+        pluginsConfig: currentSvg.pluginsConfig,
+        pluginsOrder: currentSvg.pluginsOrder,
       })
 
       // Converter configuração do Supabase para formato do svg-generator
-      const { plugins, pluginsOrder } = await convertSvgToPluginsConfig(svg)
+      const { plugins, pluginsOrder } = await convertSvgToPluginsConfig(currentSvg)
       
       console.log(`🔍 [GENERATE] Converted plugins:`, JSON.stringify(plugins, null, 2))
       console.log(`🔍 [GENERATE] Plugins order:`, pluginsOrder)
@@ -98,15 +125,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       // Preparar request para o svg-generator HTTP service
       // O svg-generator vai buscar apenas essential configs (secrets) do Supabase usando userId
       // pluginsOrder já vem convertido com ordem alfabética se null/empty
-      const uiConfig = (svg as any).uiConfig || {}
+      const uiConfig = (currentSvg as any).uiConfig || {}
       const terminalConfigs = getTerminalConfigs(uiConfig)
       const requestConfig = {
-        style: svg.style || 'default',
-        size: svg.size || 'half',
+        style: currentSvg.style || 'default',
+        size: currentSvg.size || 'half',
         plugins,
         pluginsOrder, // Already converted by convertSvgToPluginsConfig (alphabetical if null/empty)
-        customCss: svg.customCss || undefined,
-        theme: svg.theme || undefined,
+        customCss: currentSvg.customCss || undefined,
+        theme: currentSvg.theme || undefined,
         hideTerminalEmojis: terminalConfigs.hideTerminalEmojis,
         hideTerminalHeader: terminalConfigs.hideTerminalHeader,
         hideTerminalCommand: terminalConfigs.hideTerminalCommand,
@@ -127,7 +154,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       const { path, url } = await saveSvgToStorage(id, svgContent)
 
       // Calcular hash dos dados
-      const dataHash = generateDataHash(svg)
+      const dataHash = generateDataHash(currentSvg)
 
       // Atualizar SVG com resultado
       // Set next_regeneration_at to 24 hours from now for automatic regeneration
@@ -163,6 +190,26 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         .where(eq(svgs.id, id))
 
       console.error("Error generating SVG:", error)
+      
+      // Check if it's a Vercel timeout error (cold start do Railway)
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      const isVercelTimeout = 
+        errorMessage.includes("Vercel Runtime Timeout") ||
+        errorMessage.includes("Task timed out after") ||
+        errorMessage.includes("Function execution exceeded") ||
+        (error?.code === "ETIMEDOUT" && errorMessage.includes("timeout"))
+      
+      if (isVercelTimeout) {
+        return NextResponse.json(
+          {
+            error: "Service starting up",
+            code: "VERCEL_TIMEOUT",
+            message: "O serviço de geração está acordando. Por favor, aguarde alguns segundos e tente novamente.",
+            retryable: true,
+          },
+          { status: 503 }
+        )
+      }
       
       // Check if it's a structured error from svg-generator
       if (error?.code === "MISSING_REQUIRED_SECRETS" || error?.error === "MISSING_REQUIRED_CONFIG") {

@@ -1,15 +1,17 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
+import { useParams as useNextParams } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Copy, CheckCircle2, ExternalLink, Edit, RefreshCw, ArrowLeft, Calendar, Image as ImageIcon, Code2, Link2 } from "lucide-react"
 import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/routing"
 import Image from "next/image"
 import { svgApi, ApiException } from "@/lib/api"
 import { useSvgStore } from "@/stores/svg-store"
@@ -18,7 +20,8 @@ import { SvgViewSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import { generateMarkdown } from "@/lib/utils/markdown"
 
 export default function SvgViewPage() {
-  const params = useParams()
+  const t = useTranslations('view')
+  const params = useNextParams()
   const searchParams = useSearchParams()
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
@@ -124,14 +127,14 @@ export default function SvgViewPage() {
       await navigator.clipboard.writeText(markdown)
       setCopied(true)
       toast({
-        title: "Copiado!",
-        description: "Código markdown copiado para a área de transferência",
+        title: t('markdown.toastCopied'),
+        description: t('markdown.toastCopiedDescription'),
       })
       setTimeout(() => setCopied(false), 2000)
     } catch (error) {
       toast({
-        title: "Erro",
-        description: "Não foi possível copiar o código",
+        title: t('markdown.toastError'),
+        description: t('markdown.toastErrorDescription'),
         variant: "destructive",
       })
     }
@@ -145,14 +148,14 @@ export default function SvgViewPage() {
       await navigator.clipboard.writeText(url)
       setCopied(true)
       toast({
-        title: "Copiado!",
-        description: "URL copiada para a área de transferência",
+        title: t('url.toastCopied'),
+        description: t('url.toastCopiedDescription'),
       })
       setTimeout(() => setCopied(false), 2000)
     } catch (error) {
       toast({
-        title: "Erro",
-        description: "Não foi possível copiar a URL",
+        title: t('url.toastError'),
+        description: t('url.toastErrorDescription'),
         variant: "destructive",
       })
     }
@@ -163,16 +166,32 @@ export default function SvgViewPage() {
 
     try {
       setGenerating(true)
-      await svgApi.generate(svgId, true) // force = true
-      
-      toast({
-        title: "Gerando...",
-        description: "A imagem está sendo gerada novamente",
-      })
       
       // Atualizar status imediatamente - o useEffect vai fazer polling automaticamente
       updateSvg(svgId, { status: "generating" })
       setSvg({ ...svg, status: "generating" })
+      
+      const result = await svgApi.generate(svgId, true) // force = true
+      
+      // Atualizar com dados retornados se disponível
+      if (result.svg) {
+        const updatedSvgData = {
+          ...svg,
+          ...result.svg,
+          status: result.svg.status || "generating",
+        }
+        updateSvg(svgId, {
+          status: updatedSvgData.status,
+          storageUrl: updatedSvgData.storageUrl,
+          lastGeneratedAt: updatedSvgData.lastGeneratedAt,
+        })
+        setSvg(updatedSvgData)
+      }
+      
+      toast({
+        title: t('toast.generating'),
+        description: t('toast.generatingDescription'),
+      })
       
       // Recarregar do servidor após um delay para pegar dados atualizados
       // O useEffect já vai fazer polling, mas vamos forçar um refresh inicial
@@ -181,15 +200,26 @@ export default function SvgViewPage() {
         if (updatedSvg) {
           setSvg(updatedSvg)
         }
-      }, 2000)
+      }, 3000)
       
     } catch (error) {
-      const errorMessage =
-        error instanceof ApiException
-          ? error.data.message || error.data.error || error.message
-          : "Não foi possível iniciar a geração"
+      let errorMessage = t('toast.errorMessage')
+      let errorTitle = t('toast.error')
+      
+      if (error instanceof ApiException) {
+        // Verificar se é um timeout do Vercel (serviço "acordando")
+        if (error.data.code === "VERCEL_TIMEOUT" || error.data.retryable) {
+          errorTitle = t('toast.serviceStarting')
+          errorMessage = error.data.message || t('toast.serviceStartingDescription')
+        } else {
+          errorMessage = error.data.message || error.data.error || error.message
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+      
       toast({
-        title: "Erro",
+        title: errorTitle,
         description: errorMessage,
         variant: "destructive",
       })
@@ -225,12 +255,12 @@ export default function SvgViewPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Imagem não encontrada</CardTitle>
-            <CardDescription>Esta imagem não existe ou você não tem permissão para visualizá-la</CardDescription>
+            <CardTitle>{t('notFound.title')}</CardTitle>
+            <CardDescription>{t('notFound.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => router.push("/dashboard")} className="w-full">
-              Voltar ao Dashboard
+              {t('backToDashboard')}
             </Button>
           </CardContent>
         </Card>
@@ -239,9 +269,15 @@ export default function SvgViewPage() {
   }
 
   // Adicionar timestamp para forçar reload da imagem (cache busting)
+  // Usar lastGeneratedAt como chave para forçar reload quando a imagem é regenerada
   const baseImageUrl = svg?.storageUrl || urlFromQuery
+  const cacheBuster = svg?.lastGeneratedAt 
+    ? new Date(svg.lastGeneratedAt).getTime() 
+    : svg?.updatedAt 
+    ? new Date(svg.updatedAt).getTime() 
+    : Date.now()
   const imageUrl = baseImageUrl 
-    ? `${baseImageUrl}${baseImageUrl.includes('?') ? '&' : '?'}t=${svg?.lastGeneratedAt ? new Date(svg.lastGeneratedAt).getTime() : Date.now()}`
+    ? `${baseImageUrl}${baseImageUrl.includes('?') ? '&' : '?'}t=${cacheBuster}`
     : null
   
   // Gerar markdown usando o helper (inclui cache-busting e formato correto por tamanho)
@@ -275,15 +311,11 @@ export default function SvgViewPage() {
             </Button>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                {svg?.name || "SVG Preview"}
+                {svg?.name || t('title')}
               </h1>
               {svg && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Created {new Date(svg.createdAt).toLocaleDateString("pt-BR", { 
-                    day: "numeric", 
-                    month: "long", 
-                    year: "numeric" 
-                  })}
+                  {t('created')} {new Date(svg.createdAt).toLocaleDateString()}
                 </p>
               )}
             </div>
@@ -302,10 +334,10 @@ export default function SvgViewPage() {
                 className="px-3 py-1"
               >
                 {svg.status === "completed"
-                  ? "✓ Concluída"
+                  ? t('completed')
                   : svg.status === "generating"
-                  ? "⟳ Gerando..."
-                  : "✗ Erro"}
+                  ? t('generating')
+                  : t('error')}
               </Badge>
               <Button
                 variant="outline"
@@ -317,12 +349,12 @@ export default function SvgViewPage() {
                 {generating ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Gerando...
+                    {t('toast.generating')}
                   </>
                 ) : (
                   <>
                     <RefreshCw className="w-4 h-4" />
-                    Regenerar
+                    {t('regenerate')}
                   </>
                 )}
               </Button>
@@ -338,7 +370,7 @@ export default function SvgViewPage() {
             className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-sm text-yellow-700 dark:text-yellow-400 mb-6 flex items-center gap-2"
           >
             <span className="text-lg">⏱️</span>
-            <span>Cooldown ativo: aguarde {cooldownRemaining} minuto(s) antes de gerar novamente. Use "Regenerar" para ignorar.</span>
+            <span>{t('cooldownWarning', { minutes: cooldownRemaining })}</span>
           </motion.div>
         )}
 
@@ -355,9 +387,9 @@ export default function SvgViewPage() {
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
                   <ImageIcon className="w-5 h-5 text-primary" />
-                  <CardTitle className="text-xl">Preview</CardTitle>
+                  <CardTitle className="text-xl">{t('preview.title')}</CardTitle>
                 </div>
-                <CardDescription>Visualização da sua imagem SVG</CardDescription>
+                <CardDescription>{t('preview.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 {imageUrl ? (
@@ -367,7 +399,7 @@ export default function SvgViewPage() {
                       backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/svg%3E")`
                     }} />
                     <motion.img
-                      key={`${svg?.id}-${svg?.lastGeneratedAt || Date.now()}`}
+                      key={`${svg?.id}-${cacheBuster}`}
                       src={imageUrl}
                       alt={svg?.name || "Profile SVG"}
                       className="max-w-full h-auto rounded-lg shadow-2xl relative z-10"
@@ -380,6 +412,8 @@ export default function SvgViewPage() {
                         target.style.display = "none"
                         const parent = target.parentElement
                         if (parent) {
+                          const errorMsg = t('preview.errorLoading')
+                          const errorDesc = t('preview.errorLoadingDescription')
                           parent.innerHTML = `
                             <div class="flex flex-col items-center justify-center p-8 text-center relative z-10">
                               <div class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
@@ -387,8 +421,8 @@ export default function SvgViewPage() {
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                 </svg>
                               </div>
-                              <p class="text-foreground font-medium mb-2">Erro ao carregar imagem</p>
-                              <p class="text-sm text-muted-foreground">A imagem pode estar sendo gerada ainda. Aguarde alguns segundos.</p>
+                              <p class="text-foreground font-medium mb-2">${errorMsg}</p>
+                              <p class="text-sm text-muted-foreground">${errorDesc}</p>
                             </div>
                           `
                         }
@@ -397,15 +431,15 @@ export default function SvgViewPage() {
                   </div>
                 ) : svg?.status === "failed" ? (
                   <div className="border rounded-lg p-12 bg-destructive/10 flex flex-col items-center justify-center">
-                    <p className="text-destructive font-medium mb-2">Erro ao gerar imagem</p>
+                    <p className="text-destructive font-medium mb-2">{t('preview.errorGenerating')}</p>
                     {svg.lastError && (
                       <div className="text-sm text-destructive/80 mb-4 p-3 bg-destructive/5 rounded border border-destructive/20 max-w-md">
-                        <p className="font-medium mb-1">Detalhes do erro:</p>
+                        <p className="font-medium mb-1">{t('preview.errorDetails')}</p>
                         <p className="text-xs break-words">{svg.lastError}</p>
                       </div>
                     )}
                     <p className="text-sm text-muted-foreground text-center mb-4">
-                      Houve um problema ao gerar sua imagem SVG. Tente gerar novamente.
+                      {t('preview.errorTryAgain')}
                     </p>
                     <Button
                       variant="outline"
@@ -416,20 +450,31 @@ export default function SvgViewPage() {
                           updateSvg(svgId, { status: "generating" })
                           setSvg({ ...svg, status: "generating" })
                           toast({
-                            title: "Gerando...",
-                            description: "A imagem está sendo gerada novamente",
+                            title: t('toast.generating'),
+                            description: t('toast.generatingDescription'),
                           })
           // Recarregar após um delay com force para pegar dados atualizados
           setTimeout(() => {
             loadSvg(true) // force refresh
           }, 2000)
                         } catch (error) {
-                          const errorMessage =
-                            error instanceof ApiException
-                              ? error.data.message || error.data.error || error.message
-                              : "Não foi possível iniciar a geração"
+                          let errorMessage = "Não foi possível iniciar a geração"
+                          let errorTitle = "Erro"
+                          
+                          if (error instanceof ApiException) {
+                            // Verificar se é um timeout do Vercel (serviço "acordando")
+                            if (error.data.code === "VERCEL_TIMEOUT" || error.data.retryable) {
+                              errorTitle = "Serviço iniciando"
+                              errorMessage = error.data.message || "O serviço de geração está acordando. Por favor, aguarde alguns segundos e tente novamente."
+                            } else {
+                              errorMessage = error.data.message || error.data.error || error.message
+                            }
+                          } else if (error instanceof Error) {
+                            errorMessage = error.message
+                          }
+                          
                           toast({
-                            title: "Erro",
+                            title: errorTitle,
                             description: errorMessage,
                             variant: "destructive",
                           })
@@ -442,10 +487,10 @@ export default function SvgViewPage() {
                       {generating ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Gerando...
+                          {t('toast.generating')}
                         </>
                       ) : (
-                        "Tentar Novamente"
+                        t('preview.tryAgain')
                       )}
                     </Button>
                   </div>
@@ -453,10 +498,10 @@ export default function SvgViewPage() {
                   <div className="border rounded-lg p-12 bg-muted/50 flex flex-col items-center justify-center">
                     <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mb-4" />
                     <p className="text-muted-foreground mb-2">
-                      {svg?.status === "generating" ? "Gerando imagem..." : "Aguardando geração..."}
+                      {svg?.status === "generating" ? t('preview.generating') : t('preview.waiting')}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Isso pode levar alguns segundos. A página será atualizada automaticamente.
+                      {t('preview.waitingDescription')}
                     </p>
                   </div>
                 )}
@@ -477,7 +522,7 @@ export default function SvgViewPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Code2 className="w-5 h-5 text-primary" />
-                    <CardTitle className="text-xl">Markdown</CardTitle>
+                    <CardTitle className="text-xl">{t('markdown.title')}</CardTitle>
                   </div>
                   <Button 
                     variant={copied ? "default" : "outline"} 
@@ -488,17 +533,17 @@ export default function SvgViewPage() {
                     {copied ? (
                       <>
                         <CheckCircle2 className="w-4 h-4" />
-                        Copiado!
+                        {t('markdown.copied')}
                       </>
                     ) : (
                       <>
                         <Copy className="w-4 h-4" />
-                        Copiar
+                        {t('markdown.copy')}
                       </>
                     )}
                   </Button>
                 </div>
-                <CardDescription>Cole no seu README.md do GitHub</CardDescription>
+                <CardDescription>{t('markdown.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="relative">
@@ -515,9 +560,9 @@ export default function SvgViewPage() {
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
                     <Link2 className="w-5 h-5 text-primary" />
-                    <CardTitle className="text-xl">URL</CardTitle>
+                    <CardTitle className="text-xl">{t('url.title')}</CardTitle>
                   </div>
-                  <CardDescription>Link direto para a imagem SVG</CardDescription>
+                  <CardDescription>{t('url.description')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex flex-col sm:flex-row gap-2">
@@ -528,7 +573,7 @@ export default function SvgViewPage() {
                       className="flex-1 gap-2"
                     >
                       <Copy className="w-4 h-4" />
-                      Copiar URL
+                      {t('url.copyUrl')}
                     </Button>
                     <Button
                       variant="outline"
@@ -537,7 +582,7 @@ export default function SvgViewPage() {
                       className="flex-1 gap-2"
                     >
                       <ExternalLink className="w-4 h-4" />
-                      Abrir
+                      {t('url.open')}
                     </Button>
                   </div>
                   <div className="p-3 bg-muted/50 rounded-lg border border-border/50">
@@ -553,43 +598,33 @@ export default function SvgViewPage() {
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-primary" />
-                    <CardTitle className="text-xl">Informações</CardTitle>
+                    <CardTitle className="text-xl">{t('info.title')}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide">Estilo</div>
+                        <div className="text-xs text-muted-foreground uppercase tracking-wide">{t('info.style')}</div>
                         <div className="font-semibold capitalize">{svg.style || "default"}</div>
                       </div>
                       <div className="space-y-1">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide">Tamanho</div>
+                        <div className="text-xs text-muted-foreground uppercase tracking-wide">{t('info.size')}</div>
                         <div className="font-semibold capitalize">{svg.size || "half"}</div>
                       </div>
                     </div>
                     {svg.lastGeneratedAt && (
                       <div className="space-y-1 pt-2 border-t border-border/50">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide">Última geração</div>
+                        <div className="text-xs text-muted-foreground uppercase tracking-wide">{t('info.lastGenerated')}</div>
                         <div className="font-semibold text-sm">
-                          {new Date(svg.lastGeneratedAt).toLocaleString("pt-BR", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit"
-                          })}
+                          {new Date(svg.lastGeneratedAt).toLocaleString()}
                         </div>
                       </div>
                     )}
                     <div className="space-y-1 pt-2 border-t border-border/50">
-                      <div className="text-xs text-muted-foreground uppercase tracking-wide">Criado em</div>
+                      <div className="text-xs text-muted-foreground uppercase tracking-wide">{t('info.createdAt')}</div>
                       <div className="font-semibold text-sm">
-                        {new Date(svg.createdAt).toLocaleString("pt-BR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric"
-                        })}
+                        {new Date(svg.createdAt).toLocaleString()}
                       </div>
                     </div>
                   </div>

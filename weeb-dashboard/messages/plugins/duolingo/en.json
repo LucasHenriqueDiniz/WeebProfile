@@ -1,0 +1,55 @@
+{
+  "description": "Show your Duolingo learning statistics",
+  "displayName": "Duolingo",
+  "sections": {
+    "current_streak": {
+      "config": {
+        "current_streak_hide_title": {
+          "label": "Hide title"
+        },
+        "current_streak_title": {
+          "defaultValue": "Current Streak",
+          "label": "Title"
+        }
+      },
+      "description": "Display your current streak in days",
+      "name": "Duolingo Streak"
+    },
+    "languages_learning": {
+      "config": {
+        "languages_learning_hide_languages": {
+          "description": "List of language names to hide (e.g., Japanese, French)",
+          "label": "Hide languages",
+          "tooltip": "List of language names you want to hide from display. Type the exact language name (e.g., 'Japanese', 'French', 'Spanish') and press Enter to add."
+        },
+        "languages_learning_hide_title": {
+          "label": "Hide title"
+        },
+        "languages_learning_max": {
+          "description": "Maximum 20 languages",
+          "label": "Maximum languages",
+          "tooltip": "Maximum number of languages that will be displayed. Languages are ordered by total XP (highest XP first)."
+        },
+        "languages_learning_title": {
+          "defaultValue": "Languages Learning",
+          "label": "Title"
+        }
+      },
+      "description": "Display languages you're learning with XP per language",
+      "name": "Languages Learning"
+    },
+    "total_xp": {
+      "config": {
+        "total_xp_hide_title": {
+          "label": "Hide title"
+        },
+        "total_xp_title": {
+          "defaultValue": "Total XP",
+          "label": "Title"
+        }
+      },
+      "description": "Display your total XP accumulated",
+      "name": "Total XP"
+    }
+  }
+}

@@ -103,7 +103,15 @@ function PlatformCard({
   )
 }
 
-export function PlatformsSection() {
+interface PlatformsSectionProps {
+  badge: string
+  title: string
+  subtitle: string
+  createPlugin: string
+  createPluginLink: string
+}
+
+export function PlatformsSection({ badge, title, subtitle, createPlugin, createPluginLink }: PlatformsSectionProps) {
   const plugin = useRef(
     Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })
   )
@@ -130,14 +138,13 @@ export function PlatformsSection() {
       >
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary w-fit mx-auto mb-4 backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span>{platforms.length} plugins available</span>
+          <span>{badge}</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-          Connect the platforms that define you
+          {title}
         </h2>
         <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          We use a plugin system: you pick which sources to show, which sections
-          to include, and we generate the perfect SVG layout.
+          {subtitle}
         </p>
       </motion.div>
 
@@ -201,14 +208,14 @@ export function PlatformsSection() {
         className="text-center mt-8"
       >
         <p className="text-sm text-muted-foreground">
-          Não achou um plugin?{" "}
+          {createPlugin}{" "}
           <Link
             href="https://github.com/WeebProfile/WeebProfile/blob/main/weeb-plugins/docs/CREATING_PLUGINS.md"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:text-primary/80 font-semibold transition-colors duration-200 underline-offset-4 hover:underline inline-flex items-center gap-1"
           >
-            Crie um!
+            {createPluginLink}
             <span className="text-xs">↗</span>
           </Link>
         </p>

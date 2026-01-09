@@ -1,6 +1,6 @@
 "use client"
 
-import { usePathname } from "next/navigation"
+import { usePathname } from "@/i18n/routing"
 import { motion } from "framer-motion"
 import { Header } from "@/components/layout/Header"
 import { DashboardSidebar } from "@/components/dashboard/Sidebar"
@@ -18,7 +18,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
 
   // Não mostrar sidebar no wizard (WizardShell já renderiza o header)
-  if (pathname === "/dashboard/new" || pathname?.match(/^\/dashboard\/[^/]+\/edit$/)) {
+  // Pathname agora inclui locale (ex: /pt/dashboard/new)
+  if (pathname?.includes("/dashboard/new") || pathname?.match(/\/dashboard\/[^/]+\/edit$/)) {
     return <>{children}</>
   }
 

@@ -39,10 +39,12 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
 import { EmptyState } from "./EmptyState"
 import { PluginCard } from "./PluginCard"
+import { useTranslations } from "next-intl"
 
 export function PluginConfiguration() {
   const { user } = useAuth()
   const { toast } = useToast()
+  const t = useTranslations('wizard.plugins')
   // Use useShallow to prevent unnecessary re-renders
   const { plugins, pluginsOrder, style } = useWizardStore(
     useShallow((state) => ({
@@ -242,19 +244,11 @@ export function PluginConfiguration() {
     // Verificar se o secret existe usando secretsPresence (source of truth)
     const exists = secretsPresence?.[plugin]?.[key]?.exists || false
     
-    console.log(`💾 [SAVE] Tentando salvar ${configKey}:`, {
-      isUnlocked,
-      exists,
-      valueLength: value.length,
-      valuePreview: value.substring(0, 10) + "..."
-    })
-    
     // Se não está unlocked E existe, não pode salvar (precisa desbloquear primeiro)
     // Se não existe, pode salvar direto (campo novo está automaticamente unlocked)
     // IMPORTANTE: Se não existe, considerar como unlocked (campo novo)
     const canSave = !exists || isUnlocked
     if (!canSave) {
-      console.warn(`⚠️ [SAVE] Campo ${configKey} está locked. Precisa desbloquear primeiro.`)
       toast({
         title: "Campo bloqueado",
         description: "Clique em 'Editar' para desbloquear o campo antes de salvar",
@@ -264,7 +258,6 @@ export function PluginConfiguration() {
     }
     
     if (!value.trim()) {
-      console.warn(`⚠️ [SAVE] Valor vazio para ${configKey}`)
       toast({
         title: "Valor vazio",
         description: "Digite um valor antes de salvar",
@@ -272,8 +265,6 @@ export function PluginConfiguration() {
       })
       return
     }
-    
-    console.log(`✅ [SAVE] Salvando ${configKey} com valor:`, value.substring(0, 10) + "...")
 
     setSavingConfigs((prev) => new Set(prev).add(configKey))
     
@@ -335,7 +326,7 @@ export function PluginConfiguration() {
       {enabledPlugins.length > 0 && (
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-medium text-muted-foreground">Plugins ativos:</span>
+            <span className="text-xs font-medium text-muted-foreground">{t('activePlugins')}</span>
             {enabledPlugins.map((pluginName) => {
               const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
               const PluginIcon = getPluginIcon(pluginName)
@@ -399,7 +390,7 @@ export function PluginConfiguration() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search plugins..."
+            placeholder={t('searchPlaceholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="pl-9 pr-9"
@@ -420,15 +411,15 @@ export function PluginConfiguration() {
             {(() => {
               const allTags = getAllTags()
               const categoryLabels: Record<string, string> = {
-                all: "All",
-                coding: "Coding",
-                music: "Music",
-                anime: "Anime",
-                gaming: "Gaming",
-                health: "Health",
-                productivity: "Productivity",
-                social: "Social",
-                entertainment: "Entertainment",
+                all: t('categories.all'),
+                coding: t('categories.coding'),
+                music: t('categories.music'),
+                anime: t('categories.anime'),
+                gaming: t('categories.gaming'),
+                health: t('categories.health'),
+                productivity: t('categories.productivity'),
+                social: t('categories.social'),
+                entertainment: t('categories.entertainment'),
               }
               const categories: Array<PluginCategory | "all" | PluginTag> = ["all", "coding", "music", "anime", "gaming", ...allTags]
               
@@ -457,7 +448,7 @@ export function PluginConfiguration() {
                 onChange={(e) => setOnlyEnabled(e.target.checked)}
                 className="h-3.5 w-3.5 rounded border-input text-primary focus:ring-primary"
               />
-              <span className="text-muted-foreground">Only enabled</span>
+              <span className="text-muted-foreground">{t('onlyEnabled')}</span>
             </label>
           </div>
         </div>

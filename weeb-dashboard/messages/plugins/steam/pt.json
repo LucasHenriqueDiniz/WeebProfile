@@ -1,0 +1,87 @@
+{
+  "description": "Mostre suas estatísticas de jogos do Steam",
+  "displayName": "Steam",
+  "essentialConfig": {
+    "apiKey": {
+      "description": "Chave de API da Steam Web API",
+      "label": "Chave de API Steam Web",
+      "placeholder": "sua-chave-api"
+    },
+    "steamId": {
+      "description": "Seu Steam ID64 (17 dígitos)",
+      "label": "Steam ID64",
+      "placeholder": "76561198000000000"
+    }
+  },
+  "sections": {
+    "recent_games": {
+      "config": {
+        "recent_games_hide_title": {
+          "label": "Ocultar título"
+        },
+        "recent_games_max": {
+          "description": "Máximo de 20 jogos",
+          "label": "Máximo de jogos",
+          "tooltip": "Número máximo de jogos recentes a exibir. Os jogos são ordenados por mais recentemente jogados."
+        },
+        "recent_games_style": {
+          "description": "Escolha como os jogos são exibidos",
+          "label": "Estilo de exibição",
+          "options": {
+            "compact": "Grade Compacta (5 por linha)",
+            "list": "Lista"
+          }
+        },
+        "recent_games_title": {
+          "defaultValue": "Jogos Recentes",
+          "label": "Título"
+        }
+      },
+      "description": "Jogos jogados nas últimas 2 semanas",
+      "name": "Jogos Recentes"
+    },
+    "statistics": {
+      "config": {
+        "statistics_hide_title": {
+          "label": "Ocultar título"
+        },
+        "statistics_show_featured": {
+          "description": "Mostrar o card 'Destaque recente' com o jogo mais jogado nas últimas 2 semanas",
+          "label": "Mostrar jogo em destaque"
+        },
+        "statistics_title": {
+          "defaultValue": "Estatísticas",
+          "label": "Título"
+        }
+      },
+      "description": "Estatísticas gerais do Steam",
+      "name": "Estatísticas"
+    },
+    "top_games": {
+      "config": {
+        "top_games_hide_title": {
+          "label": "Ocultar título"
+        },
+        "top_games_max": {
+          "description": "Máximo de 20 jogos",
+          "label": "Máximo de jogos",
+          "tooltip": "Número máximo de jogos mais jogados a exibir. Os jogos são ordenados por tempo total de jogo (mais jogados primeiro)."
+        },
+        "top_games_style": {
+          "description": "Escolha como os jogos são exibidos",
+          "label": "Estilo de exibição",
+          "options": {
+            "compact": "Grade Compacta (5 por linha)",
+            "list": "Lista"
+          }
+        },
+        "top_games_title": {
+          "defaultValue": "Jogos Mais Jogados",
+          "label": "Título"
+        }
+      },
+      "description": "Jogos mais jogados por tempo total de jogo",
+      "name": "Jogos Mais Jogados"
+    }
+  }
+}

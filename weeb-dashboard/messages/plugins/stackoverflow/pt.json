@@ -1,0 +1,67 @@
+{
+  "description": "Mostre suas estatísticas de reputação e atividade do Stack Overflow",
+  "displayName": "Stack Overflow",
+  "sections": {
+    "answers_questions": {
+      "config": {
+        "answers_questions_hide_questions": {
+          "description": "Mostrar apenas contagem de respostas",
+          "label": "Ocultar contagem de perguntas"
+        },
+        "answers_questions_hide_title": {
+          "label": "Ocultar título"
+        },
+        "answers_questions_title": {
+          "defaultValue": "Respostas e Perguntas",
+          "label": "Título"
+        }
+      },
+      "description": "Exibir seu total de respostas e perguntas",
+      "name": "Respostas e Perguntas"
+    },
+    "badges": {
+      "config": {
+        "badges_hide_title": {
+          "label": "Ocultar título"
+        },
+        "badges_title": {
+          "defaultValue": "Medalhas",
+          "label": "Título"
+        }
+      },
+      "description": "Exibir suas contagens de medalhas (ouro, prata, bronze)",
+      "name": "Medalhas"
+    },
+    "reputation": {
+      "config": {
+        "reputation_hide_title": {
+          "label": "Ocultar título"
+        },
+        "reputation_title": {
+          "defaultValue": "Reputação",
+          "label": "Título"
+        }
+      },
+      "description": "Exibir sua reputação atual e mudança de reputação",
+      "name": "Reputação"
+    },
+    "tags_expertise": {
+      "config": {
+        "tags_expertise_hide_title": {
+          "label": "Ocultar título"
+        },
+        "tags_expertise_max": {
+          "description": "Máximo de 20 tags",
+          "label": "Máximo de tags",
+          "tooltip": "Número máximo de tags a exibir. As tags são ordenadas por pontuação (maior pontuação primeiro)."
+        },
+        "tags_expertise_title": {
+          "defaultValue": "Expertise em Tags",
+          "label": "Título"
+        }
+      },
+      "description": "Exibir suas principais tags por pontuação",
+      "name": "Expertise em Tags"
+    }
+  }
+}

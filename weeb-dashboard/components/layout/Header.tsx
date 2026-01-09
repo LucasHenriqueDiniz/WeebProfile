@@ -14,12 +14,14 @@ import {
   LogOut,
   ArrowLeft,
   ChevronRight,
+  Languages,
 } from "lucide-react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useRouter } from "@/i18n/routing"
 import { useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useTranslations } from "next-intl"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { LanguageSelector } from "./LanguageSelector"
 
 interface HeaderProps {
   className?: string
@@ -54,11 +57,13 @@ export function Header({
   variant,
   showSidebarToggle,
 }: HeaderProps) {
+  const t = useTranslations('header')
   const pathname = usePathname()
   const router = useRouter()
   const { user, signOut } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [languageSelectorOpen, setLanguageSelectorOpen] = useState(false)
 
   // Auto-detect variant from pathname if not provided
   const detectedVariant =
@@ -143,6 +148,16 @@ export function Header({
               </Link>
             </Button>
 
+            {/* Language Selector Button */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="hidden sm:inline-flex"
+              onClick={() => setLanguageSelectorOpen(true)}
+            >
+              <Languages className="w-4 h-4" />
+            </Button>
+
             {user ? (
               <>
                 <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
@@ -177,15 +192,20 @@ export function Header({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => router.push("/dashboard")}>
                       <Home className="w-4 h-4 mr-2" />
-                      Dashboard
+                      {t('dashboard')}
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setLanguageSelectorOpen(true)}>
+                      <Languages className="w-4 h-4 mr-2" />
+                      {t('changeLanguage')}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                       <LogOut className="w-4 h-4 mr-2" />
-                      Sair
+                      {t('signOut')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -257,6 +277,9 @@ export function Header({
             </div>
           </motion.div>
         )}
+
+        {/* Language Selector Modal */}
+        <LanguageSelector open={languageSelectorOpen} onOpenChange={setLanguageSelectorOpen} />
       </motion.header>
     )
   }
@@ -345,7 +368,7 @@ export function Header({
                 className="w-64 rounded-lg border shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 origin-top"
               >
                 <DropdownMenuLabel className="flex flex-col gap-1.5 px-3 py-2.5">
-                  <span className="text-sm font-semibold">Minha Conta</span>
+                  <span className="text-sm font-semibold">{t('myAccount')}</span>
                   <span className="text-xs text-muted-foreground font-normal">
                     {user.email}
                   </span>
@@ -356,14 +379,21 @@ export function Header({
                   className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
                   <Home className="w-4 h-4 mr-2.5" />
-                  Dashboard
+                  {t('dashboard')}
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => router.push("/dashboard/settings")} 
                   className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
                   <Settings className="w-4 h-4 mr-2.5" />
-                  Configurações
+                  {t('settings')}
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setLanguageSelectorOpen(true)} 
+                  className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
+                >
+                  <Languages className="w-4 h-4 mr-2.5" />
+                  {t('changeLanguage')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1" />
                 <DropdownMenuItem 
@@ -371,13 +401,16 @@ export function Header({
                   className="text-destructive cursor-pointer focus:text-destructive px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
                   <LogOut className="w-4 h-4 mr-2.5" />
-                  Sair
+                  {t('signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
         </div>
       </div>
+
+      {/* Language Selector Modal */}
+      <LanguageSelector open={languageSelectorOpen} onOpenChange={setLanguageSelectorOpen} />
     </header>
   )
 }

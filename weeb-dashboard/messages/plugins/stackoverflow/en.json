@@ -1,0 +1,67 @@
+{
+  "description": "Show your Stack Overflow reputation and activity statistics",
+  "displayName": "Stack Overflow",
+  "sections": {
+    "answers_questions": {
+      "config": {
+        "answers_questions_hide_questions": {
+          "description": "Only show answers count",
+          "label": "Hide questions count"
+        },
+        "answers_questions_hide_title": {
+          "label": "Hide title"
+        },
+        "answers_questions_title": {
+          "defaultValue": "Answers & Questions",
+          "label": "Title"
+        }
+      },
+      "description": "Display your total answers and questions count",
+      "name": "Answers & Questions"
+    },
+    "badges": {
+      "config": {
+        "badges_hide_title": {
+          "label": "Hide title"
+        },
+        "badges_title": {
+          "defaultValue": "Badges",
+          "label": "Title"
+        }
+      },
+      "description": "Display your badge counts (gold, silver, bronze)",
+      "name": "Badges"
+    },
+    "reputation": {
+      "config": {
+        "reputation_hide_title": {
+          "label": "Hide title"
+        },
+        "reputation_title": {
+          "defaultValue": "Reputation",
+          "label": "Title"
+        }
+      },
+      "description": "Display your current reputation and reputation change",
+      "name": "Reputation"
+    },
+    "tags_expertise": {
+      "config": {
+        "tags_expertise_hide_title": {
+          "label": "Hide title"
+        },
+        "tags_expertise_max": {
+          "description": "Maximum 20 tags",
+          "label": "Maximum tags",
+          "tooltip": "Maximum number of tags to display. Tags are ordered by score (highest score first)."
+        },
+        "tags_expertise_title": {
+          "defaultValue": "Tags Expertise",
+          "label": "Title"
+        }
+      },
+      "description": "Display your top tags by score",
+      "name": "Tags Expertise"
+    }
+  }
+}
