@@ -1,5 +1,8 @@
 "use client"
 
+// Force dynamic rendering to avoid static generation issues with next-intl
+export const dynamic = 'force-dynamic'
+
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { SvgCardSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import { Badge } from "@/components/ui/badge"

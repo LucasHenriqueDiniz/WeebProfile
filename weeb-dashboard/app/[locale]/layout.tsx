@@ -3,9 +3,9 @@ import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { locales } from '@/i18n/config'
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }))
-}
+// Disable static generation for locale routes to prevent build errors with next-intl
+// The middleware handles locale detection dynamically
+export const dynamic = 'force-dynamic'
 
 export default async function LocaleLayout({
   children,

@@ -6,7 +6,7 @@ import { routing } from "./i18n/routing"
 // Create the i18n middleware
 const intlMiddleware = createIntlMiddleware(routing)
 
-export async function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Normalize API routes: remove locale prefix if present (/pt/api/... -> /api/...)

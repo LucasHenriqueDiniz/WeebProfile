@@ -1,3 +1,6 @@
+// Force dynamic rendering to avoid static generation issues with next-intl
+export const dynamic = 'force-dynamic'
+
 import { Header } from "@/components/layout/Header"
 import { HeroSection } from "@/components/sections/HeroSection"
 import { PlatformsSection } from "@/components/sections/PlatformsSection"

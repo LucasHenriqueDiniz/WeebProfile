@@ -227,6 +227,7 @@ export async function fetchGithubData(
   }
 
   const data: Partial<GithubData> = {}
+  const warnings: GithubData['warnings'] = []
 
   // Configure GraphQL and REST clients with Classic Token
   const graphqlClient = graphql.defaults({
@@ -245,7 +246,15 @@ export async function fetchGithubData(
       try {
         // Code habits uses REST API, not GraphQL
         if (section === "code_habits") {
-          data.codeHabits = await processCodeHabitsData(rest, username)
+          const codeHabitsResult = await processCodeHabitsData(rest, username)
+          data.codeHabits = codeHabitsResult.data
+          if (codeHabitsResult.warning) {
+            warnings.push({
+              type: codeHabitsResult.warning.type,
+              message: codeHabitsResult.warning.message,
+              section: 'code_habits',
+            })
+          }
           continue
         }
 
@@ -523,6 +532,11 @@ export async function fetchGithubData(
           }
         }
       }
+    }
+
+    // Add warnings to data if any
+    if (warnings.length > 0) {
+      data.warnings = warnings
     }
 
     return data as GithubData
@@ -1433,7 +1447,11 @@ async function processRecentActivityData(
 /**
  * Processa dados de code habits (usa REST API)
  */
-async function processCodeHabitsData(rest: Octokit, login: string, days = 90): Promise<GithubData["codeHabits"]> {
+async function processCodeHabitsData(
+  rest: Octokit,
+  login: string,
+  days = 90
+): Promise<{ data: GithubData["codeHabits"]; warning?: { type: 'rate_limit' | 'api_error' | 'partial_data'; message: string } }> {
   const commitsByDay: Record<string, number> = {}
   const commitsByHour: Record<number, number> = {}
   let totalCommits = 0
@@ -1446,14 +1464,50 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
     const events = []
 
     for (let page = 1; page <= pages; page++) {
-      const response = await rest.activity.listPublicEventsForUser({
-        username: login,
-        per_page: 100,
-        page,
-      })
-      events.push(...response.data)
+      try {
+        const response = await rest.activity.listPublicEventsForUser({
+          username: login,
+          per_page: 100,
+          page,
+        })
+        events.push(...response.data)
+        
+        // If we got less than 100 events, we've reached the end
+        if (response.data.length < 100) {
+          break
+        }
+      } catch (apiError: any) {
+        // Log API errors but continue if it's just an empty page
+        const isNotFound = apiError.status === 404
+        const isAuthError = apiError.status === 401 || apiError.status === 403
+        
+        if (isAuthError) {
+          throw new Error(`GitHub API authentication failed: ${apiError.message}. Token may be invalid or expired.`)
+        }
+        
+        if (isNotFound) {
+          // User not found or no events - this is OK, just break
+          if (process.env.DEBUG_GITHUB === "1") {
+            console.log(`[GitHub CodeHabits] No events found for ${login} (404)`)
+          }
+          break
+        }
+        
+        // For other errors, log and continue (might be rate limit or temporary issue)
+        console.warn(`[GitHub CodeHabits] Error fetching events page ${page} for ${login}:`, apiError.message)
+        if (page === 1) {
+          // If first page fails, throw to surface the issue
+          throw apiError
+        }
+        break
+      }
     }
 
+    // Log total events fetched for debugging
+    if (process.env.DEBUG_GITHUB === "1" || events.length === 0) {
+      console.log(`[GitHub CodeHabits] Fetched ${events.length} total events for ${login}`)
+    }
+    
     // Filter only user's PushEvents
     const pushEvents = events
       .filter(({ type }) => type === "PushEvent")
@@ -1461,6 +1515,18 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
       .filter(
         ({ created_at }) => created_at && new Date(created_at) > new Date(Date.now() - days * 24 * 60 * 60 * 1000)
       )
+    
+    // Log push events for debugging
+    if (process.env.DEBUG_GITHUB === "1" || pushEvents.length === 0) {
+      console.log(`[GitHub CodeHabits] Found ${pushEvents.length} PushEvents for ${login} in last ${days} days`)
+      if (pushEvents.length === 0 && events.length > 0) {
+        const eventTypes = events.map(e => e.type).reduce((acc, type) => {
+          acc[type] = (acc[type] || 0) + 1
+          return acc
+        }, {} as Record<string, number>)
+        console.log(`[GitHub CodeHabits] Event types found:`, eventTypes)
+      }
+    }
 
     // Collect all commit SHAs from push events (limit to last 500 commits for performance)
     const commitShas: Array<{ repo: string; owner: string; sha: string }> = []
@@ -1561,7 +1627,7 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
 
     const averageChangesPerCommit = analyzedCommitsCount > 0 ? Math.round(totalChanges / analyzedCommitsCount) : 0
 
-    return {
+    const result = {
       commitsByHour,
       commitsByDay,
       languages,
@@ -1572,9 +1638,52 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
       },
       analyzedCommits: analyzedCommitsCount || totalCommits,
     }
-  } catch (error) {
-    console.error("Error processing code habits:", error)
-    return {
+
+    // Add warning if rate limit was hit
+    if (rateLimitHit) {
+      return {
+        data: result,
+        warning: {
+          type: 'rate_limit' as const,
+          message: 'API rate limit reached. Some data may be incomplete.',
+        },
+      }
+    }
+
+    // Add warning if no commits found
+    if (totalCommits === 0 && pushEvents.length === 0) {
+      return {
+        data: result,
+        warning: {
+          type: 'partial_data' as const,
+          message: 'No commit activity found in the last 90 days.',
+        },
+      }
+    }
+
+    return { data: result }
+  } catch (error: any) {
+    // Log detailed error information for debugging
+    const errorMessage = error?.message || String(error)
+    const errorStatus = error?.status || error?.response?.status
+    const isRateLimit = errorStatus === 429 || errorMessage?.toLowerCase().includes("rate limit")
+    const isAuthError = errorStatus === 401 || errorStatus === 403 || errorMessage?.toLowerCase().includes("bad credentials")
+    
+    console.error(`[GitHub CodeHabits] Error processing code habits for ${login}:`, {
+      message: errorMessage,
+      status: errorStatus,
+      isRateLimit,
+      isAuthError,
+      error: error,
+    })
+    
+    // If it's an auth error, throw to surface the issue
+    if (isAuthError) {
+      throw new Error(`GitHub authentication failed: ${errorMessage}. Please check your token permissions.`)
+    }
+    
+    // Return empty data with warning
+    const emptyData = {
       commitsByHour: {},
       commitsByDay: {},
       languages: {},
@@ -1584,6 +1693,24 @@ async function processCodeHabitsData(rest: Octokit, login: string, days = 90): P
         largestCommit: 0,
       },
       analyzedCommits: 0,
+    }
+
+    if (isRateLimit) {
+      return {
+        data: emptyData,
+        warning: {
+          type: 'rate_limit' as const,
+          message: 'API rate limit reached. Data unavailable.',
+        },
+      }
+    }
+
+    return {
+      data: emptyData,
+      warning: {
+        type: 'api_error' as const,
+        message: 'Unable to fetch commit data. Please try again later.',
+      },
     }
   }
 }

@@ -838,6 +838,11 @@
   padding-right: 0.625rem
 }
 
+#svg-main .px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem
+}
+
 #svg-main .px-4 {
   padding-left: 1rem;
   padding-right: 1rem
@@ -1183,6 +1188,14 @@
 
 #svg-main .opacity-50 {
   opacity: 0.5
+}
+
+#svg-main .opacity-70 {
+  opacity: 0.7
+}
+
+#svg-main .opacity-75 {
+  opacity: 0.75
 }
 
 #svg-main .opacity-80 {

@@ -7,6 +7,8 @@
 export interface ApiError {
   error: string
   message?: string
+  code?: string
+  retryable?: boolean
 }
 
 export class ApiException extends Error {

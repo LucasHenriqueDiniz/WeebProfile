@@ -21,6 +21,7 @@ import { GithubStargazers } from "./Stargazers"
 import { GithubStarLists } from "./StarLists"
 import { GithubStarredRepositories } from "./StarredRepositories"
 import { GithubTopRepositories } from "./TopRepositories"
+import { GithubWarning } from "./GithubWarning"
 
 interface RenderGithubProps {
   config: GithubConfig
@@ -182,8 +183,22 @@ export function RenderGithub({
   return (
     <RenderBasedOnStyle
       style={style}
-      defaultComponent={<>{renderedSections}</>}
-      terminalComponent={<>{renderedSections}</>}
+      defaultComponent={
+        <>
+          {renderedSections}
+          {data.warnings && data.warnings.length > 0 && (
+            <GithubWarning warnings={data.warnings} style={style} size={size} />
+          )}
+        </>
+      }
+      terminalComponent={
+        <>
+          {renderedSections}
+          {data.warnings && data.warnings.length > 0 && (
+            <GithubWarning warnings={data.warnings} style={style} size={size} />
+          )}
+        </>
+      }
       wrapTerminalBody={true}
     />
   )

@@ -125,10 +125,21 @@ export default function EditSvgPage() {
       Object.keys(pluginsConfig).forEach((pluginName) => {
         const pluginConfig = pluginsConfig[pluginName]
         if (pluginConfig && typeof pluginConfig === "object") {
+          const activeSections = Array.isArray(pluginConfig.sections) ? pluginConfig.sections : []
+          
+          // Filter sectionConfigs to only include configs for active sections
+          const allSectionConfigs = pluginConfig.sectionConfigs || {}
+          const activeSectionConfigs: Record<string, any> = {}
+          activeSections.forEach((sectionName: string) => {
+            if (allSectionConfigs[sectionName]) {
+              activeSectionConfigs[sectionName] = allSectionConfigs[sectionName]
+            }
+          })
+          
           setPluginConfig(pluginName, {
             enabled: pluginConfig.enabled === true,
-            sections: Array.isArray(pluginConfig.sections) ? pluginConfig.sections : [],
-            sectionConfigs: pluginConfig.sectionConfigs || {},
+            sections: activeSections,
+            sectionConfigs: activeSectionConfigs, // Only include configs for active sections
             // Username and other requiredFields are now directly in pluginsConfig
             ...(pluginConfig.username && { username: pluginConfig.username }),
             // Include any other requiredFields that might be in the config

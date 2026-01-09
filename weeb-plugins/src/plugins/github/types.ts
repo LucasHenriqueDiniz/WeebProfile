@@ -87,6 +87,12 @@ export interface GithubConfig {
 }
 
 export interface GithubData {
+  // Warnings from API (rate limits, partial data, etc)
+  warnings?: Array<{
+    type: 'rate_limit' | 'api_error' | 'partial_data' | 'auth_error'
+    message: string
+    section?: string
+  }>
   user: {
     login: string
     name: string

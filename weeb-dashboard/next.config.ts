@@ -2,6 +2,7 @@ import type { NextConfig } from "next"
 import createNextIntlPlugin from "next-intl/plugin"
 
 // Explicit path to avoid ambiguity and Turbopack resolution issues
+// The path is relative to the project root (where next.config.ts is located)
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
 
 const nextConfig: NextConfig = {
