@@ -13,12 +13,10 @@ export { steamPlugin } from "./steam/index"
 // Export centralized metadata
 export {
   getAllPluginsMetadata,
-  getCategoryColor,
   getPluginCategory,
   getPluginMetadata,
   getPluginsByCategory,
   getPluginsGroupedByCategory,
-  getPluginsGroupedByCategoryWithColors,
   getSectionConfigOptions,
   isValidCategory,
   isValidPluginMetadata,
