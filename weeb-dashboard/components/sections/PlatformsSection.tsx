@@ -11,29 +11,22 @@ import Autoplay from "embla-carousel-autoplay"
 import { useRef, useMemo } from "react"
 import Link from "next/link"
 import { getPluginIcon } from "@/lib/plugin-icons"
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins"
 import { useTranslations } from 'next-intl'
 import { Link as LocaleLink } from "@/i18n/navigation"
-
-// Temporary implementation
-const getEnabledPluginsMetadata = (plugins: any) => {
-  return Object.entries(plugins || {}).map(([name, config]) => ({
-    name,
-    ...((PLUGINS_METADATA as Record<string, any>)[name] || {}),
-    config
-  }))
-}
 
 type PluginMetadata = any
 import type { ComponentType } from "react"
 
-// Map category to color
-const categoryColors: Record<string, string> = {
-  coding: "#181717",
-  music: "#d51007",
-  anime: "#2e51a2",
-  gaming: "#1b2838",
-  reading: "#382110",
+// Cores vibrantes para cada categoria
+const getCategoryColor = (category: string): string => {
+  const categoryColors: Record<string, string> = {
+    coding: "#3B82F6",    // Azul vibrante
+    music: "#EF4444",      // Vermelho vibrante  
+    anime: "#8B5CF6",      // Roxo vibrante
+    gaming: "#10B981",     // Verde vibrante
+  }
+  return categoryColors[category] || "#6B7280" // Cinza padrão
 }
 
 interface PlatformCardProps {
@@ -120,7 +113,7 @@ export function PlatformsSection({}: PlatformsSectionProps) {
       name: metadata.displayName,
       icon: metadata.icon,
       description: metadata.description,
-      color: categoryColors[metadata.category] || "#8957E5",
+      color: getCategoryColor(metadata.category),
     }))
   }, [])
 

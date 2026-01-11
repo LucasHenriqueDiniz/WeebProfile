@@ -1,21 +1,29 @@
 "use client"
 
-import { memo, useMemo, useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Heart, Monitor, Terminal, ExternalLink } from "lucide-react"
-import { FaGithub } from "react-icons/fa"
-import { Link } from "@/i18n/navigation"
-import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
+import { useRouter } from "@/i18n/navigation"
 import { getPluginIcon } from "@/lib/plugin-icons"
-import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
-import Image from "next/image"
+import { defaultThemes, terminalThemes } from "@weeb/weeb-plugins/themes"
+import type { SvgStyle } from "@/types/svg"
 import type { Template } from "@/types/template"
-import { SvgStyle } from "@/types/svg"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
+import { ExternalLink, Heart, Monitor, Terminal } from "lucide-react"
+import { useTranslations } from "next-intl"
+import Image from "next/image"
+import { memo, useMemo, useState } from "react"
+import { FaGithub } from "react-icons/fa"
+import useMeasure from "react-use-measure"
+
+const SECONDS_PER_100PX = 0.5
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n))
+}
 
 export interface TemplateCardProps {
   template: Template
@@ -26,7 +34,7 @@ export interface TemplateCardProps {
   index?: number
 }
 
-// Map platforms to plugin IDs
+// Map platforms to plugin IDs (aceita label e id)
 const platformToPlugin: Record<string, string> = {
   GitHub: "github",
   Steam: "steam",
@@ -34,112 +42,83 @@ const platformToPlugin: Record<string, string> = {
   MyAnimeList: "myanimelist",
 }
 
-// Helper function to get default sections for plugins
-function getDefaultSections(pluginId: string): string[] {
-  const defaultSections: Record<string, string[]> = {
-    github: ['profile', 'activity'],
-    lastfm: ['recent_tracks', 'top_artists'],
-    myanimelist: ['statistics', 'anime_favorites'],
-    steam: ['profile', 'recent_games'],
-    '16personalities': ['personality'],
-    codeforces: ['profile', 'rating'],
-    codewars: ['profile', 'honor'],
-    duolingo: ['profile', 'streak'],
-    stackoverflow: ['profile', 'reputation'],
-    lyfta: ['profile']
-  }
-  
-  return defaultSections[pluginId] || ['profile']
+function normalizePluginId(platformOrId: string) {
+  const trimmed = (platformOrId || "").trim()
+  if (!trimmed) return ""
+  return platformToPlugin[trimmed] ?? trimmed.toLowerCase()
 }
 
 export function buildPluginsConfigFromPlatforms(platforms: string[]) {
   const plugins: Record<string, any> = {}
   const pluginsOrder: string[] = []
 
-  platforms.forEach((platform) => {
-    const pluginId = platformToPlugin[platform]
-    if (pluginId) {
-      plugins[pluginId] = {
-        enabled: true,
-        sections: getDefaultSections(pluginId), // Use default sections instead of empty
-      }
-      pluginsOrder.push(pluginId)
+  for (const p of platforms || []) {
+    const pluginId = normalizePluginId(p)
+    if (!pluginId) continue
+
+    plugins[pluginId] = {
+      enabled: true,
+      sections: [],
     }
-  })
+    pluginsOrder.push(pluginId)
+  }
 
   return { plugins, pluginsOrder }
 }
 
 export function buildPluginsConfigFromTemplate(template: Template) {
-  // If template has pluginsConfig, use them
+  // 1) Formato novo: pluginsConfig + pluginsOrder
   if (template.pluginsConfig && Object.keys(template.pluginsConfig).length > 0) {
-    // Normalize pluginsOrder to string array
     let pluginsOrder: string[] = []
-    
+
     if (template.pluginsOrder) {
       pluginsOrder = Array.isArray(template.pluginsOrder)
         ? template.pluginsOrder
-        : typeof template.pluginsOrder === 'string'
-          ? template.pluginsOrder.split(',').filter(Boolean)
+        : typeof template.pluginsOrder === "string"
+          ? template.pluginsOrder.split(",").map((s) => s.trim()).filter(Boolean)
           : []
     }
 
-    // Ensure all plugins have proper sections
     const normalizedPlugins: Record<string, any> = {}
-    
-    for (const [pluginId, config] of Object.entries(template.pluginsConfig)) {
-      if (config && typeof config === 'object') {
-        normalizedPlugins[pluginId] = {
-          enabled: config.enabled !== false,
-          sections: config.sections || getDefaultSections(pluginId),
-          ...config
-        }
-        
-        // Add to pluginsOrder if not already there
-        if (!pluginsOrder.includes(pluginId)) {
-          pluginsOrder.push(pluginId)
-        }
+
+    for (const [rawPluginId, config] of Object.entries(template.pluginsConfig)) {
+      const pluginId = normalizePluginId(rawPluginId)
+      if (!pluginId) continue
+      if (!config || typeof config !== "object") continue
+
+      normalizedPlugins[pluginId] = {
+        enabled: (config as any).enabled !== false,
+        sections: (config as any).sections?.length ? (config as any).sections : [],
+        ...(config as any),
       }
+
+      if (!pluginsOrder.includes(pluginId)) pluginsOrder.push(pluginId)
     }
 
-    // If we have plugins, return them
     if (Object.keys(normalizedPlugins).length > 0) {
-      return {
-        plugins: normalizedPlugins,
-        pluginsOrder,
-      }
+      return { plugins: normalizedPlugins, pluginsOrder }
     }
   }
 
-  // Handle legacy format (PLUGIN_GITHUB: true, etc.)
-  if (template.pluginsConfig && typeof template.pluginsConfig === 'object') {
-    const plugins: Record<string, any> = {}
-    const pluginsOrder: string[] = []
-    
-    // Convert legacy format to new format
-    for (const [key, value] of Object.entries(template.pluginsConfig)) {
-      if (key.startsWith('PLUGIN_') && value === true) {
-        const pluginId = key.replace('PLUGIN_', '').toLowerCase()
-        const sectionsKey = `${key}_SECTIONS`
-        const sectionsValue = (template.pluginsConfig as any)[sectionsKey]
-        
-        plugins[pluginId] = {
-          enabled: true,
-          sections: sectionsValue && typeof sectionsValue === 'string' 
-            ? sectionsValue.split(',').filter(Boolean) 
-            : getDefaultSections(pluginId)
-        }
-        pluginsOrder.push(pluginId)
-      }
-    }
-    
-    if (Object.keys(plugins).length > 0) {
-      return { plugins, pluginsOrder }
-    }
-  }
+  // 2) Fallback: deriva dos platforms (que já podem vir como ids)
+  return buildPluginsConfigFromPlatforms(template.platforms || [])
+}
 
-  // Otherwise, build from platforms
-  return buildPluginsConfigFromPlatforms(template.platforms)
+function getTemplateAccent(theme?: string) {
+  // Try to find the theme in default themes first
+  const defaultTheme = defaultThemes[theme || "default"]
+  if (defaultTheme) {
+    return defaultTheme['--default-color-highlight']
+  }
+  
+  // Try to find the theme in terminal themes
+  const terminalTheme = terminalThemes[theme || "default"]
+  if (terminalTheme) {
+    return terminalTheme['--terminal-color-highlight']
+  }
+  
+  // Fallback to default theme highlight color
+  return defaultThemes.default['--default-color-highlight']
 }
 
 export const TemplateCard = memo(function TemplateCard({
@@ -150,262 +129,241 @@ export const TemplateCard = memo(function TemplateCard({
   showLike = false,
   index = 0,
 }: TemplateCardProps) {
-  const t = useTranslations('templatesPage')
-  const shouldReduceMotion = useReducedMotion()
+  const t = useTranslations("templatesPage")
+  const router = useRouter()
+  const reduceMotion = useReducedMotion()
+
   const [isHovered, setIsHovered] = useState(false)
-  const [showcaseMode, setShowcaseMode] = useState(false)
 
-  useEffect(() => {
-    if (isHovered) {
-      setShowcaseMode(true)
-    } else {
-      setShowcaseMode(false)
-    }
-  }, [isHovered])
+  const cardHref = href || `/templates/${template.id}`
+  const accent = getTemplateAccent(template.theme)
+  const StyleIcon = template.style === "terminal" ? Terminal : Monitor
 
-  const hasImage = template.preview && template.preview !== "/placeholder.svg"
+  const hasImage = Boolean(template.preview && template.preview !== "/placeholder.svg")
+
   const pluginsConfig = useMemo(() => buildPluginsConfigFromTemplate(template), [template])
 
-  const getTemplateAccent = (template: Template) => {
-    const themeColors: Record<string, string> = {
-      purple: '#a855f7',
-      pink: '#ec4899',
-      blue: '#3b82f6',
-      green: '#22c55e',
-      dracula: '#8b5cf6',
-      default: '#6b7280'
-    }
-    return themeColors[template.theme] || themeColors.default
-  }
+  // Medidas para o “marquee” vertical do preview no hover
+  const [viewportRef, viewportBounds] = useMeasure()
+  const [contentRef, contentBounds] = useMeasure()
 
-  const accent = getTemplateAccent(template)
-  const StyleIcon = template.style === "terminal" ? Terminal : Monitor
-  const cardHref = href || `/templates/${template.id}`
-  
-  // Memoizar o PreviewRenderer para evitar re-renders desnecessários
-  const memoizedPreviewRenderer = useMemo(() => (
-    <PreviewRenderer
-      plugins={pluginsConfig.plugins}
-      pluginsOrder={pluginsConfig.pluginsOrder}
-      style={template.style as SvgStyle}
-      size={template.size}
-      theme={template.theme}
-      previewMode={true}
-      disableFadeIn={true}
-    />
-  ), [pluginsConfig.plugins, pluginsConfig.pluginsOrder, template.style, template.size, template.theme])
-  
-  // Calcular altura dinâmica baseada na quantidade de plugins
-  const pluginsQuantity = Object.keys(pluginsConfig.plugins).length
-  const baseHeight = pluginsQuantity * 200
-  
+  const travel = Math.max(0, contentBounds.height - viewportBounds.height)
+  const duration = clamp((travel / 100) * SECONDS_PER_100PX, 2.5, 14)
+  const shouldScrollPreview = isHovered && !reduceMotion && travel > 8
 
-  const hoverVariants = shouldReduceMotion ? {} : {
-    y: -2,
-    transition: { duration: 0.2, ease: "easeOut" as const }
-  }
-
-  const overlayVariants = shouldReduceMotion ? {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 }
-  } : {
-    hidden: { y: "-100%", opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" as const } }
-  }
-
-  const contentVariants = shouldReduceMotion ? {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-    showcase: { opacity: 1 }
-  } : {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1, 
-      transition: { duration: 0.3, ease: "easeOut" as const, delay: 0.1 }
-    },
-    showcase: {
-      y: [`-${baseHeight}px`, `${baseHeight}px`, `-${baseHeight}px`],
-      opacity: 1,
-      transition: { 
-        duration: Math.max(pluginsQuantity * 2, 4),
-        ease: "easeInOut" as const, 
-        repeat: Infinity,
-        repeatType: "loop" as const
+  const overlayMotion = reduceMotion
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.15 },
       }
-    }
-  }
+    : {
+        initial: { y: "100%", opacity: 0 },
+        animate: { y: 0, opacity: 1 },
+        exit: { y: "100%", opacity: 0 },
+        transition: { duration: 0.35, ease: "easeOut" as const },
+      }
+
+  const previewProps = useMemo(
+    () => ({
+      plugins: pluginsConfig.plugins,
+      pluginsOrder: pluginsConfig.pluginsOrder,
+      style: template.style as SvgStyle,
+      size: template.size,
+      theme: template.theme,
+      previewMode: true,
+      disableFadeIn: true,
+    }),
+    [pluginsConfig.plugins, pluginsConfig.pluginsOrder, template.style, template.size, template.theme]
+  )
+
+  const navigate = () => router.push(cardHref)
 
   return (
     <TooltipProvider>
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 14 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ delay: index * 0.1, duration: 0.3 }}
-        whileHover={shouldReduceMotion ? {} : hoverVariants}
+        transition={{ delay: index * 0.06, duration: 0.25 }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className="relative"
       >
-        <Link href={cardHref}>
-          <Card className={cn(
-            "h-full cursor-pointer transition-all duration-300 group",
+        <Card
+          role="link"
+          tabIndex={0}
+          onClick={navigate}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              navigate()
+            }
+          }}
+          className={cn(
+            "h-full cursor-pointer transition-all duration-300 group outline-none",
             "border-2 bg-card/50 backdrop-blur-sm",
             variant === "grid"
               ? "hover:border-primary/60 hover:shadow-xl hover:shadow-primary/20"
               : "border-border/60 hover:border-primary/40 hover:shadow-2xl"
-          )}>
-            <CardContent className="p-0">
-              {/* Preview Section with Expand on Hover */}
-              <div className="relative aspect-video bg-muted/30 overflow-hidden">
-                {/* Static preview */}
-                {hasImage ? (
-                  <Image
-                    src={template.preview}
-                    alt={template.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center p-4">
-                    {memoizedPreviewRenderer}
-                  </div>
-                )}
+          )}
+        >
+          <CardContent className="p-0">
+            {/* Preview */}
+            <div className="relative aspect-video bg-muted/30 overflow-hidden rounded-t-lg">
+              {/* Base (static) */}
+              {hasImage ? (
+                <Image
+                  src={template.preview!}
+                  alt={template.name}
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center p-4">
+                  <PreviewRenderer {...previewProps} />
+                </div>
+              )}
 
-                {/* Hover overlay - always show on hover */}
-                <AnimatePresence>
-                  {isHovered && (
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
-                      variants={overlayVariants}
-                      className="absolute inset-0 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4 z-10"
-                    >
+              {/* Overlay (hover) */}
+              <AnimatePresence>
+                {isHovered && (
+                  <motion.div
+                    {...overlayMotion}
+                    className="absolute inset-0 bg-background/95 backdrop-blur-sm p-4 z-10"
+                  >
+                    {/* viewport = “janela” fixa */}
+                    <div ref={viewportRef} className="w-full h-full overflow-hidden flex justify-center items-start">
+                      {/* content = “folha” que move */}
                       <motion.div
-                        className="w-full h-full flex items-center justify-center"
-                        variants={contentVariants}
-                        initial="hidden"
-                        animate={showcaseMode ? "showcase" : "visible"}
-                        exit="hidden"
+                        animate={shouldScrollPreview ? { y: [0, -travel] } : { y: 0 }}
+                        transition={
+                          shouldScrollPreview
+                            ? {
+                                duration,
+                                ease: "easeInOut",
+                                repeat: Infinity,
+                                repeatType: "mirror",
+                                repeatDelay: 0.15,
+                              }
+                            : { duration: 0.2, ease: "easeOut" }
+                        }
+                        className="will-change-transform"
                       >
-                        {memoizedPreviewRenderer}
+                        <div ref={contentRef} className="flex justify-center">
+                          <PreviewRenderer {...previewProps} />
+                        </div>
                       </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Content */}
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center shadow-md transition-transform group-hover:scale-110"
+                  style={{
+                    backgroundColor: accent,
+                    boxShadow: `0 4px 16px ${accent}40`,
+                  }}
+                >
+                  <StyleIcon className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-lg truncate group-hover:text-primary transition-colors">
+                    {template.name}
+                  </h3>
+                </div>
               </div>
 
-              {/* Content Section */}
-              <div className="p-5">
-                {/* Header with icon and name */}
-                <div className="flex items-center gap-3 mb-3">
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center shadow-md transition-transform group-hover:scale-110"
-                    style={{
-                      backgroundColor: accent,
-                      boxShadow: `0 4px 16px ${accent}40`,
+              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{template.description}</p>
+
+              <div className="flex items-center gap-1.5 mb-4">
+                {(template.platforms || []).slice(0, 4).map((rawId) => {
+                  const pluginId = normalizePluginId(rawId)
+                  const Icon = getPluginIcon(pluginId) || FaGithub
+                  return (
+                    <Tooltip key={pluginId}>
+                      <TooltipTrigger asChild>
+                        <div className="w-6 h-6 rounded bg-muted/50 border border-border/50 flex items-center justify-center transition-transform group-hover:scale-110">
+                          <Icon className="w-3.5 h-3.5 text-muted-foreground" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs">{pluginId}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )
+                })}
+                {(template.platforms || []).length > 4 && (
+                  <div className="w-6 h-6 rounded bg-muted/50 border border-border/50 flex items-center justify-center">
+                    <span className="text-[10px] text-muted-foreground font-medium">
+                      +{(template.platforms || []).length - 4}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2 mb-4">
+                <Badge variant="outline" className="text-xs">
+                  {template.style}
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="text-xs bg-purple-500/10 text-purple-700 dark:text-purple-400"
+                >
+                  {template.theme}
+                </Badge>
+              </div>
+
+              {variant === "grid" && (
+                <div className="flex items-center gap-2 pt-3 border-t border-border/50">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      navigate()
                     }}
                   >
-                    <StyleIcon className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-lg truncate group-hover:text-primary transition-colors">
-                      {template.name}
-                    </h3>
-                  </div>
-                </div>
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    {t("templateCard.viewDetails")}
+                  </Button>
 
-                {/* Description */}
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                  {template.description}
-                </p>
-
-                {/* Plugin Icons */}
-                <div className="flex items-center gap-1.5 mb-4">
-                  {template.platforms.slice(0, 4).map((pluginId) => {
-                    const Icon = getPluginIcon(pluginId) || FaGithub
-                    return Icon ? (
-                      <Tooltip key={pluginId}>
-                        <TooltipTrigger asChild>
-                          <div className="w-6 h-6 rounded bg-muted/50 border border-border/50 flex items-center justify-center transition-transform group-hover:scale-110">
-                            <Icon className="w-3.5 h-3.5 text-muted-foreground" />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">{pluginId}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : null
-                  })}
-                  {template.platforms.length > 4 && (
-                    <div className="w-6 h-6 rounded bg-muted/50 border border-border/50 flex items-center justify-center">
-                      <span className="text-[10px] text-muted-foreground font-medium">
-                        +{template.platforms.length - 4}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Badges */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge variant="outline" className="text-xs">
-                    {template.style}
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="text-xs bg-purple-500/10 text-purple-700 dark:text-purple-400"
-                  >
-                    {template.theme}
-                  </Badge>
-                </div>
-
-                {/* Actions */}
-                {variant === "grid" && (
-                  <div className="flex items-center gap-2 pt-3 border-t border-border/50">
+                  {showLike && onLike && (
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="flex-1"
+                      className="h-9 w-9 p-0"
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        // Navigate to template detail
-                        window.location.href = cardHref
+                        onLike(template.id)
                       }}
+                      aria-label={template.liked ? t("templateCard.unlike") : t("templateCard.like")}
                     >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      {t('templateCard.viewDetails')}
+                      <Heart
+                        className={cn(
+                          "w-4 h-4 transition-colors",
+                          template.liked
+                            ? "fill-red-500 text-red-500"
+                            : "text-muted-foreground hover:text-red-500"
+                        )}
+                      />
                     </Button>
-                    {showLike && onLike && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-9 w-9 p-0"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          onLike(template.id)
-                        }}
-                        aria-label={template.liked ? t('templateCard.unlike') : t('templateCard.like')}
-                      >
-                        <Heart
-                          className={`w-4 h-4 transition-colors ${
-                            template.liked
-                              ? "fill-red-500 text-red-500"
-                              : "text-muted-foreground hover:text-red-500"
-                          }`}
-                        />
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
+                  )}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </motion.div>
     </TooltipProvider>
   )

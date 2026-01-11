@@ -106,7 +106,7 @@ export function HowItWorksSection({}: HowItWorksSectionProps) {
           <div className="absolute -bottom-40 right-0 h-96 w-96 rounded-full bg-sky-500/10 blur-3xl" />
         </div>
 
-        <div className="container relative">
+        <div className="container relative mx-auto">
           {/* header */}
           <div className="mx-auto max-w-2xl text-center mb-12">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">

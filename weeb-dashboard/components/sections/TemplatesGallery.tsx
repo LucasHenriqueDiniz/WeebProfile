@@ -73,29 +73,31 @@ export function TemplatesGallery({
                 }}
               />
 
-              <div className="relative aspect-video flex items-center justify-center p-8">
-                <div className="text-center space-y-4 z-10">
-                  <motion.div
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 mx-auto"
-                    whileHover={{ scale: 1.1, rotate: 360 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <Sparkles className="w-8 h-8 text-white" />
-                  </motion.div>
-                  <div>
-                    <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-                      {t('exploreCount', { count: templates.length + 10 })}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {t('exploreSubtitle')}
-                    </p>
-                    <div className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                      <span>{t('viewAll')}</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <CardContent className="p-0 h-full flex flex-col">
+                <div className="flex-1 flex items-center justify-center p-8">
+                  <div className="text-center space-y-6 z-10">
+                    <motion.div
+                      className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-cyan-500 mx-auto shadow-lg shadow-purple-500/25"
+                      whileHover={{ scale: 1.15, rotate: 360 }}
+                      transition={{ duration: 0.6, ease: "easeInOut" }}
+                    >
+                      <Sparkles className="w-10 h-10 text-white drop-shadow-sm" />
+                    </motion.div>
+                    <div className="space-y-3">
+                      <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                        {t('exploreCount', { count: templates.length + 10 })}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
+                        {t('exploreSubtitle')}
+                      </p>
+                      <div className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all duration-300">
+                        <span>{t('viewAll')}</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </CardContent>
             </Card>
           </Link>
         </motion.div>

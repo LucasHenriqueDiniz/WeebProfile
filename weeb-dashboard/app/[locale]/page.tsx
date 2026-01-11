@@ -1,65 +1,47 @@
 
-"use client"
-
 import { Header } from "@/components/layout/Header"
-import { HeroSection } from "@/components/sections/HeroSection"
-import { PlatformsSection } from "@/components/sections/PlatformsSection"
-import { TemplatesGallery } from "@/components/sections/TemplatesGallery"
-import { HowItWorksSection } from "@/components/sections/HowItWorksSection"
 import { ComparisonSection } from "@/components/sections/ComparisonSection"
 import { CTASection } from "@/components/sections/CTASection"
+import { HeroSection } from "@/components/sections/HeroSection"
+import { HowItWorksSection } from "@/components/sections/HowItWorksSection"
+import { PlatformsSection } from "@/components/sections/PlatformsSection"
 import { SectionDivider } from "@/components/sections/SectionDivider"
-import { useEffect, useState } from "react"
+import { TemplatesGalleryServer } from "@/components/sections/TemplatesGalleryServer"
+import { mapApiToTemplates } from "@/lib/template-mapper"
 import type { Template } from "@/types/template"
-import { ensureConsistentPlatforms } from "@/lib/templates-utils"
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
-function HomePageContent() {
-  const [templates, setTemplates] = useState<Template[]>([])
-  const [loading, setLoading] = useState(true)
+function getBaseUrl() {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.VERCEL_URL?.startsWith("http")
+      ? process.env.VERCEL_URL
+      : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}` 
+        : "http://localhost:3000"
+  )
+}
 
-  useEffect(() => {
-    async function fetchPublicTemplates() {
-      try {
-        setLoading(true)
-        // Fetch public templates from API, limit to 5 for homepage performance
-        const response = await fetch('/api/templates?public=true&limit=5')
-        if (!response.ok) {
-          throw new Error('Failed to fetch templates')
-        }
-        const data = await response.json()
+async function fetchPublicTemplates(limit = 5): Promise<Template[]> {
+  try {
+    const url = new URL("/api/templates", getBaseUrl())
+    url.searchParams.set("public", "true")
+    url.searchParams.set("limit", String(limit))
 
-        // Transform API data to Template format
-        const transformedTemplates: Template[] = (data.templates || []).map((t: any) => {
-          const platforms = ensureConsistentPlatforms(t)
-          return {
-            id: t.id,
-            name: t.name,
-            description: t.description || "",
-            preview: t.svgId ? `/svgs/${t.svgId}` : undefined,
-            platforms,
-            style: t.style || "default",
-            theme: t.theme || "default",
-            size: t.size || "half",
-            likes: t.likesCount || t.likes || 0,
-            liked: t.userLiked || t.liked || false,
-            pluginsConfig: t.pluginsConfig,
-            pluginsOrder: t.pluginsOrder,
-          }
-        })
+    const res = await fetch(url.toString(), {
+      next: { revalidate: 60 },
+    })
 
-        setTemplates(transformedTemplates)
-      } catch (error) {
-        console.error('Error fetching public templates:', error)
-        // Fallback to empty array - TemplatesGallery handles empty state gracefully
-        setTemplates([])
-      } finally {
-        setLoading(false)
-      }
-    }
+    if (!res.ok) return []
 
-    fetchPublicTemplates()
-  }, [])
+    const data = await res.json()
+    return mapApiToTemplates(data.templates || [])
+  } catch {
+    return []
+  }
+}
+
+export default async function HomePage() {
+  const templates = await fetchPublicTemplates(5)
 
   return (
     <div className="bg-background">
@@ -70,16 +52,12 @@ function HomePageContent() {
       <SectionDivider />
       <HowItWorksSection />
       <SectionDivider />
-      <TemplatesGallery templates={templates} loading={loading} />
+      <TemplatesGalleryServer templates={templates} />
       <SectionDivider />
       <ComparisonSection />
       <SectionDivider variant="gradient" />
       <CTASection />
     </div>
   )
-}
-
-export default function HomePage() {
-  return <HomePageContent />
 }
 

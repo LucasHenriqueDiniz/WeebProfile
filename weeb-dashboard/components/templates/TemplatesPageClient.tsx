@@ -9,8 +9,9 @@ import { useLocaleNavigation } from '@/lib/navigation'
 import { ensureConsistentPlatforms } from "@/lib/templates-utils"
 import { motion } from "framer-motion"
 import { Filter, Search } from "lucide-react"
+import { defaultThemes, terminalThemes } from "@weeb/weeb-plugins/themes"
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { Link } from "@/i18n/navigation"
 import { TemplateCard } from "@/components/templates/TemplateCard"
 import type { Template } from "@/types/template"
@@ -27,6 +28,34 @@ export function TemplatesPageClient() {
   const [styleFilter, setStyleFilter] = useState("all")
   const [themeFilter, setThemeFilter] = useState("all")
   const [sortByValue, setSortByValue] = useState("newest")
+
+  // Get all available themes from weeb-plugins
+  const availableThemes = useMemo(() => {
+    const themes = ['all']
+    
+    // Add default themes
+    Object.keys(defaultThemes).forEach(theme => {
+      // Convert theme names to more display-friendly format
+      if (theme === 'default') {
+        themes.push('default')
+      } else if (theme.startsWith('default')) {
+        // Extract color name from themes like 'defaultPurple', 'defaultPink', etc.
+        const colorName = theme.replace('default', '').toLowerCase()
+        themes.push(colorName)
+      } else {
+        themes.push(theme)
+      }
+    })
+    
+    // Add terminal themes
+    Object.keys(terminalThemes).forEach(theme => {
+      if (!themes.includes(theme)) {
+        themes.push(theme)
+      }
+    })
+    
+    return themes
+  }, [])
 
 
   useEffect(() => {
@@ -212,15 +241,17 @@ export function TemplatesPageClient() {
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder={t('filters.theme.label')} />
               </SelectTrigger>
-              <SelectContent className="max-h-60">
-                <SelectItem value="all">{t('filters.theme.all')}</SelectItem>
-                <SelectItem value="default">{t('filters.theme.default')}</SelectItem>
-                <SelectItem value="dark">{t('filters.theme.dark')}</SelectItem>
-                <SelectItem value="dracula">{t('filters.theme.dracula')}</SelectItem>
-                <SelectItem value="purple">{t('filters.theme.purple')}</SelectItem>
-                <SelectItem value="pink">{t('filters.theme.pink')}</SelectItem>
-                <SelectItem value="blue">{t('filters.theme.blue')}</SelectItem>
-                <SelectItem value="green">{t('filters.theme.green')}</SelectItem>
+              <SelectContent>
+                {availableThemes.map((theme) => (
+                  <SelectItem key={theme} value={theme}>
+                    {theme === 'all' 
+                      ? t('filters.theme.all')
+                      : theme === 'default'
+                      ? t('filters.theme.default')
+                      : theme.charAt(0).toUpperCase() + theme.slice(1)
+                    }
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -264,7 +295,7 @@ export function TemplatesPageClient() {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTemplates.map((template, index) => (
                 <TemplateCard
                   key={template.id}
