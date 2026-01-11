@@ -62,7 +62,7 @@ NODE_ENV=development
 - `SVG_GENERATOR_PORT` - Porta do servidor (padrão: 3001)
 - `PORT` - Porta alternativa (Railway define automaticamente)
 - `NODE_ENV` - Ambiente (development/production)
-- `PLAYWRIGHT_CHANNEL` - Canal do browser (`msedge`, `chrome`, ou `chromium`). 
+- `PLAYWRIGHT_CHANNEL` - Canal do browser (`msedge`, `chrome`, ou `chromium`).
   - **Padrão**: `msedge` no Windows, `chrome` em Linux/Mac
   - **Recomendado**: `msedge` no Windows (já vem instalado), `chrome` em outros (mais comum)
   - **CI/Produção sem browser**: `chromium` (precisa instalar via `playwright install chromium`)
@@ -90,7 +90,8 @@ cp .env.example .env
    - Otimizado para medição de altura (leve, sem recursos pesados)
    - Usa `chromium` channel automaticamente no Railway
 
-**Importante**: 
+**Importante**:
+
 - Configure `DATABASE_URL` no Railway com a mesma connection string do weeb-dashboard
 - O Playwright é instalado automaticamente durante o build (via `postinstall`)
 - Se precisar de outro browser, configure `PLAYWRIGHT_CHANNEL=chrome` ou `PLAYWRIGHT_CHANNEL=msedge`
@@ -109,6 +110,7 @@ O `svg-generator` **sempre** usa Playwright para medir altura renderizada real d
 ### Configuração do Browser
 
 **Desenvolvimento Local (Windows):**
+
 ```bash
 # Edge já vem instalado no Windows - não precisa configurar nada
 # Ou configure explicitamente:
@@ -116,12 +118,14 @@ PLAYWRIGHT_CHANNEL=msedge
 ```
 
 **Desenvolvimento Local (Linux/Mac):**
+
 ```bash
 # Chrome geralmente já está instalado
 PLAYWRIGHT_CHANNEL=chrome
 ```
 
 **Railway/Produção:**
+
 ```bash
 # Chromium é instalado automaticamente via postinstall script
 # Não precisa configurar nada - usa 'chromium' automaticamente
@@ -129,6 +133,7 @@ PLAYWRIGHT_CHANNEL=chrome
 ```
 
 **CI customizado (sem postinstall):**
+
 ```bash
 # Instalar Chromium com dependências
 npx playwright install chromium --with-deps
@@ -142,21 +147,25 @@ PLAYWRIGHT_CHANNEL=chromium
 Por padrão, o Playwright **bloqueia todos os requests de rede externos** durante a medição:
 
 **O que é bloqueado:**
+
 - Imagens de CDNs: `https://example.com/image.png`
 - Fonts externas: `https://fonts.googleapis.com/...`
 - Chamadas de API: `https://api.example.com/...`
 - Qualquer recurso externo
 
 **O que é permitido:**
+
 - `data:` URLs: `data:image/png;base64,...` (imagens inline)
 - `blob:` URLs: `blob:...` (conteúdo gerado)
 
 **Por quê bloquear?**
+
 - Garante medição previsível (não depende de recursos externos)
 - Mais rápido (não espera downloads)
 - Mais confiável (não falha se CDN estiver offline)
 
 **Se precisar de recursos externos:**
+
 ```bash
 ALLOW_NETWORK=1  # Permite requests de rede (não recomendado)
 ```
@@ -255,7 +264,6 @@ svg-generator/
 │   │   └── essential-configs.ts  # Busca essential configs do Supabase
 │   ├── generator/
 │   │   ├── svg-generator.ts      # Gerador principal
-│   │   ├── height-calculator.ts # Cálculo manual de altura
 │   │   └── css-loader.tsx       # Carregamento de CSS
 │   ├── renderer/
 │   │   ├── react-renderer.tsx   # Renderização de plugins

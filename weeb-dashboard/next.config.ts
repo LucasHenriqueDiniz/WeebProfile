@@ -1,14 +1,8 @@
 import type { NextConfig } from "next"
 import createNextIntlPlugin from "next-intl/plugin"
-
-// Explicit path to avoid ambiguity and Turbopack resolution issues
-// The path is relative to the project root (where next.config.ts is located)
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
 
 const nextConfig: NextConfig = {
-  // Enable Turbopack configuration for next-intl alias resolution
-  // If this doesn't work, use `pnpm dev` (with --webpack) instead
-  turbopack: {},
   reactStrictMode: true,
   transpilePackages: ["@weeb/weeb-plugins"],
   serverExternalPackages: ["image-to-base64", "@weeb/svg-generator", "react-dom/server"],
@@ -56,7 +50,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "",
-    // Suprimir aviso do baseline-browser-mapping sobre dados desatualizados
     BASELINE_BROWSER_MAPPING_IGNORE_OLD_DATA: "true",
   },
 }

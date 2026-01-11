@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "@/i18n/routing"
+import { useRouter } from "@/i18n/navigation"
 import { useParams } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { Loader2 } from "lucide-react"

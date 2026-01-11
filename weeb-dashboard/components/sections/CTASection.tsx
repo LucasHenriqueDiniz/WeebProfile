@@ -2,23 +2,13 @@
 
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
+import { useTranslations } from 'next-intl'
 
-interface CTASectionProps {
-  title: string
-  description: string
-  buttonText: string
-  buttonHref: string
-  note?: string
-}
+interface CTASectionProps {}
 
-export function CTASection({
-  title,
-  description,
-  buttonText,
-  buttonHref,
-  note,
-}: CTASectionProps) {
+export function CTASection({}: CTASectionProps) {
+  const t = useTranslations('homepage.cta')
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Background decorative elements */}
@@ -37,9 +27,9 @@ export function CTASection({
           className="max-w-3xl mx-auto text-center space-y-6"
         >
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-            {title}
+            {t('title')}
           </h2>
-          <p className="text-xl text-muted-foreground">{description}</p>
+          <p className="text-xl text-muted-foreground">{t('description')}</p>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -50,10 +40,9 @@ export function CTASection({
               size="lg"
               className="text-lg px-8 py-6 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 hover:from-purple-600 hover:via-pink-600 hover:to-cyan-600 shadow-lg shadow-pink-500/30 transition-all hover:shadow-pink-500/50"
             >
-              <Link href={buttonHref}>{buttonText}</Link>
+              <Link href="/login">{t('buttonText')}</Link>
             </Button>
           </motion.div>
-          {note && <p className="text-sm text-muted-foreground">{note}</p>}
         </motion.div>
       </div>
     </section>

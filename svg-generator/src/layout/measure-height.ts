@@ -30,13 +30,13 @@ async function waitStableLayout(page: Page, timeoutMs: number): Promise<void> {
     const deadline = Date.now() + timeoutMs
     const remaining = () => {
       const timeLeft = deadline - Date.now()
-      // Garantir que o timeout seja sempre positivo (mínimo 1ms)
+      // Ensure timeout is always positive (minimum 1ms)
       return Math.max(1, timeLeft)
     }
 
     const withTimeout = <T>(p: Promise<T>) => {
       const timeoutValue = remaining()
-      // Se o deadline já passou, rejeitar imediatamente
+      // If deadline already passed, reject immediately
       if (timeoutValue <= 0) {
         return Promise.reject(new Error("timeout"))
       }

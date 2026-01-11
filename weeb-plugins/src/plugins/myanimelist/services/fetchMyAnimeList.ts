@@ -55,12 +55,12 @@ export async function fetchMyAnimeListData(
   essentialConfig?: any,
   previewMode = false
 ): Promise<MyAnimeListData> {
-  console.log(`[MyAnimeList] Fetching data for user: ${config.username || "mock"}`)
+  console.debug(`[MyAnimeList] Fetching data for user: ${config.username || "mock"}`)
 
   try {
     // Em modo dev ou preview, retornar dados mock sem validar username
     if (dev || previewMode) {
-      console.log(`[MyAnimeList] Using mock data (dev mode or preview mode)`)
+      console.debug(`[MyAnimeList] Using mock data (${dev ? 'dev' : 'preview'} mode)`)
       const mockData = getMockMyAnimeListData()
       
       // Em modo preview, manter URLs originais (não converter para base64)

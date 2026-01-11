@@ -1,199 +1,168 @@
 {
   "dashboard": {
-    "allStatus": "All Status",
-    "clearFilter": "Clear Filter",
-    "completed": "Completed",
-    "copyMarkdown": "Copy Markdown",
-    "createFirst": "Create Your First SVG",
-    "createNew": "Create New",
-    "delete": "Delete",
+    "allStatus": "Todos os Status",
+    "clearFilter": "Limpar Filtro",
+    "completed": "Concluído",
+    "copyMarkdown": "Copiar Markdown",
+    "createFirst": "Criar Seu Primeiro SVG",
+    "createNew": "Criar Novo",
+    "delete": "Deletar",
     "deleteDialog": {
-      "cancel": "Cancel",
-      "confirm": "Delete",
-      "description": "Are you sure you want to delete this image? This action cannot be undone.",
-      "title": "Delete SVG"
+      "cancel": "Cancelar",
+      "confirm": "Deletar",
+      "description": "Tem certeza que deseja deletar esta imagem? Esta ação não pode ser desfeita.",
+      "title": "Deletar SVG"
     },
-    "deleting": "Deleting...",
-    "edit": "Edit",
-    "filterByStatus": "Filter by status",
-    "forceGenerate": "Force Generate",
-    "generating": "Generating",
-    "imageNotAvailable": "Image not available",
-    "nameAZ": "Name (A-Z)",
-    "newestFirst": "Newest First",
-    "noResultsDescription": "Try adjusting your filter criteria",
-    "noResultsFound": "No results found",
-    "noSvgsDescription": "Create your first WeebProfile SVG to showcase your stats on GitHub",
-    "noSvgsYet": "No SVGs yet",
-    "oldestFirst": "Oldest First",
-    "pending": "Pending",
+    "deleting": "Deletando...",
+    "edit": "Editar",
+    "filterByStatus": "Filtrar por status",
+    "forceGenerate": "Forçar Geração",
+    "generating": "Gerando",
+    "imageNotAvailable": "Imagem não disponível",
+    "nameAZ": "Nome (A-Z)",
+    "newestFirst": "Mais Recente",
+    "noResultsDescription": "Tente ajustar seus critérios de filtro",
+    "noResultsFound": "Nenhum resultado encontrado",
+    "noSvgsDescription": "Crie seu primeiro WeebProfile SVG para exibir suas estatísticas no GitHub",
+    "noSvgsYet": "Nenhum SVG ainda",
+    "oldestFirst": "Mais Antigo",
+    "pending": "Pendente",
     "plugins": "Plugins",
-    "ready": "Ready",
-    "sortBy": "Sort by",
+    "ready": "Pronto",
+    "sortBy": "Ordenar por",
     "status": {
-      "failed": "Error",
-      "generating": "Generating",
-      "pending": "Pending",
-      "ready": "Ready"
+      "failed": "Erro",
+      "generating": "Gerando",
+      "pending": "Pendente",
+      "ready": "Pronto"
     },
-    "title": "My SVGs",
+    "title": "Meus SVGs",
     "toast": {
-      "deletedSuccess": "The image has been successfully removed.",
-      "errorDeleting": "Error deleting",
-      "errorDeletingMessage": "Error deleting image",
-      "errorGenerating": "Error generating",
-      "errorGeneratingMessage": "Could not start generation",
-      "generationStarted": "Generation started",
-      "generationStartedDescription": "The image is being generated. This may take a few minutes.",
-      "markdownCopied": "Markdown copied!",
-      "markdownCopiedDescription": "Paste it in your GitHub README.md.",
-      "svgDeleted": "SVG deleted"
+      "deletedSuccess": "A imagem foi removida com sucesso.",
+      "errorDeleting": "Erro ao deletar",
+      "errorDeletingMessage": "Erro ao deletar imagem",
+      "errorGenerating": "Erro ao gerar",
+      "errorGeneratingMessage": "Não foi possível iniciar a geração",
+      "generationStarted": "Geração iniciada",
+      "generationStartedDescription": "A imagem está sendo gerada. Isso pode levar alguns minutos.",
+      "markdownCopied": "Markdown copiado!",
+      "markdownCopiedDescription": "Cole no seu README.md do GitHub.",
+      "svgDeleted": "SVG deletado"
     },
     "total": "total",
-    "updated": "Updated",
-    "view": "View"
+    "updated": "Atualizado",
+    "view": "Visualizar"
   },
   "header": {
-    "changeLanguage": "Change language",
+    "changeLanguage": "Trocar idioma",
     "dashboard": "Dashboard",
-    "myAccount": "My Account",
-    "settings": "Settings",
-    "signOut": "Sign Out"
+    "myAccount": "Minha Conta",
+    "settings": "Configurações",
+    "signOut": "Sair",
+    "nav": {
+      "templates": "Templates",
+      "dashboard": "Dashboard"
+    }
   },
   "homepage": {
     "comparison": {
       "features": [
         {
-          "description": "Create your profile card without writing any code. Just click, drag, and customize.",
-          "highlight": "No code required",
+          "description": "Crie seu card de perfil sem escrever nenhum código. Apenas clique, arraste e personalize.",
+          "highlight": "Sem código",
           "icon": "Layout",
           "id": "visual-builder",
-          "title": "Visual Builder"
+          "title": "Builder Visual"
         },
         {
-          "description": "Connect GitHub, MyAnimeList, LastFM, Steam, Goodreads and more in one place.",
-          "highlight": "Unified stats",
+          "description": "Conecte GitHub, MyAnimeList, LastFM, Steam, Goodreads e mais em um único lugar.",
+          "highlight": "Stats unificados",
           "icon": "Plug",
           "id": "multi-platform",
-          "title": "Multi-Platform"
+          "title": "Multi-Plataforma"
         },
         {
-          "description": "See exactly how your card will look before generating. No trial and error.",
-          "highlight": "Instant feedback",
+          "description": "Veja exatamente como seu card ficará antes de gerar. Sem tentativa e erro.",
+          "highlight": "Feedback instantâneo",
           "icon": "Eye",
           "id": "real-time-preview",
-          "title": "Real-time Preview"
+          "title": "Preview em Tempo Real"
         },
         {
-          "description": "Choose from multiple themes, layouts, and styles. Make it truly yours.",
-          "highlight": "Your style",
+          "description": "Escolha entre múltiplos temas, layouts e estilos. Torne-o verdadeiramente seu.",
+          "highlight": "Seu estilo",
           "icon": "Palette",
           "id": "fully-customizable",
-          "title": "Fully Customizable"
+          "title": "Totalmente Customizável"
         },
         {
-          "description": "Your generated SVGs are hosted permanently. No GitHub Actions needed.",
-          "highlight": "Always available",
+          "description": "Seus SVGs gerados são hospedados permanentemente. Sem necessidade de GitHub Actions.",
+          "highlight": "Sempre disponível",
           "icon": "Link",
           "id": "permanent-urls",
-          "title": "Permanent URLs"
+          "title": "URLs Permanentes"
         },
         {
-          "description": "Only our backend accesses your data. Your API keys and tokens are stored securely and never exposed.",
-          "highlight": "Your data safe",
+          "description": "Apenas nosso backend acessa seus dados. Suas chaves de API e tokens são armazenados com segurança e nunca expostos.",
+          "highlight": "Seus dados seguros",
           "icon": "Shield",
           "id": "secure",
-          "title": "Secure & Private"
+          "title": "Seguro e Privado"
         }
       ],
-      "subtitle": "Everything you need to create the perfect profile card, all in one place.",
-      "title": "What makes it special"
+      "subtitle": "Tudo que você precisa para criar o card de perfil perfeito, tudo em um lugar.",
+      "title": "O que torna especial"
     },
     "cta": {
       "buttonHref": "/login",
-      "buttonText": "Create Your Profile",
-      "description": "Create your first card in under 2 minutes. No installation, no YAML, no Actions.",
-      "title": "Ready to level up your profile?"
+      "buttonText": "Criar Seu Perfil",
+      "description": "Crie seu primeiro card em menos de 2 minutos. Sem instalação, sem YAML, sem Actions.",
+      "title": "Pronto para elevar seu perfil?"
     },
     "hero": {
-      "ctaPrimary": "Start for free",
-      "subtitle": "Visual builder for your GitHub, anime, games, books and music stats. No YAML, no Actions — just click, preview, embed.",
-      "title": "One SVG to flex your entire nerd life"
+      "ctaPrimary": "Começar grátis",
+      "subtitle": "Builder visual para suas estatísticas de GitHub, anime, jogos, livros e música. Sem YAML, sem Actions — apenas clique, visualize e cole.",
+      "title": "Um SVG para exibir toda sua vida nerd"
     },
     "howItWorks": {
-      "badge": "How it works",
-      "steps": [
-        {
-          "badge": "~1 min",
-          "bullets": ["Secure OAuth", "One click to authorize", "Revocable anytime"],
-          "cta": {
-            "action": "navigate",
-            "href": "/login",
-            "text": "Connect"
-          },
-          "description": "Securely authorize your favorite platforms via OAuth.",
-          "icon": "Shield",
-          "step": 1,
-          "title": "Connect your accounts"
+      "badge": "Como funciona",
+      "steps": {
+        "step1": {
+          "title": "Conecte suas contas",
+          "description": "Autorize suas plataformas favoritas com segurança via OAuth."
         },
-        {
-          "badge": "No code",
-          "bullets": ["Ready templates", "Mix plugins your way", "GitHub, MAL, Last.fm, Steam..."],
-          "cta": {
-            "action": "navigate",
-            "href": "/dashboard/new",
-            "text": "View templates"
-          },
-          "description": "Start with a ready template or build your panel from scratch.",
-          "icon": "Plug",
-          "step": 2,
-          "title": "Choose a template or plugins"
+        "step2": {
+          "title": "Escolha um template ou plugins",
+          "description": "Comece com um template pronto ou monte seu painel do zero."
         },
-        {
-          "badge": "Live preview",
-          "bullets": ["Ready themes", "Instant preview", "Mobile/desktop safe"],
-          "cta": {
-            "action": "navigate",
-            "href": "/dashboard/new",
-            "text": "Customize"
-          },
-          "description": "Configure colors, style and organization with real-time preview.",
-          "icon": "Palette",
-          "step": 3,
-          "title": "Customize theme and layout"
+        "step3": {
+          "title": "Personalize tema e layout",
+          "description": "Configure cores, estilo e organização com preview em tempo real."
         },
-        {
-          "badge": "Auto-update",
-          "bullets": ["Unique SVG link", "Auto-sync", "Ready markdown to copy"],
-          "cta": {
-            "action": "modal",
-            "text": "Copy Markdown"
-          },
-          "description": "Copy the ready markdown and paste it in your GitHub profile.",
-          "icon": "Code",
-          "step": 4,
-          "title": "Generate and paste in README"
+        "step4": {
+          "title": "Gere e cole no README",
+          "description": "Copie o markdown pronto e cole no seu perfil do GitHub."
         }
-      ],
-      "subtitle": "Connect your accounts, choose a template and publish an amazing profile without code (unless you want to).",
-      "title": "From {zero} to profile ready in just a few steps",
+      },
+      "subtitle": "Conecte suas contas, escolha um template e publique um perfil incrível sem código (a não ser que você queira).",
+      "title": "De {zero} ao perfil pronto em poucos passos",
       "zero": "zero"
     },
     "platforms": {
-      "badge": "{count} plugins available",
-      "createPlugin": "Can't find a plugin?",
-      "createPluginLink": "Create one!",
-      "subtitle": "We use a plugin system: you pick which sources to show, which sections to include, and we generate the perfect SVG layout.",
-      "title": "Connect the platforms that define you"
+      "badge": "{count} plugins disponíveis",
+      "createPlugin": "Não achou um plugin?",
+      "createPluginLink": "Crie um!",
+      "subtitle": "Usamos um sistema de plugins: você escolhe quais fontes exibir, quais seções incluir, e geramos o layout SVG perfeito.",
+      "title": "Conecte as plataformas que te definem"
     },
     "templates": [
       {
-        "description": "GitHub + MAL, terminal style",
+        "description": "GitHub + MAL, estilo terminal",
         "id": "dev-weeb",
         "name": "Dev + Weeb"
       },
       {
-        "description": "Steam focus, dark theme",
+        "description": "Foco em Steam, tema escuro",
         "id": "gamer-status",
         "name": "Gamer Status"
       },
@@ -203,226 +172,423 @@
         "name": "Bookworm"
       },
       {
-        "description": "LastFM now playing + top artists",
+        "description": "LastFM tocando agora + top artistas",
         "id": "music-junkie",
         "name": "Music Junkie"
       },
       {
-        "description": "Everything combined",
+        "description": "Tudo combinado",
         "id": "all-in-one",
         "name": "All-in-One"
       }
     ],
     "templatesGallery": {
-      "exploreCount": "Explore {count}+ Templates",
-      "exploreSubtitle": "Browse our full collection of ready-made templates",
-      "subtitle": "Pick a template and customize it to match your vibe",
-      "title": "No time to start from scratch?",
-      "useTemplate": "Use this template",
-      "viewAll": "View all"
+      "exploreCount": "Explorar {count}+ Templates",
+      "exploreSubtitle": "Navegue pela nossa coleção completa de templates prontos",
+      "subtitle": "Escolha um template e customize para combinar com seu estilo",
+      "title": "Sem tempo para começar do zero?",
+      "useTemplate": "Usar este template",
+      "viewAll": "Ver todos"
+    },
+    "templatesPage": {
+      "title": "Galeria de Templates",
+      "subtitle": "Descubra templates incríveis criados pela comunidade. Use-os como inspiração ou comece do zero.",
+      "searchPlaceholder": "Buscar templates...",
+      "filters": {
+        "style": {
+          "label": "Filtrar por estilo",
+          "all": "Todos os estilos",
+          "default": "Padrão",
+          "terminal": "Terminal"
+        },
+        "theme": {
+          "label": "Filtrar por tema",
+          "all": "Todos os temas",
+          "default": "Padrão",
+          "dark": "Escuro",
+          "dracula": "Dracula",
+          "purple": "Roxo",
+          "pink": "Rosa",
+          "blue": "Azul",
+          "green": "Verde"
+        }
+      },
+      "sort": {
+        "label": "Ordenar por",
+        "newest": "Mais recentes",
+        "oldest": "Mais antigos",
+        "mostLiked": "Mais curtidos",
+        "name": "Nome"
+      },
+      "noTemplatesFound": "Nenhum template encontrado",
+      "noTemplatesFoundDescription": "Tente ajustar os filtros ou criar seu próprio template.",
+      "createYourOwn": "Crie o seu",
+      "backToTemplates": "Voltar aos templates",
+      "backToGallery": "Voltar à galeria",
+      "useTemplate": "Usar template",
+      "shareTemplate": "Compartilhar",
+      "likeTemplate": "Curtir",
+      "unlikeTemplate": "Descurtir",
+      "createdBy": "Criado por",
+      "lastUpdated": "Última atualização",
+      "platforms": "Plataformas",
+      "style": "Estilo",
+      "theme": "Tema",
+      "preview": "Preview",
+      "description": "Descrição",
+      "templateNotFound": "Template não encontrado",
+      "templateNotFoundDescription": "Este template pode ter sido removido ou você não tem permissão para visualizá-lo.",
+      "templateCard": {
+        "useTemplate": "Usar template",
+        "viewDetails": "Ver detalhes",
+        "likes": "curtidas",
+        "platforms": "plataformas",
+        "lastUpdated": "atualizado em",
+        "like": "Curtir",
+        "unlike": "Descurtir"
+      },
+      "modal": {
+        "title": "Usar template",
+        "description": "Este template será carregado no editor para você personalizar.",
+        "close": "Fechar",
+        "useTemplate": "Usar template"
+      },
+      "share": {
+        "title": "Compartilhar template",
+        "copyLink": "Copiar link",
+        "copied": "Copiado!"
+      },
+      "loading": "Carregando templates...",
+      "error": "Erro ao carregar templates",
+      "retry": "Tentar novamente",
+      "all": "Todos",
+      "default": "Padrão",
+      "terminal": "Terminal",
+      "dark": "Escuro",
+      "purple": "Roxo",
+      "dracula": "Dracula",
+      "blue": "Azul",
+      "pink": "Rosa",
+      "green": "Verde",
+      "previewSection": {
+        "noPreviewAvailable": "Preview não disponível",
+        "viewFullPreview": "Ver preview completo",
+        "loadingPreview": "Carregando preview..."
+      },
+      "cta": {
+        "comingSoonTitle": "em breve",
+        "comingSoonDescription": "Não encontrou o que procura? Crie um perfil personalizado do zero.",
+        "createCustomProfileLabel": "Criar Perfil Personalizado"
+      },
+      "stats": {
+        "totalTemplates": "Total de templates",
+        "totalLikes": "Total de curtidas",
+        "yourTemplates": "Seus templates"
+      },
+      "actions": {
+        "filter": "Filtrar",
+        "sort": "Ordenar",
+        "clearFilters": "Limpar filtros",
+        "refresh": "Atualizar"
+      },
+      "sizes": {
+        "half": "Meia Largura (415px)",
+        "full": "Largura Completa (830px)"
+      },
+      "detail": {
+        "createdAt": "Criado em",
+        "size": "Tamanho",
+        "terminalOptions": "Opções do Terminal",
+        "customizations": "Personalizações",
+        "customCss": "CSS Personalizado",
+        "customColors": "Cores Customizadas",
+        "applied": "Aplicado"
+      }
     }
   },
   "languageSelector": {
-    "comingSoon": "Coming soon",
-    "description": "Select your preferred language for the interface",
-    "noResults": "No languages found",
-    "searchPlaceholder": "Search language...",
-    "title": "Change language"
+    "comingSoon": "Em breve",
+    "description": "Selecione o idioma preferido para a interface",
+    "noResults": "Nenhum idioma encontrado",
+    "searchPlaceholder": "Buscar idioma...",
+    "title": "Trocar idioma"
   },
   "loading": {
-    "loading": "LOADING"
+    "loading": "CARREGANDO"
   },
   "settings": {
     "account": {
-      "dangerZone": "Danger Zone",
-      "dangerZoneDescription": "Irreversible and destructive actions",
-      "deleteAccount": "Delete Account",
-      "description": "Manage your account settings",
-      "title": "Account"
+      "dangerZone": "Zona Perigosa",
+      "dangerZoneDescription": "Ações irreversíveis e destrutivas",
+      "deleteAccount": "Deletar Conta",
+      "description": "Gerencie suas configurações de conta",
+      "title": "Conta"
     },
     "appearance": {
-      "description": "Customize the look and feel of the application",
-      "language": "Language",
-      "languageDescription": "Select the interface language",
-      "theme": "Theme",
-      "themeDescription": "Switch between light and dark mode",
-      "title": "Appearance"
+      "description": "Personalize a aparência do aplicativo",
+      "language": "Idioma",
+      "languageDescription": "Selecione o idioma da interface",
+      "theme": "Tema",
+      "themeDescription": "Alternar entre modo claro e escuro",
+      "title": "Aparência"
     },
-    "description": "Manage your account settings and preferences",
+    "description": "Gerencie suas configurações de conta e preferências",
     "profile": {
-      "description": "Update your profile information",
+      "description": "Atualize suas informações de perfil",
       "email": "Email",
-      "emailCannotChange": "Email cannot be changed",
-      "saveChanges": "Save Changes",
-      "title": "Profile",
-      "username": "Username"
+      "emailCannotChange": "Email não pode ser alterado",
+      "saveChanges": "Salvar Alterações",
+      "title": "Perfil",
+      "username": "Nome de usuário"
     },
-    "title": "Settings"
+    "title": "Configurações"
   },
   "sidebar": {
-    "createNew": "Create New",
-    "mySvgs": "My SVGs",
-    "navigation": "Navigation",
-    "settings": "Settings",
-    "user": "User"
+    "createNew": "Criar Novo",
+    "mySvgs": "Meus SVGs",
+    "navigation": "Navegação",
+    "settings": "Configurações",
+    "user": "Usuário"
   },
   "view": {
-    "backToDashboard": "Back to Dashboard",
-    "completed": "✓ Completed",
-    "cooldownWarning": "Cooldown active: wait {minutes} minute(s) before generating again. Use \"Regenerate\" to ignore.",
-    "created": "Created",
-    "error": "✗ Error",
-    "generating": "⟳ Generating...",
+    "backToDashboard": "Voltar ao Dashboard",
+    "completed": "✓ Concluída",
+    "cooldownWarning": "Cooldown ativo: aguarde {minutes} minuto(s) antes de gerar novamente. Use \"Regenerar\" para ignorar.",
+    "created": "Criado",
+    "error": "✗ Erro",
+    "generating": "⟳ Gerando...",
     "info": {
-      "createdAt": "Created at",
-      "lastGenerated": "Last generated",
-      "size": "Size",
-      "style": "Style",
-      "title": "Information"
+      "createdAt": "Criado em",
+      "lastGenerated": "Última geração",
+      "size": "Tamanho",
+      "style": "Estilo",
+      "title": "Informações"
     },
     "markdown": {
-      "copied": "Copied!",
-      "copy": "Copy",
-      "description": "Paste it in your GitHub README.md",
+      "copied": "Copiado!",
+      "copy": "Copiar",
+      "description": "Cole no seu README.md do GitHub",
       "title": "Markdown",
-      "toastCopied": "Copied!",
-      "toastCopiedDescription": "Markdown code copied to clipboard",
-      "toastError": "Error",
-      "toastErrorDescription": "Could not copy code"
+      "toastCopied": "Copiado!",
+      "toastCopiedDescription": "Código markdown copiado para a área de transferência",
+      "toastError": "Erro",
+      "toastErrorDescription": "Não foi possível copiar o código"
     },
     "notFound": {
-      "description": "This image does not exist or you don't have permission to view it",
-      "title": "Image not found"
+      "description": "Esta imagem não existe ou você não tem permissão para visualizá-la",
+      "title": "Imagem não encontrada"
     },
     "preview": {
-      "description": "Your SVG image preview",
-      "errorDetails": "Error details:",
-      "errorGenerating": "Error generating image",
-      "errorLoading": "Error loading image",
-      "errorLoadingDescription": "The image may still be generating. Please wait a few seconds.",
-      "errorTryAgain": "There was a problem generating your SVG image. Try generating again.",
-      "generating": "Generating image...",
+      "description": "Visualização da sua imagem SVG",
+      "errorDetails": "Detalhes do erro:",
+      "errorGenerating": "Erro ao gerar imagem",
+      "errorLoading": "Erro ao carregar imagem",
+      "errorLoadingDescription": "A imagem pode estar sendo gerada ainda. Aguarde alguns segundos.",
+      "errorTryAgain": "Houve um problema ao gerar sua imagem SVG. Tente gerar novamente.",
+      "generating": "Gerando imagem...",
       "title": "Preview",
-      "tryAgain": "Try Again",
-      "waiting": "Waiting for generation...",
-      "waitingDescription": "This may take a few seconds. The page will automatically refresh."
+      "tryAgain": "Tentar Novamente",
+      "waiting": "Aguardando geração...",
+      "waitingDescription": "Isso pode levar alguns segundos. A página será atualizada automaticamente."
     },
-    "regenerate": "Regenerate",
-    "title": "SVG Preview",
+    "regenerate": "Regenerar",
+    "title": "Visualização SVG",
     "toast": {
-      "error": "Error",
-      "errorMessage": "Could not start generation",
-      "generating": "Generating...",
-      "generatingDescription": "The image is being regenerated",
-      "serviceStarting": "Service starting",
-      "serviceStartingDescription": "The generation service is waking up. Please wait a few seconds and try again."
+      "error": "Erro",
+      "errorMessage": "Não foi possível iniciar a geração",
+      "generating": "Gerando...",
+      "generatingDescription": "A imagem está sendo gerada novamente",
+      "serviceStarting": "Serviço iniciando",
+      "serviceStartingDescription": "O serviço de geração está acordando. Por favor, aguarde alguns segundos e tente novamente."
     },
     "url": {
-      "copyUrl": "Copy URL",
-      "description": "Direct link to the SVG image",
-      "open": "Open",
+      "copyUrl": "Copiar URL",
+      "description": "Link direto para a imagem SVG",
+      "open": "Abrir",
       "title": "URL",
-      "toastCopied": "Copied!",
-      "toastCopiedDescription": "URL copied to clipboard",
-      "toastError": "Error",
-      "toastErrorDescription": "Could not copy URL"
+      "toastCopied": "Copiado!",
+      "toastCopiedDescription": "URL copiada para a área de transferência",
+      "toastError": "Erro",
+      "toastErrorDescription": "Não foi possível copiar a URL"
     }
   },
   "wizard": {
     "error": {
-      "loadingImage": "Error loading image"
+      "loadingImage": "Erro ao carregar imagem"
     },
     "footer": {
-      "enablePlugin": "Enable at least one plugin",
-      "finish": "Finish",
-      "generating": "Generating...",
-      "incompleteConfig": "Incomplete configuration",
+      "enablePlugin": "Habilite pelo menos um plugin",
+      "finish": "Finalize",
+      "generating": "Gerando...",
+      "incompleteConfig": "Configuração incompleta",
       "missingConfigs": {
-        "fillRequired": "Fill in the required fields to continue",
-        "more": "more...",
-        "plural": "configurations missing",
-        "singular": "configuration missing",
-        "title": "Missing configurations:"
+        "fillRequired": "Preencha os campos obrigatórios para continuar",
+        "more": "mais...",
+        "plural": "configurações faltando",
+        "singular": "configuração faltando",
+        "title": "Configurações faltando:"
       }
     },
     "resumeDialog": {
-      "continue": "Continue",
-      "description": "We detected you have a saved in-progress configuration. Do you want to continue where you left off or start from scratch?",
-      "startFresh": "Start from scratch",
-      "title": "Continue previous configuration?"
+      "continue": "Continuar",
+      "description": "Detectamos que você tem uma configuração em andamento salva. Deseja continuar de onde parou ou começar do zero?",
+      "startFresh": "Começar do zero",
+      "title": "Continuar configuração anterior?"
     },
     "sidebar": {
-      "basic": "Basic",
-      "createNewImage": "Create New Image",
-      "createdImages": "Created Images",
+      "basic": "Básico",
+      "createNewImage": "Criar Nova Imagem",
+      "createdImages": "Imagens Criadas",
       "dashboard": "Dashboard",
-      "loading": "Loading...",
-      "navigation": "Navigation",
-      "noImagesCreated": "No images created",
+      "loading": "Carregando...",
+      "navigation": "Navegação",
+      "noImagesCreated": "Nenhuma imagem criada",
       "plugins": "Plugins",
       "preview": "Preview",
-      "step": "Step",
-      "style": "Style",
-      "wizardSteps": "Wizard Steps"
+      "step": "Passo",
+      "style": "Estilo",
+      "wizardSteps": "Passos do Wizard"
     },
     "tabs": {
       "plugins": "Plugins",
-      "style": "Style"
+      "style": "Estilo"
     },
     "style": {
-      "title": "Style",
-      "size": "Size",
-      "theme": "Theme",
-      "customColors": "Custom Colors",
-      "customCss": "Custom CSS",
-      "customCssDescription": "Additional CSS applied on top of the selected theme.",
-      "customCssPlaceholder": "/* custom CSS here */",
-      "terminalOptions": "Terminal Options",
-      "hideEmojis": "Hide Emojis",
-      "hideEmojisDescription": "Remove emoji icons from terminal output",
-      "hideHeader": "Hide Header",
-      "hideHeaderDescription": "Remove the terminal header bar",
-      "reset": "Reset",
+      "title": "Estilo",
+      "size": "Tamanho",
+      "theme": "Tema",
+      "customColors": "Cores Personalizadas",
+      "customCss": "CSS Personalizado",
+      "customCssDescription": "CSS adicional aplicado sobre o tema selecionado.",
+      "customCssPlaceholder": "/* CSS personalizado aqui */",
+      "terminalOptions": "Opções do Terminal",
+      "hideEmojis": "Ocultar Emojis",
+      "hideEmojisDescription": "Remover ícones de emoji da saída do terminal",
+      "hideHeader": "Ocultar Cabeçalho",
+      "hideHeaderDescription": "Remover a barra de cabeçalho do terminal",
+      "reset": "Redefinir",
       "options": {
-        "default": "default",
+        "default": "padrão",
         "terminal": "terminal",
-        "halfWidth": "Half Width",
-        "fullWidth": "Full Width"
+        "halfWidth": "Meia Largura",
+        "fullWidth": "Largura Completa"
       }
     },
     "plugins": {
-      "activePlugins": "Active plugins:",
-      "searchPlaceholder": "Search plugins...",
-      "onlyEnabled": "Only enabled",
-      "inactive": "Inactive",
+      "activePlugins": "Plugins ativos:",
+      "searchPlaceholder": "Buscar plugins...",
+      "onlyEnabled": "Apenas habilitados",
+      "inactive": "Inativo",
       "categories": {
-        "all": "All",
-        "coding": "Coding",
-        "music": "Music",
+        "all": "Todos",
+        "coding": "Programação",
+        "music": "Música",
         "anime": "Anime",
-        "gaming": "Gaming",
-        "health": "Health",
-        "productivity": "Productivity",
+        "gaming": "Jogos",
+        "health": "Saúde",
+        "productivity": "Produtividade",
         "social": "Social",
-        "entertainment": "Entertainment"
+        "entertainment": "Entretenimento"
       },
       "requiredFields": {
-        "title": "Required fields (non-sensitive)",
-        "required": "is required",
-        "fillAllDescription": "Please fill in all required fields"
+        "title": "Campos obrigatórios (não sensíveis)",
+        "required": "é obrigatório",
+        "fillAllDescription": "Por favor, preencha todos os campos obrigatórios"
       },
-      "availableSections": "Available sections",
-      "selectAll": "Select all",
-      "deselectAll": "Deselect all",
-      "selectAllSections": "Select all sections",
-      "deselectAllSections": "Deselect all sections",
-      "noSections": "No sections",
-      "missing": "missing",
-      "hasConfigurations": "⚙️ Has configurations available",
+      "availableSections": "Seções disponíveis",
+      "selectAll": "Selecionar todas",
+      "deselectAll": "Desmarcar todas",
+      "selectAllSections": "Selecionar todas as seções",
+      "deselectAllSections": "Desmarcar todas as seções",
+      "noSections": "Sem seções",
+      "missing": "faltando",
+      "hasConfigurations": "⚙️ Tem configurações disponíveis",
       "preview": "preview",
-      "selectSection": "Select section",
-      "deselectSection": "Deselect section",
-      "enablePluginToPreview": "Enable at least one plugin and select sections to see the preview"
+      "selectSection": "Selecionar seção",
+      "deselectSection": "Desmarcar seção",
+      "enablePluginToPreview": "Habilite pelo menos um plugin e selecione seções para ver o preview"
+    }
+  },
+  "templatesPage": {
+    "title": "Templates Gallery",
+    "subtitle": "Discover amazing templates created by the community. Use them as inspiration or start from scratch.",
+    "searchPlaceholder": "Search templates...",
+    "filters": {
+      "style": {
+        "label": "Filter by style",
+        "all": "All styles",
+        "default": "Default",
+        "terminal": "Terminal"
+      },
+      "theme": {
+        "label": "Filter by theme",
+        "all": "All themes",
+        "default": "Default",
+        "dark": "Dark",
+        "dracula": "Dracula",
+        "purple": "Purple",
+        "pink": "Pink",
+        "blue": "Blue",
+        "green": "Green"
+      }
+    },
+    "sort": {
+      "label": "Sort by",
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "mostLiked": "Most liked",
+      "name": "Name"
+    },
+    "noTemplatesFound": "No templates found",
+    "noTemplatesFoundDescription": "Try adjusting the filters or create your own template.",
+    "createYourOwn": "Create your own",
+    "backToTemplates": "Back to templates",
+    "backToGallery": "Back to gallery",
+    "useTemplate": "Use template",
+    "shareTemplate": "Share",
+    "likeTemplate": "Like",
+    "unlikeTemplate": "Unlike",
+    "createdBy": "Created by",
+    "lastUpdated": "Last updated",
+    "platforms": "Platforms",
+    "style": "Style",
+    "theme": "Theme",
+    "preview": "Preview",
+    "description": "Description",
+    "templateNotFound": "Template not found",
+    "templateNotFoundDescription": "This template may have been removed or you do not have permission to view it.",
+    "templateCard": {
+      "useTemplate": "Use template",
+      "viewDetails": "View details",
+      "likes": "likes",
+      "platforms": "platforms",
+      "lastUpdated": "updated",
+      "like": "Like",
+      "unlike": "Unlike"
+    },
+    "modal": {
+      "title": "Use template",
+      "description": "This template will be loaded in the editor for you to customize.",
+      "close": "Close",
+      "useTemplate": "Use template"
+    },
+    "share": {
+      "title": "Share template",
+      "copyLink": "Copy link",
+      "copied": "Copied!"
+    },
+    "sizes": {
+      "half": "Half Width (415px)",
+      "full": "Full Width (830px)"
+    },
+    "detail": {
+      "createdAt": "Created at",
+      "size": "Size",
+      "terminalOptions": "Terminal Options",
+      "customizations": "Customizations",
+      "customCss": "Custom CSS",
+      "customColors": "Custom Colors",
+      "applied": "Applied"
     }
   }
 }

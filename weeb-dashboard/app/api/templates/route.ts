@@ -9,23 +9,72 @@ import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
  * GET /api/templates
  * List all templates (user's own + public templates)
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const publicOnly = searchParams.get("public") === "true"
+    const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined
+
     const supabase = await createClient()
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser()
 
+    // If requesting only public templates, allow unauthenticated access
+    if (publicOnly) {
+      const publicTemplates = await (limit && limit > 0
+        ? db.select().from(templates).where(eq(templates.isPublic, true)).limit(limit)
+        : db.select().from(templates).where(eq(templates.isPublic, true)))
+
+      // Get like counts for public templates
+      const publicTemplateIds = publicTemplates.map((t) => t.id)
+      let likesData: Record<string, { count: number; userLiked: boolean }> = {}
+
+      if (publicTemplateIds.length > 0) {
+        try {
+          const likes = await db
+            .select({
+              templateId: templateLikes.templateId,
+              userId: templateLikes.userId,
+            })
+            .from(templateLikes)
+            .where(inArray(templateLikes.templateId, publicTemplateIds))
+
+          // Count likes per template
+          publicTemplateIds.forEach((templateId) => {
+            const templateLikesList = likes.filter((l) => l.templateId === templateId)
+            likesData[templateId] = {
+              count: templateLikesList.length,
+              userLiked: user ? templateLikesList.some((l) => l.userId === user.id) : false,
+            }
+          })
+        } catch (error) {
+          console.warn("Error fetching likes (table may not exist yet):", error)
+          publicTemplateIds.forEach((templateId) => {
+            likesData[templateId] = { count: 0, userLiked: false }
+          })
+        }
+      }
+
+      const publicTemplatesWithLikes = publicTemplates.map((template) => ({
+        ...template,
+        likesCount: likesData[template.id]?.count || 0,
+        userLiked: likesData[template.id]?.userLiked || false,
+      }))
+
+      return NextResponse.json({
+        templates: publicTemplatesWithLikes,
+      })
+    }
+
+    // For authenticated requests, return user's templates + public templates
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Get user's templates + public templates
-    const userTemplates = await db
-      .select()
-      .from(templates)
-      .where(eq(templates.userId, user.id))
+    const userTemplates = await db.select().from(templates).where(eq(templates.userId, user.id))
 
     const publicTemplates = await db
       .select()
@@ -34,9 +83,9 @@ export async function GET() {
 
     // Get like counts and user liked status separately
     const allTemplateIds = [...userTemplates, ...publicTemplates].map((t) => t.id)
-    
+
     let likesData: Record<string, { count: number; userLiked: boolean }> = {}
-    
+
     if (allTemplateIds.length > 0) {
       try {
         const likes = await db
@@ -46,7 +95,7 @@ export async function GET() {
           })
           .from(templateLikes)
           .where(inArray(templateLikes.templateId, allTemplateIds))
-        
+
         // Count likes per template
         allTemplateIds.forEach((templateId) => {
           const templateLikesList = likes.filter((l) => l.templateId === templateId)
@@ -152,4 +201,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-

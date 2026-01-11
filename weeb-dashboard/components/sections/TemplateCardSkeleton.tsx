@@ -1,8 +1,8 @@
 "use client"
 
-import { memo } from "react"
-import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { motion } from "framer-motion"
+import { memo } from "react"
 
 interface TemplateCardSkeletonProps {
 	index?: number

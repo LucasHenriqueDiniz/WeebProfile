@@ -11,6 +11,7 @@ import {
   Shield,
   type LucideIcon,
 } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 interface Feature {
   id: string
@@ -20,11 +21,7 @@ interface Feature {
   highlight?: string
 }
 
-interface FeaturesSectionProps {
-  title: string
-  subtitle: string
-  features: Feature[]
-}
+interface FeaturesSectionProps {}
 
 const iconMap: Record<string, LucideIcon> = {
   Layout,
@@ -35,7 +32,16 @@ const iconMap: Record<string, LucideIcon> = {
   Shield,
 }
 
-export function ComparisonSection({ title, subtitle, features }: FeaturesSectionProps) {
+export function ComparisonSection({}: FeaturesSectionProps) {
+  const t = useTranslations('homepage.comparison')
+
+  const features: Feature[] = t.raw('features').map((feature: any) => ({
+    id: feature.id,
+    title: feature.title,
+    description: feature.description,
+    icon: feature.icon,
+    highlight: feature.highlight
+  }))
   return (
     <section className="relative py-16 md:py-24 overflow-hidden">
       {/* Background decoration */}
@@ -50,11 +56,11 @@ export function ComparisonSection({ title, subtitle, features }: FeaturesSection
         >
           <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
             <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-              {title}
+              {t('title')}
             </span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            {subtitle}
+            {t('subtitle')}
           </p>
         </motion.div>
 

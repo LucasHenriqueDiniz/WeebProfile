@@ -1,7 +1,7 @@
 /**
- * Renderizador React
+ * React renderer
  *
- * Renderiza plugins ativos usando React e source-v2
+ * Renders active plugins using React and svg-generator
  */
 
 import React from "react"
@@ -10,7 +10,7 @@ import type { SvgConfig } from "../types/index.js"
 import { PluginError } from "../components/PluginError.js"
 
 /**
- * Resultado da renderização de plugins
+ * Plugin rendering result
  */
 export interface RenderPluginsResult {
   element: React.ReactElement
@@ -19,17 +19,17 @@ export interface RenderPluginsResult {
 }
 
 /**
- * Renderiza plugins ativos
+ * Renders active plugins
  *
- * Usa PluginManager do source-v2 para buscar dados e renderizar plugins
+ * Uses PluginManager from svg-generator to fetch data and render plugins
  *
- * @returns Elemento React e dados dos plugins para debug
+ * @returns React element and plugin data for debug
  */
 export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsResult> {
   const pluginManager = PluginManager.getInstance()
 
   // Helper function to flatten sectionConfigs
-  // Achatamento de sectionConfigs: sectionConfigs[sectionId][optionKey] -> optionKey (no nível raiz)
+  // Flattening sectionConfigs: sectionConfigs[sectionId][optionKey] -> optionKey (root level)
   // Ex: sectionConfigs.exercises.exercises_max -> exercises_max
   function flattenSectionConfigs(pluginConfig: any): any {
     if (!pluginConfig?.sectionConfigs) {
@@ -39,7 +39,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
     const { sectionConfigs, fields, ...rest } = pluginConfig
     const flattened: any = { ...rest }
 
-    // Achatamento de sectionConfigs: sectionConfigs[sectionId][optionKey] -> optionKey
+    // Flattening sectionConfigs: sectionConfigs[sectionId][optionKey] -> optionKey
     if (sectionConfigs && typeof sectionConfigs === "object") {
       Object.values(sectionConfigs).forEach((sectionConfig: any) => {
         if (sectionConfig && typeof sectionConfig === "object") {
@@ -48,7 +48,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
       })
     }
 
-    // Adicionar fields também no nível raiz
+    // Add fields also at root level
     if (fields && typeof fields === "object") {
       Object.assign(flattened, fields)
     }
@@ -56,14 +56,14 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
     return flattened
   }
 
-  // Preparar configuração de plugins no formato esperado pelo PluginManager
-  // Incluir style e size para os plugins usarem
-  // Totalmente dinâmico - itera sobre todos os plugins disponíveis
+  // Prepare plugin configuration in format expected by PluginManager
+  // Include style and size for plugins to use
+  // Fully dynamic - iterates over all available plugins
   const pluginsConfig: Record<string, any> = {}
 
   for (const [pluginName, pluginConfig] of Object.entries(config.plugins)) {
     if (pluginConfig) {
-      // CRÍTICO: Achatamento dos sectionConfigs antes de passar para os plugins
+      // CRITICAL: Flattening sectionConfigs before passing to plugins
       const flattenedConfig = flattenSectionConfigs(pluginConfig)
       pluginsConfig[pluginName] = {
         style: config.style,
@@ -78,11 +78,11 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   // Inicializar plugins ativos
   pluginManager.initializeActivePlugins(pluginsConfig)
 
-  // Buscar dados de todos os plugins ativos
-  // Passar essentialConfigs se disponíveis
+  // Fetch data from all active plugins
+  // Pass essentialConfigs if available
   const essentialConfigs = config.essentialConfigs || {}
 
-  // Buscar dados e capturar erros
+  // Fetch data and capture errors
   const pluginsData: Record<string, any> = {}
   const pluginsErrors: Record<string, Error> = {}
 
@@ -92,18 +92,18 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
       const pluginConfig = pluginsConfig[name]
       if (pluginConfig && pluginConfig.enabled) {
         try {
-          // CRÍTICO: essentialConfigs está normalizado com lowercase (ver essential-configs.ts)
-          // Mas plugins esperam camelCase (apiKey, steamId, etc)
+          // CRITICAL: essentialConfigs is normalized with lowercase (see essential-configs.ts)
+          // But plugins expect camelCase (apiKey, steamId, etc)
           const pluginNameLower = name.toLowerCase()
           const essentialConfigLowercase = essentialConfigs[pluginNameLower]
           console.log(`🔍 [RENDER] Plugin ${name}: essentialConfig keys (lowercase):`, essentialConfigLowercase ? Object.keys(essentialConfigLowercase) : "none")
           
-          // Normalizar essentialConfig para camelCase (plugins esperam camelCase)
-          // Mapear chaves conhecidas: apikey -> apiKey, steamid -> steamId, username -> username, pat -> pat
+          // Normalize essentialConfig to camelCase (plugins expect camelCase)
+          // Map known keys: apikey -> apiKey, steamid -> steamId, username -> username, pat -> pat
           const essentialConfig: any = {}
           if (essentialConfigLowercase) {
             Object.entries(essentialConfigLowercase).forEach(([key, value]) => {
-              // Mapear chaves conhecidas para camelCase
+              // Map known keys to camelCase
               const keyMap: Record<string, string> = {
                 'apikey': 'apiKey',
                 'steamid': 'steamId',
@@ -115,8 +115,8 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
             })
           }
           
-          // CRÍTICO: Alguns plugins (ex: LastFM) podem ter username em plugin_config (reutilizável)
-          // mas também precisam dele em essentialConfig. Se não está em essentialConfig, pegar do pluginConfig
+          // CRITICAL: Some plugins (ex: LastFM) may have username in plugin_config (reusable)
+          // but they also need it in essentialConfig. If not in essentialConfig, get from pluginConfig
           if (name.toLowerCase() === 'lastfm' && !essentialConfig.username && pluginConfig.username) {
             essentialConfig.username = pluginConfig.username
             console.log(`🔍 [RENDER] Plugin ${name}: username from pluginConfig:`, pluginConfig.username)
@@ -124,7 +124,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           
           console.log(`🔍 [RENDER] Plugin ${name}: essentialConfig keys (camelCase):`, essentialConfig ? Object.keys(essentialConfig) : "none")
           
-          // Usar config.dev explicitamente (já vem normalizado do normalizeConfig)
+          // Use config.dev explicitly (already normalized from normalizeConfig)
           const useDev = config.dev === true
           const data = await plugin.fetchData(pluginConfig, useDev, essentialConfig)
           pluginsData[name] = data
@@ -136,13 +136,13 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
     })
   )
 
-  // Renderizar plugins respeitando a ordem especificada
-  // Se não especificado, usar ordem dos plugins disponíveis
+  // Render plugins respecting specified order
+  // If not specified, use order of available plugins
   const pluginsOrder = config.pluginsOrder || Object.keys(pluginsConfig)
   const activePluginsMap = new Map(pluginManager.getActivePlugins())
   const renderedPlugins: React.ReactElement[] = []
 
-  // Renderizar na ordem especificada
+  // Render in specified order
   for (const pluginName of pluginsOrder) {
     const plugin = activePluginsMap.get(pluginName)
     const pluginConfig = pluginsConfig[pluginName]
@@ -151,7 +151,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
       continue
     }
 
-    // Se houver erro ao buscar dados, renderizar componente de erro
+    // If there was an error fetching data, render error component
     if (pluginsErrors[pluginName]) {
       renderedPlugins.push(
         <PluginError

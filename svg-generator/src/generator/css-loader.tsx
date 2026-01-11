@@ -1,7 +1,7 @@
 /**
- * Carregador de CSS
+ * CSS loader
  * 
- * Carrega e prepara todos os estilos CSS necessários usando weeb-plugins
+ * Loads and prepares all necessary CSS styles using weeb-plugins
  */
 
 import React from 'react'
@@ -9,7 +9,7 @@ import type { SvgConfig } from '../types/index.js'
 import { getCompleteCSS } from '@weeb/weeb-plugins/styles/server'
 
 /**
- * Carrega todos os arquivos CSS e retorna como JSX
+ * Loads all CSS files and returns as JSX
  */
 export async function loadCss(config: SvgConfig): Promise<React.ReactElement> {
   // Load complete CSS from weeb-plugins (includes fonts + style + plugins + shared CSS)

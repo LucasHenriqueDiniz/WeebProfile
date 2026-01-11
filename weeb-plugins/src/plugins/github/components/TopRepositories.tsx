@@ -9,12 +9,14 @@ import { abbreviateNumber } from '../../../utils/number'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
 import type { GithubConfig, GithubData } from '../types'
 
-const DefaultTopRepositories = ({ 
+const DefaultTopRepositories = ({
   data,
-  maxRepos
-}: { 
+  maxRepos,
+  previewMode
+}: {
   data: NonNullable<GithubData['topRepositories']>
   maxRepos: number
+  previewMode?: boolean
 }) => {
   const reposToShow = data.slice(0, maxRepos)
 
@@ -27,7 +29,15 @@ const DefaultTopRepositories = ({
             href={repo.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px]"
+            className={previewMode 
+              ? "flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px] opacity-75"
+              : "flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px] cursor-pointer hover:bg-muted/50 transition-colors"
+            }
+            onClick={(e) => {
+              if (previewMode) {
+                e.preventDefault()
+              }
+            }}
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">

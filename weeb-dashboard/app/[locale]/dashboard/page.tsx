@@ -38,7 +38,7 @@ import { useSvgStore } from "@/stores/svg-store"
 import { generateMarkdown } from "@/lib/utils/markdown"
 import { motion } from "framer-motion"
 import { ArrowUpDown, Copy, Edit2, ExternalLink, Filter, Image as ImageIcon, Loader2, MoreVertical, Plus, RefreshCw, Trash2 } from "lucide-react"
-import { Link, useRouter } from "@/i18n/routing"
+import { Link, useRouter } from "@/i18n/navigation"
 import { useEffect, useMemo, useState, useRef } from "react"
 import { useTranslations } from "next-intl"
 

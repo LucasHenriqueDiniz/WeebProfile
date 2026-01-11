@@ -73,6 +73,7 @@ export interface WizardState {
   reset: () => void
   resetForEdit: () => void
   validateStep: (step: number) => boolean
+  loadFromTemplate: (template: any) => void
 }
 
 /**
@@ -463,6 +464,83 @@ export const useWizardStore = create<WizardState>()(
         set({ isValid: newIsValid })
 
         return isValid
+      },
+
+      loadFromTemplate: (template) => {
+        try {
+          // Reset to initial state first
+          get().reset()
+
+          // Load template data
+          const templateData = {
+            style: template.style || "default",
+            size: template.size || "half",
+            theme: template.theme || "default",
+            pluginsOrder: template.pluginsOrder
+              ? Array.isArray(template.pluginsOrder)
+                ? template.pluginsOrder
+                : template.pluginsOrder.split(",").filter(Boolean)
+              : [],
+            pluginsConfig: template.pluginsConfig || {},
+            uiConfig: template.uiConfig || {},
+            customCss: template.customCss || "",
+          }
+
+          // Set basic style configuration
+          set({
+            style: templateData.style as "default" | "terminal",
+            size: templateData.size as "half" | "full",
+            theme: templateData.theme,
+            customCss: templateData.customCss,
+          })
+
+          // Apply UI config if present
+          if (templateData.uiConfig) {
+            set({
+              hideTerminalEmojis: templateData.uiConfig.hideTerminalEmojis || false,
+              hideTerminalHeader: templateData.uiConfig.hideTerminalHeader || false,
+              hideTerminalCommand: templateData.uiConfig.hideTerminalCommand || false,
+              customThemeColors: templateData.uiConfig.customThemeColors || {},
+            })
+          }
+
+          // Configure plugins based on template
+          const plugins = get().plugins
+          const updatedPlugins = { ...plugins }
+
+          // Process each plugin from template
+          templateData.pluginsOrder.forEach((pluginId: string) => {
+            const pluginConfig = templateData.pluginsConfig[pluginId]
+            if (pluginConfig) {
+              // Apply plugin configuration
+              updatedPlugins[pluginId] = {
+                ...updatedPlugins[pluginId],
+                enabled: pluginConfig.enabled !== false,
+                sections: pluginConfig.sections || [],
+                sectionConfigs: pluginConfig.sectionConfigs || {},
+                fields: pluginConfig.fields || {},
+                // Copy other fields from template config
+                ...Object.fromEntries(
+                  Object.entries(pluginConfig).filter(
+                    ([key]) => !["enabled", "sections", "sectionConfigs", "fields"].includes(key)
+                  )
+                ),
+              }
+            }
+          })
+
+          // Update plugins and order
+          set({
+            plugins: updatedPlugins,
+            pluginsOrder: templateData.pluginsOrder,
+          })
+
+          // Validate steps
+          get().validateStep(1)
+          get().validateStep(2)
+        } catch (error) {
+          console.error("Error loading template:", error)
+        }
       },
     }),
     {

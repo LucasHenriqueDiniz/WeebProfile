@@ -66,7 +66,7 @@ export async function fetchLastFmData(
   try {
     // Em modo dev ou preview, retornar dados mock
     if (dev || previewMode) {
-      console.log(`[LastFM] Using mock data (dev mode or preview mode)`)
+      console.debug(`[LastFM] Using mock data (${dev ? 'dev' : 'preview'} mode)`)
 
       const mockData = getMockLastFmData({
         recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,
@@ -75,17 +75,11 @@ export async function fetchLastFmData(
         top_tracks_max: config.nonEssential?.top_tracks_max || 10,
       })
 
-      console.log(`[LastFM] Mock data generated:`, {
-        recentTracks: Array.isArray(mockData.recentTracks) ? mockData.recentTracks.length : "NOT_ARRAY",
-        topArtists: Array.isArray(mockData.topArtists) ? mockData.topArtists.length : "NOT_ARRAY",
-        topAlbums: Array.isArray(mockData.topAlbums) ? mockData.topAlbums.length : "NOT_ARRAY",
-        topTracks: Array.isArray(mockData.topTracks) ? mockData.topTracks.length : "NOT_ARRAY",
-        statistics: typeof mockData.statistics,
-      })
+      console.debug(`[LastFM] Mock data generated: ${Object.keys(mockData).length} properties`)
 
       // Em modo preview, manter URLs originais (não converter para base64)
       if (previewMode) {
-        console.log(`[LastFM] Preview mode: keeping image URLs as-is (no base64 conversion)`)
+        console.debug(`[LastFM] Preview mode: keeping image URLs as-is`)
         return mockData
       }
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from "@/hooks/useAuth"
-import { useRouter } from "@/i18n/routing"
+import { useRouter } from "@/i18n/navigation"
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import LoadingScreen from "@/components/loading/LoadingScreen"

@@ -10,12 +10,10 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { HeroBackgroundPattern } from "./HeroBackgroundPattern"
 import { HeroPreviewShowcase } from "./HeroPreviewShowcase"
 import { HeroTemplateCard, type Template } from "./HeroTemplateCard"
+import { useTranslations } from 'next-intl'
+import { Link as LocaleLink } from "@/i18n/navigation"
 
-interface HeroSectionProps {
-  title: string
-  subtitle: string
-  ctaPrimary: { text: string; href: string }
-}
+interface HeroSectionProps {}
 
 // Templates padrão hardcoded
 const DEFAULT_TEMPLATES: Template[] = [
@@ -105,7 +103,8 @@ const DEFAULT_TEMPLATES: Template[] = [
 
 const SUPPORTED_PLATFORMS = ["GitHub", "Steam", "LastFM", "MyAnimeList", "Lyfta"]
 
-export function HeroSection({ title, ctaPrimary }: HeroSectionProps) {
+export function HeroSection({}: HeroSectionProps) {
+  const t = useTranslations('homepage.hero')
   const [activeTemplate, setActiveTemplate] = useState<Template>(DEFAULT_TEMPLATES[0])
   const [isBuilding, setIsBuilding] = useState(false)
   const [templatesModalOpen, setTemplatesModalOpen] = useState(false)
@@ -320,7 +319,7 @@ export function HeroSection({ title, ctaPrimary }: HeroSectionProps) {
                     letterSpacing: "-0.02em",
                   }}
                 >
-                  {title.split("SVG").map((part, i, arr) => (
+                  {t('title').split("SVG").map((part, i, arr) => (
                     <span key={i}>
                       {part}
                       {i < arr.length - 1 && (
@@ -374,10 +373,10 @@ export function HeroSection({ title, ctaPrimary }: HeroSectionProps) {
                     size="lg"
                     className="relative bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 hover:from-purple-600 hover:via-pink-600 hover:to-cyan-600 shadow-lg shadow-pink-500/20 transition-all hover:shadow-pink-500/30 text-base font-semibold px-6 py-6"
                   >
-                    <Link href={ctaPrimary.href}>
+                    <LocaleLink href="/login">
                       <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
-                      {ctaPrimary.text}
-                    </Link>
+                      {t('ctaPrimary')}
+                    </LocaleLink>
                   </Button>
                   {/* Pulsing glow effect */}
                   <motion.div

@@ -1,6 +1,6 @@
 "use client"
 
-import { usePathname } from "@/i18n/routing"
+import { usePathname } from "@/i18n/navigation"
 import { motion } from "framer-motion"
 import { Header } from "@/components/layout/Header"
 import { DashboardSidebar } from "@/components/dashboard/Sidebar"

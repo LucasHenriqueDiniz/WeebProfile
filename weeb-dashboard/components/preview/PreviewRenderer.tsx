@@ -26,6 +26,8 @@ interface PreviewRendererProps {
   customThemeColors?: Record<string, string>
   width?: number // Largura fixa opcional (sobrescreve size)
   height?: number // Altura fixa opcional
+  previewMode?: boolean // Quando true, componentes não devem renderizar links externos
+  disableFadeIn?: boolean // Quando true, desativa a animação de fade-in das seções
 }
 
 /**
@@ -72,6 +74,8 @@ export function PreviewRenderer({
   customThemeColors,
   width: propWidth,
   height: propHeight,
+  previewMode,
+  disableFadeIn = false,
 }: PreviewRendererProps) {
   const { data, loading } = useMockPluginData({ plugins })
 
@@ -156,7 +160,15 @@ export function PreviewRenderer({
       }
 
       try {
-        const rendered = (plugin as any).render(pluginConfig, pluginData)
+        // Adicionar previewMode ao pluginConfig para que componentes saibam que estão em preview
+        const configWithPreviewMode = { ...pluginConfig, previewMode: previewMode || false }
+        const rendered = (plugin as any).render(configWithPreviewMode, pluginData)
+        
+        // Check if rendered is a function (which would cause the error)
+        if (typeof rendered === 'function') {
+          console.error(`[PreviewRenderer] ERROR: Plugin ${pluginName} returned a function instead of a React component!`)
+          continue
+        }
         
         // Sempre adicionar ao array - deixar o React decidir se é vazio
         // Componentes que retornam <></> ainda são válidos
@@ -168,17 +180,21 @@ export function PreviewRenderer({
         const stableKey = `${pluginName}-${components.length}`
         components.push(
           <PluginErrorBoundary key={stableKey} pluginName={pluginName}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.4,
-                delay: components.length * 0.15,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-            >
-              {rendered}
-            </motion.div>
+            {disableFadeIn ? (
+              <div>{rendered}</div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: components.length * 0.15,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              >
+                {rendered}
+              </motion.div>
+            )}
           </PluginErrorBoundary>
         )
       } catch (error) {
@@ -208,6 +224,16 @@ export function PreviewRenderer({
     // 3. Plugins não têm seções ativas
     const enabledCount = Object.values(plugins).filter(p => p?.enabled).length
     const withSections = Object.values(plugins).filter(p => p?.enabled && p.sections?.length > 0).length
+    
+    // Debug information
+    console.debug('[PreviewRenderer] No plugins rendered:', {
+      enabledCount,
+      withSections,
+      plugins: Object.keys(plugins),
+      pluginsOrder,
+      dataKeys: Object.keys(data),
+      activePluginsCount: activePluginsMap.size
+    })
     
     return null
   }

@@ -92,7 +92,7 @@ export async function fetchSteamData(
 
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
-      console.log('[Steam] Preview mode: keeping image URLs as-is (no base64 conversion)')
+      console.debug('[Steam] Preview mode: keeping image URLs as-is')
       return apiData
     }
 

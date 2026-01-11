@@ -1,13 +1,13 @@
 /**
- * Serviço Node.js HTTP para Geração de SVG
+ * Node.js HTTP service for SVG generation
  *
- * Este serviço roda em um processo separado e pode importar
- * o svg-generator sem problemas de análise estática do Turbopack.
+ * This service runs in a separate process and can import
+ * the svg-generator without Turbopack static analysis issues.
  *
- * Uso:
+ * Usage:
  *   pnpm tsx src/server.ts
  *
- * Ou via script:
+ * Or via script:
  *   pnpm dev:server
  */
 
@@ -140,21 +140,25 @@ async function handleDebugRequest(req: IncomingMessage, res: ServerResponse) {
     await db.end()
 
     res.writeHead(200, { "Content-Type": "application/json" })
-    res.end(JSON.stringify({
-      totalSvgs: totalSvgs[0]?.count || 0,
-      dueSvgs: dueSvgs[0]?.count || 0,
-      pausedSvgs: pausedSvgs[0]?.count || 0,
-      futureSvgs: futureSvgs[0]?.count || 0,
-      hasMore,
-      timestamp: new Date().toISOString()
-    }))
+    res.end(
+      JSON.stringify({
+        totalSvgs: totalSvgs[0]?.count || 0,
+        dueSvgs: dueSvgs[0]?.count || 0,
+        pausedSvgs: pausedSvgs[0]?.count || 0,
+        futureSvgs: futureSvgs[0]?.count || 0,
+        hasMore,
+        timestamp: new Date().toISOString(),
+      })
+    )
   } catch (error) {
     console.error("❌ [DEBUG] Error:", error)
     res.writeHead(500, { "Content-Type": "application/json" })
-    res.end(JSON.stringify({
-      error: "Failed to get debug info",
-      message: error instanceof Error ? error.message : "Unknown error"
-    }))
+    res.end(
+      JSON.stringify({
+        error: "Failed to get debug info",
+        message: error instanceof Error ? error.message : "Unknown error",
+      })
+    )
   }
 }
 
@@ -245,7 +249,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       hasUserId: !!requestDataTyped.userId,
     })
 
-    // Validar configuração básica
+    // Validate basic configuration
     if (!requestDataTyped.style || !requestDataTyped.size) {
       res.writeHead(400, { "Content-Type": "application/json" })
       res.end(JSON.stringify({ error: "style and size are required" }))
@@ -257,7 +261,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     // Username and other non-sensitive configs now come from request (svgs.plugins_config)
     let essentialConfigs: Record<string, any> = {}
     let dbConnectionError = false
-    
+
     if (requestDataTyped.userId) {
       console.log(`🔐 [SERVER] Fetching essential configs (secrets) for userId: ${requestDataTyped.userId}`)
       try {
@@ -266,25 +270,28 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       } catch (error: any) {
         console.error(`❌ [SERVER] Error fetching essential configs:`, error)
         dbConnectionError = true
-        
+
         // Detectar erro de DNS especificamente
         const isDnsError = error?.code === "ENOENT" || error?.syscall === "getaddrinfo"
         if (isDnsError) {
           console.error(`❌ [SERVER] DNS resolution failed for database hostname`)
         }
       }
-      
+
       if (dbConnectionError) {
         console.error(`❌ [SERVER] Database connection failed. Cannot verify secrets.`)
-        // Retornar erro explícito: DB inacessível ≠ missing secrets
-        // Isso evita "missing secret fantasma" quando na verdade não conseguiu verificar
+        // Return explicit error: DB unreachable ≠ missing secrets
+        // This avoids "phantom missing secret" when it actually couldn't verify
         res.writeHead(503, { "Content-Type": "application/json" })
-        res.end(JSON.stringify({
-          error: "DATABASE_UNREACHABLE",
-          code: "SUPABASE_DB_DNS_FAILED",
-          message: "Generator não conseguiu acessar o banco de dados. Verifique DATABASE_URL e conectividade.",
-          details: "Não foi possível verificar secrets no banco. Isso pode ser problema de DNS, rede ou configuração de DATABASE_URL."
-        }))
+        res.end(
+          JSON.stringify({
+            error: "DATABASE_UNREACHABLE",
+            code: "SUPABASE_DB_DNS_FAILED",
+            message: "Generator couldn't access database. Check DATABASE_URL and connectivity.",
+            details:
+              "Couldn't verify secrets in database. This might be DNS, network, or DATABASE_URL configuration issue.",
+          })
+        )
         return
       }
     } else if ((requestDataTyped as any).essentialConfigs) {
@@ -304,7 +311,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
         console.log(`🔧 [SERVER] Processing plugin: ${pluginName}`, JSON.stringify(pluginConfig, null, 2))
         if (pluginConfig && typeof pluginConfig === "object" && "enabled" in pluginConfig) {
           const typedPluginConfig = pluginConfig as any
-          
+
           // Username and other non-sensitive configs now come directly from request (svgs.plugins_config)
           // No need to fetch from plugin_config table anymore
           plugins[pluginName] = {
@@ -312,7 +319,10 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
             enabled: typedPluginConfig.enabled === true,
             sections: typedPluginConfig.sections || [],
           }
-          console.log(`🔧 [SERVER] ✅ Plugin ${pluginName} added (config from request):`, JSON.stringify(plugins[pluginName], null, 2))
+          console.log(
+            `🔧 [SERVER] ✅ Plugin ${pluginName} added (config from request):`,
+            JSON.stringify(plugins[pluginName], null, 2)
+          )
 
           // Username can come from plugin config or be optional depending on plugin
           // Don't add hardcoded defaults - let plugin decide
@@ -367,27 +377,27 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     // Validate required secrets and fields
     console.log("✅ [SERVER] Validating required configs...")
     const requiredConfigValidation = validateRequiredConfig(config.plugins, essentialConfigs)
-    
+
     if (!requiredConfigValidation.isValid) {
       console.error("❌ [SERVER] Missing required configs:", JSON.stringify(requiredConfigValidation.missing, null, 2))
-      
+
       // Return structured error
       res.writeHead(400, { "Content-Type": "application/json" })
-      res.end(JSON.stringify({
-        error: "MISSING_REQUIRED_CONFIG",
-        code: "MISSING_REQUIRED_SECRETS",
-        message: "Missing required secrets or fields for enabled plugins",
-        missing: requiredConfigValidation.missing,
-      }))
+      res.end(
+        JSON.stringify({
+          error: "MISSING_REQUIRED_CONFIG",
+          code: "MISSING_REQUIRED_SECRETS",
+          message: "Missing required secrets or fields for enabled plugins",
+          missing: requiredConfigValidation.missing,
+        })
+      )
       return
     }
 
     // Validate and normalize
     console.log("✅ [SERVER] Validating config...")
-    const configPlugins = Object.keys(config.plugins || {}).filter(
-      (key) => config.plugins[key]?.enabled
-    )
-    console.log("✅ [SERVER] Config validated - plugins:", configPlugins.join(', '))
+    const configPlugins = Object.keys(config.plugins || {}).filter((key) => config.plugins[key]?.enabled)
+    console.log("✅ [SERVER] Config validated - plugins:", configPlugins.join(", "))
 
     if (!validateConfig(config)) {
       // Specifically check if there are enabled plugins
@@ -418,9 +428,14 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     }
 
     console.log("✅ [SERVER] Config validated successfully")
-    console.log("🔍 [SERVER] EssentialConfigs before normalize:", essentialConfigs ? Object.keys(essentialConfigs).map(plugin => 
-      `${plugin}: [${Object.keys(essentialConfigs[plugin] || {}).join(", ")}]`
-    ).join(", ") : "none")
+    console.log(
+      "🔍 [SERVER] EssentialConfigs before normalize:",
+      essentialConfigs
+        ? Object.keys(essentialConfigs)
+            .map((plugin) => `${plugin}: [${Object.keys(essentialConfigs[plugin] || {}).join(", ")}]`)
+            .join(", ")
+        : "none"
+    )
 
     const normalizedConfig = normalizeConfig(config)
     const includeDebug = requestData.debug === true || requestData.mock === true

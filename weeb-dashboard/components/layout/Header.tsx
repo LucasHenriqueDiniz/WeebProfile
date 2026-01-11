@@ -16,8 +16,7 @@ import {
   ChevronRight,
   Languages,
 } from "lucide-react"
-import Link from "next/link"
-import { usePathname, useRouter } from "@/i18n/routing"
+import { usePathname, useRouter, Link } from "@/i18n/navigation"
 import { useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -80,13 +79,13 @@ export function Header({
   const headerBorder = useTransform(scrollY, [0, 100], ["rgba(148, 163, 184, 0)", "rgba(148, 163, 184, 0.1)"])
 
   const navigation = [
-    { name: "Templates", href: "/templates" },
+    { name: t('nav.templates'), href: "/templates" },
     { name: "Docs", href: "/docs" },
   ]
 
   const handleSignOut = async () => {
     await signOut()
-    router.push("/login")
+    router.push("/login" as any)
   }
 
   const isWizardPage = pathname === "/dashboard/new" || pathname?.match(/^\/dashboard\/[^/]+\/edit$/)
@@ -103,7 +102,7 @@ export function Header({
       >
         <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group" locale={undefined}>
             <motion.div 
               className="relative" 
               whileHover={{ scale: 1.05 }} 
@@ -161,7 +160,7 @@ export function Header({
             {user ? (
               <>
                 <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
-                  <Link href="/dashboard">Dashboard</Link>
+                  <Link href="/dashboard" locale={undefined}>Dashboard</Link>
                 </Button>
                 <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
                   <DropdownMenuTrigger asChild>
@@ -194,7 +193,7 @@ export function Header({
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                    <DropdownMenuItem onClick={() => router.push("/dashboard" as any)}>
                       <Home className="w-4 h-4 mr-2" />
                       {t('dashboard')}
                     </DropdownMenuItem>
@@ -213,7 +212,7 @@ export function Header({
             ) : (
               <>
                 <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
-                  <Link href="/login">Sign in</Link>
+                  <Link href="/login" locale={undefined}>Sign in</Link>
                 </Button>
 
                 <Button
@@ -221,7 +220,7 @@ export function Header({
                   asChild
                   className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 hover:from-purple-600 hover:via-pink-600 hover:to-cyan-600 shadow-lg shadow-pink-500/20"
                 >
-                  <Link href="/login">
+                  <Link href="/login" locale={undefined}>
                     <Sparkles className="w-3.5 h-3.5 mr-1.5" />
                     Get Started
                   </Link>
@@ -304,7 +303,7 @@ export function Header({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => router.push("/dashboard")} 
+                onClick={() => router.push("/dashboard" as any)} 
                 className="h-9 w-9 hover:bg-muted/80 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
@@ -312,7 +311,7 @@ export function Header({
               <div className="h-6 w-px bg-border/50" />
               
               {/* Logo only shown in wizard pages */}
-              <Link href="/dashboard" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+              <Link href="/dashboard" locale={undefined} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
                 <img
                   src="/sora/sora-head.png"
                   alt="Sora"
@@ -375,7 +374,7 @@ export function Header({
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  onClick={() => router.push("/dashboard")} 
+                  onClick={() => router.push("/dashboard" as any)} 
                   className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
                   <Home className="w-4 h-4 mr-2.5" />

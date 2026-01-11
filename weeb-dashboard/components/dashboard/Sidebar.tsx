@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, usePathname, Link } from "@/i18n/routing"
+import { useRouter, usePathname, Link } from "@/i18n/navigation"
 import {
   LayoutGrid,
   Plus,

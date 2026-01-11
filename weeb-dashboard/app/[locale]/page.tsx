@@ -1,5 +1,5 @@
-// Force dynamic rendering to avoid static generation issues with next-intl
-export const dynamic = 'force-dynamic'
+
+"use client"
 
 import { Header } from "@/components/layout/Header"
 import { HeroSection } from "@/components/sections/HeroSection"
@@ -9,43 +9,77 @@ import { HowItWorksSection } from "@/components/sections/HowItWorksSection"
 import { ComparisonSection } from "@/components/sections/ComparisonSection"
 import { CTASection } from "@/components/sections/CTASection"
 import { SectionDivider } from "@/components/sections/SectionDivider"
-import { getHomepageContent } from "@/lib/content/home"
+import { useEffect, useState } from "react"
+import type { Template } from "@/types/template"
+import { ensureConsistentPlatforms } from "@/lib/templates-utils"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
-import { setRequestLocale } from 'next-intl/server'
-import type { Locale } from "@/i18n/config"
 
-interface HomePageProps {
-  params: Promise<{ locale: Locale }>
-}
+function HomePageContent() {
+  const [templates, setTemplates] = useState<Template[]>([])
+  const [loading, setLoading] = useState(true)
 
-export default async function HomePage({ params }: HomePageProps) {
-  const { locale } = await params
-  // Enable static rendering
-  setRequestLocale(locale)
-  const content = await getHomepageContent(locale)
+  useEffect(() => {
+    async function fetchPublicTemplates() {
+      try {
+        setLoading(true)
+        // Fetch public templates from API, limit to 5 for homepage performance
+        const response = await fetch('/api/templates?public=true&limit=5')
+        if (!response.ok) {
+          throw new Error('Failed to fetch templates')
+        }
+        const data = await response.json()
 
-  // Get platforms count for badge
-  const platformsCount = Object.keys(PLUGINS_METADATA).length
-  const platformsBadge = content.platforms.badge.replace('{count}', platformsCount.toString())
+        // Transform API data to Template format
+        const transformedTemplates: Template[] = (data.templates || []).map((t: any) => {
+          const platforms = ensureConsistentPlatforms(t)
+          return {
+            id: t.id,
+            name: t.name,
+            description: t.description || "",
+            preview: t.svgId ? `/svgs/${t.svgId}` : undefined,
+            platforms,
+            style: t.style || "default",
+            theme: t.theme || "default",
+            size: t.size || "half",
+            likes: t.likesCount || t.likes || 0,
+            liked: t.userLiked || t.liked || false,
+            pluginsConfig: t.pluginsConfig,
+            pluginsOrder: t.pluginsOrder,
+          }
+        })
+
+        setTemplates(transformedTemplates)
+      } catch (error) {
+        console.error('Error fetching public templates:', error)
+        // Fallback to empty array - TemplatesGallery handles empty state gracefully
+        setTemplates([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPublicTemplates()
+  }, [])
 
   return (
     <div className="bg-background">
       <Header />
-      <HeroSection {...content.hero} />
+      <HeroSection />
       <SectionDivider variant="gradient" />
-      <PlatformsSection {...{ ...content.platforms, badge: platformsBadge }} />
+      <PlatformsSection />
       <SectionDivider />
-      <HowItWorksSection {...content.howItWorks} />
+      <HowItWorksSection />
       <SectionDivider />
-      <TemplatesGallery 
-        templates={content.templates} 
-        {...content.templatesGallery}
-      />
+      <TemplatesGallery templates={templates} loading={loading} />
       <SectionDivider />
-      <ComparisonSection {...content.comparison} />
+      <ComparisonSection />
       <SectionDivider variant="gradient" />
-      <CTASection {...content.cta} />
+      <CTASection />
     </div>
   )
+}
+
+export default function HomePage() {
+  return <HomePageContent />
 }
 

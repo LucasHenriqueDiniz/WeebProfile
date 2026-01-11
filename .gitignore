@@ -42,7 +42,12 @@ pnpm-debug.log*
 # Vercel
 .vercel
 
+# VS Code
+.vscode
+
 # Cursor
-/.cursor
+.cursor
 .cursorrules
-/.vscode
+
+# Windsurf
+.windsurf

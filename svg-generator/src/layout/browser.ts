@@ -1,44 +1,44 @@
 /**
  * Browser Singleton for Playwright
- * 
+ *
  * Manages a single browser instance that is reused across measurements.
  * Uses playwright-core to avoid automatic browser downloads.
- * 
+ *
  * Prefers system-installed browsers (msedge/chrome) via channels.
  */
 
-import { chromium, type Browser } from 'playwright-core'
+import { chromium, type Browser } from "playwright-core"
 
 let browserInstance: Browser | null = null
 
 /**
  * Get the browser channel from environment or default
- * 
- * Recomendações:
- * - Windows (dev): 'msedge' (Edge geralmente já está instalado)
- * - Linux/Mac (dev): 'chrome' (Chrome geralmente já está instalado)
- * - Railway/CI (produção): 'chromium' (precisa instalar via playwright install)
- * 
- * Para Railway, use 'chromium' e instale com:
+ *
+ * Recommendations:
+ * - Windows (dev): 'msedge' (Edge generally already installed)
+ * - Linux/Mac (dev): 'chrome' (Chrome generally already installed)
+ * - Railway/CI (production): 'chromium' (needs install via playwright install)
+ *
+ * For Railway, use 'chromium' and install with:
  * npx playwright install chromium --with-deps
  */
-function getBrowserChannel(): 'msedge' | 'chrome' | 'chromium' | undefined {
+function getBrowserChannel(): "msedge" | "chrome" | "chromium" | undefined {
   const envChannel = process.env.PLAYWRIGHT_CHANNEL
-  if (envChannel === 'msedge' || envChannel === 'chrome' || envChannel === 'chromium') {
+  if (envChannel === "msedge" || envChannel === "chrome" || envChannel === "chromium") {
     return envChannel
   }
-  
-  // Railway/CI: usar chromium (mais leve e confiável para produção)
+
+  // Railway/CI: use chromium (lighter and more reliable for production)
   if (process.env.RAILWAY_ENVIRONMENT || process.env.CI) {
-    return 'chromium'
+    return "chromium"
   }
-  
-  // Dev local: prefer msedge on Windows, chrome on others
-  if (process.platform === 'win32') {
-    return 'msedge'
+
+  // Local dev: prefer msedge on Windows, chrome on others
+  if (process.platform === "win32") {
+    return "msedge"
   }
-  
-  return 'chrome'
+
+  return "chrome"
 }
 
 /**
@@ -50,29 +50,29 @@ export async function getBrowser(): Promise<Browser> {
   }
 
   const channel = getBrowserChannel()
-  console.log(`[Browser] 🚀 Launching browser (channel: ${channel || 'default'})...`)
+  console.log(`[Browser] 🚀 Launching browser (channel: ${channel || "default"})...`)
 
   try {
     browserInstance = await chromium.launch({
       channel,
       headless: true,
-      // Otimizações para Railway (economiza memória)
+      // Optimizations for Railway (saves memory)
       args: [
-        '--disable-gpu',
-        '--disable-dev-shm-usage',
-        '--disable-software-rasterizer',
-        '--disable-extensions',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-background-networking',
-        '--disable-background-timer-throttling',
-        '--disable-renderer-backgrounding',
-        '--disable-default-apps',
-        '--disable-sync',
-        '--no-first-run',
-        '--no-default-browser-check',
-        '--metrics-recording-only',
-        '--mute-audio',
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
+        "--disable-software-rasterizer",
+        "--disable-extensions",
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-renderer-backgrounding",
+        "--disable-default-apps",
+        "--disable-sync",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--metrics-recording-only",
+        "--mute-audio",
       ],
     })
 
@@ -80,18 +80,18 @@ export async function getBrowser(): Promise<Browser> {
 
     // Setup graceful shutdown
     const shutdown = () => {
-      console.log('[Browser] 🛑 Shutting down browser...')
+      console.log("[Browser] 🛑 Shutting down browser...")
       browserInstance?.close().catch(console.error)
       browserInstance = null
     }
 
-    process.once('SIGINT', shutdown)
-    process.once('SIGTERM', shutdown)
-    process.once('exit', shutdown)
+    process.once("SIGINT", shutdown)
+    process.once("SIGTERM", shutdown)
+    process.once("exit", shutdown)
 
     return browserInstance
   } catch (error) {
-    console.error('[Browser] ❌ Failed to launch browser:', error)
+    console.error("[Browser] ❌ Failed to launch browser:", error)
     throw error
   }
 }
@@ -105,4 +105,3 @@ export async function closeBrowser(): Promise<void> {
     browserInstance = null
   }
 }
-

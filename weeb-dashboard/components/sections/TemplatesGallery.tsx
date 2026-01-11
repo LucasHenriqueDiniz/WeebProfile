@@ -1,169 +1,23 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
-import { useMemo, useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { motion } from "framer-motion"
 import { ArrowRight, Sparkles } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-
-interface Template {
-  id: string
-  name: string
-  description: string
-  preview: string
-  platforms: string[]
-  style: string
-  theme: string
-}
+import { useTranslations } from 'next-intl'
+import { Link } from "@/i18n/navigation"
+import { TemplateCard } from "@/components/templates/TemplateCard"
+import type { Template } from "@/types/template"
 
 interface TemplatesGalleryProps {
   templates: Template[]
-  title: string
-  subtitle: string
-  viewAll: string
-  useTemplate: string
-  exploreCount: string
-  exploreSubtitle: string
+  loading?: boolean
 }
 
-interface TemplateCardProps {
-  name: string
-  description: string
-  preview: string
-  platforms: string[]
-  style: string
-  theme: string
-  index: number
-}
-
-// Mapear platforms para plugin IDs
-const platformToPlugin: Record<string, string> = {
-  GitHub: "github",
-  Steam: "steam",
-  LastFM: "lastfm",
-  MyAnimeList: "myanimelist",
-}
-
-function TemplateCard({ name, description, preview, platforms, style, theme, index }: TemplateCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const hasImage = preview && preview !== "/placeholder.svg"
-
-  // Preparar plugins config para PreviewRenderer
-  const pluginsConfig = useMemo(() => {
-    const plugins: Record<string, any> = {}
-    const pluginsOrder: string[] = []
-
-    platforms.forEach((platform) => {
-      const pluginId = platformToPlugin[platform]
-      if (pluginId) {
-        plugins[pluginId] = {
-          enabled: true,
-          sections: [], // Começar sem seções - o render deve lidar com isso
-        }
-        pluginsOrder.push(pluginId)
-      }
-    })
-
-    return { plugins, pluginsOrder }
-  }, [platforms])
-
-  return (
-    <motion.div
-      custom={index}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      variants={{
-        hidden: { opacity: 0, scale: 0.9, y: 20 },
-        visible: (i: number) => ({
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          transition: { delay: i * 0.15 },
-        }),
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <Card className="h-full cursor-pointer hover:shadow-2xl transition-all group border-border/60 hover:border-primary/40 bg-card/50 backdrop-blur-sm">
-        <div className="relative aspect-video bg-muted flex items-center justify-center overflow-hidden rounded-t-lg">
-          {hasImage ? (
-            <>
-              <Image
-                src={preview}
-                alt={name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                loading="lazy"
-              />
-              {/* Preview overlay on hover */}
-              <AnimatePresence>
-                {isHovered && (
-                  <motion.div
-                    initial={{ y: "100%" }}
-                    animate={{ y: 0 }}
-                    exit={{ y: "100%" }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="absolute inset-0 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4 z-10"
-                  >
-                    <div className="w-full h-full flex items-center justify-center">
-                      <PreviewRenderer
-                        plugins={pluginsConfig.plugins}
-                        pluginsOrder={pluginsConfig.pluginsOrder}
-                        style={style as "default" | "terminal"}
-                        size="half"
-                        theme={theme}
-                        width={400}
-                        height={300}
-                      />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center p-4">
-              <PreviewRenderer
-                plugins={pluginsConfig.plugins}
-                pluginsOrder={pluginsConfig.pluginsOrder}
-                style={style as "default" | "terminal"}
-                size="half"
-                theme={theme}
-                width={400}
-                height={225}
-              />
-            </div>
-          )}
-        </div>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg group-hover:text-primary transition-colors">{name}</CardTitle>
-          <CardDescription className="text-sm leading-relaxed">{description}</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex flex-wrap gap-2">
-            {platforms.map((platform) => (
-              <Badge key={platform} variant="secondary" className="text-xs">
-                {platform}
-              </Badge>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
-  )
-}
-
-export function TemplatesGallery({ 
-  templates, 
-  title, 
-  subtitle, 
-  viewAll, 
-  useTemplate, 
-  exploreCount, 
-  exploreSubtitle 
+export function TemplatesGallery({
+  templates,
+  loading = false
 }: TemplatesGalleryProps) {
+  const t = useTranslations('homepage.templatesGallery')
   return (
     <section className="container mx-auto px-4 py-16 md:py-24">
       <motion.div
@@ -173,9 +27,9 @@ export function TemplatesGallery({
         className="text-center mb-12"
       >
         <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-          {title}
+          {t('title')}
         </h2>
-        <p className="text-lg text-muted-foreground">{subtitle}</p>
+        <p className="text-lg text-muted-foreground">{t('subtitle')}</p>
       </motion.div>
 
       <motion.div
@@ -230,13 +84,13 @@ export function TemplatesGallery({
                   </motion.div>
                   <div>
                     <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-                      {exploreCount}
+                      {t('exploreCount', { count: templates.length + 10 })}
                     </h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      {exploreSubtitle}
+                      {t('exploreSubtitle')}
                     </p>
                     <div className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                      <span>{viewAll}</span>
+                      <span>{t('viewAll')}</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -247,18 +101,37 @@ export function TemplatesGallery({
         </motion.div>
 
         {/* Regular template cards */}
-        {templates.map((template, index) => (
-          <TemplateCard
-            key={template.id}
-            name={template.name}
-            description={template.description}
-            preview={template.preview}
-            platforms={template.platforms}
-            style={template.style}
-            theme={template.theme}
-            index={index + 1}
-          />
-        ))}
+        {loading ? (
+          // Show loading skeletons
+          Array.from({ length: 3 }, (_, index) => (
+            <motion.div
+              key={`skeleton-${index}`}
+              custom={index + 1}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={{
+                hidden: { opacity: 0, scale: 0.9, y: 20 },
+                visible: (i: number) => ({
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                  transition: { delay: i * 0.15 },
+                }),
+              }}
+              className="h-80 bg-muted/30 rounded-lg animate-pulse"
+            />
+          ))
+        ) : (
+          templates.map((template, index) => (
+            <TemplateCard
+              key={template.id}
+              template={template}
+              variant="hero"
+              index={index + 1}
+            />
+          ))
+        )}
       </motion.div>
     </section>
   )

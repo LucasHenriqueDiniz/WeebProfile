@@ -7,7 +7,6 @@
  */
 
 export { generateSvg } from "./generator/svg-generator.js"
-export { calculateSvgWidth } from "./generator/height-calculator.js"
 export { loadCss } from "./generator/css-loader.js"
 export { normalizeConfig, validateConfig } from "./config/config-loader.js"
 export type { SvgConfig, SvgGenerationResult, PluginConfigMap } from "./types/index.js"

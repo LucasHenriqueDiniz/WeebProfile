@@ -453,3 +453,13 @@ input[type="color"]::-moz-color-swatch {
 
 /* Plugin CSS is now imported from plugins.css */
 /* Run: pnpm generate:plugins-css to regenerate */
+
+/* Hide scrollbar for template previews */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}

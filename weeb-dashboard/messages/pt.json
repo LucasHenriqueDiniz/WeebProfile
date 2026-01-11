@@ -58,7 +58,11 @@
     "dashboard": "Dashboard",
     "myAccount": "Minha Conta",
     "settings": "Configurações",
-    "signOut": "Sair"
+    "signOut": "Sair",
+    "nav": {
+      "templates": "Templates",
+      "dashboard": "Dashboard"
+    }
   },
   "homepage": {
     "comparison": {
@@ -122,75 +126,24 @@
     },
     "howItWorks": {
       "badge": "Como funciona",
-      "steps": [
-        {
-          "badge": "~1 min",
-          "bullets": [
-            "OAuth seguro",
-            "1 clique para autorizar",
-            "Revogável a qualquer momento"
-          ],
-          "cta": {
-            "action": "navigate",
-            "href": "/login",
-            "text": "Conectar"
-          },
-          "description": "Autorize suas plataformas favoritas com segurança via OAuth.",
-          "icon": "Shield",
-          "step": 1,
-          "title": "Conecte suas contas"
+      "steps": {
+        "step1": {
+          "title": "Conecte suas contas",
+          "description": "Autorize suas plataformas favoritas com segurança via OAuth."
         },
-        {
-          "badge": "Sem código",
-          "bullets": [
-            "Templates prontos",
-            "Mix de plugins do seu jeito",
-            "GitHub, MAL, Last.fm, Steam..."
-          ],
-          "cta": {
-            "action": "navigate",
-            "href": "/dashboard/new",
-            "text": "Ver templates"
-          },
-          "description": "Comece com um template pronto ou monte seu painel do zero.",
-          "icon": "Plug",
-          "step": 2,
-          "title": "Escolha um template ou plugins"
+        "step2": {
+          "title": "Escolha um template ou plugins",
+          "description": "Comece com um template pronto ou monte seu painel do zero."
         },
-        {
-          "badge": "Live preview",
-          "bullets": [
-            "Temas prontos",
-            "Preview instantâneo",
-            "Mobile/desktop safe"
-          ],
-          "cta": {
-            "action": "navigate",
-            "href": "/dashboard/new",
-            "text": "Personalizar"
-          },
-          "description": "Configure cores, estilo e organização com preview em tempo real.",
-          "icon": "Palette",
-          "step": 3,
-          "title": "Personalize tema e layout"
+        "step3": {
+          "title": "Personalize tema e layout",
+          "description": "Configure cores, estilo e organização com preview em tempo real."
         },
-        {
-          "badge": "Auto-update",
-          "bullets": [
-            "Link único do SVG",
-            "Auto-sync",
-            "Markdown pronto para copiar"
-          ],
-          "cta": {
-            "action": "modal",
-            "text": "Copiar Markdown"
-          },
-          "description": "Copie o markdown pronto e cole no seu perfil do GitHub.",
-          "icon": "Code",
-          "step": 4,
-          "title": "Gere e cole no README"
+        "step4": {
+          "title": "Gere e cole no README",
+          "description": "Copie o markdown pronto e cole no seu perfil do GitHub."
         }
-      ],
+      },
       "subtitle": "Conecte suas contas, escolha um template e publique um perfil incrível sem código (a não ser que você queira).",
       "title": "De {zero} ao perfil pronto em poucos passos",
       "zero": "zero"
@@ -236,6 +189,121 @@
       "title": "Sem tempo para começar do zero?",
       "useTemplate": "Usar este template",
       "viewAll": "Ver todos"
+    },
+    "templatesPage": {
+      "title": "Galeria de Templates",
+      "subtitle": "Descubra templates incríveis criados pela comunidade. Use-os como inspiração ou comece do zero.",
+      "searchPlaceholder": "Buscar templates...",
+      "filters": {
+        "style": {
+          "label": "Filtrar por estilo",
+          "all": "Todos os estilos",
+          "default": "Padrão",
+          "terminal": "Terminal"
+        },
+        "theme": {
+          "label": "Filtrar por tema",
+          "all": "Todos os temas",
+          "default": "Padrão",
+          "dark": "Escuro",
+          "dracula": "Dracula",
+          "purple": "Roxo",
+          "pink": "Rosa",
+          "blue": "Azul",
+          "green": "Verde"
+        }
+      },
+      "sort": {
+        "label": "Ordenar por",
+        "newest": "Mais recentes",
+        "oldest": "Mais antigos",
+        "mostLiked": "Mais curtidos",
+        "name": "Nome"
+      },
+      "noTemplatesFound": "Nenhum template encontrado",
+      "noTemplatesFoundDescription": "Tente ajustar os filtros ou criar seu próprio template.",
+      "createYourOwn": "Crie o seu",
+      "backToTemplates": "Voltar aos templates",
+      "backToGallery": "Voltar à galeria",
+      "useTemplate": "Usar template",
+      "shareTemplate": "Compartilhar",
+      "likeTemplate": "Curtir",
+      "unlikeTemplate": "Descurtir",
+      "createdBy": "Criado por",
+      "lastUpdated": "Última atualização",
+      "platforms": "Plataformas",
+      "style": "Estilo",
+      "theme": "Tema",
+      "preview": "Preview",
+      "description": "Descrição",
+      "templateNotFound": "Template não encontrado",
+      "templateNotFoundDescription": "Este template pode ter sido removido ou você não tem permissão para visualizá-lo.",
+      "templateCard": {
+        "useTemplate": "Usar template",
+        "viewDetails": "Ver detalhes",
+        "likes": "curtidas",
+        "platforms": "plataformas",
+        "lastUpdated": "atualizado em",
+        "like": "Curtir",
+        "unlike": "Descurtir"
+      },
+      "modal": {
+        "title": "Usar template",
+        "description": "Este template será carregado no editor para você personalizar.",
+        "close": "Fechar",
+        "useTemplate": "Usar template"
+      },
+      "share": {
+        "title": "Compartilhar template",
+        "copyLink": "Copiar link",
+        "copied": "Copiado!"
+      },
+      "loading": "Carregando templates...",
+      "error": "Erro ao carregar templates",
+      "retry": "Tentar novamente",
+      "all": "Todos",
+      "default": "Padrão",
+      "terminal": "Terminal",
+      "dark": "Escuro",
+      "purple": "Roxo",
+      "dracula": "Dracula",
+      "blue": "Azul",
+      "pink": "Rosa",
+      "green": "Verde",
+      "previewSection": {
+        "noPreviewAvailable": "Preview não disponível",
+        "viewFullPreview": "Ver preview completo",
+        "loadingPreview": "Carregando preview..."
+      },
+      "cta": {
+        "comingSoonTitle": "em breve",
+        "comingSoonDescription": "Não encontrou o que procura? Crie um perfil personalizado do zero.",
+        "createCustomProfileLabel": "Criar Perfil Personalizado"
+      },
+      "stats": {
+        "totalTemplates": "Total de templates",
+        "totalLikes": "Total de curtidas",
+        "yourTemplates": "Seus templates"
+      },
+      "actions": {
+        "filter": "Filtrar",
+        "sort": "Ordenar",
+        "clearFilters": "Limpar filtros",
+        "refresh": "Atualizar"
+      },
+      "sizes": {
+        "half": "Meia Largura (415px)",
+        "full": "Largura Completa (830px)"
+      },
+      "detail": {
+        "createdAt": "Criado em",
+        "size": "Tamanho",
+        "terminalOptions": "Opções do Terminal",
+        "customizations": "Personalizações",
+        "customCss": "CSS Personalizado",
+        "customColors": "Cores Customizadas",
+        "applied": "Aplicado"
+      }
     }
   },
   "languageSelector": {
@@ -439,6 +507,88 @@
       "selectSection": "Selecionar seção",
       "deselectSection": "Desmarcar seção",
       "enablePluginToPreview": "Habilite pelo menos um plugin e selecione seções para ver o preview"
+    }
+  },
+  "templatesPage": {
+    "title": "Galeria de Templates",
+    "subtitle": "Descubra templates incríveis criados pela comunidade. Use-os como inspiração ou comece do zero.",
+    "searchPlaceholder": "Buscar templates...",
+    "filters": {
+      "style": {
+        "label": "Filtrar por estilo",
+        "all": "Todos os estilos",
+        "default": "Padrão",
+        "terminal": "Terminal"
+      },
+      "theme": {
+        "label": "Filtrar por tema",
+        "all": "Todos os temas",
+        "default": "Padrão",
+        "dark": "Escuro",
+        "dracula": "Dracula",
+        "purple": "Roxo",
+        "pink": "Rosa",
+        "blue": "Azul",
+        "green": "Verde"
+      }
+    },
+    "sort": {
+      "label": "Ordenar por",
+      "newest": "Mais recentes",
+      "oldest": "Mais antigos",
+      "mostLiked": "Mais curtidos",
+      "name": "Nome"
+    },
+    "noTemplatesFound": "Nenhum template encontrado",
+    "noTemplatesFoundDescription": "Tente ajustar os filtros ou criar seu próprio template.",
+    "createYourOwn": "Crie o seu",
+    "backToTemplates": "Voltar aos templates",
+    "backToGallery": "Voltar à galeria",
+    "useTemplate": "Usar template",
+    "shareTemplate": "Compartilhar",
+    "likeTemplate": "Curtir",
+    "unlikeTemplate": "Descurtir",
+    "createdBy": "Criado por",
+    "lastUpdated": "Última atualização",
+    "platforms": "Plataformas",
+    "style": "Estilo",
+    "theme": "Tema",
+    "preview": "Preview",
+    "description": "Descrição",
+    "templateNotFound": "Template não encontrado",
+    "templateNotFoundDescription": "Este template pode ter sido removido ou você não tem permissão para visualizá-lo.",
+    "templateCard": {
+      "useTemplate": "Usar template",
+      "viewDetails": "Ver detalhes",
+      "likes": "curtidas",
+      "platforms": "plataformas",
+      "lastUpdated": "atualizado em",
+      "like": "Curtir",
+      "unlike": "Descurtir"
+    },
+    "modal": {
+      "title": "Usar template",
+      "description": "Este template será carregado no editor para você personalizar.",
+      "close": "Fechar",
+      "useTemplate": "Usar template"
+    },
+    "share": {
+      "title": "Compartilhar template",
+      "copyLink": "Copiar link",
+      "copied": "Copiado!"
+    },
+    "sizes": {
+      "half": "Meia Largura (415px)",
+      "full": "Largura Completa (830px)"
+    },
+    "detail": {
+      "createdAt": "Criado em",
+      "size": "Tamanho",
+      "terminalOptions": "Opções do Terminal",
+      "customizations": "Personalizações",
+      "customCss": "CSS Personalizado",
+      "customColors": "Cores Customizadas",
+      "applied": "Aplicado"
     }
   }
 }

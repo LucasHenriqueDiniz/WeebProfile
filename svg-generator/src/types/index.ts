@@ -1,44 +1,46 @@
 /**
- * Tipos principais do Core V2
+ * SVG Generator main types
  */
 
 /**
- * Configuração de um plugin individual
- * Totalmente dinâmico - suporta qualquer plugin
+ * Individual plugin configuration
+ * Fully dynamic - supports any plugin
  */
 export interface PluginConfig {
   enabled: boolean
   sections: string[]
-  username?: string // Alguns plugins podem ter username aqui, outros em essentialConfigs
-  [key: string]: any // Permite propriedades adicionais específicas do plugin
+  username?: string // Some plugins may have username here, others in essentialConfigs
+  [key: string]: any // Allows additional plugin-specific properties
 }
 
 /**
- * Mapa de configurações de plugins
- * Totalmente dinâmico - suporta qualquer plugin sem hardcoding
+ * Plugin configuration map
+ * Fully dynamic - supports any plugin without hardcoding
  */
 export interface PluginConfigMap {
   [pluginName: string]: PluginConfig | undefined
 }
 
 export interface SvgConfig {
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
   plugins: PluginConfigMap
-  pluginsOrder?: string[] // Ordem dos plugins (dinâmico)
+  pluginsOrder?: string[] // Plugin order (dynamic)
   customCss?: string
   terminalTheme?: string
   defaultTheme?: string
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
-  primaryColor?: string // Cor primária personalizada
-  dev?: boolean // Modo desenvolvimento (usa dados mock)
-  // Configurações essenciais (API keys, tokens) por plugin
-  // Totalmente dinâmico - suporta qualquer plugin
+  primaryColor?: string // Custom primary color
+  dev?: boolean // Development mode (uses mock data)
+  // Essential configurations (API keys, tokens) per plugin
+  // Fully dynamic - supports any plugin
   essentialConfigs?: {
-    [pluginName: string]: {
-      [key: string]: string | undefined
-    } | undefined
+    [pluginName: string]:
+      | {
+          [key: string]: string | undefined
+        }
+      | undefined
   }
 }
 
@@ -47,9 +49,8 @@ export interface SvgGenerationResult {
   height: number
   width: number
   debug?: {
-    config: SvgConfig // Config sanitizada (sem API keys/tokens)
-    pluginsData: Record<string, any> // Dados dos plugins usados na geração
-    pluginsErrors?: Record<string, string> // Erros ocorridos (se houver)
+    config: SvgConfig // Sanitized configuration (no API keys/tokens)
+    pluginsData: Record<string, any> // Plugin data used in generation
+    pluginsErrors?: Record<string, string> // Errors that occurred (if any)
   }
 }
-

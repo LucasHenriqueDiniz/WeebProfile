@@ -53,9 +53,20 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = routing.defaultLocale
   }
 
-  // Load base messages
-  const baseMessages = (await import(`../messages/${locale}.json`)).default
-  
+  // Load base messages with fallback
+  let baseMessages: any = {}
+  try {
+    baseMessages = (await import(`../messages/${locale}.json`)).default
+  } catch (error) {
+    // Fallback to English if locale file doesn't exist
+    try {
+      baseMessages = (await import(`../messages/en.json`)).default
+    } catch (fallbackError) {
+      // If even English fails, use empty object
+      console.warn(`Could not load messages for locale ${locale} or fallback en`)
+    }
+  }
+
   // Load plugin messages from separate files
   const pluginMessages = await loadPluginMessages(locale)
   

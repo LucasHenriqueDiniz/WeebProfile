@@ -1,58 +1,74 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
-import { Header } from "@/components/layout/Header"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { LoadingAnimation } from "@/components/loading/LoadingAnimation"
 import { Button } from "@/components/ui/button"
-import { Plus, Heart, ExternalLink, Loader2 } from "lucide-react"
-import Link from "next/link"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { templateApi } from "@/lib/api"
-import { ApiException } from "@/lib/api/client"
+import { useLocaleNavigation } from '@/lib/navigation'
+import { ensureConsistentPlatforms } from "@/lib/templates-utils"
+import { motion } from "framer-motion"
+import { Filter, Search } from "lucide-react"
+import { useTranslations } from 'next-intl'
+import { useEffect, useState } from "react"
+import { Link } from "@/i18n/navigation"
+import { TemplateCard } from "@/components/templates/TemplateCard"
+import type { Template } from "@/types/template"
 
-interface Template {
-  id: string
-  name: string
-  description: string
-  preview: string
-  platforms: string[]
-  style: string
-  theme: string
-  likes?: number
-  liked?: boolean
-}
 
 export function TemplatesPageClient() {
+  const t = useTranslations('templatesPage')
+  const { toLocalePath } = useLocaleNavigation()
   const [templates, setTemplates] = useState<Template[]>([])
+  const [filteredTemplates, setFilteredTemplates] = useState<Template[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [styleFilter, setStyleFilter] = useState("all")
+  const [themeFilter, setThemeFilter] = useState("all")
+  const [sortByValue, setSortByValue] = useState("newest")
+
 
   useEffect(() => {
     async function fetchTemplates() {
       try {
         setLoading(true)
-        const response = await templateApi.list()
+        // Try to fetch authenticated templates first, fallback to public templates
+        let response
+        try {
+          response = await templateApi.list()
+        } catch (authError) {
+          // If authentication fails, try fetching public templates
+          console.log("Authentication failed, fetching public templates...")
+          response = await fetch('/api/templates?public=true')
+          if (!response.ok) {
+            throw new Error('Failed to fetch public templates')
+          }
+          response = await response.json()
+        }
+
         // Transformar dados da API para o formato esperado
-        const transformedTemplates = (response.templates || []).map((t: any) => ({
-          id: t.id,
-          name: t.name,
-          description: t.description || "",
-          preview: t.preview || t.storageUrl || "",
-          platforms: t.platforms || (t.pluginsConfig ? Object.keys(t.pluginsConfig) : []),
-          style: t.style || "default",
-          theme: t.theme || "default",
-          likes: t.likesCount || t.likes || 0,
-          liked: t.userLiked || t.liked || false,
-        }))
+        const transformedTemplates = (response.templates || []).map((t: any) => {
+          const platforms = ensureConsistentPlatforms(t)
+          return {
+            id: t.id,
+            name: t.name,
+            description: t.description || "",
+            preview: t.svgId ? `/svgs/${t.svgId}` : undefined,
+            platforms,
+            style: t.style || "default",
+            theme: t.theme || "default",
+            size: t.size || "half",
+            likes: t.likesCount || t.likes || 0,
+            liked: t.userLiked || t.liked || false,
+            pluginsConfig: t.pluginsConfig,
+            pluginsOrder: t.pluginsOrder,
+          }
+        })
         setTemplates(transformedTemplates)
       } catch (err) {
         console.error("Error fetching templates:", err)
-        setError(
-          err instanceof ApiException
-            ? err.data.message || err.message
-            : "Failed to load templates"
-        )
+        setError("Failed to load templates")
       } finally {
         setLoading(false)
       }
@@ -60,6 +76,50 @@ export function TemplatesPageClient() {
 
     fetchTemplates()
   }, [])
+
+  // Apply filters and sorting
+  useEffect(() => {
+    let filtered = [...templates]
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(template =>
+        template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        template.platforms.some((platform: string) =>
+          platform.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      )
+    }
+
+    // Style filter
+    if (styleFilter !== "all") {
+      filtered = filtered.filter(template => template.style === styleFilter)
+    }
+
+    // Theme filter
+    if (themeFilter !== "all") {
+      filtered = filtered.filter(template => template.theme === themeFilter)
+    }
+
+    // Sorting
+    filtered.sort((a, b) => {
+      switch (sortByValue) {
+        case "newest":
+          return new Date(b.id).getTime() - new Date(a.id).getTime()
+        case "oldest":
+          return new Date(a.id).getTime() - new Date(b.id).getTime()
+        case "mostLiked":
+          return (b.likes || 0) - (a.likes || 0)
+        case "name":
+          return a.name.localeCompare(b.name)
+        default:
+          return 0
+      }
+    })
+
+    setFilteredTemplates(filtered)
+  }, [templates, searchTerm, styleFilter, themeFilter, sortByValue])
 
   const handleLike = async (templateId: string) => {
     try {
@@ -98,199 +158,127 @@ export function TemplatesPageClient() {
     }
   }
 
+
   return (
-    <div className="min-h-screen bg-background">
-      <Header variant="home" />
-      
-      <main className="container mx-auto px-4 py-12 md:py-16">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="text-center mb-12"
+          className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4"
         >
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent mb-4">
-            Templates Gallery
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Discover beautiful profile templates created by the community. Use them as inspiration or start from scratch.
-          </p>
-        </motion.div>
+          {t('title')}
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-xl text-muted-foreground max-w-2xl mx-auto"
+        >
+          {t('subtitle')}
+        </motion.p>
+      </div>
 
-        {/* Loading */}
-        {loading && (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      {/* Search and Filters */}
+      <div className="mb-8 space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder={t('searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
-        )}
 
-        {/* Error */}
-        {error && (
-          <div className="text-center py-20">
-            <p className="text-destructive mb-4">{error}</p>
-            <Button onClick={() => window.location.reload()}>Try Again</Button>
+          {/* Filters */}
+          <div className="flex gap-2">
+            <Select value={styleFilter} onValueChange={setStyleFilter}>
+              <SelectTrigger className="w-[180px]">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder={t('filters.style.label')} />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                <SelectItem value="all">{t('filters.style.all')}</SelectItem>
+                <SelectItem value="default">{t('filters.style.default')}</SelectItem>
+                <SelectItem value="terminal">{t('filters.style.terminal')}</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={themeFilter} onValueChange={setThemeFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder={t('filters.theme.label')} />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                <SelectItem value="all">{t('filters.theme.all')}</SelectItem>
+                <SelectItem value="default">{t('filters.theme.default')}</SelectItem>
+                <SelectItem value="dark">{t('filters.theme.dark')}</SelectItem>
+                <SelectItem value="dracula">{t('filters.theme.dracula')}</SelectItem>
+                <SelectItem value="purple">{t('filters.theme.purple')}</SelectItem>
+                <SelectItem value="pink">{t('filters.theme.pink')}</SelectItem>
+                <SelectItem value="blue">{t('filters.theme.blue')}</SelectItem>
+                <SelectItem value="green">{t('filters.theme.green')}</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={sortByValue} onValueChange={setSortByValue}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder={t('sort.label')} />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                <SelectItem value="newest">{t('sort.newest')}</SelectItem>
+                <SelectItem value="oldest">{t('sort.oldest')}</SelectItem>
+                <SelectItem value="mostLiked">{t('sort.mostLiked')}</SelectItem>
+                <SelectItem value="name">{t('sort.name')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Templates Grid */}
-        {!loading && !error && (
-          <>
-            {templates.length > 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.3 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
-              >
-                {templates.map((template, index) => (
-                  <motion.div
-                    key={template.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.3 }}
-                  >
-                    <Card className="hover:shadow-lg hover:shadow-primary/5 hover:border-primary/50 transition-all group h-full flex flex-col">
-                      <CardContent className="p-0 flex flex-col h-full">
-                        {/* Preview */}
-                        <div className="relative aspect-video overflow-hidden rounded-t-lg bg-muted/30">
-                          {template.preview ? (
-                            <img
-                              src={template.preview}
-                              alt={template.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <div className="text-muted-foreground">No preview</div>
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center items-center py-20">
+          <LoadingAnimation />
+        </div>
+      )}
 
-                        {/* Content */}
-                        <div className="p-5 flex-1 flex flex-col">
-                          <div className="mb-3">
-                            <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
-                              {template.name}
-                            </h3>
-                            <p className="text-sm text-muted-foreground line-clamp-2">
-                              {template.description}
-                            </p>
-                          </div>
+      {/* Error State */}
+      {error && (
+        <div className="text-center py-20">
+          <p className="text-red-500">{error}</p>
+        </div>
+      )}
 
-                          {/* Badges */}
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            <Badge variant="outline">{template.style}</Badge>
-                            {template.theme && (
-                              <Badge variant="outline" className="bg-purple-500/10 text-purple-700 dark:text-purple-400">
-                                {template.theme}
-                              </Badge>
-                            )}
-                          </div>
-
-                          {/* Platforms */}
-                          {template.platforms && template.platforms.length > 0 && (
-                            <div className="mb-4">
-                              <p className="text-xs text-muted-foreground mb-1">Platforms</p>
-                              <div className="flex flex-wrap gap-1">
-                                {template.platforms.slice(0, 3).map((platform) => (
-                                  <Badge key={platform} variant="secondary" className="text-xs">
-                                    {platform}
-                                  </Badge>
-                                ))}
-                                {template.platforms.length > 3 && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    +{template.platforms.length - 3}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-2 mt-auto pt-4 border-t border-border/50">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="flex-1"
-                              asChild
-                            >
-                              <Link href={`/dashboard/new?template=${template.id}`}>
-                                <ExternalLink className="w-4 h-4 mr-2" />
-                                Use Template
-                              </Link>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-9 w-9 p-0"
-                              onClick={() => handleLike(template.id)}
-                            >
-                              <Heart
-                                className={`w-4 h-4 ${
-                                  template.liked
-                                    ? "fill-red-500 text-red-500"
-                                    : "text-muted-foreground"
-                                }`}
-                              />
-                            </Button>
-                            {template.likes !== undefined && template.likes > 0 && (
-                              <span className="text-xs text-muted-foreground">
-                                {template.likes}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.3 }}
-                className="text-center py-20"
-              >
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6">
-                  <Plus className="w-10 h-10 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold mb-2">No templates yet</h3>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                  Be the first to create and share a template with the community!
-                </p>
-                <Button asChild size="lg" className="gap-2">
-                  <Link href="/dashboard/new">
-                    <Plus className="w-4 h-4" />
-                    Create Your First Template
-                  </Link>
-                </Button>
-              </motion.div>
-            )}
-
-            {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.3 }}
-              className="text-center mt-12 pt-12 border-t border-border"
-            >
-              <h2 className="text-2xl font-bold mb-2">Create Your Own</h2>
-              <p className="text-muted-foreground mb-6">
-                Don&apos;t see what you&apos;re looking for? Create a custom profile from scratch.
-              </p>
-              <Button asChild size="lg" className="gap-2">
-                <Link href="/dashboard/new">
-                  <Plus className="w-4 h-4" />
-                  Create Custom Profile
-                </Link>
+      {!loading && !error && (
+        <div className="space-y-8">
+          {filteredTemplates.length === 0 ? (
+            <div className="text-center py-20">
+              <h3 className="text-2xl font-semibold mb-2">{t('noTemplatesFound')}</h3>
+              <p className="text-muted-foreground mb-6">{t('noTemplatesFoundDescription')}</p>
+              <Button asChild>
+                <Link href={toLocalePath('/dashboard/new')}>{t('createYourOwn')}</Link>
               </Button>
-            </motion.div>
-          </>
-        )}
-      </main>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredTemplates.map((template, index) => (
+                <TemplateCard
+                  key={template.id}
+                  template={template}
+                  variant="grid"
+                  showLike={true}
+                  onLike={handleLike}
+                  index={index}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

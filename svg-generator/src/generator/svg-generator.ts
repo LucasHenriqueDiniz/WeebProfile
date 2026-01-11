@@ -1,20 +1,19 @@
 /**
- * Gerador principal de SVG
+ * Main SVG generator
  *
- * Coordena a geração completa do SVG:
- * 1. Renderiza componentes React
- * 2. Mede altura renderizada com Playwright
- * 3. Carrega CSS
- * 4. Cria container SVG com altura medida
- * 5. Retorna SVG final
+ * Coordinates complete SVG generation:
+ * 1. Renders React components
+ * 2. Measures rendered height with Playwright
+ * 3. Loads CSS
+ * 4. Creates SVG container with measured height
+ * 5. Returns final SVG
  *
- * IMPORTANTE: Este módulo é server-only e usa renderToString do react-dom/server
- * e Playwright para medição de altura. Nunca deve ser importado no cliente.
+ * IMPORTANT: This module is server-only and uses renderToString from react-dom/server
+ * and Playwright for height measurement. Never import on client side.
  */
 
 import { renderToString } from "react-dom/server"
 import type { SvgConfig, SvgGenerationResult } from "../types/index.js"
-import { calculateSvgWidth } from "./height-calculator.js"
 import { loadCss } from "./css-loader.js"
 import { renderPlugins } from "../renderer/react-renderer.js"
 import { createSvgContainer } from "../renderer/template-renderer.js"
@@ -22,24 +21,24 @@ import { measureHeight } from "../layout/measure-height.js"
 import { reactToHtml } from "../layout/react-to-html.js"
 
 /**
- * Gera SVG a partir da configuração
+ * Generates SVG from configuration
  *
- * @param config - Configuração do SVG
- * @returns SVG string e dimensões
+ * @param config - SVG configuration
+ * @returns SVG string and dimensions
  */
 export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResult> {
-  const width = calculateSvgWidth(config.size)
+  const width = config.size === "half" ? 415 : 830
 
-  // 1. Renderizar plugins (fazer uma vez só)
+  // 1. Render plugins (do this once only)
   const { element: pluginsContent, pluginsData, pluginsErrors } = await renderPlugins(config)
 
-  // 2. Calcular altura com Playwright (sempre usado)
-  console.log('[SVG Generator] 📏 Measuring height with Playwright...')
-  
-  // Converter React para HTML
+  // 2. Calculate height with Playwright (always used)
+  console.log("[SVG Generator] 📏 Measuring height with Playwright...")
+
+  // Convert React to HTML
   const { html, css } = await reactToHtml(pluginsContent, config, width)
-  
-  // Medir altura com Playwright
+
+  // Measure height with Playwright
   const height = await measureHeight({
     html,
     css,
@@ -48,13 +47,13 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
     style: config.style,
     timeoutMs: 5000,
   })
-  
+
   console.log(`[SVG Generator] ✅ Height measured: ${height}px`)
 
-  // 3. Carregar CSS
+  // 3. Load CSS
   const cssDefs = await loadCss(config)
 
-  // 4. Criar container SVG
+  // 4. Create SVG container
   const svgElement = createSvgContainer({
     width,
     height,
@@ -68,7 +67,7 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
     hideTerminalEmojis: config.hideTerminalEmojis,
   })
 
-  // 5. Renderizar para string
+  // 5. Render to string
   const svg = renderToString(svgElement)
 
   const result: any = {
@@ -77,7 +76,7 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
     width,
   }
 
-  // Adicionar debug info internamente (será usado pelo servidor)
+  // Add debug info internally (will be used by server)
   result._debug = {
     pluginsData,
     pluginsErrors: Object.fromEntries(

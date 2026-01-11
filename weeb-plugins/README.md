@@ -93,7 +93,7 @@ const element = <DefaultTemplate data={githubData} />
 
 ## Creating a new plugin
 
-Use the `create-plugin` script to scaffold a new plugin:
+Use `create-plugin` script to scaffold a new plugin:
 
 ```bash
 pnpm create-plugin my-plugin
@@ -101,14 +101,17 @@ pnpm create-plugin my-plugin
 
 It creates:
 
-- a new folder at `src/plugins/my-plugin/` with the expected structure
+- a new folder at `src/plugins/my-plugin/` with expected structure
 - files with placeholders replaced
+- automatic registration in PluginManager
+- internationalization keys in `weeb-dashboard/messages/plugins/my-plugin/`
 - (if supported by your current setup) registration wiring for discovery
 
-For the full contract and checklist, see:
+For full contract and checklist, see:
 
+- `scripts/templates/plugin-template/README.md` - Complete plugin development guide
 - `docs/plugins/creating-plugins.md`
-- `scripts/templates/plugin-template/README.md`
+- `docs/plugins/create-plugin-script.md`
 
 ---
 
@@ -127,6 +130,81 @@ For the full contract and checklist, see:
 ### NonEssentialConfig (preferences)
 
 - Safe, user-editable settings (e.g. `max_items`, `show_titles`, layout toggles).
+
+---
+
+## Internationalization (i18n)
+
+The plugin system includes built-in internationalization support:
+
+### Automatic i18n Generation
+
+When you run `pnpm generate-metadata` or use `pnpm create-plugin`, the system:
+
+1. Extracts all user-facing strings from `plugin.metadata.ts`
+2. Generates i18n keys in `weeb-dashboard/messages/plugins/{plugin-name}/`
+3. Creates files for all supported languages (en, pt, es)
+
+### Translation Files
+
+```json
+{
+  "displayName": "Plugin Name",
+  "description": "Plugin description",
+  "sections": {
+    "section_id": {
+      "name": "Section Name",
+      "config": {
+        "option_key": {
+          "label": "Option Label",
+          "description": "Option description"
+        }
+      }
+    }
+  }
+}
+```
+
+### Best Practices
+
+- **Write metadata in English** - becomes the source of truth
+- **Use descriptive labels** - users should understand options immediately
+- **Provide helpful descriptions** - explain what each configuration does
+
+### Validation
+
+The `validate-plugins` script checks for missing translations and warns about incomplete i18n coverage.
+
+---
+
+## Recent Improvements
+
+### Height Calculation
+
+⚠️ **Important**: Height calculation is now automatic!
+
+- No more manual `heights.ts` files required
+- Heights are measured dynamically using Playwright during SVG generation
+- Old `heights.ts` files are deprecated and can be safely deleted
+- See: `svg-generator/src/layout/measure-height.ts`
+
+### Enhanced Plugin Creation
+
+The `create-plugin` script now:
+
+- Automatically generates internationalization keys
+- Creates proper i18n file structure
+- Provides better guidance for next steps
+- Handles template fallbacks gracefully
+
+### Cleanup Features
+
+The `generate-metadata` script now:
+
+- Automatically removes translation files for deleted plugins
+- Preserves existing translations when possible
+- Provides better error reporting
+- Maintains clean i18n structure
 
 ---
 
@@ -156,4 +234,3 @@ These restrictions make it **impossible** to create a public-facing plugin that 
 See `src/plugins/spotify/README.md` for more details.
 
 ---
-

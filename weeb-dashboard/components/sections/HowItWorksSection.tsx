@@ -4,7 +4,8 @@ import { motion } from "framer-motion"
 import { HowItWorksCard } from "./HowItWorksCard"
 import { MarkdownCopyModal } from "./MarkdownCopyModal"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/navigation"
+import { useTranslations } from 'next-intl'
 
 interface HowItWorksItem {
   step: number
@@ -21,16 +22,66 @@ interface HowItWorksItem {
   screenshot?: string
 }
 
-interface HowItWorksSectionProps {
-  badge: string
-  title: string
-  subtitle: string
-  items: HowItWorksItem[]
-}
+interface HowItWorksSectionProps {}
 
-export function HowItWorksSection({ badge, title, subtitle, items }: HowItWorksSectionProps) {
+export function HowItWorksSection({}: HowItWorksSectionProps) {
+  const t = useTranslations('homepage.howItWorks')
   const [markdownModalOpen, setMarkdownModalOpen] = useState(false)
   const router = useRouter()
+
+  const items = [
+    {
+      step: 1,
+      icon: "Shield",
+      title: t('steps.step1.title'),
+      description: t('steps.step1.description'),
+      badge: "~1 min",
+      bullets: ["OAuth seguro", "1 clique para autorizar", "Revogável a qualquer momento"],
+      cta: {
+        action: "navigate" as const,
+        href: "/login",
+        text: "Conectar"
+      }
+    },
+    {
+      step: 2,
+      icon: "Plug",
+      title: t('steps.step2.title'),
+      description: t('steps.step2.description'),
+      badge: "Sem código",
+      bullets: ["Templates prontos", "Mix de plugins do seu jeito", "GitHub, MAL, Last.fm, Steam..."],
+      cta: {
+        action: "navigate" as const,
+        href: "/dashboard/new",
+        text: "Ver templates"
+      }
+    },
+    {
+      step: 3,
+      icon: "Palette",
+      title: t('steps.step3.title'),
+      description: t('steps.step3.description'),
+      badge: "Live preview",
+      bullets: ["Temas prontos", "Preview instantâneo", "Mobile/desktop safe"],
+      cta: {
+        action: "navigate" as const,
+        href: "/dashboard/new",
+        text: "Personalizar"
+      }
+    },
+    {
+      step: 4,
+      icon: "Code",
+      title: t('steps.step4.title'),
+      description: t('steps.step4.description'),
+      badge: "Auto-update",
+      bullets: ["Link único do SVG", "Auto-sync", "Markdown pronto para copiar"],
+      cta: {
+        action: "modal" as const,
+        text: "Copiar Markdown"
+      }
+    }
+  ]
 
   const handleCtaClick = (item: HowItWorksItem) => {
     if (item.cta.action === 'modal') {
@@ -59,18 +110,15 @@ export function HowItWorksSection({ badge, title, subtitle, items }: HowItWorksS
           {/* header */}
           <div className="mx-auto max-w-2xl text-center mb-12">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
-              {badge}
+              {t('badge')}
             </p>
             <h2 className="mt-4 text-3xl md:text-4xl font-black tracking-tight">
-              {title.split('zero').map((part, i, arr) => (
-                <span key={i}>
-                  {part}
-                  {i < arr.length - 1 && <span className="text-primary">zero</span>}
-                </span>
-              ))}
+              {t.rich('title', {
+                zero: (chunks) => <span className="text-primary">{chunks}</span>
+              })}
             </h2>
             <p className="mt-3 text-sm md:text-base text-muted-foreground">
-              {subtitle}
+              {t('subtitle')}
             </p>
           </div>
 

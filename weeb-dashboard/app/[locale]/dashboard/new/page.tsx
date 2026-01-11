@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useRef, useState, useMemo } from "react"
-import { useRouter } from "@/i18n/routing"
+import { useRouter } from "@/i18n/navigation"
+import { useSearchParams } from "next/navigation"
 import { useAuth } from "@/hooks/useAuth"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { Wizard } from "@/components/wizard/Wizard"
@@ -11,14 +12,19 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useTranslations } from "next-intl"
 
-export default function NewSvgPage() { // Updated
+export default function NewSvgPage() {
   const t = useTranslations('wizard')
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const { reset, plugins, pluginsOrder } = useWizardStore()
+  const searchParams = useSearchParams()
+  const { reset, plugins, pluginsOrder, loadFromTemplate } = useWizardStore()
   const { bootstrap, initialized } = useWizardBootstrapStore()
   const hasResetRef = useRef(false)
   const [showResumeDialog, setShowResumeDialog] = useState(false)
+  const [isLoadingTemplate, setIsLoadingTemplate] = useState(false)
+
+  // Get template ID from URL
+  const templateId = searchParams.get('template')
 
   // Check if there are saved configurations
   const hasSavedData = useMemo(() => {
@@ -26,6 +32,39 @@ export default function NewSvgPage() { // Updated
     const enabledPlugins = Object.values(plugins).filter(p => p.enabled)
     return enabledPlugins.length > 0 || pluginsOrder.length > 0
   }, [plugins, pluginsOrder])
+
+  // Load template data if template ID is provided
+  useEffect(() => {
+    if (templateId && user && !authLoading && initialized && !isLoadingTemplate) {
+      setIsLoadingTemplate(true)
+      
+      fetch(`/api/templates/${templateId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Template not found')
+          }
+          return response.json()
+        })
+        .then(data => {
+          const template = data.template
+          if (template) {
+            loadFromTemplate(template)
+            hasResetRef.current = true
+          }
+        })
+        .catch(error => {
+          console.error('Error loading template:', error)
+          // Fall back to normal reset if template loading fails
+          if (!hasResetRef.current) {
+            reset()
+            hasResetRef.current = true
+          }
+        })
+        .finally(() => {
+          setIsLoadingTemplate(false)
+        })
+    }
+  }, [templateId, user, authLoading, initialized, loadFromTemplate, isLoadingTemplate])
 
   // Bootstrap wizard data once on mount
   useEffect(() => {
@@ -41,15 +80,16 @@ export default function NewSvgPage() { // Updated
     }
 
     // Only check for saved data after auth is loaded and we have a user
-    if (user && !authLoading && !hasResetRef.current) {
-      if (hasSavedData) {
+    // Skip if we're loading a template
+    if (user && !authLoading && !hasResetRef.current && !isLoadingTemplate) {
+      if (hasSavedData && !templateId) {
         setShowResumeDialog(true)
-      } else {
+      } else if (!templateId) {
         reset() // Normal reset for new creation
         hasResetRef.current = true
       }
     }
-  }, [user, authLoading, router, reset, hasSavedData])
+  }, [user, authLoading, router, reset, hasSavedData, templateId, isLoadingTemplate])
 
   const handleStartFresh = () => {
     reset() // Normal reset for new creation
@@ -62,7 +102,7 @@ export default function NewSvgPage() { // Updated
     setShowResumeDialog(false)
   }
 
-  if (authLoading) {
+  if (authLoading || isLoadingTemplate) {
     return <LoadingScreen />
   }
 
