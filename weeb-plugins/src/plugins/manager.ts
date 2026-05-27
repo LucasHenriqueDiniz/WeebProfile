@@ -99,6 +99,7 @@ export class PluginManager {
   /**
    * Computes total SVG height by summing calculateHeight() across all enabled plugins.
    * Replaces Playwright-based height measurement for Cloudflare Worker compatibility.
+   * Adds a 24px safety buffer to absorb minor font-rendering and layout edge cases.
    */
   public calculateTotalHeight(
     pluginsConfig: Record<string, Plugin['config']>,
@@ -114,7 +115,7 @@ export class PluginManager {
       if (!data) continue
       total += plugin.calculateHeight(config, data, size)
     }
-    return total
+    return total > 0 ? total + 24 : 0
   }
 
   /**

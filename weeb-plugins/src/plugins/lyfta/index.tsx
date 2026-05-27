@@ -49,14 +49,18 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
         h += 295
       } else if (s === 'exercises') {
         const max = ne.exercises_max ?? 5
-        const n = Math.min(ld.exercises?.length ?? max, max)
-        // Calibrated: 279px for 5 items → 33 + n×46 + (n-1)×4
-        h += n > 0 ? 33 + n * 46 + Math.max(0, n - 1) * 4 : 0
+        // Use max as upper bound (exercises computed from workout history, not data.exercises)
+        const n = max
+        // p-4 container (32px fixed overhead) + space-y-2 (8px gap) + ~37px per item
+        // Formula: 65 + n*37 + (n-1)*8; checks: n=5→282≈279, n=1→102
+        h += n > 0 ? 65 + n * 37 + Math.max(0, n - 1) * 8 : 0
       } else if (s === 'recent_workouts') {
-        const max = ne.workouts_max ?? 3
+        // Component default is 4 items (workouts_max || 4)
+        const max = ne.workouts_max ?? 4
         const n = Math.min(ld.workoutSummaries?.length ?? max, max)
-        // Calibrated: 273px for 3 items → 33 + n×80
-        h += n > 0 ? 33 + n * 80 : 0
+        // p-4+mb-3 container (44px) + space-y-3 (12px gap) + ~40px per item
+        // Formula: 77 + n*40 + (n-1)*12; checks: n=4→273✓, n=3→221, n=1→117
+        h += n > 0 ? 77 + n * 40 + Math.max(0, n - 1) * 12 : 0
       }
     }
     return h

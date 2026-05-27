@@ -42,7 +42,7 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
       />
     )
   },
-  calculateHeight: (config, data) => {
+  calculateHeight: (config, data, size = 'half') => {
     const cfg = config as GithubConfig
     const gh = data as GithubData
     // Height formula for repo-card-style sections: each card is h-[120px], gap-4 (16px)
@@ -65,8 +65,8 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
         case 'favorite_languages': {
           const maxLangs = cfg.favorite_languages_max_languages ?? 5
           const n = Math.min(gh.languages?.length ?? maxLangs, maxLangs)
-          // ~58px per language row (empirically from preview 325px / 5 items)
-          h += 33 + 10 + n * 58 + Math.max(0, n - 1) * 4
+          // ~54px per language row (preview 325px for 5 items: (325-43)/5 = 56.4, rounded up)
+          h += 33 + 10 + n * 54 + Math.max(0, n - 1) * 4
           break
         }
         case 'favorite_license': h += 83; break
@@ -94,9 +94,10 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           break
         }
         case 'featured_repositories': {
+          // Uses p-4 (vs p-3 for starred_repos), content overflows 120px box; use 130px estimate
           const max = cfg.featured_repositories_max ?? 5
           const n = Math.min(gh.featuredRepositories?.length ?? max, max)
-          h += repoCardH(n, false)
+          h += n > 0 ? 33 + n * 130 + Math.max(0, n - 1) * 16 : 0
           break
         }
         case 'recent_activity': {
@@ -107,29 +108,32 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           break
         }
         case 'notable_contributions': {
-          // Each contribution item ~110px, preview 1143px for ~10 items
+          // h-[100px] fixed per item, gap-3 (12px); preview 1143px for 10 items
           const max = cfg.notable_contributions_max ?? 10
           const n = Math.min(gh.notableContributions?.length ?? max, max)
-          h += n > 0 ? 33 + n * 110 + Math.max(0, n - 1) * 4 : 0
+          h += n > 0 ? 33 + n * 100 + Math.max(0, n - 1) * 12 : 0
           break
         }
         case 'repository_contributors': {
+          // 2-col grid (half) / 3-col (full), each card ~52px, gap-3 (12px) between rows
           const max = cfg.repository_contributors_max ?? 5
           const n = Math.min(gh.repositoryContributors?.length ?? max, max)
-          h += n > 0 ? 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 : 0
+          const cols = size === 'full' ? 3 : 2
+          const rows = Math.ceil(n / cols)
+          h += rows > 0 ? 33 + rows * 52 + Math.max(0, rows - 1) * 12 : 0
           break
         }
         case 'sponsors': {
+          // Each sponsor card: p-3 + 40px avatar + 2-line text ≈ 65px; gap-2 (8px); preview 243px for 3 items
           const max = cfg.sponsors_max ?? 5
           const n = Math.min(gh.sponsors?.nodes?.length ?? max, max)
-          // Each sponsor ~40px, preview 243px for ~5 items
-          h += n > 0 ? 33 + n * 40 + Math.max(0, n - 1) * 8 : 0
+          h += n > 0 ? 33 + n * 65 + Math.max(0, n - 1) * 8 : 0
           break
         }
         case 'sponsorships': {
           const max = cfg.sponsorships_max ?? 5
           const n = Math.min(gh.sponsorships?.nodes?.length ?? max, max)
-          h += n > 0 ? 33 + n * 40 + Math.max(0, n - 1) * 8 : 0
+          h += n > 0 ? 33 + n * 65 + Math.max(0, n - 1) * 8 : 0
           break
         }
         case 'star_lists': h += 351; break
