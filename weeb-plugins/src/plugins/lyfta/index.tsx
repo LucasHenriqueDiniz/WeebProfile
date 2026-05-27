@@ -36,6 +36,31 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
       />
     )
   },
+  calculateHeight: (config, data) => {
+    const ne = (config as LyftaConfig).nonEssential || {}
+    const ld = data as LyftaData
+
+    let h = 0
+    for (const s of config.sections) {
+      if (s === 'statistics') h += 123
+      else if (s === 'overview') h += 203
+      else if (s === 'last_workout') {
+        // Fixed upper bound from preview; last workout has a fixed number of visible exercises
+        h += 295
+      } else if (s === 'exercises') {
+        const max = ne.exercises_max ?? 5
+        const n = Math.min(ld.exercises?.length ?? max, max)
+        // Calibrated: 279px for 5 items → 33 + n×46 + (n-1)×4
+        h += n > 0 ? 33 + n * 46 + Math.max(0, n - 1) * 4 : 0
+      } else if (s === 'recent_workouts') {
+        const max = ne.workouts_max ?? 3
+        const n = Math.min(ld.workoutSummaries?.length ?? max, max)
+        // Calibrated: 273px for 3 items → 33 + n×80
+        h += n > 0 ? 33 + n * 80 : 0
+      }
+    }
+    return h
+  },
 }
 
 export default lyftaPlugin

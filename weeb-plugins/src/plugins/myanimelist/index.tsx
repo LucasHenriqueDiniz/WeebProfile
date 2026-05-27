@@ -38,6 +38,50 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
       />
     )
   },
+  calculateHeight: (config) => {
+    const cfg = config as MyAnimeListConfig
+
+    const favoritesH = (
+      n: number,
+      listStyle: string | undefined,
+      defaultH: number
+    ): number => {
+      const s = listStyle ?? 'simple'
+      if (s === 'detailed') return 33 + n * 120 + Math.max(0, n - 1) * 4
+      if (s === 'compact') return 33 + n * 50 + Math.max(0, n - 1) * 4
+      if (s === 'minimal') return 33 + n * 75 + Math.max(0, n - 1) * 4
+      // 'simple' or default: grid layout, upper-bound from preview
+      return defaultH
+    }
+
+    let h = 0
+    for (const s of cfg.sections) {
+      if (s === 'statistics') h += 366
+      else if (s === 'statistics_simple') h += 95
+      else if (s === 'anime_bar') h += 129
+      else if (s === 'manga_bar') h += 129
+      else if (s === 'last_activity') {
+        // Each anime/manga update is ~75px, default max 5 each
+        const maxAnime = cfg.last_activity_hide_anime ? 0 : (cfg.last_activity_max ?? 5)
+        const maxManga = cfg.last_activity_hide_manga ? 0 : (cfg.last_activity_max ?? 5)
+        const n = maxAnime + maxManga
+        h += n > 0 ? 33 + n * 75 + Math.max(0, n - 1) * 4 : 0
+      } else if (s === 'anime_favorites') {
+        const max = cfg.anime_favorites_max ?? 5
+        h += favoritesH(max, cfg.anime_favorites_list_style, 278)
+      } else if (s === 'manga_favorites') {
+        const max = cfg.manga_favorites_max ?? 5
+        h += favoritesH(max, cfg.manga_favorites_list_style, 278)
+      } else if (s === 'character_favorites') {
+        const max = cfg.character_favorites_max ?? 5
+        h += favoritesH(max, cfg.character_favorites_list_style, 280)
+      } else if (s === 'people_favorites') {
+        const max = cfg.people_favorites_max ?? 5
+        h += favoritesH(max, cfg.people_favorites_list_style, 280)
+      }
+    }
+    return h
+  },
   // MyAnimeList specific CSS
   styles: `
     /* MyAnimeList specific styles */

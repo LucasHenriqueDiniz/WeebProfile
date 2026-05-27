@@ -97,6 +97,27 @@ export class PluginManager {
   }
 
   /**
+   * Computes total SVG height by summing calculateHeight() across all enabled plugins.
+   * Replaces Playwright-based height measurement for Cloudflare Worker compatibility.
+   */
+  public calculateTotalHeight(
+    pluginsConfig: Record<string, Plugin['config']>,
+    pluginsData: Record<string, PluginData>,
+    size: 'half' | 'full' = 'half'
+  ): number {
+    let total = 0
+    for (const [name, config] of Object.entries(pluginsConfig)) {
+      if (!config.enabled) continue
+      const plugin = this.get(name)
+      if (!plugin) continue
+      const data = pluginsData[name]
+      if (!data) continue
+      total += plugin.calculateHeight(config, data, size)
+    }
+    return total
+  }
+
+  /**
    * Busca dados de todos os plugins ativos
    */
   public async fetchAllPluginsData(

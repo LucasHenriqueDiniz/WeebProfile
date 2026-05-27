@@ -18,24 +18,24 @@ import { fetchPersonality16Data } from './services/fetchData'
    */
 export const personality16Plugin: Plugin<Personality16Config, PluginData & Personality16Data> = {
   name: '16personalities',
-  
+
   // No API key needed - only type configuration
   essentialConfigKeys: [],
-  
+
   // Default plugin configuration
   config: {
     enabled: false,
     sections: ['personality'],
     personality_type: 'ENFJ',
   } as Personality16Config,
-  
+
   /**
    * Fetches plugin data
    */
   fetchData: async (config: Personality16Config, dev = false) => {
     return await fetchPersonality16Data(config, dev) as PluginData & Personality16Data
   },
-  
+
   /**
    * Renders the plugin
    */
@@ -43,7 +43,7 @@ export const personality16Plugin: Plugin<Personality16Config, PluginData & Perso
     // Extract style and size from config (comes from SvgConfig)
     const style = ((config as any).style || 'default') as 'default' | 'terminal'
     const size = ((config as any).size || 'half') as 'half' | 'full'
-    
+
     return (
       <RenderPersonality16
         config={config}
@@ -52,6 +52,14 @@ export const personality16Plugin: Plugin<Personality16Config, PluginData & Perso
         size={size}
       />
     )
+  },
+
+  calculateHeight: (config) => {
+    let h = 0
+    for (const s of config.sections) {
+      if (s === 'personality') h += 185
+    }
+    return h
   },
 }
 
