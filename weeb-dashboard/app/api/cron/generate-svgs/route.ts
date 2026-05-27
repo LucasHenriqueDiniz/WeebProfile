@@ -33,6 +33,11 @@ export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization")
   const cronSecret = env.cronSecret
 
+  // In production, CRON_SECRET must be configured — open cron endpoints are a DoS risk
+  if (!cronSecret && process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 500 })
+  }
+
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }

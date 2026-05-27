@@ -63,7 +63,7 @@ export class MeasurePool {
   private closed = false
 
   constructor() {
-    this.poolSize = parseInt(process.env.PLAYWRIGHT_POOL_SIZE || '3', 10)
+    this.poolSize = parseInt(process.env.PLAYWRIGHT_POOL_SIZE || '8', 10)
     this.acquireTimeout = 10000 // 10s default
   }
 

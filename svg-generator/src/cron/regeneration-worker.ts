@@ -29,6 +29,9 @@ function createSupabaseClient() {
   return createClient(supabaseUrl, supabaseServiceRoleKey)
 }
 
+// Cached per process lifetime — bucket won't disappear mid-run
+let bucketVerified = false
+
 /**
  * Saves SVG to Supabase Storage
  */
@@ -36,16 +39,19 @@ async function saveSvgToStorage(svgId: string, svgContent: string): Promise<{ pa
   const supabase = createSupabaseClient()
   const bucket = "svgs"
 
-  // Verify bucket exists, create if not
-  const { data: buckets } = await supabase.storage.listBuckets()
-  if (!buckets?.find((b) => b.name === bucket)) {
-    const { error: createError } = await supabase.storage.createBucket(bucket, {
-      public: true,
-      fileSizeLimit: 5242880, // 5MB
-    })
-    if (createError) {
-      throw new Error(`Failed to create bucket: ${createError.message}`)
+  // Verify bucket exists only once per process to avoid redundant API calls
+  if (!bucketVerified) {
+    const { data: buckets } = await supabase.storage.listBuckets()
+    if (!buckets?.find((b) => b.name === bucket)) {
+      const { error: createError } = await supabase.storage.createBucket(bucket, {
+        public: true,
+        fileSizeLimit: 5242880, // 5MB
+      })
+      if (createError) {
+        throw new Error(`Failed to create bucket: ${createError.message}`)
+      }
     }
+    bucketVerified = true
   }
 
   const fileName = `${svgId}.svg`
@@ -164,37 +170,25 @@ export async function processRegenerationBatch(
       }
     }
 
-    // Process each SVG until timebox
-    for (const svg of svgs) {
-      // Check timebox
-      if (Date.now() - startTime >= timeboxMs) {
-        console.log(`⏰ [REGEN] Timebox reached (${timeboxMs}ms), stopping batch`)
-        break
-      }
+    // Process SVGs in parallel chunks — concurrency matches half the Playwright pool
+    // so we leave headroom for dashboard-triggered requests.
+    const CONCURRENCY = 4
 
+    async function processSingleSvg(svg: SvgRow): Promise<void> {
       try {
-        // Load essential configs
         const essentialConfigs = await getUserEssentialConfigs(svg.user_id)
 
-        // Convert SVG to config
         console.log(`🔄 [REGEN] Converting SVG ${svg.id} to config...`)
-
         const baseConfig = convertSvgToConfig(svg)
         const enabledPlugins = Object.keys(baseConfig.plugins).filter((key) => baseConfig.plugins[key]?.enabled)
         console.log(
           `🔄 [REGEN] Enabled plugins: ${enabledPlugins.join(", ")} | Order: ${baseConfig.pluginsOrder.join(", ")}`
         )
 
-        const config = {
-          ...baseConfig,
-          essentialConfigs,
-          dev: false, // Always use real data
-        }
+        const config = { ...baseConfig, essentialConfigs, dev: false }
 
-        // Validate config
         console.log(`🔄 [REGEN] Validating config for SVG ${svg.id}...`)
         if (!validateConfig(config)) {
-          // Log detailed validation failure
           const hasEnabledPlugin = Object.values(config.plugins || {}).some(
             (plugin: any) =>
               plugin?.enabled === true &&
@@ -219,33 +213,24 @@ export async function processRegenerationBatch(
         console.log(`✅ [REGEN] Config validated successfully for SVG ${svg.id}`)
 
         const normalizedConfig = normalizeConfig(config)
-
-        // Calculate payload hash
         const payload = normalizePayloadForHash(svg, normalizedConfig.plugins)
         const payloadHash = calculatePayloadHash(payload)
 
-        // Check if hash matches (skip rendering) - unless force_regenerate is true
         if (!svg.force_regenerate && svg.last_payload_hash && svg.last_payload_hash === payloadHash) {
           console.log(`⏭️  [REGEN] Skipping ${svg.id} (hash unchanged)`)
           await updateSvgAfterSkip(svg.id, payloadHash)
           results.skipped++
-          continue
+          return
         }
 
-        // If force_regenerate was true, log it
         if (svg.force_regenerate) {
           console.log(`🔄 [REGEN] Force regenerating ${svg.id} (force_regenerate=true)`)
         }
 
-        // Generate SVG
         console.log(`🔄 [REGEN] Generating ${svg.id}...`)
         const result = await generateSvg(normalizedConfig)
-        const svgContent = result.svg
 
-        // Upload to storage
-        const { path, url } = await saveSvgToStorage(svg.id, svgContent)
-
-        // Update database
+        const { path, url } = await saveSvgToStorage(svg.id, result.svg)
         await updateSvgAfterGeneration(svg.id, path, url, payloadHash)
         results.generated++
 
@@ -256,6 +241,16 @@ export async function processRegenerationBatch(
         await updateSvgAfterError(svg.id, errorMessage)
         results.failed++
       }
+    }
+
+    // Process in chunks so timebox is checked between each wave
+    for (let i = 0; i < svgs.length; i += CONCURRENCY) {
+      if (Date.now() - startTime >= timeboxMs) {
+        console.log(`⏰ [REGEN] Timebox reached (${timeboxMs}ms), stopping batch`)
+        break
+      }
+      const chunk = svgs.slice(i, i + CONCURRENCY)
+      await Promise.all(chunk.map((svg) => processSingleSvg(svg)))
     }
 
     // Check if there are more SVGs

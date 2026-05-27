@@ -4,6 +4,35 @@
  * Essencial para compatibilidade com GitHub/GitLab e outros sites que bloqueiam imagens externas
  */
 
+/**
+ * Blocks private/loopback/link-local hostnames to prevent SSRF.
+ * URLs come from external API responses (GitHub, Spotify, etc.) so
+ * a compromised API could inject an internal address.
+ */
+function isPrivateOrLoopback(hostname: string): boolean {
+  const h = hostname.toLowerCase()
+  if (h === "localhost" || h === "0.0.0.0") return true
+  if (/^127\./.test(h)) return true           // 127.0.0.0/8 loopback
+  if (/^10\./.test(h)) return true             // 10.0.0.0/8 private
+  if (/^192\.168\./.test(h)) return true       // 192.168.0.0/16 private
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true // 172.16-31.x private
+  if (/^169\.254\./.test(h)) return true       // 169.254.x.x link-local (AWS metadata)
+  if (/^::1$/.test(h)) return true             // IPv6 loopback
+  if (/^fc00:/i.test(h)) return true           // IPv6 unique local
+  if (/^fe80:/i.test(h)) return true           // IPv6 link-local
+  return false
+}
+
+function isSafeImageUrl(url: string): boolean {
+  try {
+    const { hostname, protocol } = new URL(url)
+    if (protocol !== "https:" && protocol !== "http:") return false
+    return !isPrivateOrLoopback(hostname)
+  } catch {
+    return false
+  }
+}
+
 export interface ImageOptimizationOptions {
   maxWidth?: number
   maxHeight?: number
@@ -66,6 +95,11 @@ export async function urlToBase64(
   }
 ): Promise<string> {
   try {
+    if (!isSafeImageUrl(imageUrl)) {
+      console.warn(`    🚫 Blocked unsafe URL: ${imageUrl.substring(0, 60)}`)
+      return ""
+    }
+
     // Criar AbortController para timeout
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), timeout)

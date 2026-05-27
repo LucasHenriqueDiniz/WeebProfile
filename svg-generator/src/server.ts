@@ -24,6 +24,10 @@ import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
 import { getUserEssentialConfigs } from "./db/essential-configs.js"
 import { processRegenerationBatch } from "./cron/regeneration-worker.js"
 import { validateRequiredConfig } from "./validation/validate-required-config.js"
+import { RateLimiter } from "./utils/rate-limiter.js"
+
+// 15 requests/min per IP on the generate endpoint
+const generateLimiter = new RateLimiter({ windowMs: 60_000, max: 15 })
 
 // Railway uses PORT, but also supports SVG_GENERATOR_PORT for local development
 const PORT = process.env.PORT || process.env.SVG_GENERATOR_PORT || 3001
@@ -215,8 +219,20 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     return
   }
 
-  // Debug endpoint to check due SVGs
+  // Debug endpoint to check due SVGs — requires same CRON_SECRET as main cron
   if (pathname === "/api/cron/debug" && req.method === "GET") {
+    const debugAuthHeader = req.headers.authorization
+    const debugCronSecret = process.env.CRON_SECRET
+    if (!debugCronSecret) {
+      res.writeHead(500, { "Content-Type": "application/json" })
+      res.end(JSON.stringify({ error: "CRON_SECRET not configured" }))
+      return
+    }
+    if (!debugAuthHeader || debugAuthHeader !== `Bearer ${debugCronSecret}`) {
+      res.writeHead(401, { "Content-Type": "application/json" })
+      res.end(JSON.stringify({ error: "Unauthorized" }))
+      return
+    }
     await handleDebugRequest(req, res)
     return
   }
@@ -224,6 +240,17 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") {
     res.writeHead(405, { "Content-Type": "application/json" })
     res.end(JSON.stringify({ error: "Method not allowed" }))
+    return
+  }
+
+  // Rate limit all POST generation requests by IP
+  const ip =
+    (req.headers["x-forwarded-for"] as string)?.split(",")[0].trim() ||
+    req.socket.remoteAddress ||
+    "unknown"
+  if (!generateLimiter.check(ip)) {
+    res.writeHead(429, { "Content-Type": "application/json" })
+    res.end(JSON.stringify({ error: "Too many requests. Please wait before trying again." }))
     return
   }
 

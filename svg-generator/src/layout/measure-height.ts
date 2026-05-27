@@ -19,7 +19,7 @@ export interface MeasureHeightOptions {
   style?: "default" | "terminal"
 }
 
-const DEFAULT_TIMEOUT_MS = parseInt(process.env.PLAYWRIGHT_TIMEOUT_MS || "2500", 10)
+const DEFAULT_TIMEOUT_MS = parseInt(process.env.PLAYWRIGHT_TIMEOUT_MS || "6000", 10)
 
 /**
  * Wait for stable layout (fonts, images, RAF)

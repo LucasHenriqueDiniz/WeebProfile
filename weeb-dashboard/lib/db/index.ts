@@ -23,7 +23,7 @@ function getClient() {
     }
     
     _client = postgres(connectionString, {
-      max: 1,
+      max: 5,
       idle_timeout: 20,
       connect_timeout: 10,
       ssl: connectionString.includes("supabase") ? "require" : false,

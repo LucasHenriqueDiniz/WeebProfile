@@ -49,8 +49,18 @@ export interface EssentialConfigs {
     | undefined
 }
 
+interface CacheEntry {
+  value: EssentialConfigs
+  expiresAt: number
+}
+
+const cache = new Map<string, CacheEntry>()
+const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
+
 /**
- * Fetches essential configs for a user directly from Supabase
+ * Fetches essential configs for a user directly from Supabase.
+ * Results are cached in memory for 5 minutes to avoid repeated DB hits
+ * during batch regeneration of multiple SVGs from the same user.
  *
  * @param userId - User ID
  * @returns Essential configs organized by plugin
@@ -58,6 +68,12 @@ export interface EssentialConfigs {
 export async function getUserEssentialConfigs(userId: string): Promise<EssentialConfigs> {
   if (!userId) {
     return {}
+  }
+
+  // Return cached value if still fresh
+  const cached = cache.get(userId)
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.value
   }
 
   try {
@@ -93,6 +109,9 @@ export async function getUserEssentialConfigs(userId: string): Promise<Essential
           .join(", ")
       )
     }
+
+    // Store in cache
+    cache.set(userId, { value: result, expiresAt: Date.now() + CACHE_TTL_MS })
 
     return result
   } catch (error) {
