@@ -38,8 +38,8 @@
     "dotenv": "^16.4.5",
     "playwright-core": "^1.40.0",
     "postgres": "^3.4.7",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19",
+    "react-dom": "^19",
     "server-only": "^0.0.1",
     "sharp": "^0.33.5"
   },
@@ -48,8 +48,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.18",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@types/sharp": "^0.31.1",
     "tsx": "^4.20.6",
     "typescript": "^5.4.0"
