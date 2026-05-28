@@ -43,11 +43,11 @@ const DefaultSponsorships = ({ data, max }: { data: GithubData['sponsorships']; 
             className="w-10 h-10 rounded-full"
           />
           <div className="flex-1">
-            <div className="font-semibold text-default-text">
+            <div className="font-semibold text-sm text-default-text">
               {sponsorship.sponsorable.name || sponsorship.sponsorable.login}
             </div>
             {sponsorship.tier && (
-              <div className="text-sm text-default-muted">
+              <div className="text-xs text-default-muted">
                 {sponsorship.tier.name} • ${sponsorship.tier.monthlyPriceInDollars}/month
               </div>
             )}

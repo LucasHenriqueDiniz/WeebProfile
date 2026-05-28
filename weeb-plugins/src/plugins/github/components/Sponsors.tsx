@@ -33,7 +33,7 @@ const DefaultSponsors = ({ data, max }: { data: GithubData['sponsors']; max: num
       {sponsors.map((sponsor, index) => (
         <div
           key={index}
-          className="flex items-center gap-3 p-3 rounded-lg border border-default-border hover:bg-default-hover transition-colors"
+          className="flex items-center gap-3 p-3 half:gap-2 rounded-lg border border-default-border hover:bg-default-hover transition-colors"
         >
           <ImageComponent
             url64={sponsor.avatarUrl}
@@ -43,11 +43,11 @@ const DefaultSponsors = ({ data, max }: { data: GithubData['sponsors']; max: num
             className="w-10 h-10 rounded-full"
           />
           <div className="flex-1">
-            <div className="font-semibold text-default-text">
+            <div className="font-semibold text-sm text-default-text">
               {sponsor.name || sponsor.login}
             </div>
             {sponsor.tier && (
-              <div className="text-sm text-default-muted">
+              <div className="text-xs text-default-muted">
                 {sponsor.tier.name} • ${sponsor.tier.monthlyPriceInDollars}/month
               </div>
             )}
