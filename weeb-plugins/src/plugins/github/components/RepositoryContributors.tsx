@@ -24,7 +24,7 @@ const DefaultRepositoryContributors = ({ data, max }: { data: GithubData['reposi
   const contributors = data.slice(0, max)
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+    <div className="grid grid-cols-3 half:grid-cols-2 gap-3">
       {contributors.map((contributor, index) => (
         <div
           key={index}

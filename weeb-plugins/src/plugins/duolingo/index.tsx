@@ -36,6 +36,24 @@ export const duolingoPlugin: Plugin<DuolingoConfig, PluginData & DuolingoData> =
       />
     )
   },
+  calculateHeight: (config, data) => {
+    const ne = config.nonEssential || {}
+    let h = 0
+    for (const s of config.sections) {
+      if (s === 'current_streak') {
+        // hideTitle defaults to true for current_streak
+        const hideTitle = ne.current_streak_hide_title ?? true
+        h += hideTitle ? 112 : 157
+      } else if (s === 'total_xp') {
+        h += 133
+      } else if (s === 'languages_learning') {
+        const max = ne.languages_learning_max ?? 10
+        const n = Math.min((data as DuolingoData).languages?.length ?? max, max)
+        h += 33 + 12 + n * 50 + Math.max(0, n - 1) * 4
+      }
+    }
+    return h
+  },
 }
 
 export default duolingoPlugin

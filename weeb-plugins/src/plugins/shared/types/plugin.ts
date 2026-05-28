@@ -42,12 +42,23 @@ export interface Plugin<TConfig extends BasePluginConfig = BasePluginConfig, TDa
   
   /**
    * Função para renderizar o plugin
-   * 
+   *
    * @param config - Configuração do plugin
    * @param data - Dados do plugin
    * @returns Componente React renderizado
    */
   render: (config: TConfig, data: TData) => React.ReactNode
+
+  /**
+   * Calcula a altura total do plugin renderizado em pixels.
+   * Substitui a medição via browser (Playwright) permitindo deploy como Worker.
+   * Deve retornar um upper-bound seguro — nunca cortar conteúdo.
+   *
+   * @param config - Configuração do plugin
+   * @param data - Dados retornados por fetchData
+   * @param size - Largura do card ('half' = 415px, 'full' = 830px)
+   */
+  calculateHeight: (config: TConfig, data: TData, size: 'half' | 'full') => number
   
   /**
    * Função opcional para validar configuração

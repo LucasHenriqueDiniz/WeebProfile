@@ -238,9 +238,8 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
 
     // Log for debug
     const requestDataTyped = requestData as GenerateRequest & { essentialConfigs?: Record<string, any> }
-    const enabledPlugins = Object.keys(requestDataTyped.plugins || {}).filter(
-      (key) => requestDataTyped.plugins[key]?.enabled
-    )
+    const pluginsMap = (requestDataTyped.plugins || {}) as Record<string, { enabled?: boolean } | undefined>
+    const enabledPlugins = Object.keys(pluginsMap).filter((key) => pluginsMap[key]?.enabled)
     console.log("📥 [SERVER] Request:", {
       plugins: enabledPlugins,
       order: requestDataTyped.pluginsOrder,

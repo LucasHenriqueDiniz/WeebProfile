@@ -57,14 +57,14 @@
     "@types/glob": "^9.0.0",
     "bottleneck": "^2.19.5",
     "country-flag-icons": "^1.6.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19",
+    "react-dom": "^19",
     "react-icons": "^5.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.18",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "autoprefixer": "^10.4.22",
     "glob": "^13.0.0",
     "postcss": "^8.5.6",

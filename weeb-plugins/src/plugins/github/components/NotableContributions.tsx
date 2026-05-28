@@ -58,7 +58,7 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData['notableC
           href={contribution.repositoryUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-start gap-3 p-4 rounded-lg border border-default-border h-[100px]"
+          className="flex items-start gap-3 p-4 half:p-3 rounded-lg border border-default-border h-[100px]"
         >
           <div className="flex-shrink-0 mt-0.5">
             <div className="p-2 rounded-md bg-default-muted/10">
@@ -67,7 +67,7 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData['notableC
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="font-semibold text-base text-default-text truncate">
+              <span className="font-semibold text-base half:text-sm text-default-text truncate">
                 {contribution.repository}
               </span>
             </div>

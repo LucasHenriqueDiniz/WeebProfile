@@ -32,6 +32,21 @@ export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesD
       />
     )
   },
+  calculateHeight: (config, data) => {
+    const ne = config.nonEssential || {}
+    let h = 0
+    for (const s of config.sections) {
+      if (s === 'rating_rank') h += 69
+      else if (s === 'contests_participated') h += 73
+      else if (s === 'problems_solved') h += 97
+      else if (s === 'recent_submissions') {
+        const max = ne.recent_submissions_max ?? 5
+        const n = Math.min((data as CodeforcesData).recentSubmissions?.length ?? max, max)
+        h += 33 + 12 + n * 50 + Math.max(0, n - 1) * 4
+      }
+    }
+    return h
+  },
 }
 
 export default codeforcesPlugin
