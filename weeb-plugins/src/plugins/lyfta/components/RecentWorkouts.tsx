@@ -97,7 +97,7 @@ export function RecentWorkouts({
                     )
                   }, 0)
                 } else {
-                  volumeKg = (workout.total_volume || 0) / 1000
+                  volumeKg = workout.total_volume || 0
                 }
 
                 const visibleMuscles = muscles.slice(0, maxChips)
