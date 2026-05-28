@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { profiles } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
@@ -11,13 +11,8 @@ import type { EssentialConfigs } from "@/lib/db/types"
  */
 export async function GET() {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -25,12 +20,12 @@ export async function GET() {
     let profile
     try {
       // Log para debug
-      console.log("Attempting to query profiles table for user:", user.id)
+      console.log("Attempting to query profiles table for user:", userId)
       
       const result = await db
         .select()
         .from(profiles)
-        .where(eq(profiles.userId, user.id))
+        .where(eq(profiles.userId, userId))
         .limit(1)
       
       console.log("Query result:", result)
@@ -48,17 +43,17 @@ export async function GET() {
     if (!profile) {
       // Criar perfil se não existir
       // Tentar obter username de múltiplas fontes
+      const clerkUser = await currentUser()
       const username =
-        user.user_metadata?.user_name ||
-        user.user_metadata?.preferred_username ||
-        user.user_metadata?.login ||
+        clerkUser?.username ||
+        clerkUser?.externalAccounts.find((a) => a.provider === "oauth_github")?.username ||
         null
 
       try {
         const [newProfile] = await db
           .insert(profiles)
           .values({
-            userId: user.id,
+            userId: userId,
             username,
             isActive: true,
           })
@@ -91,13 +86,8 @@ export async function GET() {
  */
 export async function PUT(request: Request) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -118,7 +108,7 @@ export async function PUT(request: Request) {
       const [foundProfile] = await db
         .select()
         .from(profiles)
-        .where(eq(profiles.userId, user.id))
+        .where(eq(profiles.userId, userId))
         .limit(1)
       
       existingProfile = foundProfile
@@ -137,19 +127,19 @@ export async function PUT(request: Request) {
               username,
               updatedAt: new Date(),
             })
-            .where(eq(profiles.userId, user.id))
+            .where(eq(profiles.userId, userId))
         }
 
         // Salvar essentialConfigs na tabela separada se fornecido
         if (essentialConfigs) {
-          await setEssentialConfigs(user.id, essentialConfigs as EssentialConfigs)
+          await setEssentialConfigs(userId, essentialConfigs as EssentialConfigs)
         }
 
         // Buscar perfil atualizado
         const [updatedProfile] = await db
           .select()
           .from(profiles)
-          .where(eq(profiles.userId, user.id))
+          .where(eq(profiles.userId, userId))
           .limit(1)
 
         return NextResponse.json({ profile: updatedProfile })
@@ -159,18 +149,18 @@ export async function PUT(request: Request) {
       }
     } else {
       // Tentar obter username de múltiplas fontes
+      const clerkUser = await currentUser()
       const usernameValue =
         username ||
-        user.user_metadata?.user_name ||
-        user.user_metadata?.preferred_username ||
-        user.user_metadata?.login ||
+        clerkUser?.username ||
+        clerkUser?.externalAccounts.find((a) => a.provider === "oauth_github")?.username ||
         null
 
       try {
         const [newProfile] = await db
           .insert(profiles)
           .values({
-            userId: user.id,
+            userId: userId,
             username: usernameValue,
             isActive: true,
           })
@@ -178,7 +168,7 @@ export async function PUT(request: Request) {
 
         // Salvar essentialConfigs na tabela separada se fornecido
         if (essentialConfigs) {
-          await setEssentialConfigs(user.id, essentialConfigs as EssentialConfigs)
+          await setEssentialConfigs(userId, essentialConfigs as EssentialConfigs)
         }
 
         return NextResponse.json({ profile: newProfile })

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { svgs } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
@@ -15,13 +15,8 @@ import { getTerminalConfigs } from "@/lib/config/svg-config-helpers"
  */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -40,7 +35,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const [svg] = await db
       .select()
       .from(svgs)
-      .where(and(eq(svgs.id, id), eq(svgs.userId, user.id)))
+      .where(and(eq(svgs.id, id), eq(svgs.userId, userId)))
       .limit(1)
 
     if (!svg) {
@@ -138,7 +133,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         hideTerminalHeader: terminalConfigs.hideTerminalHeader,
         hideTerminalCommand: terminalConfigs.hideTerminalCommand,
         customThemeColors: uiConfig.customThemeColors || undefined,
-        userId: user.id, // Passar userId para svg-generator buscar apenas secrets (essential configs)
+        userId: userId, // Passar userId para svg-generator buscar apenas secrets (essential configs)
         mock: false, // Sempre usar dados reais em produção
       }
 

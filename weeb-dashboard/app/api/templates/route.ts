@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { templates, templateLikes } from "@/lib/db/schema"
 import { eq, and, inArray, ne } from "drizzle-orm"
@@ -15,11 +15,7 @@ export async function GET(request: Request) {
     const publicOnly = searchParams.get("public") === "true"
     const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined
 
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
+    const { userId } = await auth()
 
     // If requesting only public templates, allow unauthenticated access
     if (publicOnly) {
@@ -46,7 +42,7 @@ export async function GET(request: Request) {
             const templateLikesList = likes.filter((l) => l.templateId === templateId)
             likesData[templateId] = {
               count: templateLikesList.length,
-              userLiked: user ? templateLikesList.some((l) => l.userId === user.id) : false,
+              userLiked: userId ? templateLikesList.some((l) => l.userId === userId) : false,
             }
           })
         } catch (error) {
@@ -69,17 +65,17 @@ export async function GET(request: Request) {
     }
 
     // For authenticated requests, return user's templates + public templates
-    if (authError || !user) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Get user's templates + public templates
-    const userTemplates = await db.select().from(templates).where(eq(templates.userId, user.id))
+    const userTemplates = await db.select().from(templates).where(eq(templates.userId, userId))
 
     const publicTemplates = await db
       .select()
       .from(templates)
-      .where(and(eq(templates.isPublic, true), ne(templates.userId, user.id)))
+      .where(and(eq(templates.isPublic, true), ne(templates.userId, userId)))
 
     // Get like counts and user liked status separately
     const allTemplateIds = [...userTemplates, ...publicTemplates].map((t) => t.id)
@@ -101,7 +97,7 @@ export async function GET(request: Request) {
           const templateLikesList = likes.filter((l) => l.templateId === templateId)
           likesData[templateId] = {
             count: templateLikesList.length,
-            userLiked: templateLikesList.some((l) => l.userId === user.id),
+            userLiked: templateLikesList.some((l) => l.userId === userId),
           }
         })
       } catch (error) {
@@ -135,13 +131,8 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -180,7 +171,7 @@ export async function POST(request: Request) {
     const [newTemplate] = await db
       .insert(templates)
       .values({
-        userId: user.id,
+        userId: userId,
         name,
         description: description || null,
         svgId: svgId || null,

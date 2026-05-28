@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { svgs } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
@@ -10,13 +10,8 @@ import { deleteSvgFromStorage } from "@/lib/svg-generator"
  */
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -25,7 +20,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const [svg] = await db
       .select()
       .from(svgs)
-      .where(and(eq(svgs.id, id), eq(svgs.userId, user.id)))
+      .where(and(eq(svgs.id, id), eq(svgs.userId, userId)))
       .limit(1)
 
     if (!svg) {
@@ -44,13 +39,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
  */
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -61,7 +51,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const [existingSvg] = await db
       .select()
       .from(svgs)
-      .where(and(eq(svgs.id, id), eq(svgs.userId, user.id)))
+      .where(and(eq(svgs.id, id), eq(svgs.userId, userId)))
       .limit(1)
 
     if (!existingSvg) {
@@ -96,13 +86,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
  */
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -112,7 +97,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     const [existingSvg] = await db
       .select()
       .from(svgs)
-      .where(and(eq(svgs.id, id), eq(svgs.userId, user.id)))
+      .where(and(eq(svgs.id, id), eq(svgs.userId, userId)))
       .limit(1)
 
     if (!existingSvg) {

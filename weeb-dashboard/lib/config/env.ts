@@ -51,23 +51,29 @@ function getEnv(key: string, required = true, serverOnly = false): string {
 }
 
 export const env = {
-  // client-safe public variables (do not crash client; return "" if missing)
+  // Clerk — client-safe (Next.js exposes NEXT_PUBLIC_* to the browser)
+  get clerkPublishableKey() {
+    return getEnv("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", false)
+  },
+
+  // Clerk — server-only
+  get clerkSecretKey() {
+    return getEnv("CLERK_SECRET_KEY", true, true)
+  },
+
+  // Supabase Storage (kept for SVG file serving until R2 migration in Phase 2/3)
   get supabaseUrl() {
     return getEnv("NEXT_PUBLIC_SUPABASE_URL", false)
   },
-  get supabaseAnonKey() {
-    return getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", false)
+  get supabaseServiceRoleKey() {
+    return getEnv("SUPABASE_SERVICE_ROLE_KEY", false, true)
   },
 
-  // server-only secrets: call only from server code (API routes, getServerSideProps, node scripts)
-  get supabaseServiceRoleKey() {
-    return getEnv("SUPABASE_SERVICE_ROLE_KEY", true, true)
-  },
+  // PostgreSQL via Drizzle (replaced by D1 in Phase 2)
   get databaseUrl() {
     return getEnv("DATABASE_URL", true, true)
   },
 
-  // opcionais
   get svgGeneratorUrl() {
     return getEnv("SVG_GENERATOR_URL", false) || "http://localhost:3001"
   },

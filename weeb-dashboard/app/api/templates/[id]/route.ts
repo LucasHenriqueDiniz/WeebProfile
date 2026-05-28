@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { templates } from "@/lib/db/schema"
 import { eq, and, or } from "drizzle-orm"
@@ -14,13 +14,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -32,7 +27,7 @@ export async function GET(
         and(
           eq(templates.id, id),
           // User can only access their own templates or public templates
-          or(eq(templates.userId, user.id), eq(templates.isPublic, true))
+          or(eq(templates.userId, userId), eq(templates.isPublic, true))
         )
       )
       .limit(1)
@@ -57,13 +52,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -72,7 +62,7 @@ export async function PUT(
     const [existingTemplate] = await db
       .select()
       .from(templates)
-      .where(and(eq(templates.id, id), eq(templates.userId, user.id)))
+      .where(and(eq(templates.id, id), eq(templates.userId, userId)))
       .limit(1)
 
     if (!existingTemplate) {
@@ -140,13 +130,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -155,7 +140,7 @@ export async function DELETE(
     const [existingTemplate] = await db
       .select()
       .from(templates)
-      .where(and(eq(templates.id, id), eq(templates.userId, user.id)))
+      .where(and(eq(templates.id, id), eq(templates.userId, userId)))
       .limit(1)
 
     if (!existingTemplate) {

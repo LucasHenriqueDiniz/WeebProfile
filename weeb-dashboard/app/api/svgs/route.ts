@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
+import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { svgs } from "@/lib/db/schema"
 import { eq, count } from "drizzle-orm"
@@ -12,17 +12,12 @@ const MAX_SVGS_FREE_TIER = 3
  */
 export async function GET() {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const userSvgs = await db.select().from(svgs).where(eq(svgs.userId, user.id))
+    const userSvgs = await db.select().from(svgs).where(eq(svgs.userId, userId))
 
     return NextResponse.json({ svgs: userSvgs })
   } catch (error) {
@@ -36,13 +31,8 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -69,7 +59,7 @@ export async function POST(request: Request) {
         const [svgCount] = await db
           .select({ count: count() })
           .from(svgs)
-          .where(eq(svgs.userId, user.id))
+          .where(eq(svgs.userId, userId))
 
         if (svgCount.count >= MAX_SVGS_FREE_TIER) {
           return NextResponse.json(
@@ -100,7 +90,7 @@ export async function POST(request: Request) {
         const [newSvg] = await db
           .insert(svgs)
           .values({
-            userId: user.id,
+            userId: userId,
             slug, // Slug ainda é necessário para compatibilidade, mas não será usado na URL
             name,
             pluginsConfig: pluginsConfig, // Only plugins, no flags

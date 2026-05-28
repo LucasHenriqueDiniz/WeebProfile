@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Inter, Sora, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
+import { ClerkProvider } from "@clerk/nextjs"
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -51,15 +52,17 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html suppressHydrationWarning>
-      <body className={`${inter.variable} ${sora.variable} ${jetbrainsMono.variable} antialiased font-body`}>
-        <ThemeProvider>
-          <TooltipProvider>
-            {children}
-            <Toaster />
-          </TooltipProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider afterSignOutUrl="/">
+      <html suppressHydrationWarning>
+        <body className={`${inter.variable} ${sora.variable} ${jetbrainsMono.variable} antialiased font-body`}>
+          <ThemeProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }

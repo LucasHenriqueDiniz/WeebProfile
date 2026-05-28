@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 import { templateLikes } from "@/lib/db/schema"
 import { eq, and } from "drizzle-orm"
@@ -13,13 +13,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -30,7 +25,7 @@ export async function POST(
     const [existingLike] = await db
       .select()
       .from(templateLikes)
-      .where(and(eq(templateLikes.userId, user.id), eq(templateLikes.templateId, templateId)))
+      .where(and(eq(templateLikes.userId, userId), eq(templateLikes.templateId, templateId)))
       .limit(1)
 
     if (existingLike) {
@@ -41,7 +36,7 @@ export async function POST(
     const [newLike] = await db
       .insert(templateLikes)
       .values({
-        userId: user.id,
+        userId: userId,
         templateId,
       })
       .returning()
@@ -62,13 +57,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -78,7 +68,7 @@ export async function DELETE(
     // Delete like
     await db
       .delete(templateLikes)
-      .where(and(eq(templateLikes.userId, user.id), eq(templateLikes.templateId, templateId)))
+      .where(and(eq(templateLikes.userId, userId), eq(templateLikes.templateId, templateId)))
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -8,7 +8,7 @@
  * - enabledPlugins: lista de plugins habilitados (opcional, para verificar faltantes)
  */
 
-import { createClient } from "@/lib/supabase/server"
+import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import { getUserEssentialConfigs } from "@/lib/config/essential-configs"
 import { getMissingEssentialConfigs } from "@/lib/config/plugin-essential-configs"
@@ -27,18 +27,13 @@ function maskSensitiveValue(value: string, type: string): string {
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Buscar essential configs do usuário (backend pode ler)
-    const essentialConfigs = await getUserEssentialConfigs(user.id)
+    const essentialConfigs = await getUserEssentialConfigs(userId)
 
     // Obter query params para saber quais plugins estão habilitados
     const { searchParams } = new URL(request.url)
