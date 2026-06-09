@@ -1,0 +1,31 @@
+name = "weebprofile-dashboard"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
+
+# ============================================================
+# D1 Database binding
+# After running: wrangler d1 create weebprofile-db
+# Fill in the database_id below
+# ============================================================
+[[d1_databases]]
+binding = "DB"
+database_name = "weebprofile-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# ============================================================
+# Environment variables
+# Secrets (CLERK_SECRET_KEY, SUPABASE_SERVICE_ROLE_KEY, etc.)
+# must be set via: wrangler pages secret put <KEY>
+# ============================================================
+[vars]
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = ""
+NEXT_PUBLIC_SUPABASE_URL = ""
+SVG_GENERATOR_URL = "https://weeb-svg-generator.workers.dev"
+
+[env.preview]
+vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "" }
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "weebprofile-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
