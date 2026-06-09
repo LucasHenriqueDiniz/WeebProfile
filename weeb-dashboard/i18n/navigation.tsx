@@ -22,8 +22,8 @@ export function usePathname() {
 
 export const Link = React.forwardRef<
   HTMLAnchorElement,
-  Omit<React.ComponentProps<typeof RouterLink>, "to"> & { href?: string; to?: string }
->(({ href, to, ...props }, ref) => {
+  Omit<React.ComponentProps<typeof RouterLink>, "to"> & { href?: string; to?: string; locale?: string }
+>(({ href, to, locale: _locale, ...props }, ref) => {
   return <RouterLink {...(props as any)} to={(to ?? href ?? "/") as any} ref={ref as any} />
 })
 Link.displayName = "Link"

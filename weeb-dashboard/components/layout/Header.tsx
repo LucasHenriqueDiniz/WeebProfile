@@ -20,7 +20,7 @@ import { usePathname, useRouter, Link } from "@/i18n/navigation"
 import { useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { RotateCcw } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 
 export function StyleConfiguration() {
   const t = useTranslations('wizard.style')

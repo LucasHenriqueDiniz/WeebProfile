@@ -11,7 +11,7 @@ import {
   Shield,
   type LucideIcon,
 } from "lucide-react"
-import { useTranslations } from 'next-intl'
+import { useTranslations } from '@/i18n/use-translations'
 
 interface Feature {
   id: string

@@ -9,11 +9,10 @@ import {
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 import { useRef, useMemo } from "react"
-import Link from "next/link"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins"
-import { useTranslations } from 'next-intl'
-import { Link as LocaleLink } from "@/i18n/navigation"
+import { useTranslations } from '@/i18n/use-translations'
+import { Link, Link as LocaleLink } from "@/i18n/navigation"
 
 type PluginMetadata = any
 import type { ComponentType } from "react"

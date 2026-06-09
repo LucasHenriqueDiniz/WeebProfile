@@ -22,7 +22,7 @@ import { PluginConfigStatus } from "./PluginConfigStatus"
 import { SecretInput } from "./SecretInput"
 import type { PluginConfig } from "@/stores/wizard-store"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 
 interface PluginCardProps {
   plugin: {

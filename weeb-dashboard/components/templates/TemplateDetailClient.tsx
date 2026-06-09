@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ArrowLeft, Heart, Share2, ExternalLink, Loader2, Eye, Monitor, Terminal, Copy } from "lucide-react"
 import { FaGithub } from "react-icons/fa"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { templateApi } from "@/lib/api"
 import { ApiException } from "@/lib/api/client"
 import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
@@ -17,7 +17,7 @@ import { ensureConsistentPlatforms, pluginIdsToDisplayNames, formatDate } from "
 import type { SvgTemplate, SvgStyle, SvgSize, SvgTheme } from "@/types/svg"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { cn } from "@/lib/utils"
-import { useTranslations } from 'next-intl'
+import { useTranslations } from '@/i18n/use-translations'
 import { useLocaleNavigation } from '@/lib/navigation'
 
 interface TemplateDetailClientProps {

@@ -10,7 +10,7 @@ import { ensureConsistentPlatforms } from "@/lib/templates-utils"
 import { motion } from "framer-motion"
 import { Filter, Search } from "lucide-react"
 import { defaultThemes, terminalThemes } from "@weeb/weeb-plugins/themes"
-import { useTranslations } from 'next-intl'
+import { useTranslations } from '@/i18n/use-translations'
 import { useEffect, useState, useMemo } from "react"
 import { Link } from "@/i18n/navigation"
 import { TemplateCard } from "@/components/templates/TemplateCard"

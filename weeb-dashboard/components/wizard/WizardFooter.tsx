@@ -10,7 +10,7 @@ import {
 import { cn } from "@/lib/utils"
 import { AlertTriangle, Check } from "lucide-react"
 import { motion } from "framer-motion"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 
 interface WizardFooterProps {
   onFinish: () => void

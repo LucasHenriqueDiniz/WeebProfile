@@ -39,7 +39,7 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
 import { EmptyState } from "./EmptyState"
 import { PluginCard } from "./PluginCard"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 
 export function PluginConfiguration() {
   const { user } = useAuth()

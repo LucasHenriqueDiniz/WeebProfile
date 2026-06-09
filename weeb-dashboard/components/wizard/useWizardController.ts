@@ -5,7 +5,7 @@
  * Returns computed values, handlers, and props for child components.
  */
 
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/src/compat/next-navigation"
 import { useMemo, useState, useCallback, useEffect, useRef } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"

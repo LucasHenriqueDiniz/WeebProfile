@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles } from "lucide-react"
-import { useTranslations } from 'next-intl'
+import { useTranslations } from '@/i18n/use-translations'
 import { Link } from "@/i18n/navigation"
 import { TemplateCard } from "@/components/templates/TemplateCard"
 import type { Template } from "@/types/template"

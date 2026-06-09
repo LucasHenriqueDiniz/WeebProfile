@@ -43,7 +43,7 @@ export default function NewSvgPage() {
           }
           return response.json()
         })
-        .then(data => {
+        .then((data: any) => {
           const template = data.template
           if (template) {
             loadFromTemplate(template)

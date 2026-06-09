@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Package, Palette } from "lucide-react"
 import { ReactNode } from "react"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 
 interface WizardTabsProps {
   activeTab: "plugins" | "style"

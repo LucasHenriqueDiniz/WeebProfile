@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "@/i18n/navigation"
 import { useEffect, useState } from "react"
 import { Home, Plus, Settings, LogOut, Image as ImageIcon, Check, Circle, FileImage, User } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 import {
   Sidebar,
   SidebarContent,

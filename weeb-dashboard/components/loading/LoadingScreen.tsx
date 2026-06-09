@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { LoadingAnimation } from "./LoadingAnimation"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 
 // Component that renders the actual loading UI
 export default function LoadingScreen() {

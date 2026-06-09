@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useTranslations, useLocale } from "next-intl"
+import { useTranslations, useLocale } from "@/i18n/use-translations"
 import { usePathname, useRouter } from "@/i18n/navigation"
 import {
   Dialog,

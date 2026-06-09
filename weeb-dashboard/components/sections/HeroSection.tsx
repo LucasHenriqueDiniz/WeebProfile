@@ -5,13 +5,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { motion } from "framer-motion"
 import { Plus, Sparkles, Zap } from "lucide-react"
-import Link from "next/link"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { HeroBackgroundPattern } from "./HeroBackgroundPattern"
 import { HeroPreviewShowcase } from "./HeroPreviewShowcase"
 import { HeroTemplateCard, type Template } from "./HeroTemplateCard"
-import { useTranslations } from 'next-intl'
-import { Link as LocaleLink } from "@/i18n/navigation"
+import { useTranslations } from '@/i18n/use-translations'
+import { Link, Link as LocaleLink } from "@/i18n/navigation"
 
 interface HeroSectionProps {}
 

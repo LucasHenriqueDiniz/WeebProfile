@@ -17,6 +17,8 @@ type ImageProps = {
   quality?: number
   placeholder?: string
   blurDataURL?: string
+  draggable?: boolean
+  loading?: "lazy" | "eager"
 }
 
 const Image = React.forwardRef<HTMLImageElement, ImageProps>(

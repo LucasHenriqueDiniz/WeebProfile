@@ -5,7 +5,7 @@ import { HowItWorksCard } from "./HowItWorksCard"
 import { MarkdownCopyModal } from "./MarkdownCopyModal"
 import { useState } from "react"
 import { useRouter } from "@/i18n/navigation"
-import { useTranslations } from 'next-intl'
+import { useTranslations } from '@/i18n/use-translations'
 
 interface HowItWorksItem {
   step: number

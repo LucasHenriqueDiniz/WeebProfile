@@ -1,4 +1,4 @@
-import { useLocale } from 'next-intl'
+import { useLocale } from '@/i18n/use-translations'
 
 /**
  * Hook para navegação locale-aware

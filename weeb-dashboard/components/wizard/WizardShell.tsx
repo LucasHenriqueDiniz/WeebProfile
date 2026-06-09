@@ -7,8 +7,8 @@ import { Package } from "lucide-react"
 import { selectPluginsWithSections } from "@/stores/wizard-selectors"
 import { useWizardStore } from "@/stores/wizard-store"
 import { LivePreview } from "./LivePreview"
-import { useTranslations } from "next-intl"
-import Image from "next/image"
+import { useTranslations } from "@/i18n/use-translations"
+import Image from "@/src/compat/next-image"
 
 interface WizardShellProps {
   stats?: {

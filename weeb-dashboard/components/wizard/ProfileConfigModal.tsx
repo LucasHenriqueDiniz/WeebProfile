@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useAuth } from "@/hooks/useAuth"
-import { useSearchParams, usePathname, useRouter } from "next/navigation"
+import { useSearchParams, usePathname, useRouter } from "@/src/compat/next-navigation"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,7 +16,7 @@ import { getMissingEssentialConfigs, getPluginEssentialConfigKeys } from "@/lib/
 import type { EssentialConfigs } from "@/lib/db/types"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
-import { useTranslations } from "next-intl"
+import { useTranslations } from "@/i18n/use-translations"
 
 interface ProfileConfigModalProps {
   open: boolean
