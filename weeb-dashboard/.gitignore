@@ -42,4 +42,7 @@ next-env.d.ts
 out/
 build/
 dist/
+
+# wrangler
+.wrangler/
 .cursor/

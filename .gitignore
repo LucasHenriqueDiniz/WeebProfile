@@ -8,8 +8,6 @@ node_modules
 /weeb-dashboard/.next/
 /weeb-dashboard/out/
 /weeb-dashboard/.vercel
-/weeb-dashboard/lib/weeb-plugins
-/weeb-dashboard/lib/plugins*
 
 # SVG Generator 
 /svg-generator/node_modules
