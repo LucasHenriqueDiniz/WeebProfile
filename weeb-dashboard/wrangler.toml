@@ -10,22 +10,33 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "weebprofile-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "c7eb434d-7ca2-4c5c-bf63-943e38e46158"
+migrations_dir = "drizzle"
+
+# ============================================================
+# R2 bucket binding (SVG storage, replaces Supabase Storage)
+# ============================================================
+[[r2_buckets]]
+binding = "SVGS_BUCKET"
+bucket_name = "weebprofile-svgs"
 
 # ============================================================
 # Environment variables
-# Secrets (CLERK_SECRET_KEY, SUPABASE_SERVICE_ROLE_KEY, etc.)
-# must be set via: wrangler pages secret put <KEY>
+# Secrets (CLERK_SECRET_KEY, etc.) must be set via: wrangler pages secret put <KEY>
 # ============================================================
 [vars]
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = ""
-NEXT_PUBLIC_SUPABASE_URL = ""
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA"
 SVG_GENERATOR_URL = "https://weeb-svg-generator.workers.dev"
+R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev"
 
 [env.preview]
-vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "" }
+vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA", R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev" }
 
 [[env.preview.d1_databases]]
 binding = "DB"
 database_name = "weebprofile-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "c7eb434d-7ca2-4c5c-bf63-943e38e46158"
+
+[[env.preview.r2_buckets]]
+binding = "SVGS_BUCKET"
+bucket_name = "weebprofile-svgs"

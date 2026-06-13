@@ -2,10 +2,10 @@ import { createClerkClient } from "@clerk/backend"
 
 export interface CloudflareEnv {
   DB: D1Database
+  SVGS_BUCKET: R2Bucket
   CLERK_SECRET_KEY: string
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: string
-  SUPABASE_SERVICE_ROLE_KEY?: string
-  NEXT_PUBLIC_SUPABASE_URL?: string
+  R2_PUBLIC_URL: string
   SVG_GENERATOR_URL?: string
   CRON_SECRET?: string
   INTERNAL_SECRET?: string

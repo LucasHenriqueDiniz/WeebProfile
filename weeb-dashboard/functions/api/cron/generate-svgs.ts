@@ -2,6 +2,7 @@ import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
+import { saveSvgToR2 } from "../_shared/storage"
 import { svgs } from "../../../lib/db/schema"
 import { eq, or, lte, isNull, and, sql, lt } from "drizzle-orm"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
@@ -116,36 +117,6 @@ function getTerminalConfigs(uiConfig: Record<string, any> | null | undefined) {
   }
 }
 
-async function saveSvgToStorage(
-  svgId: string,
-  svgContent: string,
-  supabaseUrl: string,
-  serviceRoleKey: string
-): Promise<{ path: string; url: string }> {
-  const fileName = `${svgId}.svg`
-  const uploadUrl = `${supabaseUrl}/storage/v1/object/svgs/${fileName}`
-
-  const uploadResponse = await fetch(uploadUrl, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${serviceRoleKey}`,
-      "Content-Type": "image/svg+xml",
-      "x-upsert": "true",
-    },
-    body: svgContent,
-  })
-
-  if (!uploadResponse.ok) {
-    const errText = await uploadResponse.text()
-    throw new Error(`Failed to upload SVG to storage: ${errText}`)
-  }
-
-  return {
-    path: `svgs/${fileName}`,
-    url: `${supabaseUrl}/storage/v1/object/public/svgs/${fileName}`,
-  }
-}
-
 /**
  * POST /api/cron/generate-svgs - Cron job to regenerate SVGs
  *
@@ -164,8 +135,6 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
     const now = new Date()
     const db = getDb(env)
     const svgGeneratorUrl = env.SVG_GENERATOR_URL || "http://localhost:3001"
-    const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
-    const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY
 
     // Reset SVGs stuck in "generating" for more than 30 minutes
     const STUCK_TIMEOUT_MINUTES = 30
@@ -260,13 +229,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         const result = await generateSvgViaHttpService(requestConfig, svgGeneratorUrl) as any
         const svgContent = result.svg
 
-        let storagePath = ""
-        let storageUrl = ""
-        if (supabaseUrl && serviceRoleKey) {
-          const saved = await saveSvgToStorage(svg.id, svgContent, supabaseUrl, serviceRoleKey)
-          storagePath = saved.path
-          storageUrl = saved.url
-        }
+        const { path: storagePath, url: storageUrl } = await saveSvgToR2(env, svg.id, svgContent)
 
         const nextRegenerationAt = new Date(now.getTime() + 24 * 60 * 60 * 1000)
 

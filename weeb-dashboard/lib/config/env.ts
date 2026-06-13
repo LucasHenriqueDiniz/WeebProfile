@@ -15,9 +15,6 @@ export const env = {
   get clerkPublishableKey() {
     return viteEnv("VITE_CLERK_PUBLISHABLE_KEY")
   },
-  get supabaseUrl() {
-    return viteEnv("VITE_SUPABASE_URL")
-  },
   get svgGeneratorUrl() {
     return viteEnv("VITE_SVG_GENERATOR_URL") || "http://localhost:3001"
   },

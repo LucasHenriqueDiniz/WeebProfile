@@ -2,6 +2,7 @@ import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
+import { deleteSvgFromR2 } from "../_shared/storage"
 import { svgs } from "../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
 
@@ -79,7 +80,6 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
 
 /**
  * DELETE /api/svgs/[id] - Delete SVG
- * TODO: Also delete from Supabase Storage (deleteSvgFromStorage) once R2/storage is wired up
  */
 export const onRequestDelete: PagesFunction<CloudflareEnv> = async ({ request, env, params }) => {
   try {
@@ -97,8 +97,9 @@ export const onRequestDelete: PagesFunction<CloudflareEnv> = async ({ request, e
 
     if (!existingSvg) return notFound("SVG")
 
-    // TODO: delete from Supabase Storage (existingSvg.storagePath / existingSvg.storageUrl)
-    // when storage integration is ported to Cloudflare (R2 or Supabase via fetch)
+    if (existingSvg.storagePath) {
+      await deleteSvgFromR2(env, id)
+    }
 
     await db.delete(svgs).where(eq(svgs.id, id))
 

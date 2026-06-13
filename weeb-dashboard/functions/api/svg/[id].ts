@@ -2,14 +2,14 @@ import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
+import { getSvgFromR2 } from "../_shared/storage"
 import { svgs } from "../../../lib/db/schema"
 import { eq } from "drizzle-orm"
 
 /**
- * GET /api/svg/[id] - Serve generated SVG file from Supabase Storage
+ * GET /api/svg/[id] - Serve generated SVG file from R2
  *
  * Public route — no auth required.
- * Fetches the SVG from Supabase Storage using the service role key.
  */
 export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params }) => {
   try {
@@ -29,27 +29,11 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params }
       )
     }
 
-    const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
-    const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY
+    const svgContent = await getSvgFromR2(env, id)
 
-    if (!supabaseUrl || !serviceRoleKey) {
-      return Response.json({ error: "Storage not configured" }, { status: 500 })
-    }
-
-    const fileName = `${id}.svg`
-    const downloadUrl = `${supabaseUrl}/storage/v1/object/svgs/${fileName}`
-
-    const storageResponse = await fetch(downloadUrl, {
-      headers: {
-        Authorization: `Bearer ${serviceRoleKey}`,
-      },
-    })
-
-    if (!storageResponse.ok) {
+    if (svgContent === null) {
       return Response.json({ error: "SVG file not found in storage" }, { status: 404 })
     }
-
-    const svgContent = await storageResponse.text()
 
     return new Response(svgContent, {
       headers: {

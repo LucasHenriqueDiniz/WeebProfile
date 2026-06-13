@@ -2,6 +2,7 @@ import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../../_shared/auth"
 import { getDb } from "../../_shared/db"
+import { saveSvgToR2 } from "../../_shared/storage"
 import { svgs } from "../../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
@@ -214,32 +215,8 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       const result = await generateSvgViaHttpService(requestConfig, svgGeneratorUrl) as any
       const svgContent = result.svg
 
-      // Save to Supabase Storage
-      const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
-      const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY
-      let storagePath = ""
-      let storageUrl = ""
-
-      if (supabaseUrl && serviceRoleKey) {
-        const fileName = `${id}.svg`
-        const uploadUrl = `${supabaseUrl}/storage/v1/object/svgs/${fileName}`
-        const uploadResponse = await fetch(uploadUrl, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${serviceRoleKey}`,
-            "Content-Type": "image/svg+xml",
-            "x-upsert": "true",
-          },
-          body: svgContent,
-        })
-        if (uploadResponse.ok) {
-          storagePath = `svgs/${fileName}`
-          storageUrl = `${supabaseUrl}/storage/v1/object/public/svgs/${fileName}`
-        } else {
-          const uploadError = await uploadResponse.text()
-          throw new Error(`Failed to upload SVG to storage: ${uploadError}`)
-        }
-      }
+      // Save to R2
+      const { path: storagePath, url: storageUrl } = await saveSvgToR2(env, id, svgContent)
 
       const nextRegenerationAt = new Date()
       nextRegenerationAt.setHours(nextRegenerationAt.getHours() + 24)
