@@ -33,6 +33,11 @@ interface MissingSecret {
   missingKeys: Array<{ key: string; label: string }>
 }
 
+interface SecretsPresenceResponse {
+  presence?: SecretsPresence
+  missingSecrets?: MissingSecret[]
+}
+
 interface WizardBootstrapState {
   // Non-sensitive config
   profile: ProfileData | null
@@ -99,7 +104,7 @@ export const useWizardBootstrapStore = create<WizardBootstrapState>((set, get) =
           throw new Error(`Failed to fetch secrets presence: ${presenceResponse.statusText}`)
         }
         
-        const presenceData = await presenceResponse.json()
+        const presenceData = (await presenceResponse.json()) as SecretsPresenceResponse
         
         set({
           profile: profileData.profile || null,
@@ -138,7 +143,7 @@ export const useWizardBootstrapStore = create<WizardBootstrapState>((set, get) =
         throw new Error(`Failed to refresh secrets presence: ${presenceResponse.statusText}`)
       }
       
-      const presenceData = await presenceResponse.json()
+      const presenceData = (await presenceResponse.json()) as SecretsPresenceResponse
       
       set({
         secretsPresence: presenceData.presence || {},

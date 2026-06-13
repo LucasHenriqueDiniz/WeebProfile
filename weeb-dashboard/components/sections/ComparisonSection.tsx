@@ -21,8 +21,6 @@ interface Feature {
   highlight?: string
 }
 
-interface FeaturesSectionProps {}
-
 const iconMap: Record<string, LucideIcon> = {
   Layout,
   Plug,
@@ -32,7 +30,7 @@ const iconMap: Record<string, LucideIcon> = {
   Shield,
 }
 
-export function ComparisonSection({}: FeaturesSectionProps) {
+export function ComparisonSection() {
   const t = useTranslations('homepage.comparison')
 
   const features: Feature[] = t.raw('features').map((feature: any) => ({

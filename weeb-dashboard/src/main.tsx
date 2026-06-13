@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/react"
 import { I18nextProvider } from "react-i18next"
 import i18n from "@/i18n/setup"
 import { router } from "./router"
-import "@/app/globals.css"
+import "@/src/globals.css"
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string
 

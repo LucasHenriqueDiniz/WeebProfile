@@ -131,7 +131,7 @@ export function LivePreview() {
           customThemeColors={theme === 'custom' ? customThemeColors : undefined}
         />
       </div>
-      <style jsx global>{`
+      <style>{`
         /* Custom scrollbar styles for container */
         .overflow-y-auto::-webkit-scrollbar {
           width: 12px;

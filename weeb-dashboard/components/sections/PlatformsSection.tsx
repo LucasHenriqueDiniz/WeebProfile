@@ -97,9 +97,7 @@ function PlatformCard({
   )
 }
 
-interface PlatformsSectionProps {}
-
-export function PlatformsSection({}: PlatformsSectionProps) {
+export function PlatformsSection() {
   const t = useTranslations('homepage.platforms')
   const plugin = useRef(
     Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })

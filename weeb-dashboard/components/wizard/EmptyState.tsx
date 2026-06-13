@@ -32,7 +32,7 @@ export function EmptyState({ query, category, onlyEnabled, onClearFilters }: Emp
                 {query && (
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted text-sm">
                     <span className="text-muted-foreground">Busca:</span>
-                    <span className="font-medium">"{query}"</span>
+                    <span className="font-medium">&quot;{query}&quot;</span>
                   </div>
                 )}
                 {category !== "all" && (

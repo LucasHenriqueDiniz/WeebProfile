@@ -5,9 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from '@/i18n/use-translations'
 
-interface CTASectionProps {}
-
-export function CTASection({}: CTASectionProps) {
+export function CTASection() {
   const t = useTranslations('homepage.cta')
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">

@@ -135,8 +135,6 @@ export const PluginCard = React.memo(function PluginCard({
   }, [state, metadata])
   const [showEssentialConfigs, setShowEssentialConfigs] = useState(false)
 
-  if (!metadata) return null
-
   const activeSectionCount = state.sections?.length || 0
   const pluginMissingConfigs = missingConfigs.filter(m => m.plugin === plugin.name)
   
@@ -216,10 +214,10 @@ export const PluginCard = React.memo(function PluginCard({
   }, [plugin.name, onSetSectionConfig])
 
   const handleSelectAllSections = useCallback(() => {
-    const allSectionIds = metadata.sections.map(s => s.id)
+    const allSectionIds = metadata?.sections.map(s => s.id) ?? []
     const currentSections = state.sections || []
     const allSelected = allSectionIds.every(id => currentSections.includes(id))
-    
+
     // Usar onSetPluginSections para atualizar todas de uma vez
     if (allSelected) {
       // Deselect all
@@ -228,11 +226,13 @@ export const PluginCard = React.memo(function PluginCard({
       // Select all
       onSetPluginSections(plugin.name, allSectionIds)
     }
-  }, [plugin.name, metadata.sections, state.sections, onSetPluginSections])
+  }, [plugin.name, metadata?.sections, state.sections, onSetPluginSections])
 
   const handleToggleEssentialConfigs = useCallback(() => {
     setShowEssentialConfigs(prev => !prev)
   }, [])
+
+  if (!metadata) return null
 
   // Check if plugin has essential configs
   const hasEssentialConfigs = metadata.essentialConfigKeysMetadata && metadata.essentialConfigKeysMetadata.length > 0

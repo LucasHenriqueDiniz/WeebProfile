@@ -48,7 +48,7 @@ export const usePublicTemplatesStore = create<PublicTemplatesState>((set, get) =
         const res = await fetch(`/api/templates?public=true&limit=${limit}`)
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
-        const data = await res.json()
+        const data = (await res.json()) as { templates?: unknown[] }
         const list: Template[] = mapApiToTemplates(data.templates || [])
 
         set({ templates: list, lastFetchedAt: Date.now(), loading: false })

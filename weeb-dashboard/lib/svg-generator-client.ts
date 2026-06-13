@@ -133,7 +133,7 @@ export async function generateSvgViaHttpService(config: GenerateSvgRequest): Pro
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: "Unknown error" }))
+        const error = (await response.json().catch(() => ({ error: "Unknown error" }))) as Record<string, any>
         console.error(`📤 [CLIENT] Error response:`, error)
 
         // DB unreachable errors (503) are NOT retryable - it's a configuration/network issue
@@ -163,7 +163,7 @@ export async function generateSvgViaHttpService(config: GenerateSvgRequest): Pro
         throw new Error(error.error || error.message || `HTTP ${response.status}`)
       }
 
-      const result = await response.json()
+      const result = (await response.json()) as GenerateSvgResponse
       console.log(`📤 [CLIENT] Success response received, SVG size: ${result.width}x${result.height}`)
       return result
     } catch (error) {

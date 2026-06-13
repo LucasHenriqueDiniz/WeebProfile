@@ -4,11 +4,13 @@ import SimpleLoading from "@/components/loading/SimpleLoading"
 
 function Lazy(factory: () => Promise<{ default: React.ComponentType<any> }>) {
   const Comp = lazy(factory)
-  return () => (
-    <Suspense fallback={<SimpleLoading />}>
-      <Comp />
-    </Suspense>
-  )
+  return function LazyRoute() {
+    return (
+      <Suspense fallback={<SimpleLoading />}>
+        <Comp />
+      </Suspense>
+    )
+  }
 }
 
 // Pages

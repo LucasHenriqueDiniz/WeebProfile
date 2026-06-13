@@ -17,7 +17,7 @@ export async function getAuthUserId(request: Request, env: CloudflareEnv): Promi
     const requestState = await clerk.authenticateRequest(request, {
       publishableKey: env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     })
-    return requestState.toAuth().userId
+    return requestState.toAuth()?.userId ?? null
   } catch {
     return null
   }

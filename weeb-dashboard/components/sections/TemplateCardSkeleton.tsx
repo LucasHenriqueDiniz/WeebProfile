@@ -99,9 +99,7 @@ export const SvgCardSkeleton = memo(function SvgCardSkeleton({
 })
 
 // Skeleton para a página de view de SVG (layout PREVIEW | DADOS)
-interface SvgViewSkeletonProps {}
-
-export const SvgViewSkeleton = memo(function SvgViewSkeleton({}: SvgViewSkeletonProps) {
+export const SvgViewSkeleton = memo(function SvgViewSkeleton() {
 	return (
 		<div className="p-6 md:p-8 lg:p-10">
 			<div className="max-w-7xl mx-auto space-y-6">

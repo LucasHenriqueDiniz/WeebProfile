@@ -63,17 +63,17 @@ export function TemplatesPageClient() {
       try {
         setLoading(true)
         // Try to fetch authenticated templates first, fallback to public templates
-        let response
+        let response: { templates: any[] }
         try {
           response = await templateApi.list()
         } catch (authError) {
           // If authentication fails, try fetching public templates
           console.log("Authentication failed, fetching public templates...")
-          response = await fetch('/api/templates?public=true')
-          if (!response.ok) {
+          const res = await fetch('/api/templates?public=true')
+          if (!res.ok) {
             throw new Error('Failed to fetch public templates')
           }
-          response = await response.json()
+          response = (await res.json()) as { templates: any[] }
         }
 
         // Transformar dados da API para o formato esperado
@@ -83,7 +83,7 @@ export function TemplatesPageClient() {
             id: t.id,
             name: t.name,
             description: t.description || "",
-            preview: t.svgId ? `/svgs/${t.svgId}` : undefined,
+            preview: t.svgId ? `/svgs/${t.svgId}` : "",
             platforms,
             style: t.style || "default",
             theme: t.theme || "default",

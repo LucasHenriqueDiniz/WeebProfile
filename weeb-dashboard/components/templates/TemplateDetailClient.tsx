@@ -79,7 +79,7 @@ export function TemplateDetailClient({
         if (!response.ok) {
           throw new Error('Failed to fetch template')
         }
-        const data = await response.json()
+        const data = (await response.json()) as { template: any }
         const processedTemplate = {
           ...data.template,
           platforms: ensureConsistentPlatforms(data.template),

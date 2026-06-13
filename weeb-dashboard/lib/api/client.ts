@@ -93,7 +93,7 @@ export async function apiRequest<T = any>(
     )
   }
 
-  const data = await response.json()
+  const data = (await response.json()) as ApiError
 
   if (!response.ok) {
     throw new ApiException(

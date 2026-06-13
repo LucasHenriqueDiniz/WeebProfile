@@ -22,9 +22,7 @@ interface HowItWorksItem {
   screenshot?: string
 }
 
-interface HowItWorksSectionProps {}
-
-export function HowItWorksSection({}: HowItWorksSectionProps) {
+export function HowItWorksSection() {
   const t = useTranslations('homepage.howItWorks')
   const [markdownModalOpen, setMarkdownModalOpen] = useState(false)
   const router = useRouter()

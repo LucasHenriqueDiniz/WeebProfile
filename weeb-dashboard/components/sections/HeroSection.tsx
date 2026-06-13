@@ -12,8 +12,6 @@ import { HeroTemplateCard, type Template } from "./HeroTemplateCard"
 import { useTranslations } from '@/i18n/use-translations'
 import { Link, Link as LocaleLink } from "@/i18n/navigation"
 
-interface HeroSectionProps {}
-
 // Templates padrão hardcoded
 const DEFAULT_TEMPLATES: Template[] = [
   {
@@ -102,7 +100,7 @@ const DEFAULT_TEMPLATES: Template[] = [
 
 const SUPPORTED_PLATFORMS = ["GitHub", "Steam", "LastFM", "MyAnimeList", "Lyfta"]
 
-export function HeroSection({}: HeroSectionProps) {
+export function HeroSection() {
   const t = useTranslations('homepage.hero')
   const [activeTemplate, setActiveTemplate] = useState<Template>(DEFAULT_TEMPLATES[0])
   const [isBuilding, setIsBuilding] = useState(false)

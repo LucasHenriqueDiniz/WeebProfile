@@ -2,7 +2,7 @@ import { sqliteTable, text, integer, index, unique } from "drizzle-orm/sqlite-co
 
 // JSON helper — values are stored as text and JSON.parsed/stringified transparently
 const json = <T>(name: string) =>
-  text(name).$type<T>()
+  text(name, { mode: "json" }).$type<T>()
 
 const uuid = (name: string) =>
   text(name).$defaultFn(() => crypto.randomUUID())
@@ -68,8 +68,8 @@ export const svgs = sqliteTable(
     theme: text("theme").default("default"),
     customCss: text("custom_css"),
     pluginsOrder: text("plugins_order"),
-    pluginsConfig: json<Record<string, unknown>>("plugins_config").notNull().$default(() => "{}"),
-    uiConfig: json<Record<string, unknown>>("ui_config").notNull().$default(() => "{}"),
+    pluginsConfig: json<Record<string, unknown>>("plugins_config").notNull().$default(() => ({})),
+    uiConfig: json<Record<string, unknown>>("ui_config").notNull().$default(() => ({})),
     storagePath: text("storage_path"),
     storageUrl: text("storage_url"),
     status: text("status").notNull().default("pending"),
@@ -109,8 +109,8 @@ export const templates = sqliteTable(
     theme: text("theme").default("default"),
     customCss: text("custom_css"),
     pluginsOrder: text("plugins_order"),
-    pluginsConfig: json<Record<string, unknown>>("plugins_config").notNull().$default(() => "{}"),
-    uiConfig: json<Record<string, unknown>>("ui_config").notNull().$default(() => "{}"),
+    pluginsConfig: json<Record<string, unknown>>("plugins_config").notNull().$default(() => ({})),
+    uiConfig: json<Record<string, unknown>>("ui_config").notNull().$default(() => ({})),
     isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
     createdAt: text("created_at").$defaultFn(() => new Date().toISOString()).notNull(),
   },

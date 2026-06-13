@@ -1,6 +1,6 @@
 "use client"
 
-import { useUser, useClerk, useSignIn, useSignUp } from "@clerk/nextjs"
+import { useUser, useClerk, useSignIn, useSignUp } from "@clerk/react"
 
 export function useAuth() {
   const { user, isLoaded } = useUser()
@@ -52,7 +52,7 @@ export function useAuth() {
           user_metadata: {
             user_name:
               user.username ??
-              user.externalAccounts.find((a) => String(a.provider).includes("github"))?.username ??
+              user.externalAccounts.find((a: { provider: string }) => a.provider.includes("github"))?.username ??
               null,
             preferred_username: user.username ?? null,
             login: user.username ?? null,
