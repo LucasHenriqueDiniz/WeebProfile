@@ -137,7 +137,7 @@ export async function generateSvgViaHttpService(config: GenerateSvgRequest): Pro
         console.error(`📤 [CLIENT] Error response:`, error)
 
         // DB unreachable errors (503) are NOT retryable - it's a configuration/network issue
-        if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "SUPABASE_DB_DNS_FAILED")) {
+        if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "D1_API_UNREACHABLE")) {
           const dbError = new Error(error.message || "Generator não conseguiu acessar o banco de dados")
           ;(dbError as any).code = error.code
           ;(dbError as any).details = error.details

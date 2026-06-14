@@ -38,46 +38,130 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
       />
     )
   },
-  calculateHeight: (config) => {
+  calculateHeight: (config, data, size = 'half') => {
     const cfg = config as MyAnimeListConfig
+    const mal = data as MyAnimeListData
+    const isTerminal = (config as { style?: string }).style === 'terminal'
+
+    // TerminalGrid: TerminalCommand + grid header + n rows
+    const terminalGridH = (n: number): number => (n > 0 ? 84 + n * 20 : 0)
 
     const favoritesH = (
       n: number,
       listStyle: string | undefined,
-      defaultH: number
+      defaultListStyle: 'detailed' | 'compact',
+      type: 'anime' | 'manga' | 'characters' | 'people'
     ): number => {
-      const s = listStyle ?? 'simple'
-      if (s === 'detailed') return 33 + n * 120 + Math.max(0, n - 1) * 4
-      if (s === 'compact') return 33 + n * 50 + Math.max(0, n - 1) * 4
-      if (s === 'minimal') return 33 + n * 75 + Math.max(0, n - 1) * 4
-      // 'simple' or default: grid layout, upper-bound from preview
-      return defaultH
+      if (n === 0) return 0
+      const s = listStyle ?? defaultListStyle
+      if (isTerminal) {
+        if (s === 'simple') {
+          const itemH = type === 'anime' || type === 'manga' ? 40 : 20
+          return 24 + n * itemH
+        }
+        if (s === 'compact') return 24 + n * 26
+        if (s === 'minimal') return 24 + n * 64
+        // detailed
+        return 24 + n * 107
+      }
+      if (s === 'detailed') return 40 + n * 120 + Math.max(0, n - 1) * 4
+      if (s === 'compact') return 40 + n * 50 + Math.max(0, n - 1) * 4
+      if (s === 'minimal') return 40 + n * 75 + Math.max(0, n - 1) * 4
+      // simple: image grid (image-portrait 120px, gap-2)
+      const cols = size === 'full' ? 10 : 5
+      const rows = Math.ceil(n / cols)
+      return 40 + rows * 120 + Math.max(0, rows - 1) * 8
     }
 
     let h = 0
     for (const s of cfg.sections) {
-      if (s === 'statistics') h += 366
-      else if (s === 'statistics_simple') h += 95
-      else if (s === 'anime_bar') h += 129
-      else if (s === 'manga_bar') h += 129
-      else if (s === 'last_activity') {
-        // Each anime/manga update is ~75px, default max 5 each
-        const maxAnime = cfg.last_activity_hide_anime ? 0 : (cfg.last_activity_max ?? 5)
-        const maxManga = cfg.last_activity_hide_manga ? 0 : (cfg.last_activity_max ?? 5)
-        const n = maxAnime + maxManga
-        h += n > 0 ? 33 + n * 75 + Math.max(0, n - 1) * 4 : 0
-      } else if (s === 'anime_favorites') {
-        const max = cfg.anime_favorites_max ?? 5
-        h += favoritesH(max, cfg.anime_favorites_list_style, 278)
-      } else if (s === 'manga_favorites') {
-        const max = cfg.manga_favorites_max ?? 5
-        h += favoritesH(max, cfg.manga_favorites_list_style, 278)
-      } else if (s === 'character_favorites') {
-        const max = cfg.character_favorites_max ?? 5
-        h += favoritesH(max, cfg.character_favorites_list_style, 280)
-      } else if (s === 'people_favorites') {
-        const max = cfg.people_favorites_max ?? 5
-        h += favoritesH(max, cfg.people_favorites_list_style, 280)
+      switch (s) {
+        case 'statistics': {
+          const statisticsMedia = cfg.statistics_media ?? 'both'
+          const showAnime = statisticsMedia === 'both' || statisticsMedia === 'anime'
+          const showManga = statisticsMedia === 'both' || statisticsMedia === 'manga'
+          const blocks = (showAnime ? 1 : 0) + (showManga ? 1 : 0)
+          if (blocks === 0) break
+          if (isTerminal) {
+            // GridItemProps counts are static, not data-dependent
+            const nAnime = 10
+            const nManga = 11
+            if (size === 'full') {
+              if (showAnime && showManga) h += 24 + 60 + Math.max(nAnime, nManga) * 20
+              else h += 24 + 60 + (showAnime ? nAnime : nManga) * 20
+            } else if (showAnime && showManga) {
+              h += 48 + 60 + (nAnime + nManga) * 20
+            } else {
+              h += 24 + 60 + (showAnime ? nAnime : nManga) * 20
+            }
+          } else if (size === 'full') {
+            h += 184
+          } else {
+            h += blocks * 184 + Math.max(0, blocks - 1) * 8
+          }
+          break
+        }
+        case 'statistics_simple': {
+          if (isTerminal) {
+            h += 24 + 4 * 30
+          } else {
+            const rows = size === 'half' ? 2 : 1
+            h += 48 + rows * 24 + Math.max(0, rows - 1) * 4
+          }
+          break
+        }
+        case 'anime_bar':
+        case 'manga_bar': {
+          if (isTerminal) {
+            h += 24 + 44 + 5 * 24
+          } else {
+            const rows = size === 'full' ? 1 : 3
+            h += 58 + rows * 20 + Math.max(0, rows - 1) * 8
+          }
+          break
+        }
+        case 'last_activity': {
+          const hideAnime = cfg.last_activity_hide_anime ?? false
+          const hideManga = cfg.last_activity_hide_manga ?? false
+          const maxItems = cfg.last_activity_max ?? 6
+          let total = 0
+          if (!hideAnime && !hideManga) {
+            total = (mal.last_updated?.anime?.length ?? 0) + (mal.last_updated?.manga?.length ?? 0)
+          } else if (!hideAnime) {
+            total = mal.last_updated?.anime?.length ?? 0
+          } else if (!hideManga) {
+            total = mal.last_updated?.manga?.length ?? 0
+          }
+          const n = Math.min(total, maxItems)
+          if (n === 0) break
+          h += isTerminal ? 24 + n * 74 + Math.max(0, n - 1) * 8 : 40 + n * 75 + Math.max(0, n - 1) * 4
+          break
+        }
+        case 'anime_favorites': {
+          const max = cfg.anime_favorites_max ?? cfg.favorites_max ?? 20
+          const n = Math.min(mal.favorites_full?.anime?.length ?? max, max)
+          h += favoritesH(n, cfg.anime_favorites_list_style, 'detailed', 'anime')
+          break
+        }
+        case 'manga_favorites': {
+          const max = cfg.manga_favorites_max ?? cfg.favorites_max ?? 20
+          const n = Math.min(mal.favorites_full?.manga?.length ?? max, max)
+          h += favoritesH(n, cfg.manga_favorites_list_style, 'detailed', 'manga')
+          break
+        }
+        case 'character_favorites': {
+          const max = cfg.character_favorites_max ?? cfg.favorites_max ?? 20
+          const n = Math.min(mal.favorites?.characters?.length ?? max, max)
+          h += favoritesH(n, cfg.character_favorites_list_style, 'compact', 'characters')
+          break
+        }
+        case 'people_favorites': {
+          const max = cfg.people_favorites_max ?? cfg.favorites_max ?? 20
+          const n = Math.min(mal.favorites?.people?.length ?? max, max)
+          h += favoritesH(n, cfg.people_favorites_list_style, 'compact', 'people')
+          break
+        }
+        default: break
       }
     }
     return h

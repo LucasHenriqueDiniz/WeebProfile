@@ -5,7 +5,7 @@ import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
 import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
 import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
 import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { formatRelativeTime } from '../../shared/utils/formatting'
+import { formatRelativeTime, formatRelativeTimeShort } from '../../shared/utils/formatting'
 import type { GithubConfig, GithubData } from '../types'
 
 interface RecentActivityProps {
@@ -218,9 +218,9 @@ const TerminalRecentActivity = ({ data, max }: { data: GithubData['recentActivit
   return (
     <div className="flex flex-col gap-1 font-mono text-sm">
       {activities.map((activity, index) => {
-        const relativeTime = formatRelativeTime(activity.date)
+        const relativeTime = formatRelativeTimeShort(activity.date)
         const typeSymbol = getTypeSymbol(activity.type)
-        
+
         return (
           <a
             key={index}
@@ -230,8 +230,8 @@ const TerminalRecentActivity = ({ data, max }: { data: GithubData['recentActivit
             className="flex items-start gap-2 text-terminal-text"
           >
             <span className="text-terminal-muted">*</span>
-            <span className="text-terminal-muted w-12 shrink-0">{relativeTime}</span>
-            <span className="text-terminal-highlight w-10 shrink-0">{typeSymbol}</span>
+            <span className="text-terminal-muted w-12 shrink-0 truncate">{relativeTime}</span>
+            <span className="text-terminal-highlight w-16 shrink-0 truncate">{typeSymbol}</span>
             <span className="text-terminal-muted w-32 shrink-0 truncate">{activity.repository}</span>
             <span className="text-terminal-text truncate">{activity.title}</span>
           </a>

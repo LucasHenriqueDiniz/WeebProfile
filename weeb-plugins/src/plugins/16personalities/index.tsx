@@ -54,10 +54,16 @@ export const personality16Plugin: Plugin<Personality16Config, PluginData & Perso
     )
   },
 
-  calculateHeight: (config) => {
+  calculateHeight: (config, _data, size = 'half') => {
+    const isTerminal = (config as { style?: string }).style === 'terminal'
+
     let h = 0
     for (const s of config.sections) {
-      if (s === 'personality') h += 185
+      if (s === 'personality') {
+        // +10px buffer for personality types with longer descriptions than ENFJ (test fixture)
+        if (isTerminal) h += (size === 'half' ? 206 : 186) + 10
+        else h += (size === 'half' ? 193 : 170) + 10
+      }
     }
     return h
   },

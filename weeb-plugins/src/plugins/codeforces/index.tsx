@@ -34,15 +34,28 @@ export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesD
   },
   calculateHeight: (config, data) => {
     const ne = config.nonEssential || {}
+    const cfData = data as CodeforcesData
+    const isTerminal = (config as { style?: string }).style === 'terminal'
+
     let h = 0
     for (const s of config.sections) {
-      if (s === 'rating_rank') h += 69
-      else if (s === 'contests_participated') h += 73
-      else if (s === 'problems_solved') h += 97
-      else if (s === 'recent_submissions') {
+      if (s === 'rating_rank') {
+        h += isTerminal ? 96 : 76
+      } else if (s === 'contests_participated') {
+        h += isTerminal ? 76 : 80
+      } else if (s === 'problems_solved') {
+        if (isTerminal) {
+          const byDifficulty = cfData.problemsSolved?.byDifficulty ?? {}
+          const n = Object.values(byDifficulty).filter((count) => (count ?? 0) > 0).length
+          h += 24 + (1 + n) * 25
+        } else {
+          h += 104
+        }
+      } else if (s === 'recent_submissions') {
         const max = ne.recent_submissions_max ?? 5
-        const n = Math.min((data as CodeforcesData).recentSubmissions?.length ?? max, max)
-        h += 33 + 12 + n * 50 + Math.max(0, n - 1) * 4
+        const n = Math.min(cfData.recentSubmissions?.length ?? max, max)
+        if (n === 0) continue
+        h += isTerminal ? 56 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
       }
     }
     return h

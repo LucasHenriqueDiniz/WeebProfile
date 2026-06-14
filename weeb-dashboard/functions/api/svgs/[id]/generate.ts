@@ -52,7 +52,7 @@ async function generateSvgViaHttpService(config: Record<string, any>, svgGenerat
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({ error: "Unknown error" })) as any
-        if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "SUPABASE_DB_DNS_FAILED")) {
+        if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "D1_API_UNREACHABLE")) {
           const dbError = new Error(error.message || "Generator could not reach database")
           ;(dbError as any).code = error.code
           ;(dbError as any).details = error.details
@@ -272,7 +272,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         )
       }
 
-      if (error?.code === "DATABASE_UNREACHABLE" || error?.code === "SUPABASE_DB_DNS_FAILED") {
+      if (error?.code === "DATABASE_UNREACHABLE" || error?.code === "D1_API_UNREACHABLE") {
         return Response.json(
           {
             error: "Database unreachable",

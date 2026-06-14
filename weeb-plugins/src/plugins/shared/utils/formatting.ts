@@ -49,6 +49,33 @@ export function formatRelativeTime(date: Date | string): string {
 }
 
 /**
+ * Formata uma data para string relativa compacta (ex: "5m", "3h", "2d", "Jan 15")
+ * Usado em layouts de largura fixa (ex: terminal git-log style)
+ */
+export function formatRelativeTimeShort(date: Date | string): string {
+  const now = new Date()
+  const then = typeof date === 'string' ? new Date(date) : date
+  const diffMs = now.getTime() - then.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+
+  if (diffMins < 1) {
+    return 'now'
+  }
+  if (diffMins < 60) {
+    return `${diffMins}m`
+  }
+  if (diffHours < 24) {
+    return `${diffHours}h`
+  }
+  if (diffDays < 7) {
+    return `${diffDays}d`
+  }
+  return then.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+/**
  * Formata uma string para kebab-case
  */
 export function toKebabCase(str: string): string {

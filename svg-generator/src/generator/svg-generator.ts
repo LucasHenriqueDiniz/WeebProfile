@@ -3,22 +3,22 @@
  *
  * Coordinates complete SVG generation:
  * 1. Renders React components
- * 2. Measures rendered height with Playwright
+ * 2. Calculates height by summing each plugin's calculateHeight()
  * 3. Loads CSS
- * 4. Creates SVG container with measured height
+ * 4. Creates SVG container with calculated height
  * 5. Returns final SVG
  *
- * IMPORTANT: This module is server-only and uses renderToString from react-dom/server
- * and Playwright for height measurement. Never import on client side.
+ * IMPORTANT: This module is server-only and uses renderToString from react-dom/server.
+ * No browser/Playwright is required - height is computed statically per plugin,
+ * which keeps this package deployable as a Cloudflare Worker.
  */
 
 import { renderToString } from "react-dom/server"
+import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import type { SvgConfig, SvgGenerationResult } from "../types/index.js"
 import { loadCss } from "./css-loader.js"
 import { renderPlugins } from "../renderer/react-renderer.js"
 import { createSvgContainer } from "../renderer/template-renderer.js"
-import { measureHeight } from "../layout/measure-height.js"
-import { reactToHtml } from "../layout/react-to-html.js"
 
 /**
  * Generates SVG from configuration
@@ -30,25 +30,12 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
   const width = config.size === "half" ? 415 : 830
 
   // 1. Render plugins (do this once only)
-  const { element: pluginsContent, pluginsData, pluginsErrors } = await renderPlugins(config)
+  const { element: pluginsContent, pluginsConfig, pluginsData, pluginsErrors } = await renderPlugins(config)
 
-  // 2. Calculate height with Playwright (always used)
-  console.log("[SVG Generator] 📏 Measuring height with Playwright...")
+  // 2. Calculate height by summing each enabled plugin's calculateHeight()
+  const height = PluginManager.getInstance().calculateTotalHeight(pluginsConfig, pluginsData, config.size)
 
-  // Convert React to HTML
-  const { html, css } = await reactToHtml(pluginsContent, config, width)
-
-  // Measure height with Playwright
-  const height = await measureHeight({
-    html,
-    css,
-    width,
-    size: config.size,
-    style: config.style,
-    timeoutMs: 5000,
-  })
-
-  console.log(`[SVG Generator] ✅ Height measured: ${height}px`)
+  console.log(`[SVG Generator] ✅ Height calculated: ${height}px`)
 
   // 3. Load CSS
   const cssDefs = await loadCss(config)

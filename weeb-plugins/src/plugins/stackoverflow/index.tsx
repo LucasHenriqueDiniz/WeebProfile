@@ -34,15 +34,21 @@ export const stackoverflowPlugin: Plugin<StackOverflowConfig, PluginData & Stack
   },
   calculateHeight: (config, data) => {
     const ne = config.nonEssential || {}
+    const isTerminal = (config as { style?: string }).style === 'terminal'
+
     let h = 0
     for (const s of config.sections) {
-      if (s === 'reputation') h += 73
-      else if (s === 'badges') h += 101
-      else if (s === 'answers_questions') h += 73
-      else if (s === 'tags_expertise') {
+      if (s === 'reputation') {
+        h += isTerminal ? 76 : 80
+      } else if (s === 'badges') {
+        h += isTerminal ? 136 : 108
+      } else if (s === 'answers_questions') {
+        h += isTerminal ? 96 : 80
+      } else if (s === 'tags_expertise') {
         const max = ne.tags_expertise_max ?? 5
         const n = Math.min((data as StackOverflowData).topTags?.length ?? max, max)
-        h += 33 + 12 + n * 50 + Math.max(0, n - 1) * 4
+        if (n === 0) continue
+        h += isTerminal ? 56 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
       }
     }
     return h

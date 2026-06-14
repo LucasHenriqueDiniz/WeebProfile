@@ -1,14 +1,13 @@
 /**
- * Test script for SVG generator height measurement
+ * Test script for SVG generator height calculation
  *
  * Tests the complete SVG generation pipeline with mock data
- * to ensure Playwright height measurement works correctly.
+ * to ensure per-plugin height calculation works correctly.
  *
- * Usage: pnpm --filter @weeb/svg-generator test:measure
+ * Usage: pnpm --filter @weeb/svg-generator test:generator
  */
 
 import { generateSvg } from "../src/index.js"
-import { closeBrowser } from "../src/layout/browser.js"
 import fs from "node:fs/promises"
 import path from "node:path"
 
@@ -119,7 +118,7 @@ async function saveDebugInfo(result: any, config: any) {
 }
 
 async function main() {
-  console.log("🧪 Testing SVG Generator with Playwright height measurement...\n")
+  console.log("🧪 Testing SVG Generator with per-plugin height calculation...\n")
 
   const testSizes: Array<"half" | "full"> = ["half", "full"]
   const results = []
@@ -137,7 +136,7 @@ async function main() {
       const duration = Date.now() - startTime
 
       console.log(`  ⏱️  Generation time: ${duration}ms`)
-      console.log(`  📏 Measured height: ${result.height}px`)
+      console.log(`  📏 Calculated height: ${result.height}px`)
       console.log(`  📐 Generated width: ${result.width}px`)
       console.log(`  📄 SVG size: ${result.svg.length} characters`)
 
@@ -181,11 +180,7 @@ async function main() {
   console.log("  - Generation should complete within 5 seconds")
 }
 
-main()
-  .catch((error) => {
-    console.error("\n❌ Fatal error:", error)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await closeBrowser().catch(console.error)
-  })
+main().catch((error) => {
+  console.error("\n❌ Fatal error:", error)
+  process.exit(1)
+})

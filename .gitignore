@@ -9,9 +9,10 @@ node_modules
 /weeb-dashboard/out/
 /weeb-dashboard/.vercel
 
-# SVG Generator 
+# SVG Generator
 /svg-generator/node_modules
 /svg-generator/dist
+/svg-generator/debug-previews
 
 # Weeb Plugins 
 /weeb-plugins/node_modules

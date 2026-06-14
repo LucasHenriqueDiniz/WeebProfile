@@ -14,6 +14,7 @@ import { PluginError } from "../components/PluginError.js"
  */
 export interface RenderPluginsResult {
   element: React.ReactElement
+  pluginsConfig: Record<string, any>
   pluginsData: Record<string, any>
   pluginsErrors: Record<string, Error>
 }
@@ -207,6 +208,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   // renderToString can handle arrays, but wrapping in a container is safer
   return {
     element: <div>{renderedPlugins}</div>,
+    pluginsConfig,
     pluginsData,
     pluginsErrors,
   }

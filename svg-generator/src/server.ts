@@ -22,145 +22,10 @@ import { URL } from "node:url"
 import { generateSvg, validateConfig, normalizeConfig } from "./index.js"
 import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
 import { getUserEssentialConfigs } from "./db/essential-configs.js"
-import { processRegenerationBatch } from "./cron/regeneration-worker.js"
 import { validateRequiredConfig } from "./validation/validate-required-config.js"
 
 // Railway uses PORT, but also supports SVG_GENERATOR_PORT for local development
 const PORT = process.env.PORT || process.env.SVG_GENERATOR_PORT || 3001
-
-/**
- * Handles cron endpoint for automatic SVG regeneration
- */
-async function handleCronRequest(req: IncomingMessage, res: ServerResponse, url: URL) {
-  try {
-    // Authenticate request
-    const authHeader = req.headers.authorization
-    const cronSecret = process.env.CRON_SECRET
-
-    if (!cronSecret) {
-      console.error("❌ [CRON] CRON_SECRET not configured")
-      res.writeHead(500, { "Content-Type": "application/json" })
-      res.end(JSON.stringify({ error: "Cron secret not configured" }))
-      return
-    }
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      res.writeHead(401, { "Content-Type": "application/json" })
-      res.end(JSON.stringify({ error: "Unauthorized" }))
-      return
-    }
-
-    const token = authHeader.substring(7)
-    if (token !== cronSecret) {
-      res.writeHead(401, { "Content-Type": "application/json" })
-      res.end(JSON.stringify({ error: "Invalid token" }))
-      return
-    }
-
-    // Parse query parameters
-    const limit = parseInt(url.searchParams.get("limit") || "50", 10)
-    const timeboxMs = parseInt(url.searchParams.get("timeboxMs") || "360000", 10)
-
-    console.log(`🔄 [CRON] Processing regeneration batch (limit: ${limit}, timebox: ${timeboxMs}ms)`)
-
-    // Process batch
-    const result = await processRegenerationBatch(limit, timeboxMs)
-
-    console.log(`✅ [CRON] Batch completed:`, result)
-
-    // Return result
-    res.writeHead(200, { "Content-Type": "application/json" })
-    res.end(JSON.stringify(result))
-  } catch (error) {
-    console.error("❌ [CRON] Error processing batch:", error)
-    res.writeHead(500, { "Content-Type": "application/json" })
-    res.end(
-      JSON.stringify({
-        error: "Failed to process batch",
-        message: error instanceof Error ? error.message : "Unknown error",
-      })
-    )
-  }
-}
-
-async function handleDebugRequest(req: IncomingMessage, res: ServerResponse) {
-  try {
-    // Import here to avoid circular dependencies
-    const { checkHasMoreSvgs } = await import("./db/svgs.js")
-
-    const hasMore = await checkHasMoreSvgs()
-
-    // Get count of due SVGs
-    const sql = (await import("postgres")).default
-    const dbUrl = process.env.DATABASE_URL
-    if (!dbUrl) {
-      res.writeHead(500, { "Content-Type": "application/json" })
-      res.end(JSON.stringify({ error: "DATABASE_URL not configured" }))
-      return
-    }
-
-    const db = sql(dbUrl, {
-      max: 1,
-      ssl: dbUrl.includes("supabase") ? "require" : false,
-    })
-
-    const dueSvgs = await db`
-      SELECT COUNT(*) as count
-      FROM svgs
-      WHERE next_regeneration_at IS NOT NULL
-        AND next_regeneration_at <= now()
-        AND (
-          status IN ('completed', 'error', 'pending', 'failed')
-          OR (
-            status = 'generating'
-            AND (
-              last_error IS NOT NULL
-              OR updated_at < now() - INTERVAL '30 minutes'
-            )
-          )
-        )
-        AND is_paused = false
-    `
-
-    const totalSvgs = await db`
-      SELECT COUNT(*) as count FROM svgs
-    `
-
-    const pausedSvgs = await db`
-      SELECT COUNT(*) as count FROM svgs WHERE is_paused = true
-    `
-
-    const futureSvgs = await db`
-      SELECT COUNT(*) as count FROM svgs
-      WHERE next_regeneration_at IS NOT NULL
-        AND next_regeneration_at > now()
-        AND is_paused = false
-    `
-
-    await db.end()
-
-    res.writeHead(200, { "Content-Type": "application/json" })
-    res.end(
-      JSON.stringify({
-        totalSvgs: totalSvgs[0]?.count || 0,
-        dueSvgs: dueSvgs[0]?.count || 0,
-        pausedSvgs: pausedSvgs[0]?.count || 0,
-        futureSvgs: futureSvgs[0]?.count || 0,
-        hasMore,
-        timestamp: new Date().toISOString(),
-      })
-    )
-  } catch (error) {
-    console.error("❌ [DEBUG] Error:", error)
-    res.writeHead(500, { "Content-Type": "application/json" })
-    res.end(
-      JSON.stringify({
-        error: "Failed to get debug info",
-        message: error instanceof Error ? error.message : "Unknown error",
-      })
-    )
-  }
-}
 
 interface GenerateRequest {
   style?: string
@@ -180,7 +45,7 @@ interface GenerateRequest {
   primaryColor?: string
   dev?: boolean
   mock?: boolean // Alias for dev
-  userId?: string // User ID to fetch essential configs from Supabase (production)
+  userId?: string // User ID to fetch essential configs from Cloudflare D1 (production)
   // essentialConfigs?: Record<string, any> // Only for tests (test page) - do not use in production
   debug?: boolean // Include debug information in response
 }
@@ -206,18 +71,6 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
     console.log("Test route reached!")
     res.writeHead(200, { "Content-Type": "text/plain" })
     res.end("SVG Generator is running!")
-    return
-  }
-
-  // Handle cron endpoint
-  if (pathname === "/api/cron/generate-svgs" && req.method === "POST") {
-    await handleCronRequest(req, res, url)
-    return
-  }
-
-  // Debug endpoint to check due SVGs
-  if (pathname === "/api/cron/debug" && req.method === "GET") {
-    await handleDebugRequest(req, res)
     return
   }
 
@@ -255,7 +108,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       return
     }
 
-    // Fetch essential configs (secrets) from Supabase if userId provided
+    // Fetch essential configs (secrets) from Cloudflare D1 if userId provided
     // This ensures frontend never accesses sensitive data in production
     // Username and other non-sensitive configs now come from request (svgs.plugins_config)
     let essentialConfigs: Record<string, any> = {}
@@ -269,26 +122,20 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       } catch (error: any) {
         console.error(`❌ [SERVER] Error fetching essential configs:`, error)
         dbConnectionError = true
-
-        // Detectar erro de DNS especificamente
-        const isDnsError = error?.code === "ENOENT" || error?.syscall === "getaddrinfo"
-        if (isDnsError) {
-          console.error(`❌ [SERVER] DNS resolution failed for database hostname`)
-        }
       }
 
       if (dbConnectionError) {
-        console.error(`❌ [SERVER] Database connection failed. Cannot verify secrets.`)
+        console.error(`❌ [SERVER] D1 connection failed. Cannot verify secrets.`)
         // Return explicit error: DB unreachable ≠ missing secrets
         // This avoids "phantom missing secret" when it actually couldn't verify
         res.writeHead(503, { "Content-Type": "application/json" })
         res.end(
           JSON.stringify({
             error: "DATABASE_UNREACHABLE",
-            code: "SUPABASE_DB_DNS_FAILED",
-            message: "Generator couldn't access database. Check DATABASE_URL and connectivity.",
+            code: "D1_API_UNREACHABLE",
+            message: "Generator couldn't access D1. Check CLOUDFLARE_API_TOKEN and connectivity.",
             details:
-              "Couldn't verify secrets in database. This might be DNS, network, or DATABASE_URL configuration issue.",
+              "Couldn't verify secrets in D1. This might be a network or Cloudflare API token configuration issue.",
           })
         )
         return
@@ -360,7 +207,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       hideTerminalEmojis: requestDataTyped.hideTerminalEmojis || undefined,
       hideTerminalHeader: requestDataTyped.hideTerminalHeader || undefined,
       primaryColor: requestDataTyped.primaryColor || "#ff7a00", // Use default color if not defined
-      essentialConfigs, // Use configs fetched from Supabase (production) or provided directly (tests)
+      essentialConfigs, // Use configs fetched from D1 (production) or provided directly (tests)
       dev: requestDataTyped.dev === true || requestDataTyped.mock === true, // Use mock data if dev=true or mock=true
     }
 

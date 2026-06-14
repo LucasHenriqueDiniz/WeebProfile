@@ -36,31 +36,58 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
       />
     )
   },
-  calculateHeight: (config, data) => {
+  calculateHeight: (config, data, size = 'half') => {
     const ne = (config as LyftaConfig).nonEssential || {}
     const ld = data as LyftaData
+    const isTerminal = (config as { style?: string }).style === 'terminal'
+
+    // TerminalGrid: TerminalCommand + grid header + n rows
+    const terminalGridH = (n: number): number => (n > 0 ? 84 + n * 20 : 0)
 
     let h = 0
     for (const s of config.sections) {
-      if (s === 'statistics') h += 123
-      else if (s === 'overview') h += 203
-      else if (s === 'last_workout') {
-        // Fixed upper bound from preview; last workout has a fixed number of visible exercises
-        h += 295
+      if (s === 'statistics') {
+        h += isTerminal ? 123 : 132
+      } else if (s === 'overview') {
+        h += isTerminal ? 144 : 221
+      } else if (s === 'last_workout') {
+        if (!ld.workouts || ld.workouts.length === 0) continue
+        const maxExercises = ne.last_workout_max_exercises ?? 5
+        const lastWorkout = [...ld.workouts].sort(
+          (a, b) => new Date(b.workout_perform_date).getTime() - new Date(a.workout_perform_date).getTime()
+        )[0]!
+        const n = Math.min(maxExercises, lastWorkout.exercises?.length ?? maxExercises)
+        if (isTerminal) {
+          const showBodyWeight = ne.last_workout_show_body_weight !== false
+          const hasBodyWeight = showBodyWeight && (lastWorkout.body_weight ?? 0) > 0
+          h += 24 + (2 + (hasBodyWeight ? 1 : 0) + n) * 28
+        } else {
+          const base = size === 'half' ? 315 : 334
+          const itemH = size === 'half' ? 37 : 40
+          h += base + Math.max(0, n - 5) * itemH
+        }
       } else if (s === 'exercises') {
         const max = ne.exercises_max ?? 5
         // Use max as upper bound (exercises computed from workout history, not data.exercises)
         const n = max
-        // p-4 container (32px fixed overhead) + space-y-2 (8px gap) + ~37px per item
-        // Formula: 65 + n*37 + (n-1)*8; checks: n=5→282≈279, n=1→102
-        h += n > 0 ? 65 + n * 37 + Math.max(0, n - 1) * 8 : 0
+        if (n === 0) continue
+        if (isTerminal) {
+          h += terminalGridH(n)
+        } else {
+          const itemH = size === 'half' ? 44 : 48
+          h += 70 + n * itemH
+        }
       } else if (s === 'recent_workouts') {
-        // New card design: bordered cards with muscle chips, gap-3 (12px) between cards
-        // Each card: p-3 (24px) + name(20) + date(18) + chips(22) ≈ 84px; without chips ≈ 62px
-        // Most workouts have muscle groups in title → use 84px conservative estimate
         const max = ne.workouts_max ?? 4
         const n = Math.min(ld.workoutSummaries?.length ?? max, max)
-        h += n > 0 ? 33 + n * 84 + Math.max(0, n - 1) * 12 : 0
+        if (n === 0) continue
+        if (isTerminal) {
+          h += 70 + n * 20
+        } else {
+          const base = size === 'half' ? 52 : 54
+          const itemH = size === 'half' ? 70 : 73
+          h += base + n * itemH
+        }
       }
     }
     return h

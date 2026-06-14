@@ -24,20 +24,17 @@
     "lint": "eslint src --ext .ts,.tsx",
     "test": "echo \"Tests coming soon\"",
     "test:generator": "tsx scripts/test-svg-generator.ts",
-    "test:measure": "tsx scripts/test-measure-height.ts",
+    "audit:heights": "tsx scripts/audit-section-heights.ts",
+    "audit:list-scaling": "tsx scripts/audit-list-scaling.ts",
     "generate:previews": "tsx scripts/generate-section-previews.ts",
     "generate:previews:force": "tsx scripts/generate-section-previews.ts --force",
     "generate:previews:png": "tsx scripts/generate-section-previews.ts --png",
     "watch:previews": "tsx scripts/watch-previews.ts",
-    "watch:previews:all": "tsx scripts/watch-previews.ts --all",
-    "postinstall": "if [ -n \"$VERCEL\" ]; then echo 'Skipping Playwright install on Vercel (not needed)'; else npx playwright@latest install chromium --with-deps || echo 'Playwright install failed, continuing...'; fi"
+    "watch:previews:all": "tsx scripts/watch-previews.ts --all"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.81.1",
     "@weeb/weeb-plugins": "workspace:*",
     "dotenv": "^16.4.5",
-    "playwright-core": "^1.40.0",
-    "postgres": "^3.4.7",
     "react": "^19",
     "react-dom": "^19",
     "server-only": "^0.0.1",
@@ -51,6 +48,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sharp": "^0.31.1",
+    "playwright-core": "^1.40.0",
     "tsx": "^4.20.6",
     "typescript": "^5.4.0"
   },

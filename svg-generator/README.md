@@ -4,12 +4,12 @@ Servidor HTTP Node.js para geração de SVGs usando React Server Components.
 
 ## 🎯 Características
 
-- ✅ **Sem Puppeteer** - Cálculo manual de altura (rápido e leve)
+- ✅ **Sem browser** - Altura calculada estaticamente por plugin (`calculateHeight`), sem Playwright/Puppeteer
 - ✅ **React Server Components** - Renderização server-side com `react-dom/server`
 - ✅ **ES Modules** - Imports nativos
 - ✅ **Type Safe** - TypeScript rigoroso
 - ✅ **Railway Ready** - Configurado para deploy no Railway
-- ✅ **Seguro** - Busca essential configs diretamente do Supabase (frontend nunca acessa)
+- ✅ **Seguro** - Busca essential configs diretamente do Cloudflare D1 (frontend nunca acessa)
 
 ## 📦 Instalação
 
@@ -49,27 +49,23 @@ O Railway detecta automaticamente a configuração e executa:
 Crie um arquivo `.env` na raiz do `svg-generator` com:
 
 ```env
-DATABASE_URL=postgresql://postgres:[YOUR_PASSWORD]@db.xxxxx.supabase.co:5432/postgres
+CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+CLOUDFLARE_D1_DATABASE_ID=your-d1-database-id
+CLOUDFLARE_API_TOKEN=your-cloudflare-api-token-with-d1-edit
 SVG_GENERATOR_PORT=3001
 NODE_ENV=development
 ```
 
 **Variáveis:**
 
-- `DATABASE_URL` - **OBRIGATÓRIO** - Connection string do PostgreSQL/Supabase
-  - Obtenha em: Supabase Dashboard > Settings > Database > Connection string > URI
-  - Substitua `[YOUR_PASSWORD]` pela senha do seu banco
+- `CLOUDFLARE_ACCOUNT_ID` - **OBRIGATÓRIO** - ID da conta Cloudflare (`weebprofile-db`)
+- `CLOUDFLARE_D1_DATABASE_ID` - **OBRIGATÓRIO** - ID do banco D1 (`weebprofile-db`, mesmo do `wrangler.toml` do dashboard)
+- `CLOUDFLARE_API_TOKEN` - **OBRIGATÓRIO** - Token de API Cloudflare com permissão de leitura/escrita em D1
+  - Crie em: Cloudflare Dashboard > My Profile > API Tokens > Create Token (template "Edit Cloudflare Workers" ou permissão customizada `D1:Edit`)
+  - Usado via D1 REST API, já que este serviço roda fora do Workers/Pages e não tem binding direto ao D1
 - `SVG_GENERATOR_PORT` - Porta do servidor (padrão: 3001)
 - `PORT` - Porta alternativa (Railway define automaticamente)
 - `NODE_ENV` - Ambiente (development/production)
-- `PLAYWRIGHT_CHANNEL` - Canal do browser (`msedge`, `chrome`, ou `chromium`).
-  - **Padrão**: `msedge` no Windows, `chrome` em Linux/Mac
-  - **Recomendado**: `msedge` no Windows (já vem instalado), `chrome` em outros (mais comum)
-  - **CI/Produção sem browser**: `chromium` (precisa instalar via `playwright install chromium`)
-- `ALLOW_NETWORK` - Se `1`, permite requests de rede durante medição (padrão: bloqueado)
-  - **O que bloqueia**: Imagens externas, fonts de CDNs, chamadas de API, etc.
-  - **O que permite**: `data:` URLs (imagens inline/base64), `blob:` URLs (conteúdo gerado)
-  - **Por quê bloquear**: Garante medição previsível e rápida, sem depender de recursos externos
 
 **Desenvolvimento Local:**
 
@@ -77,110 +73,31 @@ NODE_ENV=development
 # Copiar exemplo
 cp .env.example .env
 
-# Editar .env e adicionar sua DATABASE_URL
+# Editar .env e adicionar suas credenciais Cloudflare (CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID, CLOUDFLARE_API_TOKEN)
 ```
 
 **Railway (Produção):**
 
 1. Vá em Variables no projeto do Railway
-2. Adicione `DATABASE_URL` com a connection string do Supabase
+2. Adicione `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_D1_DATABASE_ID` e `CLOUDFLARE_API_TOKEN`
 3. Railway define `PORT` automaticamente
-4. Playwright é instalado automaticamente via `postinstall` script
-   - Instala apenas Chromium com dependências (`playwright install chromium --with-deps`)
-   - Otimizado para medição de altura (leve, sem recursos pesados)
-   - Usa `chromium` channel automaticamente no Railway
 
 **Importante**:
 
-- Configure `DATABASE_URL` no Railway com a mesma connection string do weeb-dashboard
-- O Playwright é instalado automaticamente durante o build (via `postinstall`)
-- Se precisar de outro browser, configure `PLAYWRIGHT_CHANNEL=chrome` ou `PLAYWRIGHT_CHANNEL=msedge`
+- `CLOUDFLARE_D1_DATABASE_ID` deve ser o mesmo banco `weebprofile-db` usado pelo `weeb-dashboard` (ver `database_id` em `weeb-dashboard/wrangler.toml`)
 
-## 📏 Medição de Altura com Playwright
+## 📏 Cálculo de Altura
 
-O `svg-generator` **sempre** usa Playwright para medir altura renderizada real do conteúdo.
+O `svg-generator` calcula a altura do SVG somando `calculateHeight()` de cada plugin habilitado (implementado em `weeb-plugins`), sem depender de browser/Playwright. Isso mantém o pacote leve e compatível com deploy como Cloudflare Worker.
 
-### Como Funciona
-
-1. Renderiza os componentes React em HTML completo
-2. Abre o HTML em um browser real (Edge/Chrome/Chromium)
-3. Mede a altura renderizada usando `scrollHeight`
-4. Retorna a altura exata em pixels
-
-### Configuração do Browser
-
-**Desenvolvimento Local (Windows):**
-
-```bash
-# Edge já vem instalado no Windows - não precisa configurar nada
-# Ou configure explicitamente:
-PLAYWRIGHT_CHANNEL=msedge
-```
-
-**Desenvolvimento Local (Linux/Mac):**
-
-```bash
-# Chrome geralmente já está instalado
-PLAYWRIGHT_CHANNEL=chrome
-```
-
-**Railway/Produção:**
-
-```bash
-# Chromium é instalado automaticamente via postinstall script
-# Não precisa configurar nada - usa 'chromium' automaticamente
-# O script roda: playwright install chromium --with-deps
-```
-
-**CI customizado (sem postinstall):**
-
-```bash
-# Instalar Chromium com dependências
-npx playwright install chromium --with-deps
-
-# Configurar
-PLAYWRIGHT_CHANNEL=chromium
-```
-
-### Bloqueio de Requests de Rede
-
-Por padrão, o Playwright **bloqueia todos os requests de rede externos** durante a medição:
-
-**O que é bloqueado:**
-
-- Imagens de CDNs: `https://example.com/image.png`
-- Fonts externas: `https://fonts.googleapis.com/...`
-- Chamadas de API: `https://api.example.com/...`
-- Qualquer recurso externo
-
-**O que é permitido:**
-
-- `data:` URLs: `data:image/png;base64,...` (imagens inline)
-- `blob:` URLs: `blob:...` (conteúdo gerado)
-
-**Por quê bloquear?**
-
-- Garante medição previsível (não depende de recursos externos)
-- Mais rápido (não espera downloads)
-- Mais confiável (não falha se CDN estiver offline)
-
-**Se precisar de recursos externos:**
-
-```bash
-ALLOW_NETWORK=1  # Permite requests de rede (não recomendado)
-```
+Cada plugin retorna um upper-bound seguro em pixels com base em sua config e dados; o `PluginManager.calculateTotalHeight()` soma esses valores e adiciona um buffer de 24px de segurança.
 
 ### Teste Local
 
 ```bash
-# Testar medição de altura
-pnpm test:measure
-
-# Com screenshot para debug
-SAVE_SCREENSHOT=1 pnpm test:measure
+# Testar geração completa com dados mock
+pnpm test:generator
 ```
-
-O teste cria um HTML mock e mede sua altura renderizada, validando que o sistema está funcionando corretamente.
 
 ## 📡 API
 
@@ -217,7 +134,7 @@ Gera um SVG baseado na configuração fornecida.
   "defaultTheme": "light",
   "hideTerminalEmojis": false,
   "hideTerminalHeader": false,
-  "userId": "user-id-here", // Para buscar essential configs do Supabase (produção)
+  "userId": "user-id-here", // Para buscar essential configs do Cloudflare D1 (produção)
   "mock": false // true para usar dados mockados
 }
 ```
@@ -235,9 +152,9 @@ Gera um SVG baseado na configuração fornecida.
 
 ## 🔐 Segurança
 
-O svg-generator busca essential configs (API keys, tokens) diretamente do Supabase quando recebe `userId`:
+O svg-generator busca essential configs (API keys, tokens) diretamente do Cloudflare D1 quando recebe `userId`:
 
-1. **Produção**: Sempre enviar `userId` → svg-generator busca do Supabase
+1. **Produção**: Sempre enviar `userId` → svg-generator busca do D1
 2. **Testes**: Pode enviar `essentialConfigs` diretamente no JSON (apenas para desenvolvimento)
 
 O frontend **NUNCA** acessa essential configs diretamente. Tudo fica isolado no svg-generator.
@@ -247,9 +164,9 @@ O frontend **NUNCA** acessa essential configs diretamente. Tudo fica isolado no 
 ### Fluxo de Geração
 
 1. **Request** → Recebe config + `userId` (ou `essentialConfigs` para testes)
-2. **Buscar Configs** → Se `userId` fornecido, busca essential configs do Supabase
+2. **Buscar Configs** → Se `userId` fornecido, busca essential configs do Cloudflare D1
 3. **Configuração** → Valida e normaliza config
-4. **Cálculo de Dimensões** → Calcula altura estimada (sem Puppeteer)
+4. **Cálculo de Dimensões** → Soma `calculateHeight()` de cada plugin habilitado (sem browser)
 5. **Carregamento CSS** → Carrega fonts, tailwind, globals
 6. **Renderização Plugins** → Renderiza plugins ativos usando React
 7. **Criação SVG** → Cria container SVG com foreignObject
@@ -261,7 +178,8 @@ O frontend **NUNCA** acessa essential configs diretamente. Tudo fica isolado no 
 svg-generator/
 ├── src/
 │   ├── db/
-│   │   └── essential-configs.ts  # Busca essential configs do Supabase
+│   │   ├── d1-client.ts          # Cliente REST do Cloudflare D1
+│   │   └── essential-configs.ts  # Busca essential configs (plugin_secrets) do D1
 │   ├── generator/
 │   │   ├── svg-generator.ts      # Gerador principal
 │   │   └── css-loader.tsx       # Carregamento de CSS
@@ -276,29 +194,29 @@ svg-generator/
 └── package.json
 ```
 
-## 🔌 Conexão com Supabase
+## 🔌 Conexão com Cloudflare D1
 
-O svg-generator usa `DATABASE_URL` para conectar diretamente ao PostgreSQL do Supabase:
+O svg-generator roda como serviço Node standalone no Railway, então não tem binding direto ao D1 (isso só existe dentro de Workers/Pages Functions). Por isso ele acessa o D1 via REST API:
 
 ```typescript
-// src/db/essential-configs.ts
-const sql = postgres(process.env.DATABASE_URL, {
-  max: 1,
-  ssl: process.env.DATABASE_URL.includes("supabase") ? "require" : false,
-})
+// src/db/d1-client.ts
+fetch(
+  `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`,
+  {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ sql, params }),
+  }
+)
 ```
+
+`getUserEssentialConfigs()` usa esse cliente para ler a tabela `plugin_secrets` (a mesma usada pelo weeb-dashboard).
 
 **Configuração no Railway:**
 
-1. Adicione a variável `DATABASE_URL` no Railway
-2. Use a mesma connection string do weeb-dashboard
-3. Formato: `postgresql://postgres:[password]@[host]:5432/postgres`
-
-**Exemplo:**
-
-```
-DATABASE_URL=postgresql://postgres.xxxxx:password@aws-0-us-east-1.pooler.supabase.com:6543/postgres
-```
+1. Adicione `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_D1_DATABASE_ID` e `CLOUDFLARE_API_TOKEN`
+2. `CLOUDFLARE_D1_DATABASE_ID` deve ser o mesmo `database_id` do `weebprofile-db` configurado em `weeb-dashboard/wrangler.toml`
+3. `CLOUDFLARE_API_TOKEN` precisa de permissão de leitura/escrita em D1 (Cloudflare Dashboard > My Profile > API Tokens)
 
 ## 🐛 Debug
 
