@@ -182,6 +182,10 @@
   display: inline-flex
 }
 
+.table {
+  display: table
+}
+
 .grid {
   display: grid
 }

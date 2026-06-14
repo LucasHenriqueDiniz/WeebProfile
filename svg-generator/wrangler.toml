@@ -1,0 +1,13 @@
+name = "weeb-svg-generator"
+main = "src/worker.ts"
+compatibility_date = "2025-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# ============================================================
+# D1 Database binding (read-only access to plugin_secrets)
+# Same database as weeb-dashboard/wrangler.toml
+# ============================================================
+[[d1_databases]]
+binding = "DB"
+database_name = "weebprofile-db"
+database_id = "c7eb434d-7ca2-4c5c-bf63-943e38e46158"

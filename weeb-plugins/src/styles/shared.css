@@ -188,6 +188,10 @@
   display: inline-flex
 }
 
+#svg-main .table {
+  display: table
+}
+
 #svg-main .grid {
   display: grid
 }

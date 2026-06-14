@@ -27,8 +27,58 @@ export const IMAGE_OPTIMIZATION = {
 } as const
 
 /**
- * Verifica se estamos no contexto do svg-generator (onde Sharp está disponível)
- * E carrega o sharp de forma assíncrona usando import dinâmico
+ * Verifica se estamos rodando dentro de um Cloudflare Worker
+ * (svg-generator e weeb-dashboard Pages Functions)
+ */
+function isCloudflareWorker(): boolean {
+  return typeof globalThis.navigator !== "undefined" && globalThis.navigator.userAgent === "Cloudflare-Workers"
+}
+
+/**
+ * Otimiza uma imagem usando @cf-wasm/photon (WASM, disponível em Cloudflare Workers)
+ * Retorna null se a otimização falhar (chamador deve usar o buffer original)
+ */
+async function optimizeWithPhoton(
+  buffer: Buffer,
+  options: ImageOptimizationOptions,
+  contentType: string
+): Promise<{ buffer: Buffer; contentType: string } | null> {
+  try {
+    // @ts-ignore - subpath export types aren't resolved with moduleResolution=node (weeb-plugins),
+    // but are resolved with moduleResolution=bundler (svg-generator); @ts-ignore avoids
+    // "unused directive" errors in the latter.
+    const { PhotonImage, SamplingFilter, resize } = await import("@cf-wasm/photon/workerd")
+
+    const inputImage = PhotonImage.new_from_byteslice(new Uint8Array(buffer))
+    const maxWidth = options.maxWidth || 200
+    const maxHeight = options.maxHeight || 200
+
+    const width = inputImage.get_width()
+    const height = inputImage.get_height()
+    const scale = Math.min(maxWidth / width, maxHeight / height, 1)
+    const targetWidth = Math.max(1, Math.round(width * scale))
+    const targetHeight = Math.max(1, Math.round(height * scale))
+
+    const outputImage =
+      scale < 1 ? resize(inputImage, targetWidth, targetHeight, SamplingFilter.Lanczos3) : inputImage
+
+    const isPng = contentType.includes("png")
+    const outputBytes = isPng ? outputImage.get_bytes() : outputImage.get_bytes_jpeg(options.quality || 70)
+
+    inputImage.free()
+    if (outputImage !== inputImage) outputImage.free()
+
+    return {
+      buffer: Buffer.from(outputBytes),
+      contentType: isPng ? "image/png" : "image/jpeg",
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Carrega o sharp de forma assíncrona usando import dinâmico (apenas Node.js)
  */
 async function loadSharp(): Promise<any | null> {
   // Verificar se estamos em um ambiente Node.js
@@ -44,6 +94,43 @@ async function loadSharp(): Promise<any | null> {
   } catch {
     return null
   }
+}
+
+/**
+ * Otimiza um buffer de imagem usando Photon (Workers) ou Sharp (Node), com
+ * fallback gracioso para o buffer original caso nenhum esteja disponível.
+ */
+async function optimizeBuffer(
+  buffer: Buffer,
+  options: ImageOptimizationOptions,
+  contentType: string
+): Promise<{ buffer: Buffer; contentType: string }> {
+  if (isCloudflareWorker()) {
+    const photonResult = await optimizeWithPhoton(buffer, options, contentType)
+    if (photonResult) return photonResult
+    return { buffer, contentType }
+  }
+
+  try {
+    const sharp = await loadSharp()
+    if (sharp && typeof sharp === "function") {
+      const optimizedBuffer = await sharp(buffer)
+        .resize(options.maxWidth || 200, options.maxHeight || 200, {
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .jpeg({ quality: options.quality || 70, mozjpeg: true })
+        .toBuffer()
+
+      return { buffer: optimizedBuffer, contentType: "image/jpeg" }
+    }
+  } catch (error) {
+    if (error instanceof Error && !error.message.includes("Cannot find module")) {
+      console.warn(`⚠️  Falha ao otimizar imagem, usando versão original:`, error)
+    }
+  }
+
+  return { buffer, contentType }
 }
 
 /**
@@ -106,30 +193,13 @@ export async function urlToBase64(
             const buffer = Buffer.from(arrayBuffer)
             
             // Aplicar otimização se necessário
-            if (options) {
-              try {
-                const sharp = await loadSharp()
-                if (sharp && typeof sharp === "function") {
-                  const optimizedBuffer = await sharp(buffer)
-                    .resize(options.maxWidth || 200, options.maxHeight || 200, {
-                      fit: "inside",
-                      withoutEnlargement: true,
-                    })
-                    .jpeg({ quality: options.quality || 70, mozjpeg: true })
-                    .toBuffer()
+            const spotifyContentType = spotifyResponse.headers.get("content-type") || "image/jpeg"
+            const { buffer: optimizedBuffer, contentType: optimizedContentType } = options
+              ? await optimizeBuffer(buffer, options, spotifyContentType)
+              : { buffer, contentType: spotifyContentType }
 
-                  const base64 = optimizedBuffer.toString("base64")
-                  const contentType = spotifyResponse.headers.get("content-type") || "image/jpeg"
-                  return `data:${contentType};base64,${base64}`
-                }
-              } catch (error) {
-                // Usar versão original se Sharp falhar
-              }
-            }
-            
-            const base64 = buffer.toString("base64")
-            const contentType = spotifyResponse.headers.get("content-type") || "image/jpeg"
-            return `data:${contentType};base64,${base64}`
+            const base64 = optimizedBuffer.toString("base64")
+            return `data:${optimizedContentType};base64,${base64}`
           }
         }
       } catch (fallbackError) {
@@ -144,37 +214,14 @@ export async function urlToBase64(
 
     const arrayBuffer = await response.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
+    const responseContentType = response.headers.get("content-type") || "image/jpeg"
 
-    // Se temos opções de otimização, tentar usar Sharp para otimizar a imagem
-    if (options) {
-      try {
-        // Tentar carregar Sharp usando import dinâmico
-        const sharp = await loadSharp()
-        if (sharp && typeof sharp === "function") {
-          const optimizedBuffer = await sharp(buffer)
-            .resize(options.maxWidth || 200, options.maxHeight || 200, {
-              fit: "inside",
-              withoutEnlargement: true,
-            })
-            .jpeg({ quality: options.quality || 70, mozjpeg: true })
-            .toBuffer()
+    // Se temos opções de otimização, otimizar via Photon (Workers) ou Sharp (Node)
+    const { buffer: finalBuffer, contentType } = options
+      ? await optimizeBuffer(buffer, options, responseContentType)
+      : { buffer, contentType: responseContentType }
 
-          const base64 = optimizedBuffer.toString("base64")
-          const contentType = response.headers.get("content-type") || "image/jpeg"
-          return `data:${contentType};base64,${base64}`
-        }
-      } catch (error) {
-        // Silenciosamente usar versão original se Sharp não estiver disponível ou falhar
-        // Só logar se for um erro inesperado (não relacionado a Sharp não estar disponível)
-        if (error instanceof Error && !error.message.includes("Cannot find module")) {
-          console.warn(`⚠️  Falha ao otimizar imagem, usando versão original:`, error)
-        }
-      }
-    }
-
-    // Conversão normal para base64
-    const base64 = buffer.toString("base64")
-    const contentType = response.headers.get("content-type") || "image/jpeg"
+    const base64 = finalBuffer.toString("base64")
     return `data:${contentType};base64,${base64}`
   } catch (error: any) {
     if (error.name === "AbortError") {

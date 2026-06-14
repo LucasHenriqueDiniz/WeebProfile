@@ -43,7 +43,7 @@ const RETRY_CONFIG = {
   maxRetries: 3,
   initialDelayMs: 1000, // 1 second
   maxDelayMs: 4000, // 4 seconds
-  timeoutMs: 60000, // 60 seconds (give Railway time to wake up)
+  timeoutMs: 60000, // 60 seconds (give the Worker time to cold start)
 }
 
 /**
@@ -104,7 +104,7 @@ async function retryWithBackoff<T>(fn: () => Promise<T>, attempt: number = 1): P
 /**
  * Gera SVG usando o svg-generator HTTP service
  *
- * Inclui retry automático com backoff exponencial para lidar com cold starts do Railway.
+ * Inclui retry automático com backoff exponencial para lidar com cold starts do Worker.
  *
  * @param config - Configuração do SVG
  * @returns Resultado da geração
@@ -137,7 +137,10 @@ export async function generateSvgViaHttpService(config: GenerateSvgRequest): Pro
         console.error(`📤 [CLIENT] Error response:`, error)
 
         // DB unreachable errors (503) are NOT retryable - it's a configuration/network issue
-        if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "D1_API_UNREACHABLE")) {
+        if (
+          response.status === 503 &&
+          (error.code === "DATABASE_UNREACHABLE" || error.code === "D1_API_UNREACHABLE" || error.code === "D1_UNREACHABLE")
+        ) {
           const dbError = new Error(error.message || "Generator não conseguiu acessar o banco de dados")
           ;(dbError as any).code = error.code
           ;(dbError as any).details = error.details

@@ -1,9 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/cron/generate-svgs",
-      "schedule": "0 * * * *"
-    }
-  ]
-}
-

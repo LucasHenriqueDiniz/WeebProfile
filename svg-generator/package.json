@@ -7,19 +7,16 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "node scripts/build-ignore-errors.js",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
     "build:tsc": "tsc --skipLibCheck",
     "build:check": "tsc",
-    "dev": "tsc --watch",
-    "dev:server": "tsx src/server.ts",
-    "start": "node scripts/start.js",
-    "start:dev": "tsx src/server.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "echo \"Tests coming soon\"",
@@ -34,23 +31,21 @@
   },
   "dependencies": {
     "@weeb/weeb-plugins": "workspace:*",
-    "dotenv": "^16.4.5",
     "react": "^19",
-    "react-dom": "^19",
-    "server-only": "^0.0.1",
-    "sharp": "^0.33.5"
+    "react-dom": "^19"
   },
   "peerDependencies": {
     "@weeb/weeb-plugins": "workspace:*"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260609.1",
     "@types/node": "^20.11.18",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/sharp": "^0.31.1",
     "playwright-core": "^1.40.0",
     "tsx": "^4.20.6",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "wrangler": "^4.98.0"
   },
   "engines": {
     "node": ">=20.0.0",

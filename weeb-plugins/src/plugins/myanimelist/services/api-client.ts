@@ -8,13 +8,25 @@ import Bottleneck from 'bottleneck'
 // Setup rate limiting: 2 requests por segundo, reservatório de 60 requests
 // Limite da API Jikan: 3 requests por segundo, 60 por minuto
 // Vamos usar 2 por segundo para ter margem de segurança
-const limiter = new Bottleneck({
-  maxConcurrent: 2,
-  minTime: 500, // 500ms entre requests (2 por segundo)
-  reservoir: 60,
-  reservoirRefreshAmount: 60,
-  reservoirRefreshInterval: 60 * 1000, // Recarrega a cada 60 segundos
-})
+//
+// Criado de forma lazy (não no escopo global do módulo): o construtor do
+// Bottleneck com `reservoir`/`reservoirRefreshInterval` agenda um timer, e
+// Cloudflare Workers proíbem operações assíncronas (incl. timers) no escopo
+// global - apenas dentro de um handler de request.
+let _limiter: Bottleneck | undefined
+
+function getLimiter(): Bottleneck {
+  if (!_limiter) {
+    _limiter = new Bottleneck({
+      maxConcurrent: 2,
+      minTime: 500, // 500ms entre requests (2 por segundo)
+      reservoir: 60,
+      reservoirRefreshAmount: 60,
+      reservoirRefreshInterval: 60 * 1000, // Recarrega a cada 60 segundos
+    })
+  }
+  return _limiter
+}
 
 const BASE_URL = 'https://api.jikan.moe/v4'
 const MAX_RETRIES = 3
@@ -34,7 +46,7 @@ export async function jikanGet<T>(endpoint: string, retryCount = 0): Promise<T> 
   const url = `${BASE_URL}${endpoint}`
   
   try {
-    const response = await limiter.schedule(async () => {
+    const response = await getLimiter().schedule(async () => {
       // Timeout de 30 segundos
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 30000)
@@ -103,6 +115,6 @@ export async function jikanGet<T>(endpoint: string, retryCount = 0): Promise<T> 
   }
 }
 
-export { limiter }
+export { getLimiter }
 
 

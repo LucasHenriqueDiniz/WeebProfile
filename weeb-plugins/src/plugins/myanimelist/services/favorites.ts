@@ -10,7 +10,7 @@ import type {
   FullAnimeFavorite,
   FullMangaFavorite,
 } from "../types"
-import { jikanGet, limiter } from "./api-client"
+import { jikanGet, getLimiter } from "./api-client"
 import { urlToBase64, IMAGE_OPTIMIZATION } from "../../../utils/image-to-base64"
 import type { MalProfileResponse } from "./profile"
 import type { MyAnimeListConfig } from "../types"
@@ -221,7 +221,7 @@ export async function getFullFavorites(
 
       try {
         console.log(`  [${index + 1}/${basicFavorites.anime.length}] Buscando dados completos: ${item.title}`)
-        const response = await limiter.schedule(() =>
+        const response = await getLimiter().schedule(() =>
           jikanGet<{
             data: {
               episodes: number | null
@@ -295,7 +295,7 @@ export async function getFullFavorites(
 
       try {
         console.log(`  [${index + 1}/${basicFavorites.manga.length}] Buscando dados completos: ${item.title}`)
-        const response = await limiter.schedule(() =>
+        const response = await getLimiter().schedule(() =>
           jikanGet<{
             data: {
               chapters: number | null

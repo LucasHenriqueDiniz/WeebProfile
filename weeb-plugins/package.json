@@ -52,6 +52,7 @@
     }
   },
   "dependencies": {
+    "@cf-wasm/photon": "^0.3.6",
     "@octokit/graphql": "^8.1.1",
     "@octokit/rest": "^21.0.2",
     "@types/glob": "^9.0.0",
@@ -74,7 +75,7 @@
     "typescript": "^5.4.0"
   },
   "scripts": {
-    "build": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && tsup && pnpm copy-shared-css && pnpm copy-fonts-assets && pnpm verify-no-relative-imports",
+    "build": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && pnpm generate-embedded-assets && tsup && pnpm verify-no-relative-imports",
     "clean": "tsx scripts/clean-compiled-files.ts",
     "validate": "tsx scripts/validate-plugins.ts",
     "validate-previews": "tsx scripts/validate-previews.ts --warn-only",
@@ -86,14 +87,13 @@
     "generate-tailwind-css": "tsx scripts/generate-tailwind-css.ts",
     "generate-style-index": "tsx scripts/generate-style-index.ts",
     "generate-duolingo-assets": "tsx scripts/generate-duolingo-assets.ts",
+    "generate-embedded-assets": "tsx scripts/generate-embedded-assets.ts",
     "verify-no-relative-imports": "node scripts/verify-no-relative-imports.js",
-    "copy-shared-css": "tsx scripts/copy-shared-css.ts",
-    "copy-fonts-assets": "tsx scripts/copy-fonts-assets.ts",
     "dev": "tsc --watch --project tsconfig.dev.json",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "create-plugin": "tsx scripts/create-plugin.ts",
     "update-lastfm-mock": "tsx scripts/update-lastfm-mock-data.ts",
-    "prepublishOnly": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index"
+    "prepublishOnly": "pnpm validate && pnpm generate-metadata && pnpm generate-types && pnpm generate-section-previews && pnpm generate-tailwind-css && pnpm generate-style-index && pnpm generate-embedded-assets"
   }
 }

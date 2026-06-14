@@ -1,4 +1,4 @@
-import { queryD1 } from "./d1-client.js"
+import type { D1Database } from "@cloudflare/workers-types"
 
 export interface EssentialConfigs {
   [pluginName: string]:
@@ -16,18 +16,19 @@ interface PluginSecretRow {
 
 /**
  * Fetches a user's plugin secrets (API keys, tokens, etc.) from the
- * `plugin_secrets` table in Cloudflare D1.
+ * `plugin_secrets` table in Cloudflare D1, via the Worker's D1 binding.
  */
-export async function getUserEssentialConfigs(userId: string): Promise<EssentialConfigs> {
+export async function getUserEssentialConfigs(db: D1Database, userId: string): Promise<EssentialConfigs> {
   if (!userId) return {}
 
   try {
-    const rows = await queryD1<PluginSecretRow>("SELECT plugin, key, value FROM plugin_secrets WHERE user_id = ?", [
-      userId,
-    ])
+    const { results } = await db
+      .prepare("SELECT plugin, key, value FROM plugin_secrets WHERE user_id = ?")
+      .bind(userId)
+      .all<PluginSecretRow>()
 
     const result: EssentialConfigs = {}
-    for (const row of rows) {
+    for (const row of results) {
       const pluginName = (row.plugin || "").toLowerCase()
       const key = (row.key || "").toLowerCase()
       if (!pluginName || !key) continue
