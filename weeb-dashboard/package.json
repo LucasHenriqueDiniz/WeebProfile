@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "dev:pages": "wrangler pages dev --d1 DB=weebprofile-db dist",
+    "dev:pages": "wrangler pages dev dist",
     "build:deps": "pnpm --filter @weeb/weeb-plugins build",
     "build": "pnpm build:deps && vite build",
     "build:only": "vite build",

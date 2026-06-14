@@ -41,6 +41,9 @@ pnpm-debug.log*
 # Vercel
 .vercel
 
+# Cloudflare Workers/Pages local dev state
+.wrangler
+
 # VS Code
 .vscode
 
