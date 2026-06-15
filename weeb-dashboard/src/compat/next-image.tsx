@@ -22,10 +22,28 @@ type ImageProps = {
 }
 
 const Image = React.forwardRef<HTMLImageElement, ImageProps>(
-  ({ src, alt, width, height, fill, className, style, priority: _p, unoptimized: _u, sizes: _s, quality: _q, placeholder: _ph, blurDataURL: _b, ...rest }, ref) => {
+  (
+    {
+      src,
+      alt,
+      width,
+      height,
+      fill,
+      className,
+      style,
+      priority: _p,
+      unoptimized: _u,
+      sizes: _s,
+      quality: _q,
+      placeholder: _ph,
+      blurDataURL: _b,
+      ...rest
+    },
+    ref
+  ) => {
     const imgStyle: React.CSSProperties = fill
       ? { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", ...style }
-      : style ?? {}
+      : (style ?? {})
 
     return (
       <img

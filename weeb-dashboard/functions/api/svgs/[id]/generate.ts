@@ -19,10 +19,18 @@ function sleep(ms: number): Promise<void> {
 
 function isRetryableError(error: any): boolean {
   if (!error) return false
-  const msg = (error.message?.toLowerCase() || String(error).toLowerCase())
-  const code = (error.code?.toLowerCase() || "")
-  return ["econnreset", "econnrefused", "etimedout", "timeout", "aborted", "network", "fetch failed", "socket hang up"]
-    .some((p) => msg.includes(p) || code.includes(p))
+  const msg = error.message?.toLowerCase() || String(error).toLowerCase()
+  const code = error.code?.toLowerCase() || ""
+  return [
+    "econnreset",
+    "econnrefused",
+    "etimedout",
+    "timeout",
+    "aborted",
+    "network",
+    "fetch failed",
+    "socket hang up",
+  ].some((p) => msg.includes(p) || code.includes(p))
 }
 
 async function retryWithBackoff<T>(fn: () => Promise<T>, attempt = 1): Promise<T> {
@@ -50,8 +58,11 @@ async function generateSvgViaHttpService(config: Record<string, any>, svgGenerat
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: "Unknown error" })) as any
-        if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "SUPABASE_DB_DNS_FAILED")) {
+        const error = (await response.json().catch(() => ({ error: "Unknown error" }))) as any
+        if (
+          response.status === 503 &&
+          (error.code === "DATABASE_UNREACHABLE" || error.code === "SUPABASE_DB_DNS_FAILED")
+        ) {
           const dbError = new Error(error.message || "Generator could not reach database")
           ;(dbError as any).code = error.code
           ;(dbError as any).details = error.details
@@ -86,9 +97,9 @@ async function generateSvgViaHttpService(config: Record<string, any>, svgGenerat
 }
 
 function convertSvgToPluginsConfig(svg: Record<string, any>) {
-  const svgPluginsConfig = (typeof svg.pluginsConfig === "string"
-    ? JSON.parse(svg.pluginsConfig)
-    : svg.pluginsConfig) || {} as Record<string, any>
+  const svgPluginsConfig =
+    (typeof svg.pluginsConfig === "string" ? JSON.parse(svg.pluginsConfig) : svg.pluginsConfig) ||
+    ({} as Record<string, any>)
 
   const validPluginNames = new Set(Object.keys(PLUGINS_METADATA))
   const enabledPlugins: Record<string, any> = {}
@@ -131,7 +142,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
 
     let force = false
     try {
-      const body = await request.clone().json() as any
+      const body = (await request.clone().json()) as any
       force = body.force === true
     } catch {
       // ignore — force remains false
@@ -166,8 +177,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
     // Cooldown check (20 minutes), unless forced
     const COOLDOWN_MINUTES = 20
     if (!force && currentSvg.lastGeneratedAt) {
-      const minutesSinceLastGeneration =
-        (Date.now() - new Date(currentSvg.lastGeneratedAt).getTime()) / (1000 * 60)
+      const minutesSinceLastGeneration = (Date.now() - new Date(currentSvg.lastGeneratedAt).getTime()) / (1000 * 60)
       if (minutesSinceLastGeneration < COOLDOWN_MINUTES) {
         const remainingMinutes = Math.ceil(COOLDOWN_MINUTES - minutesSinceLastGeneration)
         return Response.json(
@@ -182,17 +192,15 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       }
     }
 
-    await db
-      .update(svgs)
-      .set({ status: "generating", forceRegenerate: force })
-      .where(eq(svgs.id, id))
+    await db.update(svgs).set({ status: "generating", forceRegenerate: force }).where(eq(svgs.id, id))
 
     try {
       const { plugins, pluginsOrder } = convertSvgToPluginsConfig(currentSvg as any)
 
-      const uiConfig = (typeof (currentSvg as any).uiConfig === "string"
-        ? JSON.parse((currentSvg as any).uiConfig)
-        : (currentSvg as any).uiConfig) || {}
+      const uiConfig =
+        (typeof (currentSvg as any).uiConfig === "string"
+          ? JSON.parse((currentSvg as any).uiConfig)
+          : (currentSvg as any).uiConfig) || {}
       const terminalConfigs = getTerminalConfigs(uiConfig)
 
       const requestConfig = {
@@ -211,7 +219,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       }
 
       const svgGeneratorUrl = env.SVG_GENERATOR_URL || "http://localhost:3001"
-      const result = await generateSvgViaHttpService(requestConfig, svgGeneratorUrl) as any
+      const result = (await generateSvgViaHttpService(requestConfig, svgGeneratorUrl)) as any
       const svgContent = result.svg
 
       // Save to Supabase Storage
@@ -226,7 +234,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         const uploadResponse = await fetch(uploadUrl, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${serviceRoleKey}`,
+            Authorization: `Bearer ${serviceRoleKey}`,
             "Content-Type": "image/svg+xml",
             "x-upsert": "true",
           },
@@ -307,10 +315,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         )
       }
 
-      return Response.json(
-        { error: "Failed to generate SVG", message: errorMessage },
-        { status: 500 }
-      )
+      return Response.json({ error: "Failed to generate SVG", message: errorMessage }, { status: 500 })
     }
   } catch (e) {
     return serverError(e)

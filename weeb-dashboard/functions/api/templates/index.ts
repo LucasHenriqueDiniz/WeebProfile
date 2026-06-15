@@ -125,7 +125,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
     const userId = await getAuthUserId(request, env)
     if (!userId) return unauthorized()
 
-    const body = await request.json() as Record<string, any>
+    const body = (await request.json()) as Record<string, any>
     const {
       name,
       description,

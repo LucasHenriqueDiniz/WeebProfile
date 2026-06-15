@@ -48,7 +48,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
     const userId = await getAuthUserId(request, env)
     if (!userId) return unauthorized()
 
-    const body = await request.json() as Record<string, any>
+    const body = (await request.json()) as Record<string, any>
     const {
       name,
       pluginsConfig = {},
@@ -67,10 +67,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
 
     const db = getDb(env)
 
-    const [svgCount] = await db
-      .select({ count: count() })
-      .from(svgs)
-      .where(eq(svgs.userId, userId))
+    const [svgCount] = await db.select({ count: count() }).from(svgs).where(eq(svgs.userId, userId))
 
     if (svgCount.count >= MAX_SVGS_FREE_TIER) {
       return Response.json(

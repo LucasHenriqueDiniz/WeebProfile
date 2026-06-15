@@ -11,7 +11,7 @@ export function useTranslations(namespace?: string) {
   const { t, i18n } = useTranslation()
 
   const resolve = (key: string, params?: Record<string, unknown>): string =>
-    namespace ? t(`${namespace}.${key}`, params as any) as string : t(key, params as any) as string
+    namespace ? (t(`${namespace}.${key}`, params as any) as string) : (t(key, params as any) as string)
 
   /**
    * t.raw: returns the raw translation value (object/array) from the i18next store.

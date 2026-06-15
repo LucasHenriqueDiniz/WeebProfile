@@ -17,10 +17,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
     const db = getDb(env)
 
     // Fetch all essential config rows for the user
-    const configs = await db
-      .select()
-      .from(essentialConfigs)
-      .where(eq(essentialConfigs.userId, userId))
+    const configs = await db.select().from(essentialConfigs).where(eq(essentialConfigs.userId, userId))
 
     // Build nested structure: { plugin: { key: value } }
     const rawConfigs: Record<string, Record<string, string>> = {}

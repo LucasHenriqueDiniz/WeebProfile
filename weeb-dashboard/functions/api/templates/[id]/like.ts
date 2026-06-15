@@ -26,10 +26,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       return Response.json({ error: "Template already liked" }, { status: 400 })
     }
 
-    const [newLike] = await db
-      .insert(templateLikes)
-      .values({ userId, templateId })
-      .returning()
+    const [newLike] = await db.insert(templateLikes).values({ userId, templateId }).returning()
 
     return Response.json({ like: newLike }, { status: 201 })
   } catch (e) {
