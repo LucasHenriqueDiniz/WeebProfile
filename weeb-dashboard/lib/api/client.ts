@@ -46,7 +46,7 @@ export async function apiRequest<T = any>(
     : url
 
   // Debug: log da URL que está sendo chamada
-  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  if (typeof window !== 'undefined' && import.meta.env.DEV) {
     console.log('[API] Requesting:', absoluteUrl)
   }
 

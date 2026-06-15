@@ -6,14 +6,14 @@
  */
 
 const DEBUG_WIZARD =
-  process.env.NODE_ENV !== "production" &&
-  (process.env.NEXT_PUBLIC_DEBUG_WIZARD === "1" ||
+  import.meta.env.DEV &&
+  (import.meta.env.VITE_DEBUG_WIZARD === "1" ||
     (typeof window !== "undefined" && localStorage.getItem("debug:wizard") === "1"))
 
 /**
  * Debug logger for wizard-related logs
  * 
- * Enable in dev: Set NEXT_PUBLIC_DEBUG_WIZARD=1 or localStorage.setItem('debug:wizard', '1')
+ * Enable in dev: Set VITE_DEBUG_WIZARD=1 or localStorage.setItem('debug:wizard', '1')
  * 
  * @example
  * debugWizard('Plugin enabled:', pluginName)
