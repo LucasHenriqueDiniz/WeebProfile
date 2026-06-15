@@ -164,7 +164,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
     const now = new Date()
     const db = getDb(env)
     const svgGeneratorUrl = env.SVG_GENERATOR_URL || "http://localhost:3001"
-    const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseUrl = env.SUPABASE_URL
     const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY
 
     // Reset SVGs stuck in "generating" for more than 30 minutes

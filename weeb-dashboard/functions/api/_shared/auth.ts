@@ -3,9 +3,9 @@ import { createClerkClient } from "@clerk/backend"
 export interface CloudflareEnv {
   DB: D1Database
   CLERK_SECRET_KEY: string
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: string
+  CLERK_PUBLISHABLE_KEY: string
   SUPABASE_SERVICE_ROLE_KEY?: string
-  NEXT_PUBLIC_SUPABASE_URL?: string
+  SUPABASE_URL?: string
   SVG_GENERATOR_URL?: string
   CRON_SECRET?: string
   INTERNAL_SECRET?: string
@@ -15,7 +15,7 @@ export async function getAuthUserId(request: Request, env: CloudflareEnv): Promi
   try {
     const clerk = createClerkClient({ secretKey: env.CLERK_SECRET_KEY })
     const requestState = await clerk.authenticateRequest(request, {
-      publishableKey: env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+      publishableKey: env.CLERK_PUBLISHABLE_KEY,
     })
     return requestState.toAuth()?.userId ?? null
   } catch {

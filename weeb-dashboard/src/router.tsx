@@ -1,6 +1,7 @@
 import { createRouter, createRoute, createRootRoute, Outlet } from "@tanstack/react-router"
 import { lazy, Suspense } from "react"
 import SimpleLoading from "@/components/loading/SimpleLoading"
+import ErrorScreen from "@/components/loading/ErrorScreen"
 
 function Lazy(factory: () => Promise<{ default: React.ComponentType<any> }>) {
   const Comp = lazy(factory)
@@ -27,6 +28,12 @@ const TemplateDetailPage = Lazy(() => import("./routes/templates.$id"))
 // Root layout
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
+  notFoundComponent: () => (
+    <ErrorScreen title="404" message="A página que você está procurando não foi encontrada." showHomeButton />
+  ),
+  errorComponent: () => (
+    <ErrorScreen title="ERRO" message="Algo deu errado. Tente novamente mais tarde." showHomeButton />
+  ),
 })
 
 const homeRoute = createRoute({

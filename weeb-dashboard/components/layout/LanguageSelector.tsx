@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import { useTranslations, useLocale } from "@/i18n/use-translations"
-import { usePathname, useRouter } from "@/i18n/navigation"
 import {
   Dialog,
   DialogContent,
@@ -23,13 +23,10 @@ interface LanguageSelectorProps {
 
 export function LanguageSelector({ open, onOpenChange }: LanguageSelectorProps) {
   const t = useTranslations()
-  const router = useRouter()
-  const pathname = usePathname()
+  const { i18n } = useTranslation()
   const locale = useLocale() as Locale
   const [searchQuery, setSearchQuery] = useState("")
 
-  // Get current locale from next-intl's useLocale hook
-  // usePathname returns pathname WITHOUT locale prefix (e.g., "/dashboard" not "/pt/dashboard")
   const currentLocale = locale
 
   // Filter locales based on search
@@ -47,19 +44,7 @@ export function LanguageSelector({ open, onOpenChange }: LanguageSelectorProps) 
   const handleLocaleChange = (newLocale: string) => {
     if (localeComingSoon[newLocale]) return // Don't allow selection of coming soon locales
 
-    // Get current pathname without locale (from next-intl's usePathname)
-    // e.g., if you're on /pt/dashboard, pathname will be "/dashboard"
-    const targetPath = pathname || "/"
-    
-    // Build new path with new locale
-    // pathname already doesn't include locale, so we just prepend the new locale
-    const newPath = targetPath === "/" 
-      ? `/${newLocale}` 
-      : `/${newLocale}${targetPath}`
-    
-    // Use window.location for a clean navigation that ensures locale is set correctly
-    // This prevents any issues with locale duplication that might occur with router.push
-    window.location.href = newPath
+    void i18n.changeLanguage(newLocale)
     onOpenChange(false)
   }
 

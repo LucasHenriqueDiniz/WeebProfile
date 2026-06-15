@@ -13,7 +13,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit && tsc -p functions/tsconfig.json --noEmit",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate:local": "wrangler d1 migrations apply weebprofile-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply weebprofile-db --remote",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

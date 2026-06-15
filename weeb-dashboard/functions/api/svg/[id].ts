@@ -29,7 +29,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params }
       )
     }
 
-    const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseUrl = env.SUPABASE_URL
     const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY
 
     if (!supabaseUrl || !serviceRoleKey) {

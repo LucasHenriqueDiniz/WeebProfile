@@ -129,7 +129,7 @@ export const templateLikes = sqliteTable(
   {
     id: uuid("id").primaryKey(),
     userId: text("user_id").notNull(),
-    templateId: text("template_id").notNull(),
+    templateId: text("template_id").notNull().references(() => templates.id, { onDelete: "cascade" }),
     createdAt: text("created_at").$defaultFn(() => new Date().toISOString()).notNull(),
   },
   (table) => ({

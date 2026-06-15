@@ -215,7 +215,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       const svgContent = result.svg
 
       // Save to Supabase Storage
-      const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseUrl = env.SUPABASE_URL
       const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY
       let storagePath = ""
       let storageUrl = ""

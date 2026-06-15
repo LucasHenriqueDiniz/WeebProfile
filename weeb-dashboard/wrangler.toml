@@ -18,12 +18,12 @@ database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
 # must be set via: wrangler pages secret put <KEY>
 # ============================================================
 [vars]
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = ""
-NEXT_PUBLIC_SUPABASE_URL = ""
+CLERK_PUBLISHABLE_KEY = ""
+SUPABASE_URL = ""
 SVG_GENERATOR_URL = "https://weeb-svg-generator.workers.dev"
 
 [env.preview]
-vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "" }
+vars = { CLERK_PUBLISHABLE_KEY = "" }
 
 [[env.preview.d1_databases]]
 binding = "DB"
