@@ -11,6 +11,7 @@ pages_build_output_dir = "dist"
 binding = "DB"
 database_name = "weebprofile-db"
 database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+migrations_dir = "drizzle"
 
 # ============================================================
 # Environment variables

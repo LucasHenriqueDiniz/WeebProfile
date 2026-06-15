@@ -41,3 +41,6 @@ out/
 build/
 dist/
 .cursor/
+
+# wrangler local state
+.wrangler/
