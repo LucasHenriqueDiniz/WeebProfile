@@ -30,7 +30,7 @@ SVG_GENERATOR_URL = "https://weeb-svg-generator.lucas-hdo.workers.dev"
 R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev"
 
 [env.preview]
-vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA", R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev" }
+vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA", R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev", SVG_GENERATOR_URL = "https://weeb-svg-generator.lucas-hdo.workers.dev" }
 
 [[env.preview.d1_databases]]
 binding = "DB"

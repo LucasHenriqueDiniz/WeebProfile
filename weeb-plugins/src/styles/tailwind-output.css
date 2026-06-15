@@ -68,6 +68,10 @@
   margin-bottom: 0.375rem
 }
 
+.mb-0 {
+  margin-bottom: 0px
+}
+
 .mb-0\.5 {
   margin-bottom: 0.125rem
 }
@@ -114,6 +118,10 @@
 
 .mr-2 {
   margin-right: 0.5rem
+}
+
+.mt-0 {
+  margin-top: 0px
 }
 
 .mt-0\.5 {
@@ -246,6 +254,10 @@
   height: 1rem
 }
 
+.h-5 {
+  height: 1.25rem
+}
+
 .h-6 {
   height: 1.5rem
 }
@@ -346,6 +358,10 @@
   width: 1rem
 }
 
+.w-5 {
+  width: 1.25rem
+}
+
 .w-6 {
   width: 1.5rem
 }
@@ -409,6 +425,12 @@
 
 .shrink-0 {
   flex-shrink: 0
+}
+
+.scale-110 {
+  --tw-scale-x: 1.1;
+  --tw-scale-y: 1.1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
 }
 
 .transform {
@@ -537,6 +559,10 @@
   justify-content: space-evenly
 }
 
+.gap-0 {
+  gap: 0px
+}
+
 .gap-0\.5 {
   gap: 0.125rem
 }
@@ -634,6 +660,10 @@
   white-space: pre-wrap
 }
 
+.text-wrap {
+  text-wrap: wrap
+}
+
 .text-nowrap {
   text-wrap: nowrap
 }
@@ -725,6 +755,11 @@
   border-color: rgb(239 68 68 / var(--tw-border-opacity, 1))
 }
 
+.border-white {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1))
+}
+
 .border-white\/30 {
   border-color: rgb(255 255 255 / 0.3)
 }
@@ -779,6 +814,11 @@
   background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1))
 }
 
+.bg-green-950 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(5 46 22 / var(--tw-bg-opacity, 1))
+}
+
 .bg-orange-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(255 247 237 / var(--tw-bg-opacity, 1))
@@ -787,6 +827,11 @@
 .bg-red-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1))
+}
+
+.bg-red-950 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
 }
 
 .bg-red-950\/20 {
@@ -862,6 +907,11 @@
   padding-right: 1rem
 }
 
+.py-0 {
+  padding-top: 0px;
+  padding-bottom: 0px
+}
+
 .py-0\.5 {
   padding-top: 0.125rem;
   padding-bottom: 0.125rem
@@ -885,6 +935,10 @@
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem
+}
+
+.pb-0 {
+  padding-bottom: 0px
 }
 
 .pb-0\.5 {
@@ -1094,6 +1148,11 @@
   color: rgb(31 41 55 / var(--tw-text-opacity, 1))
 }
 
+.text-green-400 {
+  --tw-text-opacity: 1;
+  color: rgb(74 222 128 / var(--tw-text-opacity, 1))
+}
+
 .text-green-500 {
   --tw-text-opacity: 1;
   color: rgb(34 197 94 / var(--tw-text-opacity, 1))
@@ -1193,6 +1252,10 @@
 .text-yellow-800 {
   --tw-text-opacity: 1;
   color: rgb(133 77 14 / var(--tw-text-opacity, 1))
+}
+
+.underline {
+  text-decoration-line: underline
 }
 
 .no-underline {
