@@ -1,12 +1,12 @@
 import { createRouter, createRoute, createRootRoute, Outlet } from "@tanstack/react-router"
 import { lazy, Suspense } from "react"
-import SimpleLoading from "@/components/loading/SimpleLoading"
+import LoadingScreen from "@/components/loading/LoadingScreen"
 
 function Lazy(factory: () => Promise<{ default: React.ComponentType<any> }>) {
   const Comp = lazy(factory)
   return function LazyRoute() {
     return (
-      <Suspense fallback={<SimpleLoading />}>
+      <Suspense fallback={<LoadingScreen />}>
         <Comp />
       </Suspense>
     )

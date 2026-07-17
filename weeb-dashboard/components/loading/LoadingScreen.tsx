@@ -2,14 +2,13 @@
 
 import { motion } from "framer-motion"
 import { LoadingAnimation } from "./LoadingAnimation"
-import { useTranslations } from "@/i18n/use-translations"
+
+// Loading text is hardcoded (not i18n) because this component can render as the router's
+// Suspense fallback, before i18next's HTTP backend has finished fetching translations.
+const LOADING_TEXT = "Carregando..."
 
 // Component that renders the actual loading UI
 export default function LoadingScreen() {
-  // This component is only used within [locale] routes where NextIntlClientProvider is available
-  // For root-level loading.tsx, use SimpleLoading instead
-  const t = useTranslations("loading")
-  const loadingText = t("loading")
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#050814] relative overflow-hidden">
       {/* Pixel grid background */}
@@ -65,7 +64,7 @@ export default function LoadingScreen() {
             }}
             className="text-cyan-400 font-mono text-sm tracking-wider"
           >
-            {loadingText}
+            {LOADING_TEXT}
           </motion.div>
           <div className="flex gap-1">
             {[0, 1, 2].map((i) => (

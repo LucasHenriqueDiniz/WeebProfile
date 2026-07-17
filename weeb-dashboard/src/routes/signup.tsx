@@ -3,7 +3,7 @@ import { useRouter } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { SignUp } from "@clerk/react"
 import { Link } from "@/i18n/navigation"
-import SimpleLoading from "@/components/loading/SimpleLoading"
+import LoadingScreen from "@/components/loading/LoadingScreen"
 import { AuthDecoration } from "@/components/auth/AuthDecoration"
 import { clerkAppearance } from "@/components/auth/clerk-appearance"
 
@@ -20,7 +20,7 @@ export default function SignupPage() {
 
   // Mostrar loading enquanto verifica autenticação
   if (authLoading) {
-    return <SimpleLoading />
+    return <LoadingScreen />
   }
 
   return (
