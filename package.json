@@ -26,8 +26,8 @@
     "lint": "pnpm --filter weeb-dashboard lint . && pnpm --filter @weeb/weeb-plugins lint && pnpm --filter @weeb/svg-generator lint",
     "lint:fix": "pnpm --filter weeb-dashboard lint . --fix && pnpm --filter @weeb/weeb-plugins lint --fix && pnpm --filter @weeb/svg-generator lint --fix",
     "typecheck": "pnpm --filter weeb-dashboard typecheck && pnpm --filter @weeb/weeb-plugins typecheck && pnpm --filter @weeb/svg-generator typecheck",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore --ignore-path .prettierignore",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck",
     "generate-previews": "tsx scripts/generate-previews.ts"
   },
