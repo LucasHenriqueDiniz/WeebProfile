@@ -1,4 +1,5 @@
 import type { D1Database } from "@cloudflare/workers-types"
+import { decryptSecret } from "./secret-crypto"
 
 export interface EssentialConfigs {
   [pluginName: string]:
@@ -18,7 +19,11 @@ interface PluginSecretRow {
  * Fetches a user's plugin secrets (API keys, tokens, etc.) from the
  * `plugin_secrets` table in Cloudflare D1, via the Worker's D1 binding.
  */
-export async function getUserEssentialConfigs(db: D1Database, userId: string): Promise<EssentialConfigs> {
+export async function getUserEssentialConfigs(
+  db: D1Database,
+  userId: string,
+  encryptionKey?: string
+): Promise<EssentialConfigs> {
   if (!userId) return {}
 
   try {
@@ -33,7 +38,7 @@ export async function getUserEssentialConfigs(db: D1Database, userId: string): P
       const key = (row.key || "").toLowerCase()
       if (!pluginName || !key) continue
       if (!result[pluginName]) result[pluginName] = {}
-      result[pluginName]![key] = row.value
+      result[pluginName]![key] = encryptionKey ? await decryptSecret(row.value, encryptionKey) : row.value
     }
 
     if (Object.keys(result).length > 0) {

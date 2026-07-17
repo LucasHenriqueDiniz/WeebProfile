@@ -9,6 +9,7 @@ export interface CloudflareEnv {
   SVG_GENERATOR_URL?: string
   CRON_SECRET?: string
   INTERNAL_SECRET?: string
+  SECRETS_ENCRYPTION_KEY?: string
 }
 
 export async function getAuthUserId(request: Request, env: CloudflareEnv): Promise<string | null> {

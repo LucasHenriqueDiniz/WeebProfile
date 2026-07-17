@@ -19,6 +19,7 @@ export interface Env {
   DB: D1Database
   CRON_SECRET?: string
   DASHBOARD_URL?: string
+  SECRETS_ENCRYPTION_KEY?: string
 }
 
 interface GenerateRequest {
@@ -83,7 +84,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
   if (requestData.userId) {
     console.log(`🔐 [WORKER] Fetching essential configs (secrets) for userId: ${requestData.userId}`)
     try {
-      essentialConfigs = await getUserEssentialConfigs(env.DB, requestData.userId)
+      essentialConfigs = await getUserEssentialConfigs(env.DB, requestData.userId, env.SECRETS_ENCRYPTION_KEY)
       console.log(`✅ [WORKER] Essential configs found for plugins:`, Object.keys(essentialConfigs))
     } catch (error) {
       console.error(`❌ [WORKER] Error fetching essential configs:`, error)

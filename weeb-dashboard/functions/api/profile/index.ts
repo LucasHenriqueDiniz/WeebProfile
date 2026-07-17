@@ -5,6 +5,7 @@ import { getAuthUserId, unauthorized, badRequest, serverError } from "../_shared
 import { getDb } from "../_shared/db"
 import { profiles, essentialConfigs } from "../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
+import { encryptSecret } from "../_shared/secret-crypto"
 
 async function getGitHubUsername(env: CloudflareEnv, userId: string): Promise<string | null> {
   try {
@@ -19,24 +20,29 @@ async function getGitHubUsername(env: CloudflareEnv, userId: string): Promise<st
 async function setEssentialConfigs(
   db: ReturnType<typeof getDb>,
   userId: string,
-  configs: Record<string, Record<string, string> | undefined>
+  configs: Record<string, Record<string, string> | undefined>,
+  encryptionKey: string | undefined
 ): Promise<void> {
   for (const [plugin, pluginConfigs] of Object.entries(configs)) {
     if (!pluginConfigs || typeof pluginConfigs !== "object") continue
     for (const [key, value] of Object.entries(pluginConfigs)) {
       if (value && typeof value === "string") {
+        if (!encryptionKey) {
+          console.warn("SECRETS_ENCRYPTION_KEY not configured; storing plugin secret as plain text")
+        }
+        const storedValue = encryptionKey ? await encryptSecret(value, encryptionKey) : value
         await db
           .insert(essentialConfigs)
           .values({
             userId,
             plugin: plugin.toLowerCase(),
             key: key.toLowerCase(),
-            value,
+            value: storedValue,
             updatedAt: new Date().toISOString(),
           })
           .onConflictDoUpdate({
             target: [essentialConfigs.userId, essentialConfigs.plugin, essentialConfigs.key],
-            set: { value, updatedAt: new Date().toISOString() },
+            set: { value: storedValue, updatedAt: new Date().toISOString() },
           })
       }
     }
@@ -93,7 +99,7 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env 
       }
 
       if (essentialConfigsInput) {
-        await setEssentialConfigs(db, userId, essentialConfigsInput)
+        await setEssentialConfigs(db, userId, essentialConfigsInput, env.SECRETS_ENCRYPTION_KEY)
       }
 
       const [updatedProfile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1)
@@ -109,7 +115,7 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env 
         .returning()
 
       if (essentialConfigsInput) {
-        await setEssentialConfigs(db, userId, essentialConfigsInput)
+        await setEssentialConfigs(db, userId, essentialConfigsInput, env.SECRETS_ENCRYPTION_KEY)
       }
 
       return Response.json({ profile: newProfile })
