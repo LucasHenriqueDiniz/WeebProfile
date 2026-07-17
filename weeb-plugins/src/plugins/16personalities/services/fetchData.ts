@@ -20,7 +20,7 @@ function extractTypeFromUrl(url: string): PersonalityType | null {
   try {
     // Match patterns like: resultados/enfj-t, personalidade-enfj, enfj-personality
     const patterns = [
-      /[\/-]([a-z]{4})-t/i,           // resultados/enfj-t
+      /[/-]([a-z]{4})-t/i,           // resultados/enfj-t
       /personalidade-([a-z]{4})/i,    // personalidade-enfj
       /([a-z]{4})-personality/i,       // enfj-personality
       /resultados\/([a-z]{4})/i,       // resultados/enfj

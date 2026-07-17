@@ -72,7 +72,7 @@ export function RenderPersonality16({
 
   // Validar URL do 16personalities
   if (config.personality_url) {
-    const urlPattern = /16personalities\.com\/.*\/([A-Z]{4})[\/-]/i
+    const urlPattern = /16personalities\.com\/.*\/([A-Z]{4})[/-]/i
     const match = config.personality_url.match(urlPattern)
     if (!match) {
       return <PluginError

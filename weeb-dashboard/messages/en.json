@@ -149,7 +149,7 @@
       "zero": "zero"
     },
     "platforms": {
-      "badge": "{count} plugins disponíveis",
+      "badge": "{{count}} plugins disponíveis",
       "createPlugin": "Não achou um plugin?",
       "createPluginLink": "Crie um!",
       "subtitle": "Usamos um sistema de plugins: você escolhe quais fontes exibir, quais seções incluir, e geramos o layout SVG perfeito.",
@@ -183,7 +183,7 @@
       }
     ],
     "templatesGallery": {
-      "exploreCount": "Explorar {count}+ Templates",
+      "exploreCount": "Explorar {{count}}+ Templates",
       "exploreSubtitle": "Navegue pela nossa coleção completa de templates prontos",
       "subtitle": "Escolha um template e customize para combinar com seu estilo",
       "title": "Sem tempo para começar do zero?",
@@ -353,7 +353,7 @@
   "view": {
     "backToDashboard": "Voltar ao Dashboard",
     "completed": "✓ Concluída",
-    "cooldownWarning": "Cooldown ativo: aguarde {minutes} minuto(s) antes de gerar novamente. Use \"Regenerar\" para ignorar.",
+    "cooldownWarning": "Cooldown ativo: aguarde {{minutes}} minuto(s) antes de gerar novamente. Use \"Regenerar\" para ignorar.",
     "created": "Criado",
     "error": "✗ Erro",
     "generating": "⟳ Gerando...",

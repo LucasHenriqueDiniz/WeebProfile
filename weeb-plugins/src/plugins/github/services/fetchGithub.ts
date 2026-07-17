@@ -350,7 +350,7 @@ export async function fetchGithubData(
 
         // Process data based on section
         switch (section) {
-          case "profile":
+          case "profile": {
             if (!result.user.name || !result.user.login || !result.user.avatarUrl || !result.user.createdAt) {
               throw new Error("Missing required user data")
             }
@@ -376,6 +376,7 @@ export async function fetchGithubData(
               repositoriesContributedTo: result.user.repositoriesContributedTo?.totalCount || 0,
             }
             break
+          }
 
           case "favorite_languages":
             data.languages = processLanguagesData(result)
@@ -423,7 +424,7 @@ export async function fetchGithubData(
             }
             break
 
-          case "sponsorships":
+          case "sponsorships": {
             const sponsorships = result.user.sponsorshipsAsSponsor
             const sponsorshipsNodes = await Promise.all(
               (sponsorships?.nodes || []).map(async (sponsorship: any) => {
@@ -452,8 +453,9 @@ export async function fetchGithubData(
               nodes: sponsorshipsNodes,
             }
             break
+          }
 
-          case "sponsors":
+          case "sponsors": {
             const sponsors = result.user.sponsors
             const sponsorsNodes = await Promise.all(
               (sponsors?.nodes || []).map(async (sponsor: any) => {
@@ -475,6 +477,7 @@ export async function fetchGithubData(
               nodes: sponsorsNodes,
             }
             break
+          }
         }
       } catch (sectionError: any) {
         // Log erro mas continua processando outras seções

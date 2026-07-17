@@ -18,7 +18,7 @@
     "build:tsc": "tsc --skipLibCheck",
     "build:check": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint src",
     "test": "echo \"Tests coming soon\"",
     "test:generator": "tsx scripts/test-svg-generator.ts",
     "audit:heights": "tsx scripts/audit-section-heights.ts",

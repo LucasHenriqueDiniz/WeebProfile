@@ -9,15 +9,7 @@ export default [
   {
     // Global ignores: must live in their own config object (no "files"/"rules" alongside)
     // for ESLint v9 flat config to treat this as an unconditional exclusion.
-    ignores: [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/build/**",
-      "**/coverage/**",
-      "**/.wrangler/**",
-      "**/.next/**",
-      "**/.vercel/**",
-    ],
+    ignores: ["**/node_modules/**", "**/dist/**", "**/build/**", "**/coverage/**", "**/.wrangler/**"],
   },
   {
     files: ["**/*.{js,jsx,ts,tsx}"],

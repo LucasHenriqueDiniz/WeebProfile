@@ -1,4 +1,4 @@
-import type React from "react"
+import React from "react"
 import { useTranslation } from "react-i18next"
 
 type RichTagFn = (chunks: React.ReactNode) => React.ReactNode
@@ -32,10 +32,35 @@ export function useTranslations(namespace?: string) {
   /**
    * t.rich: renders rich text with React component tags.
    * next-intl uses this for inline JSX in translations, e.g. t.rich('title', { strong: (c) => <strong>{c}</strong> })
-   * We simulate it by returning the plain string (tags are ignored in the shim).
+   * The translation string marks the spot with a single-brace placeholder (e.g. "{zero}"); the
+   * sibling key of the same name (e.g. "zero") holds the text to wrap with the tag's render function.
    */
   const rich = (key: string, tags?: Record<string, RichTagFn>): React.ReactNode => {
-    return resolve(key)
+    const template = resolve(key)
+    const tagNames = tags ? Object.keys(tags) : []
+    if (!tags || tagNames.length === 0) return template
+
+    const pattern = new RegExp(`\\{(${tagNames.join("|")})\\}`, "g")
+    const parts: React.ReactNode[] = []
+    let lastIndex = 0
+    let match: RegExpExecArray | null
+    let partKey = 0
+
+    while ((match = pattern.exec(template)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(template.slice(lastIndex, match.index))
+      }
+      const tagName = match[1]
+      const chunkText = resolve(tagName)
+      parts.push(
+        React.createElement(React.Fragment, { key: partKey++ }, tags[tagName](chunkText))
+      )
+      lastIndex = match.index + match[0].length
+    }
+    if (lastIndex < template.length) {
+      parts.push(template.slice(lastIndex))
+    }
+    return parts
   }
 
   const tFn = Object.assign(resolve, { raw, rich })

@@ -2,13 +2,6 @@
  * Tipos do Plugin MyAnimeList
  */
 
-export interface MyAnimeListConfig {
-  enabled: boolean
-  sections: string[]
-  username: string
-  favorites_max?: number
-}
-
 export interface AnimeStatistics {
   days_watched: number
   mean_score: number

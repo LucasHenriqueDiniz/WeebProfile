@@ -44,9 +44,11 @@ async function optimizeWithPhoton(
   contentType: string
 ): Promise<{ buffer: Buffer; contentType: string } | null> {
   try {
-    // @ts-ignore - subpath export types aren't resolved with moduleResolution=node (weeb-plugins),
+    // subpath export types aren't resolved with moduleResolution=node (weeb-plugins),
     // but are resolved with moduleResolution=bundler (svg-generator); @ts-ignore avoids
     // "unused directive" errors in the latter.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const { PhotonImage, SamplingFilter, resize } = await import("@cf-wasm/photon/workerd")
 
     const inputImage = PhotonImage.new_from_byteslice(new Uint8Array(buffer))
