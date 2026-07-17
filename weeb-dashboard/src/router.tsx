@@ -16,6 +16,7 @@ function Lazy(factory: () => Promise<{ default: React.ComponentType<any> }>) {
 // Pages
 const HomePage = Lazy(() => import("./routes/home"))
 const LoginPage = Lazy(() => import("./routes/login"))
+const SignupPage = Lazy(() => import("./routes/signup"))
 const DashboardPage = Lazy(() => import("./routes/dashboard"))
 const NewSvgPage = Lazy(() => import("./routes/dashboard.new"))
 const SvgViewPage = Lazy(() => import("./routes/dashboard.$id"))
@@ -39,6 +40,12 @@ const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
   component: LoginPage,
+})
+
+const signupRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/signup",
+  component: SignupPage,
 })
 
 const dashboardRoute = createRoute({
@@ -86,6 +93,7 @@ const templateDetailRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   homeRoute,
   loginRoute,
+  signupRoute,
   dashboardRoute,
   newSvgRoute,
   svgViewRoute,
