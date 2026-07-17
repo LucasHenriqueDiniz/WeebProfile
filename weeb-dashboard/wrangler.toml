@@ -25,12 +25,15 @@ bucket_name = "weebprofile-svgs"
 # Secrets (CLERK_SECRET_KEY, etc.) must be set via: wrangler pages secret put <KEY>
 # ============================================================
 [vars]
+# NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: lido pelas Pages Functions (server-side, ver functions/api/_shared/auth.ts)
+# VITE_CLERK_PUBLISHABLE_KEY: lido pelo build do Vite (client-side, ver src/main.tsx) — mesmo valor, prefixo diferente
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA"
+VITE_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA"
 SVG_GENERATOR_URL = "https://weeb-svg-generator.lucas-hdo.workers.dev"
 R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev"
 
 [env.preview]
-vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA", R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev", SVG_GENERATOR_URL = "https://weeb-svg-generator.lucas-hdo.workers.dev" }
+vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA", VITE_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA", R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev", SVG_GENERATOR_URL = "https://weeb-svg-generator.lucas-hdo.workers.dev" }
 
 [[env.preview.d1_databases]]
 binding = "DB"
