@@ -13,55 +13,22 @@ jobs:
       - name: Regenerate all due SVGs (loop)
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-          RAILWAY_URL: ${{ secrets.RAILWAY_URL }}
+          DASHBOARD_URL: https://weebprofile-dashboard.pages.dev
         run: |
           if [ -z "$CRON_SECRET" ]; then
             echo "❌ CRON_SECRET não configurado"
             exit 1
           fi
 
-          if [ -z "$RAILWAY_URL" ]; then
-            echo "❌ RAILWAY_URL não configurado"
-            exit 1
-          fi
-
-          # Get initial stats
-          echo "📊 Checking SVG status..."
-          echo "🔗 Railway URL: ${RAILWAY_URL}"
-          echo "🔑 CRON_SECRET configured: $([ -n "$CRON_SECRET" ] && echo "YES" || echo "NO")"
-
-          # Try without auth first (debug endpoint might not require it)
-          STATS=$(curl -s -L --max-time 10 \
-            "${RAILWAY_URL}/api/cron/debug" 2>/dev/null || echo '{"totalSvgs":0,"dueSvgs":0,"pausedSvgs":0,"futureSvgs":0,"hasMore":false}')
-
-          echo "📄 Response: $STATS"
-
-          TOTAL=$(echo "$STATS" | grep -o '"totalSvgs":"[0-9]*"' | cut -d'"' -f4)
-          DUE=$(echo "$STATS" | grep -o '"dueSvgs":"[0-9]*"' | cut -d'"' -f4)
-          PAUSED=$(echo "$STATS" | grep -o '"pausedSvgs":"[0-9]*"' | cut -d'"' -f4)
-          FUTURE=$(echo "$STATS" | grep -o '"futureSvgs":"[0-9]*"' | cut -d'"' -f4)
-
-          echo "📈 Total SVGs: ${TOTAL:-0}"
-          echo "⏰ Due for regeneration: ${DUE:-0}"
-          echo "⏸️  Paused: ${PAUSED:-0}"
-          echo "📅 Future regeneration: ${FUTURE:-0}"
-
-          if [ "${DUE:-0}" -eq 0 ]; then
-            echo "✅ No SVGs due for regeneration, exiting"
-            exit 0
-          fi
-
-          echo ""
-          echo "🔄 Starting regeneration loop... (${DUE:-0} SVGs to process)"
+          echo "🔗 Dashboard URL: ${DASHBOARD_URL}"
 
           PROCESSED=0
           START_TIME=$(date +%s)
 
-          # Loop até não haver mais SVGs para processar
+          # Loop até um lote vir com menos de 50 (limit da Pages Function) = não há mais trabalho
           for i in {1..20}; do
             echo "📦 Run $i"
 
-            # Calculate elapsed time
             CURRENT_TIME=$(date +%s)
             ELAPSED=$((CURRENT_TIME - START_TIME))
             ELAPSED_MIN=$((ELAPSED / 60))
@@ -73,32 +40,24 @@ jobs:
               -X POST \
               -H "Authorization: Bearer ${CRON_SECRET}" \
               -H "Content-Type: application/json" \
-              "${RAILWAY_URL}/api/cron/generate-svgs?limit=50&timeboxMs=360000" || echo '{"hasMore":false,"claimed":0,"generated":0,"skipped":0,"failed":0}')
-
-            # Extract stats from response
-            CLAIMED=$(echo "$RES" | grep -o '"claimed":[0-9]*' | cut -d':' -f2)
-            GENERATED=$(echo "$RES" | grep -o '"generated":[0-9]*' | cut -d':' -f2)
-            SKIPPED=$(echo "$RES" | grep -o '"skipped":[0-9]*' | cut -d':' -f2)
-            FAILED=$(echo "$RES" | grep -o '"failed":[0-9]*' | cut -d':' -f2)
-
-            if [ "${CLAIMED:-0}" -gt 0 ]; then
-              PROCESSED=$((PROCESSED + GENERATED))
-              echo "📊 This run: ${CLAIMED} claimed, ${GENERATED} generated, ${SKIPPED} skipped, ${FAILED} failed"
-            fi
+              "${DASHBOARD_URL}/api/cron/generate-svgs" || echo '{"success":false,"processed":0}')
 
             echo "$RES"
 
-            # Se o endpoint indicar que não há mais trabalho, sai
-            if echo "$RES" | grep -q '"hasMore":false'; then
+            BATCH=$(echo "$RES" | grep -o '"processed":[0-9]*' | cut -d':' -f2)
+            BATCH=${BATCH:-0}
+            PROCESSED=$((PROCESSED + BATCH))
+
+            # A Pages Function processa no máximo 50 por chamada; um lote menor que
+            # isso (incluindo 0, "No SVGs to generate") indica que não há mais trabalho.
+            if [ "${BATCH}" -lt 50 ]; then
               echo "✅ No more SVGs to process, exiting loop"
               break
             fi
 
-            # Pequena pausa entre requests
             sleep 5
           done
 
-          # Final summary
           END_TIME=$(date +%s)
           TOTAL_TIME=$((END_TIME - START_TIME))
           TOTAL_MIN=$((TOTAL_TIME / 60))
