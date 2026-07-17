@@ -1,9 +1,13 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Sparkles } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import type { ReactNode } from "react"
+
+// Textura de ruído sutil para dar profundidade ao cartão sem depender de imagem externa.
+const NOISE_BG =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
 
 // Deterministic stars configuration
 const stars = [
@@ -291,30 +295,45 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
           transition={{ duration: 0.35 }}
           className="w-full lg:w-1/2 flex flex-col items-center justify-center"
         >
-          <div className="w-full max-w-md rounded-2xl border border-cyan-500/30 bg-slate-900/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] shadow-cyan-500/10 px-5 py-5 relative overflow-hidden">
-            {/* Subtle glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none" />
-            <div className="relative z-10">
-              {/* Header */}
-              <div className="text-center mb-4">
-                <h1 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-400 to-purple-400 mb-1">
-                  {title}
-                </h1>
+          <div className="w-full max-w-md rounded-[28px] bg-gradient-to-br from-purple-500/60 via-pink-500/40 to-cyan-400/60 p-px shadow-[0_25px_70px_-20px_rgba(0,0,0,0.85)]">
+            <div className="rounded-[27px] bg-[#0a0f1e]/95 backdrop-blur-xl px-6 py-8 sm:px-8 sm:py-9 relative overflow-hidden">
+              {/* Noise texture for depth */}
+              <div
+                className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay"
+                style={{ backgroundImage: NOISE_BG }}
+              />
+              {/* Corner glow */}
+              <div className="absolute -top-16 -right-16 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative z-10">
+                {/* Header */}
+                <div className="text-center mb-7">
+                  <div className="inline-flex items-center gap-1.5 mb-3">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <span className="text-[11px] font-bold tracking-[0.25em] uppercase font-heading bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                      WeebProfile
+                    </span>
+                  </div>
+                  <h1 className="text-[26px] sm:text-[28px] leading-tight font-heading font-extrabold text-white">
+                    {title}
+                  </h1>
+                </div>
+
+                {children}
+
+                {/* Footer */}
+                <p className="text-[11px] text-center text-slate-500 mt-6 leading-relaxed">
+                  Ao continuar, você concorda com nossos{" "}
+                  <a
+                    href="#"
+                    className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 decoration-cyan-400/40 transition-colors"
+                  >
+                    termos de serviço
+                  </a>
+                  .
+                </p>
               </div>
-
-              {children}
-
-              {/* Footer */}
-              <p className="text-[10px] text-center text-slate-400 mt-3">
-                Ao continuar, você concorda com nossos{" "}
-                <a
-                  href="#"
-                  className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors"
-                >
-                  termos de serviço
-                </a>
-                .
-              </p>
             </div>
           </div>
         </motion.div>

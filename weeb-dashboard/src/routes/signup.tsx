@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useRouter } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { SignUp } from "@clerk/react"
@@ -34,9 +34,9 @@ export default function SignupPage() {
       />
 
       {/* Switch to Login */}
-      <p className="text-xs text-center text-slate-500 mt-4">
+      <p className="text-[13px] text-center text-slate-400 mt-6">
         Já tem conta?{" "}
-        <Link href="/login" className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">
+        <Link href="/login" className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
           Entrar
         </Link>
       </p>

@@ -52,9 +52,9 @@ export default function LoginPage() {
       />
 
       {/* Switch to Signup */}
-      <p className="text-xs text-center text-slate-500 mt-4">
+      <p className="text-[13px] text-center text-slate-400 mt-6">
         Não tem conta?{" "}
-        <Link href="/signup" className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors">
+        <Link href="/signup" className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
           Criar conta
         </Link>
       </p>
