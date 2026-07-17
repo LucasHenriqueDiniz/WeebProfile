@@ -17,7 +17,7 @@ export const clerkAppearance = {
     card: "bg-transparent shadow-none p-0 w-full gap-3",
     headerTitle: "hidden",
     headerSubtitle: "hidden",
-    footer: "bg-transparent",
+    footer: "bg-transparent bg-none",
     footerAction: "hidden",
     footerActionLink: "text-cyan-400 hover:text-cyan-300 font-medium",
     socialButtons: "gap-2",
