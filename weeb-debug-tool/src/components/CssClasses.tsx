@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo } from "react"
 
 interface CssClassesProps {
   html: string
@@ -25,34 +25,34 @@ export default function CssClasses({ html }: CssClassesProps) {
   return (
     <div
       style={{
-        background: '#161b22',
-        border: '1px solid #30363d',
-        borderRadius: '8px',
-        padding: '20px',
+        background: "#161b22",
+        border: "1px solid #30363d",
+        borderRadius: "8px",
+        padding: "20px",
       }}
     >
-      <h2 style={{ marginBottom: '16px', color: '#58a6ff' }}>CSS Classes</h2>
-      <div style={{ marginBottom: '16px', fontSize: '14px', color: '#8b949e' }}>
-        Found {classes.length} unique class{classes.length !== 1 ? 'es' : ''}
+      <h2 style={{ marginBottom: "16px", color: "#58a6ff" }}>CSS Classes</h2>
+      <div style={{ marginBottom: "16px", fontSize: "14px", color: "#8b949e" }}>
+        Found {classes.length} unique class{classes.length !== 1 ? "es" : ""}
       </div>
       <div
         style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '8px',
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "8px",
         }}
       >
         {classes.map((cls) => (
           <span
             key={cls}
             style={{
-              background: '#21262d',
-              border: '1px solid #30363d',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              fontSize: '12px',
-              fontFamily: 'Monaco, Menlo, monospace',
-              color: '#58a6ff',
+              background: "#21262d",
+              border: "1px solid #30363d",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              fontSize: "12px",
+              fontFamily: "Monaco, Menlo, monospace",
+              color: "#58a6ff",
             }}
           >
             {cls}
@@ -62,12 +62,3 @@ export default function CssClasses({ html }: CssClassesProps) {
     </div>
   )
 }
-
-
-
-
-
-
-
-
-

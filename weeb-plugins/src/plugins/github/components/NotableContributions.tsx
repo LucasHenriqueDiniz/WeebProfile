@@ -1,23 +1,23 @@
-import React from 'react'
-import { FaCode, FaCodeBranch, FaExclamationCircle } from 'react-icons/fa'
-import { RiGitPullRequestLine } from 'react-icons/ri'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import type { GridItemProps } from '../../../templates/types'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCode, FaCodeBranch, FaExclamationCircle } from "react-icons/fa"
+import { RiGitPullRequestLine } from "react-icons/ri"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import type { GridItemProps } from "../../../templates/types"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
 interface NotableContributionsProps {
-  data: GithubData['notableContributions']
+  data: GithubData["notableContributions"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DefaultNotableContributions = ({ data, max }: { data: GithubData['notableContributions']; max: number }) => {
+const DefaultNotableContributions = ({ data, max }: { data: GithubData["notableContributions"]; max: number }) => {
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No notable contributions</div>
   }
@@ -26,11 +26,11 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData['notableC
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'commits':
+      case "commits":
         return <FaCode className="text-default-highlight" size={18} />
-      case 'prs':
+      case "prs":
         return <RiGitPullRequestLine className="text-blue-500" size={18} />
-      case 'issues':
+      case "issues":
         return <FaExclamationCircle className="text-yellow-500" size={18} />
       default:
         return <FaCodeBranch className="text-default-muted" size={18} />
@@ -39,12 +39,12 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData['notableC
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'commits':
-        return 'Commits'
-      case 'prs':
-        return 'Pull Requests'
-      case 'issues':
-        return 'Issues'
+      case "commits":
+        return "Commits"
+      case "prs":
+        return "Pull Requests"
+      case "issues":
+        return "Issues"
       default:
         return type
     }
@@ -61,9 +61,7 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData['notableC
           className="flex items-start gap-3 p-4 half:p-3 rounded-lg border border-default-border h-[100px]"
         >
           <div className="flex-shrink-0 mt-0.5">
-            <div className="p-2 rounded-md bg-default-muted/10">
-              {getIcon(contribution.type)}
-            </div>
+            <div className="p-2 rounded-md bg-default-muted/10">{getIcon(contribution.type)}</div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -85,8 +83,13 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData['notableC
   )
 }
 
-export function GithubNotableContributions({ data, config, style, size }: NotableContributionsProps): React.ReactElement {
-  const title = config.notable_contributions_title ?? 'Notable Contributions'
+export function GithubNotableContributions({
+  data,
+  config,
+  style,
+  size,
+}: NotableContributionsProps): React.ReactElement {
+  const title = config.notable_contributions_title ?? "Notable Contributions"
   const hideTitle = config.notable_contributions_hide_title ?? false
   const max = config.notable_contributions_max ?? 10
 
@@ -116,8 +119,8 @@ export function GithubNotableContributions({ data, config, style, size }: Notabl
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'notable_contributions',
+                plugin: "github",
+                section: "notable_contributions",
                 size,
               })}
             />
@@ -128,4 +131,3 @@ export function GithubNotableContributions({ data, config, style, size }: Notabl
     </section>
   )
 }
-

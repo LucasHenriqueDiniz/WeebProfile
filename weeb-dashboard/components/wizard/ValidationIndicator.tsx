@@ -50,7 +50,13 @@ interface PluginStatusBadgeProps {
   className?: string
 }
 
-export function PluginStatusBadge({ isValid, hasConfig, sectionsCount, totalSections, className }: PluginStatusBadgeProps) {
+export function PluginStatusBadge({
+  isValid,
+  hasConfig,
+  sectionsCount,
+  totalSections,
+  className,
+}: PluginStatusBadgeProps) {
   if (!hasConfig) {
     return (
       <Badge variant="destructive" className={cn("text-[10px] font-medium", className)}>
@@ -71,7 +77,13 @@ export function PluginStatusBadge({ isValid, hasConfig, sectionsCount, totalSect
 
   if (isValid && sectionsCount > 0) {
     return (
-      <Badge variant="secondary" className={cn("text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400", className)}>
+      <Badge
+        variant="secondary"
+        className={cn(
+          "text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400",
+          className
+        )}
+      >
         <CheckCircle2 className="h-2.5 w-2.5 mr-1" />
         Ready ({sectionsCount}/{totalSections})
       </Badge>
@@ -80,24 +92,3 @@ export function PluginStatusBadge({ isValid, hasConfig, sectionsCount, totalSect
 
   return null
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

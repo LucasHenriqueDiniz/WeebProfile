@@ -2,16 +2,16 @@
  * DefaultList - Lista para estilo default
  */
 
-import React from 'react'
-import { ImageComponent } from '../../utils/image'
-import type { ListItemProps } from '../types'
+import React from "react"
+import { ImageComponent } from "../../utils/image"
+import type { ListItemProps } from "../types"
 
 function ListItem({ right, center, left, image }: ListItemProps): React.ReactElement {
-  const rightContent = typeof right === 'string' ? right : right
-  const centerContent = typeof center === 'string' ? center : center
-  const leftContent = typeof left === 'string' ? left : left
-  const rightText = typeof right === 'string' ? right : String(right)
-  
+  const rightContent = typeof right === "string" ? right : right
+  const centerContent = typeof center === "string" ? center : center
+  const leftContent = typeof left === "string" ? left : left
+  const rightText = typeof right === "string" ? right : String(right)
+
   return (
     <div className="flex gap-2 items-center min-h-[50px] max-h-[50px]">
       {image && (
@@ -20,20 +20,10 @@ function ListItem({ right, center, left, image }: ListItemProps): React.ReactEle
         </div>
       )}
       <div className="flex flex-col w-full h-full justify-evenly overflow-hidden">
-        <div className="font-semibold text-lg text-default-highlight truncate">
-          {rightContent}
-        </div>
+        <div className="font-semibold text-lg text-default-highlight truncate">{rightContent}</div>
         <div className="flex justify-between items-baseline gap-2">
-          {center && (
-            <div className="text-sm text-default-muted truncate">
-              {centerContent}
-            </div>
-          )}
-          {left && (
-            <div className="text-sm text-default-muted truncate w-fit ml-auto">
-              {leftContent}
-            </div>
-          )}
+          {center && <div className="text-sm text-default-muted truncate">{centerContent}</div>}
+          {left && <div className="text-sm text-default-muted truncate w-fit ml-auto">{leftContent}</div>}
         </div>
       </div>
     </div>
@@ -53,4 +43,3 @@ export function DefaultList({ data }: DefaultListProps): React.ReactElement {
     </div>
   )
 }
-

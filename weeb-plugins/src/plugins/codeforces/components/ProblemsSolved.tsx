@@ -2,30 +2,36 @@
  * ProblemsSolved - Componente para exibir problemas resolvidos do Codeforces
  */
 
-import React from 'react'
-import { FaCheckCircle } from 'react-icons/fa'
-import { IoStatsChartOutline } from 'react-icons/io5'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { CodeforcesConfig } from '../types'
+import React from "react"
+import { FaCheckCircle } from "react-icons/fa"
+import { IoStatsChartOutline } from "react-icons/io5"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { CodeforcesConfig } from "../types"
 
 interface ProblemsSolvedProps {
   total: number
   byDifficulty: Record<string, number>
   config: CodeforcesConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function ProblemsSolved({ total, byDifficulty, config, style = 'default', size = 'half' }: ProblemsSolvedProps): React.ReactElement {
+export function ProblemsSolved({
+  total,
+  byDifficulty,
+  config,
+  style = "default",
+  size = "half",
+}: ProblemsSolvedProps): React.ReactElement {
   const hideTitle = config.nonEssential?.problems_solved_hide_title || false
-  const title = config.nonEssential?.problems_solved_title || 'Programming Problems Solved'
+  const title = config.nonEssential?.problems_solved_title || "Programming Problems Solved"
 
-  const difficultyOrder = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+  const difficultyOrder = ["A", "B", "C", "D", "E", "F", "G", "H"]
   const sortedDifficulties = Object.entries(byDifficulty)
     .filter(([_, count]) => count > 0)
     .sort(([a], [b]) => {
@@ -67,15 +73,12 @@ export function ProblemsSolved({ total, byDifficulty, config, style = 'default',
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'codeforces',
-                section: 'problems_solved',
+                plugin: "codeforces",
+                section: "problems_solved",
                 size,
               })}
             />
-            <TerminalLineWithDots
-              title="Total Problems Solved"
-              value={abbreviateNumber(total)}
-            />
+            <TerminalLineWithDots title="Total Problems Solved" value={abbreviateNumber(total)} />
             {sortedDifficulties.map(([difficulty, count]) => (
               <TerminalLineWithDots
                 key={difficulty}
@@ -89,20 +92,3 @@ export function ProblemsSolved({ total, byDifficulty, config, style = 'default',
     </section>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

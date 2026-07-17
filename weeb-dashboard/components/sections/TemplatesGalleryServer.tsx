@@ -8,9 +8,7 @@ interface TemplatesGalleryServerProps {
   templates: Template[]
 }
 
-export function TemplatesGalleryServer({
-  templates
-}: TemplatesGalleryServerProps) {
+export function TemplatesGalleryServer({ templates }: TemplatesGalleryServerProps) {
   return (
     <section className="container mx-auto px-4 py-16 md:py-24">
       <div className="text-center mb-12">
@@ -52,12 +50,7 @@ export function TemplatesGalleryServer({
 
         {/* Regular template cards */}
         {templates.map((template, index) => (
-          <TemplateCard
-            key={template.id}
-            template={template}
-            variant="hero"
-            index={index + 1}
-          />
+          <TemplateCard key={template.id} template={template} variant="hero" index={index + 1} />
         ))}
       </div>
     </section>

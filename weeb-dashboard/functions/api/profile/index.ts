@@ -10,11 +10,7 @@ async function getGitHubUsername(env: CloudflareEnv, userId: string): Promise<st
   try {
     const clerk = createClerkClient({ secretKey: env.CLERK_SECRET_KEY })
     const user = await clerk.users.getUser(userId)
-    return (
-      user.username ||
-      user.externalAccounts.find((a) => String(a.provider).includes("github"))?.username ||
-      null
-    )
+    return user.username || user.externalAccounts.find((a) => String(a.provider).includes("github"))?.username || null
   } catch {
     return null
   }
@@ -56,18 +52,11 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
     if (!userId) return unauthorized()
 
     const db = getDb(env)
-    const [profile] = await db
-      .select()
-      .from(profiles)
-      .where(eq(profiles.userId, userId))
-      .limit(1)
+    const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1)
 
     if (!profile) {
       const username = await getGitHubUsername(env, userId)
-      const [newProfile] = await db
-        .insert(profiles)
-        .values({ userId, username, isActive: true })
-        .returning()
+      const [newProfile] = await db.insert(profiles).values({ userId, username, isActive: true }).returning()
       return Response.json({ profile: newProfile })
     }
 
@@ -85,7 +74,7 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env 
     const userId = await getAuthUserId(request, env)
     if (!userId) return unauthorized()
 
-    const body = await request.json() as Record<string, any>
+    const body = (await request.json()) as Record<string, any>
     const { username, essentialConfigs: essentialConfigsInput } = body
 
     if (!username && !essentialConfigsInput) {
@@ -93,11 +82,7 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env 
     }
 
     const db = getDb(env)
-    const [existingProfile] = await db
-      .select()
-      .from(profiles)
-      .where(eq(profiles.userId, userId))
-      .limit(1)
+    const [existingProfile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1)
 
     if (existingProfile) {
       if (username !== undefined) {
@@ -111,11 +96,7 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env 
         await setEssentialConfigs(db, userId, essentialConfigsInput)
       }
 
-      const [updatedProfile] = await db
-        .select()
-        .from(profiles)
-        .where(eq(profiles.userId, userId))
-        .limit(1)
+      const [updatedProfile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1)
 
       return Response.json({ profile: updatedProfile })
     } else {

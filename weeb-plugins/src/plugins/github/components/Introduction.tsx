@@ -1,30 +1,34 @@
-import React from 'react'
-import { FaBuilding, FaLink, FaMapMarkerAlt, FaTwitter, FaUser, FaUsers } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaBuilding, FaLink, FaMapMarkerAlt, FaTwitter, FaUser, FaUsers } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
 interface IntroductionProps {
-  data: GithubData['introduction']
+  data: GithubData["introduction"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
-  activity?: GithubData['activity']
+  style: "default" | "terminal"
+  size: "half" | "full"
+  activity?: GithubData["activity"]
 }
 
-const DefaultIntroduction = ({ data, activity, customText }: { data: GithubData['introduction']; activity?: GithubData['activity']; customText?: string }) => {
+const DefaultIntroduction = ({
+  data,
+  activity,
+  customText,
+}: {
+  data: GithubData["introduction"]
+  activity?: GithubData["activity"]
+  customText?: string
+}) => {
   if (!data) return null
 
   return (
     <div className="flex flex-col gap-3 text-sm">
-      {customText && (
-        <p className="text-default-text whitespace-pre-line">{customText}</p>
-      )}
-      {data.bio && (
-        <p className="text-default-text">{data.bio}</p>
-      )}
+      {customText && <p className="text-default-text whitespace-pre-line">{customText}</p>}
+      {data.bio && <p className="text-default-text">{data.bio}</p>}
       <div className="flex flex-wrap gap-4 text-default-muted items-center">
         {data.location && (
           <div className="flex items-center gap-1.5">
@@ -41,25 +45,27 @@ const DefaultIntroduction = ({ data, activity, customText }: { data: GithubData[
         {activity?.organizations && activity.organizations > 0 && (
           <div className="flex items-center gap-1.5">
             <FaUsers className="text-base" />
-            <span>{activity.organizations} organization{activity.organizations !== 1 ? 's' : ''}</span>
+            <span>
+              {activity.organizations} organization{activity.organizations !== 1 ? "s" : ""}
+            </span>
           </div>
         )}
         {data.websiteUrl && (
-          <a 
-            href={data.websiteUrl} 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href={data.websiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-default-link hover:underline"
           >
             <FaLink className="text-base" />
-            <span>{data.websiteUrl.replace(/^https?:\/\//, '')}</span>
+            <span>{data.websiteUrl.replace(/^https?:\/\//, "")}</span>
           </a>
         )}
         {data.twitterUsername && (
-          <a 
-            href={`https://twitter.com/${data.twitterUsername}`} 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href={`https://twitter.com/${data.twitterUsername}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-default-link hover:underline"
           >
             <FaTwitter className="text-base" />
@@ -71,40 +77,38 @@ const DefaultIntroduction = ({ data, activity, customText }: { data: GithubData[
   )
 }
 
-const TerminalIntroduction = ({ data, activity, customText }: { data: GithubData['introduction']; activity?: GithubData['activity']; customText?: string }) => {
+const TerminalIntroduction = ({
+  data,
+  activity,
+  customText,
+}: {
+  data: GithubData["introduction"]
+  activity?: GithubData["activity"]
+  customText?: string
+}) => {
   if (!data) return null
 
   return (
     <div className="flex flex-col gap-1 text-terminal-text text-sm">
-      {customText && (
-        <p className="whitespace-pre-line">{customText}</p>
-      )}
-      {data.bio && (
-        <p>{data.bio}</p>
-      )}
+      {customText && <p className="whitespace-pre-line">{customText}</p>}
+      {data.bio && <p>{data.bio}</p>}
       <div className="flex flex-col gap-1 text-terminal-muted">
-        {data.location && (
-          <span>📍 {data.location}</span>
-        )}
-        {data.company && (
-          <span>🏢 {data.company}</span>
-        )}
+        {data.location && <span>📍 {data.location}</span>}
+        {data.company && <span>🏢 {data.company}</span>}
         {activity?.organizations && activity.organizations > 0 && (
-          <span>👥 {activity.organizations} organization{activity.organizations !== 1 ? 's' : ''}</span>
+          <span>
+            👥 {activity.organizations} organization{activity.organizations !== 1 ? "s" : ""}
+          </span>
         )}
-        {data.websiteUrl && (
-          <span>🔗 {data.websiteUrl}</span>
-        )}
-        {data.twitterUsername && (
-          <span>🐦 @{data.twitterUsername}</span>
-        )}
+        {data.websiteUrl && <span>🔗 {data.websiteUrl}</span>}
+        {data.twitterUsername && <span>🐦 @{data.twitterUsername}</span>}
       </div>
     </div>
   )
 }
 
 export function GithubIntroduction({ data, config, style, size, activity }: IntroductionProps): React.ReactElement {
-  const title = config.introduction_title ?? 'Introduction'
+  const title = config.introduction_title ?? "Introduction"
   const hideTitle = config.introduction_hide_title ?? false
   const customText = config.introduction_custom_text
 
@@ -126,8 +130,8 @@ export function GithubIntroduction({ data, config, style, size, activity }: Intr
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'introduction',
+                plugin: "github",
+                section: "introduction",
                 size,
               })}
             />
@@ -138,4 +142,3 @@ export function GithubIntroduction({ data, config, style, size, activity }: Intr
     </section>
   )
 }
-

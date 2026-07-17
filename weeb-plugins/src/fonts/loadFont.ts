@@ -6,7 +6,7 @@
  * runtime, so this works in Cloudflare Workers as well as Node.
  */
 
-import { FONT_DATA_URIS } from './generated-font-data.js'
+import { FONT_DATA_URIS } from "./generated-font-data.js"
 
 /**
  * Get a font as a data URI (data:font/woff2;base64,...)

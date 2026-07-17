@@ -15,10 +15,18 @@ function sleep(ms: number): Promise<void> {
 
 function isRetryableError(error: any): boolean {
   if (!error) return false
-  const msg = (error.message?.toLowerCase() || String(error).toLowerCase())
-  const code = (error.code?.toLowerCase() || "")
-  return ["econnreset", "econnrefused", "etimedout", "timeout", "aborted", "network", "fetch failed", "socket hang up"]
-    .some((p) => msg.includes(p) || code.includes(p))
+  const msg = error.message?.toLowerCase() || String(error).toLowerCase()
+  const code = error.code?.toLowerCase() || ""
+  return [
+    "econnreset",
+    "econnrefused",
+    "etimedout",
+    "timeout",
+    "aborted",
+    "network",
+    "fetch failed",
+    "socket hang up",
+  ].some((p) => msg.includes(p) || code.includes(p))
 }
 
 async function retryWithBackoff<T>(fn: () => Promise<T>, attempt = 1): Promise<T> {
@@ -46,7 +54,7 @@ async function generateSvgViaHttpService(config: Record<string, any>, svgGenerat
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: "Unknown error" })) as any
+        const error = (await response.json().catch(() => ({ error: "Unknown error" }))) as any
         if (response.status >= 500) {
           const retryableError = new Error(error.error || error.message || `HTTP ${response.status}`)
           ;(retryableError as any).code = "HTTP_" + response.status
@@ -73,7 +81,7 @@ async function generateSvgViaHttpService(config: Record<string, any>, svgGenerat
  */
 export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env }) => {
   try {
-    const body = await request.json() as Record<string, any>
+    const body = (await request.json()) as Record<string, any>
 
     if (!body.style || !body.size) {
       return Response.json({ error: "style and size are required" }, { status: 400 })

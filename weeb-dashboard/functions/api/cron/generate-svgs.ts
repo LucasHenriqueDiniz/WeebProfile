@@ -20,10 +20,18 @@ function sleep(ms: number): Promise<void> {
 
 function isRetryableError(error: any): boolean {
   if (!error) return false
-  const msg = (error.message?.toLowerCase() || String(error).toLowerCase())
-  const code = (error.code?.toLowerCase() || "")
-  return ["econnreset", "econnrefused", "etimedout", "timeout", "aborted", "network", "fetch failed", "socket hang up"]
-    .some((p) => msg.includes(p) || code.includes(p))
+  const msg = error.message?.toLowerCase() || String(error).toLowerCase()
+  const code = error.code?.toLowerCase() || ""
+  return [
+    "econnreset",
+    "econnrefused",
+    "etimedout",
+    "timeout",
+    "aborted",
+    "network",
+    "fetch failed",
+    "socket hang up",
+  ].some((p) => msg.includes(p) || code.includes(p))
 }
 
 async function retryWithBackoff<T>(fn: () => Promise<T>, attempt = 1): Promise<T> {
@@ -51,7 +59,7 @@ async function generateSvgViaHttpService(config: Record<string, any>, svgGenerat
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: "Unknown error" })) as any
+        const error = (await response.json().catch(() => ({ error: "Unknown error" }))) as any
         if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "D1_API_UNREACHABLE")) {
           const dbError = new Error(error.message || "Generator could not reach database")
           ;(dbError as any).code = error.code
@@ -87,9 +95,9 @@ async function generateSvgViaHttpService(config: Record<string, any>, svgGenerat
 }
 
 function convertSvgToPluginsConfig(svg: Record<string, any>) {
-  const svgPluginsConfig = (typeof svg.pluginsConfig === "string"
-    ? JSON.parse(svg.pluginsConfig)
-    : svg.pluginsConfig) || {} as Record<string, any>
+  const svgPluginsConfig =
+    (typeof svg.pluginsConfig === "string" ? JSON.parse(svg.pluginsConfig) : svg.pluginsConfig) ||
+    ({} as Record<string, any>)
 
   const validPluginNames = new Set(Object.keys(PLUGINS_METADATA))
   const enabledPlugins: Record<string, any> = {}
@@ -206,9 +214,8 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
 
         const { plugins: pluginsConfig, pluginsOrder } = convertSvgToPluginsConfig(svg as any)
 
-        const uiConfig = (typeof (svg as any).uiConfig === "string"
-          ? JSON.parse((svg as any).uiConfig)
-          : (svg as any).uiConfig) || {}
+        const uiConfig =
+          (typeof (svg as any).uiConfig === "string" ? JSON.parse((svg as any).uiConfig) : (svg as any).uiConfig) || {}
         const terminalConfigs = getTerminalConfigs(uiConfig)
 
         const requestConfig = {
@@ -226,7 +233,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
           mock: false,
         }
 
-        const result = await generateSvgViaHttpService(requestConfig, svgGeneratorUrl) as any
+        const result = (await generateSvgViaHttpService(requestConfig, svgGeneratorUrl)) as any
         const svgContent = result.svg
 
         const { path: storagePath, url: storageUrl } = await saveSvgToR2(env, svg.id, svgContent)

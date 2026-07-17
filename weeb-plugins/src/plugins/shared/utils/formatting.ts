@@ -6,7 +6,7 @@
  * Formata um número com separador de milhares
  */
 export function formatNumber(num: number): string {
-  return num.toLocaleString('en-US')
+  return num.toLocaleString("en-US")
 }
 
 /**
@@ -14,10 +14,10 @@ export function formatNumber(num: number): string {
  */
 export function abbreviateNumber(num: number): string {
   if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M'
+    return (num / 1000000).toFixed(1) + "M"
   }
   if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'K'
+    return (num / 1000).toFixed(1) + "K"
   }
   return num.toString()
 }
@@ -27,23 +27,23 @@ export function abbreviateNumber(num: number): string {
  */
 export function formatRelativeTime(date: Date | string): string {
   const now = new Date()
-  const then = typeof date === 'string' ? new Date(date) : date
+  const then = typeof date === "string" ? new Date(date) : date
   const diffMs = now.getTime() - then.getTime()
   const diffMins = Math.floor(diffMs / 60000)
   const diffHours = Math.floor(diffMs / 3600000)
   const diffDays = Math.floor(diffMs / 86400000)
 
   if (diffMins < 1) {
-    return 'just now'
+    return "just now"
   }
   if (diffMins < 60) {
-    return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`
+    return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`
   }
   if (diffHours < 24) {
-    return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+    return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`
   }
   if (diffDays < 7) {
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`
   }
   return then.toLocaleDateString()
 }
@@ -54,14 +54,14 @@ export function formatRelativeTime(date: Date | string): string {
  */
 export function formatRelativeTimeShort(date: Date | string): string {
   const now = new Date()
-  const then = typeof date === 'string' ? new Date(date) : date
+  const then = typeof date === "string" ? new Date(date) : date
   const diffMs = now.getTime() - then.getTime()
   const diffMins = Math.floor(diffMs / 60000)
   const diffHours = Math.floor(diffMs / 3600000)
   const diffDays = Math.floor(diffMs / 86400000)
 
   if (diffMins < 1) {
-    return 'now'
+    return "now"
   }
   if (diffMins < 60) {
     return `${diffMins}m`
@@ -72,7 +72,7 @@ export function formatRelativeTimeShort(date: Date | string): string {
   if (diffDays < 7) {
     return `${diffDays}d`
   }
-  return then.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return then.toLocaleDateString("en-US", { month: "short", day: "numeric" })
 }
 
 /**
@@ -80,8 +80,8 @@ export function formatRelativeTimeShort(date: Date | string): string {
  */
 export function toKebabCase(str: string): string {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/[\s_]+/g, "-")
     .toLowerCase()
 }
 
@@ -91,8 +91,8 @@ export function toKebabCase(str: string): string {
 export function toPascalCase(str: string): string {
   return str
     .split(/[-_\s]+/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join('')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("")
 }
 
 /**
@@ -106,10 +106,9 @@ export function toCamelCase(str: string): string {
 /**
  * Trunca uma string para um comprimento máximo
  */
-export function truncate(str: string, maxLength: number, suffix = '...'): string {
+export function truncate(str: string, maxLength: number, suffix = "..."): string {
   if (str.length <= maxLength) {
     return str
   }
   return str.slice(0, maxLength - suffix.length) + suffix
 }
-

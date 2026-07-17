@@ -1,38 +1,38 @@
-import React from 'react'
-import { FaClock, FaCode, FaCodeBranch, FaComment, FaExclamationCircle } from 'react-icons/fa'
-import { RiGitMergeLine, RiGitPullRequestLine } from 'react-icons/ri'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { formatRelativeTime, formatRelativeTimeShort } from '../../shared/utils/formatting'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaClock, FaCode, FaCodeBranch, FaComment, FaExclamationCircle } from "react-icons/fa"
+import { RiGitMergeLine, RiGitPullRequestLine } from "react-icons/ri"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { formatRelativeTime, formatRelativeTimeShort } from "../../shared/utils/formatting"
+import type { GithubConfig, GithubData } from "../types"
 
 interface RecentActivityProps {
-  data: GithubData['recentActivity']
+  data: GithubData["recentActivity"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
 // Agrupar atividades por dia
-function groupActivitiesByDay(activities: GithubData['recentActivity']): Map<string, GithubData['recentActivity']> {
-  const grouped = new Map<string, GithubData['recentActivity']>()
-  
+function groupActivitiesByDay(activities: GithubData["recentActivity"]): Map<string, GithubData["recentActivity"]> {
+  const grouped = new Map<string, GithubData["recentActivity"]>()
+
   if (!activities) {
     return grouped
   }
-  
+
   for (const activity of activities) {
     const date = new Date(activity.date)
-    const dayKey = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-    
+    const dayKey = date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+
     if (!grouped.has(dayKey)) {
       grouped.set(dayKey, [])
     }
     grouped.get(dayKey)!.push(activity)
   }
-  
+
   return grouped
 }
 
@@ -42,22 +42,22 @@ function formatDayLabel(dateString: string): string {
   const today = new Date()
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
-  
+
   // Resetar horas para comparação
   const dateDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
   const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate())
   const yesterdayDay = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate())
-  
+
   if (dateDay.getTime() === todayDay.getTime()) {
-    return 'Today'
+    return "Today"
   } else if (dateDay.getTime() === yesterdayDay.getTime()) {
-    return 'Yesterday'
+    return "Yesterday"
   } else {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
   }
 }
 
-const DefaultRecentActivity = ({ data, max }: { data: GithubData['recentActivity']; max: number }) => {
+const DefaultRecentActivity = ({ data, max }: { data: GithubData["recentActivity"]; max: number }) => {
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No recent activity</div>
   }
@@ -71,17 +71,17 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData['recentActivity
   const getIcon = (type: string) => {
     const iconClass = "text-default-muted"
     switch (type) {
-      case 'commit':
+      case "commit":
         return <FaCode className={iconClass} size={14} />
-      case 'pr':
+      case "pr":
         return <RiGitPullRequestLine className={iconClass} size={14} />
-      case 'issue':
+      case "issue":
         return <FaExclamationCircle className={iconClass} size={14} />
-      case 'comment':
+      case "comment":
         return <FaComment className={iconClass} size={14} />
-      case 'branch':
+      case "branch":
         return <FaCodeBranch className={iconClass} size={14} />
-      case 'merged':
+      case "merged":
         return <RiGitMergeLine className={iconClass} size={14} />
       default:
         return <FaCode className={iconClass} size={14} />
@@ -90,18 +90,42 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData['recentActivity
 
   const getTypeBadge = (type: string) => {
     switch (type) {
-      case 'commit':
-        return <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">PUSH</span>
-      case 'pr':
-        return <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">PR</span>
-      case 'issue':
-        return <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">ISSUE</span>
-      case 'comment':
-        return <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">COMMENT</span>
-      case 'branch':
-        return <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">BRANCH</span>
-      case 'merged':
-        return <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">MERGE</span>
+      case "commit":
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">
+            PUSH
+          </span>
+        )
+      case "pr":
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">
+            PR
+          </span>
+        )
+      case "issue":
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">
+            ISSUE
+          </span>
+        )
+      case "comment":
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">
+            COMMENT
+          </span>
+        )
+      case "branch":
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">
+            BRANCH
+          </span>
+        )
+      case "merged":
+        return (
+          <span className="text-xs px-1.5 py-0.5 rounded font-mono bg-default-muted/10 text-default-muted border border-default-border/50">
+            MERGE
+          </span>
+        )
       default:
         return null
     }
@@ -115,14 +139,12 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData['recentActivity
         const firstActivity = dayActivities[0]
         if (!firstActivity) return null
         const dayLabel = formatDayLabel(firstActivity.date)
-        
+
         return (
           <div key={dayKey} className="flex flex-col gap-3">
             {/* Header do dia */}
-            <div className="text-xs font-semibold text-default-muted uppercase tracking-wide">
-              {dayLabel}
-            </div>
-            
+            <div className="text-xs font-semibold text-default-muted uppercase tracking-wide">{dayLabel}</div>
+
             {/* Lista de atividades simples */}
             <div className="flex flex-col gap-3">
               {dayActivities.map((activity, index) => {
@@ -135,10 +157,8 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData['recentActivity
                     className="flex items-start gap-3 p-3 rounded-lg border border-default-border"
                   >
                     {/* Icon */}
-                    <div className="flex-shrink-0 mt-0.5">
-                      {getIcon(activity.type)}
-                    </div>
-                    
+                    <div className="flex-shrink-0 mt-0.5">{getIcon(activity.type)}</div>
+
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -147,18 +167,16 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData['recentActivity
                           {formatRelativeTime(activity.date)}
                         </span>
                       </div>
-                      
+
                       <div className="text-sm text-default-text mb-1.5">
-                        <span className="text-default-link font-medium line-clamp-2">
-                          {activity.title}
-                        </span>
+                        <span className="text-default-link font-medium line-clamp-2">{activity.title}</span>
                       </div>
-                      
+
                       <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                         {activity.filesChanged && (
                           <>
                             <span className="text-xs text-default-muted">
-                              {activity.filesChanged.files} file{activity.filesChanged.files !== 1 ? 's' : ''}
+                              {activity.filesChanged.files} file{activity.filesChanged.files !== 1 ? "s" : ""}
                             </span>
                             {activity.filesChanged.additions > 0 && (
                               <span className="text-xs font-mono text-green-600 dark:text-green-400">
@@ -172,9 +190,7 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData['recentActivity
                             )}
                           </>
                         )}
-                        <span className="text-xs text-default-muted font-mono">
-                          {activity.repository}
-                        </span>
+                        <span className="text-xs text-default-muted font-mono">{activity.repository}</span>
                       </div>
                     </div>
                   </a>
@@ -189,7 +205,7 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData['recentActivity
 }
 
 // Terminal mode: git log style
-const TerminalRecentActivity = ({ data, max }: { data: GithubData['recentActivity']; max: number }) => {
+const TerminalRecentActivity = ({ data, max }: { data: GithubData["recentActivity"]; max: number }) => {
   if (!data || data.length === 0) {
     return <div className="text-terminal-muted text-sm">No recent activity</div>
   }
@@ -198,20 +214,20 @@ const TerminalRecentActivity = ({ data, max }: { data: GithubData['recentActivit
 
   const getTypeSymbol = (type: string) => {
     switch (type) {
-      case 'commit':
-        return 'PUSH'
-      case 'pr':
-        return 'PR'
-      case 'issue':
-        return 'ISSUE'
-      case 'comment':
-        return 'CMT'
-      case 'branch':
-        return 'BRANCH'
-      case 'merged':
-        return 'MERGE'
+      case "commit":
+        return "PUSH"
+      case "pr":
+        return "PR"
+      case "issue":
+        return "ISSUE"
+      case "comment":
+        return "CMT"
+      case "branch":
+        return "BRANCH"
+      case "merged":
+        return "MERGE"
       default:
-        return 'EVT'
+        return "EVT"
     }
   }
 
@@ -242,7 +258,7 @@ const TerminalRecentActivity = ({ data, max }: { data: GithubData['recentActivit
 }
 
 export function GithubRecentActivity({ data, config, style, size }: RecentActivityProps): React.ReactElement {
-  const title = config.recent_activity_title ?? 'Recent Activity'
+  const title = config.recent_activity_title ?? "Recent Activity"
   const hideTitle = config.recent_activity_hide_title ?? false
   const max = config.recent_activity_max ?? 10
 
@@ -266,8 +282,8 @@ export function GithubRecentActivity({ data, config, style, size }: RecentActivi
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'recent_activity',
+                plugin: "github",
+                section: "recent_activity",
                 size,
               })}
             />

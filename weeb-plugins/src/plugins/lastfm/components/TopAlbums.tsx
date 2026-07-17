@@ -3,12 +3,12 @@
  * Renderiza Grid, List ou Default baseado no config.top_albums_style
  */
 
-import React from 'react'
-import { MdAlbum } from 'react-icons/md'
-import type { LastFmAlbum } from '../types'
-import { TopItems } from './TopItems'
-import { abbreviateNumber } from '../../../utils/number'
-import type { GridItemProps, ListItemProps } from '../../../templates/types'
+import React from "react"
+import { MdAlbum } from "react-icons/md"
+import type { LastFmAlbum } from "../types"
+import { TopItems } from "./TopItems"
+import { abbreviateNumber } from "../../../utils/number"
+import type { GridItemProps, ListItemProps } from "../../../templates/types"
 
 interface TopAlbumsProps {
   data: LastFmAlbum[]
@@ -17,15 +17,21 @@ interface TopAlbumsProps {
     top_albums_max?: number
     top_albums_title?: string
     top_albums_hide_title?: boolean
-    top_albums_style?: 'grid' | 'list' | 'default'
+    top_albums_style?: "grid" | "list" | "default"
     hide_intervals?: boolean
   }
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function TopAlbums({ data, interval, config, style = 'default', size = 'half' }: TopAlbumsProps): React.ReactElement {
-  const displayStyle = config.top_albums_style || 'default'
+export function TopAlbums({
+  data,
+  interval,
+  config,
+  style = "default",
+  size = "half",
+}: TopAlbumsProps): React.ReactElement {
+  const displayStyle = config.top_albums_style || "default"
 
   return (
     <TopItems
@@ -44,21 +50,20 @@ export function TopAlbums({ data, interval, config, style = 'default', size = 'h
       sectionName="Top Albums"
       icon={MdAlbum}
       terminalLabels={{
-        rightText: 'Album',
-        leftText: 'Plays',
+        rightText: "Album",
+        leftText: "Plays",
       }}
       mapToGridItem={(album) => ({
-        title: album.album || '',
+        title: album.album || "",
         image: album.image,
-        value: abbreviateNumber(album.plays || '0') + ' plays',
+        value: abbreviateNumber(album.plays || "0") + " plays",
       })}
       mapToListItem={(album) => ({
-        right: album.album || '',
+        right: album.album || "",
         image: album.image,
         center: album.artist,
-        left: abbreviateNumber(album.plays || '0') + ' plays',
+        left: abbreviateNumber(album.plays || "0") + " plays",
       })}
     />
   )
 }
-

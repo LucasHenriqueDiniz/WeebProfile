@@ -1,10 +1,10 @@
 /**
  * Plugin CSS Loader
- * 
+ *
  * Aggregates CSS from all active plugins
  */
 
-import { PluginManager } from '../plugins/manager'
+import { PluginManager } from "../plugins/manager"
 
 /**
  * Get CSS from a specific plugin
@@ -12,11 +12,11 @@ import { PluginManager } from '../plugins/manager'
 export function getPluginCSS(pluginName: string): string {
   const pluginManager = PluginManager.getInstance()
   const plugin = pluginManager.get(pluginName)
-  
-  if (!plugin || !('styles' in plugin) || !plugin.styles) {
-    return ''
+
+  if (!plugin || !("styles" in plugin) || !plugin.styles) {
+    return ""
   }
-  
+
   return plugin.styles
 }
 
@@ -25,7 +25,7 @@ export function getPluginCSS(pluginName: string): string {
  */
 export function getPluginsCSS(pluginNames: string[]): string {
   const cssStrings: string[] = []
-  
+
   for (const pluginName of pluginNames) {
     const css = getPluginCSS(pluginName)
     if (css) {
@@ -33,8 +33,8 @@ export function getPluginsCSS(pluginNames: string[]): string {
       cssStrings.push(css)
     }
   }
-  
-  return cssStrings.join('\n')
+
+  return cssStrings.join("\n")
 }
 
 /**
@@ -44,7 +44,6 @@ export function getActivePluginsCSS(plugins: Record<string, any>): string {
   const activePluginNames = Object.entries(plugins)
     .filter(([_, config]) => config?.enabled)
     .map(([name]) => name)
-  
+
   return getPluginsCSS(activePluginNames)
 }
-

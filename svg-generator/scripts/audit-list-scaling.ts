@@ -35,7 +35,12 @@ const CASES: ListCase[] = [
   { plugin: "lyfta", section: "recent_workouts", maxKey: "workouts_max", values: [1, 2, 3, 4] },
   { plugin: "codeforces", section: "recent_submissions", maxKey: "recent_submissions_max", values: [1, 2, 3, 4, 5] },
   { plugin: "codewars", section: "completed_kata", maxKey: "completed_kata_max", values: [1, 2, 3, 4, 5] },
-  { plugin: "codewars", section: "languages_proficiency", maxKey: "languages_proficiency_max", values: [1, 2, 3, 4, 5] },
+  {
+    plugin: "codewars",
+    section: "languages_proficiency",
+    maxKey: "languages_proficiency_max",
+    values: [1, 2, 3, 4, 5],
+  },
   { plugin: "duolingo", section: "languages_learning", maxKey: "languages_learning_max", values: [1, 2, 3] },
   { plugin: "stackoverflow", section: "tags_expertise", maxKey: "tags_expertise_max", values: [1, 2, 3, 4, 5] },
   { plugin: "lastfm", section: "recent_tracks", maxKey: "recent_tracks_max", values: [1, 2, 3, 4, 5] },

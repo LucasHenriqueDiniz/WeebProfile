@@ -1,14 +1,14 @@
-import React from 'react'
-import { IoStatsChartOutline } from 'react-icons/io5'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { ImageComponent } from '../../../utils/image'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { PluginError } from '../../../components/PluginError'
-import type { LastFmData } from '../types'
+import React from "react"
+import { IoStatsChartOutline } from "react-icons/io5"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { ImageComponent } from "../../../utils/image"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { PluginError } from "../../../components/PluginError"
+import type { LastFmData } from "../types"
 
 interface StatisticsProps {
   data: LastFmData
@@ -17,21 +17,19 @@ interface StatisticsProps {
     statistics_hide_title?: boolean
     statistics_hide_featured_track?: boolean
   }
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
 const statisticsList = [
-  { title: 'Scrobbles', key: 'totalScrobbles' },
-  { title: 'Artists', key: 'totalArtists' },
+  { title: "Scrobbles", key: "totalScrobbles" },
+  { title: "Artists", key: "totalArtists" },
 ]
 
 const DefaultFeaturedTrack = ({ track }: { track: { track: string; artist: string; image?: string } }) => (
   <div className="flex flex-col rounded-xl border border-default-muted/30 bg-default-surface/60 px-4 py-3 half:px-3 half:py-2.5">
     <div className="flex items-center justify-between mb-2">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">
-        Top Track
-      </p>
+      <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Top Track</p>
     </div>
 
     <div className="flex items-center gap-3 half:gap-2.5 min-w-0">
@@ -65,7 +63,6 @@ const DefaultFeaturedTrack = ({ track }: { track: { track: string; artist: strin
 
 const DefaultStatistic = ({ title, value }: { title: string; value: string }) => (
   <div className="flex flex-col items-center rounded-xl border border-default-muted/30 bg-default-surface/60 px-4 py-3 half:px-3 half:py-2.5">
-
     <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted mb-1.5 whitespace-nowrap">
       {title}
     </p>
@@ -85,13 +82,13 @@ const TerminalFeaturedTrack = ({ track }: { track: { track: string; artist: stri
   )
 }
 
-export function Statistics({ data, config, style = 'default', size = 'half' }: StatisticsProps): React.ReactElement {
+export function Statistics({ data, config, style = "default", size = "half" }: StatisticsProps): React.ReactElement {
   // Ensure we have valid data with defaults
-  if (!data || typeof data !== 'object') {
+  if (!data || typeof data !== "object") {
     return <></>
   }
 
-  const statistics = data.statistics || { totalScrobbles: '0', totalArtists: '0', lovedTracks: '0' }
+  const statistics = data.statistics || { totalScrobbles: "0", totalArtists: "0", lovedTracks: "0" }
 
   return (
     <section id="lastfm-statistics">
@@ -99,17 +96,15 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
         style={style}
         defaultComponent={
           <div className="w-full flex flex-col gap-3 half:gap-2.5">
-            {!config?.statistics_hide_title && <DefaultTitle title={config?.statistics_title || 'Music Statistics'} icon={<IoStatsChartOutline />} />}
+            {!config?.statistics_hide_title && (
+              <DefaultTitle title={config?.statistics_title || "Music Statistics"} icon={<IoStatsChartOutline />} />
+            )}
 
             {/* Layout mais bonito e estável */}
             <div className="flex flex-col gap-3 half:gap-2.5">
               <div className="grid grid-cols-2 gap-3 half:gap-2.5">
                 {statisticsList.map(({ title, key }) => (
-                  <DefaultStatistic
-                    key={key}
-                    title={title}
-                    value={String((statistics as any)?.[key] || '0')}
-                  />
+                  <DefaultStatistic key={key} title={title} value={String((statistics as any)?.[key] || "0")} />
                 ))}
               </div>
 
@@ -123,8 +118,8 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'lastfm',
-                section: 'statistics',
+                plugin: "lastfm",
+                section: "statistics",
                 size,
               })}
             />
@@ -132,10 +127,12 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
               <TerminalLineWithDots
                 key={key}
                 title={title}
-                value={abbreviateNumber(String((statistics as any)?.[key] || '0'))}
+                value={abbreviateNumber(String((statistics as any)?.[key] || "0"))}
               />
             ))}
-            {!config?.statistics_hide_featured_track && data?.featuredTrack && <TerminalFeaturedTrack track={data.featuredTrack} />}
+            {!config?.statistics_hide_featured_track && data?.featuredTrack && (
+              <TerminalFeaturedTrack track={data.featuredTrack} />
+            )}
           </>
         }
       />

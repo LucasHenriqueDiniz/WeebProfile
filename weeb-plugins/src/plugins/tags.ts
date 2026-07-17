@@ -1,9 +1,9 @@
 /**
  * Plugin Tags System
- * 
+ *
  * Tags allow plugins to be categorized beyond the official categories (coding, music, anime, gaming).
  * This enables more flexible filtering and organization in the dashboard.
- * 
+ *
  * To add a new tag:
  * 1. Add it to the PluginTag type
  * 2. Add it to the PLUGIN_TAGS object with plugins that use it
@@ -17,7 +17,7 @@ export type PluginTag = "health" | "productivity" | "social" | "entertainment"
 
 /**
  * Mapping of plugin names to their tags
- * 
+ *
  * Plugins can have multiple tags to allow flexible categorization
  */
 export const PLUGIN_TAGS: Record<string, PluginTag[]> = {
@@ -61,4 +61,3 @@ export function getPluginsByTag(tag: PluginTag): string[] {
     .filter(([_, tags]) => tags.includes(tag))
     .map(([pluginName]) => pluginName)
 }
-

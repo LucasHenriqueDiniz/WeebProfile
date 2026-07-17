@@ -7,10 +7,10 @@ import { myAnimeListPlugin } from "./myanimelist/index"
 import type { EssentialPluginConfig } from "./shared/types/base"
 import type { Plugin } from "./shared/types/plugin"
 import { steamPlugin } from "./steam/index"
-import { duolingoPlugin } from './duolingo/index'
-import { codewarsPlugin } from './codewars/index'
-import { codeforcesPlugin } from './codeforces/index'
-import { stackoverflowPlugin } from './stackoverflow/index'
+import { duolingoPlugin } from "./duolingo/index"
+import { codewarsPlugin } from "./codewars/index"
+import { codeforcesPlugin } from "./codeforces/index"
+import { stackoverflowPlugin } from "./stackoverflow/index"
 
 export class PluginManager {
   private static instance: PluginManager
@@ -102,9 +102,9 @@ export class PluginManager {
    * Adds a 24px safety buffer to absorb minor font-rendering and layout edge cases.
    */
   public calculateTotalHeight(
-    pluginsConfig: Record<string, Plugin['config']>,
+    pluginsConfig: Record<string, Plugin["config"]>,
     pluginsData: Record<string, PluginData>,
-    size: 'half' | 'full' = 'half'
+    size: "half" | "full" = "half"
   ): number {
     let total = 0
     for (const [name, config] of Object.entries(pluginsConfig)) {

@@ -1,22 +1,22 @@
-import React from 'react'
-import { FaFrown, FaHeart } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import type { GridItemProps } from '../../../templates/types'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { ImageComponent } from '../../../utils/image'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaFrown, FaHeart } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import type { GridItemProps } from "../../../templates/types"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { ImageComponent } from "../../../utils/image"
+import type { GithubConfig, GithubData } from "../types"
 
 interface SponsorsProps {
-  data: GithubData['sponsors']
+  data: GithubData["sponsors"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DefaultSponsors = ({ data, max }: { data: GithubData['sponsors']; max: number }) => {
+const DefaultSponsors = ({ data, max }: { data: GithubData["sponsors"]; max: number }) => {
   if (!data || data.nodes.length === 0) {
     return (
       <div className="flex items-center gap-2 text-default-muted text-sm py-4">
@@ -43,9 +43,7 @@ const DefaultSponsors = ({ data, max }: { data: GithubData['sponsors']; max: num
             className="w-10 h-10 rounded-full"
           />
           <div className="flex-1">
-            <div className="font-semibold text-sm text-default-text">
-              {sponsor.name || sponsor.login}
-            </div>
+            <div className="font-semibold text-sm text-default-text">{sponsor.name || sponsor.login}</div>
             {sponsor.tier && (
               <div className="text-xs text-default-muted">
                 {sponsor.tier.name} • ${sponsor.tier.monthlyPriceInDollars}/month
@@ -55,16 +53,14 @@ const DefaultSponsors = ({ data, max }: { data: GithubData['sponsors']; max: num
         </div>
       ))}
       {data.totalCount > max && (
-        <div className="mt-2 text-center text-sm text-default-muted">
-          +{data.totalCount - max} more sponsors
-        </div>
+        <div className="mt-2 text-center text-sm text-default-muted">+{data.totalCount - max} more sponsors</div>
       )}
     </div>
   )
 }
 
 export function GithubSponsors({ data, config, style, size }: SponsorsProps): React.ReactElement {
-  const title = config.sponsors_title ?? 'Sponsors'
+  const title = config.sponsors_title ?? "Sponsors"
   const hideTitle = config.sponsors_hide_title ?? false
   const max = config.sponsors_max ?? 10
 
@@ -74,8 +70,8 @@ export function GithubSponsors({ data, config, style, size }: SponsorsProps): Re
 
   const gridData: GridItemProps[] = sponsors.map((sponsor) => ({
     title: sponsor.name || sponsor.login,
-    subtitle: sponsor.tier?.name || 'No tier',
-    value: sponsor.tier ? `$${sponsor.tier.monthlyPriceInDollars}/mo` : '',
+    subtitle: sponsor.tier?.name || "No tier",
+    value: sponsor.tier ? `$${sponsor.tier.monthlyPriceInDollars}/mo` : "",
   }))
 
   return (
@@ -92,8 +88,8 @@ export function GithubSponsors({ data, config, style, size }: SponsorsProps): Re
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'sponsors',
+                plugin: "github",
+                section: "sponsors",
                 size,
               })}
             />
@@ -108,4 +104,3 @@ export function GithubSponsors({ data, config, style, size }: SponsorsProps): Re
     </section>
   )
 }
-

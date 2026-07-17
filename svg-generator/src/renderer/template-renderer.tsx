@@ -1,18 +1,18 @@
 /**
  * Renderizador de Templates
- * 
+ *
  * Cria o container SVG principal com foreignObject
  */
 
-import React from 'react'
-import { PluginStyles } from '@weeb/weeb-plugins/templates'
-import type { SvgConfig } from '../types/index.js'
+import React from "react"
+import { PluginStyles } from "@weeb/weeb-plugins/templates"
+import type { SvgConfig } from "../types/index.js"
 
 interface SvgContainerProps {
   width: number
   height: number
-  size: 'half' | 'full'
-  style: 'default' | 'terminal'
+  size: "half" | "full"
+  style: "default" | "terminal"
   cssDefs: React.ReactElement
   children: React.ReactNode
   terminalTheme?: string
@@ -23,21 +23,11 @@ interface SvgContainerProps {
 
 /**
  * Cria o container SVG principal
- * 
+ *
  * Usa foreignObject para permitir HTML/CSS dentro do SVG
  */
 export function createSvgContainer(props: SvgContainerProps): React.ReactElement {
-  const {
-    width,
-    height,
-    size,
-    style,
-    cssDefs,
-    children,
-    terminalTheme,
-    defaultTheme,
-    hideTerminalHeader,
-  } = props
+  const { width, height, size, style, cssDefs, children, terminalTheme, defaultTheme, hideTerminalHeader } = props
 
   const containerClass = `${size} ${style} flex flex-col relative`
 
@@ -72,4 +62,3 @@ export function createSvgContainer(props: SvgContainerProps): React.ReactElement
     </svg>
   )
 }
-

@@ -2,27 +2,27 @@
  * Badges - Componente para exibir badges do Stack Overflow
  */
 
-import React from 'react'
-import { FaMedal } from 'react-icons/fa'
-import { IoStatsChartOutline } from 'react-icons/io5'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { StackOverflowConfig } from '../types'
+import React from "react"
+import { FaMedal } from "react-icons/fa"
+import { IoStatsChartOutline } from "react-icons/io5"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { StackOverflowConfig } from "../types"
 
 interface BadgesProps {
   badges: { gold: number; silver: number; bronze: number }
   config: StackOverflowConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function Badges({ badges, config, style = 'default', size = 'half' }: BadgesProps): React.ReactElement {
+export function Badges({ badges, config, style = "default", size = "half" }: BadgesProps): React.ReactElement {
   const hideTitle = config.nonEssential?.badges_hide_title || false
-  const title = config.nonEssential?.badges_title || 'Stack Overflow Badges'
+  const title = config.nonEssential?.badges_title || "Stack Overflow Badges"
 
   const totalBadges = badges.gold + badges.silver + badges.bronze
 
@@ -68,32 +68,18 @@ export function Badges({ badges, config, style = 'default', size = 'half' }: Bad
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'stackoverflow',
-                section: 'badges',
+                plugin: "stackoverflow",
+                section: "badges",
                 size,
               })}
             />
-            <TerminalLineWithDots
-              title="Total Badges"
-              value={abbreviateNumber(totalBadges)}
-            />
-            <TerminalLineWithDots
-              title="Gold"
-              value={abbreviateNumber(badges.gold)}
-            />
-            <TerminalLineWithDots
-              title="Silver"
-              value={abbreviateNumber(badges.silver)}
-            />
-            <TerminalLineWithDots
-              title="Bronze"
-              value={abbreviateNumber(badges.bronze)}
-            />
+            <TerminalLineWithDots title="Total Badges" value={abbreviateNumber(totalBadges)} />
+            <TerminalLineWithDots title="Gold" value={abbreviateNumber(badges.gold)} />
+            <TerminalLineWithDots title="Silver" value={abbreviateNumber(badges.silver)} />
+            <TerminalLineWithDots title="Bronze" value={abbreviateNumber(badges.bronze)} />
           </>
         }
       />
     </section>
   )
 }
-
-

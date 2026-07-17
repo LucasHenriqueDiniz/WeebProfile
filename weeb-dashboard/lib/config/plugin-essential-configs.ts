@@ -1,6 +1,6 @@
 /**
  * Helper para gerenciar essentialConfigKeys dos plugins
- * 
+ *
  * Usa PLUGINS_METADATA como fonte da verdade
  * Funciona automaticamente com qualquer plugin novo adicionado
  */
@@ -37,7 +37,7 @@ export function getPluginEssentialConfigKeys(pluginName: string): EssentialConfi
   // Usa Record<string, any> para ser compatível com qualquer plugin novo
   const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
   if (!metadata) return []
-  
+
   // Acessa essentialConfigKeysMetadata de forma segura
   const essentialConfigKeysMetadata = metadata.essentialConfigKeysMetadata as EssentialConfigKey[] | undefined
   return essentialConfigKeysMetadata || []
@@ -58,7 +58,7 @@ export const PLUGIN_ESSENTIAL_CONFIGS: Record<string, EssentialConfigKey[]> = ne
 
 /**
  * Verifica quais essentialConfigKeys estão faltando para os plugins habilitados
- * 
+ *
  * @param enabledPlugins - Lista de nomes de plugins habilitados
  * @param essentialConfigs - Objeto com as configurações essenciais do perfil
  * @returns Array com informações sobre quais configs estão faltando
@@ -77,16 +77,14 @@ export function getMissingEssentialConfigs(
     }
 
     const pluginEssentialConfigs = essentialConfigs[pluginName] || {}
-    const missingKeys = pluginConfig.filter(
-      (keyDef) => {
-        const value = pluginEssentialConfigs[keyDef.key]
-        // Se for boolean, verifica se é true. Se for string (legado), verifica se não está vazio
-        if (typeof value === 'boolean') {
-          return !value
-        }
-        return !value || (typeof value === 'string' && value.trim() === '')
+    const missingKeys = pluginConfig.filter((keyDef) => {
+      const value = pluginEssentialConfigs[keyDef.key]
+      // Se for boolean, verifica se é true. Se for string (legado), verifica se não está vazio
+      if (typeof value === "boolean") {
+        return !value
       }
-    )
+      return !value || (typeof value === "string" && value.trim() === "")
+    })
 
     if (missingKeys.length > 0) {
       missing.push({
@@ -112,38 +110,12 @@ export function hasAllEssentialConfigs(
   }
 
   const pluginEssentialConfigs = essentialConfigs[pluginName] || {}
-  return pluginConfig.every(
-    (keyDef) => {
-      const value = pluginEssentialConfigs[keyDef.key]
-      // Se for boolean, verifica se é true. Se for string (legado), verifica se não está vazio
-      if (typeof value === 'boolean') {
-        return value === true
-      }
-      return value && typeof value === 'string' && value.trim() !== ''
+  return pluginConfig.every((keyDef) => {
+    const value = pluginEssentialConfigs[keyDef.key]
+    // Se for boolean, verifica se é true. Se for string (legado), verifica se não está vazio
+    if (typeof value === "boolean") {
+      return value === true
     }
-  )
+    return value && typeof value === "string" && value.trim() !== ""
+  })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

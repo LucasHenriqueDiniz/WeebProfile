@@ -25,9 +25,7 @@ export function normalizePayloadForHash(svg: any, pluginsConfig: any): any {
       if (pluginConfig && typeof pluginConfig === "object") {
         const normalizedPlugin: any = {
           enabled: (pluginConfig as any).enabled || false,
-          sections: Array.isArray((pluginConfig as any).sections)
-            ? [...(pluginConfig as any).sections].sort()
-            : [],
+          sections: Array.isArray((pluginConfig as any).sections) ? [...(pluginConfig as any).sections].sort() : [],
         }
 
         // Include all other config fields (username, etc) but exclude timestamps/IDs
@@ -79,4 +77,3 @@ export function calculatePayloadHash(payload: any): string {
   const sorted = JSON.stringify(payload, Object.keys(payload).sort())
   return createHash("sha256").update(sorted).digest("hex")
 }
-

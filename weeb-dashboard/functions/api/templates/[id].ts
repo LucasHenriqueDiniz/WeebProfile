@@ -35,12 +35,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env,
     const [template] = await db
       .select()
       .from(templates)
-      .where(
-        and(
-          eq(templates.id, id),
-          or(eq(templates.userId, userId), eq(templates.isPublic, true))
-        )
-      )
+      .where(and(eq(templates.id, id), or(eq(templates.userId, userId), eq(templates.isPublic, true))))
       .limit(1)
 
     if (!template) return notFound("Template")
@@ -70,7 +65,7 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
 
     if (!existingTemplate) return notFound("Template")
 
-    const body = await request.json() as Record<string, any>
+    const body = (await request.json()) as Record<string, any>
     const {
       name,
       description,
@@ -87,9 +82,10 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
       isPublic,
     } = body
 
-    const existingUiConfig = (typeof (existingTemplate as any).uiConfig === "string"
-      ? JSON.parse((existingTemplate as any).uiConfig)
-      : (existingTemplate as any).uiConfig) || {}
+    const existingUiConfig =
+      (typeof (existingTemplate as any).uiConfig === "string"
+        ? JSON.parse((existingTemplate as any).uiConfig)
+        : (existingTemplate as any).uiConfig) || {}
     let finalUiConfig = uiConfig !== undefined ? uiConfig : existingUiConfig
     if (hideTerminalEmojis !== undefined || hideTerminalHeader !== undefined || hideTerminalCommand !== undefined) {
       finalUiConfig = setTerminalConfigs(finalUiConfig, {

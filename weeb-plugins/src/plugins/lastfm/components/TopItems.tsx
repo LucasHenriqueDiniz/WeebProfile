@@ -1,16 +1,16 @@
-import React from 'react'
-import type { IconType } from 'react-icons'
-import { DefaultGrid } from '../../../templates/Default/DefaultGrid'
-import { DefaultImageGrid } from '../../../templates/Default/DefaultImageGrid'
-import { DefaultList } from '../../../templates/Default/DefaultList'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { TerminalList } from '../../../templates/Terminal/TerminalList'
-import TerminalTree from '../../../templates/Terminal/TerminalTree'
-import type { GridItemProps, ListItemProps, TerminalLineProps } from '../../../templates/types'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
+import React from "react"
+import type { IconType } from "react-icons"
+import { DefaultGrid } from "../../../templates/Default/DefaultGrid"
+import { DefaultImageGrid } from "../../../templates/Default/DefaultImageGrid"
+import { DefaultList } from "../../../templates/Default/DefaultList"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { TerminalList } from "../../../templates/Terminal/TerminalList"
+import TerminalTree from "../../../templates/Terminal/TerminalTree"
+import type { GridItemProps, ListItemProps, TerminalLineProps } from "../../../templates/types"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
 
 interface TopItem {
   image?: string
@@ -30,9 +30,9 @@ interface TopItemsProps {
     hide_title?: boolean
     hide_intervals?: boolean
   }
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
-  displayStyle: 'grid' | 'list' | 'default'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
+  displayStyle: "grid" | "list" | "default"
   sectionId: string
   sectionName: string
   icon: IconType
@@ -51,8 +51,8 @@ export function TopItems({
   data,
   interval,
   config,
-  style = 'default',
-  size = 'half',
+  style = "default",
+  size = "half",
   displayStyle,
   sectionId,
   sectionName,
@@ -78,12 +78,12 @@ export function TopItems({
   const gridItems: GridItemProps[] = limitedData.map(mapToGridItem)
   const listItems: ListItemProps[] = limitedData.map(mapToListItem)
   const terminalListItems: TerminalLineProps[] = listItems.map((item) => ({
-    right: typeof item.right === 'string' ? item.right : String(item.right || ''),
-    left: typeof item.left === 'string' ? item.left : String(item.left || ''),
+    right: typeof item.right === "string" ? item.right : String(item.right || ""),
+    left: typeof item.left === "string" ? item.left : String(item.left || ""),
   }))
 
   // Renderizar baseado no displayStyle
-  if (displayStyle === 'list') {
+  if (displayStyle === "list") {
     return (
       <section id={sectionId}>
         <RenderBasedOnStyle
@@ -91,11 +91,7 @@ export function TopItems({
           defaultComponent={
             <div className="pb-2">
               {!hideTitle && (
-                <DefaultTitle
-                  title={title}
-                  subtitle={hideIntervals ? undefined : finalInterval}
-                  icon={<Icon />}
-                />
+                <DefaultTitle title={title} subtitle={hideIntervals ? undefined : finalInterval} icon={<Icon />} />
               )}
               <DefaultList data={listItems} />
             </div>
@@ -104,8 +100,8 @@ export function TopItems({
             <>
               <TerminalCommand
                 command={getPseudoCommands({
-                  plugin: 'lastfm',
-                  section: sectionId.replace('lastfm-', ''),
+                  plugin: "lastfm",
+                  section: sectionId.replace("lastfm-", ""),
                   period: finalInterval,
                   limit: maxItems,
                   size,
@@ -119,7 +115,7 @@ export function TopItems({
     )
   }
 
-  if (displayStyle === 'grid') {
+  if (displayStyle === "grid") {
     return (
       <section id={sectionId}>
         <RenderBasedOnStyle
@@ -127,11 +123,7 @@ export function TopItems({
           defaultComponent={
             <div className="pb-2">
               {!hideTitle && (
-                <DefaultTitle
-                  title={title}
-                  subtitle={hideIntervals ? undefined : finalInterval}
-                  icon={<Icon />}
-                />
+                <DefaultTitle title={title} subtitle={hideIntervals ? undefined : finalInterval} icon={<Icon />} />
               )}
               <DefaultImageGrid data={gridItems} />
             </div>
@@ -140,8 +132,8 @@ export function TopItems({
             <>
               <TerminalCommand
                 command={getPseudoCommands({
-                  plugin: 'lastfm',
-                  section: sectionId.replace('lastfm-', ''),
+                  plugin: "lastfm",
+                  section: sectionId.replace("lastfm-", ""),
                   period: finalInterval,
                   limit: maxItems,
                   size,
@@ -168,11 +160,7 @@ export function TopItems({
         defaultComponent={
           <div className="pb-2">
             {!hideTitle && (
-              <DefaultTitle
-                title={title}
-                subtitle={hideIntervals ? undefined : finalInterval}
-                icon={<Icon />}
-              />
+              <DefaultTitle title={title} subtitle={hideIntervals ? undefined : finalInterval} icon={<Icon />} />
             )}
             <DefaultGrid data={gridItems} size={size} />
           </div>
@@ -181,8 +169,8 @@ export function TopItems({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'lastfm',
-                section: sectionId.replace('lastfm-', ''),
+                plugin: "lastfm",
+                section: sectionId.replace("lastfm-", ""),
                 period: finalInterval,
                 limit: maxItems,
                 size,
@@ -195,4 +183,3 @@ export function TopItems({
     </section>
   )
 }
-

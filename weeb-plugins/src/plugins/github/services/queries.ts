@@ -465,4 +465,3 @@ export const SECTION_QUERIES = {
   sponsorships: SPONSORSHIPS_QUERY,
   sponsors: SPONSORS_QUERY,
 } as const
-

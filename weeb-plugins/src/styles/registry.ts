@@ -1,13 +1,13 @@
 /**
  * Style Registry
- * 
+ *
  * Central registry for all available styles
  * New styles are automatically available once registered here
  */
 
-import defaultStyle from './default/index'
-import terminalStyle from './terminal/index'
-import { getFontCssClient, getFontsForStyle } from '../fonts/index.js'
+import defaultStyle from "./default/index"
+import terminalStyle from "./terminal/index"
+import { getFontCssClient, getFontsForStyle } from "../fonts/index.js"
 
 export interface StyleDefinition {
   name: string
@@ -46,15 +46,15 @@ export function getStyleCSS(styleName: string): string {
     console.warn(`Style "${styleName}" not found, using default`)
     const defaultStyle = styleRegistry.default
     if (!defaultStyle) {
-      console.error('Default style not found in registry!')
-      return ''
+      console.error("Default style not found in registry!")
+      return ""
     }
     return defaultStyle.getCSS()
   }
-  
+
   // Get base CSS
   const baseCSS = style.getCSS()
-  
+
   // Add @font-face declarations for client-side rendering
   // Use relative URLs that will be resolved by the consuming application
   try {
@@ -62,14 +62,14 @@ export function getStyleCSS(styleName: string): string {
     if (fontIds.length > 0) {
       // Use API route URL - dashboard serves fonts via /api/fonts
       // Other apps can configure their own baseUrl
-      const fontCSS = getFontCssClient(fontIds, '/api/fonts')
-      return [fontCSS, baseCSS].filter(Boolean).join('\n\n')
+      const fontCSS = getFontCssClient(fontIds, "/api/fonts")
+      return [fontCSS, baseCSS].filter(Boolean).join("\n\n")
     }
   } catch (error) {
     // If fonts module is not available (shouldn't happen), just return base CSS
-    console.warn('[Styles] Could not load font CSS for client:', error)
+    console.warn("[Styles] Could not load font CSS for client:", error)
   }
-  
+
   return baseCSS
 }
 
@@ -86,4 +86,3 @@ export function getAvailableStyles(): string[] {
 export function styleExists(styleName: string): boolean {
   return styleName in styleRegistry
 }
-

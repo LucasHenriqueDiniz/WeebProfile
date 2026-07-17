@@ -215,7 +215,9 @@ async function main() {
               if (result.error) {
                 console.log(`❌ ${result.error}`)
               } else {
-                console.log(`calc=${result.calculated} actual=${result.actual} diff=${result.diff >= 0 ? "+" : ""}${result.diff}`)
+                console.log(
+                  `calc=${result.calculated} actual=${result.actual} diff=${result.diff >= 0 ? "+" : ""}${result.diff}`
+                )
               }
             } catch (error) {
               console.log(`💥 ${error instanceof Error ? error.message : String(error)}`)
@@ -245,20 +247,26 @@ async function main() {
   const ok = results.filter((r) => !r.error && r.diff <= 0 && r.diff >= -20)
 
   console.log(`\n${"=".repeat(70)}`)
-  console.log(`📊 Summary: ${results.length} tested | ${ok.length} ok | ${overflow.length} overflow | ${oversized.length} oversized | ${errors.length} errors`)
+  console.log(
+    `📊 Summary: ${results.length} tested | ${ok.length} ok | ${overflow.length} overflow | ${oversized.length} oversized | ${errors.length} errors`
+  )
   console.log("=".repeat(70))
 
   if (overflow.length > 0) {
     console.log(`\n⚠️  OVERFLOW (calculateHeight() too small - content may be cut off):`)
     for (const r of overflow.sort((a, b) => b.diff - a.diff)) {
-      console.log(`  ${r.plugin}/${r.section} (${r.size}/${r.style}): calc=${r.calculated} actual=${r.actual} diff=+${r.diff}`)
+      console.log(
+        `  ${r.plugin}/${r.section} (${r.size}/${r.style}): calc=${r.calculated} actual=${r.actual} diff=+${r.diff}`
+      )
     }
   }
 
   if (oversized.length > 0) {
     console.log(`\n📏 OVERSIZED (calculateHeight() too generous - wasted space, diff < -20px):`)
     for (const r of oversized.sort((a, b) => a.diff - b.diff)) {
-      console.log(`  ${r.plugin}/${r.section} (${r.size}/${r.style}): calc=${r.calculated} actual=${r.actual} diff=${r.diff}`)
+      console.log(
+        `  ${r.plugin}/${r.section} (${r.size}/${r.style}): calc=${r.calculated} actual=${r.actual} diff=${r.diff}`
+      )
     }
   }
 

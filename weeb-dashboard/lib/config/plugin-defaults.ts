@@ -16,16 +16,14 @@ export function applyPluginDefaults(
 ): PluginConfig {
   // Hardcoded defaults: all plugins start disabled with no sections
   const enabled = config.enabled ?? userDefaults?.enabled ?? false
-  
+
   return {
     ...userDefaults,
     ...config,
     // All plugins start disabled by default
     enabled,
     // If disabled, no sections. If enabled, use provided sections or empty array
-    sections: enabled 
-      ? (config.sections ?? userDefaults?.sections ?? [])
-      : [],
+    sections: enabled ? (config.sections ?? userDefaults?.sections ?? []) : [],
     // Ensure sectionConfigs and fields exist
     sectionConfigs: config.sectionConfigs ?? userDefaults?.sectionConfigs ?? {},
     fields: config.fields ?? userDefaults?.fields ?? {},
@@ -42,43 +40,3 @@ export function getPluginFieldDefault(pluginName: string, fieldName: string): an
   // This function is kept for backwards compatibility
   return undefined
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

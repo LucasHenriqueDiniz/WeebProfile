@@ -2,15 +2,15 @@
  * Main rendering component for the PLUGIN_NAME plugin
  */
 
-import React from 'react'
-import type { PLUGIN_NAMEConfig, PLUGIN_NAMEData } from '../types'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
+import React from "react"
+import type { PLUGIN_NAMEConfig, PLUGIN_NAMEData } from "../types"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 
 interface RenderPLUGIN_NAMEProps {
   config: PLUGIN_NAMEConfig
   data: PLUGIN_NAMEData
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
 /**
@@ -19,8 +19,8 @@ interface RenderPLUGIN_NAMEProps {
 export function RenderPLUGIN_NAME({
   config,
   data,
-  style = 'default',
-  size = 'half',
+  style = "default",
+  size = "half",
 }: RenderPLUGIN_NAMEProps): React.ReactElement {
   // If not enabled or no data, return empty
   if (!config.enabled || !data) {

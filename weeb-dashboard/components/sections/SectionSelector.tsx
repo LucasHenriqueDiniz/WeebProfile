@@ -34,33 +34,33 @@ export function SectionSelector({
 }: SectionSelectorProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const { tWithFallback } = usePluginI18n()
-  
+
   const pluginMetadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
   if (!pluginMetadata) return null
 
   const allSections = pluginMetadata.sections || []
   const visibleSections = selectedSections.slice(0, 3)
   const remainingCount = Math.max(0, selectedSections.length - 3)
-  
+
   const getSectionName = (section: any) => {
     if (section.i18nKey?.name) {
-      return tWithFallback(section.i18nKey.name.replace(/^plugins\./, ''), section.name)
+      return tWithFallback(section.i18nKey.name.replace(/^plugins\./, ""), section.name)
     }
     return section.name
   }
-  
+
   const getSectionDescription = (section: any) => {
     if (!section.description) return undefined
     if (section.i18nKey?.description) {
-      return tWithFallback(section.i18nKey.description.replace(/^plugins\./, ''), section.description)
+      return tWithFallback(section.i18nKey.description.replace(/^plugins\./, ""), section.description)
     }
     return section.description
   }
-  
+
   const getPluginDisplayName = () => {
     const metadata = pluginMetadata as any
     if (metadata.i18nKey?.displayName) {
-      return tWithFallback(metadata.i18nKey.displayName.replace(/^plugins\./, ''), metadata.displayName)
+      return tWithFallback(metadata.i18nKey.displayName.replace(/^plugins\./, ""), metadata.displayName)
     }
     return metadata.displayName
   }
@@ -100,11 +100,7 @@ export function SectionSelector({
       {remainingCount > 0 && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2.5 text-xs font-medium"
-            >
+            <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs font-medium">
               <Plus className="w-3 h-3 mr-1" />
               {remainingCount} more
             </Button>
@@ -112,9 +108,7 @@ export function SectionSelector({
           <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Select Sections</DialogTitle>
-              <DialogDescription>
-                Choose which sections to display for {getPluginDisplayName()}
-              </DialogDescription>
+              <DialogDescription>Choose which sections to display for {getPluginDisplayName()}</DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-4">
               {allSections.map((section) => {
@@ -132,16 +126,11 @@ export function SectionSelector({
                         className="mt-0.5"
                       />
                       <div className="flex-1">
-                        <Label
-                          htmlFor={`section-${section.id}`}
-                          className="text-sm font-medium cursor-pointer"
-                        >
+                        <Label htmlFor={`section-${section.id}`} className="text-sm font-medium cursor-pointer">
                           {getSectionName(section)}
                         </Label>
                         {getSectionDescription(section) && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {getSectionDescription(section)}
-                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">{getSectionDescription(section)}</p>
                         )}
                       </div>
                     </div>
@@ -170,11 +159,7 @@ export function SectionSelector({
       {selectedSections.length < 3 && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2.5 text-xs font-medium"
-            >
+            <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs font-medium">
               <Plus className="w-3 h-3 mr-1" />
               Add Sections
             </Button>
@@ -182,9 +167,7 @@ export function SectionSelector({
           <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Select Sections</DialogTitle>
-              <DialogDescription>
-                Choose which sections to display for {getPluginDisplayName()}
-              </DialogDescription>
+              <DialogDescription>Choose which sections to display for {getPluginDisplayName()}</DialogDescription>
             </DialogHeader>
             <div className="space-y-3 py-4">
               {allSections.map((section) => {
@@ -202,16 +185,11 @@ export function SectionSelector({
                         className="mt-0.5"
                       />
                       <div className="flex-1">
-                        <Label
-                          htmlFor={`section-${section.id}`}
-                          className="text-sm font-medium cursor-pointer"
-                        >
+                        <Label htmlFor={`section-${section.id}`} className="text-sm font-medium cursor-pointer">
                           {getSectionName(section)}
                         </Label>
                         {getSectionDescription(section) && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {getSectionDescription(section)}
-                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">{getSectionDescription(section)}</p>
                         )}
                       </div>
                     </div>
@@ -238,5 +216,3 @@ export function SectionSelector({
     </div>
   )
 }
-
-

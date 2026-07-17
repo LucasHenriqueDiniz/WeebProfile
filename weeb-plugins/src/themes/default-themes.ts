@@ -92,10 +92,3 @@ export const defaultThemes = {
     highlight: "#FF7A3D",
   },
 }
-
-
-
-
-
-
-

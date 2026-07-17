@@ -1,6 +1,6 @@
 /**
  * Tipos base compartilhados para plugins
- * 
+ *
  * Define a estrutura fundamental de configurações de plugins,
  * separando dados sensíveis (essenciais) de preferências do usuário (não-essenciais)
  */
@@ -38,4 +38,3 @@ export interface BasePluginConfig {
   nonEssential?: NonEssentialPluginConfig
   previewMode?: boolean
 }
-

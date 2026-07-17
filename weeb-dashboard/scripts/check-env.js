@@ -14,10 +14,7 @@ const requiredVars = [
   "DATABASE_URL",
 ]
 
-const optionalVars = [
-  "SVG_GENERATOR_URL",
-  "CRON_SECRET",
-]
+const optionalVars = ["SVG_GENERATOR_URL", "CRON_SECRET"]
 
 console.log("🔍 Verificando variáveis de ambiente...\n")
 
@@ -60,63 +57,3 @@ if (hasErrors) {
   console.log("\n✅ Todas as variáveis obrigatórias estão configuradas!\n")
   process.exit(0)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

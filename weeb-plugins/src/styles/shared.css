@@ -11,1582 +11,1594 @@
 /* We only need utilities, not base or components */
 
 .visible {
-  visibility: visible
+  visibility: visible;
 }
 
 #svg-main .static {
-  position: static
+  position: static;
 }
 
 #svg-main .fixed {
-  position: fixed
+  position: fixed;
 }
 
 #svg-main .absolute {
-  position: absolute
+  position: absolute;
 }
 
 #svg-main .relative {
-  position: relative
+  position: relative;
 }
 
 #svg-main .inset-0 {
-  inset: 0px
+  inset: 0px;
 }
 
 #svg-main .right-0 {
-  right: 0px
+  right: 0px;
 }
 
 #svg-main .z-10 {
-  z-index: 10
+  z-index: 10;
 }
 
 #svg-main .col-span-2 {
-  grid-column: span 2 / span 2
+  grid-column: span 2 / span 2;
 }
 
 #svg-main .row-span-2 {
-  grid-row: span 2 / span 2
+  grid-row: span 2 / span 2;
 }
 
 #svg-main .m-0 {
-  margin: 0px
+  margin: 0px;
 }
 
 #svg-main .mx-1 {
   margin-left: 0.25rem;
-  margin-right: 0.25rem
+  margin-right: 0.25rem;
 }
 
 #svg-main .mx-\[3px\] {
   margin-left: 3px;
-  margin-right: 3px
+  margin-right: 3px;
 }
 
 #svg-main .my-1 {
   margin-top: 0.25rem;
-  margin-bottom: 0.25rem
+  margin-bottom: 0.25rem;
 }
 
 #svg-main .my-1\.5 {
   margin-top: 0.375rem;
-  margin-bottom: 0.375rem
+  margin-bottom: 0.375rem;
 }
 
 #svg-main .mb-0 {
-  margin-bottom: 0px
+  margin-bottom: 0px;
 }
 
 #svg-main .mb-0\.5 {
-  margin-bottom: 0.125rem
+  margin-bottom: 0.125rem;
 }
 
 #svg-main .mb-1 {
-  margin-bottom: 0.25rem
+  margin-bottom: 0.25rem;
 }
 
 #svg-main .mb-1\.5 {
-  margin-bottom: 0.375rem
+  margin-bottom: 0.375rem;
 }
 
 #svg-main .mb-2 {
-  margin-bottom: 0.5rem
+  margin-bottom: 0.5rem;
 }
 
 #svg-main .mb-2\.5 {
-  margin-bottom: 0.625rem
+  margin-bottom: 0.625rem;
 }
 
 #svg-main .mb-3 {
-  margin-bottom: 0.75rem
+  margin-bottom: 0.75rem;
 }
 
 #svg-main .mb-4 {
-  margin-bottom: 1rem
+  margin-bottom: 1rem;
 }
 
 #svg-main .ml-1 {
-  margin-left: 0.25rem
+  margin-left: 0.25rem;
 }
 
 #svg-main .ml-2 {
-  margin-left: 0.5rem
+  margin-left: 0.5rem;
 }
 
 #svg-main .ml-auto {
-  margin-left: auto
+  margin-left: auto;
 }
 
 #svg-main .mr-1 {
-  margin-right: 0.25rem
+  margin-right: 0.25rem;
 }
 
 #svg-main .mr-2 {
-  margin-right: 0.5rem
+  margin-right: 0.5rem;
 }
 
 #svg-main .mt-0 {
-  margin-top: 0px
+  margin-top: 0px;
 }
 
 #svg-main .mt-0\.5 {
-  margin-top: 0.125rem
+  margin-top: 0.125rem;
 }
 
 #svg-main .mt-1 {
-  margin-top: 0.25rem
+  margin-top: 0.25rem;
 }
 
 #svg-main .mt-1\.5 {
-  margin-top: 0.375rem
+  margin-top: 0.375rem;
 }
 
 #svg-main .mt-2 {
-  margin-top: 0.5rem
+  margin-top: 0.5rem;
 }
 
 #svg-main .mt-3 {
-  margin-top: 0.75rem
+  margin-top: 0.75rem;
 }
 
 #svg-main .mt-4 {
-  margin-top: 1rem
+  margin-top: 1rem;
 }
 
 #svg-main .mt-\[0\.25rem\] {
-  margin-top: 0.25rem
+  margin-top: 0.25rem;
 }
 
 #svg-main .mt-\[0\.5rem\] {
-  margin-top: 0.5rem
+  margin-top: 0.5rem;
 }
 
 #svg-main .line-clamp-1 {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1
+  -webkit-line-clamp: 1;
 }
 
 #svg-main .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2
+  -webkit-line-clamp: 2;
 }
 
 #svg-main .block {
-  display: block
+  display: block;
 }
 
 #svg-main .inline-block {
-  display: inline-block
+  display: inline-block;
 }
 
 #svg-main .inline {
-  display: inline
+  display: inline;
 }
 
 #svg-main .flex {
-  display: flex
+  display: flex;
 }
 
 #svg-main .inline-flex {
-  display: inline-flex
+  display: inline-flex;
 }
 
 #svg-main .table {
-  display: table
+  display: table;
 }
 
 #svg-main .grid {
-  display: grid
+  display: grid;
 }
 
 #svg-main .inline-grid {
-  display: inline-grid
+  display: inline-grid;
 }
 
 #svg-main .hidden {
-  display: none
+  display: none;
 }
 
 #svg-main .aspect-video {
-  aspect-ratio: 16 / 9
+  aspect-ratio: 16 / 9;
 }
 
 #svg-main .h-10 {
-  height: 2.5rem
+  height: 2.5rem;
 }
 
 #svg-main .h-12 {
-  height: 3rem
+  height: 3rem;
 }
 
 #svg-main .h-14 {
-  height: 3.5rem
+  height: 3.5rem;
 }
 
 #svg-main .h-16 {
-  height: 4rem
+  height: 4rem;
 }
 
 #svg-main .h-2 {
-  height: 0.5rem
+  height: 0.5rem;
 }
 
 #svg-main .h-2\.5 {
-  height: 0.625rem
+  height: 0.625rem;
 }
 
 #svg-main .h-20 {
-  height: 5rem
+  height: 5rem;
 }
 
 #svg-main .h-3 {
-  height: 0.75rem
+  height: 0.75rem;
 }
 
 #svg-main .h-3\.5 {
-  height: 0.875rem
+  height: 0.875rem;
 }
 
 #svg-main .h-32 {
-  height: 8rem
+  height: 8rem;
 }
 
 #svg-main .h-4 {
-  height: 1rem
+  height: 1rem;
 }
 
 #svg-main .h-5 {
-  height: 1.25rem
+  height: 1.25rem;
 }
 
 #svg-main .h-6 {
-  height: 1.5rem
+  height: 1.5rem;
 }
 
 #svg-main .h-7 {
-  height: 1.75rem
+  height: 1.75rem;
 }
 
 #svg-main .h-8 {
-  height: 2rem
+  height: 2rem;
 }
 
 #svg-main .h-\[100px\] {
-  height: 100px
+  height: 100px;
 }
 
 #svg-main .h-\[120px\] {
-  height: 120px
+  height: 120px;
 }
 
 #svg-main .h-\[15px\] {
-  height: 15px
+  height: 15px;
 }
 
 #svg-main .h-\[50px\] {
-  height: 50px
+  height: 50px;
 }
 
 #svg-main .h-\[75px\] {
-  height: 75px
+  height: 75px;
 }
 
 #svg-main .h-full {
-  height: 100%
+  height: 100%;
 }
 
 #svg-main .h-px {
-  height: 1px
+  height: 1px;
 }
 
 #svg-main .max-h-\[50px\] {
-  max-height: 50px
+  max-height: 50px;
 }
 
 #svg-main .min-h-\[120px\] {
-  min-height: 120px
+  min-height: 120px;
 }
 
 #svg-main .min-h-\[50px\] {
-  min-height: 50px
+  min-height: 50px;
 }
 
 #svg-main .min-h-\[75px\] {
-  min-height: 75px
+  min-height: 75px;
 }
 
 #svg-main .min-h-\[80px\] {
-  min-height: 80px
+  min-height: 80px;
 }
 
 #svg-main .w-10 {
-  width: 2.5rem
+  width: 2.5rem;
 }
 
 #svg-main .w-12 {
-  width: 3rem
+  width: 3rem;
 }
 
 #svg-main .w-14 {
-  width: 3.5rem
+  width: 3.5rem;
 }
 
 #svg-main .w-16 {
-  width: 4rem
+  width: 4rem;
 }
 
 #svg-main .w-2 {
-  width: 0.5rem
+  width: 0.5rem;
 }
 
 #svg-main .w-20 {
-  width: 5rem
+  width: 5rem;
 }
 
 #svg-main .w-3 {
-  width: 0.75rem
+  width: 0.75rem;
 }
 
 #svg-main .w-3\.5 {
-  width: 0.875rem
+  width: 0.875rem;
 }
 
 #svg-main .w-32 {
-  width: 8rem
+  width: 8rem;
 }
 
 #svg-main .w-4 {
-  width: 1rem
+  width: 1rem;
 }
 
 #svg-main .w-5 {
-  width: 1.25rem
+  width: 1.25rem;
 }
 
 #svg-main .w-6 {
-  width: 1.5rem
+  width: 1.5rem;
 }
 
 #svg-main .w-7 {
-  width: 1.75rem
+  width: 1.75rem;
 }
 
 #svg-main .w-8 {
-  width: 2rem
+  width: 2rem;
 }
 
 #svg-main .w-\[0\.60rem\] {
-  width: 0.60rem
+  width: 0.6rem;
 }
 
 #svg-main .w-\[50px\] {
-  width: 50px
+  width: 50px;
 }
 
 #svg-main .w-auto {
-  width: auto
+  width: auto;
 }
 
 #svg-main .w-fit {
   width: -moz-fit-content;
-  width: fit-content
+  width: fit-content;
 }
 
 #svg-main .w-full {
-  width: 100%
+  width: 100%;
 }
 
 #svg-main .min-w-0 {
-  min-width: 0px
+  min-width: 0px;
 }
 
 #svg-main .max-w-\[60\%\] {
-  max-width: 60%
+  max-width: 60%;
 }
 
 #svg-main .max-w-full {
-  max-width: 100%
+  max-width: 100%;
 }
 
 #svg-main .max-w-md {
-  max-width: 28rem
+  max-width: 28rem;
 }
 
 #svg-main .flex-1 {
-  flex: 1 1 0%
+  flex: 1 1 0%;
 }
 
 #svg-main .flex-shrink {
-  flex-shrink: 1
+  flex-shrink: 1;
 }
 
 #svg-main .flex-shrink-0 {
-  flex-shrink: 0
+  flex-shrink: 0;
 }
 
 #svg-main .shrink-0 {
-  flex-shrink: 0
+  flex-shrink: 0;
 }
 
 #svg-main .scale-110 {
   --tw-scale-x: 1.1;
   --tw-scale-y: 1.1;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
+    skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 #svg-main .transform {
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
+    skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 #svg-main .cursor-pointer {
-  cursor: pointer
+  cursor: pointer;
 }
 
 #svg-main .select-none {
   -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none
+  -moz-user-select: none;
+  user-select: none;
 }
 
 #svg-main .resize {
-  resize: both
+  resize: both;
 }
 
 #svg-main .grid-flow-col {
-  grid-auto-flow: column
+  grid-auto-flow: column;
 }
 
 #svg-main .grid-cols-1 {
-  grid-template-columns: repeat(1, minmax(0, 1fr))
+  grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
 #svg-main .grid-cols-10 {
-  grid-template-columns: repeat(10, minmax(0, 1fr))
+  grid-template-columns: repeat(10, minmax(0, 1fr));
 }
 
 #svg-main .grid-cols-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr))
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 #svg-main .grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr))
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 #svg-main .grid-cols-4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr))
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 #svg-main .grid-cols-5 {
-  grid-template-columns: repeat(5, minmax(0, 1fr))
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 #svg-main .grid-cols-8 {
-  grid-template-columns: repeat(8, minmax(0, 1fr))
+  grid-template-columns: repeat(8, minmax(0, 1fr));
 }
 
 #svg-main .grid-cols-\[30px_1fr\] {
-  grid-template-columns: 30px 1fr
+  grid-template-columns: 30px 1fr;
 }
 
 #svg-main .grid-cols-\[30px_min-content_1fr\] {
-  grid-template-columns: 30px min-content 1fr
+  grid-template-columns: 30px min-content 1fr;
 }
 
 #svg-main .grid-cols-\[75px_1fr\] {
-  grid-template-columns: 75px 1fr
+  grid-template-columns: 75px 1fr;
 }
 
 #svg-main .grid-cols-\[auto_min-content\] {
-  grid-template-columns: auto min-content
+  grid-template-columns: auto min-content;
 }
 
 #svg-main .grid-rows-2 {
-  grid-template-rows: repeat(2, minmax(0, 1fr))
+  grid-template-rows: repeat(2, minmax(0, 1fr));
 }
 
 #svg-main .grid-rows-7 {
-  grid-template-rows: repeat(7, minmax(0, 1fr))
+  grid-template-rows: repeat(7, minmax(0, 1fr));
 }
 
 #svg-main .flex-row {
-  flex-direction: row
+  flex-direction: row;
 }
 
 #svg-main .flex-col {
-  flex-direction: column
+  flex-direction: column;
 }
 
 #svg-main .flex-wrap {
-  flex-wrap: wrap
+  flex-wrap: wrap;
 }
 
 #svg-main .flex-nowrap {
-  flex-wrap: nowrap
+  flex-wrap: nowrap;
 }
 
 #svg-main .items-start {
-  align-items: flex-start
+  align-items: flex-start;
 }
 
 #svg-main .items-end {
-  align-items: flex-end
+  align-items: flex-end;
 }
 
 #svg-main .items-center {
-  align-items: center
+  align-items: center;
 }
 
 #svg-main .items-baseline {
-  align-items: baseline
+  align-items: baseline;
 }
 
 #svg-main .justify-start {
-  justify-content: flex-start
+  justify-content: flex-start;
 }
 
 #svg-main .justify-end {
-  justify-content: flex-end
+  justify-content: flex-end;
 }
 
 #svg-main .justify-center {
-  justify-content: center
+  justify-content: center;
 }
 
 #svg-main .justify-between {
-  justify-content: space-between
+  justify-content: space-between;
 }
 
 #svg-main .justify-evenly {
-  justify-content: space-evenly
+  justify-content: space-evenly;
 }
 
 #svg-main .gap-0 {
-  gap: 0px
+  gap: 0px;
 }
 
 #svg-main .gap-0\.5 {
-  gap: 0.125rem
+  gap: 0.125rem;
 }
 
 #svg-main .gap-1 {
-  gap: 0.25rem
+  gap: 0.25rem;
 }
 
 #svg-main .gap-1\.5 {
-  gap: 0.375rem
+  gap: 0.375rem;
 }
 
 #svg-main .gap-2 {
-  gap: 0.5rem
+  gap: 0.5rem;
 }
 
 #svg-main .gap-3 {
-  gap: 0.75rem
+  gap: 0.75rem;
 }
 
 #svg-main .gap-4 {
-  gap: 1rem
+  gap: 1rem;
 }
 
 #svg-main .gap-\[1px\] {
-  gap: 1px
+  gap: 1px;
 }
 
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
-       column-gap: 0.5rem
+  column-gap: 0.5rem;
 }
 
 #svg-main .gap-y-2 {
-  row-gap: 0.5rem
+  row-gap: 0.5rem;
 }
 
 #svg-main .space-y-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse))
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 
 #svg-main .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.625rem * var(--tw-space-y-reverse))
+  margin-bottom: calc(0.625rem * var(--tw-space-y-reverse));
 }
 
 #svg-main .space-y-3 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse))
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
 }
 
 #svg-main .self-end {
-  align-self: flex-end
+  align-self: flex-end;
 }
 
 #svg-main .self-center {
-  align-self: center
+  align-self: center;
 }
 
 #svg-main .overflow-hidden {
-  overflow: hidden
+  overflow: hidden;
 }
 
 #svg-main .overflow-x-auto {
-  overflow-x: auto
+  overflow-x: auto;
 }
 
 #svg-main .overflow-y-hidden {
-  overflow-y: hidden
+  overflow-y: hidden;
 }
 
 #svg-main .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap
+  white-space: nowrap;
 }
 
 #svg-main .overflow-ellipsis {
-  text-overflow: ellipsis
+  text-overflow: ellipsis;
 }
 
 #svg-main .whitespace-nowrap {
-  white-space: nowrap
+  white-space: nowrap;
 }
 
 #svg-main .whitespace-pre-line {
-  white-space: pre-line
+  white-space: pre-line;
 }
 
 #svg-main .whitespace-pre-wrap {
-  white-space: pre-wrap
+  white-space: pre-wrap;
 }
 
 #svg-main .text-wrap {
-  text-wrap: wrap
+  text-wrap: wrap;
 }
 
 #svg-main .text-nowrap {
-  text-wrap: nowrap
+  text-wrap: nowrap;
 }
 
 #svg-main .break-words {
-  overflow-wrap: break-word
+  overflow-wrap: break-word;
 }
 
 #svg-main .rounded {
-  border-radius: 0.25rem
+  border-radius: 0.25rem;
 }
 
 #svg-main .rounded-2xl {
-  border-radius: 1rem
+  border-radius: 1rem;
 }
 
 #svg-main .rounded-full {
-  border-radius: 9999px
+  border-radius: 9999px;
 }
 
 #svg-main .rounded-lg {
-  border-radius: 0.5rem
+  border-radius: 0.5rem;
 }
 
 #svg-main .rounded-md {
-  border-radius: 0.375rem
+  border-radius: 0.375rem;
 }
 
 #svg-main .rounded-sm {
-  border-radius: 0.125rem
+  border-radius: 0.125rem;
 }
 
 #svg-main .rounded-xl {
-  border-radius: 0.75rem
+  border-radius: 0.75rem;
 }
 
 #svg-main .rounded-r-lg {
   border-top-right-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem
+  border-bottom-right-radius: 0.5rem;
 }
 
 #svg-main .rounded-t-md {
   border-top-left-radius: 0.375rem;
-  border-top-right-radius: 0.375rem
+  border-top-right-radius: 0.375rem;
 }
 
 #svg-main .border {
-  border-width: 1px
+  border-width: 1px;
 }
 
 #svg-main .border-0 {
-  border-width: 0px
+  border-width: 0px;
 }
 
 #svg-main .border-2 {
-  border-width: 2px
+  border-width: 2px;
 }
 
 #svg-main .border-b {
-  border-bottom-width: 1px
+  border-bottom-width: 1px;
 }
 
 #svg-main .border-solid {
-  border-style: solid
+  border-style: solid;
 }
 
 #svg-main .border-blue-200 {
   --tw-border-opacity: 1;
-  border-color: rgb(191 219 254 / var(--tw-border-opacity, 1))
+  border-color: rgb(191 219 254 / var(--tw-border-opacity, 1));
 }
 
 #svg-main .border-gray-200 {
   --tw-border-opacity: 1;
-  border-color: rgb(229 231 235 / var(--tw-border-opacity, 1))
+  border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
 }
 
 #svg-main .border-orange-200 {
   --tw-border-opacity: 1;
-  border-color: rgb(254 215 170 / var(--tw-border-opacity, 1))
+  border-color: rgb(254 215 170 / var(--tw-border-opacity, 1));
 }
 
 #svg-main .border-red-200 {
   --tw-border-opacity: 1;
-  border-color: rgb(254 202 202 / var(--tw-border-opacity, 1))
+  border-color: rgb(254 202 202 / var(--tw-border-opacity, 1));
 }
 
 #svg-main .border-red-500 {
   --tw-border-opacity: 1;
-  border-color: rgb(239 68 68 / var(--tw-border-opacity, 1))
+  border-color: rgb(239 68 68 / var(--tw-border-opacity, 1));
 }
 
 #svg-main .border-white {
   --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1))
+  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
 }
 
 #svg-main .border-white\/30 {
-  border-color: rgb(255 255 255 / 0.3)
+  border-color: rgb(255 255 255 / 0.3);
 }
 
 #svg-main .border-white\/50 {
-  border-color: rgb(255 255 255 / 0.5)
+  border-color: rgb(255 255 255 / 0.5);
 }
 
 #svg-main .border-yellow-200 {
   --tw-border-opacity: 1;
-  border-color: rgb(254 240 138 / var(--tw-border-opacity, 1))
+  border-color: rgb(254 240 138 / var(--tw-border-opacity, 1));
 }
 
 #svg-main .bg-black {
   --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1))
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-black\/20 {
-  background-color: rgb(0 0 0 / 0.2)
+  background-color: rgb(0 0 0 / 0.2);
 }
 
 #svg-main .bg-black\/25 {
-  background-color: rgb(0 0 0 / 0.25)
+  background-color: rgb(0 0 0 / 0.25);
 }
 
 #svg-main .bg-black\/40 {
-  background-color: rgb(0 0 0 / 0.4)
+  background-color: rgb(0 0 0 / 0.4);
 }
 
 #svg-main .bg-black\/70 {
-  background-color: rgb(0 0 0 / 0.7)
+  background-color: rgb(0 0 0 / 0.7);
 }
 
 #svg-main .bg-blue-50 {
   --tw-bg-opacity: 1;
-  background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1))
+  background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-gray-50 {
   --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1))
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-gray-500 {
   --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1))
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-green-50 {
   --tw-bg-opacity: 1;
-  background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1))
+  background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-green-950 {
   --tw-bg-opacity: 1;
-  background-color: rgb(5 46 22 / var(--tw-bg-opacity, 1))
+  background-color: rgb(5 46 22 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-orange-50 {
   --tw-bg-opacity: 1;
-  background-color: rgb(255 247 237 / var(--tw-bg-opacity, 1))
+  background-color: rgb(255 247 237 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-red-50 {
   --tw-bg-opacity: 1;
-  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1))
+  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-red-950 {
   --tw-bg-opacity: 1;
-  background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
+  background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
+  background-color: rgb(69 10 10 / 0.2);
 }
 
 #svg-main .bg-yellow-50 {
   --tw-bg-opacity: 1;
-  background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1))
+  background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1));
 }
 
 #svg-main .fill-yellow-500 {
-  fill: #eab308
+  fill: #eab308;
 }
 
 #svg-main .object-contain {
   -o-object-fit: contain;
-     object-fit: contain
+  object-fit: contain;
 }
 
 #svg-main .object-cover {
   -o-object-fit: cover;
-     object-fit: cover
+  object-fit: cover;
 }
 
 #svg-main .p-0 {
-  padding: 0px
+  padding: 0px;
 }
 
 #svg-main .p-1 {
-  padding: 0.25rem
+  padding: 0.25rem;
 }
 
 #svg-main .p-2 {
-  padding: 0.5rem
+  padding: 0.5rem;
 }
 
 #svg-main .p-3 {
-  padding: 0.75rem
+  padding: 0.75rem;
 }
 
 #svg-main .p-4 {
-  padding: 1rem
+  padding: 1rem;
 }
 
 #svg-main .px-1 {
   padding-left: 0.25rem;
-  padding-right: 0.25rem
+  padding-right: 0.25rem;
 }
 
 #svg-main .px-1\.5 {
   padding-left: 0.375rem;
-  padding-right: 0.375rem
+  padding-right: 0.375rem;
 }
 
 #svg-main .px-2 {
   padding-left: 0.5rem;
-  padding-right: 0.5rem
+  padding-right: 0.5rem;
 }
 
 #svg-main .px-2\.5 {
   padding-left: 0.625rem;
-  padding-right: 0.625rem
+  padding-right: 0.625rem;
 }
 
 #svg-main .px-3 {
   padding-left: 0.75rem;
-  padding-right: 0.75rem
+  padding-right: 0.75rem;
 }
 
 #svg-main .px-4 {
   padding-left: 1rem;
-  padding-right: 1rem
+  padding-right: 1rem;
 }
 
 #svg-main .py-0 {
   padding-top: 0px;
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 #svg-main .py-0\.5 {
   padding-top: 0.125rem;
-  padding-bottom: 0.125rem
+  padding-bottom: 0.125rem;
 }
 
 #svg-main .py-1 {
   padding-top: 0.25rem;
-  padding-bottom: 0.25rem
+  padding-bottom: 0.25rem;
 }
 
 #svg-main .py-2 {
   padding-top: 0.5rem;
-  padding-bottom: 0.5rem
+  padding-bottom: 0.5rem;
 }
 
 #svg-main .py-3 {
   padding-top: 0.75rem;
-  padding-bottom: 0.75rem
+  padding-bottom: 0.75rem;
 }
 
 #svg-main .py-4 {
   padding-top: 1rem;
-  padding-bottom: 1rem
+  padding-bottom: 1rem;
 }
 
 #svg-main .pb-0 {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 #svg-main .pb-0\.5 {
-  padding-bottom: 0.125rem
+  padding-bottom: 0.125rem;
 }
 
 #svg-main .pb-2 {
-  padding-bottom: 0.5rem
+  padding-bottom: 0.5rem;
 }
 
 #svg-main .pl-1 {
-  padding-left: 0.25rem
+  padding-left: 0.25rem;
 }
 
 #svg-main .pl-3 {
-  padding-left: 0.75rem
+  padding-left: 0.75rem;
 }
 
 #svg-main .pr-1 {
-  padding-right: 0.25rem
+  padding-right: 0.25rem;
 }
 
 #svg-main .pr-2 {
-  padding-right: 0.5rem
+  padding-right: 0.5rem;
 }
 
 #svg-main .pt-1 {
-  padding-top: 0.25rem
+  padding-top: 0.25rem;
 }
 
 #svg-main .pt-2 {
-  padding-top: 0.5rem
+  padding-top: 0.5rem;
 }
 
 #svg-main .text-center {
-  text-align: center
+  text-align: center;
 }
 
 #svg-main .text-right {
-  text-align: right
+  text-align: right;
 }
 
 #svg-main .text-end {
-  text-align: end
+  text-align: end;
 }
 
 #svg-main .font-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 #svg-main .text-2xl {
   font-size: 1.5rem;
-  line-height: 2rem
+  line-height: 2rem;
 }
 
 #svg-main .text-3xl {
   font-size: 1.875rem;
-  line-height: 2.25rem
+  line-height: 2.25rem;
 }
 
 #svg-main .text-\[0\.75rem\] {
-  font-size: 0.75rem
+  font-size: 0.75rem;
 }
 
 #svg-main .text-\[10px\] {
-  font-size: 10px
+  font-size: 10px;
 }
 
 #svg-main .text-\[11px\] {
-  font-size: 11px
+  font-size: 11px;
 }
 
 #svg-main .text-\[12px\] {
-  font-size: 12px
+  font-size: 12px;
 }
 
 #svg-main .text-\[8px\] {
-  font-size: 8px
+  font-size: 8px;
 }
 
 #svg-main .text-\[9px\] {
-  font-size: 9px
+  font-size: 9px;
 }
 
 #svg-main .text-base {
   font-size: 1rem;
-  line-height: 1.5rem
+  line-height: 1.5rem;
 }
 
 #svg-main .text-lg {
   font-size: 1.125rem;
-  line-height: 1.75rem
+  line-height: 1.75rem;
 }
 
 #svg-main .text-sm {
   font-size: 0.875rem;
-  line-height: 1.25rem
+  line-height: 1.25rem;
 }
 
 #svg-main .text-xl {
   font-size: 1.25rem;
-  line-height: 1.75rem
+  line-height: 1.75rem;
 }
 
 #svg-main .text-xs {
   font-size: 0.75rem;
-  line-height: 1rem
+  line-height: 1rem;
 }
 
 #svg-main .font-black {
-  font-weight: 900
+  font-weight: 900;
 }
 
 #svg-main .font-bold {
-  font-weight: 700
+  font-weight: 700;
 }
 
 #svg-main .font-medium {
-  font-weight: 500
+  font-weight: 500;
 }
 
 #svg-main .font-semibold {
-  font-weight: 600
+  font-weight: 600;
 }
 
 #svg-main .uppercase {
-  text-transform: uppercase
+  text-transform: uppercase;
 }
 
 #svg-main .capitalize {
-  text-transform: capitalize
+  text-transform: capitalize;
 }
 
 #svg-main .italic {
-  font-style: italic
+  font-style: italic;
 }
 
 #svg-main .tabular-nums {
   --tw-numeric-spacing: tabular-nums;
-  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing)
+    var(--tw-numeric-fraction);
 }
 
 #svg-main .leading-none {
-  line-height: 1
+  line-height: 1;
 }
 
 #svg-main .leading-relaxed {
-  line-height: 1.625
+  line-height: 1.625;
 }
 
 #svg-main .leading-snug {
-  line-height: 1.375
+  line-height: 1.375;
 }
 
 #svg-main .leading-tight {
-  line-height: 1.25
+  line-height: 1.25;
 }
 
 #svg-main .tracking-tight {
-  letter-spacing: -0.025em
+  letter-spacing: -0.025em;
 }
 
 #svg-main .tracking-tighter {
-  letter-spacing: -0.05em
+  letter-spacing: -0.05em;
 }
 
 #svg-main .tracking-wide {
-  letter-spacing: 0.025em
+  letter-spacing: 0.025em;
 }
 
 #svg-main .tracking-wider {
-  letter-spacing: 0.05em
+  letter-spacing: 0.05em;
 }
 
 #svg-main .text-blue-500 {
   --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity, 1))
+  color: rgb(59 130 246 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-blue-600 {
   --tw-text-opacity: 1;
-  color: rgb(37 99 235 / var(--tw-text-opacity, 1))
+  color: rgb(37 99 235 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-blue-700 {
   --tw-text-opacity: 1;
-  color: rgb(29 78 216 / var(--tw-text-opacity, 1))
+  color: rgb(29 78 216 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-gray-300 {
   --tw-text-opacity: 1;
-  color: rgb(209 213 219 / var(--tw-text-opacity, 1))
+  color: rgb(209 213 219 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-gray-600 {
   --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity, 1))
+  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-gray-700 {
   --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity, 1))
+  color: rgb(55 65 81 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-gray-800 {
   --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity, 1))
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-green-400 {
   --tw-text-opacity: 1;
-  color: rgb(74 222 128 / var(--tw-text-opacity, 1))
+  color: rgb(74 222 128 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-green-500 {
   --tw-text-opacity: 1;
-  color: rgb(34 197 94 / var(--tw-text-opacity, 1))
+  color: rgb(34 197 94 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-green-600 {
   --tw-text-opacity: 1;
-  color: rgb(22 163 74 / var(--tw-text-opacity, 1))
+  color: rgb(22 163 74 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-orange-500 {
   --tw-text-opacity: 1;
-  color: rgb(249 115 22 / var(--tw-text-opacity, 1))
+  color: rgb(249 115 22 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-orange-600 {
   --tw-text-opacity: 1;
-  color: rgb(234 88 12 / var(--tw-text-opacity, 1))
+  color: rgb(234 88 12 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-orange-700 {
   --tw-text-opacity: 1;
-  color: rgb(194 65 12 / var(--tw-text-opacity, 1))
+  color: rgb(194 65 12 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-orange-800 {
   --tw-text-opacity: 1;
-  color: rgb(154 52 18 / var(--tw-text-opacity, 1))
+  color: rgb(154 52 18 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-red-200 {
   --tw-text-opacity: 1;
-  color: rgb(254 202 202 / var(--tw-text-opacity, 1))
+  color: rgb(254 202 202 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-red-300 {
   --tw-text-opacity: 1;
-  color: rgb(252 165 165 / var(--tw-text-opacity, 1))
+  color: rgb(252 165 165 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-red-400 {
   --tw-text-opacity: 1;
-  color: rgb(248 113 113 / var(--tw-text-opacity, 1))
+  color: rgb(248 113 113 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-red-600 {
   --tw-text-opacity: 1;
-  color: rgb(220 38 38 / var(--tw-text-opacity, 1))
+  color: rgb(220 38 38 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-red-700 {
   --tw-text-opacity: 1;
-  color: rgb(185 28 28 / var(--tw-text-opacity, 1))
+  color: rgb(185 28 28 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-red-800 {
   --tw-text-opacity: 1;
-  color: rgb(153 27 27 / var(--tw-text-opacity, 1))
+  color: rgb(153 27 27 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-white {
   --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-white\/50 {
-  color: rgb(255 255 255 / 0.5)
+  color: rgb(255 255 255 / 0.5);
 }
 
 #svg-main .text-white\/60 {
-  color: rgb(255 255 255 / 0.6)
+  color: rgb(255 255 255 / 0.6);
 }
 
 #svg-main .text-white\/80 {
-  color: rgb(255 255 255 / 0.8)
+  color: rgb(255 255 255 / 0.8);
 }
 
 #svg-main .text-white\/90 {
-  color: rgb(255 255 255 / 0.9)
+  color: rgb(255 255 255 / 0.9);
 }
 
 #svg-main .text-yellow-500 {
   --tw-text-opacity: 1;
-  color: rgb(234 179 8 / var(--tw-text-opacity, 1))
+  color: rgb(234 179 8 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-yellow-600 {
   --tw-text-opacity: 1;
-  color: rgb(202 138 4 / var(--tw-text-opacity, 1))
+  color: rgb(202 138 4 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-yellow-700 {
   --tw-text-opacity: 1;
-  color: rgb(161 98 7 / var(--tw-text-opacity, 1))
+  color: rgb(161 98 7 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .text-yellow-800 {
   --tw-text-opacity: 1;
-  color: rgb(133 77 14 / var(--tw-text-opacity, 1))
+  color: rgb(133 77 14 / var(--tw-text-opacity, 1));
 }
 
 #svg-main .underline {
-  text-decoration-line: underline
+  text-decoration-line: underline;
 }
 
 #svg-main .no-underline {
-  text-decoration-line: none
+  text-decoration-line: none;
 }
 
 #svg-main .antialiased {
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #svg-main .opacity-50 {
-  opacity: 0.5
+  opacity: 0.5;
 }
 
 #svg-main .opacity-70 {
-  opacity: 0.7
+  opacity: 0.7;
 }
 
 #svg-main .opacity-75 {
-  opacity: 0.75
+  opacity: 0.75;
 }
 
 #svg-main .opacity-80 {
-  opacity: 0.8
+  opacity: 0.8;
 }
 
 #svg-main .opacity-90 {
-  opacity: 0.9
+  opacity: 0.9;
 }
 
 #svg-main .opacity-95 {
-  opacity: 0.95
+  opacity: 0.95;
 }
 
 #svg-main .shadow-lg {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 #svg-main .shadow-md {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 #svg-main .shadow-sm {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 #svg-main .shadow-xl {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 #svg-main .blur {
   --tw-blur: blur(8px);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+    var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 #svg-main .drop-shadow {
   --tw-drop-shadow: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+    var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 #svg-main .drop-shadow-lg {
   --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+    var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 #svg-main .drop-shadow-sm {
   --tw-drop-shadow: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+    var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 #svg-main .grayscale {
   --tw-grayscale: grayscale(100%);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+    var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 #svg-main .filter {
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate)
+    var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 #svg-main .backdrop-filter {
-  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast)
+    var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity)
+    var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
 
 #svg-main .transition-all {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms
+  transition-duration: 150ms;
 }
 
 #svg-main .transition-colors {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms
+  transition-duration: 150ms;
 }
 
 #svg-main .transition-opacity {
   transition-property: opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms
+  transition-duration: 150ms;
 }
 
 #svg-main .transition-transform {
   transition-property: transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms
+  transition-duration: 150ms;
 }
 
 #svg-main .duration-300 {
-  transition-duration: 300ms
+  transition-duration: 300ms;
 }
 
 #svg-main .hover\:underline:hover {
-  text-decoration-line: underline
+  text-decoration-line: underline;
 }
 
 #svg-main .hover\:opacity-80:hover {
-  opacity: 0.8
+  opacity: 0.8;
 }
 
 #svg-main .group:hover .group-hover\:scale-110 {
   --tw-scale-x: 1.1;
   --tw-scale-y: 1.1;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
+    skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 #svg-main .group:hover .group-hover\:shadow-lg {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 #svg-main.half .half\:line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2
+  -webkit-line-clamp: 2;
 }
 
 #svg-main.half .half\:hidden {
-  display: none
+  display: none;
 }
 
 #svg-main.half .half\:h-10 {
-  height: 2.5rem
+  height: 2.5rem;
 }
 
 #svg-main.half .half\:h-12 {
-  height: 3rem
+  height: 3rem;
 }
 
 #svg-main.half .half\:h-14 {
-  height: 3.5rem
+  height: 3.5rem;
 }
 
 #svg-main.half .half\:h-16 {
-  height: 4rem
+  height: 4rem;
 }
 
 #svg-main.half .half\:h-5 {
-  height: 1.25rem
+  height: 1.25rem;
 }
 
 #svg-main.half .half\:h-6 {
-  height: 1.5rem
+  height: 1.5rem;
 }
 
 #svg-main.half .half\:min-h-\[100px\] {
-  min-height: 100px
+  min-height: 100px;
 }
 
 #svg-main.half .half\:min-h-\[70px\] {
-  min-height: 70px
+  min-height: 70px;
 }
 
 #svg-main.half .half\:w-10 {
-  width: 2.5rem
+  width: 2.5rem;
 }
 
 #svg-main.half .half\:w-12 {
-  width: 3rem
+  width: 3rem;
 }
 
 #svg-main.half .half\:w-14 {
-  width: 3.5rem
+  width: 3.5rem;
 }
 
 #svg-main.half .half\:w-16 {
-  width: 4rem
+  width: 4rem;
 }
 
 #svg-main.half .half\:w-5 {
-  width: 1.25rem
+  width: 1.25rem;
 }
 
 #svg-main.half .half\:w-6 {
-  width: 1.5rem
+  width: 1.5rem;
 }
 
 #svg-main.half .half\:grid-cols-10 {
-  grid-template-columns: repeat(10, minmax(0, 1fr))
+  grid-template-columns: repeat(10, minmax(0, 1fr));
 }
 
 #svg-main.half .half\:grid-cols-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr))
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 #svg-main.half .half\:grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr))
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 #svg-main.half .half\:grid-cols-4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr))
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 #svg-main.half .half\:grid-cols-5 {
-  grid-template-columns: repeat(5, minmax(0, 1fr))
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 #svg-main.half .half\:flex-col {
-  flex-direction: column
+  flex-direction: column;
 }
 
 #svg-main.half .half\:gap-1\.5 {
-  gap: 0.375rem
+  gap: 0.375rem;
 }
 
 #svg-main.half .half\:gap-2 {
-  gap: 0.5rem
+  gap: 0.5rem;
 }
 
 #svg-main.half .half\:gap-2\.5 {
-  gap: 0.625rem
+  gap: 0.625rem;
 }
 
 #svg-main.half .half\:gap-3 {
-  gap: 0.75rem
+  gap: 0.75rem;
 }
 
 #svg-main.half .half\:p-3 {
-  padding: 0.75rem
+  padding: 0.75rem;
 }
 
 #svg-main.half .half\:px-3 {
   padding-left: 0.75rem;
-  padding-right: 0.75rem
+  padding-right: 0.75rem;
 }
 
 #svg-main.half .half\:py-2\.5 {
   padding-top: 0.625rem;
-  padding-bottom: 0.625rem
+  padding-bottom: 0.625rem;
 }
 
 #svg-main.half .half\:py-3 {
   padding-top: 0.75rem;
-  padding-bottom: 0.75rem
+  padding-bottom: 0.75rem;
 }
 
 #svg-main.half .half\:text-\[10px\] {
-  font-size: 10px
+  font-size: 10px;
 }
 
 #svg-main.half .half\:text-\[11px\] {
-  font-size: 11px
+  font-size: 11px;
 }
 
 #svg-main.half .half\:text-\[8px\] {
-  font-size: 8px
+  font-size: 8px;
 }
 
 #svg-main.half .half\:text-\[9px\] {
-  font-size: 9px
+  font-size: 9px;
 }
 
 #svg-main.half .half\:text-base {
   font-size: 1rem;
-  line-height: 1.5rem
+  line-height: 1.5rem;
 }
 
 #svg-main.half .half\:text-lg {
   font-size: 1.125rem;
-  line-height: 1.75rem
+  line-height: 1.75rem;
 }
 
 #svg-main.half .half\:text-sm {
   font-size: 0.875rem;
-  line-height: 1.25rem
+  line-height: 1.25rem;
 }
 
 #svg-main.half .half\:text-xl {
   font-size: 1.25rem;
-  line-height: 1.75rem
+  line-height: 1.75rem;
 }
 
 #svg-main.half .half\:text-xs {
   font-size: 0.75rem;
-  line-height: 1rem
+  line-height: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {#svg-main .dark\:bg-green-950 {
+@media (prefers-color-scheme: dark) {
+  #svg-main .dark\:bg-green-950 {
     --tw-bg-opacity: 1;
-    background-color: rgb(5 46 22 / var(--tw-bg-opacity, 1))
+    background-color: rgb(5 46 22 / var(--tw-bg-opacity, 1));
   }
 
   .dark\:bg-red-950 {
     --tw-bg-opacity: 1;
-    background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
+    background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1));
   }
 
   .dark\:text-green-400 {
     --tw-text-opacity: 1;
-    color: rgb(74 222 128 / var(--tw-text-opacity, 1))
+    color: rgb(74 222 128 / var(--tw-text-opacity, 1));
   }
 
   .dark\:text-red-400 {
     --tw-text-opacity: 1;
-    color: rgb(248 113 113 / var(--tw-text-opacity, 1))
+    color: rgb(248 113 113 / var(--tw-text-opacity, 1));
   }
 }
-

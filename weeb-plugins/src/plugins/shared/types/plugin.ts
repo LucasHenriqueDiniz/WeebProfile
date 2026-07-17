@@ -1,29 +1,29 @@
 /**
  * Interface base para plugins
- * 
+ *
  * Todos os plugins devem implementar esta interface
  */
 
-import type React from 'react'
-import type { BasePluginConfig, EssentialPluginConfig } from './base'
-import type { PluginData } from '../../../types/index'
+import type React from "react"
+import type { BasePluginConfig, EssentialPluginConfig } from "./base"
+import type { PluginData } from "../../../types/index"
 
 /**
  * Interface principal de um plugin
- * 
+ *
  * @template TConfig - Tipo específico da configuração do plugin (deve estender BasePluginConfig)
  * @template TData - Tipo específico dos dados retornados pelo plugin
  */
 export interface Plugin<TConfig extends BasePluginConfig = BasePluginConfig, TData extends PluginData = PluginData> {
   /** Nome único do plugin (ex: 'github', 'lastfm') */
   name: string
-  
+
   /** Chaves de configuração essencial que este plugin requer (ex: ['apiKey'] para LastFM) */
   essentialConfigKeys: string[]
-  
+
   /** Configuração padrão do plugin */
   config: TConfig
-  
+
   /**
    * Função para buscar dados do plugin
    *
@@ -39,7 +39,7 @@ export interface Plugin<TConfig extends BasePluginConfig = BasePluginConfig, TDa
     essentialConfig?: EssentialPluginConfig,
     previewMode?: boolean
   ) => Promise<TData>
-  
+
   /**
    * Função para renderizar o plugin
    *
@@ -58,13 +58,13 @@ export interface Plugin<TConfig extends BasePluginConfig = BasePluginConfig, TDa
    * @param data - Dados retornados por fetchData
    * @param size - Largura do card ('half' = 415px, 'full' = 830px)
    */
-  calculateHeight: (config: TConfig, data: TData, size: 'half' | 'full') => number
-  
+  calculateHeight: (config: TConfig, data: TData, size: "half" | "full") => number
+
   /**
    * Função opcional para validar configuração
    */
   validate?: (config: TConfig) => ValidationResult
-  
+
   /**
    * CSS opcional específico do plugin
    * Será automaticamente carregado e injetado
@@ -79,4 +79,3 @@ export interface ValidationResult {
   valid: boolean
   errors?: string[]
 }
-

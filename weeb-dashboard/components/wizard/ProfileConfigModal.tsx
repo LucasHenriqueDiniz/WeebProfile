@@ -3,7 +3,14 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { useSearchParams, usePathname, useRouter } from "@/src/compat/next-navigation"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -32,7 +39,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
   const pathname = usePathname()
   const router = useRouter()
   const { tWithFallback } = usePluginI18n()
-  const t = useTranslations('wizard.plugins.requiredFields')
+  const t = useTranslations("wizard.plugins.requiredFields")
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<{
@@ -51,7 +58,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
   useEffect(() => {
     const oauthSuccess = searchParams.get("oauth_success")
     const oauthError = searchParams.get("oauth_error")
-    
+
     if (oauthSuccess === "spotify") {
       toast({
         title: "Conectado com sucesso!",
@@ -81,13 +88,13 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
   const fetchProfile = async () => {
     try {
       setLoading(true)
-      
+
       // Buscar perfil e essential configs separadamente
       const [profileData, essentialConfigsData] = await Promise.all([
         profileApi.get(),
         profileApi.getEssentialConfigs(enabledPlugins),
       ])
-      
+
       setProfile({
         username: profileData.profile?.username || user?.user_metadata?.user_name || "",
         essentialConfigs: (essentialConfigsData.essentialConfigs || {}) as EssentialConfigs,
@@ -109,17 +116,15 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
   const handleSave = async () => {
     // Validar campos obrigatórios
     const missingConfigs = getMissingEssentialConfigs(enabledPlugins, profile.essentialConfigs || {})
-    
+
     if (missingConfigs.length > 0) {
       const missingFieldsList = missingConfigs
-        .map(({ pluginName, missingKeys }) => 
-          missingKeys.map(key => `${pluginName}.${key.key}`).join(', ')
-        )
-        .join(', ')
-      
+        .map(({ pluginName, missingKeys }) => missingKeys.map((key) => `${pluginName}.${key.key}`).join(", "))
+        .join(", ")
+
       toast({
-        title: t('title'),
-        description: `${t('fillAllDescription')}: ${missingFieldsList}`,
+        title: t("title"),
+        description: `${t("fillAllDescription")}: ${missingFieldsList}`,
         variant: "destructive",
       })
       return
@@ -145,16 +150,15 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
           : "Não foi possível salvar o perfil"
-      
-      const isNetworkError = errorMessage.toLowerCase().includes("network") || 
-                            errorMessage.toLowerCase().includes("fetch") ||
-                            errorMessage.toLowerCase().includes("failed")
-      
+
+      const isNetworkError =
+        errorMessage.toLowerCase().includes("network") ||
+        errorMessage.toLowerCase().includes("fetch") ||
+        errorMessage.toLowerCase().includes("failed")
+
       toast({
         title: "Erro ao salvar",
-        description: isNetworkError 
-          ? `${errorMessage}. Verifique sua conexão e tente novamente.`
-          : errorMessage,
+        description: isNetworkError ? `${errorMessage}. Verifique sua conexão e tente novamente.` : errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -189,7 +193,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
 
   // Obter valor local (apenas o que o usuário digitou, não o valor salvo)
   const getLocalValue = (pluginName: string, key: string): string => {
-    return profile.essentialConfigs?.[pluginName]?.[key] || ''
+    return profile.essentialConfigs?.[pluginName]?.[key] || ""
   }
 
   return (
@@ -198,7 +202,8 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
         <DialogHeader>
           <DialogTitle>Configurar Perfil</DialogTitle>
           <DialogDescription>
-            Configure as credenciais sensíveis dos plugins habilitados (API keys, tokens, etc.). Estas serão usadas em todas as suas imagens SVG.
+            Configure as credenciais sensíveis dos plugins habilitados (API keys, tokens, etc.). Estas serão usadas em
+            todas as suas imagens SVG.
           </DialogDescription>
         </DialogHeader>
 
@@ -210,9 +215,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
           <div className="space-y-6 py-4">
             {/* Username (sempre visível) */}
             <div className="space-y-2">
-              <Label htmlFor="username">
-                Username
-              </Label>
+              <Label htmlFor="username">Username</Label>
               <Input
                 id="username"
                 value={profile.username || ""}
@@ -228,11 +231,11 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                 <Separator />
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold">Configurações Sensíveis dos Plugins</h3>
-                  
+
                   {enabledPlugins.map((pluginName) => {
                     const keys = getPluginEssentialConfigKeys(pluginName)
                     if (keys.length === 0) return null
-                    
+
                     // Get plugin metadata for i18n
                     const pluginMetadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA] as any
 
@@ -240,7 +243,10 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                       <div key={pluginName} className="space-y-3 p-3 border rounded-md">
                         <h4 className="text-sm font-medium">
                           {pluginMetadata?.i18nKey?.displayName
-                            ? tWithFallback(pluginMetadata.i18nKey.displayName.replace(/^plugins\./, ''), pluginMetadata?.displayName || pluginName)
+                            ? tWithFallback(
+                                pluginMetadata.i18nKey.displayName.replace(/^plugins\./, ""),
+                                pluginMetadata?.displayName || pluginName
+                              )
                             : pluginMetadata?.displayName || pluginName}
                         </h4>
                         {keys.map((keyDef) => {
@@ -248,28 +254,38 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                           const localValue = getLocalValue(pluginName, keyDef.key)
                           const showValue = localValue.length > 0 // Mostrar apenas se usuário digitou algo
                           const isOAuth = keyDef.type === "oauth"
-                          
+
                           const essentialConfigMeta = pluginMetadata?.essentialConfigKeysMetadata?.find(
                             (meta: any) => meta.key === keyDef.key
                           )
-                          
+
                           // Get translated values
                           const configLabel = essentialConfigMeta?.i18nKey?.label
-                            ? tWithFallback(essentialConfigMeta.i18nKey.label.replace(/^plugins\./, ''), keyDef.label)
+                            ? tWithFallback(essentialConfigMeta.i18nKey.label.replace(/^plugins\./, ""), keyDef.label)
                             : keyDef.label
-                          const configDescription = keyDef.description && essentialConfigMeta?.i18nKey?.description
-                            ? tWithFallback(essentialConfigMeta.i18nKey.description.replace(/^plugins\./, ''), keyDef.description)
-                            : keyDef.description
-                          const configPlaceholder = keyDef.placeholder && essentialConfigMeta?.i18nKey?.placeholder
-                            ? tWithFallback(essentialConfigMeta.i18nKey.placeholder.replace(/^plugins\./, ''), keyDef.placeholder)
-                            : keyDef.placeholder
-                          
+                          const configDescription =
+                            keyDef.description && essentialConfigMeta?.i18nKey?.description
+                              ? tWithFallback(
+                                  essentialConfigMeta.i18nKey.description.replace(/^plugins\./, ""),
+                                  keyDef.description
+                                )
+                              : keyDef.description
+                          const configPlaceholder =
+                            keyDef.placeholder && essentialConfigMeta?.i18nKey?.placeholder
+                              ? tWithFallback(
+                                  essentialConfigMeta.i18nKey.placeholder.replace(/^plugins\./, ""),
+                                  keyDef.placeholder
+                                )
+                              : keyDef.placeholder
+
                           // Handler para iniciar OAuth
                           const handleOAuthConnect = () => {
-                            const returnTo = encodeURIComponent(pathname + (searchParams.toString() ? `?${searchParams.toString()}` : ""))
+                            const returnTo = encodeURIComponent(
+                              pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "")
+                            )
                             window.location.href = `/api/auth/spotify/authorize?returnTo=${returnTo}`
                           }
-                          
+
                           return (
                             <div key={keyDef.key} className="space-y-2">
                               <div className="flex items-center justify-between">
@@ -301,7 +317,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                   </a>
                                 )}
                               </div>
-                              
+
                               {isOAuth ? (
                                 // Botão OAuth
                                 <Button
@@ -328,12 +344,12 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                   <Input
                                     id={`${pluginName}-${keyDef.key}`}
                                     type={keyDef.type}
-                                    value={showValue ? localValue : ''}
+                                    value={showValue ? localValue : ""}
                                     onChange={(e) => updateEssentialConfig(pluginName, keyDef.key, e.target.value)}
                                     placeholder={
-                                      isSet 
+                                      isSet
                                         ? "Digite para alterar (valor atual não é exibido por segurança)"
-                                        : (configPlaceholder || `seu-${keyDef.key}`)
+                                        : configPlaceholder || `seu-${keyDef.key}`
                                     }
                                     className="font-mono"
                                   />
@@ -344,7 +360,7 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
                                   )}
                                 </>
                               )}
-                              
+
                               {configDescription && (
                                 <p className="text-xs text-muted-foreground">{configDescription}</p>
                               )}
@@ -362,7 +378,8 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
               <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-md flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  Campos marcados com <span className="text-destructive">*</span> são obrigatórios para os plugins selecionados
+                  Campos marcados com <span className="text-destructive">*</span> são obrigatórios para os plugins
+                  selecionados
                 </p>
               </div>
             )}
@@ -388,5 +405,3 @@ export function ProfileConfigModal({ open, onOpenChange, enabledPlugins, onSave 
     </Dialog>
   )
 }
-
-

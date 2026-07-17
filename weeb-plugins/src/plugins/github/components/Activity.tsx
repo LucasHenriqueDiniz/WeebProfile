@@ -1,50 +1,50 @@
-import React from 'react'
-import { AiOutlineEye, AiOutlineStar } from 'react-icons/ai'
-import { FaCode, FaComment, FaExclamationCircle, FaHistory } from 'react-icons/fa'
-import { GoCodeReview } from 'react-icons/go'
-import { HiUsers } from 'react-icons/hi'
-import { RiGitPullRequestLine, RiGitRepositoryLine } from 'react-icons/ri'
-import { StatisticRow } from '../../../templates/Default/DefaultStatRow'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { AiOutlineEye, AiOutlineStar } from "react-icons/ai"
+import { FaCode, FaComment, FaExclamationCircle, FaHistory } from "react-icons/fa"
+import { GoCodeReview } from "react-icons/go"
+import { HiUsers } from "react-icons/hi"
+import { RiGitPullRequestLine, RiGitRepositoryLine } from "react-icons/ri"
+import { StatisticRow } from "../../../templates/Default/DefaultStatRow"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
 interface ActivityProps {
-  data: GithubData['activity']
+  data: GithubData["activity"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DefaultActivity = ({ data }: { data: GithubData['activity'] }) => {
+const DefaultActivity = ({ data }: { data: GithubData["activity"] }) => {
   const leftColumnRows = [
     {
       icon: <FaCode className="text-default-muted" />,
-      title: 'Total Commits',
+      title: "Total Commits",
       value: abbreviateNumber(data.totalCommitContributions),
     },
     {
       icon: <RiGitPullRequestLine className="text-default-muted" />,
-      title: 'PRs Created',
+      title: "PRs Created",
       value: abbreviateNumber(data.totalPullRequestContributions),
     },
     {
       icon: <GoCodeReview className="text-default-muted" />,
-      title: 'PR Reviews',
+      title: "PR Reviews",
       value: abbreviateNumber(data.totalPullRequestReviewContributions),
     },
     {
       icon: <FaExclamationCircle className="text-default-muted" />,
-      title: 'Issues Created',
+      title: "Issues Created",
       value: abbreviateNumber(data.totalIssueContributions),
     },
     {
       icon: <FaComment className="text-default-muted" />,
-      title: 'Issues Comments',
+      title: "Issues Comments",
       value: abbreviateNumber(data.issueComments),
     },
   ]
@@ -52,22 +52,22 @@ const DefaultActivity = ({ data }: { data: GithubData['activity'] }) => {
   const rightColumnRows = [
     {
       icon: <RiGitRepositoryLine className="text-default-muted" />,
-      title: 'Organizations',
+      title: "Organizations",
       value: abbreviateNumber(data.organizations),
     },
     {
       icon: <HiUsers className="text-default-muted" />,
-      title: 'Following',
+      title: "Following",
       value: abbreviateNumber(data.following),
     },
     {
       icon: <AiOutlineStar className="text-default-muted" />,
-      title: 'Starred',
+      title: "Starred",
       value: abbreviateNumber(data.starredRepositories),
     },
     {
       icon: <AiOutlineEye className="text-default-muted" />,
-      title: 'Watching',
+      title: "Watching",
       value: abbreviateNumber(data.watching),
     },
   ]
@@ -80,42 +80,42 @@ const DefaultActivity = ({ data }: { data: GithubData['activity'] }) => {
   )
 }
 
-const TerminalActivity = ({ data }: { data: GithubData['activity'] }) => {
+const TerminalActivity = ({ data }: { data: GithubData["activity"] }) => {
   const gridData = [
     {
-      title: 'Commits',
+      title: "Commits",
       value: abbreviateNumber(data.totalCommitContributions),
     },
     {
-      title: 'PRs Created',
+      title: "PRs Created",
       value: abbreviateNumber(data.totalPullRequestContributions),
     },
     {
-      title: 'PR Reviews',
+      title: "PR Reviews",
       value: abbreviateNumber(data.totalPullRequestReviewContributions),
     },
     {
-      title: 'Issues',
+      title: "Issues",
       value: abbreviateNumber(data.totalIssueContributions),
     },
     {
-      title: 'Comments',
+      title: "Comments",
       value: abbreviateNumber(data.issueComments),
     },
     {
-      title: 'Organizations',
+      title: "Organizations",
       value: abbreviateNumber(data.organizations),
     },
     {
-      title: 'Following',
+      title: "Following",
       value: abbreviateNumber(data.following),
     },
     {
-      title: 'Starred',
+      title: "Starred",
       value: abbreviateNumber(data.starredRepositories),
     },
     {
-      title: 'Watching',
+      title: "Watching",
       value: abbreviateNumber(data.watching),
     },
   ]
@@ -124,7 +124,7 @@ const TerminalActivity = ({ data }: { data: GithubData['activity'] }) => {
 }
 
 export function GithubActivity({ data, config, style, size }: ActivityProps): React.ReactElement {
-  const title = config.activity_title ?? 'Activity'
+  const title = config.activity_title ?? "Activity"
   const hideTitle = config.activity_hide_title ?? false
 
   return (
@@ -141,8 +141,8 @@ export function GithubActivity({ data, config, style, size }: ActivityProps): Re
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'activity',
+                plugin: "github",
+                section: "activity",
                 size,
               })}
             />
@@ -153,4 +153,3 @@ export function GithubActivity({ data, config, style, size }: ActivityProps): Re
     </section>
   )
 }
-

@@ -200,14 +200,11 @@ O svg-generator roda como serviço Node standalone no Railway, então não tem b
 
 ```typescript
 // src/db/d1-client.ts
-fetch(
-  `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`,
-  {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ sql, params }),
-  }
-)
+fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`, {
+  method: "POST",
+  headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
+  body: JSON.stringify({ sql, params }),
+})
 ```
 
 `getUserEssentialConfigs()` usa esse cliente para ler a tabela `plugin_secrets` (a mesma usada pelo weeb-dashboard).

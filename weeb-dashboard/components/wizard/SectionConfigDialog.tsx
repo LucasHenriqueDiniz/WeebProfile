@@ -12,25 +12,17 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { NumberInput } from "@/components/ui/number-input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { PLUGINS_METADATA, getSectionConfigOptions as getSectionConfigOptionsFromMetadata } from "@weeb/weeb-plugins/plugins/metadata"
+import {
+  PLUGINS_METADATA,
+  getSectionConfigOptions as getSectionConfigOptionsFromMetadata,
+} from "@weeb/weeb-plugins/plugins/metadata"
 import { Settings, X, Plus, HelpCircle, ExternalLink } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 // Define SectionConfigOption locally since it's not exported from metadata path
 interface SectionConfigOption {
@@ -65,17 +57,12 @@ interface SectionConfigDialogProps {
   onConfigChange: (config: Record<string, any>) => void
 }
 
-export function SectionConfigDialog({
-  plugin,
-  section,
-  sectionConfig,
-  onConfigChange,
-}: SectionConfigDialogProps) {
+export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigChange }: SectionConfigDialogProps) {
   const [open, setOpen] = useState(false)
   const { tWithFallback } = usePluginI18n()
   const options = getSectionConfigOptions(plugin, section.id)
   const prevOpenRef = useRef(false)
-  
+
   // Get full section metadata for i18n
   const pluginMetadata = PLUGINS_METADATA[plugin as keyof typeof PLUGINS_METADATA] as any
   const sectionMetadata = pluginMetadata?.sections?.find((s: any) => s.id === section.id)
@@ -93,12 +80,12 @@ export function SectionConfigDialog({
         config[option.key] = sectionConfig[option.key]
       } else {
         // For string types with defaultValueKey, use translated default only on initial creation
-        if (option.type === 'string' && option.defaultValue && typeof option.defaultValue === 'string') {
-            const optionMetadata = sectionMetadata?.configOptions?.find((opt: any) => opt.key === option.key)
+        if (option.type === "string" && option.defaultValue && typeof option.defaultValue === "string") {
+          const optionMetadata = sectionMetadata?.configOptions?.find((opt: any) => opt.key === option.key)
           if (optionMetadata?.i18nKey?.defaultValue) {
             // Use translated defaultValue if available
             const translatedDefault = tWithFallback(
-              optionMetadata.i18nKey.defaultValue.replace(/^plugins\./, ''),
+              optionMetadata.i18nKey.defaultValue.replace(/^plugins\./, ""),
               option.defaultValue
             )
             config[option.key] = translatedDefault
@@ -134,10 +121,10 @@ export function SectionConfigDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-6 w-6 p-0 rounded-full hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-colors" 
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 w-6 p-0 rounded-full hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-colors"
           onClick={(e) => e.stopPropagation()}
           title="Configurar seção"
         >
@@ -147,29 +134,30 @@ export function SectionConfigDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Configurações: {sectionMetadata?.i18nKey?.name
-              ? tWithFallback(sectionMetadata.i18nKey.name.replace(/^plugins\./, ''), section.name)
+            Configurações:{" "}
+            {sectionMetadata?.i18nKey?.name
+              ? tWithFallback(sectionMetadata.i18nKey.name.replace(/^plugins\./, ""), section.name)
               : section.name}
           </DialogTitle>
-          <DialogDescription>
-            Configure opções específicas desta seção
-          </DialogDescription>
+          <DialogDescription>Configure opções específicas desta seção</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           {options.map((option) => {
             const value = localConfig[option.key] ?? option.defaultValue
             const optionMetadata = sectionMetadata?.configOptions?.find((opt: any) => opt.key === option.key)
-            
+
             // Get translated values
-            const optionLabel = optionMetadata?.i18nKey?.label 
-              ? tWithFallback(optionMetadata.i18nKey.label.replace(/^plugins\./, ''), option.label)
+            const optionLabel = optionMetadata?.i18nKey?.label
+              ? tWithFallback(optionMetadata.i18nKey.label.replace(/^plugins\./, ""), option.label)
               : option.label
-            const optionDescription = option.description && optionMetadata?.i18nKey?.description
-              ? tWithFallback(optionMetadata.i18nKey.description.replace(/^plugins\./, ''), option.description)
-              : option.description
-            const optionTooltip = option.tooltip && optionMetadata?.i18nKey?.tooltip
-              ? tWithFallback(optionMetadata.i18nKey.tooltip.replace(/^plugins\./, ''), option.tooltip)
-              : option.tooltip
+            const optionDescription =
+              option.description && optionMetadata?.i18nKey?.description
+                ? tWithFallback(optionMetadata.i18nKey.description.replace(/^plugins\./, ""), option.description)
+                : option.description
+            const optionTooltip =
+              option.tooltip && optionMetadata?.i18nKey?.tooltip
+                ? tWithFallback(optionMetadata.i18nKey.tooltip.replace(/^plugins\./, ""), option.tooltip)
+                : option.tooltip
 
             return (
               <div key={option.key} className="space-y-2">
@@ -198,7 +186,7 @@ export function SectionConfigDialog({
                             </TooltipTrigger>
                             <TooltipContent side="top" className="max-w-xs">
                               <p className="text-sm whitespace-pre-line">
-                                {optionDescription 
+                                {optionDescription
                                   ? `${optionDescription}\n\nClique no link ao lado para obter mais informações.`
                                   : "Clique no link ao lado para abrir o link de ajuda e obter mais informações."}
                               </p>
@@ -228,7 +216,7 @@ export function SectionConfigDialog({
                   <>
                     <NumberInput
                       id={option.key}
-                      value={typeof value === "number" ? value : (option.defaultValue || 0)}
+                      value={typeof value === "number" ? value : option.defaultValue || 0}
                       onChange={(newValue) =>
                         setLocalConfig({
                           ...localConfig,
@@ -240,9 +228,7 @@ export function SectionConfigDialog({
                       step={option.step}
                       showStepper={true}
                     />
-                    {optionDescription && (
-                      <p className="text-xs text-muted-foreground">{optionDescription}</p>
-                    )}
+                    {optionDescription && <p className="text-xs text-muted-foreground">{optionDescription}</p>}
                   </>
                 )}
                 {option.type === "boolean" && (
@@ -293,7 +279,7 @@ export function SectionConfigDialog({
                         // Translate select option labels
                         const optionI18nKey = optionMetadata?.i18nKey?.options?.[opt.value]
                         const translatedLabel = optionI18nKey
-                          ? tWithFallback(optionI18nKey.replace(/^plugins\./, ''), opt.label)
+                          ? tWithFallback(optionI18nKey.replace(/^plugins\./, ""), opt.label)
                           : opt.label
                         return (
                           <SelectItem key={opt.value} value={opt.value}>
@@ -352,7 +338,7 @@ function ArrayInput({ value, onChange, placeholder }: ArrayInputProps) {
   }
 
   const handleRemove = (itemToRemove: string) => {
-    onChange(value.filter(item => item !== itemToRemove))
+    onChange(value.filter((item) => item !== itemToRemove))
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -385,11 +371,7 @@ function ArrayInput({ value, onChange, placeholder }: ArrayInputProps) {
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((item, index) => (
-            <Badge
-              key={index}
-              variant="secondary"
-              className="flex items-center gap-1.5 px-2 py-1"
-            >
+            <Badge key={index} variant="secondary" className="flex items-center gap-1.5 px-2 py-1">
               <span>{item}</span>
               <button
                 type="button"
@@ -411,4 +393,3 @@ function ArrayInput({ value, onChange, placeholder }: ArrayInputProps) {
     </div>
   )
 }
-

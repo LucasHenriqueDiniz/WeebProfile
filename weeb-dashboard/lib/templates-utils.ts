@@ -28,7 +28,7 @@ const DISPLAY_NAME_TO_PLUGIN: Record<string, string> = Object.entries(PLUGIN_DIS
  */
 export function normalizePlatformsToPluginIds(platforms: string[]): string[] {
   return platforms
-    .map(platform => {
+    .map((platform) => {
       // Se já é um pluginId válido, retorna como está
       try {
         if (PLUGINS_METADATA[platform as keyof typeof PLUGINS_METADATA]) {
@@ -51,11 +51,13 @@ export function normalizePlatformsToPluginIds(platforms: string[]): string[] {
       }
 
       // Fallback: tenta encontrar pluginId que contenha o nome
-      const found = Object.keys(PLUGINS_METADATA).find(id => {
+      const found = Object.keys(PLUGINS_METADATA).find((id) => {
         try {
           const metadata = PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]
-          return id.toLowerCase().includes(platform.toLowerCase()) ||
-                 metadata?.name?.toLowerCase().includes(platform.toLowerCase())
+          return (
+            id.toLowerCase().includes(platform.toLowerCase()) ||
+            metadata?.name?.toLowerCase().includes(platform.toLowerCase())
+          )
         } catch {
           return false
         }
@@ -70,7 +72,7 @@ export function normalizePlatformsToPluginIds(platforms: string[]): string[] {
  * Converte pluginIds para nomes bonitos para exibição
  */
 export function pluginIdsToDisplayNames(pluginIds: string[]): string[] {
-  return pluginIds.map(id => PLUGIN_DISPLAY_NAMES[id] || id)
+  return pluginIds.map((id) => PLUGIN_DISPLAY_NAMES[id] || id)
 }
 
 /**
@@ -79,12 +81,12 @@ export function pluginIdsToDisplayNames(pluginIds: string[]): string[] {
 export function derivePlatformsFromPluginsConfig(pluginsConfig?: Record<string, any>): string[] {
   if (!pluginsConfig) return []
 
-  const enabledPlugins = Object.keys(pluginsConfig).filter(key => {
+  const enabledPlugins = Object.keys(pluginsConfig).filter((key) => {
     const config = pluginsConfig[key]
     return config?.enabled === true || config?.enabled === undefined // Alguns podem não ter enabled definido
   })
 
-  return enabledPlugins.filter(pluginId => {
+  return enabledPlugins.filter((pluginId) => {
     // Verificar se o plugin existe nos metadados
     try {
       return PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA] !== undefined
@@ -117,13 +119,13 @@ export function ensureConsistentPlatforms(template: any): string[] {
 /**
  * Formata data respeitando locale
  */
-export function formatDate(dateString: string, locale: string = 'pt-BR'): string {
+export function formatDate(dateString: string, locale: string = "pt-BR"): string {
   try {
     const date = new Date(dateString)
     return date.toLocaleDateString(locale, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     })
   } catch {
     return dateString

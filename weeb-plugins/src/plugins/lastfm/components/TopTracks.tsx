@@ -3,12 +3,12 @@
  * Renderiza Grid, List ou Default baseado no config.top_tracks_style
  */
 
-import React from 'react'
-import { AiOutlineTrophy } from 'react-icons/ai'
-import type { TopTrack } from '../types'
-import { TopItems } from './TopItems'
-import { abbreviateNumber } from '../../../utils/number'
-import type { GridItemProps, ListItemProps } from '../../../templates/types'
+import React from "react"
+import { AiOutlineTrophy } from "react-icons/ai"
+import type { TopTrack } from "../types"
+import { TopItems } from "./TopItems"
+import { abbreviateNumber } from "../../../utils/number"
+import type { GridItemProps, ListItemProps } from "../../../templates/types"
 
 interface TopTracksProps {
   data: TopTrack[]
@@ -17,15 +17,21 @@ interface TopTracksProps {
     top_tracks_max?: number
     top_tracks_title?: string
     top_tracks_hide_title?: boolean
-    top_tracks_style?: 'grid' | 'list' | 'default'
+    top_tracks_style?: "grid" | "list" | "default"
     hide_intervals?: boolean
   }
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function TopTracks({ data, interval, config, style = 'default', size = 'half' }: TopTracksProps): React.ReactElement {
-  const displayStyle = config.top_tracks_style || 'default'
+export function TopTracks({
+  data,
+  interval,
+  config,
+  style = "default",
+  size = "half",
+}: TopTracksProps): React.ReactElement {
+  const displayStyle = config.top_tracks_style || "default"
 
   return (
     <TopItems
@@ -44,23 +50,22 @@ export function TopTracks({ data, interval, config, style = 'default', size = 'h
       sectionName="Top Music Tracks"
       icon={AiOutlineTrophy}
       terminalLabels={{
-        rightText: 'Track',
-        centerText: 'Artist',
-        leftText: 'Plays',
+        rightText: "Track",
+        centerText: "Artist",
+        leftText: "Plays",
       }}
       mapToGridItem={(track) => ({
-        title: track.track || '',
+        title: track.track || "",
         image: track.image,
         subtitle: track.artist,
-        value: abbreviateNumber(track.plays || '0') + ' plays',
+        value: abbreviateNumber(track.plays || "0") + " plays",
       })}
       mapToListItem={(track) => ({
-        right: track.track || '',
+        right: track.track || "",
         image: track.image,
         center: track.artist,
-        left: abbreviateNumber(track.plays || '0') + ' plays',
+        left: abbreviateNumber(track.plays || "0") + " plays",
       })}
     />
   )
 }
-

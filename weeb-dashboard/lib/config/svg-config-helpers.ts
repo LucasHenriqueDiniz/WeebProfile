@@ -1,6 +1,6 @@
 /**
  * Helper functions to read/write terminal configs from ui_config JSONB
- * 
+ *
  * These configs are now stored in ui_config (separate from plugins_config).
  */
 

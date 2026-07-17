@@ -6,7 +6,6 @@ import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
 import { debugPreview } from "@/lib/debug"
 import { useShallow } from "zustand/react/shallow"
 
-
 export function LivePreview() {
   // Use useShallow to prevent unnecessary re-renders
   const {
@@ -32,7 +31,7 @@ export function LivePreview() {
       customThemeColors: state.customThemeColors,
     }))
   )
-  
+
   // Smart debounce: only debounce text input changes, not section/config changes
   // Use state to store debounced plugins
   const [debouncedPlugins, setDebouncedPlugins] = React.useState(plugins)
@@ -41,23 +40,23 @@ export function LivePreview() {
   const lastSectionConfigsRef = React.useRef<Record<string, Record<string, Record<string, unknown>>>>({})
   const debounceTimerRef = React.useRef<NodeJS.Timeout | null>(null)
   const isInitializedRef = React.useRef(false)
-  
+
   // Initialize refs with current values on mount
   React.useEffect(() => {
     if (!isInitializedRef.current) {
-      Object.keys(plugins).forEach(pluginName => {
+      Object.keys(plugins).forEach((pluginName) => {
         lastSectionsRef.current[pluginName] = plugins[pluginName]?.sections || []
         lastSectionConfigsRef.current[pluginName] = plugins[pluginName]?.sectionConfigs || {}
       })
       isInitializedRef.current = true
     }
   }, [plugins])
-  
+
   // Update ref when plugins change
   React.useEffect(() => {
     pluginsRef.current = plugins
   }, [plugins])
-  
+
   // Check if change is in sections or sectionConfigs (should be instant)
   // vs text fields (should be debounced)
   React.useEffect(() => {
@@ -66,29 +65,29 @@ export function LivePreview() {
       clearTimeout(debounceTimerRef.current)
       debounceTimerRef.current = null
     }
-    
+
     let isInstantUpdate = false
-    
+
     // Check if sections or sectionConfigs changed
     for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
       const currentSections = JSON.stringify(pluginConfig.sections || [])
       const lastSections = JSON.stringify(lastSectionsRef.current[pluginName] || [])
-      
+
       if (currentSections !== lastSections) {
         isInstantUpdate = true
         lastSectionsRef.current[pluginName] = pluginConfig.sections || []
       }
-      
+
       // Check if sectionConfigs changed
       const currentSectionConfigs = JSON.stringify(pluginConfig.sectionConfigs || {})
       const lastSectionConfigs = JSON.stringify(lastSectionConfigsRef.current[pluginName] || {})
-      
+
       if (currentSectionConfigs !== lastSectionConfigs) {
         isInstantUpdate = true
         lastSectionConfigsRef.current[pluginName] = pluginConfig.sectionConfigs || {}
       }
     }
-    
+
     if (isInstantUpdate) {
       // Instant update for sections/configs
       setDebouncedPlugins(plugins)
@@ -99,7 +98,7 @@ export function LivePreview() {
         debounceTimerRef.current = null
       }, 1000)
     }
-    
+
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current)
@@ -108,7 +107,7 @@ export function LivePreview() {
     }
   }, [plugins])
 
-  debugPreview('Received props:', {
+  debugPreview("Received props:", {
     pluginsOrder,
     pluginsCount: Object.keys(plugins).length,
   })
@@ -128,7 +127,7 @@ export function LivePreview() {
           hideTerminalEmojis={hideTerminalEmojis}
           hideTerminalHeader={hideTerminalHeader}
           customCss={customCss}
-          customThemeColors={theme === 'custom' ? customThemeColors : undefined}
+          customThemeColors={theme === "custom" ? customThemeColors : undefined}
         />
       </div>
       <style>{`

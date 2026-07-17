@@ -5,7 +5,7 @@ import { HowItWorksCard } from "./HowItWorksCard"
 import { MarkdownCopyModal } from "./MarkdownCopyModal"
 import { useState } from "react"
 import { useRouter } from "@/i18n/navigation"
-import { useTranslations } from '@/i18n/use-translations'
+import { useTranslations } from "@/i18n/use-translations"
 
 interface HowItWorksItem {
   step: number
@@ -17,13 +17,13 @@ interface HowItWorksItem {
   cta: {
     text: string
     href?: string
-    action?: 'modal' | 'scroll' | 'navigate'
+    action?: "modal" | "scroll" | "navigate"
   }
   screenshot?: string
 }
 
 export function HowItWorksSection() {
-  const t = useTranslations('homepage.howItWorks')
+  const t = useTranslations("homepage.howItWorks")
   const [markdownModalOpen, setMarkdownModalOpen] = useState(false)
   const router = useRouter()
 
@@ -31,66 +31,66 @@ export function HowItWorksSection() {
     {
       step: 1,
       icon: "Shield",
-      title: t('steps.step1.title'),
-      description: t('steps.step1.description'),
+      title: t("steps.step1.title"),
+      description: t("steps.step1.description"),
       badge: "~1 min",
       bullets: ["OAuth seguro", "1 clique para autorizar", "Revogável a qualquer momento"],
       cta: {
         action: "navigate" as const,
         href: "/login",
-        text: "Conectar"
-      }
+        text: "Conectar",
+      },
     },
     {
       step: 2,
       icon: "Plug",
-      title: t('steps.step2.title'),
-      description: t('steps.step2.description'),
+      title: t("steps.step2.title"),
+      description: t("steps.step2.description"),
       badge: "Sem código",
       bullets: ["Templates prontos", "Mix de plugins do seu jeito", "GitHub, MAL, Last.fm, Steam..."],
       cta: {
         action: "navigate" as const,
         href: "/dashboard/new",
-        text: "Ver templates"
-      }
+        text: "Ver templates",
+      },
     },
     {
       step: 3,
       icon: "Palette",
-      title: t('steps.step3.title'),
-      description: t('steps.step3.description'),
+      title: t("steps.step3.title"),
+      description: t("steps.step3.description"),
       badge: "Live preview",
       bullets: ["Temas prontos", "Preview instantâneo", "Mobile/desktop safe"],
       cta: {
         action: "navigate" as const,
         href: "/dashboard/new",
-        text: "Personalizar"
-      }
+        text: "Personalizar",
+      },
     },
     {
       step: 4,
       icon: "Code",
-      title: t('steps.step4.title'),
-      description: t('steps.step4.description'),
+      title: t("steps.step4.title"),
+      description: t("steps.step4.description"),
       badge: "Auto-update",
       bullets: ["Link único do SVG", "Auto-sync", "Markdown pronto para copiar"],
       cta: {
         action: "modal" as const,
-        text: "Copiar Markdown"
-      }
-    }
+        text: "Copiar Markdown",
+      },
+    },
   ]
 
   const handleCtaClick = (item: HowItWorksItem) => {
-    if (item.cta.action === 'modal') {
+    if (item.cta.action === "modal") {
       setMarkdownModalOpen(true)
-    } else if (item.cta.action === 'scroll' && item.cta.href) {
+    } else if (item.cta.action === "scroll" && item.cta.href) {
       // Scroll to section if needed (e.g., #platforms)
       const element = document.querySelector(item.cta.href)
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
+        element.scrollIntoView({ behavior: "smooth" })
       }
-    } else if (item.cta.action === 'navigate' && item.cta.href) {
+    } else if (item.cta.action === "navigate" && item.cta.href) {
       router.push(item.cta.href)
     }
   }
@@ -108,16 +108,14 @@ export function HowItWorksSection() {
           {/* header */}
           <div className="mx-auto max-w-2xl text-center mb-12">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
-              {t('badge')}
+              {t("badge")}
             </p>
             <h2 className="mt-4 text-3xl md:text-4xl font-black tracking-tight">
-              {t.rich('title', {
-                zero: (chunks) => <span className="text-primary">{chunks}</span>
+              {t.rich("title", {
+                zero: (chunks) => <span className="text-primary">{chunks}</span>,
               })}
             </h2>
-            <p className="mt-3 text-sm md:text-base text-muted-foreground">
-              {t('subtitle')}
-            </p>
+            <p className="mt-3 text-sm md:text-base text-muted-foreground">{t("subtitle")}</p>
           </div>
 
           {/* grid de passos - 4 colunas no desktop */}
@@ -130,20 +128,14 @@ export function HowItWorksSection() {
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <HowItWorksCard 
-                  item={item} 
-                  onCtaClick={() => handleCtaClick(item)}
-                />
+                <HowItWorksCard item={item} onCtaClick={() => handleCtaClick(item)} />
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      <MarkdownCopyModal 
-        open={markdownModalOpen} 
-        onOpenChange={setMarkdownModalOpen}
-      />
+      <MarkdownCopyModal open={markdownModalOpen} onOpenChange={setMarkdownModalOpen} />
     </>
   )
 }

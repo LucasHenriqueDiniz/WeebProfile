@@ -14,10 +14,7 @@ type AnyDB = {
 }
 
 export async function getUserEssentialConfigs(db: AnyDB, userId: string): Promise<EssentialConfigs> {
-  const configs = await (db as any)
-    .select()
-    .from(essentialConfigs)
-    .where(eq(essentialConfigs.userId, userId))
+  const configs = await (db as any).select().from(essentialConfigs).where(eq(essentialConfigs.userId, userId))
 
   const result: EssentialConfigs = {}
   for (const config of configs) {
@@ -29,11 +26,7 @@ export async function getUserEssentialConfigs(db: AnyDB, userId: string): Promis
   return result
 }
 
-export async function setEssentialConfigs(
-  db: AnyDB,
-  userId: string,
-  configs: EssentialConfigs
-): Promise<void> {
+export async function setEssentialConfigs(db: AnyDB, userId: string, configs: EssentialConfigs): Promise<void> {
   const records: Array<{ userId: string; plugin: string; key: string; value: string }> = []
 
   for (const [plugin, pluginConfigs] of Object.entries(configs)) {

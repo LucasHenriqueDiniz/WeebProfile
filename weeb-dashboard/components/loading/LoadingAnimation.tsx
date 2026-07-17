@@ -66,13 +66,13 @@ export function LoadingAnimation() {
             filter: [
               "drop-shadow(0 0 10px rgba(var(--primary), 0.3))",
               "drop-shadow(0 0 20px rgba(var(--primary), 0.5))",
-              "drop-shadow(0 0 10px rgba(var(--primary), 0.3))"
-            ]
+              "drop-shadow(0 0 10px rgba(var(--primary), 0.3))",
+            ],
           }}
           transition={{
             duration: 2,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
 
@@ -86,12 +86,12 @@ export function LoadingAnimation() {
           <motion.h3
             className="text-lg font-medium text-muted-foreground"
             animate={{
-              opacity: [0.5, 1, 0.5]
+              opacity: [0.5, 1, 0.5],
             }}
             transition={{
               duration: 2,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
           >
             Carregando magia...
@@ -111,39 +111,3 @@ export function LoadingAnimation() {
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -44,8 +44,12 @@ const DefaultFavoriteLanguages = ({
             <GoDotFill color={lang.color} className="mr-2" />
             {lang.name}
           </span>
-          <span className="text-base text-default flex items-center justify-end">{((lang.size / totalSize) * 100).toFixed(2)}%</span>
-          <span className="text-base text-default flex items-center justify-end">{abbreviateNumber(lang.size)} lines</span>
+          <span className="text-base text-default flex items-center justify-end">
+            {((lang.size / totalSize) * 100).toFixed(2)}%
+          </span>
+          <span className="text-base text-default flex items-center justify-end">
+            {abbreviateNumber(lang.size)} lines
+          </span>
         </div>
       ))}
     </div>

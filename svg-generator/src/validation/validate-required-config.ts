@@ -1,6 +1,6 @@
 /**
  * Validation for required secrets and fields
- * 
+ *
  * Validates that enabled plugins have all required secrets (from plugin_secrets)
  * and required fields (from plugin config).
  */
@@ -21,7 +21,7 @@ export interface ValidationResult {
 
 /**
  * Validates required secrets and fields for enabled plugins
- * 
+ *
  * @param plugins - Plugin configurations (enabled plugins with sections)
  * @param essentialConfigs - Essential configs (secrets) from plugin_secrets table
  * @returns Validation result with missing configs
@@ -50,16 +50,19 @@ export function validateRequiredConfig(
     // Check required secrets
     const metadataAny = metadata as any
     const requiredSecrets = metadataAny.requiredSecrets || metadataAny.essentialConfigKeysMetadata || []
-    
+
     const pluginNameLower = pluginName.toLowerCase()
     const pluginSecrets = essentialConfigs[pluginNameLower]
-    
+
     console.log(`🔍 [VALIDATE] Plugin ${pluginName}: checking ${requiredSecrets.length} required secrets`)
-    console.log(`🔍 [VALIDATE] Plugin ${pluginName}: available secrets in DB:`, pluginSecrets ? Object.keys(pluginSecrets) : "none")
-    
+    console.log(
+      `🔍 [VALIDATE] Plugin ${pluginName}: available secrets in DB:`,
+      pluginSecrets ? Object.keys(pluginSecrets) : "none"
+    )
+
     for (const secretMeta of requiredSecrets) {
       const key = secretMeta.key?.toLowerCase() || secretMeta.key
-      
+
       if (!pluginSecrets || !pluginSecrets[key]) {
         console.log(`❌ [VALIDATE] Plugin ${pluginName}: missing secret "${key}" (looking for: ${secretMeta.key})`)
         missingSecrets.push({
@@ -76,7 +79,7 @@ export function validateRequiredConfig(
     for (const field of requiredFields) {
       const value = pluginConfig[field]
       const isEmpty = typeof value === "string" ? !value?.trim() : !value
-      
+
       if (isEmpty) {
         missingFields.push({
           field,
@@ -99,4 +102,3 @@ export function validateRequiredConfig(
     missing,
   }
 }
-

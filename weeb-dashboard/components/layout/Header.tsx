@@ -51,12 +51,8 @@ const AvatarFallback = ({ className, children }: { className?: string; children:
   </div>
 )
 
-export function Header({
-  className,
-  variant,
-  showSidebarToggle,
-}: HeaderProps) {
-  const t = useTranslations('header')
+export function Header({ className, variant, showSidebarToggle }: HeaderProps) {
+  const t = useTranslations("header")
   const pathname = usePathname()
   const router = useRouter()
   const { user, signOut } = useAuth()
@@ -79,7 +75,7 @@ export function Header({
   const headerBorder = useTransform(scrollY, [0, 100], ["rgba(148, 163, 184, 0)", "rgba(148, 163, 184, 0.1)"])
 
   const navigation = [
-    { name: t('nav.templates'), href: "/templates" },
+    { name: t("nav.templates"), href: "/templates" },
     { name: "Docs", href: "/docs" },
   ]
 
@@ -103,16 +99,8 @@ export function Header({
         <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group" locale={undefined}>
-            <motion.div 
-              className="relative" 
-              whileHover={{ scale: 1.05 }} 
-              transition={{ duration: 0.2 }}
-            >
-              <img
-                src="/sora/sora-head.png"
-                alt="Sora"
-                className="w-8 h-8 object-contain drop-shadow-lg"
-              />
+            <motion.div className="relative" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
+              <img src="/sora/sora-head.png" alt="Sora" className="w-8 h-8 object-contain drop-shadow-lg" />
             </motion.div>
             <span className="text-xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent font-sora">
               WeebProfile
@@ -148,9 +136,9 @@ export function Header({
             </Button>
 
             {/* Language Selector Button */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="hidden sm:inline-flex"
               onClick={() => setLanguageSelectorOpen(true)}
             >
@@ -160,7 +148,9 @@ export function Header({
             {user ? (
               <>
                 <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
-                  <Link href="/dashboard" locale={undefined}>Dashboard</Link>
+                  <Link href="/dashboard" locale={undefined}>
+                    Dashboard
+                  </Link>
                 </Button>
                 <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
                   <DropdownMenuTrigger asChild>
@@ -171,15 +161,16 @@ export function Header({
                           alt={user.user_metadata?.user_name || user.user_metadata?.full_name || "User"}
                         />
                         <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500">
-                          <img 
-                            src="/sora/sora-head.png" 
-                            alt="Sora" 
+                          <img
+                            src="/sora/sora-head.png"
+                            alt="Sora"
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement
-                              target.style.display = 'none'
+                              target.style.display = "none"
                               if (target.parentElement) {
-                                target.parentElement.innerHTML = user.user_metadata?.user_name?.charAt(0)?.toUpperCase() ||
+                                target.parentElement.innerHTML =
+                                  user.user_metadata?.user_name?.charAt(0)?.toUpperCase() ||
                                   user.user_metadata?.full_name?.charAt(0)?.toUpperCase() ||
                                   user.email?.charAt(0)?.toUpperCase() ||
                                   "?"
@@ -191,20 +182,20 @@ export function Header({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t("myAccount")}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => router.push("/dashboard" as any)}>
                       <Home className="w-4 h-4 mr-2" />
-                      {t('dashboard')}
+                      {t("dashboard")}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setLanguageSelectorOpen(true)}>
                       <Languages className="w-4 h-4 mr-2" />
-                      {t('changeLanguage')}
+                      {t("changeLanguage")}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                       <LogOut className="w-4 h-4 mr-2" />
-                      {t('signOut')}
+                      {t("signOut")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -212,7 +203,9 @@ export function Header({
             ) : (
               <>
                 <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
-                  <Link href="/login" locale={undefined}>Sign in</Link>
+                  <Link href="/login" locale={undefined}>
+                    Sign in
+                  </Link>
                 </Button>
 
                 <Button
@@ -296,27 +289,27 @@ export function Header({
               <div className="h-6 w-px bg-border/50" />
             </>
           )}
-          
+
           {/* Back button for wizard pages */}
           {isWizardPage && (
             <>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => router.push("/dashboard" as any)} 
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push("/dashboard" as any)}
                 className="h-9 w-9 hover:bg-muted/80 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div className="h-6 w-px bg-border/50" />
-              
+
               {/* Logo only shown in wizard pages */}
-              <Link href="/dashboard" locale={undefined} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                <img
-                  src="/sora/sora-head.png"
-                  alt="Sora"
-                  className="w-8 h-8 object-contain drop-shadow-lg"
-                />
+              <Link
+                href="/dashboard"
+                locale={undefined}
+                className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+              >
+                <img src="/sora/sora-head.png" alt="Sora" className="w-8 h-8 object-contain drop-shadow-lg" />
                 <span className="font-bold text-lg font-sora">WeebProfile</span>
               </Link>
             </>
@@ -349,58 +342,57 @@ export function Header({
                   </div>
                   <div className="hidden sm:block text-left">
                     <div className="text-sm font-semibold">
-                      {user.user_metadata?.user_name || user.user_metadata?.full_name || user.email?.split("@")[0] || "Usuário"}
+                      {user.user_metadata?.user_name ||
+                        user.user_metadata?.full_name ||
+                        user.email?.split("@")[0] ||
+                        "Usuário"}
                     </div>
                     {user.user_metadata?.user_name && user.email && (
-                      <div className="text-xs text-muted-foreground leading-tight">
-                        {user.email}
-                      </div>
+                      <div className="text-xs text-muted-foreground leading-tight">{user.email}</div>
                     )}
                   </div>
                   <ChevronRight className="w-4 h-4 text-muted-foreground hidden sm:block rotate-[-90deg]" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
+              <DropdownMenuContent
+                align="end"
                 side="bottom"
                 sideOffset={8}
                 className="w-64 rounded-lg border shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 origin-top"
               >
                 <DropdownMenuLabel className="flex flex-col gap-1.5 px-3 py-2.5">
-                  <span className="text-sm font-semibold">{t('myAccount')}</span>
-                  <span className="text-xs text-muted-foreground font-normal">
-                    {user.email}
-                  </span>
+                  <span className="text-sm font-semibold">{t("myAccount")}</span>
+                  <span className="text-xs text-muted-foreground font-normal">{user.email}</span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={() => router.push("/dashboard" as any)} 
+                <DropdownMenuItem
+                  onClick={() => router.push("/dashboard" as any)}
                   className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
                   <Home className="w-4 h-4 mr-2.5" />
-                  {t('dashboard')}
+                  {t("dashboard")}
                 </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => router.push("/dashboard/settings")} 
+                <DropdownMenuItem
+                  onClick={() => router.push("/dashboard/settings")}
                   className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
                   <Settings className="w-4 h-4 mr-2.5" />
-                  {t('settings')}
+                  {t("settings")}
                 </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => setLanguageSelectorOpen(true)} 
+                <DropdownMenuItem
+                  onClick={() => setLanguageSelectorOpen(true)}
                   className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
                   <Languages className="w-4 h-4 mr-2.5" />
-                  {t('changeLanguage')}
+                  {t("changeLanguage")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1" />
-                <DropdownMenuItem 
-                  onClick={handleSignOut} 
+                <DropdownMenuItem
+                  onClick={handleSignOut}
                   className="text-destructive cursor-pointer focus:text-destructive px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
                   <LogOut className="w-4 h-4 mr-2.5" />
-                  {t('signOut')}
+                  {t("signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

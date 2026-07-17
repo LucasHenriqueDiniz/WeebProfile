@@ -20,9 +20,7 @@ export function EmptyState({ query, category, onlyEnabled, onClearFilters }: Emp
           <Search className="h-8 w-8 text-muted-foreground" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-foreground">
-            Nenhum plugin encontrado
-          </h3>
+          <h3 className="text-lg font-semibold text-foreground">Nenhum plugin encontrado</h3>
           {hasFilters ? (
             <>
               <p className="text-sm text-muted-foreground">
@@ -47,43 +45,16 @@ export function EmptyState({ query, category, onlyEnabled, onClearFilters }: Emp
                   </div>
                 )}
               </div>
-              <Button
-                variant="outline"
-                onClick={onClearFilters}
-                className="mt-4"
-              >
+              <Button variant="outline" onClick={onClearFilters} className="mt-4">
                 <X className="h-4 w-4 mr-2" />
                 Limpar todos os filtros
               </Button>
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              Não há plugins disponíveis no momento.
-            </p>
+            <p className="text-sm text-muted-foreground">Não há plugins disponíveis no momento.</p>
           )}
         </div>
       </div>
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

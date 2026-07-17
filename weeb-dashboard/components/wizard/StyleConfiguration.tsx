@@ -7,7 +7,7 @@ import {
   DEFAULT_THEME_VARIABLES,
   DEFAULT_THEME_VARIABLE_DESCRIPTIONS,
   DEFAULT_THEME_VARIABLE_LABELS,
-  defaultThemes as themesFromPlugins
+  defaultThemes as themesFromPlugins,
 } from "@weeb/weeb-plugins/themes"
 import { useWizardStore } from "@/stores/wizard-store"
 import React, { useCallback, useEffect, useState } from "react"
@@ -18,7 +18,7 @@ import { RotateCcw } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
 
 export function StyleConfiguration() {
-  const t = useTranslations('wizard.style')
+  const t = useTranslations("wizard.style")
   const {
     style,
     size,
@@ -49,25 +49,28 @@ export function StyleConfiguration() {
   // Get default value for a theme variable
   const getDefaultColor = (variable: string): string => {
     const theme = themesFromPlugins.custom || themesFromPlugins.default
-    return theme[variable as keyof typeof theme] || '#000000'
+    return theme[variable as keyof typeof theme] || "#000000"
   }
 
   // Debounce to update theme color
-  const handleColorChange = useCallback((variable: string, value: string) => {
-    // Update visual immediately
-    setLocalColors((prev) => ({ ...prev, [variable]: value }))
-    
-    // Clear previous timer
-    if (debounceTimersRef.current[variable]) {
-      clearTimeout(debounceTimersRef.current[variable])
-    }
-    
-    // Debounce only to update store
-    debounceTimersRef.current[variable] = setTimeout(() => {
-      setCustomThemeColor(variable, value)
-      delete debounceTimersRef.current[variable]
-    }, 500)
-  }, [setCustomThemeColor])
+  const handleColorChange = useCallback(
+    (variable: string, value: string) => {
+      // Update visual immediately
+      setLocalColors((prev) => ({ ...prev, [variable]: value }))
+
+      // Clear previous timer
+      if (debounceTimersRef.current[variable]) {
+        clearTimeout(debounceTimersRef.current[variable])
+      }
+
+      // Debounce only to update store
+      debounceTimersRef.current[variable] = setTimeout(() => {
+        setCustomThemeColor(variable, value)
+        delete debounceTimersRef.current[variable]
+      }, 500)
+    },
+    [setCustomThemeColor]
+  )
 
   // Cleanup
   useEffect(() => {
@@ -78,15 +81,16 @@ export function StyleConfiguration() {
     }
   }, [])
 
-  const themes = style === "default" 
-    ? ["default", "purple", "pink", "cyan", "orange", "blue", "green", "red", "custom"]
-    : ["default", "dracula", "monokai"]
+  const themes =
+    style === "default"
+      ? ["default", "purple", "pink", "cyan", "orange", "blue", "green", "red", "custom"]
+      : ["default", "dracula", "monokai"]
 
   return (
     <div className="space-y-3">
       {/* Style selector */}
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-        <p className="text-sm font-semibold text-foreground">{t('title')}</p>
+        <p className="text-sm font-semibold text-foreground">{t("title")}</p>
         <div className="flex gap-3">
           {["default", "terminal"].map((s) => (
             <label key={s} className="flex-1 cursor-pointer">
@@ -107,11 +111,11 @@ export function StyleConfiguration() {
 
       {/* Size selector */}
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-        <p className="text-sm font-semibold text-foreground">{t('size')}</p>
+        <p className="text-sm font-semibold text-foreground">{t("size")}</p>
         <div className="flex gap-3">
           {[
-            { value: "half", label: t('options.halfWidth'), desc: "415px" },
-            { value: "full", label: t('options.fullWidth'), desc: "830px" },
+            { value: "half", label: t("options.halfWidth"), desc: "415px" },
+            { value: "full", label: t("options.fullWidth"), desc: "830px" },
           ].map((s) => (
             <label key={s.value} className="flex-1 cursor-pointer">
               <input
@@ -132,7 +136,7 @@ export function StyleConfiguration() {
 
       {/* Theme selector */}
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-        <p className="text-sm font-semibold text-foreground">{t('theme')}</p>
+        <p className="text-sm font-semibold text-foreground">{t("theme")}</p>
         <div className="flex flex-wrap gap-2">
           {themes.map((t) => (
             <button
@@ -155,27 +159,19 @@ export function StyleConfiguration() {
       {theme === "custom" && style === "default" && (
         <div className="rounded-lg border border-border bg-card p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-foreground">{t('customColors')}</p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={resetCustomThemeColors}
-              className="h-7 text-xs"
-            >
+            <p className="text-sm font-semibold text-foreground">{t("customColors")}</p>
+            <Button type="button" variant="outline" size="sm" onClick={resetCustomThemeColors} className="h-7 text-xs">
               <RotateCcw className="w-3 h-3 mr-1" />
-              {t('reset')}
+              {t("reset")}
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {DEFAULT_THEME_VARIABLES.filter(v => v !== '--default-color-raw').map((variable) => {
+            {DEFAULT_THEME_VARIABLES.filter((v) => v !== "--default-color-raw").map((variable) => {
               const defaultValue = getDefaultColor(variable)
               const currentValue = localColors[variable] || defaultValue
               return (
                 <div key={variable} className="space-y-1.5">
-                  <Label className="text-xs font-medium">
-                    {DEFAULT_THEME_VARIABLE_LABELS[variable]}
-                  </Label>
+                  <Label className="text-xs font-medium">{DEFAULT_THEME_VARIABLE_LABELS[variable]}</Label>
                   <div className="flex items-center gap-2">
                     <Input
                       type="color"
@@ -201,55 +197,39 @@ export function StyleConfiguration() {
       {/* Terminal Options */}
       {style === "terminal" && (
         <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-          <p className="text-sm font-semibold text-foreground">{t('terminalOptions')}</p>
+          <p className="text-sm font-semibold text-foreground">{t("terminalOptions")}</p>
           <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30">
             <div className="space-y-0.5 flex-1">
               <Label htmlFor="hide-emojis" className="text-sm font-medium cursor-pointer">
-                {t('hideEmojis')}
+                {t("hideEmojis")}
               </Label>
-              <p className="text-xs text-muted-foreground">
-                {t('hideEmojisDescription')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("hideEmojisDescription")}</p>
             </div>
-            <Switch
-              id="hide-emojis"
-              checked={hideTerminalEmojis}
-              onCheckedChange={setHideTerminalEmojis}
-            />
+            <Switch id="hide-emojis" checked={hideTerminalEmojis} onCheckedChange={setHideTerminalEmojis} />
           </div>
           <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/30">
             <div className="space-y-0.5 flex-1">
               <Label htmlFor="hide-header" className="text-sm font-medium cursor-pointer">
-                {t('hideHeader')}
+                {t("hideHeader")}
               </Label>
-              <p className="text-xs text-muted-foreground">
-                {t('hideHeaderDescription')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("hideHeaderDescription")}</p>
             </div>
-            <Switch
-              id="hide-header"
-              checked={hideTerminalHeader}
-              onCheckedChange={setHideTerminalHeader}
-            />
+            <Switch id="hide-header" checked={hideTerminalHeader} onCheckedChange={setHideTerminalHeader} />
           </div>
         </div>
       )}
 
       {/* Custom CSS */}
       <div className="rounded-lg border border-border bg-card p-4 space-y-2">
-        <p className="text-sm font-semibold text-foreground">{t('customCss')}</p>
-        <p className="text-xs text-muted-foreground">
-          {t('customCssDescription')}
-        </p>
+        <p className="text-sm font-semibold text-foreground">{t("customCss")}</p>
+        <p className="text-xs text-muted-foreground">{t("customCssDescription")}</p>
         <Textarea
           value={customCss}
           onChange={(e) => setCustomCss(e.target.value)}
-          placeholder={t('customCssPlaceholder')}
+          placeholder={t("customCssPlaceholder")}
           className="w-full min-h-[160px] rounded-md border border-border bg-muted/50 px-3 py-2 text-xs font-mono focus:border-primary focus:ring-1 focus:ring-primary"
         />
       </div>
     </div>
   )
 }
-
-

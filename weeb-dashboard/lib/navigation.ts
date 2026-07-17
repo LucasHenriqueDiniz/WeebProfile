@@ -1,4 +1,4 @@
-import { useLocale } from '@/i18n/use-translations'
+import { useLocale } from "@/i18n/use-translations"
 
 /**
  * Hook para navegação locale-aware
@@ -18,10 +18,10 @@ export function useLocaleNavigation() {
     }
 
     // Remove leading slash se existir e adiciona locale
-    const cleanPath = path.startsWith('/') ? path.slice(1) : path
+    const cleanPath = path.startsWith("/") ? path.slice(1) : path
 
     // Para root path, apenas retorna o locale
-    if (cleanPath === '' || cleanPath === '/') {
+    if (cleanPath === "" || cleanPath === "/") {
       return `/${locale}`
     }
 
@@ -40,7 +40,7 @@ export function useLocaleNavigation() {
   return {
     locale,
     toLocalePath,
-    navigateTo
+    navigateTo,
   }
 }
 
@@ -53,9 +53,9 @@ export function toLocalePath(path: string, locale: string): string {
     return path
   }
 
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path
 
-  if (cleanPath === '' || cleanPath === '/') {
+  if (cleanPath === "" || cleanPath === "/") {
     return `/${locale}`
   }
 

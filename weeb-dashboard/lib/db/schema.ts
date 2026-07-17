@@ -1,14 +1,14 @@
 import { sqliteTable, text, integer, index, unique } from "drizzle-orm/sqlite-core"
 
 // JSON helper — values are stored as text and JSON.parsed/stringified transparently
-const json = <T>(name: string) =>
-  text(name, { mode: "json" }).$type<T>()
+const json = <T>(name: string) => text(name, { mode: "json" }).$type<T>()
 
-const uuid = (name: string) =>
-  text(name).$defaultFn(() => crypto.randomUUID())
+const uuid = (name: string) => text(name).$defaultFn(() => crypto.randomUUID())
 
 const now = () =>
-  text().$defaultFn(() => new Date().toISOString()).notNull()
+  text()
+    .$defaultFn(() => new Date().toISOString())
+    .notNull()
 
 /**
  * User profiles table
@@ -20,8 +20,12 @@ export const profiles = sqliteTable(
     userId: text("user_id").notNull().unique(),
     username: text("username"),
     isActive: integer("is_active", { mode: "boolean" }).default(true).notNull(),
-    createdAt: text("created_at").$defaultFn(() => new Date().toISOString()).notNull(),
-    updatedAt: text("updated_at").$defaultFn(() => new Date().toISOString()).notNull(),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+    updatedAt: text("updated_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_profiles_user_id").on(table.userId),
@@ -42,14 +46,21 @@ export const essentialConfigs = sqliteTable(
     plugin: text("plugin").notNull(),
     key: text("key").notNull(),
     value: text("value").notNull(),
-    createdAt: text("created_at").$defaultFn(() => new Date().toISOString()).notNull(),
-    updatedAt: text("updated_at").$defaultFn(() => new Date().toISOString()).notNull(),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+    updatedAt: text("updated_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_essential_configs_user_id").on(table.userId),
     pluginKeyIdx: index("idx_essential_configs_plugin_key").on(table.plugin, table.key),
-    userIdPluginKeyUnique: unique("idx_essential_configs_user_plugin_key_unique")
-      .on(table.userId, table.plugin, table.key),
+    userIdPluginKeyUnique: unique("idx_essential_configs_user_plugin_key_unique").on(
+      table.userId,
+      table.plugin,
+      table.key
+    ),
   })
 )
 
@@ -68,21 +79,29 @@ export const svgs = sqliteTable(
     theme: text("theme").default("default"),
     customCss: text("custom_css"),
     pluginsOrder: text("plugins_order"),
-    pluginsConfig: json<Record<string, unknown>>("plugins_config").notNull().$default(() => ({})),
-    uiConfig: json<Record<string, unknown>>("ui_config").notNull().$default(() => ({})),
+    pluginsConfig: json<Record<string, unknown>>("plugins_config")
+      .notNull()
+      .$default(() => ({})),
+    uiConfig: json<Record<string, unknown>>("ui_config")
+      .notNull()
+      .$default(() => ({})),
     storagePath: text("storage_path"),
     storageUrl: text("storage_url"),
     status: text("status").notNull().default("pending"),
     forceRegenerate: integer("force_regenerate", { mode: "boolean" }).default(false).notNull(),
     dataHash: text("data_hash"),
     lastGeneratedAt: text("last_generated_at"),
-    updatedAt: text("updated_at").$defaultFn(() => new Date().toISOString()).notNull(),
+    updatedAt: text("updated_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
     nextRegenerationAt: text("next_regeneration_at"),
     lastPayloadHash: text("last_payload_hash"),
     failCount: integer("fail_count").notNull().default(0),
     lastError: text("last_error"),
     isPaused: integer("is_paused", { mode: "boolean" }).notNull().default(false),
-    createdAt: text("created_at").$defaultFn(() => new Date().toISOString()).notNull(),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_svgs_user_id").on(table.userId),
@@ -109,10 +128,16 @@ export const templates = sqliteTable(
     theme: text("theme").default("default"),
     customCss: text("custom_css"),
     pluginsOrder: text("plugins_order"),
-    pluginsConfig: json<Record<string, unknown>>("plugins_config").notNull().$default(() => ({})),
-    uiConfig: json<Record<string, unknown>>("ui_config").notNull().$default(() => ({})),
+    pluginsConfig: json<Record<string, unknown>>("plugins_config")
+      .notNull()
+      .$default(() => ({})),
+    uiConfig: json<Record<string, unknown>>("ui_config")
+      .notNull()
+      .$default(() => ({})),
     isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
-    createdAt: text("created_at").$defaultFn(() => new Date().toISOString()).notNull(),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_templates_user_id").on(table.userId),
@@ -130,13 +155,14 @@ export const templateLikes = sqliteTable(
     id: uuid("id").primaryKey(),
     userId: text("user_id").notNull(),
     templateId: text("template_id").notNull(),
-    createdAt: text("created_at").$defaultFn(() => new Date().toISOString()).notNull(),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_template_likes_user_id").on(table.userId),
     templateIdIdx: index("idx_template_likes_template_id").on(table.templateId),
-    userTemplateUnique: unique("idx_template_likes_user_template_unique")
-      .on(table.userId, table.templateId),
+    userTemplateUnique: unique("idx_template_likes_user_template_unique").on(table.userId, table.templateId),
   })
 )
 

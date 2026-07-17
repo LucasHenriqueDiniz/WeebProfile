@@ -2,7 +2,7 @@
  * DefaultStatRow - Linha de estatísticas para estilo default
  */
 
-import React from 'react'
+import React from "react"
 
 export interface StatProps {
   title: string
@@ -35,7 +35,13 @@ export interface StatisticsRowProps {
   strong?: boolean
 }
 
-export function StatisticRow({ rows, className }: { rows: StatisticsRowProps[]; className?: string }): React.ReactElement {
+export function StatisticRow({
+  rows,
+  className,
+}: {
+  rows: StatisticsRowProps[]
+  className?: string
+}): React.ReactElement {
   return (
     <ul className={`flex flex-col items-start w-full gap-1 ${className ?? ""}`}>
       {rows.map((row, index) => (
@@ -44,4 +50,3 @@ export function StatisticRow({ rows, className }: { rows: StatisticsRowProps[]; 
     </ul>
   )
 }
-

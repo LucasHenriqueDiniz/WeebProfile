@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles } from "lucide-react"
-import { useTranslations } from '@/i18n/use-translations'
+import { useTranslations } from "@/i18n/use-translations"
 import { Link } from "@/i18n/navigation"
 import { TemplateCard } from "@/components/templates/TemplateCard"
 import type { Template } from "@/types/template"
@@ -13,11 +13,8 @@ interface TemplatesGalleryProps {
   loading?: boolean
 }
 
-export function TemplatesGallery({
-  templates,
-  loading = false
-}: TemplatesGalleryProps) {
-  const t = useTranslations('homepage.templatesGallery')
+export function TemplatesGallery({ templates, loading = false }: TemplatesGalleryProps) {
+  const t = useTranslations("homepage.templatesGallery")
   return (
     <section className="container mx-auto px-4 py-16 md:py-24">
       <motion.div
@@ -27,9 +24,9 @@ export function TemplatesGallery({
         className="text-center mb-12"
       >
         <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-          {t('title')}
+          {t("title")}
         </h2>
-        <p className="text-lg text-muted-foreground">{t('subtitle')}</p>
+        <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
       </motion.div>
 
       <motion.div
@@ -85,13 +82,11 @@ export function TemplatesGallery({
                     </motion.div>
                     <div className="space-y-3">
                       <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-                        {t('exploreCount', { count: templates.length + 10 })}
+                        {t("exploreCount", { count: templates.length + 10 })}
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
-                        {t('exploreSubtitle')}
-                      </p>
+                      <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">{t("exploreSubtitle")}</p>
                       <div className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all duration-300">
-                        <span>{t('viewAll')}</span>
+                        <span>{t("viewAll")}</span>
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                       </div>
                     </div>
@@ -103,37 +98,30 @@ export function TemplatesGallery({
         </motion.div>
 
         {/* Regular template cards */}
-        {loading ? (
-          // Show loading skeletons
-          Array.from({ length: 3 }, (_, index) => (
-            <motion.div
-              key={`skeleton-${index}`}
-              custom={index + 1}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={{
-                hidden: { opacity: 0, scale: 0.9, y: 20 },
-                visible: (i: number) => ({
-                  opacity: 1,
-                  scale: 1,
-                  y: 0,
-                  transition: { delay: i * 0.15 },
-                }),
-              }}
-              className="h-80 bg-muted/30 rounded-lg animate-pulse"
-            />
-          ))
-        ) : (
-          templates.map((template, index) => (
-            <TemplateCard
-              key={template.id}
-              template={template}
-              variant="hero"
-              index={index + 1}
-            />
-          ))
-        )}
+        {loading
+          ? // Show loading skeletons
+            Array.from({ length: 3 }, (_, index) => (
+              <motion.div
+                key={`skeleton-${index}`}
+                custom={index + 1}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.9, y: 20 },
+                  visible: (i: number) => ({
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                    transition: { delay: i * 0.15 },
+                  }),
+                }}
+                className="h-80 bg-muted/30 rounded-lg animate-pulse"
+              />
+            ))
+          : templates.map((template, index) => (
+              <TemplateCard key={template.id} template={template} variant="hero" index={index + 1} />
+            ))}
       </motion.div>
     </section>
   )

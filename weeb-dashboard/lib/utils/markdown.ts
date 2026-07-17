@@ -1,6 +1,6 @@
 /**
  * Markdown Helper
- * 
+ *
  * Gera código markdown para incluir imagens SVG no README do GitHub.
  * Considera o tamanho da imagem para usar o formato apropriado:
  * - full: markdown simples
@@ -10,7 +10,7 @@
 export interface MarkdownOptions {
   name: string
   url: string
-  size: 'half' | 'full'
+  size: "half" | "full"
   lastGeneratedAt?: Date | string | null
 }
 
@@ -22,25 +22,24 @@ function addCacheBusting(url: string, lastGeneratedAt?: Date | string | null): s
     return url
   }
 
-  const timestamp = typeof lastGeneratedAt === 'string' 
-    ? new Date(lastGeneratedAt).getTime() 
-    : lastGeneratedAt.getTime()
+  const timestamp =
+    typeof lastGeneratedAt === "string" ? new Date(lastGeneratedAt).getTime() : lastGeneratedAt.getTime()
 
-  const separator = url.includes('?') ? '&' : '?'
+  const separator = url.includes("?") ? "&" : "?"
   return `${url}${separator}v=${timestamp}`
 }
 
 /**
  * Gera código markdown para uma imagem SVG
- * 
+ *
  * @param options - Opções para gerar o markdown
  * @returns Código markdown formatado
- * 
+ *
  * @example
  * // Para imagem full:
  * generateMarkdown({ name: "Profile", url: "https://...", size: "full" })
  * // Retorna: ![Profile](https://...?v=1234567890)
- * 
+ *
  * @example
  * // Para imagem half:
  * generateMarkdown({ name: "Profile", url: "https://...", size: "half" })
@@ -51,11 +50,11 @@ function addCacheBusting(url: string, lastGeneratedAt?: Date | string | null): s
  */
 export function generateMarkdown(options: MarkdownOptions): string {
   const { name, url, size, lastGeneratedAt } = options
-  
+
   // Adicionar cache-busting à URL
   const urlWithCache = addCacheBusting(url, lastGeneratedAt)
 
-  if (size === 'full') {
+  if (size === "full") {
     // Para imagens full, usar markdown simples
     return `![${name}](${urlWithCache})`
   } else {
@@ -68,10 +67,10 @@ export function generateMarkdown(options: MarkdownOptions): string {
 
 /**
  * Gera código markdown para múltiplas imagens half lado a lado
- * 
+ *
  * @param images - Array de imagens half
  * @returns Código markdown formatado com todas as imagens
- * 
+ *
  * @example
  * generateMarkdownForMultipleHalf([
  *   { name: "LastFM", url: "https://...", lastGeneratedAt: new Date() },
@@ -82,14 +81,14 @@ export function generateMarkdownForMultipleHalf(
   images: Array<{ name: string; url: string; lastGeneratedAt?: Date | string | null }>
 ): string {
   if (images.length === 0) {
-    return ''
+    return ""
   }
 
   if (images.length === 1) {
     return generateMarkdown({
       name: images[0].name,
       url: images[0].url,
-      size: 'half',
+      size: "half",
       lastGeneratedAt: images[0].lastGeneratedAt,
     })
   }
@@ -99,10 +98,9 @@ export function generateMarkdownForMultipleHalf(
       const urlWithCache = addCacheBusting(img.url, img.lastGeneratedAt)
       return `  <img align="top" alt="${img.name}" src="${urlWithCache}" />`
     })
-    .join('\n')
+    .join("\n")
 
   return `<p align="center">
 ${imagesHtml}
 </p>`
 }
-

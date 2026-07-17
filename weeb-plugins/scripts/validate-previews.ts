@@ -1,23 +1,23 @@
 /**
  * Script para validar e listar previews de seções
- * 
+ *
  * Este script:
  * 1. Verifica quais seções têm previews disponíveis
  * 2. Lista seções que estão faltando previews
  * 3. Pode ser usado para gerar previews automaticamente no futuro
- * 
+ *
  * Execute: pnpm tsx scripts/validate-previews.ts
  */
 
-import * as fs from 'fs'
-import * as path from 'path'
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
+import * as fs from "fs"
+import * as path from "path"
+import { fileURLToPath } from "url"
+import { dirname } from "path"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const PLUGINS_DIR = path.join(__dirname, '../src/plugins')
+const PLUGINS_DIR = path.join(__dirname, "../src/plugins")
 
 interface PreviewStatus {
   plugin: string
@@ -31,31 +31,31 @@ interface PreviewStatus {
  */
 function discoverPlugins(): string[] {
   const plugins: string[] = []
-  
+
   if (!fs.existsSync(PLUGINS_DIR)) {
     console.warn(`⚠️  Plugins directory not found: ${PLUGINS_DIR}`)
     return []
   }
-  
+
   const entries = fs.readdirSync(PLUGINS_DIR, { withFileTypes: true })
-  
+
   for (const entry of entries) {
     if (entry.isDirectory()) {
       const pluginName = entry.name
-      
+
       // Ignorar diretórios que começam com _ (templates, etc)
-      if (pluginName.startsWith('_')) {
+      if (pluginName.startsWith("_")) {
         continue
       }
-      
-      const metadataPath = path.join(PLUGINS_DIR, pluginName, 'plugin.metadata.ts')
-      
+
+      const metadataPath = path.join(PLUGINS_DIR, pluginName, "plugin.metadata.ts")
+
       if (fs.existsSync(metadataPath)) {
         plugins.push(pluginName)
       }
     }
   }
-  
+
   return plugins.sort()
 }
 
@@ -63,7 +63,7 @@ function discoverPlugins(): string[] {
  * Lê o metadata de um plugin e extrai as seções
  */
 function getPluginSections(pluginName: string): string[] {
-  const metadataPath = path.join(PLUGINS_DIR, pluginName, 'plugin.metadata.ts')
+  const metadataPath = path.join(PLUGINS_DIR, pluginName, "plugin.metadata.ts")
 
   if (!fs.existsSync(metadataPath)) {
     return []
@@ -71,15 +71,17 @@ function getPluginSections(pluginName: string): string[] {
 
   try {
     // Ler o arquivo diretamente e extrair informações básicas
-    const content = fs.readFileSync(metadataPath, 'utf8')
+    const content = fs.readFileSync(metadataPath, "utf8")
 
     // Procurar por seções definidas no arquivo
     const sectionMatches = content.match(/id:\s*['"`]([^'"`]+)['"`]/g)
     if (sectionMatches) {
-      return sectionMatches.map(match => {
-        const idMatch = match.match(/id:\s*['"`]([^'"`]+)['"`]/)
-        return idMatch ? idMatch[1] : ''
-      }).filter(Boolean)
+      return sectionMatches
+        .map((match) => {
+          const idMatch = match.match(/id:\s*['"`]([^'"`]+)['"`]/)
+          return idMatch ? idMatch[1] : ""
+        })
+        .filter(Boolean)
     }
 
     return []
@@ -93,10 +95,10 @@ function getPluginSections(pluginName: string): string[] {
  * Verifica se um preview existe
  */
 function checkPreviewExists(pluginName: string, sectionId: string): { exists: boolean; path: string } {
-  const previewsDir = path.join(PLUGINS_DIR, pluginName, 'previews')
+  const previewsDir = path.join(PLUGINS_DIR, pluginName, "previews")
   const previewFileName = `${pluginName}_${sectionId}.svg`
   const previewPath = path.join(previewsDir, previewFileName)
-  
+
   return {
     exists: fs.existsSync(previewPath),
     path: previewPath,
@@ -133,35 +135,35 @@ function validatePreviews(): PreviewStatus[] {
  */
 function generateReport(results: PreviewStatus[]): void {
   const byPlugin = new Map<string, PreviewStatus[]>()
-  
+
   for (const result of results) {
     if (!byPlugin.has(result.plugin)) {
       byPlugin.set(result.plugin, [])
     }
     byPlugin.get(result.plugin)!.push(result)
   }
-  
-  console.log('\n📊 Relatório de Previews\n')
-  console.log('='.repeat(60))
-  
+
+  console.log("\n📊 Relatório de Previews\n")
+  console.log("=".repeat(60))
+
   let totalSections = 0
   let totalWithPreview = 0
   let totalMissing = 0
-  
+
   for (const [plugin, pluginResults] of Array.from(byPlugin.entries()).sort()) {
-    const withPreview = pluginResults.filter(r => r.exists).length
-    const missing = pluginResults.filter(r => !r.exists).length
-    
+    const withPreview = pluginResults.filter((r) => r.exists).length
+    const missing = pluginResults.filter((r) => !r.exists).length
+
     totalSections += pluginResults.length
     totalWithPreview += withPreview
     totalMissing += missing
-    
-    const status = missing === 0 ? '✅' : '⚠️'
+
+    const status = missing === 0 ? "✅" : "⚠️"
     console.log(`\n${status} ${plugin}`)
     console.log(`   Total: ${pluginResults.length} | Com preview: ${withPreview} | Faltando: ${missing}`)
-    
+
     if (missing > 0) {
-      const missingSections = pluginResults.filter(r => !r.exists)
+      const missingSections = pluginResults.filter((r) => !r.exists)
       console.log(`   Faltando previews:`)
       for (const missing of missingSections) {
         const expectedPath = path.relative(process.cwd(), missing.path)
@@ -169,13 +171,13 @@ function generateReport(results: PreviewStatus[]): void {
       }
     }
   }
-  
-  console.log('\n' + '='.repeat(60))
+
+  console.log("\n" + "=".repeat(60))
   console.log(`\n📈 Resumo Geral:`)
   console.log(`   Total de seções: ${totalSections}`)
   console.log(`   Com preview: ${totalWithPreview} (${((totalWithPreview / totalSections) * 100).toFixed(1)}%)`)
   console.log(`   Faltando: ${totalMissing} (${((totalMissing / totalSections) * 100).toFixed(1)}%)`)
-  
+
   if (totalMissing > 0) {
     console.log(`\n⚠️  ${totalMissing} preview(s) faltando.`)
     console.log(`\n💡 Para gerar os previews faltantes, execute:`)
@@ -192,15 +194,15 @@ function generateReport(results: PreviewStatus[]): void {
  */
 async function main() {
   const args = process.argv.slice(2)
-  const warnOnly = args.includes('--warn-only') || args.includes('-w')
-  
-  console.log('🔍 Validando previews de seções...\n')
+  const warnOnly = args.includes("--warn-only") || args.includes("-w")
+
+  console.log("🔍 Validando previews de seções...\n")
 
   const results = validatePreviews()
   generateReport(results)
-  
-  const missingCount = results.filter(r => !r.exists).length
-  
+
+  const missingCount = results.filter((r) => !r.exists).length
+
   if (missingCount > 0) {
     if (warnOnly) {
       console.log(`\n⚠️  ${missingCount} preview(s) faltando (modo warning - não falha o build)`)
@@ -224,7 +226,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error('Erro ao validar previews:', error)
+  console.error("Erro ao validar previews:", error)
   process.exit(1)
 })
-

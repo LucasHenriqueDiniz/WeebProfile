@@ -23,12 +23,7 @@ export function ThemeToggle() {
   }
 
   return (
-    <Button 
-      variant="ghost" 
-      size="icon" 
-      onClick={toggleTheme}
-      className="h-9 w-9"
-    >
+    <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-9 w-9">
       {resolvedTheme === "light" ? (
         <Moon className="h-[1.2rem] w-[1.2rem]" />
       ) : (
@@ -38,4 +33,3 @@ export function ThemeToggle() {
     </Button>
   )
 }
-

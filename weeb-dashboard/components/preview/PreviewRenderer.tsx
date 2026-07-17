@@ -104,7 +104,7 @@ export function PreviewRenderer({
         }
       }
     }
-    
+
     return configs
   }, [plugins, style, size, theme, hideTerminalEmojis])
 
@@ -114,7 +114,7 @@ export function PreviewRenderer({
       const manager = PluginManager.getInstance()
       // Filtrar plugins habilitados com seções
       const activePluginNames = Object.keys(preparedPluginsConfig).filter(
-        name => preparedPluginsConfig[name]?.enabled && preparedPluginsConfig[name]?.sections?.length > 0
+        (name) => preparedPluginsConfig[name]?.enabled && preparedPluginsConfig[name]?.sections?.length > 0
       )
 
       const map = new Map()
@@ -138,16 +138,16 @@ export function PreviewRenderer({
   const renderedPlugins = useMemo(() => {
     // Pegar TODOS os plugins habilitados (não apenas os que estão em pluginsOrder)
     const allEnabledPlugins = Object.keys(preparedPluginsConfig).filter(
-      name => preparedPluginsConfig[name]?.enabled && preparedPluginsConfig[name]?.sections?.length > 0
+      (name) => preparedPluginsConfig[name]?.enabled && preparedPluginsConfig[name]?.sections?.length > 0
     )
-    
+
     // Ordenar: plugins que estão em pluginsOrder primeiro (mantendo a ordem deles),
     // depois os outros em ordem alfabética
     const orderedPlugins = [
-      ...pluginsOrder.filter(name => allEnabledPlugins.includes(name)),
-      ...allEnabledPlugins.filter(name => !pluginsOrder.includes(name)).sort()
+      ...pluginsOrder.filter((name) => allEnabledPlugins.includes(name)),
+      ...allEnabledPlugins.filter((name) => !pluginsOrder.includes(name)).sort(),
     ]
-    
+
     const components: React.ReactElement[] = []
 
     for (const pluginName of orderedPlugins) {
@@ -163,19 +163,21 @@ export function PreviewRenderer({
         // Adicionar previewMode ao pluginConfig para que componentes saibam que estão em preview
         const configWithPreviewMode = { ...pluginConfig, previewMode: previewMode || false }
         const rendered = (plugin as any).render(configWithPreviewMode, pluginData)
-        
+
         // Check if rendered is a function (which would cause the error)
-        if (typeof rendered === 'function') {
-          console.error(`[PreviewRenderer] ERROR: Plugin ${pluginName} returned a function instead of a React component!`)
+        if (typeof rendered === "function") {
+          console.error(
+            `[PreviewRenderer] ERROR: Plugin ${pluginName} returned a function instead of a React component!`
+          )
           continue
         }
-        
+
         // Sempre adicionar ao array - deixar o React decidir se é vazio
         // Componentes que retornam <></> ainda são válidos
         if (rendered === null || rendered === undefined) {
           continue
         }
-        
+
         // Usar key única baseada em pluginName + índice estável
         const stableKey = `${pluginName}-${components.length}`
         components.push(
@@ -221,19 +223,19 @@ export function PreviewRenderer({
     // 1. Plugins não têm dados mock carregados
     // 2. Plugins não foram encontrados
     // 3. Plugins não têm seções ativas
-    const enabledCount = Object.values(plugins).filter(p => p?.enabled).length
-    const withSections = Object.values(plugins).filter(p => p?.enabled && p.sections?.length > 0).length
-    
+    const enabledCount = Object.values(plugins).filter((p) => p?.enabled).length
+    const withSections = Object.values(plugins).filter((p) => p?.enabled && p.sections?.length > 0).length
+
     // Debug information
-    console.debug('[PreviewRenderer] No plugins rendered:', {
+    console.debug("[PreviewRenderer] No plugins rendered:", {
       enabledCount,
       withSections,
       plugins: Object.keys(plugins),
       pluginsOrder,
       dataKeys: Object.keys(data),
-      activePluginsCount: activePluginsMap.size
+      activePluginsCount: activePluginsMap.size,
     })
-    
+
     return null
   }
 

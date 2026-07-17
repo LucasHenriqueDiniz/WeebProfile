@@ -21,7 +21,7 @@ interface MockPluginData {
 /**
  * Hook para buscar dados mockados dos plugins
  * Cacheia dados para evitar múltiplas chamadas
- * 
+ *
  * Usa os plugins diretamente com fetchData(..., dev=true) para obter dados mock
  * Funciona dinamicamente com qualquer plugin
  */
@@ -33,18 +33,15 @@ export function useMockPluginData({ plugins }: UseMockPluginDataProps): {
   const [loading, setLoading] = useState(true)
 
   // Criar chave única baseada nas configurações dos plugins habilitados
-  const pluginsKey = useMemo(
-    () => {
-      const enabledPlugins: Record<string, any> = {}
-      for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
-        if (pluginConfig?.enabled) {
-          enabledPlugins[pluginName] = pluginConfig
-        }
+  const pluginsKey = useMemo(() => {
+    const enabledPlugins: Record<string, any> = {}
+    for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
+      if (pluginConfig?.enabled) {
+        enabledPlugins[pluginName] = pluginConfig
       }
-      return JSON.stringify(enabledPlugins)
-    },
-    [plugins]
-  )
+    }
+    return JSON.stringify(enabledPlugins)
+  }, [plugins])
 
   useEffect(() => {
     setLoading(true)
@@ -87,4 +84,3 @@ export function useMockPluginData({ plugins }: UseMockPluginDataProps): {
 
   return { data, loading }
 }
-

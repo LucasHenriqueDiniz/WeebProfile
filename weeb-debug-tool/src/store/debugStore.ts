@@ -1,12 +1,12 @@
 /**
  * Debug Store (Zustand)
- * 
+ *
  * Global state management for the debug tool
  */
 
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import type { StyleSnapshot } from '../lib/iframe/iframeProtocol'
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
+import type { StyleSnapshot } from "../lib/iframe/iframeProtocol"
 
 interface SnapshotCacheEntry {
   react: StyleSnapshot
@@ -24,35 +24,35 @@ interface UiPreferences {
   showHighlights: boolean
   diffMode: boolean
   selectedTab: string
-  previewBackground: 'light' | 'dark'
+  previewBackground: "light" | "dark"
 }
 
 interface DebugStore {
   // Selection state
   selectedDebugId: string | null
   hoveredDebugId: string | null
-  
+
   // UI preferences (persisted)
   uiPreferences: UiPreferences
-  
+
   // Configuration
   plugin: string
   section: string
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
   dev: boolean
   sectionConfig: Record<string, any>
-  
+
   // Outputs
   lastOutputs: {
     html: string
     css: string
     svg: string
   } | null
-  
+
   // Snapshot cache
   snapshotCache: SnapshotCache
-  
+
   // Actions
   setSelectedDebugId: (id: string | null) => void
   setHoveredDebugId: (id: string | null) => void
@@ -60,8 +60,14 @@ interface DebugStore {
   setShowHighlights: (show: boolean) => void
   setDiffMode: (enabled: boolean) => void
   setSelectedTab: (tab: string) => void
-  setPreviewBackground: (bg: 'light' | 'dark') => void
-  setConfig: (config: { plugin: string; section: string; style: 'default' | 'terminal'; size: 'half' | 'full'; dev: boolean }) => void
+  setPreviewBackground: (bg: "light" | "dark") => void
+  setConfig: (config: {
+    plugin: string
+    section: string
+    style: "default" | "terminal"
+    size: "half" | "full"
+    dev: boolean
+  }) => void
   setSectionConfig: (config: Record<string, any>) => void
   setLastOutputs: (outputs: { html: string; css: string; svg: string }) => void
   setSnapshot: (debugId: string, react: StyleSnapshot, svg: StyleSnapshot) => void
@@ -74,8 +80,8 @@ const defaultUiPreferences: UiPreferences = {
   syncSelectionEnabled: true,
   showHighlights: true,
   diffMode: false,
-  selectedTab: 'element',
-  previewBackground: 'dark',
+  selectedTab: "element",
+  previewBackground: "dark",
 }
 
 export const useDebugStore = create<DebugStore>()(
@@ -83,51 +89,51 @@ export const useDebugStore = create<DebugStore>()(
     (set, get) => ({
       selectedDebugId: null,
       hoveredDebugId: null,
-      
+
       uiPreferences: defaultUiPreferences,
-      
-      plugin: 'myanimelist',
-      section: 'statistics',
-      style: 'default',
-      size: 'half',
+
+      plugin: "myanimelist",
+      section: "statistics",
+      style: "default",
+      size: "half",
       dev: true,
       sectionConfig: {},
-      
+
       lastOutputs: null,
-      
+
       snapshotCache: {
         renderVersion: 0,
         snapshots: new Map(),
       },
-      
+
       setSelectedDebugId: (id) => set({ selectedDebugId: id }),
       setHoveredDebugId: (id) => set({ hoveredDebugId: id }),
-      
+
       setSyncSelectionEnabled: (enabled) =>
         set((state) => ({
           uiPreferences: { ...state.uiPreferences, syncSelectionEnabled: enabled },
         })),
-      
+
       setShowHighlights: (show) =>
         set((state) => ({
           uiPreferences: { ...state.uiPreferences, showHighlights: show },
         })),
-      
+
       setDiffMode: (enabled) =>
         set((state) => ({
           uiPreferences: { ...state.uiPreferences, diffMode: enabled },
         })),
-      
+
       setSelectedTab: (tab) =>
         set((state) => ({
           uiPreferences: { ...state.uiPreferences, selectedTab: tab },
         })),
-      
+
       setPreviewBackground: (bg) =>
         set((state) => ({
           uiPreferences: { ...state.uiPreferences, previewBackground: bg },
         })),
-      
+
       setConfig: (config) => {
         set(config)
         // Reset section config when plugin/section changes
@@ -136,9 +142,9 @@ export const useDebugStore = create<DebugStore>()(
         }
       },
       setSectionConfig: (config) => set({ sectionConfig: config }),
-      
+
       setLastOutputs: (outputs) => set({ lastOutputs: outputs }),
-      
+
       setSnapshot: (debugId, react, svg) =>
         set((state) => {
           const cache = state.snapshotCache
@@ -155,7 +161,7 @@ export const useDebugStore = create<DebugStore>()(
             },
           }
         }),
-      
+
       getSnapshot: (debugId) => {
         const state = get()
         const entry = state.snapshotCache.snapshots.get(debugId)
@@ -175,7 +181,7 @@ export const useDebugStore = create<DebugStore>()(
         }
         return entry
       },
-      
+
       clearCache: () =>
         set({
           snapshotCache: {
@@ -183,7 +189,7 @@ export const useDebugStore = create<DebugStore>()(
             snapshots: new Map(),
           },
         }),
-      
+
       incrementRenderVersion: () =>
         set((state) => ({
           snapshotCache: {
@@ -193,7 +199,7 @@ export const useDebugStore = create<DebugStore>()(
         })),
     }),
     {
-      name: 'weeb-debug-store',
+      name: "weeb-debug-store",
       partialize: (state) => ({
         uiPreferences: state.uiPreferences,
         plugin: state.plugin,
@@ -206,4 +212,3 @@ export const useDebugStore = create<DebugStore>()(
     }
   )
 )
-

@@ -2,7 +2,7 @@
  * Tipos do Plugin Stack Overflow
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from "../shared/types/base"
 
 export interface StackOverflowTag {
   name: string
@@ -46,5 +46,3 @@ export interface StackOverflowData {
   questions: number
   topTags: StackOverflowTag[]
 }
-
-

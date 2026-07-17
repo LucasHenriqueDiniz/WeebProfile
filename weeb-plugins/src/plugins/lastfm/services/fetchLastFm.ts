@@ -66,7 +66,7 @@ export async function fetchLastFmData(
   try {
     // Em modo dev ou preview, retornar dados mock
     if (dev || previewMode) {
-      console.debug(`[LastFM] Using mock data (${dev ? 'dev' : 'preview'} mode)`)
+      console.debug(`[LastFM] Using mock data (${dev ? "dev" : "preview"} mode)`)
 
       const mockData = getMockLastFmData({
         recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,

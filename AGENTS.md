@@ -73,6 +73,7 @@ pnpm generate-previews                                    # Regera SVGs de previ
 - O `svg-generator` busca esses dados via `userId` em tempo de geração e os passa diretamente para `fetchData`. Nunca serializar ou retornar `essentialConfig`/`plugin_secrets` em respostas HTTP — apenas booleans de "configurado/não configurado" (ver `functions/api/profile/essential-configs.ts` e `functions/api/secrets/presence.ts`).
 
 **Arquivos que NÃO devem ser commitados:**
+
 - `.env` / `.env.local` (qualquer variável de ambiente real)
 - Qualquer arquivo com credentials reais
 
@@ -128,6 +129,7 @@ export const meuPlugin: Plugin<PluginConfig & MinhaConfig, PluginData & MeusDado
 ### 3. Implementar `plugin.metadata.ts`
 
 Ver `steam/plugin.metadata.ts` como referência canônica. Campos obrigatórios:
+
 - `displayName`, `description`, `category` (`"coding" | "music" | "anime" | "gaming"`)
 - `icon` (nome de ícone do `lucide-react`)
 - `requiredFields` — campos que vão para a config pública (ex: `["username"]`)
@@ -140,7 +142,7 @@ Ver `steam/plugin.metadata.ts` como referência canônica. Campos obrigatórios:
 Arquivo: `weeb-plugins/src/plugins/manager.ts`
 
 ```typescript
-import { meuPlugin } from './meuplugin/index'
+import { meuPlugin } from "./meuplugin/index"
 
 // No construtor:
 this.register(meuPlugin)
@@ -189,6 +191,7 @@ HTTP POST /
 **Dois estilos visuais:** `default` e `terminal`
 
 **Temas built-in** (em `weeb-plugins/src/themes/themes.ts`):
+
 - Default: `default`, `purple`, `pink`, `cyan`, `orange`, `blue`, `green`, `red`
 - Terminal: variantes equivalentes
 
@@ -222,9 +225,11 @@ O dashboard envia POST para o `svg-generator` via `lib/svg-generator-client.ts`,
 ## Variáveis de ambiente
 
 ### svg-generator
+
 Não usa `.env` — é um Cloudflare Worker, configurado via `svg-generator/wrangler.toml` ([[d1_databases]] binding `DB`, mesmo banco do dashboard). Ver `.env.example` para detalhes de dev local.
 
 ### weeb-dashboard (.env.local)
+
 ```
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
@@ -243,6 +248,7 @@ Copiar de `.env.example` e preencher. **Nunca commitar valores reais.**
 ## Padrões de código
 
 ### Componentes React de plugin
+
 - Recebem sempre `{ config, data, style, size }` como props
 - `style: 'default' | 'terminal'` controla o visual
 - `size: 'half' | 'full'` controla largura (415px vs 830px)
@@ -250,16 +256,19 @@ Copiar de `.env.example` e preencher. **Nunca commitar valores reais.**
 - Cada seção é um componente separado em `components/`
 
 ### TypeScript
+
 - Tipagem estrita; sem `any` exceto onde o padrão do plugin exige (ex: `(config as any).style`)
 - `EssentialPluginConfig` é `Record<string, string>` — acesso por chave dinâmica é esperado
 - Rodar `pnpm typecheck` antes de commitar
 
 ### Dados mock
+
 - Todo plugin tem `services/mock-data.ts` com dados estáticos realistas
 - `fetchData(config, dev=true)` deve retornar mock sem fazer chamadas externas
 - `previewMode=true` sinaliza para não converter imagens em base64 (performance)
 
 ### Arquivos auto-gerados
+
 - `weeb-plugins/src/plugins/metadata.ts` — não editar, rodar `generate:metadata`
 - `weeb-plugins/src/plugins/generated-types.ts` — não editar
 - Previews SVG em `plugins/*/previews/` — gerados por `generate-previews`
@@ -278,22 +287,22 @@ Copiar de `.env.example` e preencher. **Nunca commitar valores reais.**
 
 ## Referência rápida de arquivos importantes
 
-| O que mudar | Arquivo |
-|---|---|
-| Registrar novo plugin | `weeb-plugins/src/plugins/manager.ts` |
-| Metadados de plugin | `weeb-plugins/src/plugins/{name}/plugin.metadata.ts` |
-| Metadata centralizado (auto-gerado) | `weeb-plugins/src/plugins/metadata.ts` |
-| Temas visuais | `weeb-plugins/src/themes/themes.ts` |
-| Lógica de geração SVG | `svg-generator/src/generator/svg-generator.ts` |
-| Renderização React → SVG | `svg-generator/src/renderer/react-renderer.tsx` |
-| Acesso ao D1 (svg-generator) | `svg-generator/src/db/essential-configs.ts` |
-| Worker entry point do gerador | `svg-generator/src/worker.ts` |
-| Config Cloudflare (D1 binding) do gerador | `svg-generator/wrangler.toml` |
-| Estado global do wizard | `weeb-dashboard/stores/wizard-store.ts` |
-| Cliente HTTP para o gerador | `weeb-dashboard/lib/svg-generator-client.ts` |
-| Auth (Clerk) + tipos de binding Cloudflare | `weeb-dashboard/functions/api/_shared/auth.ts` |
-| Acesso ao D1 (Pages Functions) | `weeb-dashboard/functions/api/_shared/db.ts` |
-| Acesso ao R2 (SVGs) | `weeb-dashboard/functions/api/_shared/storage.ts` |
-| Config Cloudflare (D1/R2/vars/secrets) | `weeb-dashboard/wrangler.toml` |
-| Sanitização de input | `svg-generator/src/utils/sanitize.ts` |
-| Design system do dashboard | `weeb-dashboard/BRAND.md` |
+| O que mudar                                | Arquivo                                              |
+| ------------------------------------------ | ---------------------------------------------------- |
+| Registrar novo plugin                      | `weeb-plugins/src/plugins/manager.ts`                |
+| Metadados de plugin                        | `weeb-plugins/src/plugins/{name}/plugin.metadata.ts` |
+| Metadata centralizado (auto-gerado)        | `weeb-plugins/src/plugins/metadata.ts`               |
+| Temas visuais                              | `weeb-plugins/src/themes/themes.ts`                  |
+| Lógica de geração SVG                      | `svg-generator/src/generator/svg-generator.ts`       |
+| Renderização React → SVG                   | `svg-generator/src/renderer/react-renderer.tsx`      |
+| Acesso ao D1 (svg-generator)               | `svg-generator/src/db/essential-configs.ts`          |
+| Worker entry point do gerador              | `svg-generator/src/worker.ts`                        |
+| Config Cloudflare (D1 binding) do gerador  | `svg-generator/wrangler.toml`                        |
+| Estado global do wizard                    | `weeb-dashboard/stores/wizard-store.ts`              |
+| Cliente HTTP para o gerador                | `weeb-dashboard/lib/svg-generator-client.ts`         |
+| Auth (Clerk) + tipos de binding Cloudflare | `weeb-dashboard/functions/api/_shared/auth.ts`       |
+| Acesso ao D1 (Pages Functions)             | `weeb-dashboard/functions/api/_shared/db.ts`         |
+| Acesso ao R2 (SVGs)                        | `weeb-dashboard/functions/api/_shared/storage.ts`    |
+| Config Cloudflare (D1/R2/vars/secrets)     | `weeb-dashboard/wrangler.toml`                       |
+| Sanitização de input                       | `svg-generator/src/utils/sanitize.ts`                |
+| Design system do dashboard                 | `weeb-dashboard/BRAND.md`                            |

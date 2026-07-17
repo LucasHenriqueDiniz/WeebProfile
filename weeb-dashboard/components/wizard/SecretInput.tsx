@@ -10,11 +10,11 @@ import React from "react"
 interface SecretInputProps {
   plugin: string
   label: string
-  realValue: string  // Valor real (o que será salvo)
+  realValue: string // Valor real (o que será salvo)
   exists: boolean
   updatedAt?: string
-  onChange: (value: string) => void  // Apenas atualiza estado local (sem save)
-  onSave: () => Promise<void>  // Salva no servidor
+  onChange: (value: string) => void // Apenas atualiza estado local (sem save)
+  onSave: () => Promise<void> // Salva no servidor
   onUnlock: () => void
   unlocked: boolean
   saving: boolean
@@ -27,31 +27,31 @@ interface SecretInputProps {
 
 /**
  * SecretInput component with masked display
- * 
+ *
  * CRÍTICO: Separar displayValue de realValue para evitar salvar placeholder por acidente.
  * - displayValue: o que aparece (pode ser "••••••••" quando locked)
  * - realValue: o que será salvo (nunca pode ser placeholder)
  */
-export function SecretInput({ 
-  plugin, 
-  label, 
-  realValue, 
-  exists, 
-  updatedAt, 
-  onChange, 
+export function SecretInput({
+  plugin,
+  label,
+  realValue,
+  exists,
+  updatedAt,
+  onChange,
   onSave,
-  onUnlock, 
-  unlocked, 
-  saving, 
+  onUnlock,
+  unlocked,
+  saving,
   saved,
   isMissing,
   helpUrl,
   placeholder,
-  type = "password"
+  type = "password",
 }: SecretInputProps) {
   const isLocked = exists && !unlocked
   const [localValue, setLocalValue] = React.useState(realValue || "")
-  
+
   // Sincronizar localValue com realValue quando realValue mudar externamente (apenas se não estiver locked)
   // Se estiver locked, manter o placeholder
   React.useEffect(() => {
@@ -63,7 +63,7 @@ export function SecretInput({
       }
     }
   }, [realValue, isLocked]) // Remover localValue da dependência para evitar loop
-  
+
   // Verificar se o valor local é diferente do valor salvo
   // hasChanges = true se:
   // - Não está locked
@@ -72,24 +72,24 @@ export function SecretInput({
   const realValueNormalized = (realValue || "").trim()
   const localValueNormalized = (localValue || "").trim()
   const hasChanges = !isLocked && localValueNormalized !== realValueNormalized && localValueNormalized !== ""
-  
+
   // CRÍTICO: Separar displayValue de realValue
   // displayValue é o que aparece (placeholder quando locked)
   // realValue é o que será salvo (nunca pode ser placeholder)
   const displayValue = isLocked ? "••••••••" : localValue
-  
+
   const handleChange = (newValue: string) => {
     // NUNCA salvar placeholder
     if (newValue === "••••••••") return
     setLocalValue(newValue)
-    onChange(newValue)  // Apenas atualiza estado local (no PluginCard)
+    onChange(newValue) // Apenas atualiza estado local (no PluginCard)
   }
-  
+
   const handleSave = async () => {
     if (isLocked || saving) {
       return
     }
-    
+
     // Permitir salvar se:
     // 1. Há mudanças (valor diferente do salvo)
     // 2. Campo não existe (campo novo) e tem valor
@@ -99,7 +99,7 @@ export function SecretInput({
     if (!hasChanges && !exists && localValueNormalized === "") {
       return
     }
-    
+
     try {
       await onSave()
     } catch (error) {
@@ -107,16 +107,11 @@ export function SecretInput({
     }
     // Após salvar, o realValue será atualizado pelo parent, então localValue será sincronizado
   }
-  
+
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2">
-        <Label className={cn(
-          "text-xs font-medium",
-          isMissing && "text-destructive"
-        )}>
-          {label}
-        </Label>
+        <Label className={cn("text-xs font-medium", isMissing && "text-destructive")}>{label}</Label>
         {helpUrl && (
           <a
             href={helpUrl}
@@ -139,8 +134,8 @@ export function SecretInput({
               isLocked && "bg-muted/50 text-muted-foreground italic cursor-not-allowed",
               isMissing && "border-destructive focus-visible:ring-destructive"
             )}
-            placeholder={isLocked ? "Configurado" : (placeholder || `Digite ${label.toLowerCase()}`)}
-            value={displayValue}  // Sempre usar displayValue
+            placeholder={isLocked ? "Configurado" : placeholder || `Digite ${label.toLowerCase()}`}
+            value={displayValue} // Sempre usar displayValue
             disabled={isLocked || saving}
             onChange={(e) => !isLocked && handleChange(e.target.value)}
             onKeyDown={(e) => {
@@ -153,9 +148,7 @@ export function SecretInput({
             aria-label={label}
             aria-required={isMissing}
           />
-          {isLocked && (
-            <Lock className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-          )}
+          {isLocked && <Lock className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />}
           {saving && (
             <Loader2 className="absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-primary animate-spin" />
           )}
@@ -187,21 +180,14 @@ export function SecretInput({
             className="h-8 text-xs"
             aria-label={`Salvar ${label}`}
           >
-            {saving ? (
-              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-            ) : (
-              <Save className="h-3 w-3 mr-1" />
-            )}
+            {saving ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Save className="h-3 w-3 mr-1" />}
             Salvar
           </Button>
         )}
       </div>
       {exists && updatedAt && (
-        <p className="text-xs text-muted-foreground">
-          Atualizado em {new Date(updatedAt).toLocaleDateString()}
-        </p>
+        <p className="text-xs text-muted-foreground">Atualizado em {new Date(updatedAt).toLocaleDateString()}</p>
       )}
     </div>
   )
 }
-

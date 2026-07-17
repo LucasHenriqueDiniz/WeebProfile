@@ -1,20 +1,14 @@
-import React from 'react'
-import { FaCode, FaFileCode } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCode, FaFileCode } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
-const DefaultGists = ({ 
-  data,
-  maxGists
-}: { 
-  data: NonNullable<GithubData['gists']>
-  maxGists: number
-}) => {
+const DefaultGists = ({ data, maxGists }: { data: NonNullable<GithubData["gists"]>; maxGists: number }) => {
   const gistsToShow = data.nodes.slice(0, maxGists)
 
   return (
@@ -35,9 +29,7 @@ const DefaultGists = ({
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <span className="font-semibold text-base text-default-text truncate">
-                  {gist.name}
-                </span>
+                <span className="font-semibold text-base text-default-text truncate">{gist.name}</span>
                 {gist.stargazerCount > 0 && (
                   <div className="flex items-center gap-1 text-default-muted flex-shrink-0">
                     <span className="text-xs font-medium">⭐ {abbreviateNumber(gist.stargazerCount)}</span>
@@ -45,9 +37,7 @@ const DefaultGists = ({
                 )}
               </div>
               {gist.description && (
-                <p className="text-sm text-default-muted line-clamp-2 mb-2.5 leading-relaxed">
-                  {gist.description}
-                </p>
+                <p className="text-sm text-default-muted line-clamp-2 mb-2.5 leading-relaxed">{gist.description}</p>
               )}
               {gist.files.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
@@ -57,15 +47,11 @@ const DefaultGists = ({
                       className="text-xs px-2 py-0.5 rounded-full font-medium bg-default-muted/10 text-default-muted border border-default-border/50"
                     >
                       {file.name}
-                      {file.language && (
-                        <span className="ml-1 text-default-muted/60">• {file.language}</span>
-                      )}
+                      {file.language && <span className="ml-1 text-default-muted/60">• {file.language}</span>}
                     </span>
                   ))}
                   {gist.files.length > 3 && (
-                    <span className="text-xs text-default-muted px-2 py-0.5">
-                      +{gist.files.length - 3} more
-                    </span>
+                    <span className="text-xs text-default-muted px-2 py-0.5">+{gist.files.length - 3} more</span>
                   )}
                 </div>
               )}
@@ -75,61 +61,45 @@ const DefaultGists = ({
       </div>
       {data.totalCount > maxGists && (
         <div className="mt-3 text-center text-sm text-default-muted">
-          +{data.totalCount - maxGists} more {data.totalCount - maxGists === 1 ? 'gist' : 'gists'}
+          +{data.totalCount - maxGists} more {data.totalCount - maxGists === 1 ? "gist" : "gists"}
         </div>
       )}
     </div>
   )
 }
 
-const TerminalGists = ({ 
-  data,
-  maxGists
-}: { 
-  data: NonNullable<GithubData['gists']>
-  maxGists: number
-}) => {
+const TerminalGists = ({ data, maxGists }: { data: NonNullable<GithubData["gists"]>; maxGists: number }) => {
   const gistsToShow = data.nodes.slice(0, maxGists)
 
   const gridData = gistsToShow.map((gist) => ({
     title: gist.name,
     subtitle: gist.description || undefined,
-    value: `${gist.files.length} file${gist.files.length > 1 ? 's' : ''}${gist.stargazerCount > 0 ? ` ⭐ ${gist.stargazerCount}` : ''}`,
+    value: `${gist.files.length} file${gist.files.length > 1 ? "s" : ""}${gist.stargazerCount > 0 ? ` ⭐ ${gist.stargazerCount}` : ""}`,
   }))
 
   return (
     <>
       <TerminalGrid data={gridData} rightText="Gist" leftText="Info" />
       {data.totalCount > maxGists && (
-        <div className="text-terminal-muted text-sm text-center mt-2">
-          +{data.totalCount - maxGists} more
-        </div>
+        <div className="text-terminal-muted text-sm text-center mt-2">+{data.totalCount - maxGists} more</div>
       )}
     </>
   )
 }
 
 interface GistsProps {
-  data: GithubData['gists']
+  data: GithubData["gists"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-export function GithubGists({ 
-  data, 
-  config, 
-  style, 
-  size 
-}: GistsProps): React.ReactElement {
+export function GithubGists({ data, config, style, size }: GistsProps): React.ReactElement {
   if (!data || data.totalCount === 0) {
     return <></>
   }
 
-  const title = (config.gists_title ?? '<qnt> Gists').replace(
-    '<qnt>',
-    abbreviateNumber(data.totalCount)
-  )
+  const title = (config.gists_title ?? "<qnt> Gists").replace("<qnt>", abbreviateNumber(data.totalCount))
   const hideTitle = config.gists_hide_title ?? false
   const maxGists = config.gists_max ?? 10
 
@@ -147,8 +117,8 @@ export function GithubGists({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'gists',
+                plugin: "github",
+                section: "gists",
                 size,
               })}
             />
@@ -159,4 +129,3 @@ export function GithubGists({
     </section>
   )
 }
-

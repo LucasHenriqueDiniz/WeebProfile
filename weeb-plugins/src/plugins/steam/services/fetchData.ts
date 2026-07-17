@@ -2,12 +2,12 @@
  * Fetches data from Steam API
  */
 
-import type { SteamConfig, SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from '../types'
-import { getMockSteamData } from './mock-data'
-import { urlToBase64, IMAGE_OPTIMIZATION } from '../../../utils/image-to-base64'
+import type { SteamConfig, SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from "../types"
+import { getMockSteamData } from "./mock-data"
+import { urlToBase64, IMAGE_OPTIMIZATION } from "../../../utils/image-to-base64"
 
-const STEAM_API_BASE = 'https://api.steampowered.com'
-const STEAM_STORE_API = 'https://store.steampowered.com/api'
+const STEAM_API_BASE = "https://api.steampowered.com"
+const STEAM_STORE_API = "https://store.steampowered.com/api"
 
 export async function fetchSteamData(
   config: SteamConfig,
@@ -18,21 +18,21 @@ export async function fetchSteamData(
 ): Promise<SteamData> {
   // Em modo dev ou preview, retornar dados mock
   if (dev || previewMode) {
-    console.log('[Steam] Using mock data (dev mode or preview mode)')
+    console.log("[Steam] Using mock data (dev mode or preview mode)")
     const mockData = await getMockSteamData()
-    
+
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
       return mockData
     }
-    
+
     // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
     return (await convertImageUrlsToBase64(mockData, previewMode)) as SteamData
   }
 
   // Validar que tem credenciais configuradas quando não estiver em modo dev/preview
   if (!apiKey || !steamId) {
-    throw new Error('Steam API Key and Steam ID are required. Please configure them in your profile settings.')
+    throw new Error("Steam API Key and Steam ID are required. Please configure them in your profile settings.")
   }
 
   try {
@@ -46,8 +46,7 @@ export async function fetchSteamData(
     }
 
     const playerSummaryData = await playerSummaryResponse.json()
-    const playerSummary: SteamPlayerSummary | null =
-      playerSummaryData.response?.players?.[0] || null
+    const playerSummary: SteamPlayerSummary | null = playerSummaryData.response?.players?.[0] || null
 
     // Fetch owned games
     const gamesResponse = await fetch(
@@ -92,27 +91,27 @@ export async function fetchSteamData(
 
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
-      console.debug('[Steam] Preview mode: keeping image URLs as-is')
+      console.debug("[Steam] Preview mode: keeping image URLs as-is")
       return apiData
     }
 
     // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
-    console.log('[Steam] Converting image URLs to base64...')
+    console.log("[Steam] Converting image URLs to base64...")
     const dataWithBase64Images = await convertImageUrlsToBase64(apiData, previewMode)
-    console.log('[Steam] Image conversion completed')
+    console.log("[Steam] Image conversion completed")
 
     return dataWithBase64Images
   } catch (error) {
-    console.error('Error fetching Steam data:', error)
+    console.error("Error fetching Steam data:", error)
     // Fallback to mock data on error, with image conversion
-    console.log('[Steam] Using mock data as fallback')
+    console.log("[Steam] Using mock data as fallback")
     const mockData = await getMockSteamData()
-    
+
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
       return mockData
     }
-    
+
     return (await convertImageUrlsToBase64(mockData, previewMode)) as SteamData
   }
 }
@@ -123,9 +122,8 @@ function calculateStatistics(games: SteamGame[]): SteamStatistics {
   const recentPlaytime = games.reduce((acc, game) => acc + (game.playtime_2weeks || 0), 0)
 
   // Find favorite game (most played)
-  const favoriteGame = games
-    .filter((g) => g.playtime_forever > 0)
-    .sort((a, b) => b.playtime_forever - a.playtime_forever)[0]?.name || null
+  const favoriteGame =
+    games.filter((g) => g.playtime_forever > 0).sort((a, b) => b.playtime_forever - a.playtime_forever)[0]?.name || null
 
   // Top games by playtime
   const topGames = games
@@ -151,13 +149,13 @@ async function convertImageUrlsToBase64(data: any, previewMode = false): Promise
     return Promise.all(data.map((item) => convertImageUrlsToBase64(item, previewMode)))
   }
 
-  if (data && typeof data === 'object') {
+  if (data && typeof data === "object") {
     const result: any = {}
     for (const [key, value] of Object.entries(data)) {
       if (
-        (key === 'avatar' || key === 'avatarmedium' || key === 'avatarfull' || key === 'header_image') &&
-        typeof value === 'string' &&
-        (value.startsWith('http://') || value.startsWith('https://'))
+        (key === "avatar" || key === "avatarmedium" || key === "avatarfull" || key === "header_image") &&
+        typeof value === "string" &&
+        (value.startsWith("http://") || value.startsWith("https://"))
       ) {
         // Em modo preview, manter URLs originais
         if (previewMode) {
@@ -175,4 +173,3 @@ async function convertImageUrlsToBase64(data: any, previewMode = false): Promise
 
   return data
 }
-

@@ -50,7 +50,7 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
 
     if (!existingSvg) return notFound("SVG")
 
-    const body = await request.json() as Record<string, any>
+    const body = (await request.json()) as Record<string, any>
 
     const [updatedSvg] = await db
       .update(svgs)
@@ -60,14 +60,9 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
         size: body.size || existingSvg.size,
         theme: body.theme !== undefined ? body.theme : existingSvg.theme,
         customCss: body.customCss !== undefined ? body.customCss : existingSvg.customCss,
-        pluginsOrder:
-          body.pluginsOrder !== undefined
-            ? body.pluginsOrder || null
-            : existingSvg.pluginsOrder,
-        pluginsConfig:
-          body.pluginsConfig !== undefined ? body.pluginsConfig : existingSvg.pluginsConfig,
-        uiConfig:
-          body.uiConfig !== undefined ? body.uiConfig : existingSvg.uiConfig,
+        pluginsOrder: body.pluginsOrder !== undefined ? body.pluginsOrder || null : existingSvg.pluginsOrder,
+        pluginsConfig: body.pluginsConfig !== undefined ? body.pluginsConfig : existingSvg.pluginsConfig,
+        uiConfig: body.uiConfig !== undefined ? body.uiConfig : existingSvg.uiConfig,
       })
       .where(eq(svgs.id, id))
       .returning()

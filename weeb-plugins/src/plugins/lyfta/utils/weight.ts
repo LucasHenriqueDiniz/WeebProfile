@@ -8,8 +8,8 @@
  * @param unit - Unidade desejada ('kg' ou 'lbs')
  * @returns Peso formatado na unidade desejada
  */
-export function formatWeight(grams: number, unit: 'kg' | 'lbs' = 'kg'): string {
-  if (unit === 'lbs') {
+export function formatWeight(grams: number, unit: "kg" | "lbs" = "kg"): string {
+  if (unit === "lbs") {
     // Converter gramas para libras (1 kg = 2.20462 lbs, 1 kg = 1000g)
     const pounds = (grams / 1000) * 2.20462
     if (pounds >= 1) {
@@ -19,7 +19,7 @@ export function formatWeight(grams: number, unit: 'kg' | 'lbs' = 'kg'): string {
     const ounces = pounds * 16
     return `${ounces.toFixed(1)}oz`
   }
-  
+
   // Unidade padrão: kg
   if (grams >= 1000) {
     const kg = grams / 1000
@@ -36,13 +36,13 @@ export function formatWeight(grams: number, unit: 'kg' | 'lbs' = 'kg'): string {
  * @param unit - Unidade desejada ('kg' ou 'lbs')
  * @returns Peso formatado na unidade desejada (sem decimais)
  */
-export function formatWeightInt(grams: number, unit: 'kg' | 'lbs' = 'kg'): string {
-  if (unit === 'lbs') {
+export function formatWeightInt(grams: number, unit: "kg" | "lbs" = "kg"): string {
+  if (unit === "lbs") {
     // Converter gramas para libras (1 kg = 2.20462 lbs, 1 kg = 1000g)
     const pounds = (grams / 1000) * 2.20462
     return `${Math.round(pounds)}lbs`
   }
-  
+
   // Unidade padrão: kg
   if (grams >= 1000) {
     const kg = grams / 1000
@@ -50,4 +50,3 @@ export function formatWeightInt(grams: number, unit: 'kg' | 'lbs' = 'kg'): strin
   }
   return `${Math.round(grams)}g`
 }
-

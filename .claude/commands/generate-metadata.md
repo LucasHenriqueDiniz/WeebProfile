@@ -5,6 +5,7 @@ pnpm --filter @weeb/weeb-plugins run generate:metadata
 ```
 
 Run this after:
+
 - Adding a new plugin
 - Modifying any `plugin.metadata.ts`
 - Adding or removing sections from a plugin

@@ -53,13 +53,16 @@ export function normalizeConfig(config: Partial<SvgConfig>): SvgConfig {
     dev: config.dev ?? false,
     essentialConfigs: config.essentialConfigs, // CRÍTICO: Preservar essentialConfigs (secrets/tokens)
   }
-  
+
   // Debug: log essentialConfigs keys if present
   if (normalized.essentialConfigs && Object.keys(normalized.essentialConfigs).length > 0) {
-    console.log(`✅ [NORMALIZE] EssentialConfigs preserved:`, Object.keys(normalized.essentialConfigs).map(plugin => 
-      `${plugin}: [${Object.keys(normalized.essentialConfigs![plugin] || {}).join(", ")}]`
-    ).join(", "))
+    console.log(
+      `✅ [NORMALIZE] EssentialConfigs preserved:`,
+      Object.keys(normalized.essentialConfigs)
+        .map((plugin) => `${plugin}: [${Object.keys(normalized.essentialConfigs![plugin] || {}).join(", ")}]`)
+        .join(", ")
+    )
   }
-  
+
   return normalized
 }

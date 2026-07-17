@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { HeroBackgroundPattern } from "./HeroBackgroundPattern"
 import { HeroPreviewShowcase } from "./HeroPreviewShowcase"
 import { HeroTemplateCard, type Template } from "./HeroTemplateCard"
-import { useTranslations } from '@/i18n/use-translations'
+import { useTranslations } from "@/i18n/use-translations"
 import { Link, Link as LocaleLink } from "@/i18n/navigation"
 
 // Templates padrão hardcoded
@@ -101,7 +101,7 @@ const DEFAULT_TEMPLATES: Template[] = [
 const SUPPORTED_PLATFORMS = ["GitHub", "Steam", "LastFM", "MyAnimeList", "Lyfta"]
 
 export function HeroSection() {
-  const t = useTranslations('homepage.hero')
+  const t = useTranslations("homepage.hero")
   const [activeTemplate, setActiveTemplate] = useState<Template>(DEFAULT_TEMPLATES[0])
   const [isBuilding, setIsBuilding] = useState(false)
   const [templatesModalOpen, setTemplatesModalOpen] = useState(false)
@@ -316,30 +316,33 @@ export function HeroSection() {
                     letterSpacing: "-0.02em",
                   }}
                 >
-                  {t('title').split("SVG").map((part, i, arr) => (
-                    <span key={i}>
-                      {part}
-                      {i < arr.length - 1 && (
-                        <span className="inline-block relative mx-1">
-                          {/* SVG text with vibrant gradient */}
-                          <span
-                            className="relative inline-block"
-                            style={{
-                              background: "linear-gradient(135deg, #a855f7 0%, #ec4899 30%, #06b6d4 60%, #a855f7 100%)",
-                              WebkitBackgroundClip: "text",
-                              WebkitTextFillColor: "transparent",
-                              backgroundClip: "text",
-                              fontWeight: 900,
-                              letterSpacing: "-0.03em",
-                              fontSize: "1.1em",
-                            }}
-                          >
-                            SVG
+                  {t("title")
+                    .split("SVG")
+                    .map((part, i, arr) => (
+                      <span key={i}>
+                        {part}
+                        {i < arr.length - 1 && (
+                          <span className="inline-block relative mx-1">
+                            {/* SVG text with vibrant gradient */}
+                            <span
+                              className="relative inline-block"
+                              style={{
+                                background:
+                                  "linear-gradient(135deg, #a855f7 0%, #ec4899 30%, #06b6d4 60%, #a855f7 100%)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                                backgroundClip: "text",
+                                fontWeight: 900,
+                                letterSpacing: "-0.03em",
+                                fontSize: "1.1em",
+                              }}
+                            >
+                              SVG
+                            </span>
                           </span>
-                        </span>
-                      )}
-                    </span>
-                  ))}
+                        )}
+                      </span>
+                    ))}
                 </span>
               </h1>
 
@@ -359,7 +362,9 @@ export function HeroSection() {
                     {name}
                   </motion.span>
                 ))}
-                <Link href="/plugins" className="text-[10px] text-muted-foreground/70 ml-1">+{Object.keys(PLUGINS_METADATA).length} plugins available</Link>
+                <Link href="/plugins" className="text-[10px] text-muted-foreground/70 ml-1">
+                  +{Object.keys(PLUGINS_METADATA).length} plugins available
+                </Link>
               </div>
 
               {/* CTA Buttons - Enhanced */}
@@ -372,7 +377,7 @@ export function HeroSection() {
                   >
                     <LocaleLink href="/login">
                       <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
-                      {t('ctaPrimary')}
+                      {t("ctaPrimary")}
                     </LocaleLink>
                   </Button>
                   {/* Pulsing glow effect */}

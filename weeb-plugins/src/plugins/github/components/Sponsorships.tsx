@@ -1,22 +1,22 @@
-import React from 'react'
-import { FaFrown, FaHeart } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import type { GridItemProps } from '../../../templates/types'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { ImageComponent } from '../../../utils/image'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaFrown, FaHeart } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import type { GridItemProps } from "../../../templates/types"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { ImageComponent } from "../../../utils/image"
+import type { GithubConfig, GithubData } from "../types"
 
 interface SponsorshipsProps {
-  data: GithubData['sponsorships']
+  data: GithubData["sponsorships"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DefaultSponsorships = ({ data, max }: { data: GithubData['sponsorships']; max: number }) => {
+const DefaultSponsorships = ({ data, max }: { data: GithubData["sponsorships"]; max: number }) => {
   if (!data || data.nodes.length === 0) {
     return (
       <div className="flex items-center gap-2 text-default-muted text-sm py-4">
@@ -55,16 +55,14 @@ const DefaultSponsorships = ({ data, max }: { data: GithubData['sponsorships']; 
         </div>
       ))}
       {data.totalCount > max && (
-        <div className="mt-2 text-center text-sm text-default-muted">
-          +{data.totalCount - max} more sponsorships
-        </div>
+        <div className="mt-2 text-center text-sm text-default-muted">+{data.totalCount - max} more sponsorships</div>
       )}
     </div>
   )
 }
 
 export function GithubSponsorships({ data, config, style, size }: SponsorshipsProps): React.ReactElement {
-  const title = config.sponsorships_title ?? 'Sponsorships'
+  const title = config.sponsorships_title ?? "Sponsorships"
   const hideTitle = config.sponsorships_hide_title ?? false
   const max = config.sponsorships_max ?? 10
 
@@ -74,8 +72,8 @@ export function GithubSponsorships({ data, config, style, size }: SponsorshipsPr
 
   const gridData: GridItemProps[] = sponsorships.map((sponsorship) => ({
     title: sponsorship.sponsorable.name || sponsorship.sponsorable.login,
-    subtitle: sponsorship.tier?.name || 'No tier',
-    value: sponsorship.tier ? `$${sponsorship.tier.monthlyPriceInDollars}/mo` : '',
+    subtitle: sponsorship.tier?.name || "No tier",
+    value: sponsorship.tier ? `$${sponsorship.tier.monthlyPriceInDollars}/mo` : "",
   }))
 
   return (
@@ -92,8 +90,8 @@ export function GithubSponsorships({ data, config, style, size }: SponsorshipsPr
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'sponsorships',
+                plugin: "github",
+                section: "sponsorships",
                 size,
               })}
             />
@@ -108,4 +106,3 @@ export function GithubSponsorships({ data, config, style, size }: SponsorshipsPr
     </section>
   )
 }
-

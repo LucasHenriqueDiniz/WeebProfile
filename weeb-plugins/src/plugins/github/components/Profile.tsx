@@ -1,26 +1,25 @@
-import React from 'react'
-import { FaGithub, FaUserFriends } from 'react-icons/fa'
-import { RiGitRepositoryLine } from 'react-icons/ri'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { ImageComponent } from '../../../utils/image'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
-import { getCalendarColor } from '../utils'
+import React from "react"
+import { FaGithub, FaUserFriends } from "react-icons/fa"
+import { RiGitRepositoryLine } from "react-icons/ri"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { ImageComponent } from "../../../utils/image"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
+import { getCalendarColor } from "../utils"
 
 interface ProfileProps {
-  data: GithubData['user']
+  data: GithubData["user"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-
-const DefaultProfile = ({ data, size }: { data: GithubData['user']; size: 'half' | 'full' }) => {
+const DefaultProfile = ({ data, size }: { data: GithubData["user"]; size: "half" | "full" }) => {
   const years = new Date().getFullYear() - new Date(data.createdAt).getFullYear()
-  const isHalfMode = size === 'half'
+  const isHalfMode = size === "half"
   const weeksToShow = isHalfMode ? 12 : 24
 
   return (
@@ -61,7 +60,7 @@ const DefaultProfile = ({ data, size }: { data: GithubData['user']; size: 'half'
                   <div
                     key={`${weekIndex}-${dayIndex}`}
                     className="h-3 w-3 rounded-sm"
-                    style={{ backgroundColor: getCalendarColor(day.color || '') }}
+                    style={{ backgroundColor: getCalendarColor(day.color || "") }}
                   />
                 ))}
               </div>
@@ -69,7 +68,7 @@ const DefaultProfile = ({ data, size }: { data: GithubData['user']; size: 'half'
           </div>
           <div className="flex items-center gap-1 text-default-text truncate">
             <RiGitRepositoryLine />
-            Contributed to {data.repositoriesContributedTo} {isHalfMode ? 'repos' : 'repositories'}
+            Contributed to {data.repositoriesContributedTo} {isHalfMode ? "repos" : "repositories"}
           </div>
         </div>
       </div>
@@ -77,7 +76,7 @@ const DefaultProfile = ({ data, size }: { data: GithubData['user']; size: 'half'
   )
 }
 
-const TerminalProfile = ({ data }: { data: GithubData['user'] }) => {
+const TerminalProfile = ({ data }: { data: GithubData["user"] }) => {
   const years = new Date().getFullYear() - new Date(data.createdAt).getFullYear()
 
   return (
@@ -101,8 +100,8 @@ export function GithubProfile({ data, config, style, size }: ProfileProps): Reac
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'profile',
+                plugin: "github",
+                section: "profile",
                 size,
               })}
             />
@@ -113,4 +112,3 @@ export function GithubProfile({ data, config, style, size }: ProfileProps): Reac
     </section>
   )
 }
-

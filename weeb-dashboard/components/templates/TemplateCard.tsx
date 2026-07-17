@@ -75,7 +75,10 @@ export function buildPluginsConfigFromTemplate(template: Template) {
       pluginsOrder = Array.isArray(template.pluginsOrder)
         ? template.pluginsOrder
         : typeof template.pluginsOrder === "string"
-          ? template.pluginsOrder.split(",").map((s) => s.trim()).filter(Boolean)
+          ? template.pluginsOrder
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
           : []
     }
 
@@ -108,17 +111,17 @@ function getTemplateAccent(theme?: string) {
   // Try to find the theme in default themes first
   const defaultTheme = defaultThemes[theme || "default"]
   if (defaultTheme) {
-    return defaultTheme['--default-color-highlight']
+    return defaultTheme["--default-color-highlight"]
   }
-  
+
   // Try to find the theme in terminal themes
   const terminalTheme = terminalThemes[theme || "default"]
   if (terminalTheme) {
-    return terminalTheme['--terminal-color-highlight']
+    return terminalTheme["--terminal-color-highlight"]
   }
-  
+
   // Fallback to default theme highlight color
-  return defaultThemes.default['--default-color-highlight']
+  return defaultThemes.default["--default-color-highlight"]
 }
 
 export const TemplateCard = memo(function TemplateCard({
@@ -313,10 +316,7 @@ export const TemplateCard = memo(function TemplateCard({
                 <Badge variant="outline" className="text-xs">
                   {template.style}
                 </Badge>
-                <Badge
-                  variant="outline"
-                  className="text-xs bg-purple-500/10 text-purple-700 dark:text-purple-400"
-                >
+                <Badge variant="outline" className="text-xs bg-purple-500/10 text-purple-700 dark:text-purple-400">
                   {template.theme}
                 </Badge>
               </div>
@@ -352,9 +352,7 @@ export const TemplateCard = memo(function TemplateCard({
                       <Heart
                         className={cn(
                           "w-4 h-4 transition-colors",
-                          template.liked
-                            ? "fill-red-500 text-red-500"
-                            : "text-muted-foreground hover:text-red-500"
+                          template.liked ? "fill-red-500 text-red-500" : "text-muted-foreground hover:text-red-500"
                         )}
                       />
                     </Button>

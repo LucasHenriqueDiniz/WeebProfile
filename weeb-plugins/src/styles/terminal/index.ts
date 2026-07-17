@@ -1,19 +1,19 @@
 /**
  * ⚠️ FILE GENERATED AUTOMATICALLY - DO NOT EDIT MANUALLY ⚠️
- * 
+ *
  * This file is generated automatically by scripts/generate-style-index.ts
  * from weeb-plugins/src/styles/terminal/styles.css
- * 
+ *
  * To modify the CSS, edit styles.css and run:
  *   pnpm generate-style-index
  *   (or: tsx scripts/generate-style-index.ts)
- * 
+ *
  * Terminal Style Definition
  * Terminal/console style with monospace font and terminal themes
  */
 
-import { terminalThemes } from '../../themes/themes'
-import type { TerminalTheme } from '../../themes/types'
+import { terminalThemes } from "../../themes/themes"
+import type { TerminalTheme } from "../../themes/types"
 
 /**
  * Terminal style CSS (embedded for browser compatibility)
@@ -258,22 +258,22 @@ function getCSS(): string {
  * Returns Record<string, string> for compatibility with StyleDefinition
  */
 export function getTerminalThemeVariables(theme: TerminalTheme | string): Record<string, string> {
-  const validTheme = (theme in terminalThemes ? theme : 'default') as TerminalTheme
+  const validTheme = (theme in terminalThemes ? theme : "default") as TerminalTheme
   const selectedTheme = terminalThemes[validTheme]
 
   // Always return a valid theme - default theme is guaranteed to exist
   // Using non-null assertion because 'default' theme is always defined in terminalThemes
-  return (selectedTheme ?? terminalThemes['default']) as Record<string, string>
+  return (selectedTheme ?? terminalThemes["default"]) as Record<string, string>
 }
 
 /**
  * Terminal style definition
  */
 export const terminalStyle = {
-  name: 'terminal',
-  displayName: 'Terminal',
-  fontFamily: 'ui-monospace, monospace',
-  containerClass: 'terminal-container',
+  name: "terminal",
+  displayName: "Terminal",
+  fontFamily: "ui-monospace, monospace",
+  containerClass: "terminal-container",
   getCSS: getCSS,
   getThemeVariables: getTerminalThemeVariables,
   themes: terminalThemes,

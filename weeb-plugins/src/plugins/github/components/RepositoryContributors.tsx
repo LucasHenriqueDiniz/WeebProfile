@@ -1,22 +1,22 @@
-import React from 'react'
-import { FaCodeBranch } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import type { GridItemProps } from '../../../templates/types'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { ImageComponent } from '../../../utils/image'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCodeBranch } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import type { GridItemProps } from "../../../templates/types"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { ImageComponent } from "../../../utils/image"
+import type { GithubConfig, GithubData } from "../types"
 
 interface RepositoryContributorsProps {
-  data: GithubData['repositoryContributors']
+  data: GithubData["repositoryContributors"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DefaultRepositoryContributors = ({ data, max }: { data: GithubData['repositoryContributors']; max: number }) => {
+const DefaultRepositoryContributors = ({ data, max }: { data: GithubData["repositoryContributors"]; max: number }) => {
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No contributors found</div>
   }
@@ -41,9 +41,7 @@ const DefaultRepositoryContributors = ({ data, max }: { data: GithubData['reposi
             <div className="font-semibold text-sm text-default-text truncate">
               {contributor.name || contributor.login}
             </div>
-            <div className="text-xs text-default-muted">
-              {contributor.contributions} contributions
-            </div>
+            <div className="text-xs text-default-muted">{contributor.contributions} contributions</div>
           </div>
         </div>
       ))}
@@ -51,8 +49,13 @@ const DefaultRepositoryContributors = ({ data, max }: { data: GithubData['reposi
   )
 }
 
-export function GithubRepositoryContributors({ data, config, style, size }: RepositoryContributorsProps): React.ReactElement {
-  const title = config.repository_contributors_title ?? 'Contributors'
+export function GithubRepositoryContributors({
+  data,
+  config,
+  style,
+  size,
+}: RepositoryContributorsProps): React.ReactElement {
+  const title = config.repository_contributors_title ?? "Contributors"
   const hideTitle = config.repository_contributors_hide_title ?? false
   const max = config.repository_contributors_max ?? 10
 
@@ -65,7 +68,7 @@ export function GithubRepositoryContributors({ data, config, style, size }: Repo
   const gridData: GridItemProps[] = contributors.map((contributor) => ({
     title: contributor.name || contributor.login,
     subtitle: `${contributor.contributions} contributions`,
-    value: '',
+    value: "",
   }))
 
   return (
@@ -82,8 +85,8 @@ export function GithubRepositoryContributors({ data, config, style, size }: Repo
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'repository_contributors',
+                plugin: "github",
+                section: "repository_contributors",
                 size,
               })}
             />
@@ -94,4 +97,3 @@ export function GithubRepositoryContributors({ data, config, style, size }: Repo
     </section>
   )
 }
-

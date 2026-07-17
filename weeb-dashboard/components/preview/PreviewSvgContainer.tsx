@@ -41,48 +41,50 @@ export function PreviewSvgContainer({
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   // Load CSS from generated styles (browser-compatible)
-  const [pluginsCss, setPluginsCss] = useState('')
-  
+  const [pluginsCss, setPluginsCss] = useState("")
+
   useEffect(() => {
     async function loadCSS() {
       try {
         // Get style CSS
         const styleCSS = getStyleCSS(style)
-        
+
         // Get plugins CSS (only if plugins are provided)
-        const activePluginsCSS = plugins ? await getPluginsCSS(plugins) : ''
-        
+        const activePluginsCSS = plugins ? await getPluginsCSS(plugins) : ""
+
         // Combine
-        setPluginsCss([styleCSS, activePluginsCSS].filter(Boolean).join('\n'))
+        setPluginsCss([styleCSS, activePluginsCSS].filter(Boolean).join("\n"))
       } catch (error) {
-        console.warn('Could not load CSS:', error)
-        setPluginsCss('')
+        console.warn("Could not load CSS:", error)
+        setPluginsCss("")
       }
     }
-    
+
     loadCSS()
   }, [style, plugins])
 
   // Gerar CSS dinâmico para variáveis CSS do tema
   // Injeta as variáveis CSS do tema selecionado + customThemeColors (se houver)
   const themeCss = useMemo(() => {
-    const selectedTheme = theme || 'default'
-    
+    const selectedTheme = theme || "default"
+
     // Obter variáveis CSS do tema selecionado
-    const themeVariables = style === 'terminal'
-      ? getTerminalThemeVariables(selectedTheme)
-      : getDefaultThemeVariables(selectedTheme, customThemeColors)
-    
+    const themeVariables =
+      style === "terminal"
+        ? getTerminalThemeVariables(selectedTheme)
+        : getDefaultThemeVariables(selectedTheme, customThemeColors)
+
     // Se houver customThemeColors, mesclar (customThemeColors sobrescreve)
-    const finalVariables = customThemeColors && Object.keys(customThemeColors).length > 0
-      ? { ...themeVariables, ...customThemeColors }
-      : themeVariables
-    
+    const finalVariables =
+      customThemeColors && Object.keys(customThemeColors).length > 0
+        ? { ...themeVariables, ...customThemeColors }
+        : themeVariables
+
     // Converter para CSS
     const cssVariables = Object.entries(finalVariables)
       .map(([variable, color]) => `  ${variable}: ${color};`)
-      .join('\n')
-    
+      .join("\n")
+
     return `/* Theme Variables */
     #svg-main {
 ${cssVariables}
@@ -93,7 +95,7 @@ ${cssVariables}
   useEffect(() => {
     if (!containerRef.current) return
 
-    const combinedCss = [pluginsCss, themeCss, customCss].filter(Boolean).join('\n')
+    const combinedCss = [pluginsCss, themeCss, customCss].filter(Boolean).join("\n")
 
     // Sempre criar o elemento style (pluginsCss sempre existe)
     if (!styleRef.current) {
@@ -127,8 +129,8 @@ ${cssVariables}
     >
       <PluginStyles
         style={style}
-        terminalTheme={style === "terminal" ? (theme || "default") : undefined}
-        defaultTheme={style === "default" ? (theme || "default") : undefined}
+        terminalTheme={style === "terminal" ? theme || "default" : undefined}
+        defaultTheme={style === "default" ? theme || "default" : undefined}
         hideTerminalHeader={hideTerminalHeader}
         customThemeColors={customThemeColors}
       >
@@ -137,4 +139,3 @@ ${cssVariables}
     </div>
   )
 }
-

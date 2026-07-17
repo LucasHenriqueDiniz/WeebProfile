@@ -1,4 +1,3 @@
-
 A **style pack** controls how templates/plugins render visually (CSS + theme variables).
 Because output is embedded (often as SVG/HTML), **CSS must be strictly scoped**.
 
@@ -32,11 +31,16 @@ mkdir -p src/styles/<style-name>
 All selectors must be scoped under `#svg-main`:
 
 ```css
-#svg-main .my-style-title { /* ... */ }
-#svg-main .text-my-style-highlight { /* ... */ }
+#svg-main .my-style-title {
+  /* ... */
+}
+#svg-main .text-my-style-highlight {
+  /* ... */
+}
 ```
 
 ### Why `#svg-main`?
+
 To prevent CSS from leaking into the host page when embedded.
 
 ## Step 3 — Theme variables

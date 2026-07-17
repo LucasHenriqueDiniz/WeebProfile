@@ -1,4 +1,3 @@
-
 # `pnpm create-plugin` Scaffolder
 
 This repo includes (or should include) a script that scaffolds a new plugin with the expected structure.

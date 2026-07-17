@@ -3,7 +3,7 @@
  * Estilo terminal Linux - texto alinhado na base, dots na mesma linha
  */
 
-import React from 'react'
+import React from "react"
 
 interface TerminalLineWithDotsProps {
   title: string | React.ReactNode
@@ -14,35 +14,35 @@ interface TerminalLineWithDotsProps {
   titleStyle?: React.CSSProperties
 }
 
-export function TerminalLineWithDots({ 
-  title, 
+export function TerminalLineWithDots({
+  title,
   value,
-  className = '',
-  titleClassName = '',
-  valueClassName = '',
-  titleStyle
+  className = "",
+  titleClassName = "",
+  valueClassName = "",
+  titleStyle,
 }: TerminalLineWithDotsProps): React.ReactElement {
   return (
-    <div 
+    <div
       className={`flex items-baseline gap-1 w-full overflow-hidden px-1 ${className}`}
       style={{
         fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
         fontSize: "0.875rem",
-        lineHeight: "1.25rem"
+        lineHeight: "1.25rem",
       }}
     >
-      <span 
+      <span
         className={`font-semibold whitespace-nowrap truncate flex-shrink-0 ${titleClassName}`}
         style={{
           fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
           fontSize: "0.875rem",
           color: "var(--terminal-color-warning, #ffaa00)",
-          ...(titleStyle || {})
+          ...(titleStyle || {}),
         }}
       >
         {title}
       </span>
-      <span 
+      <span
         className="flex-1 h-px opacity-50 self-end mb-1"
         style={{
           background: `repeating-linear-gradient(
@@ -51,14 +51,14 @@ export function TerminalLineWithDots({
             var(--terminal-color-muted) 2px,
             transparent 2px,
             transparent 4px
-          )`
+          )`,
         }}
       ></span>
-      <span 
+      <span
         className={`text-terminal-muted whitespace-nowrap pr-1 flex-shrink-0 ${valueClassName}`}
         style={{
           fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
-          fontSize: "0.875rem"
+          fontSize: "0.875rem",
         }}
       >
         {String(value)}
@@ -66,4 +66,3 @@ export function TerminalLineWithDots({
     </div>
   )
 }
-

@@ -2,7 +2,7 @@
  * HorizontalMultipleItemsBar - Barra horizontal com múltiplos itens para estilo default
  */
 
-import React from 'react'
+import React from "react"
 
 export interface HorizontalMultipleItem {
   value: number

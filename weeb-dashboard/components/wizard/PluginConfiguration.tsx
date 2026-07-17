@@ -12,12 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAuth } from "@/hooks/useAuth"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
@@ -25,7 +20,19 @@ import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } fr
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { useWizardStore } from "@/stores/wizard-store"
 import { selectEnabledPluginNames, selectMissingConfigs } from "@/stores/wizard-selectors"
-import { AlertCircle, Search, X, Check, Lock, Unlock, Loader2, CheckCircle2, Music, HelpCircle, ExternalLink } from "lucide-react"
+import {
+  AlertCircle,
+  Search,
+  X,
+  Check,
+  Lock,
+  Unlock,
+  Loader2,
+  CheckCircle2,
+  Music,
+  HelpCircle,
+  ExternalLink,
+} from "lucide-react"
 import { useMemo, useState, useEffect, useCallback, useRef, useDeferredValue } from "react"
 import { useShallow } from "zustand/react/shallow"
 import { ProfileConfigModal } from "./ProfileConfigModal"
@@ -44,7 +51,7 @@ import { useTranslations } from "@/i18n/use-translations"
 export function PluginConfiguration() {
   const { user } = useAuth()
   const { toast } = useToast()
-  const t = useTranslations('wizard.plugins')
+  const t = useTranslations("wizard.plugins")
   // Use useShallow to prevent unnecessary re-renders
   const { plugins, pluginsOrder, style } = useWizardStore(
     useShallow((state) => ({
@@ -60,16 +67,27 @@ export function PluginConfiguration() {
   const setPluginsHaveMissingEssentialConfigs = useWizardStore((state) => state.setPluginsHaveMissingEssentialConfigs)
 
   const [showProfileModal, setShowProfileModal] = useState(false)
-  
+
   // UX 2: Use persisted UI state hook
   const uiState = useWizardUIState()
-  const { category, query, onlyEnabled, expandedPlugins, selectedPlugin, toggleExpanded, setCategory, setQuery, setOnlyEnabled, setSelectedPlugin } = uiState
-  
+  const {
+    category,
+    query,
+    onlyEnabled,
+    expandedPlugins,
+    selectedPlugin,
+    toggleExpanded,
+    setCategory,
+    setQuery,
+    setOnlyEnabled,
+    setSelectedPlugin,
+  } = uiState
+
   // Phase 1.1: useDeferredValue for smooth search
   const deferredQuery = useDeferredValue(query)
   // Phase 1.2: Debounce for additional optimization
   const debouncedQuery = useDebouncedValue(deferredQuery, 150)
-  
+
   const [unlockedConfigs, setUnlockedConfigs] = useState<Set<string>>(new Set())
   const [unlockDialog, setUnlockDialog] = useState<{ plugin: string; key: string } | null>(null)
   const [savingConfigs, setSavingConfigs] = useState<Set<string>>(new Set())
@@ -81,55 +99,56 @@ export function PluginConfiguration() {
     return selectEnabledPluginNames({ plugins, pluginsOrder })
   }, [plugins, pluginsOrder])
 
-  const scrollToPlugin = useCallback((pluginName: string) => {
-    toggleExpanded(pluginName)
-    // Increased timeout to allow banner animations and layout to settle
-    setTimeout(() => {
-      const element = pluginRefs.current[pluginName]
-      if (element) {
-        // Scroll to show the plugin card with some offset to account for banners
-        const rect = element.getBoundingClientRect()
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-        const targetY = scrollTop + rect.top - 100 // 100px offset to show banners above
-        
-        window.scrollTo({
-          top: targetY,
-          behavior: "smooth",
-        })
-      }
-    }, 200)
-  }, [toggleExpanded])
+  const scrollToPlugin = useCallback(
+    (pluginName: string) => {
+      toggleExpanded(pluginName)
+      // Increased timeout to allow banner animations and layout to settle
+      setTimeout(() => {
+        const element = pluginRefs.current[pluginName]
+        if (element) {
+          // Scroll to show the plugin card with some offset to account for banners
+          const rect = element.getBoundingClientRect()
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+          const targetY = scrollTop + rect.top - 100 // 100px offset to show banners above
+
+          window.scrollTo({
+            top: targetY,
+            behavior: "smooth",
+          })
+        }
+      }, 200)
+    },
+    [toggleExpanded]
+  )
 
   // Use new hook for profile config (now uses bootstrap store)
   const { profile, essentialConfigs } = useProfileConfig(enabledPlugins)
-  
+
   // Get secrets presence from bootstrap store (no fetching here)
-  const { secretsPresence, missingSecrets, refreshSecretsPresence, updateSecretsPresenceOptimistic } = useWizardBootstrapStore()
-  
+  const { secretsPresence, missingSecrets, refreshSecretsPresence, updateSecretsPresenceOptimistic } =
+    useWizardBootstrapStore()
+
   // Username is now saved directly in svgs.plugins_config when user saves SVG
   // No more auto-save or bootstrap of plugin_config needed
-  
+
   // Force refresh when plugins are enabled/disabled (removed - no longer needed)
   const prevEnabledPluginsRef = useRef<string[]>([])
   useEffect(() => {
     const prevEnabled = prevEnabledPluginsRef.current
     const currentEnabled = enabledPlugins
-    
+
     // If plugins changed, no need to fetch - data already bootstrapped
     if (prevEnabled.join(",") !== currentEnabled.join(",")) {
       prevEnabledPluginsRef.current = currentEnabled
       // The useProfileConfig hook will automatically update when enabledPlugins changes
     }
   }, [enabledPlugins])
-  
+
   // Missing configs validation - use canonical selector that espelha backend criteria
   const missingConfigs = useMemo(() => {
-    return selectMissingConfigs(
-      { plugins, pluginsOrder },
-      { missingSecrets }
-    )
+    return selectMissingConfigs({ plugins, pluginsOrder }, { missingSecrets })
   }, [plugins, pluginsOrder, missingSecrets])
-  
+
   // Update store with missing configs status
   useEffect(() => {
     setPluginsHaveMissingEssentialConfigs(missingConfigs.length > 0)
@@ -184,7 +203,7 @@ export function PluginConfiguration() {
           if (plugin.categoryId !== category) {
             return false
           }
-        } 
+        }
         // Se for uma tag, verificar tags do plugin
         else {
           const pluginTags = getPluginTags(plugin.name)
@@ -208,9 +227,12 @@ export function PluginConfiguration() {
     })
   }, [allPlugins, plugins, category, debouncedQuery, onlyEnabled, selectedPlugin])
 
-  const togglePluginExpanded = useCallback((pluginId: string) => {
-    toggleExpanded(pluginId)
-  }, [toggleExpanded])
+  const togglePluginExpanded = useCallback(
+    (pluginId: string) => {
+      toggleExpanded(pluginId)
+    },
+    [toggleExpanded]
+  )
 
   const toggleSection = (pluginName: string, sectionId: string) => {
     const currentSections = plugins[pluginName]?.sections || []
@@ -243,7 +265,7 @@ export function PluginConfiguration() {
     const isUnlocked = unlockedConfigs.has(configKey)
     // Verificar se o secret existe usando secretsPresence (source of truth)
     const exists = secretsPresence?.[plugin]?.[key]?.exists || false
-    
+
     // Se não está unlocked E existe, não pode salvar (precisa desbloquear primeiro)
     // Se não existe, pode salvar direto (campo novo está automaticamente unlocked)
     // IMPORTANTE: Se não existe, considerar como unlocked (campo novo)
@@ -256,7 +278,7 @@ export function PluginConfiguration() {
       })
       return
     }
-    
+
     if (!value.trim()) {
       toast({
         title: "Valor vazio",
@@ -267,10 +289,10 @@ export function PluginConfiguration() {
     }
 
     setSavingConfigs((prev) => new Set(prev).add(configKey))
-    
+
     // Optimistic update: atualizar UI imediatamente antes de salvar
     updateSecretsPresenceOptimistic(plugin, key)
-    
+
     try {
       await profileApi.updateEssentialConfig(plugin, key, value)
       setSavedConfigs((prev) => new Set(prev).add(configKey))
@@ -326,12 +348,12 @@ export function PluginConfiguration() {
       {enabledPlugins.length > 0 && (
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-medium text-muted-foreground">{t('activePlugins')}</span>
+            <span className="text-xs font-medium text-muted-foreground">{t("activePlugins")}</span>
             {enabledPlugins.map((pluginName) => {
               const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
               const PluginIcon = getPluginIcon(pluginName)
               const isSelected = selectedPlugin === pluginName
-              
+
               return (
                 <button
                   key={pluginName}
@@ -359,8 +381,8 @@ export function PluginConfiguration() {
                   {PluginIcon && <PluginIcon className="h-3 w-3" />}
                   <span>{metadata?.displayName || pluginName}</span>
                   {isSelected && (
-                    <X 
-                      className="h-3 w-3 ml-0.5" 
+                    <X
+                      className="h-3 w-3 ml-0.5"
                       onClick={(e) => {
                         e.stopPropagation()
                         e.preventDefault()
@@ -390,7 +412,7 @@ export function PluginConfiguration() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder={t('searchPlaceholder')}
+            placeholder={t("searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="pl-9 pr-9"
@@ -411,28 +433,35 @@ export function PluginConfiguration() {
             {(() => {
               const allTags = getAllTags()
               const categoryLabels: Record<string, string> = {
-                all: t('categories.all'),
-                coding: t('categories.coding'),
-                music: t('categories.music'),
-                anime: t('categories.anime'),
-                gaming: t('categories.gaming'),
-                health: t('categories.health'),
-                productivity: t('categories.productivity'),
-                social: t('categories.social'),
-                entertainment: t('categories.entertainment'),
+                all: t("categories.all"),
+                coding: t("categories.coding"),
+                music: t("categories.music"),
+                anime: t("categories.anime"),
+                gaming: t("categories.gaming"),
+                health: t("categories.health"),
+                productivity: t("categories.productivity"),
+                social: t("categories.social"),
+                entertainment: t("categories.entertainment"),
               }
-              const categories: Array<PluginCategory | "all" | PluginTag> = ["all", "coding", "music", "anime", "gaming", ...allTags]
-              
+              const categories: Array<PluginCategory | "all" | PluginTag> = [
+                "all",
+                "coding",
+                "music",
+                "anime",
+                "gaming",
+                ...allTags,
+              ]
+
               return categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCategory(cat)}
-                    className={cn(
-                      "px-3 py-1 rounded-full text-xs font-medium transition-all capitalize",
-                      category === cat
-                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80"
-                    )}
+                  className={cn(
+                    "px-3 py-1 rounded-full text-xs font-medium transition-all capitalize",
+                    category === cat
+                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  )}
                 >
                   {categoryLabels[cat] || cat}
                 </button>
@@ -448,12 +477,11 @@ export function PluginConfiguration() {
                 onChange={(e) => setOnlyEnabled(e.target.checked)}
                 className="h-3.5 w-3.5 rounded border-input text-primary focus:ring-primary"
               />
-              <span className="text-muted-foreground">{t('onlyEnabled')}</span>
+              <span className="text-muted-foreground">{t("onlyEnabled")}</span>
             </label>
           </div>
         </div>
       </div>
-
 
       {/* UX 3: Improved warning banner with action */}
       {missingConfigs.length > 0 && (
@@ -461,59 +489,59 @@ export function PluginConfiguration() {
           <div className="flex items-start gap-3">
             <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
             <div className="text-sm flex-1 min-w-0">
-              <p className="font-medium text-amber-900 dark:text-amber-200">
-                Configuração incompleta
-              </p>
+              <p className="font-medium text-amber-900 dark:text-amber-200">Configuração incompleta</p>
               <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
-                {missingConfigs.length === 1 
-                  ? "1 campo obrigatório precisa ser preenchido" 
+                {missingConfigs.length === 1
+                  ? "1 campo obrigatório precisa ser preenchido"
                   : `${missingConfigs.length} campos obrigatórios precisam ser preenchidos`}
               </p>
               {/* UX 5: Quick action to expand plugins with missing configs */}
               <div className="mt-2 flex flex-wrap gap-2">
-                {Array.from(new Set(missingConfigs.map(m => m.plugin))).slice(0, 5).map((pluginName) => {
-                  const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
-                  const PluginIcon = getPluginIcon(pluginName)
-                  const isSelected = selectedPlugin === pluginName
-                  
-                  return (
-                    <button
-                      key={pluginName}
-                      onClick={() => {
-                        if (isSelected) {
-                          setSelectedPlugin(null)
-                        } else {
-                          setSelectedPlugin(pluginName)
-                          toggleExpanded(pluginName)
-                          setTimeout(() => {
-                            pluginRefs.current[pluginName]?.scrollIntoView({
-                              behavior: "smooth",
-                              block: "center",
-                            })
-                          }, 100)
-                        }
-                      }}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all border capitalize",
-                        isSelected
-                          ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                          : "bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-800 hover:bg-amber-200 dark:hover:bg-amber-900/70"
-                      )}
-                    >
-                      {PluginIcon && <PluginIcon className="h-3 w-3" />}
-                      <span>{metadata?.displayName || pluginName}</span>
-                      {isSelected && (
-                        <X 
-                          className="h-3 w-3 ml-0.5" 
-                          onClick={(e) => {
-                            e.stopPropagation()
+                {Array.from(new Set(missingConfigs.map((m) => m.plugin)))
+                  .slice(0, 5)
+                  .map((pluginName) => {
+                    const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
+                    const PluginIcon = getPluginIcon(pluginName)
+                    const isSelected = selectedPlugin === pluginName
+
+                    return (
+                      <button
+                        key={pluginName}
+                        onClick={() => {
+                          if (isSelected) {
                             setSelectedPlugin(null)
-                          }}
-                        />
-                      )}
-                    </button>
-                  )
-                })}
+                          } else {
+                            setSelectedPlugin(pluginName)
+                            toggleExpanded(pluginName)
+                            setTimeout(() => {
+                              pluginRefs.current[pluginName]?.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              })
+                            }, 100)
+                          }
+                        }}
+                        className={cn(
+                          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all border capitalize",
+                          isSelected
+                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                            : "bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-800 hover:bg-amber-200 dark:hover:bg-amber-900/70"
+                        )}
+                      >
+                        {PluginIcon && <PluginIcon className="h-3 w-3" />}
+                        <span>{metadata?.displayName || pluginName}</span>
+                        {isSelected && (
+                          <X
+                            className="h-3 w-3 ml-0.5"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedPlugin(null)
+                            }}
+                          />
+                        )}
+                      </button>
+                    )
+                  })}
               </div>
             </div>
           </div>
@@ -563,11 +591,16 @@ export function PluginConfiguration() {
           })}
         </div>
       ) : (
-        <EmptyState query={query} category={category} onlyEnabled={onlyEnabled} onClearFilters={() => {
-          setQuery("")
-          setCategory("all")
-          setOnlyEnabled(false)
-        }} />
+        <EmptyState
+          query={query}
+          category={category}
+          onlyEnabled={onlyEnabled}
+          onClearFilters={() => {
+            setQuery("")
+            setCategory("all")
+            setOnlyEnabled(false)
+          }}
+        />
       )}
 
       <PluginConfigurationFooter
@@ -618,7 +651,8 @@ export function PluginConfigurationFooter({
           <DialogHeader>
             <DialogTitle>Desbloquear Configuração</DialogTitle>
             <DialogDescription>
-              Esta configuração já possui um valor salvo. Ao desbloquear, você poderá alterá-la, mas o valor atual será substituído. Deseja continuar?
+              Esta configuração já possui um valor salvo. Ao desbloquear, você poderá alterá-la, mas o valor atual será
+              substituído. Deseja continuar?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -634,4 +668,3 @@ export function PluginConfigurationFooter({
     </>
   )
 }
-

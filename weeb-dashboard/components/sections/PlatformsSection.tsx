@@ -2,16 +2,12 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 import { useRef, useMemo } from "react"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins"
-import { useTranslations } from '@/i18n/use-translations'
+import { useTranslations } from "@/i18n/use-translations"
 import { Link, Link as LocaleLink } from "@/i18n/navigation"
 
 type PluginMetadata = any
@@ -20,10 +16,10 @@ import type { ComponentType } from "react"
 // Cores vibrantes para cada categoria
 const getCategoryColor = (category: string): string => {
   const categoryColors: Record<string, string> = {
-    coding: "#3B82F6",    // Azul vibrante
-    music: "#EF4444",      // Vermelho vibrante  
-    anime: "#8B5CF6",      // Roxo vibrante
-    gaming: "#10B981",     // Verde vibrante
+    coding: "#3B82F6", // Azul vibrante
+    music: "#EF4444", // Vermelho vibrante
+    anime: "#8B5CF6", // Roxo vibrante
+    gaming: "#10B981", // Verde vibrante
   }
   return categoryColors[category] || "#6B7280" // Cinza padrão
 }
@@ -35,12 +31,7 @@ interface PlatformCardProps {
   color: string
 }
 
-function PlatformCard({
-  name,
-  icon: Icon,
-  description,
-  color,
-}: PlatformCardProps) {
+function PlatformCard({ name, icon: Icon, description, color }: PlatformCardProps) {
   if (!Icon) {
     return null
   }
@@ -61,7 +52,7 @@ function PlatformCard({
             background: `linear-gradient(135deg, ${color}08 0%, transparent 100%)`,
           }}
         />
-        
+
         <CardContent className="p-6 flex flex-col items-center text-center gap-4 relative z-10">
           {/* Icon container with gradient background */}
           <motion.div
@@ -85,7 +76,7 @@ function PlatformCard({
               style={{ color }}
             />
           </motion.div>
-          
+
           <div className="space-y-1 flex-1">
             <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300">
               {name}
@@ -98,10 +89,8 @@ function PlatformCard({
 }
 
 export function PlatformsSection() {
-  const t = useTranslations('homepage.platforms')
-  const plugin = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })
-  )
+  const t = useTranslations("homepage.platforms")
+  const plugin = useRef(Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true }))
 
   // Convert PLUGINS_METADATA to platforms format (todos os plugins disponíveis)
   const platforms = useMemo(() => {
@@ -125,21 +114,19 @@ export function PlatformsSection() {
       >
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium text-primary w-fit mx-auto mb-4 backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          <span>{t('badge', { count: platforms.length })}</span>
+          <span>{t("badge", { count: platforms.length })}</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-          {t('title')}
+          {t("title")}
         </h2>
-        <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          {t('subtitle')}
-        </p>
+        <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">{t("subtitle")}</p>
       </motion.div>
 
       <div className="relative overflow-hidden">
         {/* Gradient fade on edges */}
         <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-        
+
         <Carousel
           plugins={[plugin.current]}
           opts={{
@@ -195,14 +182,14 @@ export function PlatformsSection() {
         className="text-center mt-8"
       >
         <p className="text-sm text-muted-foreground">
-          {t('createPlugin')}{" "}
+          {t("createPlugin")}{" "}
           <Link
             href="https://github.com/WeebProfile/WeebProfile/blob/main/weeb-plugins/docs/CREATING_PLUGINS.md"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:text-primary/80 font-semibold transition-colors duration-200 underline-offset-4 hover:underline inline-flex items-center gap-1"
           >
-            {t('createPluginLink')}
+            {t("createPluginLink")}
             <span className="text-xs">↗</span>
           </Link>
         </p>

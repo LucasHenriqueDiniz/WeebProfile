@@ -1,28 +1,28 @@
-import React from 'react'
-import { GiWeightLiftingUp } from 'react-icons/gi'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { LyftaData, LyftaNonEssentialConfig } from '../types'
-import { formatWeight } from '../utils/weight'
+import React from "react"
+import { GiWeightLiftingUp } from "react-icons/gi"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { LyftaData, LyftaNonEssentialConfig } from "../types"
+import { formatWeight } from "../utils/weight"
 
 interface StatisticsProps {
   data: LyftaData
   config: LyftaNonEssentialConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function Statistics({ data, config, style = 'default', size = 'half' }: StatisticsProps): React.ReactElement {
+export function Statistics({ data, config, style = "default", size = "half" }: StatisticsProps): React.ReactElement {
   if (!data || !data.statistics || !data.workoutSummaries) {
     return <></>
   }
 
   const hideTitle = config.statistics_hide_title || false
-  const title = config.statistics_title || 'Fitness Statistics'
-  const weightUnit = config.weight_unit || 'kg'
+  const title = config.statistics_title || "Fitness Statistics"
+  const weightUnit = config.weight_unit || "kg"
   const stats = data.statistics
 
   const longestStreakWeeks = Math.floor(stats.longestStreak / 7)
@@ -41,13 +41,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
         style={style}
         defaultComponent={
           <div className="w-full overflow-hidden">
-            {!hideTitle && (
-              <DefaultTitle
-                title={title}
-                icon={<GiWeightLiftingUp />}
-                subtitle="Lifetime stats"
-              />
-            )}
+            {!hideTitle && <DefaultTitle title={title} icon={<GiWeightLiftingUp />} subtitle="Lifetime stats" />}
 
             <div className="rounded-lg shadow-sm p-4 mb-3 space-y-3">
               {/* Métricas principais em grid 2x2 (fica perfeito em 415px) */}
@@ -72,41 +66,30 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
               </div>
 
               {/* Chips de streak / favorite – mais leves que cards grandes */}
-              {(longestStreakWeeks > 0 ||
-                currentStreakWeeks > 0 ||
-                stats.favoriteExercise) && (
+              {(longestStreakWeeks > 0 || currentStreakWeeks > 0 || stats.favoriteExercise) && (
                 <div className="flex flex-wrap gap-2 pt-1">
                   {longestStreakWeeks > 0 && (
                     <div className="inline-flex items-center rounded-full bg-default-muted/10 px-2.5 py-1">
-                      <span className="text-[11px] text-default-muted mr-1">
-                        longest streak
-                      </span>
+                      <span className="text-[11px] text-default-muted mr-1">longest streak</span>
                       <span className="text-xs font-semibold text-default-success tabular-nums">
                         {longestStreakWeeks}w
                       </span>
                     </div>
                   )}
 
-                  {currentStreakWeeks > 0 &&
-                    currentStreakWeeks !== longestStreakWeeks && (
-                      <div className="inline-flex items-center rounded-full bg-default-muted/10 px-2.5 py-1">
-                        <span className="text-[11px] text-default-muted mr-1">
-                          current streak
-                        </span>
-                        <span className="text-xs font-semibold text-default-highlight tabular-nums">
-                          {currentStreakWeeks}w
-                        </span>
-                      </div>
-                    )}
+                  {currentStreakWeeks > 0 && currentStreakWeeks !== longestStreakWeeks && (
+                    <div className="inline-flex items-center rounded-full bg-default-muted/10 px-2.5 py-1">
+                      <span className="text-[11px] text-default-muted mr-1">current streak</span>
+                      <span className="text-xs font-semibold text-default-highlight tabular-nums">
+                        {currentStreakWeeks}w
+                      </span>
+                    </div>
+                  )}
 
                   {stats.favoriteExercise && (
                     <div className="inline-flex items-center rounded-full bg-default-muted/10 px-2.5 py-1 max-w-full">
-                      <span className="text-[11px] text-default-muted mr-1">
-                        favorite
-                      </span>
-                      <span className="text-xs font-semibold text-default-fg truncate">
-                        {stats.favoriteExercise}
-                      </span>
+                      <span className="text-[11px] text-default-muted mr-1">favorite</span>
+                      <span className="text-xs font-semibold text-default-fg truncate">{stats.favoriteExercise}</span>
                     </div>
                   )}
                 </div>
@@ -114,9 +97,7 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
 
               {stats.totalWorkouts === 0 && (
                 <div className="text-center pt-2">
-                  <p className="text-sm text-default-muted">
-                    No workouts recorded yet
-                  </p>
+                  <p className="text-sm text-default-muted">No workouts recorded yet</p>
                 </div>
               )}
             </div>
@@ -126,8 +107,8 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'lyfta',
-                section: 'statistics',
+                plugin: "lyfta",
+                section: "statistics",
                 size,
               })}
             />
@@ -135,14 +116,9 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
               <TerminalLineWithDots title="Total Workouts" value={String(stats.totalWorkouts)} />
             )}
             {stats.totalLiftedWeight > 0 && (
-              <TerminalLineWithDots
-                title="Total Weight"
-                value={formatWeight(stats.totalLiftedWeight, weightUnit)}
-              />
+              <TerminalLineWithDots title="Total Weight" value={formatWeight(stats.totalLiftedWeight, weightUnit)} />
             )}
-            {longestStreakWeeks > 0 && (
-              <TerminalLineWithDots title="Longest Streak" value={`${longestStreakWeeks}w`} />
-            )}
+            {longestStreakWeeks > 0 && <TerminalLineWithDots title="Longest Streak" value={`${longestStreakWeeks}w`} />}
             {currentStreakWeeks > 0 && currentStreakWeeks !== longestStreakWeeks && (
               <TerminalLineWithDots title="Current Streak" value={`${currentStreakWeeks}w`} />
             )}

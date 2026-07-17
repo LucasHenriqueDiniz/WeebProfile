@@ -1,6 +1,6 @@
 /**
  * API Helpers
- * 
+ *
  * Funções auxiliares para fazer requisições HTTP de forma limpa e consistente
  */
 
@@ -24,30 +24,27 @@ export class ApiException extends Error {
 
 /**
  * Faz uma requisição HTTP e retorna os dados parseados
- * 
+ *
  * @param url - URL da requisição (relativa, será convertida para absoluta)
  * @param options - Opções do fetch
  * @returns Dados da resposta
  * @throws ApiException se a requisição falhar
  */
-export async function apiRequest<T = any>(
-  url: string,
-  options?: RequestInit
-): Promise<T> {
+export async function apiRequest<T = any>(url: string, options?: RequestInit): Promise<T> {
   // Converter URL relativa para absoluta se necessário
   // Isso evita problemas com locale prefix nas rotas de API
   // As rotas de API sempre começam com /api e devem usar URLs absolutas
-  let absoluteUrl = url.startsWith('http') 
-    ? url 
-    : url.startsWith('/api')
-    ? (typeof window !== 'undefined' 
+  let absoluteUrl = url.startsWith("http")
+    ? url
+    : url.startsWith("/api")
+      ? typeof window !== "undefined"
         ? `${window.location.origin}${url}`
-        : url) // No servidor, manter relativa (Next.js resolve corretamente)
-    : url
+        : url // No servidor, manter relativa (Next.js resolve corretamente)
+      : url
 
   // Debug: log da URL que está sendo chamada
-  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-    console.log('[API] Requesting:', absoluteUrl)
+  if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+    console.log("[API] Requesting:", absoluteUrl)
   }
 
   let response: Response
@@ -63,13 +60,13 @@ export async function apiRequest<T = any>(
     // Se o fetch falhou completamente (ECONNREFUSED, network error, etc)
     const errorMessage = error instanceof Error ? error.message : String(error)
     const errorCode = (error as any)?.code || ""
-    
+
     throw new ApiException(
       0,
-      { 
-        error: "Network error", 
+      {
+        error: "Network error",
         message: errorMessage,
-        code: errorCode
+        code: errorCode,
       },
       `Failed to fetch: ${errorMessage}`
     )
@@ -80,11 +77,11 @@ export async function apiRequest<T = any>(
   if (!contentType?.includes("application/json")) {
     // Se não for JSON, pode ser HTML (erro 404, etc)
     const text = await response.text()
-    console.error('[API] Non-JSON response received:', {
+    console.error("[API] Non-JSON response received:", {
       url: absoluteUrl,
       status: response.status,
       contentType,
-      preview: text.substring(0, 200)
+      preview: text.substring(0, 200),
     })
     throw new ApiException(
       response.status,
@@ -96,11 +93,7 @@ export async function apiRequest<T = any>(
   const data = (await response.json()) as ApiError
 
   if (!response.ok) {
-    throw new ApiException(
-      response.status,
-      data as ApiError,
-      data.message || data.error || `HTTP ${response.status}`
-    )
+    throw new ApiException(response.status, data as ApiError, data.message || data.error || `HTTP ${response.status}`)
   }
 
   return data as T
@@ -154,10 +147,7 @@ export const profileApi = {
   /**
    * Atualizar perfil do usuário
    */
-  async update(data: {
-    username?: string
-    essentialConfigs?: Record<string, any>
-  }) {
+  async update(data: { username?: string; essentialConfigs?: Record<string, any> }) {
     return apiPut<{ profile: any }>("/api/profile", data)
   },
 
@@ -165,10 +155,8 @@ export const profileApi = {
    * Buscar essential configs do usuário (valores mascarados)
    */
   async getEssentialConfigs(enabledPlugins?: string[]) {
-    const params = enabledPlugins && enabledPlugins.length > 0
-      ? `?enabledPlugins=${enabledPlugins.join(",")}`
-      : ""
-    return apiGet<{ 
+    const params = enabledPlugins && enabledPlugins.length > 0 ? `?enabledPlugins=${enabledPlugins.join(",")}` : ""
+    return apiGet<{
       essentialConfigs: Record<string, any>
       missingConfigs: Array<{ pluginName: string; missingKeys: any[] }>
     }>(`/api/profile/essential-configs${params}`)
@@ -181,9 +169,9 @@ export const profileApi = {
     return apiPut<{ success: boolean }>("/api/profile", {
       essentialConfigs: {
         [plugin]: {
-          [key]: value
-        }
-      }
+          [key]: value,
+        },
+      },
     })
   },
 }
@@ -240,33 +228,26 @@ export const svgApi = {
 export const templateApi = {
   list: () => apiRequest<{ templates: any[] }>("/api/templates"),
   get: (id: string) => apiRequest<{ template: any }>(`/api/templates/${id}`),
-  create: (data: any) => apiRequest<{ template: any }>("/api/templates", {
-    method: "POST",
-    body: JSON.stringify(data),
-  }),
-  update: (id: string, data: any) => apiRequest<{ template: any }>(`/api/templates/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  }),
-  delete: (id: string) => apiRequest<{ success: boolean }>(`/api/templates/${id}`, {
-    method: "DELETE",
-  }),
-  like: (id: string) => apiRequest<{ like: any }>(`/api/templates/${id}/like`, {
-    method: "POST",
-  }),
-  unlike: (id: string) => apiRequest<{ success: boolean }>(`/api/templates/${id}/like`, {
-    method: "DELETE",
-  }),
+  create: (data: any) =>
+    apiRequest<{ template: any }>("/api/templates", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  update: (id: string, data: any) =>
+    apiRequest<{ template: any }>(`/api/templates/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+  delete: (id: string) =>
+    apiRequest<{ success: boolean }>(`/api/templates/${id}`, {
+      method: "DELETE",
+    }),
+  like: (id: string) =>
+    apiRequest<{ like: any }>(`/api/templates/${id}/like`, {
+      method: "POST",
+    }),
+  unlike: (id: string) =>
+    apiRequest<{ success: boolean }>(`/api/templates/${id}/like`, {
+      method: "DELETE",
+    }),
 }
-
-
-
-
-
-
-
-
-
-
-
-

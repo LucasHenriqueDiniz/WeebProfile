@@ -1,19 +1,25 @@
 /**
  * React Iframe Preview
- * 
+ *
  * Renders React HTML in an iframe with bridge script for inspection
  */
 
-import { useEffect, useRef, useState } from 'react'
-import type { StyleSnapshot } from '../../lib/iframe/iframeProtocol'
-import { buildSrcDoc } from '../../lib/iframe/injectHtmlDocument'
-import { makeBridgeScript } from '../../lib/iframe/bridgeScript'
-import { postToIframe, isIframeMessage, makeRequestId, type IframeToParent, type ParentToIframe } from '../../lib/iframe/iframeProtocol'
+import { useEffect, useRef, useState } from "react"
+import type { StyleSnapshot } from "../../lib/iframe/iframeProtocol"
+import { buildSrcDoc } from "../../lib/iframe/injectHtmlDocument"
+import { makeBridgeScript } from "../../lib/iframe/bridgeScript"
+import {
+  postToIframe,
+  isIframeMessage,
+  makeRequestId,
+  type IframeToParent,
+  type ParentToIframe,
+} from "../../lib/iframe/iframeProtocol"
 
 interface ReactIframePreviewProps {
   html: string
   css: string
-  background?: 'light' | 'dark'
+  background?: "light" | "dark"
   onElementSelect?: (snapshot: StyleSnapshot | null) => void
   selectedDebugId?: string | null
   hoveredDebugId?: string | null
@@ -24,7 +30,7 @@ interface ReactIframePreviewProps {
 export default function ReactIframePreview({
   html,
   css,
-  background = 'dark',
+  background = "dark",
   onElementSelect,
   selectedDebugId,
   hoveredDebugId,
@@ -33,14 +39,16 @@ export default function ReactIframePreview({
 }: ReactIframePreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isReady, setIsReady] = useState(false)
-  const pendingRequestsRef = useRef<Map<string, { resolve: (value: any) => void; reject: (error: any) => void }>>(new Map())
+  const pendingRequestsRef = useRef<Map<string, { resolve: (value: any) => void; reject: (error: any) => void }>>(
+    new Map()
+  )
 
   // Build srcDoc with bridge script
   const srcDoc = buildSrcDoc({
-    kind: 'react',
+    kind: "react",
     htmlOrSvg: html,
     css,
-    bridgeJs: makeBridgeScript('react'),
+    bridgeJs: makeBridgeScript("react"),
   })
 
   // Handle messages from iframe
@@ -50,62 +58,68 @@ export default function ReactIframePreview({
 
       const msg = event.data as IframeToParent
 
-      if (msg.type === 'DBG_READY') {
+      if (msg.type === "DBG_READY") {
         setIsReady(true)
         // Send init message
         if (iframeRef.current) {
-          postToIframe(iframeRef.current, { type: 'DBG_INIT', payload: { kind: 'react' } })
+          postToIframe(iframeRef.current, { type: "DBG_INIT", payload: { kind: "react" } })
         }
         return
       }
 
-      if (msg.type === 'DBG_EVENT_SELECT') {
+      if (msg.type === "DBG_EVENT_SELECT") {
         // Request snapshot for selected element
         if (iframeRef.current && onElementSelect) {
-          requestSnapshot(msg.payload.debugId, 'important', cssVarNames).then((snapshot) => {
-            onElementSelect(snapshot)
-          }).catch(() => {
-            onElementSelect(null)
-          })
+          requestSnapshot(msg.payload.debugId, "important", cssVarNames)
+            .then((snapshot) => {
+              onElementSelect(snapshot)
+            })
+            .catch(() => {
+              onElementSelect(null)
+            })
         }
         return
       }
 
-      if (msg.type === 'DBG_EVENT_HOVER') {
+      if (msg.type === "DBG_EVENT_HOVER") {
         onElementHover?.(msg.payload.debugId || null)
         return
       }
 
-      if (msg.type === 'DBG_RPC_RESPONSE') {
+      if (msg.type === "DBG_RPC_RESPONSE") {
         const pending = pendingRequestsRef.current.get(msg.requestId)
         if (pending) {
           pendingRequestsRef.current.delete(msg.requestId)
           if (msg.ok) {
             pending.resolve(msg.result)
           } else {
-            pending.reject(new Error(msg.error || 'RPC failed'))
+            pending.reject(new Error(msg.error || "RPC failed"))
           }
         }
         return
       }
     }
 
-    window.addEventListener('message', handleMessage)
+    window.addEventListener("message", handleMessage)
     return () => {
-      window.removeEventListener('message', handleMessage)
+      window.removeEventListener("message", handleMessage)
     }
   }, [onElementSelect, onElementHover])
 
   // Request snapshot via RPC
-  const requestSnapshot = async (debugId: string, mode: 'important' | 'all' = 'important', varNames: string[] = []): Promise<StyleSnapshot> => {
-    if (!iframeRef.current) throw new Error('Iframe not ready')
+  const requestSnapshot = async (
+    debugId: string,
+    mode: "important" | "all" = "important",
+    varNames: string[] = []
+  ): Promise<StyleSnapshot> => {
+    if (!iframeRef.current) throw new Error("Iframe not ready")
 
     const requestId = makeRequestId()
     const request: ParentToIframe = {
-      type: 'DBG_RPC_REQUEST',
+      type: "DBG_RPC_REQUEST",
       requestId,
       payload: {
-        method: 'getSnapshot',
+        method: "getSnapshot",
         params: {
           debugId,
           mode,
@@ -122,7 +136,7 @@ export default function ReactIframePreview({
       setTimeout(() => {
         if (pendingRequestsRef.current.has(requestId)) {
           pendingRequestsRef.current.delete(requestId)
-          reject(new Error('Snapshot request timeout'))
+          reject(new Error("Snapshot request timeout"))
         }
       }, 5000)
     })
@@ -133,7 +147,7 @@ export default function ReactIframePreview({
     if (!iframeRef.current || !isReady) return
 
     postToIframe(iframeRef.current, {
-      type: 'DBG_SET_HIGHLIGHT',
+      type: "DBG_SET_HIGHLIGHT",
       payload: {
         selectedDebugId: selectedDebugId || null,
         hoveredDebugId: hoveredDebugId || null,
@@ -141,33 +155,32 @@ export default function ReactIframePreview({
     })
   }, [selectedDebugId, hoveredDebugId, isReady])
 
-  const bgColor = background === 'light' ? '#ffffff' : '#0d1117'
-  const borderColor = background === 'light' ? '#d0d7de' : '#30363d'
+  const bgColor = background === "light" ? "#ffffff" : "#0d1117"
+  const borderColor = background === "light" ? "#d0d7de" : "#30363d"
 
   return (
     <div
       style={{
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         background: bgColor,
         border: `1px solid ${borderColor}`,
-        borderRadius: '6px',
-        overflow: 'hidden',
-        position: 'relative',
+        borderRadius: "6px",
+        overflow: "hidden",
+        position: "relative",
       }}
     >
       <iframe
         ref={iframeRef}
         srcDoc={srcDoc}
         style={{
-          width: '100%',
-          height: '100%',
-          border: 'none',
-          display: 'block',
+          width: "100%",
+          height: "100%",
+          border: "none",
+          display: "block",
         }}
         sandbox="allow-same-origin allow-scripts"
       />
     </div>
   )
 }
-

@@ -24,7 +24,7 @@ interface WizardShellProps {
 
 export function WizardShell({ stats, preview, footer, children }: WizardShellProps) {
   const { plugins, pluginsOrder, size } = useWizardStore()
-  const t = useTranslations('wizard.plugins')
+  const t = useTranslations("wizard.plugins")
 
   return (
     <div className="flex flex-col h-screen bg-background relative overflow-hidden">
@@ -67,9 +67,7 @@ export function WizardShell({ stats, preview, footer, children }: WizardShellPro
           <div className="flex-1 overflow-y-auto">
             <div className="p-6 max-w-6xl mx-auto">
               {/* Tabs */}
-              <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-                {children}
-              </div>
+              <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">{children}</div>
             </div>
           </div>
         </div>
@@ -80,18 +78,24 @@ export function WizardShell({ stats, preview, footer, children }: WizardShellPro
             const pluginsWithSections = selectPluginsWithSections({ plugins, pluginsOrder })
             const previewWidth = size === "half" ? 450 : 900
             const contentWidth = size === "half" ? 415 : 830
-            
+
             return (
               <>
                 <div className="flex-1 overflow-y-auto scrollbar-hide pt-2" style={{ width: `${previewWidth}px` }}>
                   {/* SVG Preview - Responsive width */}
-                  <div className="bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 p-0 flex items-center justify-center mb-4 min-h-[400px]" style={{ width: `${previewWidth}px` }}>
+                  <div
+                    className="bg-gradient-to-br from-muted/30 via-muted/20 to-muted/10 p-0 flex items-center justify-center mb-4 min-h-[400px]"
+                    style={{ width: `${previewWidth}px` }}
+                  >
                     {pluginsWithSections.length > 0 ? (
                       <div className="w-full flex justify-center h-full" style={{ width: `${contentWidth}px` }}>
                         {preview}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-full w-full py-12" style={{ width: `${contentWidth}px` }}>
+                      <div
+                        className="flex flex-col items-center justify-center h-full w-full py-12"
+                        style={{ width: `${contentWidth}px` }}
+                      >
                         <motion.div
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -120,7 +124,7 @@ export function WizardShell({ stats, preview, footer, children }: WizardShellPro
                           </motion.div>
                           <div className="text-center space-y-2 max-w-sm">
                             <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-                              <span>{t('enablePluginToPreview')}</span>
+                              <span>{t("enablePluginToPreview")}</span>
                             </p>
                           </div>
                         </motion.div>

@@ -23,10 +23,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params }
     }
 
     if (svg.status !== "completed" || !svg.storageUrl) {
-      return Response.json(
-        { error: "SVG not generated yet", status: svg.status },
-        { status: 404 }
-      )
+      return Response.json({ error: "SVG not generated yet", status: svg.status }, { status: 404 })
     }
 
     const svgContent = await getSvgFromR2(env, id)

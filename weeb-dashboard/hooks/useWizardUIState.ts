@@ -27,11 +27,11 @@ const defaultState: WizardUIState = {
 
 function loadFromStorage(): Partial<WizardUIState> {
   if (typeof window === "undefined") return {}
-  
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (!stored) return {}
-    
+
     const parsed = JSON.parse(stored)
     return {
       expandedPlugins: parsed.expandedPlugins ? new Set(parsed.expandedPlugins) : new Set(),
@@ -48,7 +48,7 @@ function loadFromStorage(): Partial<WizardUIState> {
 
 function saveToStorage(state: Partial<WizardUIState>) {
   if (typeof window === "undefined") return
-  
+
   try {
     const toSave = {
       expandedPlugins: state.expandedPlugins ? Array.from(state.expandedPlugins) : [],
@@ -142,7 +142,7 @@ export function useWizardUIState() {
     query,
     onlyEnabled,
     selectedPlugin,
-    
+
     // Setters
     setExpandedPlugins,
     setActiveTab,
@@ -150,12 +150,10 @@ export function useWizardUIState() {
     setQuery,
     setOnlyEnabled,
     setSelectedPlugin,
-    
+
     // Helpers
     toggleExpanded,
     expandAll,
     collapseAll,
   }
 }
-
-

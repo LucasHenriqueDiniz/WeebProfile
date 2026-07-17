@@ -7,7 +7,7 @@
  * (letras, números, hífens, underscores, pontos)
  */
 export function isValidUsername(username: string): boolean {
-  if (!username || typeof username !== 'string') {
+  if (!username || typeof username !== "string") {
     return false
   }
   return /^[a-zA-Z0-9._-]+$/.test(username)
@@ -17,7 +17,7 @@ export function isValidUsername(username: string): boolean {
  * Valida se uma string é um email válido
  */
 export function isValidEmail(email: string): boolean {
-  if (!email || typeof email !== 'string') {
+  if (!email || typeof email !== "string") {
     return false
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -29,7 +29,7 @@ export function isValidEmail(email: string): boolean {
  * (geralmente alfanumérica, pode ter hífens)
  */
 export function isValidApiKey(apiKey: string): boolean {
-  if (!apiKey || typeof apiKey !== 'string') {
+  if (!apiKey || typeof apiKey !== "string") {
     return false
   }
   // API keys geralmente são alfanuméricas com possíveis hífens
@@ -41,7 +41,7 @@ export function isValidApiKey(apiKey: string): boolean {
  * (similar a API key, mas pode ter mais caracteres especiais)
  */
 export function isValidToken(token: string): boolean {
-  if (!token || typeof token !== 'string') {
+  if (!token || typeof token !== "string") {
     return false
   }
   // Tokens podem ser mais complexos (base64, JWT, etc)
@@ -62,13 +62,10 @@ export function isValidStringArray(arr: unknown, allowedValues?: string[]): bool
   if (!Array.isArray(arr)) {
     return false
   }
-  
-  if (allowedValues) {
-    return arr.every(item => 
-      typeof item === 'string' && allowedValues.includes(item)
-    )
-  }
-  
-  return arr.every(item => typeof item === 'string')
-}
 
+  if (allowedValues) {
+    return arr.every((item) => typeof item === "string" && allowedValues.includes(item))
+  }
+
+  return arr.every((item) => typeof item === "string")
+}

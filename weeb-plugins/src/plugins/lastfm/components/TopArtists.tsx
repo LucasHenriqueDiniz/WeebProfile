@@ -3,12 +3,12 @@
  * Renderiza Grid, List ou Default baseado no config.top_artists_style
  */
 
-import React from 'react'
-import { MdOutlinePersonOutline } from 'react-icons/md'
-import type { LastFmArtist } from '../types'
-import { TopItems } from './TopItems'
-import { abbreviateNumber } from '../../../utils/number'
-import type { GridItemProps, ListItemProps } from '../../../templates/types'
+import React from "react"
+import { MdOutlinePersonOutline } from "react-icons/md"
+import type { LastFmArtist } from "../types"
+import { TopItems } from "./TopItems"
+import { abbreviateNumber } from "../../../utils/number"
+import type { GridItemProps, ListItemProps } from "../../../templates/types"
 
 interface TopArtistsProps {
   data: LastFmArtist[]
@@ -17,15 +17,21 @@ interface TopArtistsProps {
     top_artists_max?: number
     top_artists_title?: string
     top_artists_hide_title?: boolean
-    top_artists_style?: 'grid' | 'list' | 'default'
+    top_artists_style?: "grid" | "list" | "default"
     hide_intervals?: boolean
   }
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function TopArtists({ data, interval, config, style = 'default', size = 'half' }: TopArtistsProps): React.ReactElement {
-  const displayStyle = config.top_artists_style || 'default'
+export function TopArtists({
+  data,
+  interval,
+  config,
+  style = "default",
+  size = "half",
+}: TopArtistsProps): React.ReactElement {
+  const displayStyle = config.top_artists_style || "default"
 
   return (
     <TopItems
@@ -44,20 +50,19 @@ export function TopArtists({ data, interval, config, style = 'default', size = '
       sectionName="Top Music Artists"
       icon={MdOutlinePersonOutline}
       terminalLabels={{
-        rightText: 'Artist',
-        leftText: 'Plays',
+        rightText: "Artist",
+        leftText: "Plays",
       }}
       mapToGridItem={(artist) => ({
-        title: artist.artist || '',
+        title: artist.artist || "",
         image: artist.image,
-        value: abbreviateNumber(artist.totalPlays || '0') + ' plays',
+        value: abbreviateNumber(artist.totalPlays || "0") + " plays",
       })}
       mapToListItem={(artist) => ({
-        right: artist.artist || '',
+        right: artist.artist || "",
         image: artist.image,
-        left: abbreviateNumber(artist.totalPlays || '0') + ' plays',
+        left: abbreviateNumber(artist.totalPlays || "0") + " plays",
       })}
     />
   )
 }
-

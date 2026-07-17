@@ -1,9 +1,9 @@
 /**
  * Metadata do Plugin LastFM
- * 
+ *
  * This file defines all sections, configurations and options for the LastFM plugin.
  * É usado para gerar automaticamente o metadata.ts centralizado.
- * 
+ *
  * DO NOT edit metadata.ts manually - it is generated automatically from this file.
  */
 
@@ -116,7 +116,8 @@ export const lastfmPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 artists",
-          tooltip: "Maximum number of top artists to display. Artists are ordered by total play count (most played first).",
+          tooltip:
+            "Maximum number of top artists to display. Artists are ordered by total play count (most played first).",
         },
         {
           key: "top_artists_style",
@@ -171,7 +172,8 @@ export const lastfmPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 albums",
-          tooltip: "Maximum number of top albums to display. Albums are ordered by total play count (most played first).",
+          tooltip:
+            "Maximum number of top albums to display. Albums are ordered by total play count (most played first).",
         },
         {
           key: "top_albums_style",
@@ -183,7 +185,8 @@ export const lastfmPluginMetadata = {
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" },
           ],
-          tooltip: "Choose how to display the albums: Grid shows album covers in a grid layout, List shows a compact list format.",
+          tooltip:
+            "Choose how to display the albums: Grid shows album covers in a grid layout, List shows a compact list format.",
         },
         {
           key: "top_albums_period",
@@ -198,7 +201,8 @@ export const lastfmPluginMetadata = {
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" },
           ],
-          tooltip: "Select the time period for top albums. 'All time' shows your most played albums ever, while other options show recent activity.",
+          tooltip:
+            "Select the time period for top albums. 'All time' shows your most played albums ever, while other options show recent activity.",
         },
       ],
     },
@@ -209,7 +213,7 @@ export const lastfmPluginMetadata = {
       configOptions: [
         {
           key: "top_tracks_hide_title",
-          label: "Hide title",  
+          label: "Hide title",
           type: "boolean" as const,
           defaultValue: false,
         },
@@ -239,7 +243,8 @@ export const lastfmPluginMetadata = {
             { value: "list", label: "List" },
             { value: "default", label: "Default (Grid)" },
           ],
-          tooltip: "Choose how to display the tracks: Grid shows track artwork in a grid layout, List shows a compact list format.",
+          tooltip:
+            "Choose how to display the tracks: Grid shows track artwork in a grid layout, List shows a compact list format.",
         },
         {
           key: "top_tracks_period",
@@ -254,7 +259,8 @@ export const lastfmPluginMetadata = {
             { value: "6month", label: "Last 6 months" },
             { value: "12month", label: "Last year" },
           ],
-          tooltip: "Select the time period for top tracks. 'All time' shows your most played tracks ever, while other options show recent activity.",
+          tooltip:
+            "Select the time period for top tracks. 'All time' shows your most played tracks ever, while other options show recent activity.",
         },
       ],
     },
@@ -265,4 +271,3 @@ export const lastfmPluginMetadata = {
     sections: ["recent_tracks", "top_artists"],
   },
 }
-

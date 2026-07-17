@@ -8,27 +8,28 @@ import { useTranslations } from "@/i18n/use-translations"
 export default function LoadingScreen() {
   // This component is only used within [locale] routes where NextIntlClientProvider is available
   // For root-level loading.tsx, use SimpleLoading instead
-  const t = useTranslations('loading')
-  const loadingText = t('loading')
+  const t = useTranslations("loading")
+  const loadingText = t("loading")
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#050814] relative overflow-hidden">
       {/* Pixel grid background */}
-      <div 
+      <div
         className="absolute inset-0 opacity-20"
         style={{
           backgroundImage: `
             linear-gradient(rgba(56,189,248,0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(56,189,248,0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '32px 32px',
+          backgroundSize: "32px 32px",
         }}
       />
-      
+
       {/* Scanlines effect */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.03) 2px, rgba(0,255,255,0.03) 4px)',
+          background:
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.03) 2px, rgba(0,255,255,0.03) 4px)",
         }}
       />
 
@@ -39,7 +40,7 @@ export default function LoadingScreen() {
         transition={{ duration: 0.5 }}
         className="relative z-10 mb-8"
         style={{
-          filter: 'drop-shadow(0 0 20px rgba(56,189,248,0.5)) drop-shadow(0 0 40px rgba(168,85,247,0.3))',
+          filter: "drop-shadow(0 0 20px rgba(56,189,248,0.5)) drop-shadow(0 0 40px rgba(168,85,247,0.3))",
         }}
       >
         <LoadingAnimation />
@@ -84,7 +85,7 @@ export default function LoadingScreen() {
             ))}
           </div>
         </div>
-        
+
         {/* Pixel border decoration */}
         <div className="flex items-center justify-center gap-2">
           <div className="w-8 h-0.5 bg-cyan-400" />
@@ -117,4 +118,3 @@ export default function LoadingScreen() {
     </div>
   )
 }
-

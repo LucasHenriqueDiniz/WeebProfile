@@ -2,7 +2,7 @@
  * Serviço para transformar estatísticas do MyAnimeList
  */
 
-import type { AnimeStatistics, MangaStatistics } from '../types'
+import type { AnimeStatistics, MangaStatistics } from "../types"
 
 export interface JikanStatisticsResponse {
   anime: {
@@ -67,6 +67,3 @@ export function transformStatistics(response: JikanStatisticsResponse): {
     },
   }
 }
-
-
-

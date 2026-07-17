@@ -1,18 +1,18 @@
-import React from 'react'
-import { FaTrophy } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { FaGamepad } from 'react-icons/fa'
-import type { SteamData, SteamNonEssentialConfig } from '../types'
+import React from "react"
+import { FaTrophy } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { FaGamepad } from "react-icons/fa"
+import type { SteamData, SteamNonEssentialConfig } from "../types"
 
 interface TopGamesProps {
   data: SteamData
   config: SteamNonEssentialConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
 function formatPlaytime(minutes: number): string {
@@ -30,20 +30,15 @@ function getSteamImageUrl(game: { appid: number; header_image?: string }): strin
   return game.header_image || null
 }
 
-export function TopGames({
-  data,
-  config,
-  style = 'default',
-  size = 'half',
-}: TopGamesProps): React.ReactElement {
+export function TopGames({ data, config, style = "default", size = "half" }: TopGamesProps): React.ReactElement {
   if (!data || !data.games || data.games.length === 0) {
     return <></>
   }
 
   const hideTitle = config.top_games_hide_title || false
-  const title = config.top_games_title || 'Most Played Games'
+  const title = config.top_games_title || "Most Played Games"
   const maxGames = config.top_games_max || 5
-  const displayStyle = config.top_games_style || 'list'
+  const displayStyle = config.top_games_style || "list"
 
   // Get top games by total playtime
   const topGames = data.games
@@ -63,13 +58,10 @@ export function TopGames({
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<FaTrophy />} />}
 
-            {displayStyle === 'compact' ? (
+            {displayStyle === "compact" ? (
               <div className="grid grid-cols-4 gap-3 half:grid-cols-3 half:gap-2.5">
                 {topGames.map((game) => (
-                  <div
-                    key={game.appid}
-                    className="flex flex-col items-center gap-2 half:gap-1.5 group"
-                  >
+                  <div key={game.appid} className="flex flex-col items-center gap-2 half:gap-1.5 group">
                     {game.header_image && (
                       <div className="relative w-full aspect-video overflow-hidden rounded-lg border-2 border-default-border/60 group-hover:border-default-highlight transition-all shadow-md group-hover:shadow-lg">
                         <img
@@ -94,7 +86,7 @@ export function TopGames({
               <div className="flex flex-col gap-3 half:gap-2.5">
                 {topGames.map((game) => {
                   const gameIconUrl = getSteamImageUrl(game)
-                  
+
                   return (
                     <div
                       key={game.appid}
@@ -102,23 +94,24 @@ export function TopGames({
                     >
                       {/* Background com blur */}
                       {game.header_image && (
-                        <div 
+                        <div
                           className="absolute inset-0"
                           style={{
                             backgroundImage: `url(${game.header_image})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            filter: 'blur(2px)',
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            filter: "blur(2px)",
                           }}
                         />
                       )}
-                      <div 
+                      <div
                         className="absolute inset-0"
                         style={{
-                          background: 'linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.9))',
+                          background:
+                            "linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.9))",
                         }}
                       />
-                      
+
                       {/* Conteúdo */}
                       <div className="relative flex items-center gap-3 px-4 py-3 half:px-3 half:py-2.5 h-full">
                         {gameIconUrl && (
@@ -131,9 +124,7 @@ export function TopGames({
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm half:text-xs font-bold text-white truncate mb-1">
-                            {game.name}
-                          </p>
+                          <p className="text-sm half:text-xs font-bold text-white truncate mb-1">{game.name}</p>
                           <p className="text-xs half:text-[11px] text-white font-semibold">
                             {formatPlaytime(game.playtime_forever)} total
                           </p>
@@ -150,8 +141,8 @@ export function TopGames({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'steam',
-                section: 'top_games',
+                plugin: "steam",
+                section: "top_games",
                 size,
               })}
             />
@@ -169,4 +160,3 @@ export function TopGames({
     </section>
   )
 }
-

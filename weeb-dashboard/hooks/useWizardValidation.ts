@@ -1,6 +1,6 @@
 /**
  * Wizard Validation Hook
- * 
+ *
  * Provides validation state and errors for the wizard.
  * Uses memoization to avoid recalculating on every render.
  */
@@ -11,7 +11,7 @@ import { validateWizard, isWizardValid, type ValidationErrors } from "@/lib/vali
 
 /**
  * Hook that provides validation state for the wizard
- * 
+ *
  * @returns Object with validation errors and isValid flag
  */
 export function useWizardValidation(): {
@@ -21,10 +21,7 @@ export function useWizardValidation(): {
 } {
   const state = useWizardStore()
 
-  const errors = useMemo(() => validateWizard(state), [
-    state.plugins,
-    state.pluginsOrder,
-  ])
+  const errors = useMemo(() => validateWizard(state), [state.plugins, state.pluginsOrder])
 
   const isValid = useMemo(() => isWizardValid(state), [state.plugins, state.pluginsOrder])
   const hasErrors = Object.keys(errors).length > 0

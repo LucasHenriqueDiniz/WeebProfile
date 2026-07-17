@@ -48,7 +48,7 @@ function walkAssign(
   siblingTagCounters: Map<string, number> = new Map()
 ) {
   if (el.type !== "tag") return
-  
+
   const element = el as Element
   const $el = $(element)
   const tag = element.tagName.toLowerCase()
@@ -94,4 +94,3 @@ export function injectDebugIds(html: string, plugin: string, section: string): s
   }
   return $.html()
 }
-

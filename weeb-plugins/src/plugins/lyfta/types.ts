@@ -2,7 +2,7 @@
  * Tipos do Plugin Lyfta
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from "../shared/types/base"
 
 export interface LyftaSet {
   id: string
@@ -98,7 +98,7 @@ export interface LyftaNonEssentialConfig extends NonEssentialPluginConfig {
   last_workout_show_body_weight?: boolean
   last_workout_max_exercises?: number
   last_workout_compact?: boolean
-  weight_unit?: 'kg' | 'lbs' // Unidade de peso: kg ou libras
+  weight_unit?: "kg" | "lbs" // Unidade de peso: kg ou libras
 }
 
 /**
@@ -115,4 +115,3 @@ export interface LyftaData {
   exercises: LyftaExerciseData[]
   statistics: LyftaStatistics
 }
-

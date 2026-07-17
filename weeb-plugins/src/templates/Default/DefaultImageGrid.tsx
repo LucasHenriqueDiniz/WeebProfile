@@ -2,9 +2,9 @@
  * DefaultImageGrid - Grid de imagens para estilo default
  */
 
-import React from 'react'
-import { ImageComponent } from '../../utils/image'
-import type { GridItemProps } from '../types'
+import React from "react"
+import { ImageComponent } from "../../utils/image"
+import type { GridItemProps } from "../types"
 
 function GridItem({ title, image, value }: GridItemProps): React.ReactElement {
   return (
@@ -41,4 +41,3 @@ export function DefaultImageGrid({ data }: DefaultImageGridProps): React.ReactEl
     </div>
   )
 }
-

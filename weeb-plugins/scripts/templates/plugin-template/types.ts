@@ -2,7 +2,7 @@
  * PLUGIN_NAME plugin specific types
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from "../shared/types/base"
 
 /**
  * Non-essential plugin configuration (user preferences)

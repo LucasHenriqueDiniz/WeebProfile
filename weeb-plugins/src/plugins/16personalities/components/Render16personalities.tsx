@@ -1,18 +1,18 @@
-import React from 'react'
-import { FaBrain, FaExternalLinkAlt } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { PluginError } from '../../../components/PluginError'
-import type { Personality16Config, Personality16Data } from '../types'
+import React from "react"
+import { FaBrain, FaExternalLinkAlt } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { PluginError } from "../../../components/PluginError"
+import type { Personality16Config, Personality16Data } from "../types"
 
 interface RenderPersonality16Props {
   config: Personality16Config
   data: Personality16Data
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
 const DefaultPersonality = ({ data, config }: { data: Personality16Data; config: Personality16Config }) => {
@@ -37,9 +37,7 @@ const DefaultPersonality = ({ data, config }: { data: Personality16Data; config:
       </div>
 
       {/* Description */}
-      {showDescription && (
-        <p className="text-default-text text-sm leading-relaxed">{data.description}</p>
-      )}
+      {showDescription && <p className="text-default-text text-sm leading-relaxed">{data.description}</p>}
 
       {/* Link */}
       {showLink && (
@@ -63,8 +61,8 @@ const DefaultPersonality = ({ data, config }: { data: Personality16Data; config:
 export function RenderPersonality16({
   config,
   data,
-  style = 'default',
-  size = 'half',
+  style = "default",
+  size = "half",
 }: RenderPersonality16Props): React.ReactElement {
   if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
@@ -75,28 +73,32 @@ export function RenderPersonality16({
     const urlPattern = /16personalities\.com\/.*\/([A-Z]{4})[/-]/i
     const match = config.personality_url.match(urlPattern)
     if (!match) {
-      return <PluginError
-        pluginName="16Personalities"
-        error="Invalid 16Personalities URL. Please provide a valid personality test result URL."
-        errorType="config"
-        style={style}
-        compact={true}
-      />
+      return (
+        <PluginError
+          pluginName="16Personalities"
+          error="Invalid 16Personalities URL. Please provide a valid personality test result URL."
+          errorType="config"
+          style={style}
+          compact={true}
+        />
+      )
     }
   }
 
   // Verificar se há erro nos dados
   if ((data as any)._error) {
-    return <PluginError
-      pluginName="16Personalities"
-      error={(data as any)._error}
-      errorType="config"
-      style={style}
-      compact={true}
-    />
+    return (
+      <PluginError
+        pluginName="16Personalities"
+        error={(data as any)._error}
+        errorType="config"
+        style={style}
+        compact={true}
+      />
+    )
   }
 
-  const title = config.personality_title || 'Personality'
+  const title = config.personality_title || "Personality"
   const hideTitle = config.personality_hide_title || false
   const showDescription = config.personality_show_description !== false
   const showLink = config.personality_show_link !== false
@@ -115,18 +117,18 @@ export function RenderPersonality16({
           <div className="flex flex-col gap-1">
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: '16personalities',
-                section: 'personality',
+                plugin: "16personalities",
+                section: "personality",
                 type: data.type,
                 size,
               })}
             />
-            <div 
+            <div
               className="px-1 py-0.5"
               style={{
                 fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
                 fontSize: "0.875rem",
-                lineHeight: "1.25rem"
+                lineHeight: "1.25rem",
               }}
             >
               <div className="text-terminal-warning font-semibold">
@@ -137,33 +139,28 @@ export function RenderPersonality16({
               </div>
             </div>
             {showDescription && (
-              <div 
+              <div
                 className="px-1 py-0.5"
                 style={{
                   fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
                   fontSize: "0.875rem",
-                  lineHeight: "1.25rem"
+                  lineHeight: "1.25rem",
                 }}
               >
                 <div className="text-terminal-warning font-semibold mb-0.5">📝 Description</div>
-                <div 
+                <div
                   className="text-terminal-muted whitespace-pre-wrap break-words"
                   style={{
                     fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
                     fontSize: "0.875rem",
-                    lineHeight: "1.25rem"
+                    lineHeight: "1.25rem",
                   }}
                 >
                   {data.description}
                 </div>
               </div>
             )}
-            {showLink && (
-              <TerminalLineWithDots
-                title="🔗 Link"
-                value={data.url}
-              />
-            )}
+            {showLink && <TerminalLineWithDots title="🔗 Link" value={data.url} />}
           </div>
         }
         wrapTerminalBody={true}

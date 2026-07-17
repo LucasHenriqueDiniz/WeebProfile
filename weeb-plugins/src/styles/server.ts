@@ -34,7 +34,7 @@ export async function getCompleteCSS(styleName: string, plugins?: Record<string,
   const styleCSS = getStyleCSS(styleName)
   const sharedCSS = getSharedCSS()
   const pluginsCSS = plugins ? getActivePluginsCSS(plugins) : ""
-  
+
   // Carregar fontes para o estilo
   const fontIds = getFontsForStyle(styleName)
   const fontCSS = fontIds.length > 0 ? await getFontCss(fontIds) : ""

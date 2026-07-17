@@ -18,10 +18,7 @@ export function useAuth() {
     return { error: null }
   }
 
-  const signInWithEmail = async (
-    email: string,
-    password: string
-  ): Promise<{ error: { message: string } | null }> => {
+  const signInWithEmail = async (email: string, password: string): Promise<{ error: { message: string } | null }> => {
     if (!signIn) return { error: { message: "Auth not ready" } }
     try {
       await signIn.create({ identifier: email, password })
@@ -31,10 +28,7 @@ export function useAuth() {
     }
   }
 
-  const signUpWithEmail = async (
-    email: string,
-    password: string
-  ): Promise<{ error: { message: string } | null }> => {
+  const signUpWithEmail = async (email: string, password: string): Promise<{ error: { message: string } | null }> => {
     if (!signUp) return { error: { message: "Auth not ready" } }
     try {
       await signUp.create({ emailAddress: email, password })

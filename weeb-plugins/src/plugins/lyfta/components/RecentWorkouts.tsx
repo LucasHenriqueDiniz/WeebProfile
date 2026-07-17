@@ -1,18 +1,18 @@
-import React from 'react'
-import { FaClock } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { LyftaData, LyftaNonEssentialConfig } from '../types'
-import { formatWeightInt } from '../utils/weight'
+import React from "react"
+import { FaClock } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { LyftaData, LyftaNonEssentialConfig } from "../types"
+import { formatWeightInt } from "../utils/weight"
 
 interface RecentWorkoutsProps {
   data: LyftaData
   config: LyftaNonEssentialConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
 function formatDate(dateString: string): string {
@@ -22,7 +22,7 @@ function formatDate(dateString: string): string {
 
 function getDurationMinutes(duration: string | null): number | null {
   if (!duration) return null
-  const parts = duration.split(':')
+  const parts = duration.split(":")
   if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
     const h = parseInt(parts[0], 10) || 0
     const m = parseInt(parts[1], 10) || 0
@@ -43,7 +43,10 @@ function parseTitle(raw: string): { name: string; muscles: string[] } {
   if (match && match[1] && match[2]) {
     return {
       name: match[1].trim(),
-      muscles: match[2].split(',').map((s) => s.trim()).filter(Boolean),
+      muscles: match[2]
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
     }
   }
   return { name: raw, muscles: [] }
@@ -52,18 +55,18 @@ function parseTitle(raw: string): { name: string; muscles: string[] } {
 export function RecentWorkouts({
   data,
   config,
-  style = 'default',
-  size = 'half',
+  style = "default",
+  size = "half",
 }: RecentWorkoutsProps): React.ReactElement {
   if (!data?.workoutSummaries?.length) return <></>
 
   const hideTitle = config.recent_workouts_hide_title || false
-  const title = config.recent_workouts_title || 'Recent Fitness Workouts'
+  const title = config.recent_workouts_title || "Recent Fitness Workouts"
   const maxWorkouts = config.workouts_max || 4
-  const weightUnit = config.weight_unit || 'kg'
+  const weightUnit = config.weight_unit || "kg"
   const workouts = data.workoutSummaries.slice(0, maxWorkouts)
   // how many muscle chips to show depends on available width
-  const maxChips = size === 'full' ? 6 : 4
+  const maxChips = size === "full" ? 6 : 4
 
   return (
     <section id="lyfta-recent-workouts">
@@ -103,10 +106,7 @@ export function RecentWorkouts({
                 const visibleMuscles = muscles.slice(0, maxChips)
 
                 return (
-                  <div
-                    key={workout.id}
-                    className="flex items-start gap-3 p-3 rounded-lg border border-default-border"
-                  >
+                  <div key={workout.id} className="flex items-start gap-3 p-3 rounded-lg border border-default-border">
                     {/* Index badge */}
                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-default-highlight bg-default-highlight/10 flex-shrink-0 mt-0.5">
                       {index + 1}
@@ -119,7 +119,7 @@ export function RecentWorkouts({
                       </p>
                       <p className="text-xs half:text-[10px] text-default-muted mt-0.5">
                         {dateStr}
-                        {durationMin ? ` • ${durationMin}min` : ''}
+                        {durationMin ? ` • ${durationMin}min` : ""}
                       </p>
                       {visibleMuscles.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1.5">
@@ -157,8 +157,8 @@ export function RecentWorkouts({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'lyfta',
-                section: 'recent_workouts',
+                plugin: "lyfta",
+                section: "recent_workouts",
                 size,
               })}
             />

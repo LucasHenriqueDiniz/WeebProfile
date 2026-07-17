@@ -64,7 +64,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         onChange(min ?? 0)
         return
       }
-      
+
       const numValue = parseInt(inputValue, 10)
       if (isNaN(numValue)) {
         return
@@ -80,7 +80,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         onChange(min ?? 0)
         return
       }
-      
+
       const numValue = parseInt(inputValue, 10)
       if (isNaN(numValue)) {
         onChange(min ?? 0)
@@ -134,4 +134,3 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   }
 )
 NumberInput.displayName = "NumberInput"
-

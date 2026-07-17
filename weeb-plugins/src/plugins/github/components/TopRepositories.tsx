@@ -1,20 +1,20 @@
-import React from 'react'
-import { FaCodeBranch, FaStar } from 'react-icons/fa'
-import { RiGitRepositoryLine } from 'react-icons/ri'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCodeBranch, FaStar } from "react-icons/fa"
+import { RiGitRepositoryLine } from "react-icons/ri"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
 const DefaultTopRepositories = ({
   data,
   maxRepos,
-  previewMode
+  previewMode,
 }: {
-  data: NonNullable<GithubData['topRepositories']>
+  data: NonNullable<GithubData["topRepositories"]>
   maxRepos: number
   previewMode?: boolean
 }) => {
@@ -29,9 +29,10 @@ const DefaultTopRepositories = ({
             href={repo.url}
             target="_blank"
             rel="noopener noreferrer"
-            className={previewMode 
-              ? "flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px] opacity-75"
-              : "flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px] cursor-pointer hover:bg-muted/50 transition-colors"
+            className={
+              previewMode
+                ? "flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px] opacity-75"
+                : "flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px] cursor-pointer hover:bg-muted/50 transition-colors"
             }
             onClick={(e) => {
               if (previewMode) {
@@ -58,9 +59,7 @@ const DefaultTopRepositories = ({
                 )}
               </div>
               {repo.description && (
-                <p className="text-sm text-default-muted line-clamp-2 mb-2 leading-relaxed">
-                  {repo.description}
-                </p>
+                <p className="text-sm text-default-muted line-clamp-2 mb-2 leading-relaxed">{repo.description}</p>
               )}
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-1.5 text-default-muted">
@@ -78,18 +77,18 @@ const DefaultTopRepositories = ({
       </div>
       {data.length > maxRepos && (
         <div className="mt-3 text-center text-sm text-default-muted">
-          +{data.length - maxRepos} more {data.length - maxRepos === 1 ? 'repository' : 'repositories'}
+          +{data.length - maxRepos} more {data.length - maxRepos === 1 ? "repository" : "repositories"}
         </div>
       )}
     </div>
   )
 }
 
-const TerminalTopRepositories = ({ 
+const TerminalTopRepositories = ({
   data,
-  maxRepos
-}: { 
-  data: NonNullable<GithubData['topRepositories']>
+  maxRepos,
+}: {
+  data: NonNullable<GithubData["topRepositories"]>
   maxRepos: number
 }) => {
   const reposToShow = data.slice(0, maxRepos)
@@ -104,35 +103,25 @@ const TerminalTopRepositories = ({
     <>
       <TerminalGrid data={gridData} rightText="Repository" leftText="Stats" />
       {data.length > maxRepos && (
-        <div className="text-terminal-muted text-sm text-center mt-2">
-          +{data.length - maxRepos} more
-        </div>
+        <div className="text-terminal-muted text-sm text-center mt-2">+{data.length - maxRepos} more</div>
       )}
     </>
   )
 }
 
 interface TopRepositoriesProps {
-  data: GithubData['topRepositories']
+  data: GithubData["topRepositories"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-export function GithubTopRepositories({ 
-  data, 
-  config, 
-  style, 
-  size 
-}: TopRepositoriesProps): React.ReactElement {
+export function GithubTopRepositories({ data, config, style, size }: TopRepositoriesProps): React.ReactElement {
   if (!data || data.length === 0) {
     return <></>
   }
 
-  const title = (config.top_repositories_title ?? 'Top Repositories').replace(
-    '<qnt>',
-    abbreviateNumber(data.length)
-  )
+  const title = (config.top_repositories_title ?? "Top Repositories").replace("<qnt>", abbreviateNumber(data.length))
   const hideTitle = config.top_repositories_hide_title ?? false
   const maxRepos = config.top_repositories_max ?? 10
 
@@ -150,8 +139,8 @@ export function GithubTopRepositories({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'top_repositories',
+                plugin: "github",
+                section: "top_repositories",
                 size,
               })}
             />
@@ -162,8 +151,3 @@ export function GithubTopRepositories({
     </section>
   )
 }
-
-
-
-
-

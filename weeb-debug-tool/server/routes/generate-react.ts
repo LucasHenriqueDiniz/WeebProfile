@@ -1,25 +1,25 @@
 /**
  * Generate React HTML Route
- * 
+ *
  * POST /api/generate-react
  * Body: { plugin: string, section: string, style?: string, size?: 'half' | 'full' }
  */
 
-import { Router, Request, Response } from 'express'
-import { renderToString } from 'react-dom/server'
-import React from 'react'
-import { normalizeConfig } from '../../../svg-generator/src/config/config-loader.js'
-import { renderPlugins } from '../utils/render-plugins.js'
-import { injectDebugIds } from '../utils/inject-debug-ids.js'
+import { Router, Request, Response } from "express"
+import { renderToString } from "react-dom/server"
+import React from "react"
+import { normalizeConfig } from "../../../svg-generator/src/config/config-loader.js"
+import { renderPlugins } from "../utils/render-plugins.js"
+import { injectDebugIds } from "../utils/inject-debug-ids.js"
 
 const router = Router()
 
-router.post('/', async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
-    const { plugin, section, style = 'default', size = 'half', sectionConfig = {} } = req.body
+    const { plugin, section, style = "default", size = "half", sectionConfig = {} } = req.body
 
     if (!plugin || !section) {
-      return res.status(400).json({ error: 'plugin and section are required' })
+      return res.status(400).json({ error: "plugin and section are required" })
     }
 
     // Prepare plugin config
@@ -27,7 +27,7 @@ router.post('/', async (req: Request, res: Response) => {
       [plugin]: {
         enabled: true,
         sections: [section],
-        username: 'example', // Mock data
+        username: "example", // Mock data
         ...sectionConfig, // Merge section-specific configs
       },
     }
@@ -51,30 +51,30 @@ router.post('/', async (req: Request, res: Response) => {
         dev: true,
       })
       pluginsContent = renderResult.element
-      console.log('✅ React render successful (using direct imports)')
+      console.log("✅ React render successful (using direct imports)")
     } catch (error) {
-      console.error('❌ Error rendering plugins:', error)
-      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+      console.error("❌ Error rendering plugins:", error)
+      console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace")
       throw error
     }
 
     // Get CSS - import directly from weeb-plugins/src
     let stylesModule, themeUtilsModule
     try {
-      stylesModule = await import('@weeb-plugins/styles/server')
-      themeUtilsModule = await import('@weeb-plugins/themes/theme-utils')
-      console.log('✅ CSS modules imported successfully')
+      stylesModule = await import("@weeb-plugins/styles/server")
+      themeUtilsModule = await import("@weeb-plugins/themes/theme-utils")
+      console.log("✅ CSS modules imported successfully")
     } catch (error) {
-      console.error('❌ Error importing CSS modules:', error)
+      console.error("❌ Error importing CSS modules:", error)
       throw error
     }
-    
+
     const completeCSS = await stylesModule.getCompleteCSS(style, { [plugin]: { enabled: true } })
-    const theme = normalizedConfig.defaultTheme || 'default'
+    const theme = normalizedConfig.defaultTheme || "default"
     const themeVariables = themeUtilsModule.getDefaultThemeVariables(theme, (normalizedConfig as any).customThemeColors)
     const themeVariablesCss = Object.entries(themeVariables)
       .map(([key, value]) => `  ${key}: ${value};`)
-      .join('\n')
+      .join("\n")
 
     const fullCSS = `
       #svg-main {
@@ -84,8 +84,8 @@ ${themeVariablesCss}
     `
 
     // Create React HTML with proper container
-    const containerClass = style === 'terminal' ? 'terminal-container' : 'default-container'
-    const reactHtml = `<div id="svg-main" class="${size}" style="font-family: Poppins, sans-serif; width: ${size === 'half' ? 415 : 830}px;">
+    const containerClass = style === "terminal" ? "terminal-container" : "default-container"
+    const reactHtml = `<div id="svg-main" class="${size}" style="font-family: Poppins, sans-serif; width: ${size === "half" ? 415 : 830}px;">
       <div class="${containerClass}">
         ${renderToString(pluginsContent)}
       </div>
@@ -103,14 +103,13 @@ ${themeVariablesCss}
       debugVersion,
     })
   } catch (error) {
-    console.error('❌ Error generating React HTML:', error)
-    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+    console.error("❌ Error generating React HTML:", error)
+    console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace")
     res.status(500).json({
-      error: error instanceof Error ? error.message : 'Failed to generate React HTML',
+      error: error instanceof Error ? error.message : "Failed to generate React HTML",
       details: error instanceof Error ? error.stack : String(error),
     })
   }
 })
 
 export default router
-

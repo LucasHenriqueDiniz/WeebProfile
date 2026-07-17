@@ -2,9 +2,9 @@
  * DefaultGrid - Grid para estilo default
  */
 
-import React from 'react'
-import { ImageComponent } from '../../utils/image'
-import type { GridItemProps } from '../types'
+import React from "react"
+import { ImageComponent } from "../../utils/image"
+import type { GridItemProps } from "../types"
 
 function GridItem({ image, title, value, subtitle, index }: GridItemProps & { index: number }): React.ReactElement {
   return (
@@ -26,8 +26,12 @@ function GridItem({ image, title, value, subtitle, index }: GridItemProps & { in
       </div>
       <div className={`favorite-overlay ${index === 0 ? "p-2" : "p-1"}`}>
         <div className={`flex flex-col ${index === 0 ? "gap-1" : "gap-0.5"}`}>
-          <p className={`font-semibold text-default truncate line-clamp-1 ${index === 0 ? "text-xs" : "text-[10px]"}`}>{title}</p>
-          {subtitle && <p className={`text-default line-clamp-1 ${index === 0 ? "text-xs" : "text-[10px]"}`}>{subtitle}</p>}
+          <p className={`font-semibold text-default truncate line-clamp-1 ${index === 0 ? "text-xs" : "text-[10px]"}`}>
+            {title}
+          </p>
+          {subtitle && (
+            <p className={`text-default line-clamp-1 ${index === 0 ? "text-xs" : "text-[10px]"}`}>{subtitle}</p>
+          )}
           <p className={`text-default line-clamp-1 ${index === 0 ? "text-xs" : "text-[10px]"}`}>{value}</p>
         </div>
       </div>
@@ -37,10 +41,10 @@ function GridItem({ image, title, value, subtitle, index }: GridItemProps & { in
 
 interface DefaultGridProps {
   data: GridItemProps[]
-  size?: 'half' | 'full'
+  size?: "half" | "full"
 }
 
-export function DefaultGrid({ data, size = 'full' }: DefaultGridProps): React.ReactElement {
+export function DefaultGrid({ data, size = "full" }: DefaultGridProps): React.ReactElement {
   // Limitar dados baseado no tamanho
   let limitedData = data
   if (data.length > 5 && size === "half") {
@@ -57,4 +61,3 @@ export function DefaultGrid({ data, size = 'full' }: DefaultGridProps): React.Re
     </div>
   )
 }
-

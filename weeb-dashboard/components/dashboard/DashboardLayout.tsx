@@ -4,11 +4,7 @@ import { usePathname } from "@/i18n/navigation"
 import { motion } from "framer-motion"
 import { Header } from "@/components/layout/Header"
 import { DashboardSidebar } from "@/components/dashboard/Sidebar"
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -27,10 +23,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     <SidebarProvider>
       <DashboardSidebar />
       <SidebarInset>
-        <Header
-          variant="dashboard"
-          showSidebarToggle={true}
-        />
+        <Header variant="dashboard" showSidebarToggle={true} />
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -38,27 +31,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           transition={{ duration: 0.3 }}
           className="flex-1 overflow-auto bg-muted/20"
         >
-          <div className="min-h-full">
-            {children}
-          </div>
+          <div className="min-h-full">{children}</div>
         </motion.div>
       </SidebarInset>
     </SidebarProvider>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

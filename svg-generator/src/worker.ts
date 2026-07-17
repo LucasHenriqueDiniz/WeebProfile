@@ -155,8 +155,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
 
   if (!validateConfig(config)) {
     const hasEnabledPlugin = Object.values(config.plugins || {}).some(
-      (plugin: any) =>
-        plugin?.enabled === true && Array.isArray(plugin.sections) && plugin.sections.length > 0
+      (plugin: any) => plugin?.enabled === true && Array.isArray(plugin.sections) && plugin.sections.length > 0
     )
 
     const errorMessage = !hasEnabledPlugin

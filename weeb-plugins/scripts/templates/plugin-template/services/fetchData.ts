@@ -1,18 +1,18 @@
 /**
  * PLUGIN_NAME plugin data fetch service
- * 
+ *
  * Implement data fetching logic here
  */
 
-import type { PLUGIN_NAMEConfig, PLUGIN_NAMEData } from '../types'
-import type { EssentialPluginConfig } from '../../shared/types/base'
-import { getMockPLUGIN_NAMEData } from './mock-data'
-import { requireApiKey, fetchJson } from '../../shared/utils/api'
-import { ConfigError } from '../../shared/utils/errors'
+import type { PLUGIN_NAMEConfig, PLUGIN_NAMEData } from "../types"
+import type { EssentialPluginConfig } from "../../shared/types/base"
+import { getMockPLUGIN_NAMEData } from "./mock-data"
+import { requireApiKey, fetchJson } from "../../shared/utils/api"
+import { ConfigError } from "../../shared/utils/errors"
 
 /**
  * Fetches plugin data
- * 
+ *
  * @param config - Plugin configuration (includes enabled, sections, nonEssential)
  * @param dev - Development mode (uses mock data)
  * @param essentialConfig - Essential configurations (API keys, tokens) from profile

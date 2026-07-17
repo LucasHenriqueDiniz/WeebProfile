@@ -97,8 +97,11 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           // But plugins expect camelCase (apiKey, steamId, etc)
           const pluginNameLower = name.toLowerCase()
           const essentialConfigLowercase = essentialConfigs[pluginNameLower]
-          console.log(`🔍 [RENDER] Plugin ${name}: essentialConfig keys (lowercase):`, essentialConfigLowercase ? Object.keys(essentialConfigLowercase) : "none")
-          
+          console.log(
+            `🔍 [RENDER] Plugin ${name}: essentialConfig keys (lowercase):`,
+            essentialConfigLowercase ? Object.keys(essentialConfigLowercase) : "none"
+          )
+
           // Normalize essentialConfig to camelCase (plugins expect camelCase)
           // Map known keys: apikey -> apiKey, steamid -> steamId, username -> username, pat -> pat
           const essentialConfig: any = {}
@@ -106,25 +109,28 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
             Object.entries(essentialConfigLowercase).forEach(([key, value]) => {
               // Map known keys to camelCase
               const keyMap: Record<string, string> = {
-                'apikey': 'apiKey',
-                'steamid': 'steamId',
-                'username': 'username',
-                'pat': 'pat',
+                apikey: "apiKey",
+                steamid: "steamId",
+                username: "username",
+                pat: "pat",
               }
               const camelKey = keyMap[key.toLowerCase()] || key
               essentialConfig[camelKey] = value
             })
           }
-          
+
           // CRITICAL: Some plugins (ex: LastFM) may have username in plugin_config (reusable)
           // but they also need it in essentialConfig. If not in essentialConfig, get from pluginConfig
-          if (name.toLowerCase() === 'lastfm' && !essentialConfig.username && pluginConfig.username) {
+          if (name.toLowerCase() === "lastfm" && !essentialConfig.username && pluginConfig.username) {
             essentialConfig.username = pluginConfig.username
             console.log(`🔍 [RENDER] Plugin ${name}: username from pluginConfig:`, pluginConfig.username)
           }
-          
-          console.log(`🔍 [RENDER] Plugin ${name}: essentialConfig keys (camelCase):`, essentialConfig ? Object.keys(essentialConfig) : "none")
-          
+
+          console.log(
+            `🔍 [RENDER] Plugin ${name}: essentialConfig keys (camelCase):`,
+            essentialConfig ? Object.keys(essentialConfig) : "none"
+          )
+
           // Use config.dev explicitly (already normalized from normalizeConfig)
           const useDev = config.dev === true
           const data = await plugin.fetchData(pluginConfig, useDev, essentialConfig)

@@ -5,20 +5,19 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { templateApi } from "@/lib/api"
-import { useLocaleNavigation } from '@/lib/navigation'
+import { useLocaleNavigation } from "@/lib/navigation"
 import { ensureConsistentPlatforms } from "@/lib/templates-utils"
 import { motion } from "framer-motion"
 import { Filter, Search } from "lucide-react"
 import { defaultThemes, terminalThemes } from "@weeb/weeb-plugins/themes"
-import { useTranslations } from '@/i18n/use-translations'
+import { useTranslations } from "@/i18n/use-translations"
 import { useEffect, useState, useMemo } from "react"
 import { Link } from "@/i18n/navigation"
 import { TemplateCard } from "@/components/templates/TemplateCard"
 import type { Template } from "@/types/template"
 
-
 export function TemplatesPageClient() {
-  const t = useTranslations('templatesPage')
+  const t = useTranslations("templatesPage")
   const { toLocalePath } = useLocaleNavigation()
   const [templates, setTemplates] = useState<Template[]>([])
   const [filteredTemplates, setFilteredTemplates] = useState<Template[]>([])
@@ -31,32 +30,31 @@ export function TemplatesPageClient() {
 
   // Get all available themes from weeb-plugins
   const availableThemes = useMemo(() => {
-    const themes = ['all']
-    
+    const themes = ["all"]
+
     // Add default themes
-    Object.keys(defaultThemes).forEach(theme => {
+    Object.keys(defaultThemes).forEach((theme) => {
       // Convert theme names to more display-friendly format
-      if (theme === 'default') {
-        themes.push('default')
-      } else if (theme.startsWith('default')) {
+      if (theme === "default") {
+        themes.push("default")
+      } else if (theme.startsWith("default")) {
         // Extract color name from themes like 'defaultPurple', 'defaultPink', etc.
-        const colorName = theme.replace('default', '').toLowerCase()
+        const colorName = theme.replace("default", "").toLowerCase()
         themes.push(colorName)
       } else {
         themes.push(theme)
       }
     })
-    
+
     // Add terminal themes
-    Object.keys(terminalThemes).forEach(theme => {
+    Object.keys(terminalThemes).forEach((theme) => {
       if (!themes.includes(theme)) {
         themes.push(theme)
       }
     })
-    
+
     return themes
   }, [])
-
 
   useEffect(() => {
     async function fetchTemplates() {
@@ -69,9 +67,9 @@ export function TemplatesPageClient() {
         } catch (authError) {
           // If authentication fails, try fetching public templates
           console.log("Authentication failed, fetching public templates...")
-          const res = await fetch('/api/templates?public=true')
+          const res = await fetch("/api/templates?public=true")
           if (!res.ok) {
-            throw new Error('Failed to fetch public templates')
+            throw new Error("Failed to fetch public templates")
           }
           response = (await res.json()) as { templates: any[] }
         }
@@ -112,23 +110,22 @@ export function TemplatesPageClient() {
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(template =>
-        template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        template.platforms.some((platform: string) =>
-          platform.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+      filtered = filtered.filter(
+        (template) =>
+          template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          template.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          template.platforms.some((platform: string) => platform.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     }
 
     // Style filter
     if (styleFilter !== "all") {
-      filtered = filtered.filter(template => template.style === styleFilter)
+      filtered = filtered.filter((template) => template.style === styleFilter)
     }
 
     // Theme filter
     if (themeFilter !== "all") {
-      filtered = filtered.filter(template => template.theme === themeFilter)
+      filtered = filtered.filter((template) => template.theme === themeFilter)
     }
 
     // Sorting
@@ -187,25 +184,24 @@ export function TemplatesPageClient() {
     }
   }
 
-
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4"
         >
-          {t('title')}
+          {t("title")}
         </motion.h1>
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="text-xl text-muted-foreground max-w-2xl mx-auto"
         >
-          {t('subtitle')}
+          {t("subtitle")}
         </motion.p>
       </div>
 
@@ -216,7 +212,7 @@ export function TemplatesPageClient() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder={t('searchPlaceholder')}
+              placeholder={t("searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -228,28 +224,27 @@ export function TemplatesPageClient() {
             <Select value={styleFilter} onValueChange={setStyleFilter}>
               <SelectTrigger className="w-[180px]">
                 <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder={t('filters.style.label')} />
+                <SelectValue placeholder={t("filters.style.label")} />
               </SelectTrigger>
               <SelectContent className="max-h-60">
-                <SelectItem value="all">{t('filters.style.all')}</SelectItem>
-                <SelectItem value="default">{t('filters.style.default')}</SelectItem>
-                <SelectItem value="terminal">{t('filters.style.terminal')}</SelectItem>
+                <SelectItem value="all">{t("filters.style.all")}</SelectItem>
+                <SelectItem value="default">{t("filters.style.default")}</SelectItem>
+                <SelectItem value="terminal">{t("filters.style.terminal")}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={themeFilter} onValueChange={setThemeFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder={t('filters.theme.label')} />
+                <SelectValue placeholder={t("filters.theme.label")} />
               </SelectTrigger>
               <SelectContent>
                 {availableThemes.map((theme) => (
                   <SelectItem key={theme} value={theme}>
-                    {theme === 'all' 
-                      ? t('filters.theme.all')
-                      : theme === 'default'
-                      ? t('filters.theme.default')
-                      : theme.charAt(0).toUpperCase() + theme.slice(1)
-                    }
+                    {theme === "all"
+                      ? t("filters.theme.all")
+                      : theme === "default"
+                        ? t("filters.theme.default")
+                        : theme.charAt(0).toUpperCase() + theme.slice(1)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -257,13 +252,13 @@ export function TemplatesPageClient() {
 
             <Select value={sortByValue} onValueChange={setSortByValue}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder={t('sort.label')} />
+                <SelectValue placeholder={t("sort.label")} />
               </SelectTrigger>
               <SelectContent className="max-h-60">
-                <SelectItem value="newest">{t('sort.newest')}</SelectItem>
-                <SelectItem value="oldest">{t('sort.oldest')}</SelectItem>
-                <SelectItem value="mostLiked">{t('sort.mostLiked')}</SelectItem>
-                <SelectItem value="name">{t('sort.name')}</SelectItem>
+                <SelectItem value="newest">{t("sort.newest")}</SelectItem>
+                <SelectItem value="oldest">{t("sort.oldest")}</SelectItem>
+                <SelectItem value="mostLiked">{t("sort.mostLiked")}</SelectItem>
+                <SelectItem value="name">{t("sort.name")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -288,10 +283,10 @@ export function TemplatesPageClient() {
         <div className="space-y-8">
           {filteredTemplates.length === 0 ? (
             <div className="text-center py-20">
-              <h3 className="text-2xl font-semibold mb-2">{t('noTemplatesFound')}</h3>
-              <p className="text-muted-foreground mb-6">{t('noTemplatesFoundDescription')}</p>
+              <h3 className="text-2xl font-semibold mb-2">{t("noTemplatesFound")}</h3>
+              <p className="text-muted-foreground mb-6">{t("noTemplatesFoundDescription")}</p>
               <Button asChild>
-                <Link href={toLocalePath('/dashboard/new')}>{t('createYourOwn')}</Link>
+                <Link href={toLocalePath("/dashboard/new")}>{t("createYourOwn")}</Link>
               </Button>
             </div>
           ) : (
@@ -313,4 +308,3 @@ export function TemplatesPageClient() {
     </div>
   )
 }
-
