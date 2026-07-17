@@ -104,7 +104,6 @@ A simple and customizable way to display code, anime, and music stats on your Gi
   </table>
 </details>
 
-
 <details close>
   <summary><b>lastfm</b></summary>
 
@@ -214,7 +213,6 @@ A simple and customizable way to display code, anime, and music stats on your Gi
     </tr>
   </table>
 </details>
-
 
 <details close>
   <summary><b>myanimelist</b></summary>
@@ -341,7 +339,6 @@ A simple and customizable way to display code, anime, and music stats on your Gi
     </tr>
   </table>
 </details>
-
 
 <!-- SETUP:README @TODO UPDATE THIS -->
 

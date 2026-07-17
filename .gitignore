@@ -3,11 +3,12 @@ node_modules
 .pnp
 .pnp.js
 
-# Weeb Dashboard 
+# Weeb Dashboard
 /weeb-dashboard/node_modules
 /weeb-dashboard/.next/
 /weeb-dashboard/out/
 /weeb-dashboard/.vercel
+/weeb-dashboard/dist
 
 # SVG Generator
 /svg-generator/node_modules
