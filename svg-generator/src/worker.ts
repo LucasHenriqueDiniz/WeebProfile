@@ -9,7 +9,7 @@
  * Deploy:    `pnpm deploy` (wrangler deploy)
  */
 
-import type { D1Database } from "@cloudflare/workers-types"
+import type { D1Database, ScheduledController, ExecutionContext } from "@cloudflare/workers-types"
 import { generateSvg, validateConfig, normalizeConfig } from "./index.js"
 import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
 import { getUserEssentialConfigs } from "./db/essential-configs.js"
@@ -17,6 +17,8 @@ import { validateRequiredConfig } from "./validation/validate-required-config.js
 
 export interface Env {
   DB: D1Database
+  CRON_SECRET?: string
+  DASHBOARD_URL?: string
 }
 
 interface GenerateRequest {
@@ -203,6 +205,46 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
   }
 }
 
+/**
+ * Cron Trigger handler (see [triggers] in wrangler.toml): calls the dashboard's
+ * cron endpoint (weeb-dashboard/functions/api/cron/generate-svgs.ts), which owns
+ * the actual "which SVGs are due" + regenerate + save-to-R2 logic, and loops
+ * until a batch comes back under the endpoint's per-call limit (50).
+ */
+async function runScheduledGeneration(env: Env): Promise<void> {
+  if (!env.CRON_SECRET) {
+    console.error("[CRON] CRON_SECRET not configured, skipping scheduled generation")
+    return
+  }
+
+  const dashboardUrl = env.DASHBOARD_URL || "https://weebprofile-dashboard.pages.dev"
+  let totalProcessed = 0
+
+  for (let run = 1; run <= 20; run++) {
+    let batch = 0
+    try {
+      const response = await fetch(`${dashboardUrl}/api/cron/generate-svgs`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${env.CRON_SECRET}`,
+          "Content-Type": "application/json",
+        },
+      })
+      const result = (await response.json().catch(() => ({}))) as { processed?: number }
+      batch = result.processed || 0
+      totalProcessed += batch
+      console.log(`[CRON] Run ${run}: processed ${batch} (total ${totalProcessed})`)
+    } catch (error) {
+      console.error(`[CRON] Run ${run} failed:`, error instanceof Error ? error.message : error)
+      break
+    }
+
+    if (batch < 50) break
+  }
+
+  console.log(`[CRON] Scheduled generation complete. Total processed: ${totalProcessed}`)
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === "OPTIONS") {
@@ -223,5 +265,9 @@ export default {
     }
 
     return handleGenerate(request, env)
+  },
+
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(runScheduledGeneration(env))
   },
 }

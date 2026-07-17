@@ -11,3 +11,15 @@ compatibility_flags = ["nodejs_compat"]
 binding = "DB"
 database_name = "weebprofile-db"
 database_id = "c7eb434d-7ca2-4c5c-bf63-943e38e46158"
+
+# ============================================================
+# Daily SVG regeneration (replaces the old GitHub Actions cron).
+# Calls weeb-dashboard's /api/cron/generate-svgs on schedule; see
+# the scheduled() handler in src/worker.ts.
+# CRON_SECRET is set via `wrangler secret put CRON_SECRET` (not here).
+# ============================================================
+[triggers]
+crons = ["7 3 * * *"]
+
+[vars]
+DASHBOARD_URL = "https://weebprofile-dashboard.pages.dev"
