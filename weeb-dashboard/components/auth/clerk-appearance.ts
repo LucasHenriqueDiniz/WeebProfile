@@ -17,9 +17,10 @@ export const clerkAppearance = {
     card: "bg-transparent shadow-none p-0 w-full gap-3",
     headerTitle: "hidden",
     headerSubtitle: "hidden",
-    footer: "bg-transparent bg-none",
-    footerAction: "hidden",
-    footerActionLink: "text-cyan-400 hover:text-cyan-300 font-medium",
+    // Clerk's own footer ("Secured by Clerk" / dev-mode notice) ships a dot-grid
+    // background-image meant for light surfaces and clashes with the dark card - hide it
+    // entirely (our own "Não tem conta?" / "Já tem conta?" links live outside this component).
+    footer: "hidden",
     socialButtons: "gap-2",
     socialButtonsBlockButton:
       "border border-slate-700 bg-slate-900/70 hover:bg-slate-800 text-slate-100 text-sm font-medium transition py-2",
@@ -32,7 +33,6 @@ export const clerkAppearance = {
       "rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition",
     formButtonPrimary:
       "rounded-xl bg-gradient-to-r from-cyan-500 to-sky-600 text-white text-sm font-semibold hover:from-cyan-400 hover:to-sky-500 transition-all hover:scale-[1.01] shadow-[0_0_20px_rgba(56,189,248,0.3)] py-2",
-    footerActionText: "text-xs text-slate-500",
     identityPreviewText: "text-slate-200",
     identityPreviewEditButton: "text-cyan-400 hover:text-cyan-300",
     formResendCodeLink: "text-cyan-400 hover:text-cyan-300",
