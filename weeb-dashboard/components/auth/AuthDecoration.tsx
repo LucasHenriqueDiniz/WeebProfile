@@ -5,10 +5,6 @@ import { ArrowLeft } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import type { ReactNode } from "react"
 
-// Textura de ruído sutil para dar profundidade ao cartão sem depender de imagem externa.
-const NOISE_BG =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
-
 // Deterministic stars configuration
 const stars = [
   { id: 1, top: "10%", left: "15%", size: 2, opacity: 0.2 },
@@ -295,44 +291,33 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
           transition={{ duration: 0.35 }}
           className="w-full lg:w-1/2 flex flex-col items-center justify-center"
         >
-          <div className="w-full max-w-md rounded-[28px] bg-gradient-to-br from-purple-500/50 via-pink-500/35 to-cyan-400/50 p-px">
-            <div
-              className="rounded-[27px] bg-[#0a0f1e]/95 backdrop-blur-xl px-6 py-8 sm:px-8 sm:py-9 relative shadow-[0_10px_40px_-12px_rgba(0,0,0,0.6)]"
-              style={{
-                backgroundImage: `radial-gradient(circle at 100% 0%, rgba(34,211,238,0.12), transparent 55%), radial-gradient(circle at 0% 100%, rgba(168,85,247,0.12), transparent 55%), ${NOISE_BG}`,
-                backgroundBlendMode: "normal, normal, overlay",
-                backgroundSize: "auto, auto, 120px 120px",
-              }}
-            >
-              <div className="relative z-10">
-                {/* Header */}
-                <div className="text-center mb-7">
-                  <div className="inline-flex items-center gap-1.5 mb-3">
-                    <img src="/sora/sora-head.png" alt="" className="w-4 h-4 object-contain" />
-                    <span className="text-[11px] font-bold tracking-[0.25em] uppercase font-heading bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-                      WeebProfile
-                    </span>
-                  </div>
-                  <h1 className="text-[26px] sm:text-[28px] leading-tight font-heading font-extrabold text-white">
-                    {title}
-                  </h1>
-                </div>
-
-                {children}
-
-                {/* Footer */}
-                <p className="text-[11px] text-center text-slate-500 mt-6 leading-relaxed">
-                  Ao continuar, você concorda com nossos{" "}
-                  <a
-                    href="#"
-                    className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 decoration-cyan-400/40 transition-colors"
-                  >
-                    termos de serviço
-                  </a>
-                  .
-                </p>
+          <div className="w-full max-w-md rounded-2xl border border-cyan-500/30 bg-[#0a0f1e]/90 backdrop-blur-xl px-6 py-8 sm:px-8 sm:py-9">
+            {/* Header */}
+            <div className="text-center mb-7">
+              <div className="inline-flex items-center gap-1.5 mb-3">
+                <img src="/sora/sora-head.png" alt="" className="w-4 h-4 object-contain" />
+                <span className="text-[11px] font-bold tracking-[0.25em] uppercase font-heading bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                  WeebProfile
+                </span>
               </div>
+              <h1 className="text-[26px] sm:text-[28px] leading-tight font-heading font-extrabold text-white">
+                {title}
+              </h1>
             </div>
+
+            {children}
+
+            {/* Footer */}
+            <p className="text-[11px] text-center text-slate-500 mt-6 leading-relaxed">
+              Ao continuar, você concorda com nossos{" "}
+              <a
+                href="#"
+                className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 decoration-cyan-400/40 transition-colors"
+              >
+                termos de serviço
+              </a>
+              .
+            </p>
           </div>
         </motion.div>
       </div>
