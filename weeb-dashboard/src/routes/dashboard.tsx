@@ -278,9 +278,7 @@ export default function DashboardPage() {
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-border/50"
           >
             <div className="flex-1">
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                {t("title")}
-              </h1>
+              <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">{t("title")}</h1>
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <Badge variant="outline">
                   {total} {t("total")}
