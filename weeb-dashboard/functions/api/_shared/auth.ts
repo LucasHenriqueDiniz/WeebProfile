@@ -12,9 +12,23 @@ export interface CloudflareEnv {
   SECRETS_ENCRYPTION_KEY?: string
 }
 
+// Cache the Clerk client at module scope so its JWKS cache survives across
+// requests on the same warm Worker isolate, instead of every request paying
+// a network round-trip to Clerk to re-fetch signing keys.
+let cachedClerk: ReturnType<typeof createClerkClient> | null = null
+let cachedSecretKey: string | null = null
+
+export function getClerkClient(secretKey: string) {
+  if (!cachedClerk || cachedSecretKey !== secretKey) {
+    cachedClerk = createClerkClient({ secretKey })
+    cachedSecretKey = secretKey
+  }
+  return cachedClerk
+}
+
 export async function getAuthUserId(request: Request, env: CloudflareEnv): Promise<string | null> {
   try {
-    const clerk = createClerkClient({ secretKey: env.CLERK_SECRET_KEY })
+    const clerk = getClerkClient(env.CLERK_SECRET_KEY)
     const requestState = await clerk.authenticateRequest(request, {
       publishableKey: env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     })

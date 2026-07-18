@@ -151,6 +151,13 @@ export const PluginCard = React.memo(
       })
     }, [state, metadata])
     const [showEssentialConfigs, setShowEssentialConfigs] = useState(false)
+    // Só mostrar campo obrigatório como erro depois que o usuário interagiu com ele
+    // (evita mostrar "obrigatório" em vermelho assim que o plugin é habilitado, antes
+    // de qualquer chance de preencher o campo).
+    const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set())
+    const handleFieldBlur = useCallback((field: string) => {
+      setTouchedFields((prev) => (prev.has(field) ? prev : new Set(prev).add(field)))
+    }, [])
 
     const activeSectionCount = state.sections?.length || 0
     const pluginMissingConfigs = missingConfigs.filter((m) => m.plugin === plugin.name)
@@ -710,10 +717,9 @@ export const PluginCard = React.memo(
                         // Get value from local state first (for immediate UI updates), fallback to global state
                         const localValue = localInputValues[`required.${field}`]
                         const value = localValue !== undefined ? localValue : (state as any)[field] || ""
+                        const isEmpty = !value || (typeof value === "string" && !value.trim())
                         const isMissing =
-                          pluginMissingConfigs.some((m) => m.field === field) ||
-                          !value ||
-                          (typeof value === "string" && !value.trim())
+                          touchedFields.has(field) && (pluginMissingConfigs.some((m) => m.field === field) || isEmpty)
 
                         // Try to find metadata for this field in section configOptions
                         let fieldMetadata: any = {
@@ -783,6 +789,7 @@ export const PluginCard = React.memo(
                               placeholder={fieldMetadata.placeholder || `Enter ${field}...`}
                               value={value}
                               onChange={(e) => handleRequiredFieldChange(field, e.target.value)}
+                              onBlur={() => handleFieldBlur(field)}
                               aria-label={fieldMetadata.label}
                               aria-required={isMissing}
                             />

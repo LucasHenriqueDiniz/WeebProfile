@@ -1,7 +1,6 @@
 import type { PagesFunction } from "@cloudflare/workers-types"
-import { createClerkClient } from "@clerk/backend"
 import type { CloudflareEnv } from "../_shared/auth"
-import { getAuthUserId, unauthorized, badRequest, serverError } from "../_shared/auth"
+import { getAuthUserId, getClerkClient, unauthorized, badRequest, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
 import { profiles, essentialConfigs } from "../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
@@ -9,7 +8,7 @@ import { encryptSecret } from "../_shared/secret-crypto"
 
 async function getGitHubUsername(env: CloudflareEnv, userId: string): Promise<string | null> {
   try {
-    const clerk = createClerkClient({ secretKey: env.CLERK_SECRET_KEY })
+    const clerk = getClerkClient(env.CLERK_SECRET_KEY)
     const user = await clerk.users.getUser(userId)
     return user.username || user.externalAccounts.find((a) => String(a.provider).includes("github"))?.username || null
   } catch {
