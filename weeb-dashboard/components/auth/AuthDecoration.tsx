@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowLeft, Sparkles } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import type { ReactNode } from "react"
 
@@ -295,22 +295,20 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
           transition={{ duration: 0.35 }}
           className="w-full lg:w-1/2 flex flex-col items-center justify-center"
         >
-          <div className="w-full max-w-md rounded-[28px] bg-gradient-to-br from-purple-500/60 via-pink-500/40 to-cyan-400/60 p-px shadow-[0_25px_70px_-20px_rgba(0,0,0,0.85)]">
-            <div className="rounded-[27px] bg-[#0a0f1e]/95 backdrop-blur-xl px-6 py-8 sm:px-8 sm:py-9 relative overflow-hidden">
-              {/* Noise texture for depth */}
-              <div
-                className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay"
-                style={{ backgroundImage: NOISE_BG }}
-              />
-              {/* Corner glow */}
-              <div className="absolute -top-16 -right-16 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
-
+          <div className="w-full max-w-md rounded-[28px] bg-gradient-to-br from-purple-500/50 via-pink-500/35 to-cyan-400/50 p-px">
+            <div
+              className="rounded-[27px] bg-[#0a0f1e]/95 backdrop-blur-xl px-6 py-8 sm:px-8 sm:py-9 relative shadow-[0_10px_40px_-12px_rgba(0,0,0,0.6)]"
+              style={{
+                backgroundImage: `radial-gradient(circle at 100% 0%, rgba(34,211,238,0.12), transparent 55%), radial-gradient(circle at 0% 100%, rgba(168,85,247,0.12), transparent 55%), ${NOISE_BG}`,
+                backgroundBlendMode: "normal, normal, overlay",
+                backgroundSize: "auto, auto, 120px 120px",
+              }}
+            >
               <div className="relative z-10">
                 {/* Header */}
                 <div className="text-center mb-7">
                   <div className="inline-flex items-center gap-1.5 mb-3">
-                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <img src="/sora/sora-head.png" alt="" className="w-4 h-4 object-contain" />
                     <span className="text-[11px] font-bold tracking-[0.25em] uppercase font-heading bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
                       WeebProfile
                     </span>
