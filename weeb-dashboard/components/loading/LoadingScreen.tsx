@@ -10,7 +10,7 @@ const LOADING_TEXT = "Carregando..."
 // Component that renders the actual loading UI
 export default function LoadingScreen() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#050814] relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0f1e] relative overflow-hidden">
       {/* Single atmospheric glow - brand gradient, not a stacked grid/scanline effect */}
       <motion.div
         className="absolute w-[36rem] h-[36rem] rounded-full pointer-events-none"

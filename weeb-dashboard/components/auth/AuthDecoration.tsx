@@ -123,7 +123,7 @@ interface AuthDecorationProps {
 // Fundo decorativo compartilhado entre /login e /signup (estrelas, sparkles, mascote Sora).
 export function AuthDecoration({ title, children }: AuthDecorationProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[#050814] relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-[#0a0f1e] relative overflow-hidden">
       {/* Back to Home Button */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -143,7 +143,7 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,_rgba(6,182,212,0.15),_transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_60%,_rgba(168,85,247,0.12),_transparent_55%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(139,92,246,0.08),_transparent_70%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050814]/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0f1e]/40 pointer-events-none" />
 
       {/* Subtle stars */}
       {stars.map((star) => (

@@ -160,7 +160,7 @@ export function Header({ className, variant, showSidebarToggle }: HeaderProps) {
                           src={user.user_metadata?.avatar_url || user.user_metadata?.picture || "/sora/sora-head.png"}
                           alt={user.user_metadata?.user_name || user.user_metadata?.full_name || "User"}
                         />
-                        <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500">
+                        <AvatarFallback className="bg-gradient-to-br from-violet-500 to-cyan-500">
                           <img
                             src="/sora/sora-head.png"
                             alt="Sora"
@@ -331,7 +331,7 @@ export function Header({ className, variant, showSidebarToggle }: HeaderProps) {
                         src={user.user_metadata?.avatar_url || user.user_metadata?.picture}
                         alt={user.user_metadata?.user_name || user.user_metadata?.full_name || "User"}
                       />
-                      <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-sm font-bold shadow-lg">
+                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-cyan-500 text-white text-sm font-bold shadow-lg">
                         {user.user_metadata?.user_name?.charAt(0)?.toUpperCase() ||
                           user.user_metadata?.full_name?.charAt(0)?.toUpperCase() ||
                           user.email?.charAt(0)?.toUpperCase() ||

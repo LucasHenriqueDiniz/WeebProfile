@@ -36,34 +36,35 @@
   }
 
   .dark {
-    /* GitHub Dark Theme Colors - Baseado no Primer Design System */
-    --background: 210 24% 6%; /* #0d1117 - GitHub dark bg-default */
-    --foreground: 210 17% 82%; /* #c9d1d9 - GitHub dark fg-default */
-    --card: 210 24% 9%; /* #161b22 - GitHub dark bg-muted */
-    --card-foreground: 210 17% 82%; /* #c9d1d9 */
-    --popover: 210 24% 9%; /* #161b22 */
-    --popover-foreground: 210 17% 82%; /* #c9d1d9 */
-    --primary: 258 90% 66%; /* #8b5cf6 - Purple (WeebProfile brand) */
+    /* Navy Terminal - anime cyber-cute escuro. Navy profundo (não cinza-GitHub),
+       violeta + cyan como par de acento operante. Ver AGENTS.md/BRAND.md. */
+    --background: 222 47% 7%; /* #0a0f1e - navy profundo */
+    --foreground: 210 20% 88%; /* #dde3ec */
+    --card: 222 39% 11%; /* #131a2b */
+    --card-foreground: 210 20% 88%; /* #dde3ec */
+    --popover: 222 39% 11%; /* #131a2b */
+    --popover-foreground: 210 20% 88%; /* #dde3ec */
+    --primary: 258 90% 66%; /* #8b5cf6 - Violet (WeebProfile brand) */
     --primary-foreground: 0 0% 100%; /* #ffffff */
-    --secondary: 330 81% 60%; /* #ec4899 - Pink (WeebProfile accent) */
+    --secondary: 330 81% 60%; /* #ec4899 - Pink (rare accent, not the main pair) */
     --secondary-foreground: 0 0% 100%; /* #ffffff */
-    --muted: 210 24% 9%; /* #161b22 */
-    --muted-foreground: 210 10% 60%; /* #8b949e - GitHub dark fg-muted */
-    --accent: 210 24% 12%; /* #21262d - GitHub dark bg-canvas-subtle */
-    --accent-foreground: 210 17% 82%; /* #c9d1d9 */
-    --destructive: 0 72% 51%; /* #f85149 - GitHub dark danger */
+    --muted: 222 33% 13%; /* #171f33 */
+    --muted-foreground: 220 14% 65%; /* #9aa5ba */
+    --accent: 222 30% 16%; /* #1c2438 */
+    --accent-foreground: 210 20% 88%; /* #dde3ec */
+    --destructive: 0 84% 65%; /* #f87171 */
     --destructive-foreground: 0 0% 100%; /* #ffffff */
-    --border: 210 18% 20%; /* #30363d - GitHub dark border-default */
-    --input: 210 18% 20%; /* #30363d */
-    --ring: 212 100% 72%; /* #58a6ff */
-    --sidebar-background: 210 24% 9%; /* #161b22 */
-    --sidebar-foreground: 210 17% 82%; /* #c9d1d9 */
-    --sidebar-primary: 212 100% 72%; /* #58a6ff */
-    --sidebar-primary-foreground: 210 24% 6%; /* #0d1117 */
-    --sidebar-accent: 210 24% 12%; /* #21262d */
-    --sidebar-accent-foreground: 210 17% 82%; /* #c9d1d9 */
-    --sidebar-border: 210 18% 20%; /* #30363d */
-    --sidebar-ring: 212 100% 72%; /* #58a6ff */
+    --border: 222 24% 20%; /* #262f47 */
+    --input: 222 24% 20%; /* #262f47 */
+    --ring: 189 94% 55%; /* #22d3ee - Cyan */
+    --sidebar-background: 222 42% 8%; /* #0c1220 */
+    --sidebar-foreground: 210 20% 88%; /* #dde3ec */
+    --sidebar-primary: 189 94% 55%; /* #22d3ee - Cyan (active nav state) */
+    --sidebar-primary-foreground: 222 47% 7%; /* #0a0f1e */
+    --sidebar-accent: 222 30% 16%; /* #1c2438 */
+    --sidebar-accent-foreground: 210 20% 88%; /* #dde3ec */
+    --sidebar-border: 222 24% 20%; /* #262f47 */
+    --sidebar-ring: 189 94% 55%; /* #22d3ee */
   }
 }
 

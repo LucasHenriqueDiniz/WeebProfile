@@ -362,11 +362,16 @@ export default function DashboardPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.03, duration: 0.2 }}
                     >
-                      <Card className="hover:shadow-lg hover:shadow-primary/5 hover:border-primary/50 transition-all group h-full flex flex-col border-border/50">
+                      <Card className="hover:border-cyan-500/40 hover:bg-card/80 transition-colors group h-full flex flex-col border-border/50">
                         <CardContent className="p-5 flex flex-col flex-1">
                           {/* Preview Image */}
                           {svg.storageUrl && svg.status === "completed" && !imageErrors.has(svg.id) ? (
                             <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/30 shadow-sm relative group">
+                              {/* Pixel-corner accent - discreet nod to the Sora pixel art, not a full retro theme */}
+                              <div
+                                aria-hidden
+                                className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-400/50 group-hover:border-cyan-400 transition-colors z-10 pointer-events-none"
+                              />
                               <img
                                 src={`${svg.storageUrl}?v=${svg.lastGeneratedAt ? new Date(svg.lastGeneratedAt).getTime() : svg.updatedAt ? new Date(svg.updatedAt).getTime() : Date.now()}`}
                                 alt={svg.name}
@@ -389,8 +394,8 @@ export default function DashboardPage() {
                               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                             </div>
                           ) : imageErrors.has(svg.id) || (svg.storageUrl && svg.status === "completed") ? (
-                            <div className="mb-4 rounded-lg border border-border bg-gradient-to-br from-purple-500/10 to-pink-500/10 aspect-video flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
-                              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5" />
+                            <div className="mb-4 rounded-lg border border-border bg-gradient-to-br from-violet-500/10 to-cyan-500/10 aspect-video flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
+                              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-cyan-500/5" />
                               <img
                                 src="/sora/sora-head.png"
                                 alt="Sora - Error loading image"
@@ -585,7 +590,7 @@ export default function DashboardPage() {
                 transition={{ delay: 0.15, duration: 0.2 }}
                 className="text-center py-16 md:py-20"
               >
-                <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 mb-6">
+                <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-violet-500/10 to-cyan-500/10 mb-6">
                   <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold mb-2">{t("noResultsFound")}</h3>

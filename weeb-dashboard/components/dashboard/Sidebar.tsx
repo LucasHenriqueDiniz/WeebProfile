@@ -73,10 +73,8 @@ export function DashboardSidebar() {
             />
           </div>
           <div className="group-data-[collapsible=icon]:hidden flex items-center gap-1.5">
-            <h1 className="font-bold text-base bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              WeebProfile
-            </h1>
-            <Sparkles className="w-3 h-3 text-primary/60 flex-shrink-0" />
+            <h1 className="font-heading font-bold text-base text-foreground">WeebProfile</h1>
+            <Sparkles className="w-3 h-3 text-cyan-400/70 flex-shrink-0" />
           </div>
         </Link>
       </SidebarHeader>
@@ -93,7 +91,11 @@ export function DashboardSidebar() {
 
                 return (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      className="relative data-[active=true]:bg-cyan-500/10 data-[active=true]:text-cyan-300 data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-1/2 data-[active=true]:before:-translate-y-1/2 data-[active=true]:before:h-4 data-[active=true]:before:w-[3px] data-[active=true]:before:bg-cyan-400"
+                    >
                       <Link href={item.href}>
                         <Icon />
                         <span>{item.label}</span>
@@ -113,7 +115,7 @@ export function DashboardSidebar() {
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:bg-sidebar-accent group-data-[collapsible=icon]:justify-center">
                 <div className="relative flex-shrink-0">
-                  <div className="w-9 h-9 rounded-full ring-2 ring-primary/20 overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-full ring-2 ring-primary/20 overflow-hidden bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center">
                     {user.user_metadata?.avatar_url || user.user_metadata?.picture ? (
                       <img
                         src={user.user_metadata?.avatar_url || user.user_metadata?.picture}
