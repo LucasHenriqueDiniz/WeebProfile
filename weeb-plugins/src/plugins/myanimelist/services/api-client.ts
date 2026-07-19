@@ -5,7 +5,13 @@ export interface JikanEdgeDiagnostics {
 }
 
 export class JikanEdgeError extends Error {
-  constructor(message: string, readonly status?: number, readonly code?: string, readonly diagnostics?: JikanEdgeDiagnostics) {
+  constructor(
+    message: string,
+    readonly status?: number,
+    readonly code?: string,
+    readonly diagnostics?: JikanEdgeDiagnostics,
+    readonly request?: { method: "GET"; originPathname: string }
+  ) {
     super(message)
     this.name = "JikanEdgeError"
   }
@@ -24,15 +30,28 @@ function diagnostics(response: Response): JikanEdgeDiagnostics {
 export async function jikanEdgeGet<T>(path: string, options: { timeoutMs?: number } = {}): Promise<T> {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), options.timeoutMs ?? 20_000)
+  const url = new URL(path, baseUrl())
+  const request = { method: "GET" as const, originPathname: `${url.origin}${url.pathname}` }
   let response: Response
   try {
-    response = await fetch(new URL(path, baseUrl()), { signal: controller.signal, headers: { Accept: "application/json", "User-Agent": "WeebProfile/1.0" } })
+    response = await fetch(url, { signal: controller.signal, headers: { Accept: "application/json", "User-Agent": "WeebProfile/1.0" } })
   } catch (error) {
-    throw new JikanEdgeError(error instanceof Error && error.name === "AbortError" ? "Jikan Edge request timed out" : "Jikan Edge request failed")
+    throw new JikanEdgeError(error instanceof Error && error.name === "AbortError" ? "Jikan Edge request timed out" : "Jikan Edge request failed", undefined, undefined, undefined, request)
   } finally {
     clearTimeout(timeoutId)
   }
   const body = (await response.json().catch(() => null)) as { error?: { code?: string; message?: string } } | null
-  if (!response.ok) throw new JikanEdgeError(body?.error?.message || `Jikan Edge responded HTTP ${response.status}`, response.status, body?.error?.code, diagnostics(response))
+  if (!response.ok) {
+    const detail = body?.error?.message || `Jikan Edge responded HTTP ${response.status}`
+    const code = body?.error?.code
+    const trace = diagnostics(response)
+    throw new JikanEdgeError(
+      `${request.method} ${request.originPathname} HTTP ${response.status}${code ? ` ${code}` : ""}: ${detail}; requestId=${trace.requestId ?? "-"}; workerVersion=${trace.workerVersion ?? "-"}; cacheStatus=${trace.cacheStatus ?? "-"}`,
+      response.status,
+      code,
+      trace,
+      request
+    )
+  }
   return body as T
 }

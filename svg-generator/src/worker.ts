@@ -19,6 +19,7 @@ export interface Env {
   DB: D1Database
   CRON_SECRET?: string
   DASHBOARD_URL?: string
+  JIKAN_EDGE_BASE_URL?: string
   SECRETS_ENCRYPTION_KEY?: string
 }
 
@@ -56,6 +57,12 @@ function json(body: unknown, status = 200): Response {
 
 async function handleGenerate(request: Request, env: Env): Promise<Response> {
   let requestData: GenerateRequest
+
+  // Plugin packages execute outside this module and read their configured base URL
+  // through process.env. Bind the Wrangler variable explicitly for that shared runtime.
+  if (env.JIKAN_EDGE_BASE_URL && typeof process !== "undefined") {
+    process.env.JIKAN_EDGE_BASE_URL = env.JIKAN_EDGE_BASE_URL
+  }
 
   try {
     requestData = await request.json()
