@@ -3,6 +3,7 @@ import type { CloudflareEnv } from "../_shared/auth"
 import { serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
 import { saveSvgToR2 } from "../_shared/storage"
+import { assertGenerationSucceeded } from "../_shared/svg-generation-validation"
 import { svgs } from "../../../lib/db/schema"
 import { eq, or, lte, isNull, and, sql, lt } from "drizzle-orm"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
@@ -235,6 +236,11 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
 
         const result = (await generateSvgViaHttpService(requestConfig, svgGeneratorUrl)) as any
         const svgContent = result.svg
+
+        // Same gate the manual regenerate endpoint uses -- neither trigger may publish a
+        // degraded SVG over a previously-valid one. pluginErrors/hasErrors are always present
+        // on the generator's response now, not gated behind a `debug` request flag.
+        assertGenerationSucceeded(result)
 
         const { path: storagePath, url: storageUrl } = await saveSvgToR2(env, svg.id, svgContent)
 

@@ -1,7 +1,7 @@
 import React from "react"
 
 interface ImageComponentProps {
-  url64?: string
+  url64?: string | null
   alt: string
   className?: string
   width?: number

@@ -3,6 +3,7 @@ import type { CloudflareEnv } from "../../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../../_shared/auth"
 import { getDb } from "../../_shared/db"
 import { saveSvgToR2 } from "../../_shared/storage"
+import { assertGenerationSucceeded } from "../../_shared/svg-generation-validation"
 import { svgs } from "../../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
@@ -219,6 +220,10 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       const svgGeneratorUrl = env.SVG_GENERATOR_URL || "http://localhost:3001"
       const result = (await generateSvgViaHttpService(requestConfig, svgGeneratorUrl)) as any
       const svgContent = result.svg
+
+      // Same gate the cron uses -- a manual click must not publish a degraded SVG
+      // (one with a <PluginError> section) over a previously-valid stored version.
+      assertGenerationSucceeded(result)
 
       // Save to R2
       const { path: storagePath, url: storageUrl } = await saveSvgToR2(env, id, svgContent)

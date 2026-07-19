@@ -3,9 +3,21 @@
  */
 
 import type { LastUpdatesAnime, LastUpdatesManga, MalLastUpdates } from "../types"
-import { urlToBase64 } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import type { MalProfileResponse } from "./profile"
 import type { MyAnimeListConfig } from "../types"
+
+const COVER_MAX_BYTES = 100_000
+
+async function embedOrNull(image: string): Promise<string | null> {
+  // null, not "" -- an absent/failed image must never become <img src=""> downstream.
+  if (!image) return null
+  try {
+    return (await urlToDataUriDirect(image, { maxBytes: COVER_MAX_BYTES })).dataUri
+  } catch {
+    return null
+  }
+}
 
 /**
  * Transforma as atualizações do perfil em formato interno
@@ -18,16 +30,12 @@ export async function transformLastUpdates(
 
   const anime: LastUpdatesAnime[] = await Promise.all(
     (profile.updates.anime || []).slice(0, maxItems).map(async (item) => {
-      const image =
-        item.entry.images?.jpg?.image_url ||
-        item.entry.images?.jpg?.large_image_url ||
-        item.entry.images?.jpg?.small_image_url ||
-        item.entry.images?.webp?.image_url ||
-        ""
+      // small_image_url has priority -- it's the smallest real variant Jikan provides.
+      const image = item.entry.images?.jpg?.small_image_url || ""
 
       return {
         title: item.entry.title,
-        image: image ? await urlToBase64(image) : "",
+        image: await embedOrNull(image),
         score: item.score || 0,
         status: item.status || "",
         episodes_seen: item.episodes_seen ?? null,
@@ -39,16 +47,11 @@ export async function transformLastUpdates(
 
   const manga: LastUpdatesManga[] = await Promise.all(
     (profile.updates.manga || []).slice(0, maxItems).map(async (item) => {
-      const image =
-        item.entry.images?.jpg?.image_url ||
-        item.entry.images?.jpg?.large_image_url ||
-        item.entry.images?.jpg?.small_image_url ||
-        item.entry.images?.webp?.image_url ||
-        ""
+      const image = item.entry.images?.jpg?.small_image_url || ""
 
       return {
         title: item.entry.title,
-        image: image ? await urlToBase64(image) : "",
+        image: await embedOrNull(image),
         score: item.score || 0,
         status: item.status || "",
         chapters_read: item.chapters_read ?? null,

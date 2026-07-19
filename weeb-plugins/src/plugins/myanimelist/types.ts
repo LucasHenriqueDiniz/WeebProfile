@@ -31,7 +31,7 @@ export interface MangaStatistics {
 
 export interface LastUpdatesAnime {
   title: string
-  image: string
+  image: string | null
   score: number
   status: string
   episodes_seen: number | null
@@ -41,7 +41,7 @@ export interface LastUpdatesAnime {
 
 export interface LastUpdatesManga {
   title: string
-  image: string
+  image: string | null
   score: number
   status: string
   chapters_read: number | null
@@ -78,7 +78,7 @@ export interface MyAnimeListData {
 export interface BasicAnimeFavorite {
   mal_id: number
   title: string
-  image: string
+  image: string | null
   start_year: number
   type: string
 }
@@ -99,7 +99,7 @@ export interface FullAnimeFavorite extends BasicAnimeFavorite {
 export interface BasicMangaFavorite {
   mal_id: number
   title: string
-  image: string
+  image: string | null
   start_year: number
   type: string
 }
@@ -121,13 +121,13 @@ export interface FullMangaFavorite extends BasicMangaFavorite {
 export interface BasicCharacterFavorite {
   mal_id: number
   name: string
-  image: string
+  image: string | null
 }
 
 export interface BasicPeopleFavorite {
   mal_id: number
   name: string
-  image: string
+  image: string | null
 }
 
 export type AnyMalFavorite =

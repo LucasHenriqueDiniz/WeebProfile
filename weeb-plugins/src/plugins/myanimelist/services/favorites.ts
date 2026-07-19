@@ -11,7 +11,14 @@ import type {
   FullMangaFavorite,
 } from "../types"
 import { jikanGet, getLimiter } from "./api-client"
-import { urlToBase64, IMAGE_OPTIMIZATION } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+
+// No decode/resize happens anymore -- these are just upper bounds on the raw download,
+// centralized here rather than treated as a universal constant (see urlToDataUriDirect's
+// maxBytes doc). MAL's small_image_url thumbnails are a few KB, so this is generous
+// headroom, not a target; exceeding it throws ImageTooLargeError rather than resizing.
+const COVER_MAX_BYTES = 100_000
+const AVATAR_MAX_BYTES = 100_000
 import type { MalProfileResponse } from "./profile"
 import type { MyAnimeListConfig } from "../types"
 
@@ -30,7 +37,177 @@ export interface FullFavorites {
 }
 
 /**
- * Busca favoritos básicos do perfil
+ * Per-category outcome, distinct from "empty array":
+ * - "complete": section wasn't requested, or every item's image embedded successfully (or had no image).
+ * - "partial": section had items but at least one image failed to embed (urlToDataUriDirect threw).
+ * - "empty": section was requested and the user genuinely has 0 favorites in it.
+ * - "unavailable": the category's own processing threw before producing a result at all.
+ */
+export type FavoriteCategoryStatus = "complete" | "partial" | "empty" | "unavailable"
+
+export interface FavoritesSectionsStatus {
+  anime: FavoriteCategoryStatus
+  manga: FavoriteCategoryStatus
+  characters: FavoriteCategoryStatus
+  people: FavoriteCategoryStatus
+}
+
+function sanitizedHost(url: string): string {
+  try {
+    return new URL(url).host
+  } catch {
+    return "(invalid url)"
+  }
+}
+
+async function embedFavoriteImage(
+  image: string,
+  maxBytes: number,
+  previewMode: boolean,
+  warnLabel: string
+): Promise<{ image: string | null; failed: boolean }> {
+  // null, not "" -- an absent image must never become an <img src=""> (or, in the
+  // isolated SVG-native path, <image href="">). Callers/renderers treat null as
+  // "omit/placeholder", never as a literal empty string attribute value.
+  if (!image) return { image: null, failed: false }
+  if (previewMode) return { image, failed: false }
+  try {
+    const result = await urlToDataUriDirect(image, { maxBytes })
+    return { image: result.dataUri, failed: false }
+  } catch (error: any) {
+    // Sanitized: host + error type only, never the full URL (may carry sensitive query
+    // params) and never the image bytes/base64.
+    console.warn(`  ⚠️  Erro ao converter ${warnLabel} (host: ${sanitizedHost(image)}):`, error?.name || error?.message)
+    return { image: null, failed: true }
+  }
+}
+
+async function processAnime(
+  favorites: NonNullable<MalProfileResponse["favorites"]>,
+  max: number,
+  previewMode: boolean
+): Promise<{ items: BasicAnimeFavorite[]; status: FavoriteCategoryStatus }> {
+  if (max <= 0) return { items: [], status: "complete" }
+  const list = (favorites.anime || []).slice(0, max)
+  if (list.length === 0) return { items: [], status: "empty" }
+
+  let anyFailed = false
+  const items: BasicAnimeFavorite[] = []
+  for (const item of list) {
+    if (!item) continue
+    // small_image_url has priority -- it's the smallest real variant Jikan provides,
+    // not a fallback chain through progressively larger images.
+    const image = item.images?.jpg?.small_image_url || ""
+    const { image: imageBase64, failed } = await embedFavoriteImage(
+      image,
+      COVER_MAX_BYTES,
+      previewMode,
+      `imagem de anime favorito (id ${item.mal_id})`
+    )
+    if (failed) anyFailed = true
+    items.push({
+      mal_id: item.mal_id,
+      title: item.title,
+      image: imageBase64,
+      start_year: item.start_year || 0,
+      type: item.type || "TV",
+    })
+  }
+  return { items, status: anyFailed ? "partial" : "complete" }
+}
+
+async function processManga(
+  favorites: NonNullable<MalProfileResponse["favorites"]>,
+  max: number,
+  previewMode: boolean
+): Promise<{ items: BasicMangaFavorite[]; status: FavoriteCategoryStatus }> {
+  if (max <= 0) return { items: [], status: "complete" }
+  const list = (favorites.manga || []).slice(0, max)
+  if (list.length === 0) return { items: [], status: "empty" }
+
+  let anyFailed = false
+  const items: BasicMangaFavorite[] = []
+  for (const item of list) {
+    if (!item) continue
+    const image = item.images?.jpg?.small_image_url || ""
+    const { image: imageBase64, failed } = await embedFavoriteImage(
+      image,
+      COVER_MAX_BYTES,
+      previewMode,
+      `imagem de manga favorito (id ${item.mal_id})`
+    )
+    if (failed) anyFailed = true
+    items.push({
+      mal_id: item.mal_id,
+      title: item.title,
+      image: imageBase64,
+      start_year: item.start_year || 0,
+      type: item.type || "Manga",
+    })
+  }
+  return { items, status: anyFailed ? "partial" : "complete" }
+}
+
+async function processCharacters(
+  favorites: NonNullable<MalProfileResponse["favorites"]>,
+  max: number,
+  previewMode: boolean
+): Promise<{ items: BasicCharacterFavorite[]; status: FavoriteCategoryStatus }> {
+  if (max <= 0) return { items: [], status: "complete" }
+  const list = (favorites.characters || []).slice(0, max)
+  if (list.length === 0) return { items: [], status: "empty" }
+
+  let anyFailed = false
+  const items: BasicCharacterFavorite[] = []
+  for (const item of list) {
+    if (!item) continue
+    // Jikan doesn't provide a small/thumbnail variant for characters -- jpg.image_url
+    // is the only real option, not an invented or upscaled one.
+    const image = item.images?.jpg?.image_url || ""
+    const { image: imageBase64, failed } = await embedFavoriteImage(
+      image,
+      AVATAR_MAX_BYTES,
+      previewMode,
+      `imagem de personagem favorito (id ${item.mal_id})`
+    )
+    if (failed) anyFailed = true
+    items.push({ mal_id: item.mal_id, name: item.name, image: imageBase64 })
+  }
+  return { items, status: anyFailed ? "partial" : "complete" }
+}
+
+async function processPeople(
+  favorites: NonNullable<MalProfileResponse["favorites"]>,
+  max: number,
+  previewMode: boolean
+): Promise<{ items: BasicPeopleFavorite[]; status: FavoriteCategoryStatus }> {
+  if (max <= 0) return { items: [], status: "complete" }
+  const list = (favorites.people || []).slice(0, max)
+  if (list.length === 0) return { items: [], status: "empty" }
+
+  let anyFailed = false
+  const items: BasicPeopleFavorite[] = []
+  for (const item of list) {
+    if (!item) continue
+    const image = item.images?.jpg?.image_url || ""
+    const { image: imageBase64, failed } = await embedFavoriteImage(
+      image,
+      AVATAR_MAX_BYTES,
+      previewMode,
+      `imagem de pessoa favorita (id ${item.mal_id})`
+    )
+    if (failed) anyFailed = true
+    items.push({ mal_id: item.mal_id, name: item.name, image: imageBase64 })
+  }
+  return { items, status: anyFailed ? "partial" : "complete" }
+}
+
+/**
+ * Busca favoritos básicos do perfil.
+ *
+ * The four categories are independent: one throwing (e.g. an unexpected shape in the
+ * profile payload) must not sink the other three. Promise.allSettled -- rather than a
+ * shared try/catch -- is what makes that isolation real instead of incidental.
  */
 export async function getBasicFavorites(
   profile: MalProfileResponse,
@@ -41,158 +218,37 @@ export async function getBasicFavorites(
     peopleMax: number
   },
   config: { previewMode?: boolean }
-): Promise<BasicFavorites> {
+): Promise<BasicFavorites & { sectionsStatus: FavoritesSectionsStatus }> {
   const favorites = profile.favorites || { anime: [], manga: [], characters: [], people: [] }
+  const previewMode = !!config.previewMode
 
-  // Processar em sequência para evitar sobrecarga
-  // Só processar se o limite for maior que 0 (seção ativada)
-  const animeResults = []
-  if (limits.animeMax > 0) {
-    const animeList = (favorites.anime || []).slice(0, limits.animeMax)
-    for (let index = 0; index < animeList.length; index++) {
-      const item = animeList[index]
-      if (!item) continue
-      const image =
-        item.images?.jpg?.image_url ||
-        item.images?.jpg?.large_image_url ||
-        item.images?.jpg?.small_image_url ||
-        item.images?.webp?.image_url ||
-        ""
+  const [animeResult, mangaResult, charactersResult, peopleResult] = await Promise.allSettled([
+    processAnime(favorites, limits.animeMax, previewMode),
+    processManga(favorites, limits.mangaMax, previewMode),
+    processCharacters(favorites, limits.charactersMax, previewMode),
+    processPeople(favorites, limits.peopleMax, previewMode),
+  ])
 
-      let imageBase64 = ""
-      if (image) {
-        if (config.previewMode) {
-          // Em modo preview, usar URLs originais sem conversão
-          imageBase64 = image
-        } else {
-          try {
-            console.log(`  [${index + 1}/${animeList.length}] Convertendo imagem: ${item.title}`)
-            imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
-            console.log(`  ✅ Imagem convertida: ${item.title}`)
-          } catch (error: any) {
-            console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
-            imageBase64 = ""
-          }
-        }
-      }
-
-      animeResults.push({
-        mal_id: item.mal_id,
-        title: item.title,
-        image: imageBase64,
-        start_year: item.start_year || 0,
-        type: item.type || "TV",
-      })
-    }
+  const unwrap = <T>(
+    result: PromiseSettledResult<{ items: T[]; status: FavoriteCategoryStatus }>,
+    label: string
+  ): { items: T[]; status: FavoriteCategoryStatus } => {
+    if (result.status === "fulfilled") return result.value
+    console.warn(`  ⚠️  Categoria de favoritos indisponível (${label}):`, result.reason)
+    return { items: [], status: "unavailable" }
   }
 
-  // Processar manga em sequência
-  // Só processar se o limite for maior que 0 (seção ativada)
-  const mangaResults = []
-  if (limits.mangaMax > 0) {
-    const mangaList = (favorites.manga || []).slice(0, limits.mangaMax)
-    for (let index = 0; index < mangaList.length; index++) {
-      const item = mangaList[index]
-      if (!item) continue
-      const image =
-        item.images?.jpg?.image_url ||
-        item.images?.jpg?.large_image_url ||
-        item.images?.jpg?.small_image_url ||
-        item.images?.webp?.image_url ||
-        ""
-
-      let imageBase64 = ""
-      if (image) {
-        if (config.previewMode) {
-          // Em modo preview, usar URLs originais sem conversão
-          imageBase64 = image
-        } else {
-          try {
-            console.log(`  [${index + 1}/${mangaList.length}] Convertendo imagem: ${item.title}`)
-            imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
-            console.log(`  ✅ Imagem convertida: ${item.title}`)
-          } catch (error: any) {
-            console.warn(`  ⚠️  Erro ao converter imagem de ${item.title}:`, error.message)
-            imageBase64 = ""
-          }
-        }
-      }
-
-      mangaResults.push({
-        mal_id: item.mal_id,
-        title: item.title,
-        image: imageBase64,
-        start_year: item.start_year || 0,
-        type: item.type || "Manga",
-      })
-    }
-  }
-
-  // Processar characters em sequência
-  // Só processar se o limite for maior que 0 (seção ativada)
-  const charactersResults = []
-  if (limits.charactersMax > 0) {
-    const charactersList = (favorites.characters || []).slice(0, limits.charactersMax)
-    for (let index = 0; index < charactersList.length; index++) {
-      const item = charactersList[index]
-      if (!item) continue
-      const image = item.images?.jpg?.image_url || item.images?.webp?.image_url || ""
-
-      let imageBase64 = ""
-      if (image) {
-        try {
-          console.log(`  [${index + 1}/${charactersList.length}] Convertendo imagem: ${item.name}`)
-          imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
-          console.log(`  ✅ Imagem convertida: ${item.name}`)
-        } catch (error: any) {
-          console.warn(`  ⚠️  Erro ao converter imagem de ${item.name}:`, error.message)
-          imageBase64 = ""
-        }
-      }
-
-      charactersResults.push({
-        mal_id: item.mal_id,
-        name: item.name,
-        image: imageBase64,
-      })
-    }
-  }
-
-  // Processar people em sequência
-  // Só processar se o limite for maior que 0 (seção ativada)
-  const peopleResults = []
-  if (limits.peopleMax > 0) {
-    const peopleList = (favorites.people || []).slice(0, limits.peopleMax)
-    for (let index = 0; index < peopleList.length; index++) {
-      const item = peopleList[index]
-      if (!item) continue
-      const image = item.images?.jpg?.image_url || item.images?.webp?.image_url || ""
-
-      let imageBase64 = ""
-      if (image) {
-        try {
-          console.log(`  [${index + 1}/${peopleList.length}] Convertendo imagem: ${item.name}`)
-          imageBase64 = await urlToBase64(image, 15000, IMAGE_OPTIMIZATION)
-          console.log(`  ✅ Imagem convertida: ${item.name}`)
-        } catch (error: any) {
-          console.warn(`  ⚠️  Erro ao converter imagem de ${item.name}:`, error.message)
-          imageBase64 = ""
-        }
-      }
-
-      peopleResults.push({
-        mal_id: item.mal_id,
-        name: item.name,
-        image: imageBase64,
-      })
-    }
-  }
+  const anime = unwrap(animeResult, "anime")
+  const manga = unwrap(mangaResult, "manga")
+  const characters = unwrap(charactersResult, "characters")
+  const people = unwrap(peopleResult, "people")
 
   return {
-    anime: animeResults,
-    manga: mangaResults,
-    characters: charactersResults,
-    people: peopleResults,
+    anime: anime.items,
+    manga: manga.items,
+    characters: characters.items,
+    people: people.items,
+    sectionsStatus: { anime: anime.status, manga: manga.status, characters: characters.status, people: people.status },
   }
 }
 
@@ -372,44 +428,38 @@ export async function fetchFavorites(
   profile: MalProfileResponse,
   config: MyAnimeListConfig,
   previewMode = false
-): Promise<{ basic: BasicFavorites; full: FullFavorites }> {
-  try {
-    const sections = config.sections || []
+): Promise<{ basic: BasicFavorites; full: FullFavorites; sectionsStatus: FavoritesSectionsStatus }> {
+  // No top-level catch here: a real failure (malformed profile, unexpected exception outside
+  // the per-item try/catches below) must propagate as an actual Error, not come back as
+  // "success" with empty arrays. Per-item failures are still swallowed individually further
+  // down (a single bad image/entry doesn't sink the whole section) -- this only guards the
+  // difference between "user genuinely has 0 favorites" and "the fetch pipeline broke".
+  const sections = config.sections || []
 
-    // Determinar quais tipos de favoritos precisam ser processados baseado nas seções ativadas
-    const needsAnime = sections.includes("anime_favorites")
-    const needsManga = sections.includes("manga_favorites")
-    const needsCharacters = sections.includes("character_favorites")
-    const needsPeople = sections.includes("people_favorites")
+  // Determinar quais tipos de favoritos precisam ser processados baseado nas seções ativadas
+  const needsAnime = sections.includes("anime_favorites")
+  const needsManga = sections.includes("manga_favorites")
+  const needsCharacters = sections.includes("character_favorites")
+  const needsPeople = sections.includes("people_favorites")
 
-    console.log(`📥 Processando favoritos básicos... (seções ativadas: ${sections.join(", ") || "nenhuma"})`)
+  // Usar limites específicos por tipo, com fallback para favorites_max ou 20
+  // Se a seção não estiver ativada, usar limite 0 para não processar
+  const basicFavorites = await getBasicFavorites(
+    profile,
+    {
+      animeMax: needsAnime ? (config.anime_favorites_max ?? config.favorites_max ?? 20) : 0,
+      mangaMax: needsManga ? (config.manga_favorites_max ?? config.favorites_max ?? 20) : 0,
+      charactersMax: needsCharacters ? (config.character_favorites_max ?? config.favorites_max ?? 20) : 0,
+      peopleMax: needsPeople ? (config.people_favorites_max ?? config.favorites_max ?? 20) : 0,
+    },
+    { previewMode }
+  )
 
-    // Usar limites específicos por tipo, com fallback para favorites_max ou 20
-    // Se a seção não estiver ativada, usar limite 0 para não processar
-    const basicFavorites = await getBasicFavorites(
-      profile,
-      {
-        animeMax: needsAnime ? (config.anime_favorites_max ?? config.favorites_max ?? 20) : 0,
-        mangaMax: needsManga ? (config.manga_favorites_max ?? config.favorites_max ?? 20) : 0,
-        charactersMax: needsCharacters ? (config.character_favorites_max ?? config.favorites_max ?? 20) : 0,
-        peopleMax: needsPeople ? (config.people_favorites_max ?? config.favorites_max ?? 20) : 0,
-      },
-      { previewMode }
-    )
-    console.log(`✅ Favoritos básicos processados`)
+  const fullFavorites = await getFullFavorites(basicFavorites, config.sections || [], { previewMode })
 
-    const fullFavorites = await getFullFavorites(basicFavorites, config.sections || [], { previewMode })
-
-    return {
-      basic: basicFavorites,
-      full: fullFavorites,
-    }
-  } catch (error) {
-    console.error("Error fetching favorites:", error)
-    // Retornar favoritos vazios em caso de erro
-    return {
-      basic: { anime: [], manga: [], characters: [], people: [] },
-      full: { anime: [], manga: [], characters: [], people: [] },
-    }
+  return {
+    basic: basicFavorites,
+    full: fullFavorites,
+    sectionsStatus: basicFavorites.sectionsStatus,
   }
 }

@@ -113,7 +113,10 @@ export class PluginManager {
       if (!plugin) continue
       const data = pluginsData[name]
       if (!data) continue
-      total += plugin.calculateHeight(config, data, size)
+      const sectionHeight = plugin.calculateHeight(config, data, size)
+      // Defend against a plugin's calculateHeight() returning NaN/negative (e.g. from a
+      // malformed count) -- that must never propagate into the SVG's overall height.
+      if (Number.isFinite(sectionHeight) && sectionHeight > 0) total += sectionHeight
     }
     return total > 0 ? total + 24 : 0
   }

@@ -174,15 +174,25 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
   try {
     const result = await generateSvg(normalizedConfig)
 
+    const debugInfo = (result as any)._debug as
+      | { pluginsData?: unknown; pluginsErrors?: Record<string, string> }
+      | undefined
+    const pluginErrors = debugInfo?.pluginsErrors || {}
+
     const response: any = {
       success: true,
       svg: result.svg,
       width: result.width,
       height: result.height,
+      // Always present, not gated behind `debug` -- callers (cron, manual regenerate) need
+      // to know whether any plugin degraded without requesting the full debug payload below,
+      // which also carries pluginsData/config and isn't meant for routine, non-debug traffic.
+      // Only plain error messages here (see svg-generator.ts), never pluginsData or secrets.
+      pluginErrors,
+      hasErrors: Object.keys(pluginErrors).length > 0,
     }
 
-    if (includeDebug && (result as any)._debug) {
-      const debugInfo = (result as any)._debug
+    if (includeDebug && debugInfo) {
       response.debug = {
         config: sanitizeConfig({
           ...normalizedConfig,
