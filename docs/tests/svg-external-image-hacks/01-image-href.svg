@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="260" viewBox="0 0 420 260">
+  <rect width="420" height="260" rx="16" fill="#0a0f1e"/>
+  <text x="20" y="28" fill="#67e8f9" font-family="Arial" font-size="16">01 — SVG &lt;image href="https://..."&gt;</text>
+  <rect x="20" y="44" width="140" height="196" fill="#111827" stroke="#334155"/>
+  <image x="20" y="44" width="140" height="196" preserveAspectRatio="xMidYMid slice" href="https://i0.wp.com/blogbbm.com/wp-content/uploads/2025/05/Nodame-Cantabile-01.jpg?resize=693%2C1024&amp;ssl=1"/>
+  <text x="180" y="90" fill="#e2e8f0" font-family="Arial" font-size="15">Esperado: capa à esquerda.</text>
+  <text x="180" y="116" fill="#94a3b8" font-family="Arial" font-size="13">Sem base64, URL externa direta.</text>
+</svg>
