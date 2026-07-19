@@ -2,7 +2,9 @@
 
 import type { LastFmConfig, LastFmData } from "../types"
 import { getMockLastFmData } from "./mock-data"
-import { urlToBase64 } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+
+const LASTFM_IMAGE_MAX_BYTES = 100_000
 
 /**
  * Converte URLs de imagens para base64 recursivamente
@@ -32,15 +34,14 @@ async function convertImageUrlsToBase64(data: any, previewMode = false, context?
         if (previewMode) {
           result[key] = value
         } else {
-          // Converter URL para base64 com log detalhado
+          // null (não a URL original) quando a conversão falha -- sem fallback
+          // silencioso para a imagem grande/original.
           const itemName = data.artist || data.track || data.album || context || "unknown"
           try {
-            console.log(`  [LastFM] Converting image for: ${itemName}`)
-            result[key] = await urlToBase64(value)
-            console.log(`  ✅ [LastFM] Image converted: ${itemName}`)
+            result[key] = (await urlToDataUriDirect(value, { maxBytes: LASTFM_IMAGE_MAX_BYTES })).dataUri
           } catch (error: any) {
-            console.warn(`  ⚠️  [LastFM] Error converting image for ${itemName}:`, error.message)
-            result[key] = value // Manter URL original em caso de erro
+            console.warn(`  ⚠️  [LastFM] Error converting image for ${itemName}:`, error?.name || error?.message)
+            result[key] = null
           }
         }
       } else {

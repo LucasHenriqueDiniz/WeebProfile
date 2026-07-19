@@ -13,7 +13,7 @@ import type { GridItemProps, ListItemProps, TerminalLineProps } from "../../../t
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 
 interface TopItem {
-  image?: string
+  image?: string | null
   artist?: string
   totalPlays?: string
   album?: string

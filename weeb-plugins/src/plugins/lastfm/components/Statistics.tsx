@@ -26,7 +26,7 @@ const statisticsList = [
   { title: "Artists", key: "totalArtists" },
 ]
 
-const DefaultFeaturedTrack = ({ track }: { track: { track: string; artist: string; image?: string } }) => (
+const DefaultFeaturedTrack = ({ track }: { track: { track: string; artist: string; image?: string | null } }) => (
   <div className="flex flex-col rounded-xl border border-default-muted/30 bg-default-surface/60 px-4 py-3 half:px-3 half:py-2.5">
     <div className="flex items-center justify-between mb-2">
       <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Top Track</p>

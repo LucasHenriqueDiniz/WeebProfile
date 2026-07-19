@@ -8,10 +8,28 @@ import type { LastFmData, LastFmTrack, LastFmArtist, LastFmAlbum, TopTrack } fro
 import type { EssentialPluginConfig } from "../../shared/types/base"
 import { fetchJson, requireApiKey, buildQueryString } from "../../shared/utils/api"
 import { ApiError, ConfigError } from "../../shared/utils/errors"
-import { urlToBase64 } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { getArtistImageFallback } from "./artistImageFallback"
 
 const LASTFM_API_BASE = "https://ws.audioscrobbler.com/2.0/"
+
+// No decode/resize happens anymore -- this is just an upper bound on the raw download.
+// Last.fm's own images (small/medium) are a few KB; this leaves generous headroom
+// without allowing passthrough of an arbitrarily large image.
+const LASTFM_IMAGE_MAX_BYTES = 100_000
+
+/**
+ * Picks the smallest real image Last.fm actually provided, never the largest.
+ * Last.fm's `image` array sizes, smallest to largest: small, medium, large, extralarge, mega.
+ */
+function smallestLastFmImage(images?: Array<{ "#text": string; size: string }>): string | undefined {
+  if (!images || images.length === 0) return undefined
+  return (
+    images.find((img) => img.size === "small")?.["#text"] ||
+    images.find((img) => img.size === "medium")?.["#text"] ||
+    images[0]?.["#text"]
+  )
+}
 
 /**
  * Converte período da API para label legível
@@ -110,10 +128,7 @@ async function fetchRecentTracks(apiKey: string, username: string, limit = 50): 
   const tracks = response.recenttracks?.track || []
 
   return tracks.map((track) => {
-    const image =
-      track.image?.find((img) => img.size === "large")?.["#text"] ||
-      track.image?.find((img) => img.size === "medium")?.["#text"] ||
-      track.image?.[0]?.["#text"]
+    const image = smallestLastFmImage(track.image)
 
     return {
       track: track.name,
@@ -152,10 +167,7 @@ async function fetchTopArtists(
 
   // Mapear artistas com suas imagens do Last.fm
   const artistsWithImages = artists.map((artist) => {
-    const image =
-      artist.image?.find((img) => img.size === "large")?.["#text"] ||
-      artist.image?.find((img) => img.size === "medium")?.["#text"] ||
-      artist.image?.[0]?.["#text"]
+    const image = smallestLastFmImage(artist.image)
 
     return {
       artist: artist.name,
@@ -206,10 +218,7 @@ async function fetchTopAlbums(
   const albums = response.topalbums?.album || []
 
   return albums.map((album) => {
-    const image =
-      album.image?.find((img) => img.size === "large")?.["#text"] ||
-      album.image?.find((img) => img.size === "medium")?.["#text"] ||
-      album.image?.[0]?.["#text"]
+    const image = smallestLastFmImage(album.image)
 
     return {
       album: album.name,
@@ -247,10 +256,7 @@ async function fetchTopTracks(
   const tracks = response.toptracks?.track || []
 
   return tracks.map((track) => {
-    const image =
-      track.image?.find((img) => img.size === "large")?.["#text"] ||
-      track.image?.find((img) => img.size === "medium")?.["#text"] ||
-      track.image?.[0]?.["#text"]
+    const image = smallestLastFmImage(track.image)
 
     return {
       track: track.name,
@@ -294,8 +300,9 @@ async function fetchUserInfo(
 }
 
 /**
- * Converte URLs de imagens para base64 recursivamente
- * Adiciona fallback para Spotify quando imagens falham
+ * Converte URLs de imagens para data URI recursivamente: fetch -> ArrayBuffer -> base64
+ * dos mesmos bytes, sem Photon/Sharp/resize/recompressão. Em falha, retorna null (nunca
+ * a URL original) -- sem fallback silencioso para uma variante maior.
  */
 async function convertImageUrlsToBase64(data: any): Promise<any> {
   if (Array.isArray(data)) {
@@ -310,16 +317,12 @@ async function convertImageUrlsToBase64(data: any): Promise<any> {
         typeof value === "string" &&
         (value.startsWith("http://") || value.startsWith("https://"))
       ) {
-        // Converter URL para base64 com fallback para Spotify
-        // Extrair informações do contexto (artista, álbum, track) para fallback
-        const fallbackOptions = {
-          artistName: data.artist,
-          albumName: data.album,
-          trackName: data.track,
+        try {
+          result[key] = (await urlToDataUriDirect(value, { maxBytes: LASTFM_IMAGE_MAX_BYTES })).dataUri
+        } catch (error: any) {
+          console.warn(`  ⚠️  Erro ao converter imagem do LastFM:`, error?.name || error?.message)
+          result[key] = null
         }
-
-        // Tentar converter, com fallback automático para Spotify se falhar
-        result[key] = await urlToBase64(value, 15000, { maxWidth: 200, maxHeight: 200, quality: 70 }, fallbackOptions)
       } else {
         result[key] = await convertImageUrlsToBase64(value)
       }

@@ -8,12 +8,12 @@ export interface LastFmTrack {
   track: string
   artist: string
   date: string
-  image?: string
+  image?: string | null
 }
 
 export interface LastFmArtist {
   artist: string
-  image?: string
+  image?: string | null
   totalPlays: string
 }
 
@@ -21,20 +21,20 @@ export interface LastFmAlbum {
   album: string
   artist: string
   plays: string
-  image?: string
+  image?: string | null
 }
 
 export interface TopTrack {
   track: string
   artist: string
   plays: string
-  image?: string
+  image?: string | null
 }
 
 export interface LastFmFeaturedTrack {
   track: string
   artist: string
-  image?: string
+  image?: string | null
 }
 
 /**
