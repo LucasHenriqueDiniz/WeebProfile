@@ -32,7 +32,7 @@ export interface MangaStatistics {
 export interface LastUpdatesAnime {
   title: string
   image: string | null
-  score: number
+  score: number | null
   status: string
   episodes_seen: number | null
   episodes_total: number | null
@@ -42,7 +42,7 @@ export interface LastUpdatesAnime {
 export interface LastUpdatesManga {
   title: string
   image: string | null
-  score: number
+  score: number | null
   status: string
   chapters_read: number | null
   chapters_total: number | null
