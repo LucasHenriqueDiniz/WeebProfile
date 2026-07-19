@@ -2,13 +2,16 @@
  * Serviço principal para buscar dados do MyAnimeList
  */
 
-import type { MyAnimeListConfig, MyAnimeListData } from "../types"
+import type { MalLastUpdates, MyAnimeListConfig, MyAnimeListData } from "../types"
 import { getMockMyAnimeListData } from "./mock-data"
 import { fetchFullProfile } from "./profile"
 import { fetchFavorites } from "./favorites"
+import { jikanEdgeGet, JikanEdgeError } from "./api-client"
 import { transformLastUpdates } from "./last-updates"
 import { transformStatistics } from "./statistics"
-import { urlToBase64 } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+
+const MAL_MOCK_IMAGE_MAX_BYTES = 100_000
 
 /**
  * Converte URLs de imagens para base64 recursivamente (para dados mock)
@@ -31,7 +34,11 @@ async function convertImageUrlsToBase64(data: any, previewMode = false): Promise
           result[key] = value
         } else {
           // Converter URL para base64
-          result[key] = await urlToBase64(value)
+          try {
+            result[key] = (await urlToDataUriDirect(value, { maxBytes: MAL_MOCK_IMAGE_MAX_BYTES })).dataUri
+          } catch {
+            result[key] = null
+          }
         }
       } else {
         result[key] = await convertImageUrlsToBase64(value, previewMode)
@@ -82,10 +89,20 @@ export async function fetchMyAnimeListData(
     const profile = await fetchFullProfile(config.username)
 
     // Buscar favoritos (básicos e completos)
-    const favorites = await fetchFavorites(profile, config, previewMode)
+    const favorites = await fetchFavorites(profile, config)
 
     // Transformar últimas atualizações
-    const lastUpdates = await transformLastUpdates(profile, config)
+    let lastUpdates: MalLastUpdates = { anime: [], manga: [] }
+    let lastActivityStatus: MyAnimeListData["lastActivityStatus"] = "complete"
+    if ((config.sections || []).includes("last_activity")) {
+      try {
+        const updates = await jikanEdgeGet<{ data: unknown }>(`/v1/users/${encodeURIComponent(config.username)}/userupdates`)
+        lastUpdates = await transformLastUpdates(updates as never, config)
+      } catch (error) {
+        lastActivityStatus = "unavailable"
+        if (!(error instanceof JikanEdgeError && error.status === 501 && error.code === "USER_UPDATES_UNSUPPORTED")) console.warn("[MyAnimeList] Recent updates unavailable", error)
+      }
+    }
 
     // Transformar estatísticas
     const statistics = transformStatistics(profile.statistics)
@@ -94,6 +111,7 @@ export async function fetchMyAnimeListData(
       favorites: favorites.basic,
       favorites_full: favorites.full,
       last_updated: lastUpdates,
+      lastActivityStatus,
       statistics,
     }
 

@@ -409,9 +409,6 @@ importers:
 
   weeb-plugins:
     dependencies:
-      '@cf-wasm/photon':
-        specifier: ^0.3.6
-        version: 0.3.6
       '@octokit/graphql':
         specifier: ^8.1.1
         version: 8.2.2
@@ -563,12 +560,6 @@ packages:
   '@babel/types@7.28.5':
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
-
-  '@cf-wasm/internals@0.1.2':
-    resolution: {integrity: sha512-9d/I3JFv1IpQFYOrIw5RQShQPyuZRw9DyeBylF39Uj/MH7my8+EzKDPpUCHiqZ5O7tZS/A6zwP08egpeI5NBhA==}
-
-  '@cf-wasm/photon@0.3.6':
-    resolution: {integrity: sha512-LfLfJ10+Z+DrohjQTSBkgmqxp6d4gvlGuwFkb5c4RHJGAMyVJxrAQWGrLunWE6TvZssIkT5fhKAjQZYhFSYzqg==}
 
   '@clerk/backend@3.4.14':
     resolution: {integrity: sha512-0iaMT7k4wDk31QVC3HMaoeVFttblwsCECTHKNQpbRzIyD8j2gHdKEw/FNjffoyqyBqPw869IQlk1YokUlwVAqQ==}
@@ -5853,12 +5844,6 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
-
-  '@cf-wasm/internals@0.1.2': {}
-
-  '@cf-wasm/photon@0.3.6':
-    dependencies:
-      '@cf-wasm/internals': 0.1.2
 
   '@clerk/backend@3.4.14(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:

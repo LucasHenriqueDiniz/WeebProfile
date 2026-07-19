@@ -1,122 +1,38 @@
-/**
- * Cliente HTTP para API do MyAnimeList (Jikan)
- * Com rate limiting, retry e tratamento de erros
- */
+export interface JikanEdgeDiagnostics {
+  requestId: string | null
+  workerVersion: string | null
+  cacheStatus: string | null
+}
 
-import Bottleneck from "bottleneck"
-
-// Setup rate limiting: 2 requests por segundo, reservatório de 60 requests
-// Limite da API Jikan: 3 requests por segundo, 60 por minuto
-// Vamos usar 2 por segundo para ter margem de segurança
-//
-// Criado de forma lazy (não no escopo global do módulo): o construtor do
-// Bottleneck com `reservoir`/`reservoirRefreshInterval` agenda um timer, e
-// Cloudflare Workers proíbem operações assíncronas (incl. timers) no escopo
-// global - apenas dentro de um handler de request.
-let _limiter: Bottleneck | undefined
-
-function getLimiter(): Bottleneck {
-  if (!_limiter) {
-    _limiter = new Bottleneck({
-      maxConcurrent: 2,
-      minTime: 500, // 500ms entre requests (2 por segundo)
-      reservoir: 60,
-      reservoirRefreshAmount: 60,
-      reservoirRefreshInterval: 60 * 1000, // Recarrega a cada 60 segundos
-    })
+export class JikanEdgeError extends Error {
+  constructor(message: string, readonly status?: number, readonly code?: string, readonly diagnostics?: JikanEdgeDiagnostics) {
+    super(message)
+    this.name = "JikanEdgeError"
   }
-  return _limiter
 }
 
-const BASE_URL = "https://api.jikan.moe/v4"
-const MAX_RETRIES = 3
-const RETRY_DELAY = 2000 // 2 segundos base
-
-/**
- * Aguarda um tempo específico
- */
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+function baseUrl(): string {
+  const value = typeof process !== "undefined" ? process.env?.JIKAN_EDGE_BASE_URL : undefined
+  if (!value) throw new JikanEdgeError("JIKAN_EDGE_BASE_URL is not configured")
+  return value
 }
 
-/**
- * Faz uma requisição GET para a API Jikan com rate limiting e retry
- */
-export async function jikanGet<T>(endpoint: string, retryCount = 0): Promise<T> {
-  const url = `${BASE_URL}${endpoint}`
+function diagnostics(response: Response): JikanEdgeDiagnostics {
+  return { requestId: response.headers.get("x-request-id"), workerVersion: response.headers.get("x-worker-version"), cacheStatus: response.headers.get("x-cache-status") }
+}
 
+export async function jikanEdgeGet<T>(path: string, options: { timeoutMs?: number } = {}): Promise<T> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), options.timeoutMs ?? 20_000)
+  let response: Response
   try {
-    const response = await getLimiter().schedule(async () => {
-      // Timeout de 30 segundos
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 30000)
-
-      try {
-        const res = await fetch(url, {
-          signal: controller.signal,
-          headers: {
-            "User-Agent": "WeebProfile/1.0",
-          },
-        })
-
-        clearTimeout(timeoutId)
-
-        // Rate limit exceeded - aguardar e tentar novamente
-        if (res.status === 429) {
-          const retryAfter = res.headers.get("Retry-After")
-          const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : RETRY_DELAY * (retryCount + 1)
-          throw new Error(`RATE_LIMIT:${waitTime}`)
-        }
-
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`)
-        }
-
-        return res.json()
-      } catch (error: any) {
-        clearTimeout(timeoutId)
-        if (error.name === "AbortError") {
-          throw new Error("TIMEOUT")
-        }
-        throw error
-      }
-    })
-
-    return response as T
-  } catch (error: any) {
-    // Tratar rate limit com retry
-    if (error.message?.startsWith("RATE_LIMIT:")) {
-      const waitTime = parseInt(error.message.split(":")[1]) || RETRY_DELAY * (retryCount + 1)
-
-      if (retryCount < MAX_RETRIES) {
-        console.log(
-          `  ⏳ Rate limit atingido. Aguardando ${waitTime / 1000}s antes de tentar novamente... (tentativa ${retryCount + 1}/${MAX_RETRIES})`
-        )
-        await sleep(waitTime)
-        return jikanGet<T>(endpoint, retryCount + 1)
-      } else {
-        throw new Error(`Rate limit exceeded após ${MAX_RETRIES} tentativas`)
-      }
-    }
-
-    // Tratar timeout com retry
-    if (error.message === "TIMEOUT" && retryCount < MAX_RETRIES) {
-      console.log(`  ⏳ Timeout na requisição. Tentando novamente... (tentativa ${retryCount + 1}/${MAX_RETRIES})`)
-      await sleep(RETRY_DELAY * (retryCount + 1))
-      return jikanGet<T>(endpoint, retryCount + 1)
-    }
-
-    // Outros erros - tentar retry se ainda houver tentativas
-    if (retryCount < MAX_RETRIES && !error.message?.includes("HTTP 4")) {
-      console.log(
-        `  ⚠️  Erro na requisição: ${error.message}. Tentando novamente... (tentativa ${retryCount + 1}/${MAX_RETRIES})`
-      )
-      await sleep(RETRY_DELAY * (retryCount + 1))
-      return jikanGet<T>(endpoint, retryCount + 1)
-    }
-
-    throw error
+    response = await fetch(new URL(path, baseUrl()), { signal: controller.signal, headers: { Accept: "application/json", "User-Agent": "WeebProfile/1.0" } })
+  } catch (error) {
+    throw new JikanEdgeError(error instanceof Error && error.name === "AbortError" ? "Jikan Edge request timed out" : "Jikan Edge request failed")
+  } finally {
+    clearTimeout(timeoutId)
   }
+  const body = (await response.json().catch(() => null)) as { error?: { code?: string; message?: string } } | null
+  if (!response.ok) throw new JikanEdgeError(body?.error?.message || `Jikan Edge responded HTTP ${response.status}`, response.status, body?.error?.code, diagnostics(response))
+  return body as T
 }
-
-export { getLimiter }

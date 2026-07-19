@@ -1,13 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import { urlToDataUriDirect, InvalidImageError, ImageTooLargeError } from "./image-to-base64"
 
-// The direct pipeline must never touch Photon (or Sharp) -- if it ever does, this
-// dynamic import is what would be hit, so mocking it lets us assert it wasn't.
-const photonImportSpy = vi.fn()
-vi.mock("@cf-wasm/photon/workerd", () => {
-  photonImportSpy()
-  return { PhotonImage: {}, SamplingFilter: {}, resize: vi.fn() }
-})
 
 // Minimal valid file headers for magic-byte validation, padded to a plausible size.
 const JPEG_BYTES = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0])
@@ -123,9 +116,4 @@ describe("urlToDataUriDirect", () => {
     expect(typeof hasNativeToBase64).toBe("boolean")
   })
 
-  it("never touches Photon in the direct pipeline", async () => {
-    ;(global.fetch as any).mockResolvedValueOnce(mockResponse(200, JPEG_BYTES, "image/jpeg"))
-    await urlToDataUriDirect("https://example.com/a.jpg")
-    expect(photonImportSpy).not.toHaveBeenCalled()
-  })
 })

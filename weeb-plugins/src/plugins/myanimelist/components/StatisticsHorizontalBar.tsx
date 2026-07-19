@@ -87,11 +87,12 @@ export function StatisticsHorizontalBar({
     return <></>
   }
 
-  const watching = (data as AnimeStatistics).watching || (data as MangaStatistics).reading
-  const completed = data.completed
-  const onHold = data.on_hold
-  const dropped = data.dropped
-  const planToWatch = (data as AnimeStatistics).plan_to_watch || (data as MangaStatistics).plan_to_read
+  const normalized = data as unknown as Record<string, number>
+  const watching = normalized.watching ?? normalized.reading ?? 0
+  const completed = normalized.completed ?? 0
+  const onHold = normalized.on_hold ?? 0
+  const dropped = normalized.dropped ?? 0
+  const planToWatch = normalized.plan_to_watch ?? normalized.plan_to_read ?? 0
 
   const animeTitle = config.anime_bar_title || "Anime Statistics"
   const mangaTitle = config.manga_bar_title || "Manga Statistics"

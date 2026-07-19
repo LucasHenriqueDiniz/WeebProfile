@@ -155,4 +155,31 @@ describe("getBasicFavorites section status", () => {
     await getBasicFavorites(profile, { ...noLimits, charactersMax: 20 }, { previewMode: false })
     expect(urlToDataUriDirect).toHaveBeenCalledWith("https://cdn.example/char-1.jpg", expect.anything())
   })
+
+  it("maps the Jikan Edge imageUrl contract across all four favorite categories", async () => {
+    vi.mocked(urlToDataUriDirect).mockResolvedValue({
+      dataUri: "data:image/jpeg;base64,AAAA",
+      mime: "image/jpeg",
+      byteLength: 10,
+    })
+    const profile = makeProfile({
+      anime: [{ mal_id: 1, title: "Anime", imageUrl: "https://edge.example/anime.jpg" }],
+      manga: [{ mal_id: 2, title: "Manga", imageUrl: "https://edge.example/manga.jpg" }],
+      characters: [{ mal_id: 3, name: "Character", imageUrl: "https://edge.example/character.jpg" }],
+      people: [{ mal_id: 4, name: "Person", imageUrl: "https://edge.example/person.jpg" }],
+    })
+
+    const result = await getBasicFavorites(
+      profile,
+      { animeMax: 10, mangaMax: 10, charactersMax: 10, peopleMax: 10 },
+      { previewMode: false }
+    )
+
+    expect(result.sectionsStatus).toEqual({ anime: "complete", manga: "complete", characters: "complete", people: "complete" })
+    expect(result.anime[0]?.image).toBe("data:image/jpeg;base64,AAAA")
+    expect(result.manga[0]?.image).toBe("data:image/jpeg;base64,AAAA")
+    expect(result.characters[0]?.image).toBe("data:image/jpeg;base64,AAAA")
+    expect(result.people[0]?.image).toBe("data:image/jpeg;base64,AAAA")
+    expect(urlToDataUriDirect).toHaveBeenCalledTimes(4)
+  })
 })

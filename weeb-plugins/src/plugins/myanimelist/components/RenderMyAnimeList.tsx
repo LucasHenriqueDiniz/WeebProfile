@@ -57,6 +57,7 @@ export function RenderMyAnimeList({
           />
         )
       case "last_activity":
+        if (data.lastActivityStatus === "unavailable") return null
         return (
           <LastUpdates
             key="last_activity"

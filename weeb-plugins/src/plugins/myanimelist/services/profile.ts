@@ -1,159 +1,39 @@
-/**
- * Serviço para buscar perfil completo do MyAnimeList
- */
+import { jikanEdgeGet } from "./api-client"
+import type { AnimeStatistics, MangaStatistics } from "../types"
 
-import { jikanGet } from "./api-client"
-
-export interface JikanUserFullResponse {
-  data: {
-    mal_id: number
-    username: string
-    url: string
-    images: {
-      jpg: { image_url: string }
-      webp: { image_url: string }
-    }
-    last_online: string
-    gender: string | null
-    birthday: string | null
-    location: string | null
-    joined: string
-    statistics: {
-      anime: {
-        days_watched: number
-        mean_score: number
-        watching: number
-        completed: number
-        on_hold: number
-        dropped: number
-        plan_to_watch: number
-        total_entries: number
-        rewatched: number
-        episodes_watched: number
-      }
-      manga: {
-        days_read: number
-        mean_score: number
-        reading: number
-        completed: number
-        on_hold: number
-        dropped: number
-        plan_to_read: number
-        total_entries: number
-        reread: number
-        chapters_read: number
-        volumes_read: number
-      }
-    }
-    favorites: {
-      anime: Array<{
-        mal_id: number
-        title: string
-        type: string
-        start_year: number | null
-        images: {
-          jpg: { image_url: string; large_image_url: string; small_image_url: string }
-          webp: { image_url: string; large_image_url: string; small_image_url: string }
-        }
-      }>
-      manga: Array<{
-        mal_id: number
-        title: string
-        type: string
-        start_year: number | null
-        images: {
-          jpg: { image_url: string; large_image_url: string; small_image_url: string }
-          webp: { image_url: string; large_image_url: string; small_image_url: string }
-        }
-      }>
-      characters: Array<{
-        mal_id: number
-        name: string
-        images: {
-          jpg: { image_url: string }
-          webp: { image_url: string }
-        }
-      }>
-      people: Array<{
-        mal_id: number
-        name: string
-        images: {
-          jpg: { image_url: string }
-          webp: { image_url: string }
-        }
-      }>
-    }
-    updates: {
-      anime: Array<{
-        entry: {
-          mal_id: number
-          title: string
-          images: {
-            jpg: { image_url: string; large_image_url: string; small_image_url: string }
-            webp: { image_url: string }
-          }
-        }
-        score: number
-        status: string
-        episodes_seen: number | null
-        episodes_total: number | null
-        date: string
-      }>
-      manga: Array<{
-        entry: {
-          mal_id: number
-          title: string
-          images: {
-            jpg: { image_url: string; large_image_url: string; small_image_url: string }
-            webp: { image_url: string }
-          }
-        }
-        score: number
-        status: string
-        chapters_read: number | null
-        chapters_total: number | null
-        date: string
-      }>
-    }
-  }
-}
+export type EdgeFavorite = { mal_id: number; title?: string; name?: string; url?: string; type?: string; imageUrl?: string | null; images?: { jpg?: { small_image_url?: string; image_url?: string } } }
+export type EdgeFavorites = { anime: EdgeFavorite[]; manga: EdgeFavorite[]; characters: EdgeFavorite[]; people: EdgeFavorite[] }
+type EdgeEnvelope<T> = { data: T; meta: { stale?: boolean; refreshFailed?: boolean; pagination?: { page: number; limit: number; total: number; hasNextPage: boolean } } }
+export type EdgeListItem = { malId: number; title: string; imageUrl: string | null; status: string | null; score: number | null; progress: number | null; total: number | null; updatedAt: string | null }
 
 export interface MalProfileResponse {
-  mal_id: number
-  username: string
-  url: string
-  images: {
-    jpg: { image_url: string }
-    webp: { image_url: string }
-  }
-  last_online: string
-  gender: string | null
-  birthday: string | null
-  location: string | null
-  joined: string
-  statistics: JikanUserFullResponse["data"]["statistics"]
-  favorites: JikanUserFullResponse["data"]["favorites"]
-  updates: JikanUserFullResponse["data"]["updates"]
+  favorites: EdgeFavorites
+  statistics: { anime: AnimeStatistics; manga: MangaStatistics }
 }
 
-/**
- * Busca o perfil completo de um usuário do MyAnimeList
- */
-export async function fetchFullProfile(username: string): Promise<MalProfileResponse> {
-  const response = await jikanGet<JikanUserFullResponse>(`/users/${username}/full`)
-
+function mapStatistics(value: Record<string, number | null | undefined>): AnimeStatistics & MangaStatistics {
   return {
-    mal_id: response.data.mal_id,
-    username: response.data.username,
-    url: response.data.url,
-    images: response.data.images,
-    last_online: response.data.last_online,
-    gender: response.data.gender,
-    birthday: response.data.birthday,
-    location: response.data.location,
-    joined: response.data.joined,
-    statistics: response.data.statistics,
-    favorites: response.data.favorites,
-    updates: response.data.updates,
+    days_watched: value.daysWatched ?? null, days_read: value.daysRead ?? null, mean_score: value.meanScore ?? null,
+    watching: value.watching ?? null, reading: value.reading ?? null, completed: value.completed ?? null, on_hold: value.onHold ?? null,
+    dropped: value.dropped ?? null, plan_to_watch: value.planToWatch ?? null, plan_to_read: value.planToRead ?? null,
+    total_entries: value.totalEntries ?? null, rewatched: value.rewatched ?? null, reread: value.reread ?? null,
+    episodes_watched: value.episodesWatched ?? null, chapters_read: value.chaptersRead ?? null, volumes_read: value.volumesRead ?? null,
   }
+}
+
+export async function fetchFullProfile(username: string): Promise<MalProfileResponse> {
+  const user = encodeURIComponent(username)
+  const [favorites, statistics] = await Promise.all([
+    jikanEdgeGet<EdgeEnvelope<EdgeFavorites>>(`/v1/users/${user}/favorites`),
+    jikanEdgeGet<EdgeEnvelope<{ anime: Record<string, number | null>; manga: Record<string, number | null> }>>(`/v1/users/${user}/statistics`),
+  ])
+  if (favorites.meta.refreshFailed || statistics.meta.refreshFailed) throw new Error("Jikan Edge returned refreshFailed data")
+  return { favorites: favorites.data, statistics: { anime: mapStatistics(statistics.data.anime), manga: mapStatistics(statistics.data.manga) } }
+}
+
+/** Reads a single, caller-selected page. The plugin never fans this out into catalog requests. */
+export async function fetchMediaList(username: string, media: "anime" | "manga", page = 1, limit = 100): Promise<EdgeEnvelope<EdgeListItem[]>> {
+  const safePage = Math.max(1, Math.floor(page))
+  const safeLimit = Math.min(300, Math.max(1, Math.floor(limit)))
+  return jikanEdgeGet<EdgeEnvelope<EdgeListItem[]>>(`/v1/users/${encodeURIComponent(username)}/${media}list?page=${safePage}&limit=${safeLimit}`)
 }

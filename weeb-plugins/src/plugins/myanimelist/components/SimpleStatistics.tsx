@@ -33,12 +33,14 @@ export function SimpleStatistics({
   const title = config.statistics_simple_title || "Anime & Manga Statistics"
   const hideTitle = config.statistics_simple_hide_title || false
 
-  const TotalDays = data.anime.days_watched + data.manga.days_read
+  const anime = data.anime as Record<keyof MyAnimeListData["statistics"]["anime"], number>
+  const manga = data.manga as Record<keyof MyAnimeListData["statistics"]["manga"], number>
+  const TotalDays = anime.days_watched + manga.days_read
   const TotalMeanScore =
-    (data.anime.mean_score * data.anime.total_entries + data.manga.mean_score * data.manga.total_entries) /
-    (data.anime.total_entries + data.manga.total_entries)
-  const ChaptersRead = data.manga.chapters_read
-  const EpisodesWatched = data.anime.episodes_watched
+    (anime.mean_score * anime.total_entries + manga.mean_score * manga.total_entries) /
+    (anime.total_entries + manga.total_entries)
+  const ChaptersRead = manga.chapters_read
+  const EpisodesWatched = anime.episodes_watched
 
   return (
     <section id="mal-simple-statistics">

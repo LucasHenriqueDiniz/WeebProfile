@@ -6,29 +6,29 @@ import type { AnimeStatistics, MangaStatistics } from "../types"
 
 export interface JikanStatisticsResponse {
   anime: {
-    days_watched: number
+    days_watched: number | null
     mean_score: number | null
-    watching: number
-    completed: number
-    on_hold: number
-    dropped: number
-    plan_to_watch: number
-    total_entries: number
-    rewatched: number
-    episodes_watched: number
+    watching: number | null
+    completed: number | null
+    on_hold: number | null
+    dropped: number | null
+    plan_to_watch: number | null
+    total_entries: number | null
+    rewatched: number | null
+    episodes_watched: number | null
   }
   manga: {
-    days_read: number
+    days_read: number | null
     mean_score: number | null
-    reading: number
-    completed: number
-    on_hold: number
-    dropped: number
-    plan_to_read: number
-    total_entries: number
-    reread: number
-    chapters_read: number
-    volumes_read: number
+    reading: number | null
+    completed: number | null
+    on_hold: number | null
+    dropped: number | null
+    plan_to_read: number | null
+    total_entries: number | null
+    reread: number | null
+    chapters_read: number | null
+    volumes_read: number | null
   }
 }
 
@@ -42,7 +42,7 @@ export function transformStatistics(response: JikanStatisticsResponse): {
   return {
     anime: {
       days_watched: response.anime.days_watched,
-      mean_score: response.anime.mean_score ?? 0,
+      mean_score: response.anime.mean_score,
       watching: response.anime.watching,
       completed: response.anime.completed,
       on_hold: response.anime.on_hold,
@@ -54,7 +54,7 @@ export function transformStatistics(response: JikanStatisticsResponse): {
     },
     manga: {
       days_read: response.manga.days_read,
-      mean_score: response.manga.mean_score ?? 0,
+      mean_score: response.manga.mean_score,
       reading: response.manga.reading,
       completed: response.manga.completed,
       on_hold: response.manga.on_hold,

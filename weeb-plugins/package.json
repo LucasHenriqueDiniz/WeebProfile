@@ -52,7 +52,6 @@
     }
   },
   "dependencies": {
-    "@cf-wasm/photon": "^0.3.6",
     "@octokit/graphql": "^8.1.1",
     "@octokit/rest": "^21.0.2",
     "@types/glob": "^9.0.0",

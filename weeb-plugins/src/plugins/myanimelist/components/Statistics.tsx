@@ -12,7 +12,7 @@ import type { GridItemProps } from "../../../templates/types"
 import { emojiStatus } from "../../../utils/emoji"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
-import type { AnimeStatistics, MangaStatistics, MyAnimeListConfig, MyAnimeListData } from "../types"
+import type { MyAnimeListConfig, MyAnimeListData } from "../types"
 
 interface StatisticsProps {
   data: MyAnimeListData["statistics"]
@@ -33,8 +33,10 @@ export function Statistics({
     return <></>
   }
 
-  const animeStatistics = data.anime as AnimeStatistics
-  const mangaStatistics = data.manga as MangaStatistics
+  const animeStatistics = data.anime
+  const mangaStatistics = data.manga
+  const displayNumber = (value: number | null) => (value === null ? "—" : abbreviateNumber(value))
+  const displayPlainNumber = (value: number | null) => (value === null ? "—" : value.toString())
 
   const hideTitle = config.statistics_hide_title ?? false
   const statisticsMedia = config.statistics_media ?? "both"
@@ -48,90 +50,90 @@ export function Statistics({
   const animeDataAsGridItemProps: GridItemProps[] = [
     {
       title: emojiStatus("Mean Score", hideTerminalEmojis) + " Mean Score",
-      value: animeStatistics.mean_score.toString(),
+      value: displayPlainNumber(animeStatistics.mean_score),
     },
     {
       title: emojiStatus("Total Days", hideTerminalEmojis) + " Total Days",
-      value: animeStatistics.days_watched.toString(),
+      value: displayPlainNumber(animeStatistics.days_watched),
     },
     {
       title: emojiStatus("Total Entries", hideTerminalEmojis) + " Total Entries",
-      value: abbreviateNumber(animeStatistics.total_entries),
+      value: displayNumber(animeStatistics.total_entries),
     },
     {
       title: emojiStatus("Rewatched", hideTerminalEmojis) + " Rewatched",
-      value: abbreviateNumber(animeStatistics.rewatched),
+      value: displayNumber(animeStatistics.rewatched),
     },
     {
       title: emojiStatus("Episodes Watched", hideTerminalEmojis) + " Episodes Watched",
-      value: abbreviateNumber(animeStatistics.episodes_watched),
+      value: displayNumber(animeStatistics.episodes_watched),
     },
     {
       title: emojiStatus("Watching", hideTerminalEmojis) + " Watching",
-      value: abbreviateNumber(animeStatistics.watching),
+      value: displayNumber(animeStatistics.watching),
     },
     {
       title: emojiStatus("Completed", hideTerminalEmojis) + " Completed",
-      value: abbreviateNumber(animeStatistics.completed),
+      value: displayNumber(animeStatistics.completed),
     },
     {
       title: emojiStatus("On Hold", hideTerminalEmojis) + " On Hold",
-      value: abbreviateNumber(animeStatistics.on_hold),
+      value: displayNumber(animeStatistics.on_hold),
     },
     {
       title: emojiStatus("Dropped", hideTerminalEmojis) + " Dropped",
-      value: abbreviateNumber(animeStatistics.dropped),
+      value: displayNumber(animeStatistics.dropped),
     },
     {
       title: emojiStatus("Plan to Watch", hideTerminalEmojis) + " Plan to Watch",
-      value: abbreviateNumber(animeStatistics.plan_to_watch),
+      value: displayNumber(animeStatistics.plan_to_watch),
     },
   ]
 
   const mangaDataAsGridItemProps: GridItemProps[] = [
     {
       title: emojiStatus("Mean Score", hideTerminalEmojis) + " Mean Score",
-      value: mangaStatistics.mean_score.toString(),
+      value: displayPlainNumber(mangaStatistics.mean_score),
     },
     {
       title: emojiStatus("Total Days", hideTerminalEmojis) + " Total Days",
-      value: mangaStatistics.days_read.toString(),
+      value: displayPlainNumber(mangaStatistics.days_read),
     },
     {
       title: emojiStatus("Total Entries", hideTerminalEmojis) + " Total Entries",
-      value: abbreviateNumber(mangaStatistics.total_entries),
+      value: displayNumber(mangaStatistics.total_entries),
     },
     {
       title: emojiStatus("Reread", hideTerminalEmojis) + " Reread",
-      value: abbreviateNumber(mangaStatistics.reread),
+      value: displayNumber(mangaStatistics.reread),
     },
     {
       title: emojiStatus("Chapters Read", hideTerminalEmojis) + " Chapters Read",
-      value: abbreviateNumber(mangaStatistics.chapters_read),
+      value: displayNumber(mangaStatistics.chapters_read),
     },
     {
       title: emojiStatus("Volumes Read", hideTerminalEmojis) + " Volumes Read",
-      value: abbreviateNumber(mangaStatistics.volumes_read),
+      value: displayNumber(mangaStatistics.volumes_read),
     },
     {
       title: emojiStatus("Reading", hideTerminalEmojis) + " Reading",
-      value: abbreviateNumber(mangaStatistics.reading),
+      value: displayNumber(mangaStatistics.reading),
     },
     {
       title: emojiStatus("Completed", hideTerminalEmojis) + " Completed",
-      value: abbreviateNumber(mangaStatistics.completed),
+      value: displayNumber(mangaStatistics.completed),
     },
     {
       title: emojiStatus("On Hold", hideTerminalEmojis) + " On Hold",
-      value: abbreviateNumber(mangaStatistics.on_hold),
+      value: displayNumber(mangaStatistics.on_hold),
     },
     {
       title: emojiStatus("Dropped", hideTerminalEmojis) + " Dropped",
-      value: abbreviateNumber(mangaStatistics.dropped),
+      value: displayNumber(mangaStatistics.dropped),
     },
     {
       title: emojiStatus("Plan to Read", hideTerminalEmojis) + " Plan to Read",
-      value: abbreviateNumber(mangaStatistics.plan_to_read),
+      value: displayNumber(mangaStatistics.plan_to_read),
     },
   ]
 
@@ -146,33 +148,33 @@ export function Statistics({
                 {
                   icon: <FaStar />,
                   title: "Mean Score",
-                  value: abbreviateNumber(animeStatistics.mean_score),
+                  value: displayNumber(animeStatistics.mean_score),
                   strong: true,
                 },
                 {
                   icon: <FaCirclePlay className="fill-mal-watching" />,
                   title: "Watching",
-                  value: abbreviateNumber(animeStatistics.watching),
+                  value: displayNumber(animeStatistics.watching),
                 },
                 {
                   icon: <FaCircleCheck className="fill-mal-completed" />,
                   title: "Completed",
-                  value: abbreviateNumber(animeStatistics.completed),
+                  value: displayNumber(animeStatistics.completed),
                 },
                 {
                   icon: <FaCirclePause className="fill-mal-on-hold" />,
                   title: "On Hold",
-                  value: abbreviateNumber(animeStatistics.on_hold),
+                  value: displayNumber(animeStatistics.on_hold),
                 },
                 {
                   icon: <FaCircleXmark className="fill-mal-dropped" />,
                   title: "Dropped",
-                  value: abbreviateNumber(animeStatistics.dropped),
+                  value: displayNumber(animeStatistics.dropped),
                 },
                 {
                   icon: <FaQuestionCircle className="fill-mal-plan-to-watch" />,
                   title: "Plan to Watch",
-                  value: abbreviateNumber(animeStatistics.plan_to_watch),
+                  value: displayNumber(animeStatistics.plan_to_watch),
                 },
               ]}
             />
@@ -181,23 +183,23 @@ export function Statistics({
                 {
                   icon: <FaCalendar />,
                   title: "Total Days",
-                  value: abbreviateNumber(animeStatistics.days_watched),
+                  value: displayNumber(animeStatistics.days_watched),
                   strong: true,
                 },
                 {
                   icon: <FaDatabase />,
                   title: "Total Entries",
-                  value: abbreviateNumber(animeStatistics.total_entries),
+                  value: displayNumber(animeStatistics.total_entries),
                 },
                 {
                   icon: <RiRestartFill size={16} />,
                   title: "Rewatched",
-                  value: abbreviateNumber(animeStatistics.rewatched),
+                  value: displayNumber(animeStatistics.rewatched),
                 },
                 {
                   icon: <FaVideo />,
                   title: "Episodes Watched",
-                  value: abbreviateNumber(animeStatistics.episodes_watched),
+                  value: displayNumber(animeStatistics.episodes_watched),
                 },
               ]}
             />
@@ -213,33 +215,33 @@ export function Statistics({
                 {
                   icon: <FaStar />,
                   title: "Mean Score",
-                  value: abbreviateNumber(mangaStatistics.mean_score),
+                  value: displayNumber(mangaStatistics.mean_score),
                   strong: true,
                 },
                 {
                   icon: <FaCirclePlay className="fill-mal-watching" />,
                   title: "Reading",
-                  value: abbreviateNumber(mangaStatistics.reading),
+                  value: displayNumber(mangaStatistics.reading),
                 },
                 {
                   icon: <FaCircleCheck className="fill-mal-completed" />,
                   title: "Completed",
-                  value: abbreviateNumber(mangaStatistics.completed),
+                  value: displayNumber(mangaStatistics.completed),
                 },
                 {
                   icon: <FaCirclePause className="fill-mal-on-hold" />,
                   title: "On Hold",
-                  value: abbreviateNumber(mangaStatistics.on_hold),
+                  value: displayNumber(mangaStatistics.on_hold),
                 },
                 {
                   icon: <FaCircleXmark className="fill-mal-dropped" />,
                   title: "Dropped",
-                  value: abbreviateNumber(mangaStatistics.dropped),
+                  value: displayNumber(mangaStatistics.dropped),
                 },
                 {
                   icon: <FaQuestionCircle className="fill-mal-plan-to-watch" />,
                   title: "Plan to Read",
-                  value: abbreviateNumber(mangaStatistics.plan_to_read),
+                  value: displayNumber(mangaStatistics.plan_to_read),
                 },
               ]}
             />
@@ -248,28 +250,28 @@ export function Statistics({
                 {
                   icon: <FaCalendar />,
                   title: "Total Days",
-                  value: abbreviateNumber(mangaStatistics.days_read),
+                  value: displayNumber(mangaStatistics.days_read),
                   strong: true,
                 },
                 {
                   icon: <FaDatabase />,
                   title: "Total Entries",
-                  value: abbreviateNumber(mangaStatistics.total_entries),
+                  value: displayNumber(mangaStatistics.total_entries),
                 },
                 {
                   icon: <RiRestartFill size={16} />,
                   title: "Reread",
-                  value: abbreviateNumber(mangaStatistics.reread),
+                  value: displayNumber(mangaStatistics.reread),
                 },
                 {
                   icon: <FaBookOpen />,
                   title: "Chapters Read",
-                  value: abbreviateNumber(mangaStatistics.chapters_read),
+                  value: displayNumber(mangaStatistics.chapters_read),
                 },
                 {
                   icon: <FaVideo />,
                   title: "Volumes Read",
-                  value: abbreviateNumber(mangaStatistics.volumes_read),
+                  value: displayNumber(mangaStatistics.volumes_read),
                 },
               ]}
             />

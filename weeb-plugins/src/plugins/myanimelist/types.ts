@@ -3,30 +3,30 @@
  */
 
 export interface AnimeStatistics {
-  days_watched: number
-  mean_score: number
-  watching: number
-  completed: number
-  on_hold: number
-  dropped: number
-  plan_to_watch: number
-  total_entries: number
-  rewatched: number
-  episodes_watched: number
+  days_watched: number | null
+  mean_score: number | null
+  watching: number | null
+  completed: number | null
+  on_hold: number | null
+  dropped: number | null
+  plan_to_watch: number | null
+  total_entries: number | null
+  rewatched: number | null
+  episodes_watched: number | null
 }
 
 export interface MangaStatistics {
-  days_read: number
-  mean_score: number
-  reading: number
-  completed: number
-  on_hold: number
-  dropped: number
-  plan_to_read: number
-  total_entries: number
-  reread: number
-  chapters_read: number
-  volumes_read: number
+  days_read: number | null
+  mean_score: number | null
+  reading: number | null
+  completed: number | null
+  on_hold: number | null
+  dropped: number | null
+  plan_to_read: number | null
+  total_entries: number | null
+  reread: number | null
+  chapters_read: number | null
+  volumes_read: number | null
 }
 
 export interface LastUpdatesAnime {
@@ -68,6 +68,7 @@ export interface MyAnimeListData {
     people: BasicPeopleFavorite[]
   }
   last_updated: MalLastUpdates
+  lastActivityStatus?: "complete" | "partial" | "empty" | "unavailable"
   statistics: {
     anime: AnimeStatistics
     manga: MangaStatistics
