@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="420" height="260" viewBox="0 0 420 260">
+  <rect width="420" height="260" rx="16" fill="#0a0f1e"/>
+  <text x="20" y="28" fill="#67e8f9" font-family="Arial" font-size="16">02 — SVG &lt;image xlink:href&gt;</text>
+  <rect x="20" y="44" width="140" height="196" fill="#111827" stroke="#334155"/>
+  <image x="20" y="44" width="140" height="196" preserveAspectRatio="xMidYMid slice" xlink:href="https://i0.wp.com/blogbbm.com/wp-content/uploads/2025/05/Nodame-Cantabile-01.jpg?resize=693%2C1024&amp;ssl=1"/>
+  <text x="184" y="86" fill="#f8fafc" font-family="Arial" font-size="18" font-weight="700">xlink:href externo</text>
+  <text x="184" y="116" fill="#94a3b8" font-family="Arial" font-size="14">Teste legado do SVG 1.1</text>
+</svg>
