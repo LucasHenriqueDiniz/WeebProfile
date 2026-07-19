@@ -6,6 +6,8 @@ const originalFetch = globalThis.fetch
 afterEach(() => {
   globalThis.fetch = originalFetch
   delete process.env.JIKAN_EDGE_BASE_URL
+  delete (globalThis as { __weebJikanEdgeFetcher?: unknown }).__weebJikanEdgeFetcher
+  delete (globalThis as { __weebRequireJikanEdgeBinding?: unknown }).__weebRequireJikanEdgeBinding
 })
 
 function response(status: number, body: unknown) {
@@ -31,6 +33,22 @@ describe("jikanEdgeGet", () => {
     const [url, options] = vi.mocked(globalThis.fetch).mock.calls[0]!
     expect(url.toString()).toBe("https://edge.example/v1/users/test/favorites")
     expect(options?.headers).toEqual({ Accept: "application/json", "User-Agent": "WeebProfile/1.0" })
+  })
+
+  it("uses the service binding and preserves pathname/query without calling global fetch", async () => {
+    process.env.JIKAN_EDGE_BASE_URL = "https://jikan-edge.example"
+    const serviceFetch = vi.fn().mockResolvedValue(response(200, { data: { ok: true } }))
+    ;(globalThis as { __weebJikanEdgeFetcher?: { fetch: typeof serviceFetch } }).__weebJikanEdgeFetcher = { fetch: serviceFetch }
+    ;(globalThis as { __weebRequireJikanEdgeBinding?: boolean }).__weebRequireJikanEdgeBinding = true
+    globalThis.fetch = vi.fn()
+
+    await expect(jikanEdgeGet<{ data: { ok: boolean } }>("/v1/users/Amayacrab/animelist?page=2&limit=100")).resolves.toEqual({ data: { ok: true } })
+
+    expect(globalThis.fetch).not.toHaveBeenCalled()
+    const request = serviceFetch.mock.calls[0]![0]
+    expect(request.method).toBe("GET")
+    expect(request.url).toBe("https://jikan-edge.example/v1/users/Amayacrab/animelist?page=2&limit=100")
+    expect(request.headers.get("accept")).toBe("application/json")
   })
 
   it.each([404, 429, 500])("preserves HTTP %i as a structured error", async (status) => {

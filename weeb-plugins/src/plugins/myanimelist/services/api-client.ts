@@ -4,6 +4,19 @@ export interface JikanEdgeDiagnostics {
   cacheStatus: string | null
 }
 
+export interface JikanEdgeFetcher {
+  fetch(request: Request): Promise<Response>
+}
+
+type JikanEdgeRuntime = typeof globalThis & {
+  __weebJikanEdgeFetcher?: JikanEdgeFetcher
+  __weebRequireJikanEdgeBinding?: boolean
+}
+
+function runtime(): JikanEdgeRuntime {
+  return globalThis as JikanEdgeRuntime
+}
+
 export class JikanEdgeError extends Error {
   constructor(
     message: string,
@@ -34,7 +47,14 @@ export async function jikanEdgeGet<T>(path: string, options: { timeoutMs?: numbe
   const request = { method: "GET" as const, originPathname: `${url.origin}${url.pathname}` }
   let response: Response
   try {
-    response = await fetch(url, { signal: controller.signal, headers: { Accept: "application/json", "User-Agent": "WeebProfile/1.0" } })
+    const init = { signal: controller.signal, headers: { Accept: "application/json", "User-Agent": "WeebProfile/1.0" } }
+    const binding = runtime().__weebJikanEdgeFetcher
+    if (binding) {
+      response = await binding.fetch(new Request(url, init))
+    } else {
+      if (runtime().__weebRequireJikanEdgeBinding) throw new JikanEdgeError("Jikan Edge service binding is unavailable", undefined, undefined, undefined, request)
+      response = await fetch(url, init)
+    }
   } catch (error) {
     throw new JikanEdgeError(error instanceof Error && error.name === "AbortError" ? "Jikan Edge request timed out" : "Jikan Edge request failed", undefined, undefined, undefined, request)
   } finally {
