@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="260" viewBox="0 0 420 260">
+  <rect width="420" height="260" rx="16" fill="#0a0f1e"/>
+  <text x="20" y="28" fill="#67e8f9" font-family="Arial" font-size="16">07 — nested SVG data URI + external image</text>
+  <image x="20" y="44" width="140" height="196" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='196'%3E%3Crect width='140' height='196' fill='%23111827'/%3E%3Cimage href='https%3A%2F%2Fi0.wp.com%2Fblogbbm.com%2Fwp-content%2Fuploads%2F2025%2F05%2FNodame-Cantabile-01.jpg%3Fresize%3D693%252C1024%26ssl%3D1' width='140' height='196' preserveAspectRatio='xMidYMid slice'/%3E%3C/svg%3E"/>
+  <text x="184" y="86" fill="#f8fafc" font-family="Arial" font-size="18" font-weight="700">Nested SVG</text>
+  <text x="184" y="116" fill="#94a3b8" font-family="Arial" font-size="14">Data URI contendo URL externa</text>
+</svg>
