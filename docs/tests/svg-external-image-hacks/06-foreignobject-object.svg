@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="420" height="260" viewBox="0 0 420 260">
+  <rect width="420" height="260" rx="16" fill="#0a0f1e"/>
+  <text x="20" y="28" fill="#67e8f9" font-family="Arial" font-size="16">06 — foreignObject + &lt;object data&gt;</text>
+  <foreignObject x="20" y="44" width="140" height="196">
+    <xhtml:object data="https://i0.wp.com/blogbbm.com/wp-content/uploads/2025/05/Nodame-Cantabile-01.jpg?resize=693%2C1024&amp;ssl=1" type="image/jpeg" width="140" height="196"/>
+  </foreignObject>
+  <text x="184" y="86" fill="#f8fafc" font-family="Arial" font-size="18" font-weight="700">HTML object</text>
+  <text x="184" y="116" fill="#94a3b8" font-family="Arial" font-size="14">Objeto externo em foreignObject</text>
+</svg>
