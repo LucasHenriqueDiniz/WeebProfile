@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="360" height="160" viewBox="0 0 360 160" role="img" aria-labelledby="title desc">
+  <title id="title">GitHub embedded PNG inside SVG test</title>
+  <desc id="desc">A red PNG embedded as a base64 data URI inside an SVG.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0f1e"/>
+      <stop offset="100%" stop-color="#17122f"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="360" height="160" rx="18" fill="url(#bg)"/>
+  <rect x="12" y="12" width="336" height="136" rx="13" fill="none" stroke="#22d3ee" stroke-opacity="0.55"/>
+
+  <image
+    x="32"
+    y="36"
+    width="88"
+    height="88"
+    preserveAspectRatio="none"
+    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAM0lEQVR4nO3OQQEAMAjEsGPiEIF/H0wGn9RAU9uzOexdzgEAAAAAAAAAAAAAAAAAAJLkA0PfAt7S9Rw2AAAAAElFTkSuQmCC"
+    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAM0lEQVR4nO3OQQEAMAjEsGPiEIF/H0wGn9RAU9uzOexdzgEAAAAAAAAAAAAAAAAAAJLkA0PfAt7S9Rw2AAAAAElFTkSuQmCC"
+  />
+
+  <text x="144" y="62" fill="#f8fafc" font-family="Arial, sans-serif" font-size="20" font-weight="700">PNG dentro do SVG</text>
+  <text x="144" y="90" fill="#a5f3fc" font-family="Arial, sans-serif" font-size="14">Se o quadrado vermelho aparecer,</text>
+  <text x="144" y="112" fill="#cbd5e1" font-family="Arial, sans-serif" font-size="14">o README aceitou raster embutido.</text>
+</svg>
