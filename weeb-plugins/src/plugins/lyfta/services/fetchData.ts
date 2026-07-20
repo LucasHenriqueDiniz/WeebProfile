@@ -4,7 +4,18 @@
 
 import type { LyftaConfig, LyftaData } from "../types"
 import { getMockLyftaData } from "./mock-data"
-import { urlToBase64, IMAGE_OPTIMIZATION } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+
+const LYFTA_IMAGE_MAX_BYTES = 250_000
+
+async function embedImageOrNull(image: string): Promise<string | null> {
+  if (!image.startsWith("https://")) return null
+  try {
+    return (await urlToDataUriDirect(image, { maxBytes: LYFTA_IMAGE_MAX_BYTES })).dataUri
+  } catch {
+    return null
+  }
+}
 
 const BASE_URL = "https://my.lyfta.app"
 
@@ -63,12 +74,12 @@ export async function fetchLyftaData(
       workouts.map(async (workout: any) => {
         const processedExercises = await Promise.all(
           workout.exercises.map(async (exercise: any) => {
-            let exerciseImage = exercise.exercise_image || ""
+            let exerciseImage: string | null = exercise.exercise_image || null
 
             // If exercise_image is a URL, convert to base64
             if (exerciseImage && !exerciseImage.startsWith("data:") && exerciseImage.startsWith("http")) {
               try {
-                exerciseImage = await urlToBase64(exerciseImage, 15000, IMAGE_OPTIMIZATION)
+                exerciseImage = await embedImageOrNull(exerciseImage)
               } catch (error) {
                 console.error("Failed to convert exercise image to base64:", error)
               }
@@ -104,11 +115,11 @@ export async function fetchLyftaData(
     // Process exercise data images
     const processedExercises = await Promise.all(
       exercises.map(async (exercise: any) => {
-        let imageName = exercise.image_name || ""
+        let imageName: string | null = exercise.image_name || null
 
         if (imageName && !imageName.startsWith("data:") && imageName.startsWith("http")) {
           try {
-            imageName = await urlToBase64(imageName, 15000, IMAGE_OPTIMIZATION)
+            imageName = await embedImageOrNull(imageName)
           } catch (error) {
             console.error("Failed to convert exercise data image to base64:", error)
           }
@@ -288,7 +299,7 @@ async function convertImageUrlsToBase64(data: any, previewMode = false): Promise
           result[key] = value
         } else {
           // Converter URL para base64 com otimização (imagens pequenas)
-          result[key] = await urlToBase64(value, 15000, IMAGE_OPTIMIZATION)
+          result[key] = await embedImageOrNull(value)
         }
       } else {
         result[key] = await convertImageUrlsToBase64(value, previewMode)

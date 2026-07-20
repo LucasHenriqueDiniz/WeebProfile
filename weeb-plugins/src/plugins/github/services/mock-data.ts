@@ -1,5 +1,5 @@
 import type { GithubData } from "../types"
-import { urlToBase64 } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 
 export async function getMockGithubData(): Promise<GithubData> {
   // Dados reais copiados do real-data.json
@@ -6446,28 +6446,26 @@ export async function getMockGithubData(): Promise<GithubData> {
   } as GithubData
 
   // Converter todos os avatarUrls para base64
-  const convertAvatarUrl = async (url: string | undefined): Promise<string | undefined> => {
+  const convertAvatarUrl = async (url: string | null | undefined): Promise<string | null> => {
     if (!url || (!url.startsWith("http://") && !url.startsWith("https://"))) {
-      return url
+      return null
     }
     try {
-      return await urlToBase64(url)
+      return (await urlToDataUriDirect(url, { maxBytes: 250_000 })).dataUri
     } catch (error) {
       console.warn(`Failed to convert avatar URL to base64: ${url}`, error)
-      return url
+      return null
     }
   }
 
   // Converter avatarUrl do user
-  const userAvatarUrl = await convertAvatarUrl(
-    realData.user?.avatarUrl ?? "https://avatars.githubusercontent.com/octocat"
-  )
+  const userAvatarUrl = await convertAvatarUrl(realData.user?.avatarUrl)
 
   // Converter avatarUrls de people
   const peopleNodes = await Promise.all(
     (realData.people?.nodes || []).map(async (person) => ({
       ...person,
-      avatarUrl: (await convertAvatarUrl(person.avatarUrl)) || person.avatarUrl,
+      avatarUrl: await convertAvatarUrl(person.avatarUrl || undefined),
     }))
   )
 
@@ -6475,7 +6473,7 @@ export async function getMockGithubData(): Promise<GithubData> {
   const sponsorsNodes = await Promise.all(
     (realData.sponsors?.nodes || []).map(async (sponsor) => ({
       ...sponsor,
-      avatarUrl: (await convertAvatarUrl(sponsor.avatarUrl)) || sponsor.avatarUrl,
+      avatarUrl: await convertAvatarUrl(sponsor.avatarUrl || undefined),
     }))
   )
 
@@ -6485,7 +6483,7 @@ export async function getMockGithubData(): Promise<GithubData> {
       ...sponsorship,
       sponsorable: {
         ...sponsorship.sponsorable,
-        avatarUrl: (await convertAvatarUrl(sponsorship.sponsorable.avatarUrl)) || sponsorship.sponsorable.avatarUrl,
+        avatarUrl: await convertAvatarUrl(sponsorship.sponsorable.avatarUrl || undefined),
       },
     }))
   )
@@ -6494,7 +6492,7 @@ export async function getMockGithubData(): Promise<GithubData> {
   const repositoryContributors = await Promise.all(
     (realData.repositoryContributors || []).map(async (contributor) => ({
       ...contributor,
-      avatarUrl: (await convertAvatarUrl(contributor.avatarUrl)) || contributor.avatarUrl,
+      avatarUrl: await convertAvatarUrl(contributor.avatarUrl || undefined),
     }))
   )
 
@@ -6502,7 +6500,7 @@ export async function getMockGithubData(): Promise<GithubData> {
     ...realData,
     user: {
       ...realData.user,
-      avatarUrl: userAvatarUrl ?? "https://avatars.githubusercontent.com/octocat",
+      avatarUrl: userAvatarUrl,
     },
     people: realData.people
       ? {

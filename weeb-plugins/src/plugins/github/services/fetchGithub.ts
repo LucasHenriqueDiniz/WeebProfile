@@ -11,7 +11,18 @@ import {
   RECENT_ACTIVITY_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
-import { urlToBase64 } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+
+const GITHUB_AVATAR_MAX_BYTES = 250_000
+
+async function embedImageOrNull(url: string): Promise<string | null> {
+  if (!url.startsWith("https://")) return null
+  try {
+    return (await urlToDataUriDirect(url, { maxBytes: GITHUB_AVATAR_MAX_BYTES })).dataUri
+  } catch {
+    return null
+  }
+}
 
 // Mapeamento de seções para permissões necessárias
 const SECTION_PERMISSIONS: Record<string, string[]> = {
@@ -358,13 +369,13 @@ export async function fetchGithubData(
             const avatarUrlBase64 =
               result.user.avatarUrl &&
               (result.user.avatarUrl.startsWith("http://") || result.user.avatarUrl.startsWith("https://"))
-                ? await urlToBase64(result.user.avatarUrl)
-                : result.user.avatarUrl
+                ? await embedImageOrNull(result.user.avatarUrl)
+                : null
 
             data.user = {
               name: result.user.name,
               login: result.user.login,
-              avatarUrl: avatarUrlBase64 || result.user.avatarUrl,
+              avatarUrl: avatarUrlBase64,
               createdAt: result.user.createdAt,
               followers: result.user.followers?.totalCount || 0,
               following: result.user.following?.totalCount || 0,
@@ -431,13 +442,13 @@ export async function fetchGithubData(
                 const avatarUrl = sponsorship.sponsorable?.avatarUrl || ""
                 const avatarUrlBase64 =
                   avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
-                    ? await urlToBase64(avatarUrl)
-                    : avatarUrl
+                    ? await embedImageOrNull(avatarUrl)
+                    : null
                 return {
                   sponsorable: {
                     login: sponsorship.sponsorable?.login || "",
                     name: sponsorship.sponsorable?.name || null,
-                    avatarUrl: avatarUrlBase64 || avatarUrl,
+                    avatarUrl: avatarUrlBase64,
                   },
                   tier: sponsorship.tier
                     ? {
@@ -462,12 +473,12 @@ export async function fetchGithubData(
                 const avatarUrl = sponsor.avatarUrl || ""
                 const avatarUrlBase64 =
                   avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
-                    ? await urlToBase64(avatarUrl)
-                    : avatarUrl
+                    ? await embedImageOrNull(avatarUrl)
+                    : null
                 return {
                   login: sponsor.login || "",
                   name: sponsor.name || null,
-                  avatarUrl: avatarUrlBase64 || avatarUrl,
+                  avatarUrl: avatarUrlBase64,
                   tier: null, // TODO: pegar tier do sponsor
                 }
               })
@@ -940,12 +951,12 @@ async function processPeopleData(
         const avatarUrl = follower.avatarUrl || ""
         const avatarUrlBase64 =
           avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
-            ? await urlToBase64(avatarUrl)
-            : avatarUrl
+            ? await embedImageOrNull(avatarUrl)
+            : null
         return {
           login: follower.login || "",
           name: follower.name || null,
-          avatarUrl: avatarUrlBase64 || avatarUrl,
+          avatarUrl: avatarUrlBase64,
         }
       })
     )
@@ -987,12 +998,12 @@ async function processPeopleData(
         const avatarUrl = person.avatarUrl || ""
         const avatarUrlBase64 =
           avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
-            ? await urlToBase64(avatarUrl)
-            : avatarUrl
+            ? await embedImageOrNull(avatarUrl)
+            : null
         return {
           login: person.login || "",
           name: person.name || null,
-          avatarUrl: avatarUrlBase64 || avatarUrl,
+          avatarUrl: avatarUrlBase64,
         }
       })
     )
@@ -1041,12 +1052,12 @@ async function processRepositoryContributorsData(
         const avatarUrl = contributor.avatar_url || ""
         const avatarUrlBase64 =
           avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
-            ? await urlToBase64(avatarUrl)
-            : avatarUrl
+            ? await embedImageOrNull(avatarUrl)
+            : null
         return {
           login: contributor.login,
           name: contributor.name || null,
-          avatarUrl: avatarUrlBase64 || avatarUrl,
+          avatarUrl: avatarUrlBase64,
           contributions: contributor.contributions || 0,
         }
       })
@@ -1095,11 +1106,11 @@ async function processRepositoryContributorsData(
           const avatarUrl = contributor.avatarUrl || ""
           const avatarUrlBase64 =
             avatarUrl && (avatarUrl.startsWith("http://") || avatarUrl.startsWith("https://"))
-              ? await urlToBase64(avatarUrl)
-              : avatarUrl
+              ? await embedImageOrNull(avatarUrl)
+              : null
           return {
             ...contributor,
-            avatarUrl: avatarUrlBase64 || avatarUrl,
+            avatarUrl: avatarUrlBase64,
           }
         })
       )

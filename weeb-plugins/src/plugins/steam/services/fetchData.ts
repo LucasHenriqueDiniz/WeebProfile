@@ -4,7 +4,9 @@
 
 import type { SteamConfig, SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from "../types"
 import { getMockSteamData } from "./mock-data"
-import { urlToBase64, IMAGE_OPTIMIZATION } from "../../../utils/image-to-base64"
+import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+
+const STEAM_IMAGE_MAX_BYTES = 250_000
 
 const STEAM_API_BASE = "https://api.steampowered.com"
 const STEAM_STORE_API = "https://store.steampowered.com/api"
@@ -162,7 +164,11 @@ async function convertImageUrlsToBase64(data: any, previewMode = false): Promise
           result[key] = value
         } else {
           // Converter URL para base64 com otimização
-          result[key] = await urlToBase64(value, 15000, IMAGE_OPTIMIZATION)
+          try {
+            result[key] = (await urlToDataUriDirect(value, { maxBytes: STEAM_IMAGE_MAX_BYTES })).dataUri
+          } catch {
+            result[key] = null
+          }
         }
       } else {
         result[key] = await convertImageUrlsToBase64(value, previewMode)
