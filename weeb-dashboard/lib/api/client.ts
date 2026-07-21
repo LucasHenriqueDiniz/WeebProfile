@@ -36,6 +36,21 @@ export class ApiException extends Error {
   }
 }
 
+type ClerkBrowserClient = {
+  session?: {
+    getToken: () => Promise<string | null>
+  }
+}
+
+async function getClerkAuthorizationHeader(): Promise<Record<string, string>> {
+  if (typeof window === "undefined") return {}
+
+  const clerk = (window as Window & { Clerk?: ClerkBrowserClient }).Clerk
+  const token = await clerk?.session?.getToken()
+
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
 /**
  * Faz uma requisição HTTP e retorna os dados parseados
  *
