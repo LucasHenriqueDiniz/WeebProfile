@@ -22,7 +22,8 @@ const TERMINAL_STYLE_CSS = `/* Terminal Style CSS */
 
 /* Container */
 #svg-main .terminal-container {
-  --font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-family:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-family: var(--font-family);
   font-variant-ligatures: none; /* Desliga ligatures para previsibilidade */
   width: 100%;

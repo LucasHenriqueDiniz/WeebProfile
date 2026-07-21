@@ -15,6 +15,11 @@ export const clerkAppearance = {
   },
   elements: {
     rootBox: "w-full",
+    // Clerk renders card INSIDE a separate cardBox wrapper that ships its own default
+    // box-shadow/border-radius/overflow-hidden (a full modal elevation) - zeroing only
+    // `card` (the inner element) left this outer wrapper's shadow forming an invisible
+    // panel around the whole form. Both must be neutralized.
+    cardBox: "shadow-none bg-transparent border-0 rounded-none overflow-visible",
     card: "bg-transparent shadow-none p-0 w-full gap-4",
     headerTitle: "hidden",
     headerSubtitle: "hidden",

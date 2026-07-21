@@ -21,7 +21,6 @@ import { getDefaultThemeVariables as getDefaultThemeVariablesFromUtils } from ".
  */
 const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -328,7 +327,9 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 }
 
 #svg-main .shadow-md {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 #svg-main .h-\\[15px\\] {
@@ -368,7 +369,6 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 #svg-main .text-bold {
   font-weight: 700;
 }
-
 
 /* Line clamp utilities */
 #svg-main .line-clamp-2 {
@@ -474,28 +474,28 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 }
 
 #svg-main .duolingo-streak-card[data-intensity="low"] {
-  background: linear-gradient(135deg, #89E219 0%, #A8F03A 100%);
-  border: 2px solid #58CC02;
+  background: linear-gradient(135deg, #89e219 0%, #a8f03a 100%);
+  border: 2px solid #58cc02;
 }
 
 #svg-main .duolingo-streak-card[data-intensity="medium"] {
-  background: linear-gradient(135deg, #58CC02 0%, #89E219 100%);
-  border: 2px solid #4BB800;
+  background: linear-gradient(135deg, #58cc02 0%, #89e219 100%);
+  border: 2px solid #4bb800;
 }
 
 #svg-main .duolingo-streak-card[data-intensity="high"] {
-  background: linear-gradient(135deg, #FFC800 0%, #FFD633 100%);
-  border: 2px solid #FFB300;
+  background: linear-gradient(135deg, #ffc800 0%, #ffd633 100%);
+  border: 2px solid #ffb300;
 }
 
 #svg-main .duolingo-streak-card[data-intensity="legendary"] {
-  background: linear-gradient(135deg, #FF4B4B 0%, #FF6B6B 100%);
-  border: 2px solid #FF2B2B;
+  background: linear-gradient(135deg, #ff4b4b 0%, #ff6b6b 100%);
+  border: 2px solid #ff2b2b;
 }
 
 #svg-main .duolingo-streak-card[data-intensity="godlike"] {
-  background: linear-gradient(135deg, #CE82FF 0%, #E5B3FF 100%);
-  border: 2px solid #B866FF;
+  background: linear-gradient(135deg, #ce82ff 0%, #e5b3ff 100%);
+  border: 2px solid #b866ff;
 }
 
 #svg-main .duolingo-xp-card {
@@ -504,8 +504,8 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
   padding: 1rem;
   overflow: hidden;
   min-height: 80px;
-  background: linear-gradient(135deg, #58CC02 0%, #89E219 100%);
-  border: 2px solid #4BB800;
+  background: linear-gradient(135deg, #58cc02 0%, #89e219 100%);
+  border: 2px solid #4bb800;
 }
 
 #svg-main .duolingo-icon-container {
@@ -518,7 +518,7 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 }
 
 #svg-main .duolingo-text-snow {
-  color: #FFFFFF;
+  color: #ffffff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }`
 

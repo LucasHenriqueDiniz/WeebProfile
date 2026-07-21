@@ -1,11 +1,12 @@
 "use client"
 
 import { LivePreview } from "./LivePreview"
-import { PluginConfiguration } from "./PluginConfiguration"
+import { PluginListPanel } from "./PluginListPanel"
+import { PluginDetailPanel } from "./PluginDetailPanel"
+import { PluginWorkspaceDialogs } from "./PluginWorkspaceDialogs"
 import { StyleConfiguration } from "./StyleConfiguration"
 import { WizardShell } from "./WizardShell"
-import { WizardTabs } from "./WizardTabs"
-import { WizardFooter } from "./WizardFooter"
+import { usePluginWorkspace } from "./usePluginWorkspace"
 import { useWizardController } from "./useWizardController"
 
 interface WizardProps {
@@ -15,20 +16,21 @@ interface WizardProps {
 
 export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
   const ctrl = useWizardController({ isEditMode, editSvgId })
-
-  // Pass isEditMode to wizard store to control persistence
-  // This will be handled in the store initialization
+  const workspace = usePluginWorkspace()
 
   return (
-    <WizardShell stats={ctrl.stats} preview={<LivePreview />} footer={<WizardFooter {...ctrl.footerProps} />}>
-      <WizardTabs activeTab={ctrl.activeTab} onTabChange={ctrl.setActiveTab}>
-        <WizardTabs.Plugins>
-          <PluginConfiguration />
-        </WizardTabs.Plugins>
-        <WizardTabs.Style>
-          <StyleConfiguration />
-        </WizardTabs.Style>
-      </WizardTabs>
-    </WizardShell>
+    <>
+      <WizardShell
+        activeTab={ctrl.activeTab}
+        onTabChange={ctrl.setActiveTab}
+        pluginsList={<PluginListPanel workspace={workspace} />}
+        pluginDetail={<PluginDetailPanel workspace={workspace} />}
+        styleConfig={<StyleConfiguration />}
+        preview={<LivePreview />}
+        footerProps={{ ...ctrl.footerProps, isEditMode }}
+        selectedPlugin={workspace.selectedPlugin}
+      />
+      <PluginWorkspaceDialogs workspace={workspace} />
+    </>
   )
 }

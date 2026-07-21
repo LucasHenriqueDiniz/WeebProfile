@@ -6,8 +6,8 @@
  */
 
 const DEBUG_WIZARD =
-  process.env.NODE_ENV !== "production" &&
-  (process.env.NEXT_PUBLIC_DEBUG_WIZARD === "1" ||
+  import.meta.env.DEV &&
+  (import.meta.env.VITE_DEBUG_WIZARD === "1" ||
     (typeof window !== "undefined" && localStorage.getItem("debug:wizard") === "1"))
 
 /**

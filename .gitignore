@@ -56,3 +56,7 @@ pnpm-debug.log*
 
 # Windsurf
 .windsurf
+
+# Claude Code local tooling (plugin skills/marketplace data, launch configs)
+/.agents
+/.claude

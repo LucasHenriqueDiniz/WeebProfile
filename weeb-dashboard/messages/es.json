@@ -330,6 +330,11 @@
       "languageDescription": "Selecione o idioma da interface",
       "theme": "Tema",
       "themeDescription": "Alternar entre modo claro e escuro",
+      "themeOptions": {
+        "dark": "Escuro",
+        "light": "Claro",
+        "system": "Sistema"
+      },
       "title": "Aparência"
     },
     "description": "Gerencie suas configurações de conta e preferências",
@@ -348,6 +353,7 @@
     "mySvgs": "Meus SVGs",
     "navigation": "Navegação",
     "settings": "Configurações",
+    "svgsUsed": "SVGs usados",
     "user": "Usuário"
   },
   "view": {
@@ -478,6 +484,7 @@
       "activePlugins": "Plugins ativos:",
       "searchPlaceholder": "Buscar plugins...",
       "onlyEnabled": "Apenas habilitados",
+      "active": "Ativo",
       "inactive": "Inativo",
       "categories": {
         "all": "Todos",

@@ -36,6 +36,7 @@
       "pending": "Pendente",
       "ready": "Pronto"
     },
+    "subtitle": "Cole o markdown gerado no topo do seu README do GitHub",
     "title": "Meus SVGs",
     "toast": {
       "deletedSuccess": "A imagem foi removida com sucesso.",
@@ -330,6 +331,11 @@
       "languageDescription": "Selecione o idioma da interface",
       "theme": "Tema",
       "themeDescription": "Alternar entre modo claro e escuro",
+      "themeOptions": {
+        "dark": "Escuro",
+        "light": "Claro",
+        "system": "Sistema"
+      },
       "title": "Aparência"
     },
     "description": "Gerencie suas configurações de conta e preferências",
@@ -344,10 +350,12 @@
     "title": "Configurações"
   },
   "sidebar": {
+    "collapse": "Recolher",
     "createNew": "Criar Novo",
     "mySvgs": "Meus SVGs",
     "navigation": "Navegação",
     "settings": "Configurações",
+    "svgsUsed": "SVGs usados",
     "user": "Usuário"
   },
   "view": {
@@ -417,10 +425,12 @@
       "loadingImage": "Erro ao carregar imagem"
     },
     "footer": {
+      "createSvg": "Criar SVG",
       "enablePlugin": "Habilite pelo menos um plugin",
       "finish": "Finalize",
       "generating": "Gerando...",
       "incompleteConfig": "Configuração incompleta",
+      "saveSvg": "Salvar SVG",
       "missingConfigs": {
         "fillRequired": "Preencha os campos obrigatórios para continuar",
         "more": "mais...",
@@ -478,6 +488,7 @@
       "activePlugins": "Plugins ativos:",
       "searchPlaceholder": "Buscar plugins...",
       "onlyEnabled": "Apenas habilitados",
+      "active": "Ativo",
       "inactive": "Inativo",
       "categories": {
         "all": "Todos",

@@ -3,21 +3,9 @@
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { motion, useScroll, useTransform } from "framer-motion"
-import {
-  Github,
-  Menu,
-  PanelLeft,
-  Sparkles,
-  X,
-  Home,
-  Settings,
-  LogOut,
-  ArrowLeft,
-  ChevronRight,
-  Languages,
-} from "lucide-react"
+import { Github, Menu, Sparkles, X, Home, LogOut, Languages } from "lucide-react"
 import { usePathname, useRouter, Link } from "@/i18n/navigation"
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTranslations } from "@/i18n/use-translations"
@@ -30,13 +18,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
-import { SidebarTrigger } from "@/components/ui/sidebar"
 import { LanguageSelector } from "./LanguageSelector"
 
 interface HeaderProps {
   className?: string
   variant?: "home" | "dashboard"
-  showSidebarToggle?: boolean
+  /** Contextual content for the dashboard variant - each route supplies its own. */
+  title?: ReactNode
+  description?: ReactNode
+  actions?: ReactNode
 }
 
 // Avatar component - simple implementation
@@ -51,7 +41,7 @@ const AvatarFallback = ({ className, children }: { className?: string; children:
   </div>
 )
 
-export function Header({ className, variant, showSidebarToggle }: HeaderProps) {
+export function Header({ className, variant, title, description, actions }: HeaderProps) {
   const t = useTranslations("header")
   const pathname = usePathname()
   const router = useRouter()
@@ -60,7 +50,6 @@ export function Header({ className, variant, showSidebarToggle }: HeaderProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [languageSelectorOpen, setLanguageSelectorOpen] = useState(false)
 
-  // Auto-detect variant from pathname if not provided
   const detectedVariant =
     variant ||
     (() => {
@@ -83,8 +72,6 @@ export function Header({ className, variant, showSidebarToggle }: HeaderProps) {
     await signOut()
     router.push("/login" as any)
   }
-
-  const isWizardPage = pathname === "/dashboard/new" || pathname?.match(/^\/dashboard\/[^/]+\/edit$/)
 
   // Home variant
   if (detectedVariant === "home") {
@@ -276,127 +263,36 @@ export function Header({ className, variant, showSidebarToggle }: HeaderProps) {
     )
   }
 
-  // Dashboard variant (works with or without sidebar)
+  // Dashboard variant - contextual per route: each page supplies title/description/actions
+  // instead of the header being a fixed, mostly-empty bar. Sidebar-toggle and identity live
+  // in the sidebar now, not here - this bar's only job is "what am I looking at, what can I
+  // do about it".
   return (
-    <header className="sticky top-0 z-40 border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 shadow-sm">
-      <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        {/* Left */}
-        <div className="flex items-center gap-3 md:gap-4">
-          {/* Sidebar toggle - only show if sidebar is available */}
-          {showSidebarToggle && !isWizardPage && (
-            <>
-              <SidebarTrigger className="h-9 w-9" />
-              <div className="h-6 w-px bg-border/50" />
-            </>
-          )}
-
-          {/* Back button for wizard pages */}
-          {isWizardPage && (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push("/dashboard" as any)}
-                className="h-9 w-9 hover:bg-muted/80 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <div className="h-6 w-px bg-border/50" />
-
-              {/* Logo only shown in wizard pages */}
-              <Link
-                href="/dashboard"
-                locale={undefined}
-                className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
-              >
-                <img src="/sora/sora-head.png" alt="Sora" className="w-8 h-8 object-contain drop-shadow-lg" />
-                <span className="font-bold text-lg font-sora">WeebProfile</span>
-              </Link>
-            </>
-          )}
+    <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-xl">
+      <div className="flex min-h-16 items-center justify-between gap-4 px-4 md:px-6 py-3">
+        <div className="min-w-0 flex-1">
+          {title && <h1 className="font-heading text-lg md:text-xl font-bold text-foreground truncate">{title}</h1>}
+          {description && <p className="text-xs md:text-sm text-muted-foreground truncate mt-0.5">{description}</p>}
         </div>
 
-        {/* Right */}
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <div className="h-6 w-px bg-border/50" />
-
-          {user && (
-            <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-auto px-2 py-1.5 gap-2.5 hover:bg-muted/80 transition-colors">
-                  <div className="relative">
-                    <Avatar className="h-9 w-9 ring-2 ring-primary/20 shadow-md">
-                      <AvatarImage
-                        src={user.user_metadata?.avatar_url || user.user_metadata?.picture}
-                        alt={user.user_metadata?.user_name || user.user_metadata?.full_name || "User"}
-                      />
-                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-cyan-500 text-white text-sm font-bold shadow-lg">
-                        {user.user_metadata?.user_name?.charAt(0)?.toUpperCase() ||
-                          user.user_metadata?.full_name?.charAt(0)?.toUpperCase() ||
-                          user.email?.charAt(0)?.toUpperCase() ||
-                          "?"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background shadow-sm" />
-                  </div>
-                  <div className="hidden sm:block text-left">
-                    <div className="text-sm font-semibold">
-                      {user.user_metadata?.user_name ||
-                        user.user_metadata?.full_name ||
-                        user.email?.split("@")[0] ||
-                        "Usuário"}
-                    </div>
-                    {user.user_metadata?.user_name && user.email && (
-                      <div className="text-xs text-muted-foreground leading-tight">{user.email}</div>
-                    )}
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground hidden sm:block rotate-[-90deg]" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                side="bottom"
-                sideOffset={8}
-                className="w-64 rounded-lg border shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 origin-top"
-              >
-                <DropdownMenuLabel className="flex flex-col gap-1.5 px-3 py-2.5">
-                  <span className="text-sm font-semibold">{t("myAccount")}</span>
-                  <span className="text-xs text-muted-foreground font-normal">{user.email}</span>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => router.push("/dashboard" as any)}
-                  className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
-                >
-                  <Home className="w-4 h-4 mr-2.5" />
-                  {t("dashboard")}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => router.push("/dashboard/settings")}
-                  className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
-                >
-                  <Settings className="w-4 h-4 mr-2.5" />
-                  {t("settings")}
-                </DropdownMenuItem>
-                <DropdownMenuItem
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {actions}
+          <div className="hidden md:flex items-center gap-1 pl-2 ml-1 border-l border-border">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 hover:bg-muted/80 transition-colors"
                   onClick={() => setLanguageSelectorOpen(true)}
-                  className="cursor-pointer px-3 py-2.5 rounded-md mx-1 transition-colors"
                 >
-                  <Languages className="w-4 h-4 mr-2.5" />
-                  {t("changeLanguage")}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="my-1" />
-                <DropdownMenuItem
-                  onClick={handleSignOut}
-                  className="text-destructive cursor-pointer focus:text-destructive px-3 py-2.5 rounded-md mx-1 transition-colors"
-                >
-                  <LogOut className="w-4 h-4 mr-2.5" />
-                  {t("signOut")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                  <Languages className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t("changeLanguage")}</TooltipContent>
+            </Tooltip>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
 

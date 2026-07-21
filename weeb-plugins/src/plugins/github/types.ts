@@ -97,7 +97,7 @@ export interface GithubData {
     login: string
     name: string
     bio?: string
-    avatarUrl: string
+    avatarUrl: string | null
     location?: string
     company?: string
     websiteUrl?: string
@@ -310,7 +310,7 @@ export interface GithubData {
       sponsorable: {
         login: string
         name: string | null
-        avatarUrl: string
+        avatarUrl: string | null
       }
       tier: {
         name: string
@@ -323,7 +323,7 @@ export interface GithubData {
     nodes: Array<{
       login: string
       name: string | null
-      avatarUrl: string
+      avatarUrl: string | null
       tier: {
         name: string
         monthlyPriceInDollars: number
@@ -336,14 +336,14 @@ export interface GithubData {
     nodes: Array<{
       login: string
       name: string | null
-      avatarUrl: string
+      avatarUrl: string | null
       contributions?: number
     }>
   }
   repositoryContributors?: Array<{
     login: string
     name: string | null
-    avatarUrl: string
+    avatarUrl: string | null
     contributions: number
   }>
 }

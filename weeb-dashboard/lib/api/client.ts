@@ -11,6 +11,20 @@ export interface ApiError {
   retryable?: boolean
 }
 
+type ClerkBrowserClient = {
+  session?: {
+    getToken: () => Promise<string | null>
+  }
+}
+
+async function getClerkAuthorizationHeader(): Promise<Record<string, string>> {
+  if (typeof window === "undefined") return {}
+
+  const clerk = (window as Window & { Clerk?: ClerkBrowserClient }).Clerk
+  const token = await clerk?.session?.getToken()
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
 export class ApiException extends Error {
   constructor(
     public status: number,
@@ -49,10 +63,12 @@ export async function apiRequest<T = any>(url: string, options?: RequestInit): P
 
   let response: Response
   try {
+    const authorization = await getClerkAuthorizationHeader()
     response = await fetch(absoluteUrl, {
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...authorization,
         ...options?.headers,
       },
     })

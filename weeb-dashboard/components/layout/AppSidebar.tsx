@@ -244,7 +244,7 @@ export function AppSidebar() {
               <Button variant="ghost" className="w-full justify-start gap-3 h-auto p-2 hover:bg-accent">
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src={user.user_metadata?.avatar_url}
+                    src={user.user_metadata?.avatar_url ?? undefined}
                     alt={user.user_metadata?.user_name || user.email || "User"}
                   />
                   <AvatarFallback>

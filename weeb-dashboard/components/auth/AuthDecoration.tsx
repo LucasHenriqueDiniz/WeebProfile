@@ -228,14 +228,15 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
         />
       ))}
 
-      {/* Layer 3: Foreground - Sora + Auth Card */}
-      <div className="relative z-10 w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center gap-8">
+      {/* Layer 3: Foreground - Sora + Auth Card. max-w keeps illustration and form close
+          together as one composition instead of each claiming half the viewport. */}
+      <div className="relative z-10 w-full max-w-4xl flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-16">
         {/* Sora Illustration Panel - Desktop Only */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="hidden lg:flex flex-col items-center justify-center w-full lg:w-1/2 relative"
+          className="hidden lg:flex flex-col items-center justify-center w-[340px] flex-shrink-0 relative"
         >
           {/* Props around Sora */}
           {soraProps.map((prop) => (
@@ -279,21 +280,24 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
             <img
               src="/sora/login/sora_login.png"
               alt="Sora"
-              className="w-[400px] h-auto max-h-[650px] object-contain drop-shadow-[0_0_40px_rgba(56,189,248,0.3)] drop-shadow-[0_0_20px_rgba(168,85,247,0.2)]"
+              className="w-[300px] h-auto max-h-[560px] object-contain drop-shadow-[0_0_40px_rgba(56,189,248,0.3)] drop-shadow-[0_0_20px_rgba(168,85,247,0.2)]"
             />
           </motion.div>
         </motion.div>
 
-        {/* Auth Card */}
+        {/* Auth form - integrated directly into the page, no modal-like card around it.
+            Structure comes from width, alignment, spacing and a thin divider instead of
+            a bordered box; OAuth buttons and inputs keep their own surfaces via
+            clerk-appearance.ts. */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="w-full lg:w-1/2 flex flex-col items-center justify-center"
+          className="w-full lg:w-[440px] flex flex-col items-center lg:items-start justify-center px-2"
         >
-          <div className="w-full max-w-md rounded-2xl border border-cyan-500/30 bg-[#0a0f1e]/90 backdrop-blur-xl px-6 py-8 sm:px-8 sm:py-9">
+          <div className="w-full max-w-sm">
             {/* Header */}
-            <div className="text-center mb-7">
+            <div className="text-center lg:text-left mb-6">
               <div className="inline-flex items-center gap-1.5 mb-3">
                 <img src="/sora/sora-head.png" alt="" className="w-4 h-4 object-contain" />
                 <span className="text-[11px] font-bold tracking-[0.25em] uppercase font-heading bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
@@ -305,10 +309,10 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
               </h1>
             </div>
 
-            {children}
+            <div className="border-t border-white/[0.06] pt-6">{children}</div>
 
             {/* Footer */}
-            <p className="text-[11px] text-center text-slate-500 mt-6 leading-relaxed">
+            <p className="text-[11px] text-center lg:text-left text-slate-500 mt-7 leading-relaxed">
               Ao continuar, você concorda com nossos{" "}
               <a
                 href="#"

@@ -1,7 +1,7 @@
 // Mapeamento de seções para previews de imagem
 // AUTO-GENERATED - DO NOT EDIT MANUALLY
 // Execute: pnpm generate-section-previews (in weeb-plugins)
-//
+// 
 // Este arquivo é gerado automaticamente a partir dos plugins em weeb-plugins
 // e verifica quais previews existem na pasta previews/ de cada plugin
 
@@ -95,11 +95,7 @@ export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
   },
 }
 
-export function getSectionPreview(
-  plugin: string,
-  section: string,
-  style: "default" | "terminal" = "default"
-): string | null {
+export function getSectionPreview(plugin: string, section: string, style: "default" | "terminal" = "default"): string | null {
   const pluginPreviews = SECTION_PREVIEWS[plugin]
   if (!pluginPreviews) return null
 

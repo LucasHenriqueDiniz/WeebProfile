@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 
 export function LoadingAnimation() {
+  const reduceMotion = useReducedMotion()
   const frames = useMemo(
     () => Array.from({ length: 24 }, (_, i) => `/sora/loading/loading${String(i).padStart(2, "0")}.webp`),
     []
@@ -25,6 +26,9 @@ export function LoadingAnimation() {
   }, [frames])
 
   useEffect(() => {
+    // prefers-reduced-motion: hold on a single frame instead of cycling
+    if (reduceMotion) return
+
     // 8 fps = 125ms. 10 fps = 100ms
     const fps = 8
     const interval = Math.round(1000 / fps)
@@ -34,7 +38,7 @@ export function LoadingAnimation() {
     }, interval)
 
     return () => window.clearInterval(t)
-  }, [frames.length])
+  }, [frames.length, reduceMotion])
 
   // Sprite only - no background layer, no fixed sizing. Every real usage (LoadingScreen,
   // TemplatesPageClient) already provides its own page background; wrapping this in a second
@@ -48,7 +52,9 @@ export function LoadingAnimation() {
       transition={{ duration: 0.5 }}
     >
       {/* Glowing background for the animation */}
-      <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl scale-150 animate-pulse" />
+      <div
+        className={`absolute inset-0 bg-primary/10 rounded-full blur-3xl scale-150 ${reduceMotion ? "" : "animate-pulse"}`}
+      />
 
       <motion.img
         src={frames[idx]}
@@ -61,18 +67,18 @@ export function LoadingAnimation() {
           imageRendering: "pixelated",
           display: "block",
         }}
-        animate={{
-          filter: [
-            "drop-shadow(0 0 10px rgba(var(--primary), 0.3))",
-            "drop-shadow(0 0 20px rgba(var(--primary), 0.5))",
-            "drop-shadow(0 0 10px rgba(var(--primary), 0.3))",
-          ],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+        animate={
+          reduceMotion
+            ? { filter: "drop-shadow(0 0 14px rgba(var(--primary), 0.4))" }
+            : {
+                filter: [
+                  "drop-shadow(0 0 10px rgba(var(--primary), 0.3))",
+                  "drop-shadow(0 0 20px rgba(var(--primary), 0.5))",
+                  "drop-shadow(0 0 10px rgba(var(--primary), 0.3))",
+                ],
+              }
+        }
+        transition={reduceMotion ? undefined : { duration: 2, repeat: Infinity, ease: "easeInOut" }}
       />
     </motion.div>
   )

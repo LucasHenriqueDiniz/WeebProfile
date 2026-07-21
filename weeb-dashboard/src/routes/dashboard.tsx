@@ -1,9 +1,9 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState"
+import { SvgLibraryRow } from "@/components/dashboard/SvgLibraryRow"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { SvgCardSkeleton } from "@/components/sections/TemplateCardSkeleton"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -12,13 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/hooks/useAuth"
 import { useToast } from "@/hooks/use-toast"
@@ -27,19 +20,7 @@ import type { Svg } from "@/lib/db/schema"
 import { useSvgStore } from "@/stores/svg-store"
 import { generateMarkdown } from "@/lib/utils/markdown"
 import { motion } from "framer-motion"
-import {
-  ArrowUpDown,
-  Copy,
-  Edit2,
-  ExternalLink,
-  Filter,
-  Image as ImageIcon,
-  Loader2,
-  MoreVertical,
-  Plus,
-  RefreshCw,
-  Trash2,
-} from "lucide-react"
+import { ArrowUpDown, Filter, Loader2, Plus } from "lucide-react"
 import { Link, useRouter } from "@/i18n/navigation"
 import { useEffect, useMemo, useState, useRef } from "react"
 import { useTranslations } from "@/i18n/use-translations"
@@ -49,6 +30,77 @@ const styleColors: Record<string, string> = {
   terminal: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
 }
 
+// DEV-ONLY mock data for the ?mock=full preview state. Never imported in production
+// (the whole call site is gated behind import.meta.env.DEV, which Vite strips).
+// TEMP: remove once the redesign is approved.
+const MOCK_SVGS = [
+  {
+    id: "mock-1",
+    slug: "github-stats",
+    name: "GitHub Stats",
+    style: "default",
+    size: "half",
+    status: "completed",
+    storageUrl: "/sora/sora-head.png",
+    pluginsOrder: "github,anime,music",
+    lastGeneratedAt: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(),
+  },
+  {
+    id: "mock-2",
+    slug: "terminal-card",
+    name: "Terminal Card",
+    style: "terminal",
+    size: "full",
+    status: "generating",
+    storageUrl: null,
+    pluginsOrder: "github,steam",
+    lastGeneratedAt: null,
+    updatedAt: new Date().toISOString(),
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
+  },
+  {
+    id: "mock-3",
+    slug: "anime-list",
+    name: "Anime List",
+    style: "default",
+    size: "half",
+    status: "completed",
+    storageUrl: null,
+    pluginsOrder: "myanimelist,anilist",
+    lastGeneratedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
+  },
+  {
+    id: "mock-4",
+    slug: "pending-card",
+    name: "Novo card",
+    style: "default",
+    size: "half",
+    status: "pending",
+    storageUrl: null,
+    pluginsOrder: "github",
+    lastGeneratedAt: null,
+    updatedAt: new Date().toISOString(),
+    createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+  },
+  {
+    id: "mock-5",
+    slug: "music-taste",
+    name: "Music Taste",
+    style: "default",
+    size: "half",
+    status: "completed",
+    storageUrl: null,
+    pluginsOrder: "lastfm,spotify,youtube-music",
+    lastGeneratedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString(),
+  },
+]
+
 type SortOption = "newest" | "oldest" | "name" | "status"
 type FilterStatus = "all" | "completed" | "generating" | "pending"
 
@@ -57,7 +109,7 @@ export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
-  const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg, _hasHydrated, setHasHydrated } = useSvgStore()
+  const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [generatingId, setGeneratingId] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all")
@@ -72,50 +124,45 @@ export default function DashboardPage() {
   const generatingCount = svgs.filter((s) => s.status === "generating").length
 
   const showAdvancedControls = total > 6
+  const isTrulyEmpty = !svgsLoading && svgs.length === 0
 
   // Ref para garantir que só fazemos fetch uma vez por montagem
   const hasFetchedRef = useRef(false)
 
-  // Marcar como reidratado se ainda não foi marcado (fallback)
+  // DEV-ONLY preview bypass: ?mock=empty or ?mock=full seeds the store with fake data
+  // instead of fetching. import.meta.env.DEV is statically replaced by Vite, so this
+  // branch is dead-code-eliminated from the production bundle.
+  // TEMP: remove once the redesign is approved.
   useEffect(() => {
-    if (typeof window !== "undefined" && !_hasHydrated) {
-      // Aguardar um pouco para garantir que o zustand reidratou
-      const timer = setTimeout(() => {
-        setHasHydrated(true)
-      }, 100)
-      return () => clearTimeout(timer)
+    if (!import.meta.env.DEV) return
+    const mockFlag = new URLSearchParams(window.location.search).get("mock")
+    if (mockFlag === "empty") {
+      hasFetchedRef.current = true
+      useSvgStore.setState({ svgs: [], svgsLoading: false })
+    } else if (mockFlag === "full") {
+      hasFetchedRef.current = true
+      useSvgStore.setState({ svgs: MOCK_SVGS as unknown as Svg[], svgsLoading: false })
     }
-  }, [_hasHydrated, setHasHydrated])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
+  // PERF: zustand's persist middleware rehydrates localStorage synchronously at module
+  // eval time in this SPA (no SSR to reconcile against), so the previous code that waited
+  // 100ms then another 200ms for "_hasHydrated" before calling fetchSvgs() was pure added
+  // latency solving a hydration-mismatch problem that only exists with SSR. Removed - fetch
+  // now fires the instant auth resolves.
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login")
       return
     }
 
-    // Só fazer fetch quando:
-    // 1. Usuário está autenticado
-    // 2. Auth terminou de carregar
-    // 3. Store já foi reidratado (ou aguardou tempo suficiente)
-    // 4. Ainda não fez fetch nesta montagem
     if (user && !authLoading && !hasFetchedRef.current) {
-      // Aguardar reidratação se ainda não aconteceu
-      if (!_hasHydrated) {
-        const timer = setTimeout(() => {
-          hasFetchedRef.current = true
-          // Mesmo que não tenha reidratado, tentar buscar (store pode estar vazio)
-          fetchSvgs()
-        }, 200)
-        return () => clearTimeout(timer)
-      }
-
       hasFetchedRef.current = true
-      // Se já temos SVGs carregados do localStorage, o fetchSvgs vai verificar o cache
-      // e só fazer request se necessário (cache expirado ou forçado)
-      fetchSvgs() // Sem force - o store verifica cache internamente
+      fetchSvgs()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, authLoading, _hasHydrated])
+  }, [user, authLoading])
 
   const handleDeleteClick = (id: string) => {
     setSvgToDelete(id)
@@ -266,51 +313,38 @@ export default function DashboardPage() {
     return null
   }
 
-  return (
-    <DashboardLayout>
-      <div className="w-full space-y-6 bg-background">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 lg:py-8">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-border/50"
-          >
-            <div className="flex-1">
-              <h1 className="font-heading text-2xl md:text-3xl font-bold text-foreground">{t("title")}</h1>
-              <div className="flex flex-wrap items-center gap-2 mt-2">
-                <Badge variant="outline">
-                  {total} {t("total")}
-                </Badge>
-                {readyCount > 0 && (
-                  <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 border-0">
-                    {t("ready")} • {readyCount}
-                  </Badge>
-                )}
-                {generatingCount > 0 && (
-                  <Badge className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-0 gap-1">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    {t("generating")} • {generatingCount}
-                  </Badge>
-                )}
-              </div>
-            </div>
-            <Button asChild size="lg" className="gap-2 shadow-sm">
-              <Link href="/dashboard/new">
-                <Plus className="w-4 h-4" />
-                {t("createNew")}
-              </Link>
-            </Button>
-          </motion.div>
+  const headerActions = !isTrulyEmpty ? (
+    <Button
+      asChild
+      size="sm"
+      className="gap-1.5 bg-gradient-to-r from-violet-500 to-cyan-500 hover:opacity-90 shadow-[0_0_16px_rgba(56,189,248,0.2)]"
+    >
+      <Link href="/dashboard/new">
+        <Plus className="w-4 h-4" />
+        <span className="hidden sm:inline">{t("createNew")}</span>
+      </Link>
+    </Button>
+  ) : undefined
 
+  return (
+    <DashboardLayout
+      title={t("title")}
+      description={
+        !isTrulyEmpty
+          ? `${total} ${t("total")}${readyCount > 0 ? ` · ${readyCount} ${t("ready")}` : ""}${generatingCount > 0 ? ` · ${generatingCount} ${t("generating")}` : ""}`
+          : undefined
+      }
+      actions={headerActions}
+    >
+      <div className="w-full space-y-5">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6">
           {/* Filters - apenas quando houver muitos SVGs */}
           {showAdvancedControls && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05, duration: 0.2 }}
-              className="flex flex-col sm:flex-row gap-3"
+              className="flex flex-col sm:flex-row gap-3 mb-5"
             >
               <div className="relative w-full sm:w-[180px]">
                 <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
@@ -343,272 +377,89 @@ export default function DashboardPage() {
             </motion.div>
           )}
 
-          {/* SVGs List */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
-          >
-            {/* Show loading skeletons if loading and no data */}
-            {svgsLoading && svgs.length === 0
-              ? Array.from({ length: 3 }).map((_, index) => <SvgCardSkeleton key={`skeleton-${index}`} index={index} />)
-              : filteredAndSortedSvgs.length > 0
-                ? /* Show actual SVGs */
-                  filteredAndSortedSvgs.map((svg, index) => (
-                    <motion.div
-                      key={svg.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03, duration: 0.2 }}
-                    >
-                      <Card className="hover:border-cyan-500/40 hover:bg-card/80 transition-colors group h-full flex flex-col border-border/50">
-                        <CardContent className="p-5 flex flex-col flex-1">
-                          {/* Preview Image */}
-                          {svg.storageUrl && svg.status === "completed" && !imageErrors.has(svg.id) ? (
-                            <div className="mb-4 rounded-lg overflow-hidden border border-border bg-muted/30 shadow-sm relative group">
-                              {/* Pixel-corner accent - discreet nod to the Sora pixel art, not a full retro theme */}
-                              <div
-                                aria-hidden
-                                className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-400/50 group-hover:border-cyan-400 transition-colors z-10 pointer-events-none"
-                              />
-                              <img
-                                src={`${svg.storageUrl}?v=${svg.lastGeneratedAt ? new Date(svg.lastGeneratedAt).getTime() : svg.updatedAt ? new Date(svg.updatedAt).getTime() : Date.now()}`}
-                                alt={svg.name}
-                                className="w-full h-auto object-contain transition-opacity"
-                                loading="lazy"
-                                key={`img-${svg.id}-${svg.lastGeneratedAt ? new Date(svg.lastGeneratedAt).getTime() : svg.updatedAt ? new Date(svg.updatedAt).getTime() : Date.now()}`}
-                                onError={(e) => {
-                                  setImageErrors((prev) => new Set(prev).add(svg.id))
-                                  e.currentTarget.style.display = "none"
-                                }}
-                                onLoad={() => {
-                                  // Remover erro se a imagem carregar com sucesso
-                                  setImageErrors((prev) => {
-                                    const next = new Set(prev)
-                                    next.delete(svg.id)
-                                    return next
-                                  })
-                                }}
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                            </div>
-                          ) : imageErrors.has(svg.id) || (svg.storageUrl && svg.status === "completed") ? (
-                            <div className="mb-4 rounded-lg border border-border bg-gradient-to-br from-violet-500/10 to-cyan-500/10 aspect-video flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
-                              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-cyan-500/5" />
-                              <img
-                                src="/sora/sora-head.png"
-                                alt="Sora - Error loading image"
-                                className="w-16 h-16 object-contain opacity-60 mb-2 relative z-10"
-                              />
-                              <p className="text-xs text-muted-foreground relative z-10">{t("imageNotAvailable")}</p>
-                            </div>
-                          ) : (
-                            <div className="mb-4 rounded-lg border border-border bg-muted/30 aspect-video flex items-center justify-center shadow-sm">
-                              {svg.status === "generating" ? (
-                                <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                              ) : (
-                                <ImageIcon className="w-8 h-8 text-muted-foreground" />
-                              )}
-                            </div>
-                          )}
-
-                          {/* Info */}
-                          <div className="space-y-3 flex-1">
-                            <div>
-                              <h3 className="font-semibold text-base group-hover:text-primary transition-colors mb-1.5 line-clamp-1">
-                                {svg.name}
-                              </h3>
-                              <code className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded font-mono">
-                                /{svg.slug || svg.id.slice(0, 8)}
-                              </code>
-                            </div>
-
-                            {/* Status Badge */}
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant={
-                                  svg.status === "completed"
-                                    ? "default"
-                                    : svg.status === "generating"
-                                      ? "secondary"
-                                      : svg.status === "failed"
-                                        ? "destructive"
-                                        : "outline"
-                                }
-                                className="gap-1"
-                              >
-                                {svg.status === "generating" && <Loader2 className="w-3 h-3 animate-spin" />}
-                                {svg.status === "completed"
-                                  ? t("status.ready")
-                                  : svg.status === "failed"
-                                    ? t("status.failed")
-                                    : svg.status === "generating"
-                                      ? t("status.generating")
-                                      : t("status.pending")}
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className={`${styleColors[svg.style] || styleColors.default} border-0`}
-                              >
-                                {svg.style}
-                              </Badge>
-                            </div>
-
-                            {/* Plugins */}
-                            {svg.pluginsOrder && (
-                              <div className="space-y-1">
-                                <p className="text-xs text-muted-foreground">{t("plugins")}</p>
-                                <div className="flex flex-wrap gap-1">
-                                  {svg.pluginsOrder
-                                    .split(",")
-                                    .slice(0, 4)
-                                    .map((plugin) => (
-                                      <Badge key={plugin} variant="outline" className="text-xs">
-                                        {plugin}
-                                      </Badge>
-                                    ))}
-                                  {svg.pluginsOrder.split(",").length > 4 && (
-                                    <Badge variant="outline" className="text-xs">
-                                      +{svg.pluginsOrder.split(",").length - 4}
-                                    </Badge>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Last Updated */}
-                            {svg.lastGeneratedAt && (
-                              <p className="text-xs text-muted-foreground">
-                                {t("updated")} {new Date(svg.lastGeneratedAt).toLocaleDateString()}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/50">
-                            <Button
-                              variant="default"
-                              size="sm"
-                              className="flex-1 text-xs"
-                              onClick={() => handleCopyUrl(svg)}
-                            >
-                              <Copy className="w-3.5 h-3.5 mr-1.5" />
-                              {t("copyMarkdown")}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-xs"
-                              onClick={() => router.push(`/dashboard/${svg.id}`)}
-                            >
-                              <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
-                              {t("view")}
-                            </Button>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                  <MoreVertical className="w-3.5 h-3.5" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => router.push(`/dashboard/${svg.id}/edit`)}>
-                                  <Edit2 className="w-4 h-4 mr-2" />
-                                  {t("edit")}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => handleForceGenerate(svg)}
-                                  disabled={generatingId === svg.id || svg.status === "generating"}
-                                >
-                                  {generatingId === svg.id ? (
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                  ) : (
-                                    <RefreshCw className="w-4 h-4 mr-2" />
-                                  )}
-                                  {t("forceGenerate")}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  onClick={() => handleDeleteClick(svg.id)}
-                                  disabled={deletingId === svg.id}
-                                  className="text-destructive focus:text-destructive"
-                                >
-                                  {deletingId === svg.id ? (
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                  ) : (
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                  )}
-                                  {t("delete")}
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
+          {/* Biblioteca de SVGs - lista de linhas (asset library), nao uma grade de cards
+              identicos. O onboarding cuida sozinho do estado verdadeiramente vazio, abaixo. */}
+          {!isTrulyEmpty && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15, duration: 0.2 }}
+              className="rounded-xl border border-white/[0.06] bg-white/[0.015] divide-y divide-white/[0.05] overflow-hidden"
+            >
+              {svgsLoading && svgs.length === 0
+                ? Array.from({ length: 4 }).map((_, index) => (
+                    <div key={`skeleton-${index}`} className="p-3">
+                      <SvgCardSkeleton index={index} />
+                    </div>
                   ))
-                : null}
+                : filteredAndSortedSvgs.length > 0
+                  ? filteredAndSortedSvgs.map((svg, index) => (
+                      <SvgLibraryRow
+                        key={svg.id}
+                        svg={svg}
+                        index={index}
+                        imageErrored={imageErrors.has(svg.id)}
+                        onImageError={() => setImageErrors((prev) => new Set(prev).add(svg.id))}
+                        onImageLoad={() =>
+                          setImageErrors((prev) => {
+                            const next = new Set(prev)
+                            next.delete(svg.id)
+                            return next
+                          })
+                        }
+                        onCopyUrl={() => handleCopyUrl(svg)}
+                        onView={() => router.push(`/dashboard/${svg.id}`)}
+                        onEdit={() => router.push(`/dashboard/${svg.id}/edit`)}
+                        onForceGenerate={() => handleForceGenerate(svg)}
+                        onDelete={() => handleDeleteClick(svg.id)}
+                        isGenerating={generatingId === svg.id}
+                        isDeleting={deletingId === svg.id}
+                        t={t}
+                      />
+                    ))
+                  : null}
 
-            {/* Show skeletons when loading more data */}
-            {svgsLoading && filteredAndSortedSvgs.length > 0 && (
-              <>
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <SvgCardSkeleton key={`loading-${index}`} index={filteredAndSortedSvgs.length + index} />
+              {svgsLoading &&
+                filteredAndSortedSvgs.length > 0 &&
+                Array.from({ length: 2 }).map((_, index) => (
+                  <div key={`loading-${index}`} className="p-3">
+                    <SvgCardSkeleton index={filteredAndSortedSvgs.length + index} />
+                  </div>
                 ))}
-              </>
-            )}
-          </motion.div>
+            </motion.div>
+          )}
 
-          {/* Empty State */}
-          {filteredAndSortedSvgs.length === 0 &&
-            !svgsLoading &&
-            (svgs.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.15, duration: 0.2 }}
-                className="text-center py-16 md:py-20"
+          {/* Onboarding real - substitui o antigo "ícone pequeno num canvas enorme" */}
+          {isTrulyEmpty && <DashboardEmptyState />}
+
+          {/* Empty State (filtro sem resultados - diferente do onboarding acima, só
+              acontece quando já existem SVGs mas o filtro ativo não bate com nenhum) */}
+          {!isTrulyEmpty && filteredAndSortedSvgs.length === 0 && !svgsLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.2 }}
+              className="text-center py-16 md:py-20"
+            >
+              <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-violet-500/10 to-cyan-500/10 mb-6">
+                <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold mb-2">{t("noResultsFound")}</h3>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
+                {t("noResultsDescription")}
+              </p>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  setStatusFilter("all")
+                  setSortBy("newest")
+                }}
               >
-                <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 mb-6 shadow-sm">
-                  <ImageIcon className="w-10 h-10 md:w-12 md:h-12 text-primary" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-bold mb-2">{t("noSvgsYet")}</h3>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-                  {t("noSvgsDescription")}
-                </p>
-                <Button asChild size="lg" className="gap-2 shadow-sm">
-                  <Link href="/dashboard/new">
-                    <Plus className="w-4 h-4" />
-                    {t("createFirst")}
-                  </Link>
-                </Button>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.15, duration: 0.2 }}
-                className="text-center py-16 md:py-20"
-              >
-                <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-violet-500/10 to-cyan-500/10 mb-6">
-                  <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-bold mb-2">{t("noResultsFound")}</h3>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-                  {t("noResultsDescription")}
-                </p>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => {
-                    setStatusFilter("all")
-                    setSortBy("newest")
-                  }}
-                >
-                  {t("clearFilter")}
-                </Button>
-              </motion.div>
-            ))}
+                {t("clearFilter")}
+              </Button>
+            </motion.div>
+          )}
 
           {/* Delete Confirmation Dialog */}
           <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

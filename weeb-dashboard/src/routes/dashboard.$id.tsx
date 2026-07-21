@@ -298,70 +298,51 @@ export default function SvgViewPage() {
         })
       : `![${svg?.name || "Profile"}](${baseImageUrl || imageUrl})`
 
+  const headerTitle = (
+    <span className="flex items-center gap-2">
+      <button
+        onClick={() => router.push("/dashboard")}
+        className="text-slate-400 hover:text-slate-200 transition-colors -ml-1 p-1"
+        aria-label={t("backToDashboard")}
+      >
+        <ArrowLeft className="w-4 h-4" />
+      </button>
+      {svg?.name || t("title")}
+    </span>
+  )
+
+  const headerActions = svg ? (
+    <div className="flex items-center gap-2">
+      <Badge
+        variant={svg.status === "completed" ? "default" : svg.status === "generating" ? "secondary" : "destructive"}
+      >
+        {svg.status === "completed" ? t("completed") : svg.status === "generating" ? t("generating") : t("error")}
+      </Badge>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleForceGenerate}
+        disabled={generating || svg.status === "generating"}
+        className="gap-1.5"
+      >
+        {generating ? (
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        ) : (
+          <RefreshCw className="w-3.5 h-3.5" />
+        )}
+        <span className="hidden sm:inline">{t("regenerate")}</span>
+      </Button>
+    </div>
+  ) : undefined
+
   return (
-    <DashboardLayout>
+    <DashboardLayout
+      title={headerTitle}
+      description={svg ? `${t("created")} ${new Date(svg.createdAt).toLocaleDateString()}` : undefined}
+      actions={headerActions}
+    >
       <div className="w-full min-h-screen bg-background">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-10">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center justify-between mb-6"
-          >
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard")} className="hover:bg-muted">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  {svg?.name || t("title")}
-                </h1>
-                {svg && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {t("created")} {new Date(svg.createdAt).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {svg && (
-              <div className="flex items-center gap-3">
-                <Badge
-                  variant={
-                    svg.status === "completed" ? "default" : svg.status === "generating" ? "secondary" : "destructive"
-                  }
-                  className="px-3 py-1"
-                >
-                  {svg.status === "completed"
-                    ? t("completed")
-                    : svg.status === "generating"
-                      ? t("generating")
-                      : t("error")}
-                </Badge>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleForceGenerate}
-                  disabled={generating || svg.status === "generating"}
-                  className="gap-2"
-                >
-                  {generating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      {t("toast.generating")}
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="w-4 h-4" />
-                      {t("regenerate")}
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-          </motion.div>
-
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8">
           {/* Cooldown Warning */}
           {svg && cooldownRemaining !== null && cooldownRemaining > 0 && (
             <motion.div
@@ -383,7 +364,7 @@ export default function SvgViewPage() {
               transition={{ delay: 0.1, duration: 0.3 }}
               className="lg:col-span-2 space-y-6"
             >
-              <Card className="border-2 shadow-lg">
+              <Card className="border-white/[0.06] bg-white/[0.015] shadow-none">
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
                     <ImageIcon className="w-5 h-5 text-primary" />
@@ -518,7 +499,7 @@ export default function SvgViewPage() {
               className="space-y-6"
             >
               {/* Markdown Code */}
-              <Card className="border-2 shadow-lg">
+              <Card className="border-white/[0.06] bg-white/[0.015] shadow-none">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -557,7 +538,7 @@ export default function SvgViewPage() {
 
               {/* URL */}
               {imageUrl && (
-                <Card className="border-2 shadow-lg">
+                <Card className="border-white/[0.06] bg-white/[0.015] shadow-none">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2">
                       <Link2 className="w-5 h-5 text-primary" />
@@ -590,7 +571,7 @@ export default function SvgViewPage() {
 
               {/* Info Card - Moved here for better layout */}
               {svg && (
-                <Card className="border-2 shadow-lg">
+                <Card className="border-white/[0.06] bg-white/[0.015] shadow-none">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-5 h-5 text-primary" />
