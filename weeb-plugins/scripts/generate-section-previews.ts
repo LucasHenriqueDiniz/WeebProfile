@@ -21,6 +21,8 @@ const __dirname = dirname(__filename)
 const PLUGINS_DIR = path.join(__dirname, "../src/plugins")
 const DASHBOARD_DIR = path.join(__dirname, "../../weeb-dashboard")
 const OUTPUT_FILE = path.join(DASHBOARD_DIR, "lib/config/section-previews.ts")
+const DASHBOARD_PREVIEWS_DIR = path.join(DASHBOARD_DIR, "public/previews")
+const STYLES = ["default", "terminal"] as const
 
 /**
  * Descobre todos os plugins disponíveis
@@ -95,30 +97,50 @@ async function getPluginSections(pluginName: string): Promise<string[]> {
 }
 
 /**
- * Verifica se um preview existe
+ * Caminho do preview de uma seção (source, em weeb-plugins) para um estilo específico
  */
-function checkPreviewExists(pluginName: string, sectionId: string): boolean {
-  const previewsDir = path.join(PLUGINS_DIR, pluginName, "previews")
-  const previewFileName = `${pluginName}_${sectionId}.svg`
-  const previewPath = path.join(previewsDir, previewFileName)
+function previewSourcePath(pluginName: string, sectionId: string, style: (typeof STYLES)[number]): string {
+  return path.join(PLUGINS_DIR, pluginName, "previews", style, `${sectionId}.svg`)
+}
 
-  return fs.existsSync(previewPath)
+/**
+ * Verifica quais estilos têm preview disponível para uma seção
+ */
+function checkAvailableStyles(pluginName: string, sectionId: string): Array<(typeof STYLES)[number]> {
+  return STYLES.filter((style) => fs.existsSync(previewSourcePath(pluginName, sectionId, style)))
+}
+
+/**
+ * Copia os SVGs de preview de weeb-plugins para weeb-dashboard/public/previews,
+ * onde o Vite os serve como assets estáticos em /previews/**.
+ */
+function copyPreviewToDashboard(pluginName: string, sectionId: string, style: (typeof STYLES)[number]): void {
+  const src = previewSourcePath(pluginName, sectionId, style)
+  const destDir = path.join(DASHBOARD_PREVIEWS_DIR, pluginName, style)
+  const dest = path.join(destDir, `${sectionId}.svg`)
+
+  if (!fs.existsSync(destDir)) {
+    fs.mkdirSync(destDir, { recursive: true })
+  }
+
+  fs.copyFileSync(src, dest)
 }
 
 /**
  * Gera o conteúdo do arquivo section-previews.ts
  */
 function generateSectionPreviewsFile(
-  pluginsData: Map<string, Array<{ section: string; hasPreview: boolean }>>
+  pluginsData: Map<string, Array<{ section: string; styles: Array<(typeof STYLES)[number]> }>>
 ): string {
   const header = `// Mapeamento de seções para previews de imagem
 // AUTO-GENERATED - DO NOT EDIT MANUALLY
 // Execute: pnpm generate-section-previews (in weeb-plugins)
-// 
+//
 // Este arquivo é gerado automaticamente a partir dos plugins em weeb-plugins
-// e verifica quais previews existem na pasta previews/ de cada plugin
+// e verifica quais previews existem (por estilo) na pasta previews/ de cada plugin.
+// Os arquivos são copiados para weeb-dashboard/public/previews/ pelo mesmo script.
 
-export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
+export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean; terminal: boolean }>> = {
 `
 
   const plugins = Array.from(pluginsData.entries()).sort()
@@ -127,10 +149,11 @@ export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
   for (const [pluginName, sections] of plugins) {
     const sectionEntries: string[] = []
 
-    for (const { section, hasPreview } of sections) {
-      if (hasPreview) {
-        // Usar o formato: plugin/default/section.svg
-        sectionEntries.push(`    ${section}: "${pluginName}/default/${section}.svg",`)
+    for (const { section, styles } of sections) {
+      if (styles.length > 0) {
+        sectionEntries.push(
+          `    ${section}: { default: ${styles.includes("default")}, terminal: ${styles.includes("terminal")} },`
+        )
       }
     }
 
@@ -147,15 +170,14 @@ export const SECTION_PREVIEWS: Record<string, Record<string, string>> = {
   const footer = `}
 
 export function getSectionPreview(plugin: string, section: string, style: "default" | "terminal" = "default"): string | null {
-  const pluginPreviews = SECTION_PREVIEWS[plugin]
-  if (!pluginPreviews) return null
+  const info = SECTION_PREVIEWS[plugin]?.[section]
+  if (!info) return null
 
-  // Sempre usar default, não importa o style
-  const previewPath = pluginPreviews[section]
-  if (!previewPath) return null
+  // Usa o estilo pedido se existir; senão cai para "default" (melhor que nada).
+  const usableStyle = info[style] ? style : info.default ? "default" : null
+  if (!usableStyle) return null
 
-  // Usar caminho estático: arquivos estão em public/previews/
-  return \`/previews/\${previewPath}\`
+  return \`/previews/\${plugin}/\${usableStyle}/\${section}.svg\`
 }
 `
 
@@ -174,15 +196,19 @@ async function main() {
   }
 
   const plugins = discoverPlugins()
-  const pluginsData = new Map<string, Array<{ section: string; hasPreview: boolean }>>()
+  const pluginsData = new Map<string, Array<{ section: string; styles: Array<(typeof STYLES)[number]> }>>()
 
   for (const pluginName of plugins) {
     const sections = await getPluginSections(pluginName)
-    const sectionsData: Array<{ section: string; hasPreview: boolean }> = []
+    const sectionsData: Array<{ section: string; styles: Array<(typeof STYLES)[number]> }> = []
 
     for (const sectionId of sections) {
-      const hasPreview = checkPreviewExists(pluginName, sectionId)
-      sectionsData.push({ section: sectionId, hasPreview })
+      const styles = checkAvailableStyles(pluginName, sectionId)
+      sectionsData.push({ section: sectionId, styles })
+
+      for (const style of styles) {
+        copyPreviewToDashboard(pluginName, sectionId, style)
+      }
     }
 
     if (sectionsData.length > 0) {
@@ -200,26 +226,27 @@ async function main() {
 
   fs.writeFileSync(OUTPUT_FILE, content, "utf-8")
 
-  // Previews ficam no weeb-plugins, não são copiados para o dashboard
-
   // Estatísticas
   let totalSections = 0
-  let totalWithPreview = 0
+  let totalWithDefault = 0
+  let totalWithTerminal = 0
 
   for (const [, sections] of pluginsData) {
     totalSections += sections.length
-    totalWithPreview += sections.filter((s) => s.hasPreview).length
+    totalWithDefault += sections.filter((s) => s.styles.includes("default")).length
+    totalWithTerminal += sections.filter((s) => s.styles.includes("terminal")).length
   }
 
   console.log(`\n✅ section-previews.ts gerado em: ${OUTPUT_FILE}`)
+  console.log(`✅ Arquivos copiados para: ${DASHBOARD_PREVIEWS_DIR}`)
   console.log(`\n📊 Estatísticas:`)
   console.log(`   Plugins: ${pluginsData.size}`)
   console.log(`   Seções totais: ${totalSections}`)
-  console.log(`   Seções com preview: ${totalWithPreview} (${((totalWithPreview / totalSections) * 100).toFixed(1)}%)`)
-  console.log(`   Seções sem preview: ${totalSections - totalWithPreview}`)
+  console.log(`   Com preview default: ${totalWithDefault} (${((totalWithDefault / totalSections) * 100).toFixed(1)}%)`)
+  console.log(`   Com preview terminal: ${totalWithTerminal} (${((totalWithTerminal / totalSections) * 100).toFixed(1)}%)`)
 
-  if (totalSections - totalWithPreview > 0) {
-    console.log(`\n⚠️  Algumas seções não têm preview. Execute pnpm validate-previews para ver detalhes.`)
+  if (totalSections - totalWithDefault > 0) {
+    console.log(`\n⚠️  Algumas seções não têm preview default. Execute "pnpm generate-preview-images" primeiro.`)
   }
 }
 

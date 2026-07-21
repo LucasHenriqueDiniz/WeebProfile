@@ -17,6 +17,7 @@ import * as fs from "fs"
 import * as path from "path"
 import { fileURLToPath } from "url"
 import { dirname } from "path"
+import { PLUGINS_METADATA } from "../src/plugins/metadata.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -96,21 +97,50 @@ async function getPluginSections(pluginName: string): Promise<string[]> {
   }
 }
 
+const STYLES = ["default", "terminal"] as const
+type PreviewStyle = (typeof STYLES)[number]
+
+/**
+ * validateRequiredConfig() runs even for mock generation, so previews need
+ * placeholder values for every requiredField / required secret or the
+ * generator responds 400 MISSING_REQUIRED_SECRETS before ever touching mock data.
+ */
+function buildPlaceholderConfig(pluginName: string): { fields: Record<string, string>; essentialConfig: Record<string, string> } {
+  const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
+  const fields: Record<string, string> = {}
+  const essentialConfig: Record<string, string> = {}
+
+  for (const field of metadata?.requiredFields || []) {
+    fields[field] = "preview"
+  }
+
+  const requiredSecrets = metadata?.requiredSecrets || metadata?.essentialConfigKeysMetadata || []
+  for (const secretMeta of requiredSecrets) {
+    const key = (secretMeta.key || secretMeta) as string
+    essentialConfig[key.toLowerCase()] = "preview"
+  }
+
+  return { fields, essentialConfig }
+}
+
 /**
  * Gera SVG para uma seção usando o svg-generator
  */
-async function generatePreviewSvg(pluginName: string, sectionId: string): Promise<string | null> {
+async function generatePreviewSvg(pluginName: string, sectionId: string, style: PreviewStyle): Promise<string | null> {
   try {
+    const { fields, essentialConfig } = buildPlaceholderConfig(pluginName)
     const requestBody = {
-      style: "default",
+      style,
       size: "half",
       plugins: {
         [pluginName]: {
           enabled: true,
           sections: [sectionId],
+          ...fields,
         },
       },
       pluginsOrder: [pluginName],
+      essentialConfigs: Object.keys(essentialConfig).length > 0 ? { [pluginName.toLowerCase()]: essentialConfig } : undefined,
       mock: true, // Usar dados mock para previews
     }
 
@@ -124,24 +154,24 @@ async function generatePreviewSvg(pluginName: string, sectionId: string): Promis
 
     if (!response.ok) {
       const error = await response.text()
-      console.error(`❌ Error generating preview for ${pluginName}/${sectionId}: ${response.status} ${error}`)
+      console.error(`❌ Error generating preview for ${pluginName}/${sectionId} (${style}): ${response.status} ${error}`)
       return null
     }
 
     const result = await response.json()
     return result.svg || null
   } catch (error) {
-    console.error(`❌ Error generating preview for ${pluginName}/${sectionId}:`, error)
+    console.error(`❌ Error generating preview for ${pluginName}/${sectionId} (${style}):`, error)
     return null
   }
 }
 
 /**
- * Salva SVG na pasta previews do plugin
+ * Salva SVG na pasta previews/{style} do plugin
  */
-function savePreviewSvg(pluginName: string, sectionId: string, svgContent: string): void {
-  const previewsDir = path.join(PLUGINS_DIR, pluginName, "previews")
-  const previewFileName = `${pluginName}_${sectionId}.svg`
+function savePreviewSvg(pluginName: string, sectionId: string, style: PreviewStyle, svgContent: string): void {
+  const previewsDir = path.join(PLUGINS_DIR, pluginName, "previews", style)
+  const previewFileName = `${sectionId}.svg`
   const previewPath = path.join(previewsDir, previewFileName)
 
   // Criar diretório se não existir
@@ -150,7 +180,7 @@ function savePreviewSvg(pluginName: string, sectionId: string, svgContent: strin
   }
 
   fs.writeFileSync(previewPath, svgContent, "utf-8")
-  console.log(`  ✅ ${previewFileName}`)
+  console.log(`  ✅ ${style}/${previewFileName}`)
 }
 
 /**
@@ -218,35 +248,38 @@ async function main() {
     totalSections += sections.length
 
     for (const sectionId of sections) {
-      const previewsDir = path.join(PLUGINS_DIR, pluginName, "previews")
-      const previewFileName = `${pluginName}_${sectionId}.svg`
-      const previewPath = path.join(previewsDir, previewFileName)
+      for (const style of STYLES) {
+        const previewsDir = path.join(PLUGINS_DIR, pluginName, "previews", style)
+        const previewFileName = `${sectionId}.svg`
+        const previewPath = path.join(previewsDir, previewFileName)
+        const label = `${pluginName}/${style}/${previewFileName}`
 
-      // Verificar se já existe (a menos que --force esteja ativo)
-      if (!force && fs.existsSync(previewPath)) {
-        console.log(`  ⏭️  ${previewFileName} (já existe, pulando)`)
-        totalSkipped++
-        continue
+        // Verificar se já existe (a menos que --force esteja ativo)
+        if (!force && fs.existsSync(previewPath)) {
+          console.log(`  ⏭️  ${label} (já existe, pulando)`)
+          totalSkipped++
+          continue
+        }
+
+        if (force && fs.existsSync(previewPath)) {
+          console.log(`  🔄 Regenerando ${label}...`)
+        } else {
+          console.log(`  🔄 Gerando ${label}...`)
+        }
+
+        const svgContent = await generatePreviewSvg(pluginName, sectionId, style)
+
+        if (svgContent) {
+          savePreviewSvg(pluginName, sectionId, style, svgContent)
+          totalGenerated++
+        } else {
+          console.log(`  ❌ Falha ao gerar ${label}`)
+          totalFailed++
+        }
+
+        // Pequeno delay para não sobrecarregar o servidor
+        await new Promise((resolve) => setTimeout(resolve, 500))
       }
-
-      if (force && fs.existsSync(previewPath)) {
-        console.log(`  🔄 Regenerando ${previewFileName}...`)
-      } else {
-        console.log(`  🔄 Gerando ${previewFileName}...`)
-      }
-
-      const svgContent = await generatePreviewSvg(pluginName, sectionId)
-
-      if (svgContent) {
-        savePreviewSvg(pluginName, sectionId, svgContent)
-        totalGenerated++
-      } else {
-        console.log(`  ❌ Falha ao gerar ${previewFileName}`)
-        totalFailed++
-      }
-
-      // Pequeno delay para não sobrecarregar o servidor
-      await new Promise((resolve) => setTimeout(resolve, 500))
     }
   }
 
