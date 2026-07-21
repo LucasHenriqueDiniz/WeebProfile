@@ -144,8 +144,9 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   )
 
   // Render plugins respecting specified order
-  // If not specified, use order of available plugins
-  const pluginsOrder = config.pluginsOrder || Object.keys(pluginsConfig)
+  // If not specified (or empty — `[] || x` is always `[]` since [] is truthy), use order of available plugins
+  const pluginsOrder =
+    config.pluginsOrder && config.pluginsOrder.length > 0 ? config.pluginsOrder : Object.keys(pluginsConfig)
   const activePluginsMap = new Map(pluginManager.getActivePlugins())
   const renderedPlugins: React.ReactElement[] = []
 

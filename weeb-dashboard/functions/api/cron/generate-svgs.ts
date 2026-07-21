@@ -111,9 +111,13 @@ function convertSvgToPluginsConfig(svg: Record<string, any>) {
     }
   }
 
+  // undefined (not []) when there's no stored order — see generate.ts for why:
+  // `[] || x` is always `[]` since an empty array is truthy in JS.
+  const parsedOrder = svg.pluginsOrder ? svg.pluginsOrder.split(",").filter(Boolean) : []
+
   return {
     plugins: enabledPlugins,
-    pluginsOrder: svg.pluginsOrder ? svg.pluginsOrder.split(",").filter(Boolean) : [],
+    pluginsOrder: parsedOrder.length > 0 ? parsedOrder : undefined,
   }
 }
 
@@ -223,7 +227,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
           style: svg.style || "default",
           size: svg.size || "half",
           plugins: pluginsConfig,
-          pluginsOrder: pluginsOrder || svg.pluginsOrder?.split(",") || [],
+          pluginsOrder,
           customCss: svg.customCss || undefined,
           theme: svg.theme || undefined,
           hideTerminalEmojis: terminalConfigs.hideTerminalEmojis,

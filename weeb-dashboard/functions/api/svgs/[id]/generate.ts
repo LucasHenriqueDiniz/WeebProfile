@@ -113,9 +113,14 @@ function convertSvgToPluginsConfig(svg: Record<string, any>) {
     }
   }
 
+  // undefined (not []) when there's no stored order, so the generator's
+  // `config.pluginsOrder || Object.keys(pluginsConfig)` fallback actually triggers —
+  // `[] || x` evaluates to `[]` since an empty array is truthy in JS.
+  const parsedOrder = svg.pluginsOrder ? svg.pluginsOrder.split(",").filter(Boolean) : []
+
   return {
     plugins: enabledPlugins,
-    pluginsOrder: svg.pluginsOrder ? svg.pluginsOrder.split(",").filter(Boolean) : [],
+    pluginsOrder: parsedOrder.length > 0 ? parsedOrder : undefined,
   }
 }
 
