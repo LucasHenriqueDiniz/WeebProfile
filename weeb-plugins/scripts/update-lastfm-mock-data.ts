@@ -16,9 +16,14 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const LASTFM_API_BASE = "https://ws.audioscrobbler.com/2.0/"
-const API_KEY = "3f9fde819871f9a82f581fca84f31294"
+const API_KEY = process.env.LASTFM_API_KEY
 // Altere o USERNAME abaixo para o seu username do Last.fm
-const USERNAME = "Amayacrab"
+const USERNAME = process.env.LASTFM_USERNAME || "Amayacrab"
+
+if (!API_KEY) {
+  console.error("❌ Defina LASTFM_API_KEY no ambiente (.env) antes de rodar este script.")
+  process.exit(1)
+}
 
 interface LastFmApiResponse<T> {
   recenttracks?: {
