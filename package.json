@@ -29,7 +29,8 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore --ignore-path .prettierignore",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore --ignore-path .prettierignore",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck",
-    "generate-previews": "tsx scripts/generate-previews.ts"
+    "generate-previews": "tsx scripts/generate-previews.ts",
+    "generate-plugins-doc": "tsx scripts/generate-plugins-doc.ts"
   },
   "dependencies": {
     "@octokit/graphql": "^8.1.1",
