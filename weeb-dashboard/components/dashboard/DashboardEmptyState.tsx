@@ -1,9 +1,10 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
-import { Sparkles, Music2, Gamepad2, Trophy, Github as GithubIcon } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
+import { Sparkles, Trophy } from "lucide-react"
 
 const STEPS = [
   { title: "Conecte", description: "GitHub, Google ou e-mail. Leva 10 segundos." },
@@ -17,39 +18,136 @@ const stars = [
   { top: "12%", left: "94%", size: 2, opacity: 0.2 },
 ]
 
-// Miniatura estática representando o resultado (não é screenshot real, é um mockup
-// deliberado - evita depender de assets externos e ainda comunica o produto).
-function ReadmePreview() {
-  return (
-    <div className="rounded-lg border border-cyan-500/20 bg-[#0a0f1e] overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.1)]">
-      <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/5 bg-white/[0.02]">
-        <span className="w-2 h-2 rounded-full bg-white/15" />
-        <span className="w-2 h-2 rounded-full bg-white/15" />
-        <span className="w-2 h-2 rounded-full bg-white/15" />
-        <span className="ml-2 text-[10px] font-mono text-slate-500">README.md</span>
+type Variant = {
+  id: string
+  label: string
+  accent: string
+  render: "bars" | "wave" | "trophy" | "quote"
+}
+
+const VARIANTS: Variant[] = [
+  { id: "github", label: "GitHub stats", accent: "#22D3EE", render: "bars" },
+  { id: "music", label: "Now playing", accent: "#EC4899", render: "wave" },
+  { id: "games", label: "Troféus", accent: "#FBBF24", render: "trophy" },
+  { id: "anime", label: "Quote card", accent: "#A78BFA", render: "quote" },
+]
+
+function ShowcaseBody({ variant }: { variant: Variant }) {
+  if (variant.render === "bars") {
+    const heights = [14, 26, 18, 32, 22, 30, 12, 24, 28, 16, 20, 34]
+    return (
+      <div className="flex items-end gap-1 h-11">
+        {heights.map((h, i) => (
+          <div
+            key={i}
+            className="flex-1 rounded-sm"
+            style={{ height: h, background: i % 3 === 0 ? variant.accent : `${variant.accent}47` }}
+          />
+        ))}
       </div>
-      <div className="p-4 space-y-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-cyan-500 flex-shrink-0" />
-          <div className="flex-1 space-y-1">
-            <div className="h-2 w-24 rounded-full bg-slate-200/20" />
-            <div className="h-1.5 w-16 rounded-full bg-slate-200/10" />
+    )
+  }
+  if (variant.render === "wave") {
+    const bars = [6, 14, 22, 30, 20, 26, 12, 18, 28, 16, 10, 24, 20, 8, 30]
+    return (
+      <div className="flex items-center gap-[3px] h-11">
+        {bars.map((h, i) => (
+          <div
+            key={i}
+            className="w-[3px] rounded-sm"
+            style={{ height: h, background: variant.accent, opacity: 0.4 + (i % 4) * 0.15 }}
+          />
+        ))}
+      </div>
+    )
+  }
+  if (variant.render === "trophy") {
+    return (
+      <div className="flex gap-2.5">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="flex-1 rounded-[11px] border p-2.5 pb-3 bg-white/[0.02]"
+            style={{ borderColor: `${variant.accent}40` }}
+          >
+            <Trophy className="w-4 h-4" style={{ color: variant.accent }} />
+            <div className="h-[5px] w-[70%] rounded-full bg-white/10 mt-2" />
+          </div>
+        ))}
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-[11px] border p-3.5 bg-white/[0.02]" style={{ borderColor: `${variant.accent}40` }}>
+      <div className="h-2 w-[92%] rounded-full bg-white/10" />
+      <div className="h-2 w-[78%] rounded-full bg-white/10 mt-2" />
+      <div className="h-2 w-[54%] rounded-full bg-white/10 mt-2 opacity-60" />
+    </div>
+  )
+}
+
+// Preview que roda entre variantes reais (GitHub/música/jogos/anime) para comunicar
+// a variedade de plugins sem depender de screenshots reais - mockup deliberado.
+function ReadmePreview({ variant, onDotSelect, activeIdx }: { variant: Variant; onDotSelect: (i: number) => void; activeIdx: number }) {
+  return (
+    <div>
+      <div
+        className="rounded-lg border overflow-hidden transition-colors duration-500"
+        style={{ borderColor: `${variant.accent}33`, background: "#0a0f1e", boxShadow: `0 0 50px ${variant.accent}1a` }}
+      >
+        <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/5 bg-white/[0.02]">
+          <span className="w-2 h-2 rounded-full bg-white/15" />
+          <span className="w-2 h-2 rounded-full bg-white/15" />
+          <span className="w-2 h-2 rounded-full bg-white/15" />
+          <span className="ml-2 text-[10px] font-mono text-slate-500">preview.svg</span>
+          <span
+            className="ml-auto text-[10px] font-mono font-medium px-2 py-0.5 rounded-full border transition-colors duration-500"
+            style={{ color: variant.accent, borderColor: `${variant.accent}55`, background: `${variant.accent}14` }}
+          >
+            {variant.label}
+          </span>
+        </div>
+        <div className="p-4 space-y-3">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-8 h-8 rounded-full flex-shrink-0 transition-colors duration-500"
+              style={{ background: `linear-gradient(135deg, ${variant.accent}, #7C3AED)` }}
+            />
+            <div className="flex-1 space-y-1">
+              <div className="h-2 w-24 rounded-full bg-slate-200/20" />
+              <div className="h-1.5 w-16 rounded-full bg-slate-200/10" />
+            </div>
+          </div>
+          <div className="min-h-[44px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={variant.id}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.25 }}
+              >
+                <ShowcaseBody variant={variant} />
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2">
-          {[GithubIcon, Music2, Gamepad2].map((Icon, i) => (
-            <div key={i} className="rounded-md border border-white/5 bg-white/[0.02] p-2 flex flex-col gap-1.5">
-              <Icon className="w-3.5 h-3.5 text-cyan-400/70" />
-              <div className="h-1.5 w-full rounded-full bg-slate-200/10" />
-              <div className="h-1.5 w-2/3 rounded-full bg-slate-200/10" />
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-1.5 pt-1">
-          <Trophy className="w-3 h-3 text-violet-400/70" />
-          <div className="h-1.5 flex-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-violet-500/20" />
-        </div>
       </div>
+
+      <div className="flex items-center justify-center gap-1.5 mt-4">
+        {VARIANTS.map((v, i) => (
+          <button
+            key={v.id}
+            onClick={() => onDotSelect(i)}
+            aria-label={v.label}
+            className="h-[7px] rounded-full transition-all duration-300"
+            style={{ width: i === activeIdx ? 20 : 7, background: i === activeIdx ? v.accent : "rgba(255,255,255,0.14)" }}
+          />
+        ))}
+      </div>
+      <p className="text-center text-xs text-muted-foreground mt-2.5 max-w-[280px] mx-auto leading-relaxed">
+        exemplo do SVG gerado - os módulos abaixo são plugins reais do gerador
+      </p>
     </div>
   )
 }
@@ -60,6 +158,18 @@ function ReadmePreview() {
 // gradiente cyan/violeta + estrelas discretas do login para dar continuidade visual entre
 // autenticacao e produto.
 export function DashboardEmptyState() {
+  const [activeStep, setActiveStep] = useState(0)
+  const [variantIdx, setVariantIdx] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    if (paused) return
+    const t = setInterval(() => setVariantIdx((v) => (v + 1) % VARIANTS.length), 3200)
+    return () => clearInterval(t)
+  }, [paused])
+
+  const variant = VARIANTS[variantIdx]
+
   return (
     <div className="relative overflow-hidden">
       <div className="absolute -top-16 left-1/4 w-[30rem] h-[30rem] bg-[radial-gradient(circle,_rgba(6,182,212,0.09),_transparent_65%)] pointer-events-none" />
@@ -97,8 +207,20 @@ export function DashboardEmptyState() {
           <div className="relative space-y-5 mb-8 max-w-sm">
             <div className="absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-cyan-500/40 via-violet-500/30 to-transparent" />
             {STEPS.map((step, i) => (
-              <div key={step.title} className="relative flex gap-3.5">
-                <span className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full bg-[#0a0f1e] border border-cyan-500/40 text-cyan-300 flex items-center justify-center text-xs font-mono font-semibold">
+              <div
+                key={step.title}
+                className="relative flex gap-3.5 -mx-2 px-2 py-1 rounded-lg cursor-default transition-colors duration-200"
+                onMouseEnter={() => setActiveStep(i)}
+                style={{ background: activeStep === i ? "rgba(124,58,237,0.08)" : "transparent" }}
+              >
+                <span
+                  className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full border flex items-center justify-center text-xs font-mono font-semibold transition-colors duration-200"
+                  style={
+                    activeStep === i
+                      ? { background: "linear-gradient(135deg,#7C3AED,#EC4899)", borderColor: "transparent", color: "#fff" }
+                      : { background: "#0a0f1e", borderColor: "rgba(34,211,238,0.4)", color: "#67e8f9" }
+                  }
+                >
                   {i + 1}
                 </span>
                 <div className="pt-1">
@@ -123,7 +245,11 @@ export function DashboardEmptyState() {
         </div>
 
         {/* Preview + mascote com presenca real - sobreposicao controlada, nao decorativo solto */}
-        <div className="relative flex items-center justify-center">
+        <div
+          className="relative flex items-center justify-center"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
           <motion.img
             src="/sora/sora_main.png"
             alt=""
@@ -132,7 +258,7 @@ export function DashboardEmptyState() {
             transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
           />
           <div className="relative z-10 w-full max-w-[340px] -translate-x-4">
-            <ReadmePreview />
+            <ReadmePreview variant={variant} activeIdx={variantIdx} onDotSelect={setVariantIdx} />
           </div>
         </div>
       </motion.div>
