@@ -42,9 +42,26 @@ const loginRoute = createRoute({
   component: LoginPage,
 })
 
+// Clerk's <SignIn routing="path"> owns every nested segment under /login
+// (factor-one, sso-callback, etc.) — without this splat route, a hard
+// navigation back from the OAuth provider to /login/sso-callback has
+// nothing to match and the router renders its own "Not Found".
+const loginSplatRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/login/$",
+  component: LoginPage,
+})
+
 const signupRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/signup",
+  component: SignupPage,
+})
+
+// Same reasoning as loginSplatRoute above, for <SignUp routing="path">.
+const signupSplatRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/signup/$",
   component: SignupPage,
 })
 
@@ -93,7 +110,9 @@ const templateDetailRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   homeRoute,
   loginRoute,
+  loginSplatRoute,
   signupRoute,
+  signupSplatRoute,
   dashboardRoute,
   newSvgRoute,
   svgViewRoute,
