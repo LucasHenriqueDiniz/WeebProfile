@@ -7,7 +7,7 @@ export function mapApiToTemplate(apiTemplate: any): Template {
     id: apiTemplate.id,
     name: apiTemplate.name,
     description: apiTemplate.description || "",
-    preview: apiTemplate.svgId ? `/svgs/${apiTemplate.svgId}` : "",
+    preview: apiTemplate.previewUrl || "",
     platforms,
     style: (apiTemplate.style as "default" | "terminal") || "default",
     theme: (apiTemplate.theme as "default" | "dark" | "purple" | "pink" | "blue" | "green" | "dracula") || "default",

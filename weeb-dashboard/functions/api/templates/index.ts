@@ -2,8 +2,24 @@ import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, unauthorized, badRequest, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
-import { templates, templateLikes } from "../../../lib/db/schema"
+import { templates, templateLikes, svgs } from "../../../lib/db/schema"
 import { eq, and, inArray, ne } from "drizzle-orm"
+
+async function withPreviewUrls<T extends { svgId: string | null }>(
+  db: ReturnType<typeof getDb>,
+  rows: T[]
+): Promise<(T & { previewUrl: string | null })[]> {
+  const svgIds = rows.map((r) => r.svgId).filter((id): id is string => Boolean(id))
+  if (svgIds.length === 0) return rows.map((r) => ({ ...r, previewUrl: null }))
+
+  const svgRows = await db
+    .select({ id: svgs.id, storageUrl: svgs.storageUrl })
+    .from(svgs)
+    .where(inArray(svgs.id, svgIds))
+  const urlById = new Map(svgRows.map((s) => [s.id, s.storageUrl]))
+
+  return rows.map((r) => ({ ...r, previewUrl: (r.svgId && urlById.get(r.svgId)) || null }))
+}
 
 function setTerminalConfigs(
   uiConfig: Record<string, any>,
@@ -64,8 +80,10 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
         }
       }
 
+      const publicTemplatesWithPreviews = await withPreviewUrls(db, publicTemplates)
+
       return Response.json({
-        templates: publicTemplates.map((t) => ({
+        templates: publicTemplatesWithPreviews.map((t) => ({
           ...t,
           likesCount: likesData[t.id]?.count || 0,
           userLiked: likesData[t.id]?.userLiked || false,
@@ -105,8 +123,10 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
       }
     }
 
+    const combinedWithPreviews = await withPreviewUrls(db, [...userTemplates, ...publicTemplates])
+
     return Response.json({
-      templates: [...userTemplates, ...publicTemplates].map((t) => ({
+      templates: combinedWithPreviews.map((t) => ({
         ...t,
         likesCount: likesData[t.id]?.count || 0,
         userLiked: likesData[t.id]?.userLiked || false,

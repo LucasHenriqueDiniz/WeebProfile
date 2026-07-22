@@ -2,7 +2,7 @@ import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
-import { templates } from "../../../lib/db/schema"
+import { templates, svgs } from "../../../lib/db/schema"
 import { eq, and, or } from "drizzle-orm"
 
 function setTerminalConfigs(
@@ -40,7 +40,13 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env,
 
     if (!template) return notFound("Template")
 
-    return Response.json({ template })
+    let previewUrl: string | null = null
+    if (template.svgId) {
+      const [svgRow] = await db.select({ storageUrl: svgs.storageUrl }).from(svgs).where(eq(svgs.id, template.svgId)).limit(1)
+      previewUrl = svgRow?.storageUrl || null
+    }
+
+    return Response.json({ template: { ...template, previewUrl } })
   } catch (e) {
     return serverError(e)
   }

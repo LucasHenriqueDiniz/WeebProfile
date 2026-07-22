@@ -81,7 +81,7 @@ export function TemplatesPageClient() {
             id: t.id,
             name: t.name,
             description: t.description || "",
-            preview: t.svgId ? `/svgs/${t.svgId}` : "",
+            preview: t.previewUrl || "",
             platforms,
             style: t.style || "default",
             theme: t.theme || "default",
