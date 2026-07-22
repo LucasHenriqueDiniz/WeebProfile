@@ -4,7 +4,8 @@ import { useEffect, useState } from "react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { AnimatePresence, motion } from "framer-motion"
-import { Sparkles, Trophy } from "lucide-react"
+import { Sparkles } from "lucide-react"
+import { getSectionPreview } from "@/lib/config/section-previews"
 
 const STEPS = [
   { title: "Conecte", description: "GitHub, Google ou e-mail. Leva 10 segundos." },
@@ -18,157 +19,98 @@ const stars = [
   { top: "12%", left: "94%", size: 2, opacity: 0.2 },
 ]
 
-type Variant = {
-  id: string
-  label: string
-  accent: string
-  render: "bars" | "wave" | "trophy" | "quote"
-}
+// Seções reais, geradas pelo mesmo svg-generator usado em produção (dados mock) -
+// nao e mockup, e o proprio produto rodando em modo preview.
+type Showcase = { plugin: string; section: string; label: string; accent: string }
 
-const VARIANTS: Variant[] = [
-  { id: "github", label: "GitHub stats", accent: "#22D3EE", render: "bars" },
-  { id: "music", label: "Now playing", accent: "#EC4899", render: "wave" },
-  { id: "games", label: "Troféus", accent: "#FBBF24", render: "trophy" },
-  { id: "anime", label: "Quote card", accent: "#A78BFA", render: "quote" },
+const SHOWCASE: Showcase[] = [
+  { plugin: "github", section: "calendar", label: "GitHub", accent: "#22D3EE" },
+  { plugin: "lastfm", section: "recent_tracks", label: "Last.fm", accent: "#EC4899" },
+  { plugin: "myanimelist", section: "statistics_simple", label: "MyAnimeList", accent: "#A78BFA" },
+  { plugin: "steam", section: "recent_games", label: "Steam", accent: "#F97316" },
 ]
 
-function ShowcaseBody({ variant }: { variant: Variant }) {
-  if (variant.render === "bars") {
-    const heights = [14, 26, 18, 32, 22, 30, 12, 24, 28, 16, 20, 34]
-    return (
-      <div className="flex items-end gap-1 h-11">
-        {heights.map((h, i) => (
-          <div
-            key={i}
-            className="flex-1 rounded-sm"
-            style={{ height: h, background: i % 3 === 0 ? variant.accent : `${variant.accent}47` }}
-          />
-        ))}
-      </div>
-    )
-  }
-  if (variant.render === "wave") {
-    const bars = [6, 14, 22, 30, 20, 26, 12, 18, 28, 16, 10, 24, 20, 8, 30]
-    return (
-      <div className="flex items-center gap-[3px] h-11">
-        {bars.map((h, i) => (
-          <div
-            key={i}
-            className="w-[3px] rounded-sm"
-            style={{ height: h, background: variant.accent, opacity: 0.4 + (i % 4) * 0.15 }}
-          />
-        ))}
-      </div>
-    )
-  }
-  if (variant.render === "trophy") {
-    return (
-      <div className="flex gap-2.5">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="flex-1 rounded-[11px] border p-2.5 pb-3 bg-white/[0.02]"
-            style={{ borderColor: `${variant.accent}40` }}
-          >
-            <Trophy className="w-4 h-4" style={{ color: variant.accent }} />
-            <div className="h-[5px] w-[70%] rounded-full bg-white/10 mt-2" />
-          </div>
-        ))}
-      </div>
-    )
-  }
-  return (
-    <div className="rounded-[11px] border p-3.5 bg-white/[0.02]" style={{ borderColor: `${variant.accent}40` }}>
-      <div className="h-2 w-[92%] rounded-full bg-white/10" />
-      <div className="h-2 w-[78%] rounded-full bg-white/10 mt-2" />
-      <div className="h-2 w-[54%] rounded-full bg-white/10 mt-2 opacity-60" />
-    </div>
-  )
-}
+// Preview lateral: roda entre seções reais do produto (mesmos SVGs mostrados no
+// wizard), nao um mockup desenhado a mao - o que o usuário vê aqui é exatamente
+// o que ele vai gerar.
+function SectionShowcase({
+  item,
+  onDotSelect,
+  activeIdx,
+}: {
+  item: Showcase
+  onDotSelect: (i: number) => void
+  activeIdx: number
+}) {
+  const src = getSectionPreview(item.plugin, item.section, "terminal")
 
-// Preview que roda entre variantes reais (GitHub/música/jogos/anime) para comunicar
-// a variedade de plugins sem depender de screenshots reais - mockup deliberado.
-function ReadmePreview({ variant, onDotSelect, activeIdx }: { variant: Variant; onDotSelect: (i: number) => void; activeIdx: number }) {
   return (
-    <div>
-      <div
-        className="rounded-lg border overflow-hidden transition-colors duration-500"
-        style={{ borderColor: `${variant.accent}33`, background: "#0a0f1e", boxShadow: `0 0 50px ${variant.accent}1a` }}
-      >
-        <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/5 bg-white/[0.02]">
-          <span className="w-2 h-2 rounded-full bg-white/15" />
-          <span className="w-2 h-2 rounded-full bg-white/15" />
-          <span className="w-2 h-2 rounded-full bg-white/15" />
-          <span className="ml-2 text-[10px] font-mono text-slate-500">preview.svg</span>
-          <span
-            className="ml-auto text-[10px] font-mono font-medium px-2 py-0.5 rounded-full border transition-colors duration-500"
-            style={{ color: variant.accent, borderColor: `${variant.accent}55`, background: `${variant.accent}14` }}
+    <div className="w-full max-w-[420px]">
+      <div className="flex items-center justify-between mb-2.5 px-0.5">
+        <span
+          className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full border transition-colors duration-500"
+          style={{ color: item.accent, borderColor: `${item.accent}55`, background: `${item.accent}14` }}
+        >
+          {item.label}
+        </span>
+        <span className="text-[10px] font-mono text-muted-foreground">preview.svg</span>
+      </div>
+
+      <div className="relative">
+        <div
+          className="absolute -inset-4 rounded-[24px] blur-2xl transition-colors duration-700 -z-10"
+          style={{ background: `radial-gradient(circle, ${item.accent}26 0%, transparent 70%)` }}
+        />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={item.plugin + item.section}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.35 }}
+            className="rounded-xl overflow-hidden border shadow-[0_20px_50px_-20px_rgba(0,0,0,0.5)]"
+            style={{ borderColor: `${item.accent}30` }}
           >
-            {variant.label}
-          </span>
-        </div>
-        <div className="p-4 space-y-3">
-          <div className="flex items-center gap-2.5">
-            <div
-              className="w-8 h-8 rounded-full flex-shrink-0 transition-colors duration-500"
-              style={{ background: `linear-gradient(135deg, ${variant.accent}, #7C3AED)` }}
-            />
-            <div className="flex-1 space-y-1">
-              <div className="h-2 w-24 rounded-full bg-slate-200/20" />
-              <div className="h-1.5 w-16 rounded-full bg-slate-200/10" />
-            </div>
-          </div>
-          <div className="min-h-[44px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={variant.id}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.25 }}
-              >
-                <ShowcaseBody variant={variant} />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
+            {src && <img src={src} alt={`Preview: ${item.label}`} className="block w-full h-auto" />}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       <div className="flex items-center justify-center gap-1.5 mt-4">
-        {VARIANTS.map((v, i) => (
+        {SHOWCASE.map((s, i) => (
           <button
-            key={v.id}
+            key={s.plugin + s.section}
             onClick={() => onDotSelect(i)}
-            aria-label={v.label}
+            aria-label={s.label}
             className="h-[7px] rounded-full transition-all duration-300"
-            style={{ width: i === activeIdx ? 20 : 7, background: i === activeIdx ? v.accent : "rgba(255,255,255,0.14)" }}
+            style={{ width: i === activeIdx ? 20 : 7, background: i === activeIdx ? s.accent : "rgba(255,255,255,0.14)" }}
           />
         ))}
       </div>
-      <p className="text-center text-xs text-muted-foreground mt-2.5 max-w-[280px] mx-auto leading-relaxed">
-        exemplo do SVG gerado - os módulos abaixo são plugins reais do gerador
+      <p className="text-center text-xs text-muted-foreground mt-2.5 max-w-[300px] mx-auto leading-relaxed">
+        seções reais, geradas com dados de exemplo pelo mesmo motor usado em produção
       </p>
     </div>
   )
 }
 
 // Onboarding de tela cheia como uma unica composicao editorial: os passos vivem dentro do
-// mesmo bloco narrativo do texto (nao uma segunda secao separada por divisor), o mascote
-// tem presenca real atras do preview (sobreposicao controlada), e o fundo reusa o mesmo
-// gradiente cyan/violeta + estrelas discretas do login para dar continuidade visual entre
-// autenticacao e produto.
+// mesmo bloco narrativo do texto (nao uma segunda secao separada por divisor), o preview
+// lateral roda entre seções reais do produto (mesmos SVGs do wizard, nao mockup), e o fundo
+// reusa o mesmo gradiente cyan/violeta + estrelas discretas do login para dar continuidade
+// visual entre autenticacao e produto.
 export function DashboardEmptyState() {
   const [activeStep, setActiveStep] = useState(0)
-  const [variantIdx, setVariantIdx] = useState(0)
+  const [showcaseIdx, setShowcaseIdx] = useState(0)
   const [paused, setPaused] = useState(false)
 
   useEffect(() => {
     if (paused) return
-    const t = setInterval(() => setVariantIdx((v) => (v + 1) % VARIANTS.length), 3200)
+    const t = setInterval(() => setShowcaseIdx((v) => (v + 1) % SHOWCASE.length), 3400)
     return () => clearInterval(t)
   }, [paused])
 
-  const variant = VARIANTS[variantIdx]
+  const showcase = SHOWCASE[showcaseIdx]
 
   return (
     <div className="relative overflow-hidden">
@@ -188,7 +130,7 @@ export function DashboardEmptyState() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="relative grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 lg:gap-16 items-center py-8 lg:py-12"
+        className="relative grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-10 lg:gap-16 items-center py-8 lg:py-12"
       >
         {/* Narrativa - headline, passos e CTA no mesmo bloco editorial */}
         <div>
@@ -244,22 +186,13 @@ export function DashboardEmptyState() {
           </div>
         </div>
 
-        {/* Preview + mascote com presenca real - sobreposicao controlada, nao decorativo solto */}
+        {/* Preview - seções reais do produto, escala com o espaço disponível */}
         <div
-          className="relative flex items-center justify-center"
+          className="relative flex items-center justify-center w-full"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <motion.img
-            src="/sora/sora_main.png"
-            alt=""
-            className="absolute -right-6 -bottom-10 w-40 md:w-48 h-auto object-contain drop-shadow-[0_0_30px_rgba(139,92,246,0.3)] z-0"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <div className="relative z-10 w-full max-w-[340px] -translate-x-4">
-            <ReadmePreview variant={variant} activeIdx={variantIdx} onDotSelect={setVariantIdx} />
-          </div>
+          <SectionShowcase item={showcase} activeIdx={showcaseIdx} onDotSelect={setShowcaseIdx} />
         </div>
       </motion.div>
     </div>
