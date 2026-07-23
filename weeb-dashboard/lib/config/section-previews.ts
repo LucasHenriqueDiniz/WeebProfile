@@ -54,6 +54,10 @@ export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean;
     repository_contributors: { default: true, terminal: true },
   },
 
+  github_repo: {
+    repository_card: { default: true, terminal: true },
+  },
+
   lastfm: {
     recent_tracks: { default: true, terminal: true },
     statistics: { default: true, terminal: true },

@@ -1,5 +1,6 @@
 import type { D1Database } from "@cloudflare/workers-types"
 import { decryptSecret } from "./secret-crypto"
+import { ESSENTIAL_CONFIG_ALIASES } from "../config/essential-config-aliases"
 
 export interface EssentialConfigs {
   [pluginName: string]:
@@ -39,6 +40,15 @@ export async function getUserEssentialConfigs(
       if (!pluginName || !key) continue
       if (!result[pluginName]) result[pluginName] = {}
       result[pluginName]![key] = encryptionKey ? await decryptSecret(row.value, encryptionKey) : row.value
+    }
+
+    // Alias resolution: if a plugin (e.g. "github_repo") has no secret of its own,
+    // fall back to another plugin's already-configured secret (e.g. "github"'s PAT)
+    // so the user never has to re-enter the same token twice.
+    for (const [alias, target] of Object.entries(ESSENTIAL_CONFIG_ALIASES)) {
+      if (!result[alias] && result[target]) {
+        result[alias] = result[target]
+      }
     }
 
     if (Object.keys(result).length > 0) {

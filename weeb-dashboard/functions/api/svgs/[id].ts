@@ -1,10 +1,11 @@
 import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
-import { getAuthUserId, unauthorized, notFound, serverError } from "../_shared/auth"
+import { getAuthUserId, unauthorized, notFound, badRequest, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
 import { deleteSvgFromR2 } from "../_shared/storage"
 import { svgs } from "../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
+import { assertPluginsMatchEntityType } from "../_shared/artifact-types"
 
 /**
  * GET /api/svgs/[id] - Get a specific SVG
@@ -52,16 +53,24 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
 
     const body = (await request.json()) as Record<string, any>
 
+    const nextEntityType = body.entityType !== undefined ? body.entityType : existingSvg.entityType
+    const nextPluginsConfig = body.pluginsConfig !== undefined ? body.pluginsConfig : existingSvg.pluginsConfig
+    const entityTypeError = assertPluginsMatchEntityType(nextEntityType, nextPluginsConfig)
+    if (entityTypeError) return badRequest(entityTypeError)
+
     const [updatedSvg] = await db
       .update(svgs)
       .set({
         name: body.name || existingSvg.name,
+        entityType: nextEntityType,
+        artifactType: body.artifactType !== undefined ? body.artifactType : existingSvg.artifactType,
+        variant: body.variant !== undefined ? body.variant : existingSvg.variant,
         style: body.style || existingSvg.style,
         size: body.size || existingSvg.size,
         theme: body.theme !== undefined ? body.theme : existingSvg.theme,
         customCss: body.customCss !== undefined ? body.customCss : existingSvg.customCss,
         pluginsOrder: body.pluginsOrder !== undefined ? body.pluginsOrder || null : existingSvg.pluginsOrder,
-        pluginsConfig: body.pluginsConfig !== undefined ? body.pluginsConfig : existingSvg.pluginsConfig,
+        pluginsConfig: nextPluginsConfig,
         uiConfig: body.uiConfig !== undefined ? body.uiConfig : existingSvg.uiConfig,
       })
       .where(eq(svgs.id, id))

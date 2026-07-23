@@ -1,0 +1,46 @@
+{
+  "description": "Show a card with stats for a single GitHub repository",
+  "displayName": "Repository",
+  "essentialConfig": {
+    "pat": {
+      "description": "Reuses the same token configured for the GitHub plugin, if you already have one.",
+      "label": "GitHub Classic Token",
+      "placeholder": "ghp_..."
+    }
+  },
+  "sections": {
+    "repository_card": {
+      "config": {
+        "max_topics": {
+          "description": "Maximum 6 topics",
+          "label": "Maximum topics",
+          "tooltip": "Topics beyond this limit are summarized as '+N more'."
+        },
+        "repository_card_hide_title": {
+          "label": "Hide title"
+        },
+        "repository_card_title": {
+          "defaultValue": "Repository",
+          "label": "Title"
+        },
+        "show_description": {
+          "label": "Show description"
+        },
+        "show_language": {
+          "label": "Show primary language"
+        },
+        "show_license": {
+          "label": "Show license"
+        },
+        "show_stats": {
+          "label": "Show stars and forks"
+        },
+        "show_topics": {
+          "label": "Show topics"
+        }
+      },
+      "description": "Compact card with name, description, language, stars, forks, license and topics",
+      "name": "Repository Card"
+    }
+  }
+}

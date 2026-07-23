@@ -4,7 +4,9 @@ import { useParams } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { Loader2 } from "lucide-react"
 import { Wizard } from "@/components/wizard/Wizard"
+import { RepositoryWizard } from "@/components/wizard/RepositoryWizard"
 import { useWizardStore } from "@/stores/wizard-store"
+import { useRepositoryWizardStore } from "@/stores/repository-wizard-store"
 import { useSvgStore } from "@/stores/svg-store"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import type { Svg } from "@/lib/db/schema"
@@ -26,6 +28,7 @@ export default function EditSvgPage() {
   const cachedSvg = getSvgSync(svgId)
   const [loading, setLoading] = useState(!cachedSvg)
   const [hasLoaded, setHasLoaded] = useState(false)
+  const [entityType, setEntityType] = useState<string | null>((cachedSvg as any)?.entityType || null)
   const {
     reset,
     setBasicInfo,
@@ -39,6 +42,7 @@ export default function EditSvgPage() {
     setCustomCss,
     reorderPlugins,
   } = useWizardStore()
+  const { loadFromSvg: loadRepositoryFromSvg } = useRepositoryWizardStore()
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -112,6 +116,14 @@ export default function EditSvgPage() {
   }
 
   const loadSvgData = (svg: Svg) => {
+    const svgEntityType = (svg as any).entityType || "profile"
+    setEntityType(svgEntityType)
+
+    if (svgEntityType === "repository") {
+      loadRepositoryFromSvg(svg as any)
+      return
+    }
+
     // Carregar dados no wizard store
     setBasicInfo(svg.name, svg.id, false) // Usar ID como slug temporário
     setStyle(svg.style as "default" | "terminal")
@@ -182,6 +194,10 @@ export default function EditSvgPage() {
 
   if (!user) {
     return null
+  }
+
+  if (entityType === "repository") {
+    return <RepositoryWizard isEditMode={true} editSvgId={params.id as string} />
   }
 
   return <Wizard isEditMode={true} editSvgId={params.id as string} />

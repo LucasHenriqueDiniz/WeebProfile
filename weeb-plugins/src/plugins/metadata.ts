@@ -15,7 +15,7 @@
 /**
  * Plugin category
  */
-export type PluginCategory = "coding" | "music" | "anime" | "gaming"
+export type PluginCategory = "coding" | "music" | "anime" | "gaming" | "repository"
 
 /**
  * I18n key map for translatable fields
@@ -1727,6 +1727,130 @@ export const PLUGINS_METADATA = {
         "activity"
       ]
     },
+  },
+
+  github_repo: {
+    name: "github_repo",
+    displayName: "Repository",
+    description: "Show a card with stats for a single GitHub repository",
+    category: "repository",
+    icon: "BookMarked",
+    requiredFields: ["owner","repo"],
+    essentialConfigKeys: ["pat"],
+    essentialConfigKeysMetadata: [
+        {
+          key: "pat",
+          label: "GitHub Classic Token",
+          type: "password",
+          placeholder: "ghp_...",
+          description: "Reuses the same token configured for the GitHub plugin, if you already have one.",
+          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
+          docKey: "github.pat",
+          i18nKey: {
+            label: "plugins.github_repo.essentialConfig.pat.label",
+            placeholder: "plugins.github_repo.essentialConfig.pat.placeholder",
+            description: "plugins.github_repo.essentialConfig.pat.description"
+          }
+        }
+    ],
+    sections: [
+      {
+        id: "repository_card",
+        name: "Repository Card",
+        description: "Compact card with name, description, language, stars, forks, license and topics",
+        i18nKey: {
+          name: "plugins.github_repo.sections.repository_card.name",
+          description: "plugins.github_repo.sections.repository_card.description"
+        },
+        configOptions: [
+        {
+          key: "repository_card_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github_repo.sections.repository_card.config.repository_card_hide_title.label"
+          }
+        },
+        {
+          key: "repository_card_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Repository",
+          i18nKey: {
+            label: "plugins.github_repo.sections.repository_card.config.repository_card_title.label",
+            defaultValue: "plugins.github_repo.sections.repository_card.config.repository_card_title.defaultValue"
+          }
+        },
+        {
+          key: "show_description",
+          label: "Show description",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.github_repo.sections.repository_card.config.show_description.label"
+          }
+        },
+        {
+          key: "show_language",
+          label: "Show primary language",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.github_repo.sections.repository_card.config.show_language.label"
+          }
+        },
+        {
+          key: "show_stats",
+          label: "Show stars and forks",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.github_repo.sections.repository_card.config.show_stats.label"
+          }
+        },
+        {
+          key: "show_license",
+          label: "Show license",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.github_repo.sections.repository_card.config.show_license.label"
+          }
+        },
+        {
+          key: "show_topics",
+          label: "Show topics",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.github_repo.sections.repository_card.config.show_topics.label"
+          }
+        },
+        {
+          key: "max_topics",
+          label: "Maximum topics",
+          type: "number",
+          defaultValue: 6,
+          min: 0,
+          max: 6,
+          step: 1,
+          description: "Maximum 6 topics",
+          tooltip: "Topics beyond this limit are summarized as '+N more'.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.repository_card.config.max_topics.label",
+            description: "plugins.github_repo.sections.repository_card.config.max_topics.description",
+            tooltip: "plugins.github_repo.sections.repository_card.config.max_topics.tooltip"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.github_repo.displayName",
+      description: "plugins.github_repo.description"
+    },
+    exampleConfig: {},
   },
 
   lastfm: {
@@ -3477,6 +3601,7 @@ export function getPluginsGroupedByCategory(): Record<PluginCategory, PluginMeta
     music: [],
     anime: [],
     gaming: [],
+    repository: [],
   }
   
   Object.values(PLUGINS_METADATA).forEach((plugin) => {
@@ -3513,7 +3638,7 @@ export function isValidPluginName(name: string): name is keyof typeof PLUGINS_ME
  * Valida se uma categoria é válida
  */
 export function isValidCategory(category: string): category is PluginCategory {
-  return ['coding', 'music', 'anime', 'gaming'].includes(category)
+  return ['coding', 'music', 'anime', 'gaming', 'repository'].includes(category)
 }
 
 /**

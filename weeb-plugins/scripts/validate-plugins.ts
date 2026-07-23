@@ -34,7 +34,7 @@ pluginManager.register(lastFmPlugin)
 pluginManager.register(myAnimeListPlugin)
 
 // Valid categories
-const VALID_CATEGORIES: PluginCategory[] = ["coding", "music", "anime", "gaming"]
+const VALID_CATEGORIES: PluginCategory[] = ["coding", "music", "anime", "gaming", "repository"]
 
 interface ValidationError {
   plugin: string

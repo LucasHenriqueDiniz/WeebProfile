@@ -9,7 +9,6 @@ import {
   DEFAULT_THEME_VARIABLE_LABELS,
   defaultThemes as themesFromPlugins,
 } from "@weeb/weeb-plugins/themes"
-import { useWizardStore } from "@/stores/wizard-store"
 import React, { useCallback, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
@@ -17,25 +16,44 @@ import { Button } from "@/components/ui/button"
 import { RotateCcw } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
 
-export function StyleConfiguration() {
+export interface StyleConfigurationProps {
+  style: "default" | "terminal"
+  size: "half" | "full"
+  theme: string
+  hideTerminalEmojis: boolean
+  hideTerminalHeader: boolean
+  customCss: string
+  customThemeColors: Record<string, string>
+  setStyle: (style: "default" | "terminal") => void
+  setSize: (size: "half" | "full") => void
+  setTheme: (theme: string) => void
+  setHideTerminalEmojis: (value: boolean) => void
+  setHideTerminalHeader: (value: boolean) => void
+  setCustomCss: (css: string) => void
+  setCustomThemeColor: (variable: string, value: string) => void
+  resetCustomThemeColors: () => void
+}
+
+// Store-agnostic: reused by both the Profile wizard (useWizardStore) and the
+// Repository wizard (useRepositoryWizardStore) — each passes its own slice down.
+export function StyleConfiguration({
+  style,
+  size,
+  theme,
+  hideTerminalEmojis,
+  hideTerminalHeader,
+  customCss,
+  customThemeColors,
+  setStyle,
+  setSize,
+  setTheme,
+  setHideTerminalEmojis,
+  setHideTerminalHeader,
+  setCustomCss,
+  setCustomThemeColor,
+  resetCustomThemeColors,
+}: StyleConfigurationProps) {
   const t = useTranslations("wizard.style")
-  const {
-    style,
-    size,
-    theme,
-    hideTerminalEmojis,
-    hideTerminalHeader,
-    customCss,
-    customThemeColors,
-    setStyle,
-    setSize,
-    setTheme,
-    setHideTerminalEmojis,
-    setHideTerminalHeader,
-    setCustomCss,
-    setCustomThemeColor,
-    resetCustomThemeColors,
-  } = useWizardStore()
 
   // Local state for debounce of color pickers
   const [localColors, setLocalColors] = useState<Record<string, string>>(customThemeColors)

@@ -19,6 +19,8 @@ const LoginPage = Lazy(() => import("./routes/login"))
 const SignupPage = Lazy(() => import("./routes/signup"))
 const DashboardPage = Lazy(() => import("./routes/dashboard"))
 const NewSvgPage = Lazy(() => import("./routes/dashboard.new"))
+const NewProfileSvgPage = Lazy(() => import("./routes/dashboard.new.profile"))
+const NewRepositorySvgPage = Lazy(() => import("./routes/dashboard.new.repository"))
 const SvgViewPage = Lazy(() => import("./routes/dashboard.$id"))
 const EditSvgPage = Lazy(() => import("./routes/dashboard.$id.edit"))
 const SettingsPage = Lazy(() => import("./routes/dashboard.settings"))
@@ -77,6 +79,18 @@ const newSvgRoute = createRoute({
   component: NewSvgPage,
 })
 
+const newProfileSvgRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dashboard/new/profile",
+  component: NewProfileSvgPage,
+})
+
+const newRepositorySvgRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dashboard/new/repository",
+  component: NewRepositorySvgPage,
+})
+
 const svgViewRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/dashboard/$id",
@@ -115,6 +129,8 @@ const routeTree = rootRoute.addChildren([
   signupSplatRoute,
   dashboardRoute,
   newSvgRoute,
+  newProfileSvgRoute,
+  newRepositorySvgRoute,
   svgViewRoute,
   editSvgRoute,
   settingsRoute,

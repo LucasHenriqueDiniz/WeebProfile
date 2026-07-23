@@ -4,8 +4,6 @@ import { Header } from "@/components/layout/Header"
 import { motion } from "framer-motion"
 import { ReactNode, useEffect, useRef, useState } from "react"
 import { ArrowLeft, Columns2, ListFilter, Puzzle, Settings2, Square } from "lucide-react"
-import { selectPluginsWithSections } from "@/stores/wizard-selectors"
-import { useWizardStore } from "@/stores/wizard-store"
 import { useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "@/i18n/use-translations"
@@ -21,6 +19,12 @@ interface WizardShellProps {
   preview: ReactNode
   footerProps: WizardFooterProps
   selectedPlugin: string | null
+  // Store-agnostic: caller (Profile or Repository wizard) supplies its own slice, so this
+  // shell has no direct dependency on either wizard-store.
+  name: string
+  size: "half" | "full"
+  setSize: (size: "half" | "full") => void
+  contentCount: number
 }
 
 // Fluxo mobile/tablet dedicado: nunca 3 colunas espremidas, sempre um passo de cada vez.
@@ -35,11 +39,13 @@ export function WizardShell({
   preview,
   footerProps,
   selectedPlugin,
+  name,
+  size,
+  setSize,
+  contentCount,
 }: WizardShellProps) {
-  const { plugins, pluginsOrder, size, name, setSize } = useWizardStore()
   const t = useTranslations("wizard.plugins")
   const router = useRouter()
-  const pluginsWithSections = selectPluginsWithSections({ plugins, pluginsOrder })
   const contentWidth = size === "half" ? 415 : 830
   const [mobileStep, setMobileStep] = useState<MobileStep>("list")
   const detailScrollRef = useRef<HTMLDivElement>(null)
@@ -93,7 +99,7 @@ export function WizardShell({
             mais alto que a area visivel. Centralizar no container com overflow corta o topo
             do conteudo e o torna inacessivel via scroll, fazendo parecer que o header cobre o SVG. */}
         <div className="p-4 lg:p-8 w-full min-h-full flex items-center justify-center">
-          {pluginsWithSections.length > 0 ? (
+          {contentCount > 0 ? (
             <div className="w-full max-w-full overflow-x-auto flex justify-center">
               {/* O frame nao declara a propria largura nem padding horizontal - ele so
                   encolhe (w-fit) ao redor do que o LivePreview ja renderiza em 415/830px
@@ -158,7 +164,7 @@ export function WizardShell({
             {name || "Novo SVG"}
           </span>
         }
-        description={pluginsWithSections.length > 0 ? `${pluginsWithSections.length} plugin(s) ativo(s)` : undefined}
+        description={contentCount > 0 ? `${contentCount} plugin(s) ativo(s)` : undefined}
         actions={
           <div className="flex items-center gap-2">
             {missingCount > 0 && (

@@ -210,6 +210,9 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
       // 3. Create/Update SVG (pluginsConfig has plugins only, uiConfig has global flags)
       const svgData: any = {
         name: autoName,
+        entityType: "profile",
+        artifactType: "profile_card",
+        variant: "default",
         style,
         size,
         theme,

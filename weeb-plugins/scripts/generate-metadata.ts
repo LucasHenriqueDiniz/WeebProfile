@@ -119,8 +119,8 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
   }
   if (!metadata.category) {
     errors.push(`Missing category`)
-  } else if (!["coding", "music", "anime", "gaming"].includes(metadata.category)) {
-    errors.push(`Invalid category: ${metadata.category}. Must be one of: coding, music, anime, gaming`)
+  } else if (!["coding", "music", "anime", "gaming", "repository"].includes(metadata.category)) {
+    errors.push(`Invalid category: ${metadata.category}. Must be one of: coding, music, anime, gaming, repository`)
   }
   if (!metadata.icon) {
     errors.push(`Missing icon`)
@@ -729,7 +729,7 @@ function generateMetadataFile(
 /**
  * Plugin category
  */
-export type PluginCategory = "coding" | "music" | "anime" | "gaming"
+export type PluginCategory = "coding" | "music" | "anime" | "gaming" | "repository"
 
 /**
  * I18n key map for translatable fields
@@ -1101,6 +1101,7 @@ export function getPluginsGroupedByCategory(): Record<PluginCategory, PluginMeta
     music: [],
     anime: [],
     gaming: [],
+    repository: [],
   }
   
   Object.values(PLUGINS_METADATA).forEach((plugin) => {
@@ -1137,7 +1138,7 @@ export function isValidPluginName(name: string): name is keyof typeof PLUGINS_ME
  * Valida se uma categoria é válida
  */
 export function isValidCategory(category: string): category is PluginCategory {
-  return ['coding', 'music', 'anime', 'gaming'].includes(category)
+  return ['coding', 'music', 'anime', 'gaming', 'repository'].includes(category)
 }
 
 /**
