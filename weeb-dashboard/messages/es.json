@@ -68,50 +68,50 @@
     "comparison": {
       "features": [
         {
-          "description": "Crie seu card de perfil sem escrever nenhum código. Apenas clique, arraste e personalize.",
-          "highlight": "Sem código",
+          "description": "Crea tu tarjeta de perfil sin escribir código. Solo haz clic, arrastra y personaliza.",
+          "highlight": "Sin código",
           "icon": "Layout",
           "id": "visual-builder",
-          "title": "Builder Visual"
+          "title": "Constructor Visual"
         },
         {
-          "description": "Conecte GitHub, MyAnimeList, LastFM, Steam, Goodreads e mais em um único lugar.",
-          "highlight": "Stats unificados",
+          "description": "Conecta GitHub, MyAnimeList, LastFM, Steam, Goodreads y más en un solo lugar.",
+          "highlight": "Estadísticas unificadas",
           "icon": "Plug",
           "id": "multi-platform",
           "title": "Multi-Plataforma"
         },
         {
-          "description": "Veja exatamente como seu card ficará antes de gerar. Sem tentativa e erro.",
-          "highlight": "Feedback instantâneo",
+          "description": "Mira exactamente cómo quedará tu tarjeta antes de generarla. Sin prueba y error.",
+          "highlight": "Feedback instantáneo",
           "icon": "Eye",
           "id": "real-time-preview",
-          "title": "Preview em Tempo Real"
+          "title": "Vista Previa en Tiempo Real"
         },
         {
-          "description": "Escolha entre múltiplos temas, layouts e estilos. Torne-o verdadeiramente seu.",
-          "highlight": "Seu estilo",
+          "description": "Elige entre múltiples temas, diseños y estilos. Hazlo verdaderamente tuyo.",
+          "highlight": "Tu estilo",
           "icon": "Palette",
           "id": "fully-customizable",
-          "title": "Totalmente Customizável"
+          "title": "Totalmente Personalizable"
         },
         {
-          "description": "Seus SVGs gerados são hospedados permanentemente. Sem necessidade de GitHub Actions.",
-          "highlight": "Sempre disponível",
+          "description": "Tus SVGs generados se alojan permanentemente. Sin necesidad de GitHub Actions.",
+          "highlight": "Siempre disponible",
           "icon": "Link",
           "id": "permanent-urls",
           "title": "URLs Permanentes"
         },
         {
-          "description": "Apenas nosso backend acessa seus dados. Suas chaves de API e tokens são armazenados com segurança e nunca expostos.",
-          "highlight": "Seus dados seguros",
+          "description": "Solo nuestro backend accede a tus datos. Tus claves de API y tokens se almacenan de forma segura y nunca se exponen.",
+          "highlight": "Tus datos, seguros",
           "icon": "Shield",
           "id": "secure",
-          "title": "Seguro e Privado"
+          "title": "Seguro y Privado"
         }
       ],
-      "subtitle": "Tudo que você precisa para criar o card de perfil perfeito, tudo em um lugar.",
-      "title": "O que torna especial"
+      "subtitle": "Todo lo que necesitas para crear la tarjeta de perfil perfecta, todo en un solo lugar.",
+      "title": "Qué Hace Especial a WeebProfile"
     },
     "cta": {
       "buttonHref": "/login",
