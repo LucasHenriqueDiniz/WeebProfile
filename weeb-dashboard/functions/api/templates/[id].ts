@@ -3,7 +3,7 @@ import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
 import { templates, svgs } from "../../../lib/db/schema"
-import { eq, and, or } from "drizzle-orm"
+import { eq, and } from "drizzle-orm"
 
 function setTerminalConfigs(
   uiConfig: Record<string, any>,
@@ -27,18 +27,16 @@ function setTerminalConfigs(
 export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env, params }) => {
   try {
     const userId = await getAuthUserId(request, env)
-    if (!userId) return unauthorized()
 
     const id = params.id as string
     const db = getDb(env)
 
-    const [template] = await db
-      .select()
-      .from(templates)
-      .where(and(eq(templates.id, id), or(eq(templates.userId, userId), eq(templates.isPublic, true))))
-      .limit(1)
+    const [template] = await db.select().from(templates).where(eq(templates.id, id)).limit(1)
 
     if (!template) return notFound("Template")
+    if (!template.isPublic && template.userId !== userId) {
+      return userId ? notFound("Template") : unauthorized()
+    }
 
     let previewUrl: string | null = null
     if (template.svgId) {
