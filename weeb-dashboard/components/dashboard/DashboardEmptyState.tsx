@@ -102,8 +102,10 @@ export function DashboardEmptyState() {
         transition={{ duration: 0.3 }}
         className="relative z-10 max-w-xl text-center"
       >
-        <span className="mb-3 inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-transparent">
-          Novo por aqui
+        <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/50 px-3 py-1 font-heading text-[11px] font-bold uppercase tracking-[0.2em] backdrop-blur-sm">
+          <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+            Novo por aqui
+          </span>
         </span>
         <h2 className="mb-3 font-heading text-[28px] font-extrabold leading-[1.08] text-white md:text-[36px]">
           Seu primeiro card de perfil começa aqui
