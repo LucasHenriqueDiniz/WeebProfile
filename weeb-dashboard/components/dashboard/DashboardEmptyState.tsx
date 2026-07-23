@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Sparkles } from "lucide-react"
-import { getSectionPreview } from "@/lib/config/section-previews"
+import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
 
 const STEPS = [
   { title: "Conecte", description: "GitHub, Google ou e-mail. Leva 10 segundos." },
@@ -61,45 +61,13 @@ function ThemeTogglePill({ style, onChange }: { style: PreviewStyle; onChange: (
   )
 }
 
-// Sem AnimatePresence: trocar a key força o React a desmontar o nó antigo e montar
-// um novo, que já entra com initial->animate - simples e sem o problema de nós de
-// saída que nao desmontam (visto com AnimatePresence + trocas rápidas de estado).
-// Altura fixa no wrapper da imagem: as previews reais têm alturas bem diferentes
-// entre si (ex: 100px a 307px), então sem isso o card inteiro mudava de tamanho a
-// cada rotação e "pulava" o layout ao redor. object-contain mantém a imagem inteira
-// visível, só variando a escala dentro da faixa fixa.
-const SLOT_IMAGE_HEIGHT = 180
-
-function SlotContent({ item, style }: { item: PoolItem; style: PreviewStyle }) {
-  const src = getSectionPreview(item.plugin, item.section, style)
-  return (
-    <motion.div
-      key={item.plugin + item.section + style}
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="w-full"
-    >
-      <div className="px-3.5 pt-3 pb-1">
-        <span className="text-[10px] font-mono text-cyan-300/70">{item.label}</span>
-      </div>
-      {src && (
-        <div className="px-3.5 pb-3.5 flex items-center justify-center" style={{ height: SLOT_IMAGE_HEIGHT }}>
-          <img
-            src={src}
-            alt={`Preview: ${item.label}`}
-            className="block w-full h-full object-contain"
-          />
-        </div>
-      )}
-    </motion.div>
-  )
-}
-
-// Card unico imitando o SVG real gerado: 3 seções empilhadas que vao trocando de
-// plugin/seção de forma escalonada (uma por vez), e um toggle pra alternar entre os
-// estilos default/terminal - mostra a diversidade de plugins sem virar um carrossel
-// de imagens soltas.
+// Card unico imitando o SVG real gerado: em vez de screenshots estáticos por seção
+// (que ficavam separados em caixinhas com legenda própria - nada a ver com o card
+// real), renderiza o mesmo PreviewRenderer usado no Hero e no wizard, então as
+// seções saem coladas exatamente como no SVG de produção. Os 3 slots vao trocando
+// de plugin/seção de forma escalonada (uma por vez); quando duas seções ativas
+// pertencem ao mesmo plugin elas ficam agrupadas sob esse plugin, como aconteceria
+// de verdade.
 const SLOT_COUNT = 3
 const ROTATIONS_PER_SLOT = POOL.length / SLOT_COUNT
 
@@ -125,6 +93,22 @@ function GeneratedCardPreview() {
   }, [tick])
 
   const pointers = rotations.map((r, i) => i + SLOT_COUNT * r)
+  const activeItems = useMemo(() => pointers.map((p) => POOL[p]), [pointers])
+
+  const pluginsConfig = useMemo(() => {
+    const plugins: Record<string, { enabled: boolean; sections: string[] }> = {}
+    const order: string[] = []
+    activeItems.forEach((item) => {
+      if (!plugins[item.plugin]) {
+        plugins[item.plugin] = { enabled: true, sections: [] }
+        order.push(item.plugin)
+      }
+      if (!plugins[item.plugin].sections.includes(item.section)) {
+        plugins[item.plugin].sections.push(item.section)
+      }
+    })
+    return { plugins, pluginsOrder: order }
+  }, [activeItems])
 
   const isDefault = style === "default"
 
@@ -134,7 +118,9 @@ function GeneratedCardPreview() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div
+      <motion.div
+        layout
+        transition={{ layout: { duration: 0.35, ease: "easeOut" } }}
         className="rounded-2xl overflow-hidden border shadow-[0_25px_60px_-20px_rgba(0,0,0,0.55)] transition-colors duration-500"
         style={{
           borderColor: isDefault ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.09)",
@@ -159,18 +145,17 @@ function GeneratedCardPreview() {
           </div>
         </div>
 
-        {pointers.map((p, i) => (
-          <div
-            key={i}
-            className="relative overflow-hidden transition-colors duration-500"
-            style={{
-              borderTop: i === 0 ? "none" : `1px solid ${isDefault ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.06)"}`,
-            }}
-          >
-            <SlotContent item={POOL[p]} style={style} />
-          </div>
-        ))}
-      </div>
+        <div className="flex justify-center p-3.5">
+          <PreviewRenderer
+            plugins={pluginsConfig.plugins}
+            pluginsOrder={pluginsConfig.pluginsOrder}
+            style={style}
+            size="half"
+            width={415}
+            hideTerminalHeader
+          />
+        </div>
+      </motion.div>
 
       <p className="text-center text-xs text-muted-foreground mt-3 max-w-[360px] mx-auto leading-relaxed">
         seções reais, geradas com dados de exemplo pelo mesmo motor usado em produção

@@ -16,19 +16,19 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, title, description, actions }: DashboardLayoutProps) {
   return (
-    <div className="flex min-h-svh bg-sidebar">
+    <div className="flex h-svh overflow-hidden bg-sidebar">
       <DashboardSidebar />
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
         <Header variant="dashboard" title={title} description={description} actions={actions} />
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="flex-1 bg-background pb-20 md:pb-0"
+          className="flex-1 min-h-0 overflow-y-auto bg-background pb-20 md:pb-0"
         >
-          <div className="min-h-full">{children}</div>
+          {children}
         </motion.div>
       </div>
 
