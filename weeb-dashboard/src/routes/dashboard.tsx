@@ -354,8 +354,15 @@ export default function DashboardPage() {
       }
       actions={headerActions}
     >
-      <div className="w-full space-y-5">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6">
+      <div className="w-full h-full">
+        {/* Onboarding real - ocupa toda a área disponível (sem o container com padding
+            das outras branches), substitui o antigo "ícone pequeno num canvas enorme" */}
+        {isTrulyEmpty ? (
+          <div className="h-full px-4 py-4 md:px-6 md:py-6 lg:px-8">
+            <DashboardEmptyState />
+          </div>
+        ) : (
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 space-y-5">
           {/* Filters - apenas quando houver muitos SVGs */}
           {showAdvancedControls && (
             <motion.div
@@ -395,15 +402,14 @@ export default function DashboardPage() {
             </motion.div>
           )}
 
-          {/* Biblioteca de SVGs - lista de linhas (asset library), nao uma grade de cards
-              identicos. O onboarding cuida sozinho do estado verdadeiramente vazio, abaixo. */}
-          {!isTrulyEmpty && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.2 }}
-              className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden"
-            >
+          {/* Biblioteca de SVGs - lista de linhas (asset library). Só chega aqui quando
+              !isTrulyEmpty (ver branch acima que renderiza o onboarding). */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.2 }}
+            className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden"
+          >
               {svgsLoading && svgs.length === 0
                 ? Array.from({ length: 4 }).map((_, index) => (
                     <div key={`skeleton-${index}`} className="p-3">
@@ -444,15 +450,11 @@ export default function DashboardPage() {
                     <SvgCardSkeleton index={filteredAndSortedSvgs.length + index} />
                   </div>
                 ))}
-            </motion.div>
-          )}
-
-          {/* Onboarding real - substitui o antigo "ícone pequeno num canvas enorme" */}
-          {isTrulyEmpty && <DashboardEmptyState />}
+          </motion.div>
 
           {/* Empty State (filtro sem resultados - diferente do onboarding acima, só
               acontece quando já existem SVGs mas o filtro ativo não bate com nenhum) */}
-          {!isTrulyEmpty && filteredAndSortedSvgs.length === 0 && !svgsLoading && (
+          {filteredAndSortedSvgs.length === 0 && !svgsLoading && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -478,38 +480,39 @@ export default function DashboardPage() {
               </Button>
             </motion.div>
           )}
-
-          {/* Delete Confirmation Dialog */}
-          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{t("deleteDialog.title")}</DialogTitle>
-                <DialogDescription>{t("deleteDialog.description")}</DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setDeleteDialogOpen(false)
-                    setSvgToDelete(null)
-                  }}
-                >
-                  {t("deleteDialog.cancel")}
-                </Button>
-                <Button variant="destructive" onClick={handleDeleteConfirm} disabled={deletingId !== null}>
-                  {deletingId ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {t("deleting")}
-                    </>
-                  ) : (
-                    t("deleteDialog.confirm")
-                  )}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </div>
+        )}
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t("deleteDialog.title")}</DialogTitle>
+              <DialogDescription>{t("deleteDialog.description")}</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDeleteDialogOpen(false)
+                  setSvgToDelete(null)
+                }}
+              >
+                {t("deleteDialog.cancel")}
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteConfirm} disabled={deletingId !== null}>
+                {deletingId ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {t("deleting")}
+                  </>
+                ) : (
+                  t("deleteDialog.confirm")
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   )

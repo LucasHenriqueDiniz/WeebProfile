@@ -5,7 +5,6 @@ import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Sparkles } from "lucide-react"
-import { getSectionPreview } from "@/lib/config/section-previews"
 
 const STEPS = [
   { title: "Conecte", description: "GitHub, Google ou e-mail. Leva 10 segundos." },
@@ -19,58 +18,51 @@ const stars = [
   { top: "18%", left: "90%", size: 2, opacity: 0.25 },
 ]
 
-// Papel de parede decorativo: uma parede de seções reais (mesmos SVGs de preview
-// usados no wizard), em grid, jogada em perspectiva/tilt e escurecida atrás do
-// conteúdo - a ideia é comunicar "isso tudo é gerado de verdade" com volume, sem
-// competir por atenção com o texto. Imagens estáticas (não o PreviewRenderer ao
-// vivo): são só papel de parede, não precisam ser interativas nem trocar sozinhas.
-const COLLAGE_ITEMS: { plugin: string; section: string; style: "default" | "terminal" }[] = [
-  { plugin: "github", section: "calendar", style: "terminal" },
-  { plugin: "lastfm", section: "top_artists", style: "default" },
-  { plugin: "myanimelist", section: "anime_favorites", style: "terminal" },
-  { plugin: "steam", section: "recent_games", style: "default" },
-  { plugin: "codewars", section: "rank_honor", style: "terminal" },
-  { plugin: "duolingo", section: "current_streak", style: "default" },
-  { plugin: "github", section: "favorite_languages", style: "terminal" },
-  { plugin: "lastfm", section: "recent_tracks", style: "default" },
-  { plugin: "myanimelist", section: "statistics_simple", style: "terminal" },
-  { plugin: "stackoverflow", section: "reputation", style: "default" },
-  { plugin: "16personalities", section: "personality", style: "terminal" },
-  { plugin: "codeforces", section: "rating_rank", style: "default" },
-  { plugin: "github", section: "code_habits", style: "default" },
-  { plugin: "duolingo", section: "languages_learning", style: "terminal" },
-  { plugin: "steam", section: "statistics", style: "terminal" },
-  { plugin: "lastfm", section: "top_albums", style: "default" },
+// Papel de parede decorativo: cards de perfil reais (os mesmos SVGs completos
+// mostrados em /templates, não seções isoladas), em grid, levemente inclinados
+// e com uma vinheta suave atrás do conteúdo - comunica "isso tudo é gerado de
+// verdade" com volume, sem apagar os cards a ponto de virarem borrão.
+const TEMPLATE_PREVIEWS = [
+  "/template-previews/4b63b29a-d0da-4363-a061-1f61f6dc9a05.svg",
+  "/template-previews/97f42207-3990-4faa-ba99-d105b12061eb.svg",
+  "/template-previews/6bfb8f10-e367-4c8e-905c-4f209e13f303.svg",
+  "/template-previews/a271c6ac-45a6-4df1-a389-579ed24a516b.svg",
+  "/template-previews/e66831e1-abab-4877-ba6a-92cbd0bd17d6.svg",
 ]
+
+// Repete os 5 templates o suficiente pra preencher uma parede de 12 tiles, sem
+// dois iguais lado a lado.
+const WALL_TILES = [0, 1, 2, 3, 4, 2, 4, 0, 3, 1, 4, 2].map((i) => TEMPLATE_PREVIEWS[i])
 
 function PreviewCollageBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
       <div
-        className="absolute left-1/2 top-0 grid w-[170%] grid-cols-4 gap-4 sm:w-[135%] sm:grid-cols-5"
+        className="absolute left-1/2 top-[-6%] grid w-[150%] grid-cols-3 gap-5 sm:w-[122%] sm:grid-cols-4"
         style={{
-          transform: "translateX(-50%) perspective(1000px) rotateX(45deg) rotateZ(-3deg) scale(1.2)",
+          // Perspectiva mais suave (distância maior + rotação menor) do que a primeira
+          // tentativa - rotateX 45deg com perspective 1000px distorcia demais e ficava
+          // estranho. Isso aqui lê como uma prateleira levemente inclinada, não uma parede
+          // caindo pra trás.
+          transform: "translateX(-50%) perspective(1800px) rotateX(28deg) rotateZ(-4deg) scale(1.05)",
           transformOrigin: "top center",
         }}
       >
-        {COLLAGE_ITEMS.map((item, i) => {
-          const src = getSectionPreview(item.plugin, item.section, item.style)
-          if (!src) return null
-          return (
-            <div
-              key={`${item.plugin}-${item.section}`}
-              className="overflow-hidden rounded-lg border border-white/10 bg-black/40 shadow-2xl"
-              style={{ opacity: 0.45 + (i % 3) * 0.1 }}
-            >
-              <img src={src} alt="" className="block h-auto w-full" />
-            </div>
-          )
-        })}
+        {WALL_TILES.map((src, i) => (
+          <div
+            key={i}
+            className="h-64 overflow-hidden rounded-xl border border-white/15 shadow-2xl sm:h-72"
+            style={{ opacity: 0.75 + (i % 3) * 0.08 }}
+          >
+            <img src={src} alt="" className="block h-full w-full object-cover object-top" />
+          </div>
+        ))}
       </div>
 
-      {/* Vinheta escura - garante legibilidade do texto por cima independente do tema do site */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#05070d]/60 via-[#05070d]/88 to-[#05070d]" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#05070d]/50 via-transparent to-[#05070d]/50" />
+      {/* Vinheta - só o suficiente pra legibilidade do texto por cima, sem apagar os
+          cards (o problema anterior era escurecer demais e virar um borrão ilegível) */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#05070d]/15 via-[#05070d]/45 to-[#05070d]/92" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#05070d]/55 via-transparent to-[#05070d]/55" />
     </div>
   )
 }
@@ -83,7 +75,7 @@ export function DashboardEmptyState() {
   const [activeStep, setActiveStep] = useState(0)
 
   return (
-    <div className="relative flex min-h-[600px] items-center justify-center overflow-hidden rounded-2xl px-6 py-16">
+    <div className="relative flex h-full min-h-[600px] items-center justify-center overflow-hidden rounded-2xl px-6 py-16">
       <PreviewCollageBackground />
 
       {stars.map((s, i) => (
