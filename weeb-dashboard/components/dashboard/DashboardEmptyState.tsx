@@ -64,6 +64,12 @@ function ThemeTogglePill({ style, onChange }: { style: PreviewStyle; onChange: (
 // Sem AnimatePresence: trocar a key força o React a desmontar o nó antigo e montar
 // um novo, que já entra com initial->animate - simples e sem o problema de nós de
 // saída que nao desmontam (visto com AnimatePresence + trocas rápidas de estado).
+// Altura fixa no wrapper da imagem: as previews reais têm alturas bem diferentes
+// entre si (ex: 100px a 307px), então sem isso o card inteiro mudava de tamanho a
+// cada rotação e "pulava" o layout ao redor. object-contain mantém a imagem inteira
+// visível, só variando a escala dentro da faixa fixa.
+const SLOT_IMAGE_HEIGHT = 180
+
 function SlotContent({ item, style }: { item: PoolItem; style: PreviewStyle }) {
   const src = getSectionPreview(item.plugin, item.section, style)
   return (
@@ -77,7 +83,15 @@ function SlotContent({ item, style }: { item: PoolItem; style: PreviewStyle }) {
       <div className="px-3.5 pt-3 pb-1">
         <span className="text-[10px] font-mono text-cyan-300/70">{item.label}</span>
       </div>
-      {src && <img src={src} alt={`Preview: ${item.label}`} className="block w-full h-auto px-3.5 pb-3.5" />}
+      {src && (
+        <div className="px-3.5 pb-3.5 flex items-center justify-center" style={{ height: SLOT_IMAGE_HEIGHT }}>
+          <img
+            src={src}
+            alt={`Preview: ${item.label}`}
+            className="block w-full h-full object-contain"
+          />
+        </div>
+      )}
     </motion.div>
   )
 }
