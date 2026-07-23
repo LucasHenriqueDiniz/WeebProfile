@@ -109,7 +109,13 @@ export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
-  const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
+  const { svgs: storeSvgs, svgsLoading: storeSvgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
+  // DEV-ONLY: ?mock=empty / ?mock=full override the list for design review without ever
+  // touching the persisted svg-store (which used to leak MOCK_SVGS into localStorage
+  // forever - see mockOverride effect below).
+  const [mockOverride, setMockOverride] = useState<Svg[] | null>(null)
+  const svgs = mockOverride ?? storeSvgs
+  const svgsLoading = mockOverride ? false : storeSvgsLoading
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [generatingId, setGeneratingId] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all")
@@ -138,10 +144,22 @@ export default function DashboardPage() {
     const mockFlag = new URLSearchParams(window.location.search).get("mock")
     if (mockFlag === "empty") {
       hasFetchedRef.current = true
-      useSvgStore.setState({ svgs: [], svgsLoading: false })
+      setMockOverride([])
     } else if (mockFlag === "full") {
       hasFetchedRef.current = true
-      useSvgStore.setState({ svgs: MOCK_SVGS as unknown as Svg[], svgsLoading: false })
+      setMockOverride(MOCK_SVGS as unknown as Svg[])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // SELF-HEAL: an earlier version of the ?mock=full bypass wrote straight into the
+  // persisted svg-store, so anyone who ever loaded that URL got fake "mock-*" SVGs
+  // stuck in their dashboard forever (even with no dev server / mock flag). Strip them
+  // out of the real store once on mount.
+  useEffect(() => {
+    const hasLeakedMocks = storeSvgs.some((svg) => svg.id.startsWith("mock-"))
+    if (hasLeakedMocks) {
+      useSvgStore.setState({ svgs: storeSvgs.filter((svg) => !svg.id.startsWith("mock-")) })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
