@@ -20,8 +20,8 @@ const stars = [
 ]
 
 // Seções reais, geradas pelo mesmo svg-generator usado em produção (dados mock) -
-// nao e mockup, e o proprio produto rodando em modo preview. Pool com 9 itens (3
-// slots x 3 rotações) para os 3 slots nunca mostrarem o mesmo item ao mesmo tempo.
+// nao e mockup, e o proprio produto rodando em modo preview. Uma seção por vez,
+// trocando com slide lateral (ver GeneratedCardPreview).
 type PoolItem = { plugin: string; section: string; label: string }
 type PreviewStyle = "default" | "terminal"
 
@@ -30,7 +30,7 @@ const POOL: PoolItem[] = [
   { plugin: "lastfm", section: "recent_tracks", label: "Last.fm · Faixas recentes" },
   { plugin: "myanimelist", section: "statistics_simple", label: "MyAnimeList · Estatísticas" },
   { plugin: "steam", section: "recent_games", label: "Steam · Jogos recentes" },
-  { plugin: "github", section: "top_repositories", label: "GitHub · Repositórios" },
+  { plugin: "github", section: "favorite_languages", label: "GitHub · Linguagens favoritas" },
   { plugin: "lastfm", section: "top_artists", label: "Last.fm · Top artistas" },
   { plugin: "codewars", section: "rank_honor", label: "Codewars · Rank" },
   { plugin: "duolingo", section: "current_streak", label: "Duolingo · Streak" },
@@ -63,73 +63,64 @@ function ThemeTogglePill({ style, onChange }: { style: PreviewStyle; onChange: (
 
 // Card unico imitando o SVG real gerado: em vez de screenshots estáticos por seção
 // (que ficavam separados em caixinhas com legenda própria - nada a ver com o card
-// real), renderiza o mesmo PreviewRenderer usado no Hero e no wizard, então as
-// seções saem coladas exatamente como no SVG de produção. Os 3 slots vao trocando
-// de plugin/seção de forma escalonada (uma por vez); quando duas seções ativas
-// pertencem ao mesmo plugin elas ficam agrupadas sob esse plugin, como aconteceria
-// de verdade.
-const SLOT_COUNT = 3
-const ROTATIONS_PER_SLOT = POOL.length / SLOT_COUNT
+// real), renderiza o mesmo PreviewRenderer usado no Hero e no wizard.
+//
+// Uma seção real por vez (nao 3 empilhadas): medido ao vivo, 3 plugins simultâneos
+// somavam mais de 1200px de conteúdo real (ex: lista de repositórios completa do
+// GitHub), muito além de qualquer frame fixo razoável - resultava em conteúdo cortado
+// no meio. Com uma seção por vez a altura fica previsível (a maior gira em torno de
+// ~310px), então o frame consegue ter width/height fixos de verdade e o conteúdo só
+// desliza *dentro* dele - nunca redimensiona o card nem empurra o layout da tela.
+const FRAME_WIDTH = 448
+const FRAME_HEADER_HEIGHT = 44
+const FRAME_CONTENT_HEIGHT = 400
+const ROTATE_INTERVAL_MS = 2200
 
 function GeneratedCardPreview() {
   const [style, setStyle] = useState<PreviewStyle>("default")
   const [paused, setPaused] = useState(false)
-  // rotations[i] = qual rotação o slot i está mostrando (0..ROTATIONS_PER_SLOT-1).
-  // O item real é POOL[i + SLOT_COUNT * rotations[i]] - cada slot só sorteia dentro
-  // do seu próprio subconjunto fixo do pool, então nunca colidem entre si.
-  const [rotations, setRotations] = useState(() => Array(SLOT_COUNT).fill(0))
-  const [tick, setTick] = useState(0)
+  const [index, setIndex] = useState(0)
 
   useEffect(() => {
     if (paused) return
-    const t = setInterval(() => setTick((v) => v + 1), 1600)
+    const t = setInterval(() => setIndex((v) => (v + 1) % POOL.length), ROTATE_INTERVAL_MS)
     return () => clearInterval(t)
   }, [paused])
 
-  useEffect(() => {
-    const slotToAdvance = tick % SLOT_COUNT
-    setRotations((prev) => prev.map((r, i) => (i === slotToAdvance ? (r + 1) % ROTATIONS_PER_SLOT : r)))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tick])
+  const activeItem = POOL[index]
 
-  const pointers = rotations.map((r, i) => i + SLOT_COUNT * r)
-  const activeItems = useMemo(() => pointers.map((p) => POOL[p]), [pointers])
-
-  const pluginsConfig = useMemo(() => {
-    const plugins: Record<string, { enabled: boolean; sections: string[] }> = {}
-    const order: string[] = []
-    activeItems.forEach((item) => {
-      if (!plugins[item.plugin]) {
-        plugins[item.plugin] = { enabled: true, sections: [] }
-        order.push(item.plugin)
-      }
-      if (!plugins[item.plugin].sections.includes(item.section)) {
-        plugins[item.plugin].sections.push(item.section)
-      }
-    })
-    return { plugins, pluginsOrder: order }
-  }, [activeItems])
+  const pluginsConfig = useMemo(
+    () => ({
+      plugins: { [activeItem.plugin]: { enabled: true, sections: [activeItem.section] } },
+      pluginsOrder: [activeItem.plugin],
+    }),
+    [activeItem]
+  )
 
   const isDefault = style === "default"
 
   return (
     <div
-      className="w-full max-w-[480px]"
+      className="relative"
+      style={{ width: FRAME_WIDTH }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <motion.div
-        layout
-        transition={{ layout: { duration: 0.35, ease: "easeOut" } }}
+      {/* Glow decorativo atrás da janela, mesma linguagem visual do Hero */}
+      <div className="absolute -inset-10 blur-3xl opacity-60 pointer-events-none -z-10 rounded-2xl bg-gradient-to-br from-cyan-500/20 via-violet-500/15 to-pink-500/15" />
+
+      <div
         className="rounded-2xl overflow-hidden border shadow-[0_25px_60px_-20px_rgba(0,0,0,0.55)] transition-colors duration-500"
         style={{
+          width: FRAME_WIDTH,
           borderColor: isDefault ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.09)",
           background: isDefault ? "#ffffff" : "#0a0f1e",
         }}
       >
+        {/* Barra de título - altura fixa */}
         <div
-          className="flex items-center gap-2 px-4 py-2.5 border-b transition-colors duration-500"
-          style={{ borderColor: isDefault ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.06)" }}
+          className="flex items-center gap-2 px-4 border-b transition-colors duration-500"
+          style={{ height: FRAME_HEADER_HEIGHT, borderColor: isDefault ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.06)" }}
         >
           <span className="w-2 h-2 rounded-full bg-[#FF6259]/80" />
           <span className="w-2 h-2 rounded-full bg-[#FFC02E]/80" />
@@ -145,7 +136,13 @@ function GeneratedCardPreview() {
           </div>
         </div>
 
-        <div className="flex justify-center p-3.5">
+        {/* Área de conteúdo - altura fixa, o card nunca cresce/encolhe. overflow-hidden
+            é só uma rede de segurança - com uma seção por vez o conteúdo real fica bem
+            abaixo do teto fixado. */}
+        <div
+          className="flex items-center justify-center overflow-hidden p-3.5"
+          style={{ height: FRAME_CONTENT_HEIGHT }}
+        >
           <PreviewRenderer
             plugins={pluginsConfig.plugins}
             pluginsOrder={pluginsConfig.pluginsOrder}
@@ -156,7 +153,7 @@ function GeneratedCardPreview() {
             sectionTransition="slide"
           />
         </div>
-      </motion.div>
+      </div>
 
       <p className="text-center text-xs text-muted-foreground mt-3 max-w-[360px] mx-auto leading-relaxed">
         seções reais, geradas com dados de exemplo pelo mesmo motor usado em produção
