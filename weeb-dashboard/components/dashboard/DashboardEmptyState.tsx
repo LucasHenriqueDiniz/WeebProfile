@@ -72,7 +72,7 @@ const SLOT_COUNT = 3
 const ROTATIONS_PER_SLOT = POOL.length / SLOT_COUNT
 
 function GeneratedCardPreview() {
-  const [style, setStyle] = useState<PreviewStyle>("terminal")
+  const [style, setStyle] = useState<PreviewStyle>("default")
   const [paused, setPaused] = useState(false)
   // rotations[i] = qual rotação o slot i está mostrando (0..ROTATIONS_PER_SLOT-1).
   // O item real é POOL[i + SLOT_COUNT * rotations[i]] - cada slot só sorteia dentro
@@ -153,6 +153,7 @@ function GeneratedCardPreview() {
             size="half"
             width={415}
             hideTerminalHeader
+            sectionTransition="slide"
           />
         </div>
       </motion.div>

@@ -2,7 +2,7 @@
 
 import { useMockPluginData } from "@/hooks/useMockPluginData"
 import { PluginManager } from "@weeb/weeb-plugins/plugins/manager"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import React, { useEffect, useMemo, useState } from "react"
 import { PreviewSvgContainer } from "./PreviewSvgContainer"
 import { PluginErrorBoundary } from "./PluginErrorBoundary"
@@ -28,6 +28,7 @@ interface PreviewRendererProps {
   height?: number // Altura fixa opcional
   previewMode?: boolean // Quando true, componentes não devem renderizar links externos
   disableFadeIn?: boolean // Quando true, desativa a animação de fade-in das seções
+  sectionTransition?: "fade" | "slide" // "slide" anima entrada/saída lateral (usa AnimatePresence); default "fade"
 }
 
 /**
@@ -76,6 +77,7 @@ export function PreviewRenderer({
   height: propHeight,
   previewMode,
   disableFadeIn = false,
+  sectionTransition = "fade",
 }: PreviewRendererProps) {
   const { data, loading } = useMockPluginData({ plugins })
 
@@ -178,12 +180,27 @@ export function PreviewRenderer({
           continue
         }
 
-        // Usar key única baseada em pluginName + índice estável
-        const stableKey = `${pluginName}-${components.length}`
+        // Key estável: no modo "slide" precisa refletir o conteúdo (plugin + seções)
+        // para que o AnimatePresence detecte troca de seção como saída/entrada; no
+        // modo "fade" (comportamento original, usado no Hero/wizard) mantém a key
+        // posicional para não alterar o comportamento existente.
+        const stableKey =
+          sectionTransition === "slide"
+            ? `${pluginName}:${pluginConfig.sections.join(",")}`
+            : `${pluginName}-${components.length}`
         components.push(
           <PluginErrorBoundary key={stableKey} pluginName={pluginName}>
             {disableFadeIn ? (
               <div>{rendered}</div>
+            ) : sectionTransition === "slide" ? (
+              <motion.div
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -24 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+                {rendered}
+              </motion.div>
             ) : (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -204,7 +221,7 @@ export function PreviewRenderer({
     }
 
     return components
-  }, [pluginsOrder, data, activePluginsMap, preparedPluginsConfig])
+  }, [pluginsOrder, data, activePluginsMap, preparedPluginsConfig, disableFadeIn, sectionTransition])
 
   if (loading) {
     return (
@@ -256,7 +273,13 @@ export function PreviewRenderer({
         customThemeColors={customThemeColors}
         plugins={plugins}
       >
-        {renderedPlugins}
+        {sectionTransition === "slide" ? (
+          <AnimatePresence mode="popLayout" initial={false}>
+            {renderedPlugins}
+          </AnimatePresence>
+        ) : (
+          renderedPlugins
+        )}
       </PreviewSvgContainer>
     </div>
   )
