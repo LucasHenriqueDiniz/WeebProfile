@@ -92,7 +92,7 @@ export function DashboardEmptyState() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="relative z-10 max-w-xl text-center"
+        className="relative z-10 max-w-xl rounded-2xl border border-white/10 bg-[#05070d]/75 px-6 py-10 text-center shadow-[0_25px_60px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md sm:px-10"
       >
         <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/50 px-3 py-1 font-heading text-[11px] font-bold uppercase tracking-[0.2em] backdrop-blur-sm">
           <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
