@@ -25,26 +25,44 @@ export default function NewArtifactChooserPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl w-full">
           <button
             onClick={() => router.push("/dashboard/new/profile")}
-            className="flex flex-col items-start gap-3 p-6 rounded-xl border border-border bg-card hover:border-primary hover:bg-primary/5 transition-all text-left"
+            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:border-primary hover:bg-primary/5"
           >
-            <UserCircle2 className="w-8 h-8 text-cyan-400" />
-            <div>
-              <p className="text-base font-semibold text-foreground">Profile</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Build a complete personal stats image combining code, anime, music and gaming plugins.
-              </p>
+            <div className="h-40 w-full overflow-hidden border-b border-border bg-muted/40">
+              <img
+                src="/template-previews/e66831e1-abab-4877-ba6a-92cbd0bd17d6.svg"
+                alt="Exemplo de card de perfil"
+                className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+            <div className="flex flex-col items-start gap-3 p-6">
+              <UserCircle2 className="w-8 h-8 text-cyan-400" />
+              <div>
+                <p className="text-base font-semibold text-foreground">Profile</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Build a complete personal stats image combining code, anime, music and gaming plugins.
+                </p>
+              </div>
             </div>
           </button>
           <button
             onClick={() => router.push("/dashboard/new/repository")}
-            className="flex flex-col items-start gap-3 p-6 rounded-xl border border-border bg-card hover:border-primary hover:bg-primary/5 transition-all text-left"
+            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:border-primary hover:bg-primary/5"
           >
-            <BookMarked className="w-8 h-8 text-violet-400" />
-            <div>
-              <p className="text-base font-semibold text-foreground">Repository</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Create a standalone card for a single GitHub repository.
-              </p>
+            <div className="flex h-40 w-full items-center justify-center overflow-hidden border-b border-border bg-muted/40 p-4">
+              <img
+                src="/previews/github_repo/default/repository_card.svg"
+                alt="Exemplo de card de repositório"
+                className="w-full object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+            <div className="flex flex-col items-start gap-3 p-6">
+              <BookMarked className="w-8 h-8 text-violet-400" />
+              <div>
+                <p className="text-base font-semibold text-foreground">Repository</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Create a standalone card for a single GitHub repository.
+                </p>
+              </div>
             </div>
           </button>
         </div>
