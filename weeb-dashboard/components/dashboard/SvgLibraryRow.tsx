@@ -73,10 +73,10 @@ export function SvgLibraryRow({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.02, duration: 0.2 }}
-      className="group flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-white/[0.03] transition-colors"
+      className="group flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-accent/50 transition-colors"
     >
       {/* Thumbnail */}
-      <div className="relative flex-shrink-0 w-20 h-14 md:w-24 md:h-16 rounded-md overflow-hidden border border-white/[0.06] bg-white/[0.02]">
+      <div className="relative flex-shrink-0 w-20 h-14 md:w-24 md:h-16 rounded-md overflow-hidden border border-border bg-muted/50">
         <div
           aria-hidden
           className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-400/40 group-hover:border-cyan-400 transition-colors z-10 pointer-events-none"

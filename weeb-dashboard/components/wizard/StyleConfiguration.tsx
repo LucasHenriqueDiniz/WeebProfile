@@ -228,7 +228,7 @@ export function StyleConfiguration() {
           onChange={(e) => setCustomCss(e.target.value)}
           placeholder={t("customCssPlaceholder")}
           spellCheck={false}
-          className="w-full min-h-[220px] rounded-md border border-border bg-[#0a0f1e] text-slate-200 px-3 py-2.5 text-xs font-mono leading-relaxed focus:border-primary focus:ring-1 focus:ring-primary"
+          className="w-full min-h-[220px] rounded-md border border-border bg-muted text-foreground px-3 py-2.5 text-xs font-mono leading-relaxed focus:border-primary focus:ring-1 focus:ring-primary"
         />
       </div>
     </div>

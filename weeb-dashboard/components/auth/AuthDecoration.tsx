@@ -123,7 +123,7 @@ interface AuthDecorationProps {
 // Fundo decorativo compartilhado entre /login e /signup (estrelas, sparkles, mascote Sora).
 export function AuthDecoration({ title, children }: AuthDecorationProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[#0a0f1e] relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-background relative overflow-hidden">
       {/* Back to Home Button */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -133,7 +133,7 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
       >
         <Link
           href="/"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-cyan-500/30 bg-slate-900/80 backdrop-blur-xl text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50 transition-all hover:bg-slate-800/80"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-cyan-500/30 bg-card/80 backdrop-blur-xl text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50 transition-all hover:bg-accent/80"
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-medium">Voltar</span>
@@ -143,13 +143,13 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,_rgba(6,182,212,0.15),_transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_60%,_rgba(168,85,247,0.12),_transparent_55%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(139,92,246,0.08),_transparent_70%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0f1e]/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/40 pointer-events-none" />
 
       {/* Subtle stars */}
       {stars.map((star) => (
         <motion.div
           key={star.id}
-          className="absolute rounded-full bg-white pointer-events-none"
+          className="absolute rounded-full bg-foreground pointer-events-none"
           style={{
             top: star.top,
             left: star.left,
@@ -304,15 +304,15 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
                   WeebProfile
                 </span>
               </div>
-              <h1 className="text-[26px] sm:text-[28px] leading-tight font-heading font-extrabold text-white">
+              <h1 className="text-[26px] sm:text-[28px] leading-tight font-heading font-extrabold text-foreground">
                 {title}
               </h1>
             </div>
 
-            <div className="border-t border-white/[0.06] pt-6">{children}</div>
+            <div className="border-t border-border pt-6">{children}</div>
 
             {/* Footer */}
-            <p className="text-[11px] text-center lg:text-left text-slate-500 mt-7 leading-relaxed">
+            <p className="text-[11px] text-center lg:text-left text-muted-foreground mt-7 leading-relaxed">
               Ao continuar, você concorda com nossos{" "}
               <a
                 href="#"

@@ -55,8 +55,8 @@ export function WizardShell({
 
   const previewArea = (
     <div className="flex flex-col h-full">
-      <div className="flex-shrink-0 flex items-center justify-between px-4 lg:px-6 py-2.5 border-b border-white/[0.06]">
-        <div className="flex items-center gap-1 rounded-lg bg-white/[0.03] p-0.5">
+      <div className="flex-shrink-0 flex items-center justify-between px-4 lg:px-6 py-2.5 border-b border-border">
+        <div className="flex items-center gap-1 rounded-lg bg-muted/50 p-0.5">
           <button
             onClick={() => setSize("half")}
             className={cn(
@@ -84,7 +84,7 @@ export function WizardShell({
       <div
         className="flex-1 overflow-y-auto scrollbar-hide"
         style={{
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(hsl(var(--foreground) / 0.05) 1px, transparent 1px)",
           backgroundSize: "20px 20px",
         }}
       >
@@ -100,7 +100,7 @@ export function WizardShell({
                   reais. Antes o frame tinha width:415px + p-4 (16px), então o conteudo
                   interno (tambem fixado em 415px) estourava 17px para fora de cada lado
                   do padding, e a borda visivel nao correspondia aos limites reais do SVG. */}
-              <div className="w-fit mx-auto rounded-lg border border-white/10 bg-[#0a0f1e] shadow-[0_0_40px_rgba(0,0,0,0.3)] overflow-hidden">
+              <div className="w-fit mx-auto rounded-lg border border-border bg-card shadow-[0_0_40px_hsl(var(--foreground)/0.1)] dark:shadow-[0_0_40px_rgba(0,0,0,0.3)] overflow-hidden">
                 {preview}
               </div>
             </div>
@@ -112,7 +112,7 @@ export function WizardShell({
               className="flex flex-col items-center justify-center space-y-5 px-4 text-center"
             >
               <div
-                className="relative rounded-lg border border-dashed border-white/10 flex items-center justify-center"
+                className="relative rounded-lg border border-dashed border-border flex items-center justify-center"
                 style={{ width: Math.min(contentWidth, 360), height: 140 }}
               >
                 <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
@@ -138,7 +138,7 @@ export function WizardShell({
   )
 
   return (
-    <div className="flex flex-col h-dvh bg-[#0a0f1e] relative">
+    <div className="flex flex-col h-dvh bg-background relative">
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-[radial-gradient(circle,_rgba(6,182,212,0.08),_transparent_65%)]" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[radial-gradient(circle,_rgba(168,85,247,0.07),_transparent_65%)]" />
@@ -175,7 +175,7 @@ export function WizardShell({
 
       {/* Tab switcher - Plugins/Estilo agora e um controle real do shell, nao escondido
           dentro de uma das colunas. */}
-      <div className="flex-shrink-0 flex items-center gap-1 px-4 lg:px-6 py-2 border-b border-white/[0.06] bg-white/[0.015]">
+      <div className="flex-shrink-0 flex items-center gap-1 px-4 lg:px-6 py-2 border-b border-border bg-muted/20">
         <button
           onClick={() => onTabChange("plugins")}
           className={cn(
@@ -200,7 +200,7 @@ export function WizardShell({
 
       {/* Mobile/tablet: passos deliberados (Plugins -> Configurar -> Preview), nunca 3
           colunas espremidas nem scroll horizontal como solucao principal. */}
-      <div className="lg:hidden flex-shrink-0 flex border-b border-white/[0.06] bg-white/[0.02]">
+      <div className="lg:hidden flex-shrink-0 flex border-b border-border bg-muted/30">
         {(activeTab === "plugins"
           ? ([
               ["list", "Plugins", Puzzle],
@@ -237,7 +237,7 @@ export function WizardShell({
         <div className="mx-auto flex w-full max-w-[1700px] overflow-hidden">
           <div
             className={cn(
-              "lg:w-64 xl:w-72 lg:flex-shrink-0 lg:border-r border-white/[0.06] lg:overflow-y-auto w-full",
+              "lg:w-64 xl:w-72 lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
               activeTab === "plugins"
                 ? mobileStep === "list"
                   ? "block lg:block"
@@ -250,7 +250,7 @@ export function WizardShell({
           <div
             ref={detailScrollRef}
             className={cn(
-              "lg:w-[400px] xl:w-[460px] lg:flex-shrink-0 lg:border-r border-white/[0.06] lg:overflow-y-auto w-full",
+              "lg:w-[400px] xl:w-[460px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
               activeTab === "plugins"
                 ? mobileStep === "detail"
                   ? "block lg:block"
@@ -262,7 +262,7 @@ export function WizardShell({
           </div>
           <div
             className={cn(
-              "lg:w-[460px] xl:w-[600px] lg:flex-shrink-0 lg:border-r border-white/[0.06] lg:overflow-y-auto w-full",
+              "lg:w-[460px] xl:w-[600px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
               activeTab === "style"
                 ? mobileStep === "detail"
                   ? "block lg:block"
@@ -280,7 +280,7 @@ export function WizardShell({
 
       {/* Acao principal - persistente no mobile independente do passo ativo. No desktop
           ja vive no header (compact). */}
-      <div className="lg:hidden flex-shrink-0 border-t border-white/[0.06] bg-[#0a0f1e] px-4 py-3">
+      <div className="lg:hidden flex-shrink-0 border-t border-border bg-background px-4 py-3">
         <WizardFooter {...footerProps} />
       </div>
     </div>

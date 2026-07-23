@@ -384,7 +384,7 @@ export default function DashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.2 }}
-              className="rounded-xl border border-white/[0.06] bg-white/[0.015] divide-y divide-white/[0.05] overflow-hidden"
+              className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden"
             >
               {svgsLoading && svgs.length === 0
                 ? Array.from({ length: 4 }).map((_, index) => (

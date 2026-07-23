@@ -364,7 +364,7 @@ export default function SvgViewPage() {
               transition={{ delay: 0.1, duration: 0.3 }}
               className="lg:col-span-2 space-y-6"
             >
-              <Card className="border-white/[0.06] bg-white/[0.015] shadow-none">
+              <Card className="border-border bg-card shadow-none">
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
                     <ImageIcon className="w-5 h-5 text-primary" />
@@ -499,7 +499,7 @@ export default function SvgViewPage() {
               className="space-y-6"
             >
               {/* Markdown Code */}
-              <Card className="border-white/[0.06] bg-white/[0.015] shadow-none">
+              <Card className="border-border bg-card shadow-none">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -538,7 +538,7 @@ export default function SvgViewPage() {
 
               {/* URL */}
               {imageUrl && (
-                <Card className="border-white/[0.06] bg-white/[0.015] shadow-none">
+                <Card className="border-border bg-card shadow-none">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2">
                       <Link2 className="w-5 h-5 text-primary" />
@@ -571,7 +571,7 @@ export default function SvgViewPage() {
 
               {/* Info Card - Moved here for better layout */}
               {svg && (
-                <Card className="border-white/[0.06] bg-white/[0.015] shadow-none">
+                <Card className="border-border bg-card shadow-none">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-5 h-5 text-primary" />

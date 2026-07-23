@@ -15,7 +15,7 @@ export default function ErrorScreen({
   showHomeButton = true,
 }: ErrorScreenProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#050814] relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background relative overflow-hidden">
       {/* Pixel grid background */}
       <div
         className="absolute inset-0 opacity-20"

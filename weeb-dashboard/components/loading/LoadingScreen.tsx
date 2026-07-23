@@ -27,7 +27,7 @@ export default function LoadingScreen() {
   const reduceMotion = useReducedMotion()
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center bg-[#0a0f1e] relative overflow-hidden px-4">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-background relative overflow-hidden px-4">
       {/* Same base gradient language as the login/signup background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,_rgba(6,182,212,0.15),_transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_60%,_rgba(168,85,247,0.12),_transparent_55%)] pointer-events-none" />
@@ -37,7 +37,7 @@ export default function LoadingScreen() {
         stars.map((star) => (
           <motion.div
             key={star.id}
-            className="absolute rounded-full bg-white pointer-events-none"
+            className="absolute rounded-full bg-foreground pointer-events-none"
             style={{ top: star.top, left: star.left, width: star.size, height: star.size, opacity: star.opacity }}
             animate={{ y: [0, -4, 0], opacity: [star.opacity, star.opacity * 1.5, star.opacity] }}
             transition={{ duration: 8 + star.id * 0.3, repeat: Infinity, ease: "easeInOut", delay: star.id * 0.2 }}
@@ -86,7 +86,7 @@ export default function LoadingScreen() {
         transition={{ delay: 0.15 }}
         className="relative z-10 flex items-center gap-2.5"
       >
-        <span className="font-heading text-sm font-medium tracking-wide text-slate-300">{LOADING_TEXT}</span>
+        <span className="font-heading text-sm font-medium tracking-wide text-muted-foreground">{LOADING_TEXT}</span>
         <div className="flex gap-1">
           {[0, 1, 2].map((i) => (
             <motion.div

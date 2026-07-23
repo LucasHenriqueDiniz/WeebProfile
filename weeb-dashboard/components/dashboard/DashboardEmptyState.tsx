@@ -39,7 +39,7 @@ const POOL: PoolItem[] = [
 
 function ThemeTogglePill({ style, onChange }: { style: PreviewStyle; onChange: (s: PreviewStyle) => void }) {
   return (
-    <div className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] p-0.5 text-[11px] font-mono">
+    <div className="inline-flex items-center rounded-full border border-border bg-muted/50 p-0.5 text-[11px] font-mono">
       {(["terminal", "default"] as const).map((s) => (
         <button
           key={s}

@@ -55,7 +55,7 @@ export function PluginListPanel({ workspace }: PluginListPanelProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Busca e filtros fixos no topo */}
-      <div className="flex-shrink-0 p-3 space-y-2.5 border-b border-white/[0.06]">
+      <div className="flex-shrink-0 p-3 space-y-2.5 border-b border-border">
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
