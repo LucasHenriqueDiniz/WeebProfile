@@ -220,8 +220,16 @@
   aspect-ratio: 16 / 9
 }
 
+#svg-main .h-1\.5 {
+  height: 0.375rem
+}
+
 #svg-main .h-10 {
   height: 2.5rem
+}
+
+#svg-main .h-11 {
+  height: 2.75rem
 }
 
 #svg-main .h-12 {
@@ -280,6 +288,10 @@
   height: 2rem
 }
 
+#svg-main .h-9 {
+  height: 2.25rem
+}
+
 #svg-main .h-\[100px\] {
   height: 100px
 }
@@ -328,8 +340,16 @@
   min-height: 80px
 }
 
+#svg-main .w-1 {
+  width: 0.25rem
+}
+
 #svg-main .w-10 {
   width: 2.5rem
+}
+
+#svg-main .w-11 {
+  width: 2.75rem
 }
 
 #svg-main .w-12 {
@@ -597,6 +617,10 @@
   gap: 1rem
 }
 
+#svg-main .gap-6 {
+  gap: 1.5rem
+}
+
 #svg-main .gap-\[1px\] {
   gap: 1px
 }
@@ -604,6 +628,15 @@
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
+}
+
+#svg-main .gap-x-3 {
+  -moz-column-gap: 0.75rem;
+       column-gap: 0.75rem
+}
+
+#svg-main .gap-y-1 {
+  row-gap: 0.25rem
 }
 
 #svg-main .gap-y-2 {
@@ -734,6 +767,10 @@
 
 #svg-main .border-b {
   border-bottom-width: 1px
+}
+
+#svg-main .border-t {
+  border-top-width: 1px
 }
 
 #svg-main .border-solid {
@@ -953,6 +990,10 @@
 
 #svg-main .pb-0\.5 {
   padding-bottom: 0.125rem
+}
+
+#svg-main .pb-1 {
+  padding-bottom: 0.25rem
 }
 
 #svg-main .pb-2 {

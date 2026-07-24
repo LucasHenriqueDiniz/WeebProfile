@@ -1,24 +1,6 @@
 import { create } from "zustand"
 
-export interface RepositoryContentConfig {
-  repository_card_hide_title?: boolean
-  repository_card_title?: string
-  show_description?: boolean
-  show_language?: boolean
-  show_stats?: boolean
-  show_license?: boolean
-  show_topics?: boolean
-  max_topics?: number
-}
-
-const DEFAULT_CONTENT_CONFIG: RepositoryContentConfig = {
-  show_description: true,
-  show_language: true,
-  show_stats: true,
-  show_license: true,
-  show_topics: true,
-  max_topics: 6,
-}
+const DEFAULT_SECTIONS = ["banner", "insights"]
 
 export interface RepositoryWizardState {
   name: string
@@ -36,12 +18,17 @@ export interface RepositoryWizardState {
   customCss: string
   customThemeColors: Record<string, string>
 
-  contentConfig: RepositoryContentConfig
+  // Seções ativas (banner/insights) e as opções de cada uma - mesmo formato
+  // "sections + sectionConfigs" usado pelo wizard-store genérico, pra reaproveitar
+  // PreviewRenderer/flattenSectionConfigs e o SectionConfigDialog sem adaptação.
+  sections: string[]
+  sectionConfigs: Record<string, Record<string, any>>
 
   previewUrl: string | null
 
   setOwnerRepo: (owner: string, repo: string) => void
-  setContentOption: <K extends keyof RepositoryContentConfig>(key: K, value: RepositoryContentConfig[K]) => void
+  toggleSection: (sectionId: string) => void
+  setSectionConfig: (sectionId: string, config: Record<string, any>) => void
   setStyle: (style: "default" | "terminal") => void
   setSize: (size: "half" | "full") => void
   setTheme: (theme: string) => void
@@ -75,7 +62,8 @@ const initialState = {
   hideTerminalCommand: false,
   customCss: "",
   customThemeColors: {},
-  contentConfig: DEFAULT_CONTENT_CONFIG,
+  sections: [...DEFAULT_SECTIONS],
+  sectionConfigs: {},
   previewUrl: null,
 }
 
@@ -84,9 +72,16 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
 
   setOwnerRepo: (owner, repo) => set({ owner, repo }),
 
-  setContentOption: (key, value) =>
+  toggleSection: (sectionId) =>
     set((state) => ({
-      contentConfig: { ...state.contentConfig, [key]: value },
+      sections: state.sections.includes(sectionId)
+        ? state.sections.filter((id) => id !== sectionId)
+        : [...state.sections, sectionId],
+    })),
+
+  setSectionConfig: (sectionId, config) =>
+    set((state) => ({
+      sectionConfigs: { ...state.sectionConfigs, [sectionId]: config },
     })),
 
   setStyle: (style) => set({ style }),
@@ -100,10 +95,11 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
   resetCustomThemeColors: () => set({ customThemeColors: {} }),
   setPreviewUrl: (url) => set({ previewUrl: url }),
 
-  reset: () => set({ ...initialState, contentConfig: { ...DEFAULT_CONTENT_CONFIG } }),
+  reset: () => set({ ...initialState, customThemeColors: {}, sections: [...DEFAULT_SECTIONS], sectionConfigs: {} }),
 
   loadFromSvg: (svg) => {
     const repoConfig = svg.pluginsConfig?.github_repo || {}
+    const loadedSections = Array.isArray(repoConfig.sections) ? repoConfig.sections : []
     set({
       name: svg.name,
       style: (svg.style as "default" | "terminal") || "default",
@@ -112,12 +108,8 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
       customCss: svg.customCss || "",
       owner: repoConfig.owner || "",
       repo: repoConfig.repo || "",
-      contentConfig: {
-        ...DEFAULT_CONTENT_CONFIG,
-        ...Object.fromEntries(
-          Object.entries(repoConfig).filter(([key]) => key in DEFAULT_CONTENT_CONFIG)
-        ),
-      },
+      sections: loadedSections.length > 0 ? loadedSections : [...DEFAULT_SECTIONS],
+      sectionConfigs: repoConfig.sectionConfigs || {},
     })
   },
 }))

@@ -16,7 +16,8 @@ export function RepositoryLivePreview() {
     hideTerminalHeader,
     customCss,
     customThemeColors,
-    contentConfig,
+    sections,
+    sectionConfigs,
   } = useRepositoryWizardStore(
     useShallow((state) => ({
       owner: state.owner,
@@ -28,7 +29,8 @@ export function RepositoryLivePreview() {
       hideTerminalHeader: state.hideTerminalHeader,
       customCss: state.customCss,
       customThemeColors: state.customThemeColors,
-      contentConfig: state.contentConfig,
+      sections: state.sections,
+      sectionConfigs: state.sectionConfigs,
     }))
   )
 
@@ -38,13 +40,13 @@ export function RepositoryLivePreview() {
     () => ({
       github_repo: {
         enabled: !!(owner && repo),
-        sections: ["repository_card"],
+        sections,
         owner,
         repo,
-        ...contentConfig,
+        sectionConfigs,
       },
     }),
-    [owner, repo, contentConfig]
+    [owner, repo, sections, sectionConfigs]
   )
 
   return (

@@ -30,7 +30,8 @@ export function useRepositoryWizardController({
     hideTerminalCommand,
     customCss,
     customThemeColors,
-    contentConfig,
+    sections,
+    sectionConfigs,
     reset,
   } = useRepositoryWizardStore()
 
@@ -73,10 +74,10 @@ export function useRepositoryWizardController({
       const pluginsConfig = {
         github_repo: {
           enabled: true,
-          sections: ["repository_card"],
+          sections,
           owner,
           repo,
-          ...contentConfig,
+          sectionConfigs,
         },
       }
 
