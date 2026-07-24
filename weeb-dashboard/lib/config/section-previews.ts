@@ -55,7 +55,8 @@ export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean;
   },
 
   github_repo: {
-    repository_card: { default: true, terminal: true },
+    banner: { default: true, terminal: true },
+    insights: { default: true, terminal: true },
   },
 
   lastfm: {

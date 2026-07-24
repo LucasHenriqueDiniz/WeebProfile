@@ -3,14 +3,27 @@ export interface GithubRepoConfig {
   sections: string[]
   owner: string
   repo: string
-  repository_card_hide_title?: boolean
-  repository_card_title?: string
-  show_description?: boolean
-  show_language?: boolean
-  show_stats?: boolean
-  show_license?: boolean
-  show_topics?: boolean
+  // Banner section
+  banner_show_description?: boolean
+  // Insights section (stats + star graph + technologies)
+  insights_hide_title?: boolean
+  insights_title?: string
+  insights_show_star_graph?: boolean
+  insights_show_languages?: boolean
+  insights_show_topics?: boolean
   max_topics?: number
+  max_languages?: number
+}
+
+export interface StarHistoryPoint {
+  date: string
+  count: number
+}
+
+export interface RepoLanguage {
+  name: string
+  color: string
+  percentage: number
 }
 
 export interface GithubRepoData {
@@ -33,4 +46,6 @@ export interface GithubRepoData {
     spdxId: string | null
   } | null
   topics: string[]
+  languages: RepoLanguage[]
+  starHistory: StarHistoryPoint[]
 }

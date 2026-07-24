@@ -17,7 +17,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
   essentialConfigKeys: ["pat"], // Shared with the "github" plugin's PAT via alias resolution
   config: {
     enabled: false,
-    sections: ["repository_card"],
+    sections: ["banner", "insights"],
     owner: "",
     repo: "",
   } as PluginConfig & GithubRepoConfig,
@@ -42,29 +42,41 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     const repo = data as GithubRepoData
     const isTerminal = (config as { style?: string }).style === "terminal"
 
-    if (!cfg.sections.includes("repository_card")) return 0
+    let h = 0
 
-    if (isTerminal) {
-      // TerminalCommand + TerminalGrid header + 1 row
-      return 84 + 1 * 20
+    if (cfg.sections.includes("banner")) {
+      const showDescription = cfg.banner_show_description ?? true
+      if (isTerminal) {
+        // TerminalCommand + name line + description line
+        h += 84 + 24 + (showDescription && repo.description ? 24 : 0)
+      } else {
+        // avatar/name row + border
+        h += 24 + 68
+        // description block (border-top + 2-line text)
+        if (showDescription && repo.description) h += 56
+      }
     }
 
-    // Default style — fixed-height blocks regardless of actual content length:
-    // header row + card padding
-    let h = 40 + 24 // title (if shown, still budget for consistency) + card top padding
+    if (cfg.sections.includes("insights")) {
+      const showGraph = cfg.insights_show_star_graph ?? true
+      const showLanguages = cfg.insights_show_languages ?? true
+      const showTopics = cfg.insights_show_topics ?? true
+      const hideTitle = cfg.insights_hide_title ?? false
 
-    const showDescription = cfg.show_description ?? true
-    const showStats = cfg.show_stats ?? true
-    const showTopics = cfg.show_topics ?? true
-
-    // header row (name + language + license badges)
-    h += 28
-    // description: fixed 2-line block, always reserved when the toggle is on
-    if (showDescription) h += 40
-    // stats row (stars/forks/license)
-    if (showStats) h += 24
-    // topics row — single fixed-height row regardless of topic count (wraps within card)
-    if (showTopics && repo.topics && repo.topics.length > 0) h += 32
+      if (isTerminal) {
+        h += 84 // TerminalCommand
+        h += 28 // stars/forks line
+        if (showGraph && repo.starHistory && repo.starHistory.length >= 2) h += 64
+        if (showLanguages && repo.languages && repo.languages.length > 0) h += 40
+      } else {
+        h += 24 // card top padding
+        if (!hideTitle) h += 40 // DefaultTitle
+        h += 24 + 44 // card padding + stars/forks row
+        if (showGraph && repo.starHistory && repo.starHistory.length >= 2) h += 64
+        if (showLanguages && repo.languages && repo.languages.length > 0) h += 40
+        if (showTopics && repo.topics && repo.topics.length > 0) h += 32
+      }
+    }
 
     return h
   },

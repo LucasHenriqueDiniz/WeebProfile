@@ -50,7 +50,7 @@ export default function NewArtifactChooserPage() {
           >
             <div className="flex h-40 w-full items-center justify-center overflow-hidden border-b border-border bg-muted/40 p-4">
               <img
-                src="/previews/github_repo/default/repository_card.svg"
+                src="/previews/github_repo/default/banner.svg"
                 alt="Exemplo de card de repositório"
                 className="w-full object-contain transition-transform duration-300 group-hover:scale-105"
               />

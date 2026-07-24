@@ -9,6 +9,46 @@
     }
   },
   "sections": {
+    "banner": {
+      "config": {
+        "banner_show_description": {
+          "label": "Show description"
+        }
+      },
+      "description": "Header banner with owner avatar, repository name and description, tinted by the primary language",
+      "name": "Banner"
+    },
+    "insights": {
+      "config": {
+        "insights_hide_title": {
+          "label": "Hide title"
+        },
+        "insights_show_languages": {
+          "label": "Show language breakdown"
+        },
+        "insights_show_star_graph": {
+          "label": "Show star growth graph"
+        },
+        "insights_show_topics": {
+          "label": "Show topics"
+        },
+        "insights_title": {
+          "defaultValue": "Insights",
+          "label": "Title"
+        },
+        "max_languages": {
+          "label": "Maximum languages",
+          "tooltip": "Languages beyond this limit are omitted from the breakdown bar."
+        },
+        "max_topics": {
+          "description": "Maximum 6 topics",
+          "label": "Maximum topics",
+          "tooltip": "Topics beyond this limit are summarized as '+N more'."
+        }
+      },
+      "description": "Star and fork counters, a real star-growth graph, language breakdown and topics",
+      "name": "Insights"
+    },
     "repository_card": {
       "config": {
         "max_topics": {

@@ -26,6 +26,16 @@ query repositoryCard($owner: String!, $repo: String!) {
         }
       }
     }
+    languages(first: 6, orderBy: { field: SIZE, direction: DESC }) {
+      totalSize
+      edges {
+        size
+        node {
+          name
+          color
+        }
+      }
+    }
   }
 }
 `
