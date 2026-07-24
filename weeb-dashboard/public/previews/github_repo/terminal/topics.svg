@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="240" class="half terminal flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="140" class="half terminal flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
     #svg-main {
   --terminal-color-surface: #161b22;
   --terminal-color-background: #0d1117;
@@ -489,8 +489,16 @@
   aspect-ratio: 16 / 9
 }
 
+#svg-main .h-1\.5 {
+  height: 0.375rem
+}
+
 #svg-main .h-10 {
   height: 2.5rem
+}
+
+#svg-main .h-11 {
+  height: 2.75rem
 }
 
 #svg-main .h-12 {
@@ -549,6 +557,10 @@
   height: 2rem
 }
 
+#svg-main .h-9 {
+  height: 2.25rem
+}
+
 #svg-main .h-\[100px\] {
   height: 100px
 }
@@ -597,8 +609,16 @@
   min-height: 80px
 }
 
+#svg-main .w-1 {
+  width: 0.25rem
+}
+
 #svg-main .w-10 {
   width: 2.5rem
+}
+
+#svg-main .w-11 {
+  width: 2.75rem
 }
 
 #svg-main .w-12 {
@@ -866,6 +886,10 @@
   gap: 1rem
 }
 
+#svg-main .gap-6 {
+  gap: 1.5rem
+}
+
 #svg-main .gap-\[1px\] {
   gap: 1px
 }
@@ -873,6 +897,15 @@
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
+}
+
+#svg-main .gap-x-3 {
+  -moz-column-gap: 0.75rem;
+       column-gap: 0.75rem
+}
+
+#svg-main .gap-y-1 {
+  row-gap: 0.25rem
 }
 
 #svg-main .gap-y-2 {
@@ -1003,6 +1036,10 @@
 
 #svg-main .border-b {
   border-bottom-width: 1px
+}
+
+#svg-main .border-t {
+  border-top-width: 1px
 }
 
 #svg-main .border-solid {
@@ -1222,6 +1259,10 @@
 
 #svg-main .pb-0\.5 {
   padding-bottom: 0.125rem
+}
+
+#svg-main .pb-1 {
+  padding-bottom: 0.25rem
 }
 
 #svg-main .pb-2 {
@@ -1862,4 +1903,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9"><div class="terminal-header "><div class="terminal-header-dots"><span class="terminal-dot terminal-dot-red"></span><span class="terminal-dot terminal-dot-yellow"></span><span class="terminal-dot terminal-dot-green"></span></div><div class="terminal-header-title text-overflow">weeb@profile:~</div></div><div><div><section id="github-repo-insights"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run github_repo insights</span></div><div class="flex items-center gap-4 px-1 py-1 text-sm"><span class="text-terminal-highlight">⭐ <!-- -->128</span><span class="text-terminal-muted">🍴 <!-- -->24</span></div><div class="px-1 pb-1"><svg viewBox="0 0 300 56" class="h-14 w-full" preserveAspectRatio="none" aria-hidden="true"><path d="M 0,54 L 38,48 L 75,41 L 113,34 L 150,26 L 188,18 L 225,12 L 263,7 L 300,2 L 300,56 L 0,56 Z" fill="#3178c6" opacity="0.16"></path><path d="M 0,54 L 38,48 L 75,41 L 113,34 L 150,26 L 188,18 L 225,12 L 263,7 L 300,2" fill="none" stroke="#3178c6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></div><div class="px-1 pb-1"><div class="flex flex-col gap-1.5"><div class="flex h-1.5 w-full overflow-hidden rounded-full bg-default-muted/10"><div style="width:68.4%;background:#3178c6"></div><div style="width:18.2%;background:#61dafb"></div><div style="width:9.1%;background:#563d7c"></div><div style="width:4.3%;background:#f1e05a"></div></div><div class="flex flex-wrap items-center gap-x-3 gap-y-1"><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#3178c6"></span>TypeScript<span class="text-default-muted/70">68.4<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#61dafb"></span>React<span class="text-default-muted/70">18.2<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#563d7c"></span>CSS<span class="text-default-muted/70">9.1<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#f1e05a"></span>JavaScript<span class="text-default-muted/70">4.3<!-- -->%</span></span></div></div></div></section></div></div></div></div></foreignObject></svg>
+</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9"><div class="terminal-header "><div class="terminal-header-dots"><span class="terminal-dot terminal-dot-red"></span><span class="terminal-dot terminal-dot-yellow"></span><span class="terminal-dot terminal-dot-green"></span></div><div class="terminal-header-title text-overflow">weeb@profile:~</div></div><div><div><section id="github-repo-topics"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run github_repo topics</span></div><div class="px-1 pb-1"><div class="flex flex-wrap items-center gap-1.5"><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">github-profile</span><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">svg</span><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">readme</span><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">cloudflare-workers</span><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">react</span></div></div></section></div></div></div></div></foreignObject></svg>

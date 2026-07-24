@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-const DEFAULT_SECTIONS = ["banner", "insights"]
+const DEFAULT_SECTIONS = ["banner", "stats", "star_graph", "languages", "topics"]
 
 export interface RepositoryWizardState {
   name: string

@@ -1,18 +1,27 @@
+export type BannerVariant = "large" | "compact" | "minimal"
+
 export interface GithubRepoConfig {
   enabled: boolean
   sections: string[]
   owner: string
   repo: string
-  // Banner section
+  // Banner
+  banner_variant?: BannerVariant
   banner_show_description?: boolean
-  // Insights section (stats + star graph + technologies)
-  insights_hide_title?: boolean
-  insights_title?: string
-  insights_show_star_graph?: boolean
-  insights_show_languages?: boolean
-  insights_show_topics?: boolean
-  max_topics?: number
+  // Stats (star/fork counters)
+  stats_hide_title?: boolean
+  stats_title?: string
+  // Star growth graph
+  star_graph_hide_title?: boolean
+  star_graph_title?: string
+  // Language/tech breakdown
+  languages_hide_title?: boolean
+  languages_title?: string
   max_languages?: number
+  // Topics
+  topics_hide_title?: boolean
+  topics_title?: string
+  max_topics?: number
 }
 
 export interface StarHistoryPoint {

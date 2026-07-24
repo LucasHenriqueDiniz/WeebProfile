@@ -17,7 +17,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
   essentialConfigKeys: ["pat"], // Shared with the "github" plugin's PAT via alias resolution
   config: {
     enabled: false,
-    sections: ["banner", "insights"],
+    sections: ["banner", "stats", "star_graph", "languages", "topics"],
     owner: "",
     repo: "",
   } as PluginConfig & GithubRepoConfig,
@@ -45,37 +45,42 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     let h = 0
 
     if (cfg.sections.includes("banner")) {
+      const variant = cfg.banner_variant ?? "large"
       const showDescription = cfg.banner_show_description ?? true
+      const hasDescription = showDescription && !!repo.description
+
       if (isTerminal) {
-        // TerminalCommand + name line + description line
-        h += 84 + 24 + (showDescription && repo.description ? 24 : 0)
+        // TerminalCommand + name line + (description line, unless compact)
+        h += 84 + 24 + (hasDescription && variant !== "compact" ? 24 : 0)
+      } else if (variant === "minimal") {
+        h += 24 + (hasDescription ? 48 : 24)
+      } else if (variant === "compact") {
+        h += 24 + 44
       } else {
-        // avatar/name row + border
+        // large: avatar/name row + border, + description block (border-top + 2-line text)
         h += 24 + 68
-        // description block (border-top + 2-line text)
-        if (showDescription && repo.description) h += 56
+        if (hasDescription) h += 56
       }
     }
 
-    if (cfg.sections.includes("insights")) {
-      const showGraph = cfg.insights_show_star_graph ?? true
-      const showLanguages = cfg.insights_show_languages ?? true
-      const showTopics = cfg.insights_show_topics ?? true
-      const hideTitle = cfg.insights_hide_title ?? false
+    if (cfg.sections.includes("stats")) {
+      const hideTitle = cfg.stats_hide_title ?? false
+      h += isTerminal ? 84 + 28 : 24 + (hideTitle ? 0 : 40) + 72
+    }
 
-      if (isTerminal) {
-        h += 84 // TerminalCommand
-        h += 28 // stars/forks line
-        if (showGraph && repo.starHistory && repo.starHistory.length >= 2) h += 64
-        if (showLanguages && repo.languages && repo.languages.length > 0) h += 40
-      } else {
-        h += 24 // card top padding
-        if (!hideTitle) h += 40 // DefaultTitle
-        h += 24 + 44 // card padding + stars/forks row
-        if (showGraph && repo.starHistory && repo.starHistory.length >= 2) h += 64
-        if (showLanguages && repo.languages && repo.languages.length > 0) h += 40
-        if (showTopics && repo.topics && repo.topics.length > 0) h += 32
-      }
+    if (cfg.sections.includes("star_graph") && repo.starHistory && repo.starHistory.length >= 2) {
+      const hideTitle = cfg.star_graph_hide_title ?? false
+      h += isTerminal ? 84 + 64 : 24 + (hideTitle ? 0 : 40) + 88
+    }
+
+    if (cfg.sections.includes("languages") && repo.languages && repo.languages.length > 0) {
+      const hideTitle = cfg.languages_hide_title ?? false
+      h += isTerminal ? 84 + 40 : 24 + (hideTitle ? 0 : 40) + 64
+    }
+
+    if (cfg.sections.includes("topics") && repo.topics && repo.topics.length > 0) {
+      const hideTitle = cfg.topics_hide_title ?? false
+      h += isTerminal ? 84 + 32 : 24 + (hideTitle ? 0 : 40) + 56
     }
 
     return h

@@ -1764,6 +1764,27 @@ export const PLUGINS_METADATA = {
         },
         configOptions: [
         {
+          key: "banner_variant",
+          label: "Style",
+          type: "select",
+          defaultValue: "large",
+          description: "Choose how big and prominent the banner is",
+          options: [
+            { value: "large", label: "Large (avatar + gradient background)" },
+            { value: "compact", label: "Compact (single row)" },
+            { value: "minimal", label: "Minimal (text only, no background)" }
+          ],
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_variant.label",
+            description: "plugins.github_repo.sections.banner.config.banner_variant.description",
+            options: {
+              "large": "plugins.github_repo.sections.banner.config.banner_variant.options.large",
+              "compact": "plugins.github_repo.sections.banner.config.banner_variant.options.compact",
+              "minimal": "plugins.github_repo.sections.banner.config.banner_variant.options.minimal"
+            }
+          }
+        },
+        {
           key: "banner_show_description",
           label: "Show description",
           type: "boolean",
@@ -1775,58 +1796,135 @@ export const PLUGINS_METADATA = {
         ]
       },
       {
-        id: "insights",
-        name: "Insights",
-        description: "Star and fork counters, a real star-growth graph, language breakdown and topics",
+        id: "stats",
+        name: "Stats",
+        description: "Star and fork counters",
         i18nKey: {
-          name: "plugins.github_repo.sections.insights.name",
-          description: "plugins.github_repo.sections.insights.description"
+          name: "plugins.github_repo.sections.stats.name",
+          description: "plugins.github_repo.sections.stats.description"
         },
         configOptions: [
         {
-          key: "insights_hide_title",
+          key: "stats_hide_title",
           label: "Hide title",
           type: "boolean",
           defaultValue: false,
           i18nKey: {
-            label: "plugins.github_repo.sections.insights.config.insights_hide_title.label"
+            label: "plugins.github_repo.sections.stats.config.stats_hide_title.label"
           }
         },
         {
-          key: "insights_title",
+          key: "stats_title",
           label: "Title",
           type: "string",
-          defaultValue: "Insights",
+          defaultValue: "Stats",
           i18nKey: {
-            label: "plugins.github_repo.sections.insights.config.insights_title.label",
-            defaultValue: "plugins.github_repo.sections.insights.config.insights_title.defaultValue"
+            label: "plugins.github_repo.sections.stats.config.stats_title.label",
+            defaultValue: "plugins.github_repo.sections.stats.config.stats_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "star_graph",
+        name: "Star Growth Graph",
+        description: "A real graph of the repository's star growth over time",
+        i18nKey: {
+          name: "plugins.github_repo.sections.star_graph.name",
+          description: "plugins.github_repo.sections.star_graph.description"
+        },
+        configOptions: [
+        {
+          key: "star_graph_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github_repo.sections.star_graph.config.star_graph_hide_title.label"
           }
         },
         {
-          key: "insights_show_star_graph",
-          label: "Show star growth graph",
-          type: "boolean",
-          defaultValue: true,
+          key: "star_graph_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Star growth",
           i18nKey: {
-            label: "plugins.github_repo.sections.insights.config.insights_show_star_graph.label"
+            label: "plugins.github_repo.sections.star_graph.config.star_graph_title.label",
+            defaultValue: "plugins.github_repo.sections.star_graph.config.star_graph_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "languages",
+        name: "Technologies",
+        description: "Language/technology breakdown bar, by bytes of code",
+        i18nKey: {
+          name: "plugins.github_repo.sections.languages.name",
+          description: "plugins.github_repo.sections.languages.description"
+        },
+        configOptions: [
+        {
+          key: "languages_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github_repo.sections.languages.config.languages_hide_title.label"
           }
         },
         {
-          key: "insights_show_languages",
-          label: "Show language breakdown",
-          type: "boolean",
-          defaultValue: true,
+          key: "languages_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Technologies",
           i18nKey: {
-            label: "plugins.github_repo.sections.insights.config.insights_show_languages.label"
+            label: "plugins.github_repo.sections.languages.config.languages_title.label",
+            defaultValue: "plugins.github_repo.sections.languages.config.languages_title.defaultValue"
           }
         },
         {
-          key: "insights_show_topics",
-          label: "Show topics",
-          type: "boolean",
-          defaultValue: true,
+          key: "max_languages",
+          label: "Maximum languages",
+          type: "number",
+          defaultValue: 5,
+          min: 0,
+          max: 5,
+          step: 1,
+          tooltip: "Languages beyond this limit are omitted from the breakdown bar.",
           i18nKey: {
-            label: "plugins.github_repo.sections.insights.config.insights_show_topics.label"
+            label: "plugins.github_repo.sections.languages.config.max_languages.label",
+            tooltip: "plugins.github_repo.sections.languages.config.max_languages.tooltip"
+          }
+        }
+        ]
+      },
+      {
+        id: "topics",
+        name: "Topics",
+        description: "Repository topic tags",
+        i18nKey: {
+          name: "plugins.github_repo.sections.topics.name",
+          description: "plugins.github_repo.sections.topics.description"
+        },
+        configOptions: [
+        {
+          key: "topics_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github_repo.sections.topics.config.topics_hide_title.label"
+          }
+        },
+        {
+          key: "topics_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Topics",
+          i18nKey: {
+            label: "plugins.github_repo.sections.topics.config.topics_title.label",
+            defaultValue: "plugins.github_repo.sections.topics.config.topics_title.defaultValue"
           }
         },
         {
@@ -1840,23 +1938,9 @@ export const PLUGINS_METADATA = {
           description: "Maximum 6 topics",
           tooltip: "Topics beyond this limit are summarized as '+N more'.",
           i18nKey: {
-            label: "plugins.github_repo.sections.insights.config.max_topics.label",
-            description: "plugins.github_repo.sections.insights.config.max_topics.description",
-            tooltip: "plugins.github_repo.sections.insights.config.max_topics.tooltip"
-          }
-        },
-        {
-          key: "max_languages",
-          label: "Maximum languages",
-          type: "number",
-          defaultValue: 5,
-          min: 0,
-          max: 5,
-          step: 1,
-          tooltip: "Languages beyond this limit are omitted from the breakdown bar.",
-          i18nKey: {
-            label: "plugins.github_repo.sections.insights.config.max_languages.label",
-            tooltip: "plugins.github_repo.sections.insights.config.max_languages.tooltip"
+            label: "plugins.github_repo.sections.topics.config.max_topics.label",
+            description: "plugins.github_repo.sections.topics.config.max_topics.description",
+            tooltip: "plugins.github_repo.sections.topics.config.max_topics.tooltip"
           }
         }
         ]

@@ -13,6 +13,15 @@
       "config": {
         "banner_show_description": {
           "label": "Show description"
+        },
+        "banner_variant": {
+          "description": "Choose how big and prominent the banner is",
+          "label": "Style",
+          "options": {
+            "compact": "Compact (single row)",
+            "large": "Large (avatar + gradient background)",
+            "minimal": "Minimal (text only, no background)"
+          }
         }
       },
       "description": "Header banner with owner avatar, repository name and description, tinted by the primary language",
@@ -49,6 +58,23 @@
       "description": "Star and fork counters, a real star-growth graph, language breakdown and topics",
       "name": "Insights"
     },
+    "languages": {
+      "config": {
+        "languages_hide_title": {
+          "label": "Hide title"
+        },
+        "languages_title": {
+          "defaultValue": "Technologies",
+          "label": "Title"
+        },
+        "max_languages": {
+          "label": "Maximum languages",
+          "tooltip": "Languages beyond this limit are omitted from the breakdown bar."
+        }
+      },
+      "description": "Language/technology breakdown bar, by bytes of code",
+      "name": "Technologies"
+    },
     "repository_card": {
       "config": {
         "max_topics": {
@@ -81,6 +107,50 @@
       },
       "description": "Compact card with name, description, language, stars, forks, license and topics",
       "name": "Repository Card"
+    },
+    "star_graph": {
+      "config": {
+        "star_graph_hide_title": {
+          "label": "Hide title"
+        },
+        "star_graph_title": {
+          "defaultValue": "Star growth",
+          "label": "Title"
+        }
+      },
+      "description": "A real graph of the repository's star growth over time",
+      "name": "Star Growth Graph"
+    },
+    "stats": {
+      "config": {
+        "stats_hide_title": {
+          "label": "Hide title"
+        },
+        "stats_title": {
+          "defaultValue": "Stats",
+          "label": "Title"
+        }
+      },
+      "description": "Star and fork counters",
+      "name": "Stats"
+    },
+    "topics": {
+      "config": {
+        "max_topics": {
+          "description": "Maximum 6 topics",
+          "label": "Maximum topics",
+          "tooltip": "Topics beyond this limit are summarized as '+N more'."
+        },
+        "topics_hide_title": {
+          "label": "Hide title"
+        },
+        "topics_title": {
+          "defaultValue": "Topics",
+          "label": "Title"
+        }
+      },
+      "description": "Repository topic tags",
+      "name": "Topics"
     }
   }
 }
