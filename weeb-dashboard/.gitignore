@@ -38,8 +38,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# drizzle
-/drizzle
+# migrations in ./drizzle ARE committed (wrangler d1 migrations reads from this dir,
+# per migrations_dir in wrangler.toml) - never gitignore it, that's what let the
+# entity_type/artifact_type/variant migration silently never reach git/production.
 .next/
 out/
 build/
