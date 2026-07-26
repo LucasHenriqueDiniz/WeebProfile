@@ -9,6 +9,64 @@ import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { SectionConfigDialog } from "./SectionConfigDialog"
 
+// Rótulos de select vêm com uma explicação entre parênteses (bom no dropdown do
+// drawer, longo demais pra um chip) - corta na primeira "(" pra caber.
+function shortLabel(label: string): string {
+  const parenIndex = label.indexOf(" (")
+  return parenIndex === -1 ? label : label.slice(0, parenIndex)
+}
+
+interface ConfigOption {
+  key: string
+  label: string
+  type: "number" | "boolean" | "string" | "select" | "array"
+  defaultValue?: unknown
+  options?: { value: string; label: string }[]
+}
+
+// Resumo compacto do que está configurado nesta seção - mostrado no lugar do preview
+// estático quando o item está selecionado, já que o preview genérico não reflete a
+// variante/opções escolhidas de verdade.
+function ConfigSummary({
+  configOptions,
+  sectionConfig,
+}: {
+  configOptions: ConfigOption[]
+  sectionConfig: Record<string, any>
+}) {
+  const chips = configOptions
+    .map((option) => {
+      const value = sectionConfig[option.key] ?? option.defaultValue
+      if (value === undefined || value === null || value === "") return null
+
+      let display: string
+      if (option.type === "boolean") display = value ? "On" : "Off"
+      else if (option.type === "select") display = shortLabel(option.options?.find((o) => o.value === value)?.label ?? String(value))
+      else display = String(value)
+
+      return { key: option.key, label: option.label, display }
+    })
+    .filter((c): c is { key: string; label: string; display: string } => c !== null)
+
+  if (chips.length === 0) {
+    return <p className="text-xs text-muted-foreground">Using default settings.</p>
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {chips.map((chip) => (
+        <span
+          key={chip.key}
+          className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/5 px-2 py-1 text-[11px]"
+        >
+          <span className="text-muted-foreground">{chip.label}:</span>
+          <span className="font-medium text-foreground">{chip.display}</span>
+        </span>
+      ))}
+    </div>
+  )
+}
+
 /**
  * Parses "owner/repo" or a full GitHub URL into { owner, repo }.
  * Mirrors normalizeGithubRepoTarget in weeb-plugins/src/plugins/github_repo/services/fetchGithubRepo.ts.
@@ -139,21 +197,25 @@ export function RepositoryConfigPanel() {
                 {section.description && (
                   <p className="text-xs text-muted-foreground line-clamp-2">{section.description}</p>
                 )}
-                {previewImage && (
-                  <div
-                    className="rounded-md overflow-hidden border border-border bg-background aspect-video"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      selectSection(section.id)
-                    }}
-                  >
-                    <img
-                      src={previewImage}
-                      alt={`${section.name} preview`}
-                      className="w-full h-full object-contain pointer-events-none"
-                      draggable={false}
-                    />
-                  </div>
+                {isSelected && hasConfigs ? (
+                  <ConfigSummary configOptions={section.configOptions} sectionConfig={sectionConfigs[section.id] || {}} />
+                ) : (
+                  previewImage && (
+                    <div
+                      className="rounded-md overflow-hidden border border-border bg-background aspect-video"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        selectSection(section.id)
+                      }}
+                    >
+                      <img
+                        src={previewImage}
+                        alt={`${section.name} preview`}
+                        className="w-full h-full object-contain pointer-events-none"
+                        draggable={false}
+                      />
+                    </div>
+                  )
                 )}
               </div>
             )

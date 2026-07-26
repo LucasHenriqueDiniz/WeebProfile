@@ -86,10 +86,6 @@
   left: 0.5rem
 }
 
-#svg-main .left-2\.5 {
-  left: 0.625rem
-}
-
 #svg-main .right-0 {
   right: 0px
 }
@@ -404,6 +400,10 @@
   max-height: 50px
 }
 
+#svg-main .min-h-\[110px\] {
+  min-height: 110px
+}
+
 #svg-main .min-h-\[120px\] {
   min-height: 120px
 }
@@ -621,8 +621,8 @@
   grid-template-columns: 1.25fr .75fr
 }
 
-#svg-main .grid-cols-\[1\.2fr_\.8fr\] {
-  grid-template-columns: 1.2fr .8fr
+#svg-main .grid-cols-\[1\.3fr_\.7fr\] {
+  grid-template-columns: 1.3fr .7fr
 }
 
 #svg-main .grid-cols-\[130px_1fr\] {
@@ -1076,6 +1076,10 @@
 
 #svg-main .p-4 {
   padding: 1rem
+}
+
+#svg-main .p-5 {
+  padding: 1.25rem
 }
 
 #svg-main .p-6 {
@@ -1551,6 +1555,11 @@
 
 #svg-main .blur {
   --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .blur-2xl {
+  --tw-blur: blur(40px);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
 }
 

@@ -257,12 +257,12 @@ function AuroraBanner({ data, config }: { data: GithubRepoData; config: GithubRe
       style={{ background: "linear-gradient(135deg,#0c1830,#182654 56%,#31205f)" }}
     >
       <div
-        className="pointer-events-none absolute -left-8 -top-10 h-32 w-32 rounded-full blur-sm"
-        style={{ background: "rgba(34,211,238,.21)" }}
+        className="pointer-events-none absolute -left-8 -top-10 h-32 w-32 rounded-full blur-2xl"
+        style={{ background: "rgba(34,211,238,.35)" }}
       />
       <div
-        className="pointer-events-none absolute -bottom-14 -right-8 h-36 w-36 rounded-full blur-sm"
-        style={{ background: "rgba(236,72,153,.18)" }}
+        className="pointer-events-none absolute -bottom-14 -right-8 h-36 w-36 rounded-full blur-2xl"
+        style={{ background: "rgba(236,72,153,.3)" }}
       />
       <div
         className="relative rounded-lg p-3.5"
@@ -486,9 +486,12 @@ function RibbonBanner({ data, config }: { data: GithubRepoData; config: GithubRe
   )
 }
 
-// "social" (18): layout tipo Open Graph - conteúdo à esquerda, bloco decorativo à
-// direita. Pensado pra size="full"; em "half" o bloco decorativo fica bem estreito.
+// "social" (18): layout tipo Open Graph - conteúdo à esquerda, marca circular
+// centralizada à direita sobre um fundo com glow (em vez dos anéis ocos cortados da
+// v1, que pareciam bug). Pensado pra size="full"; em "half" o bloco à direita fica
+// mais estreito mas a marca continua centralizada e legível.
 function SocialBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
+  const accent = data.primaryLanguage?.color || "#8957e5"
   const showDescription = config.banner_show_description ?? true
 
   return (
@@ -496,39 +499,46 @@ function SocialBanner({ data, config }: { data: GithubRepoData; config: GithubRe
       href={data.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="grid grid-cols-[1.2fr_.8fr] overflow-hidden rounded-lg border border-default-border"
+      className="grid grid-cols-[1.3fr_.7fr] overflow-hidden rounded-lg border border-default-border"
       style={{ background: "#fcfcfc" }}
     >
-      <div className="flex flex-col justify-center p-4">
-        <div className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "#6d6d6d" }}>
+      <div className="flex flex-col justify-center p-5">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: accent }}>
           Open-source project
         </div>
-        <div className="mt-1 truncate text-2xl font-bold" style={{ color: "#171717" }}>
+        <div className="mt-1.5 truncate text-2xl font-bold" style={{ color: "#171717" }}>
           {data.name}
         </div>
         {showDescription && data.description && (
-          <p className="mt-2 truncate text-xs" style={{ color: "#626262" }}>
+          <p className="mt-2 line-clamp-2 text-xs leading-relaxed" style={{ color: "#626262" }}>
             {data.description}
           </p>
         )}
-        <div className="mt-2.5 flex items-center gap-3 text-xs" style={{ color: "#171717" }}>
+        <div className="mt-3 flex items-center gap-3 text-xs" style={{ color: "#171717" }}>
           <span>★ {data.stargazerCount}</span>
           <span>⑂ {data.forkCount}</span>
-          {data.primaryLanguage && <span>{data.primaryLanguage.name}</span>}
+          {data.primaryLanguage && (
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full" style={{ background: accent }} />
+              {data.primaryLanguage.name}
+            </span>
+          )}
         </div>
       </div>
       <div
-        className="relative"
-        style={{ background: "linear-gradient(145deg,#161d2d,#2d1f4f)", minHeight: 96 }}
+        className="relative flex min-h-[110px] items-center justify-center overflow-hidden"
+        style={{ background: `linear-gradient(160deg, #161d2d, ${accent}25 130%)` }}
       >
         <div
-          className="absolute -right-14 -top-12 h-48 w-48 rounded-full"
-          style={{ border: "35px solid rgba(81,171,255,.45)" }}
+          className="absolute h-28 w-28 rounded-full blur-2xl"
+          style={{ background: `${accent}55` }}
         />
         <div
-          className="absolute -bottom-10 left-2.5 h-28 w-28 rounded-full"
-          style={{ border: "27px solid rgba(255,102,183,.45)" }}
-        />
+          className="relative flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold text-white"
+          style={{ background: `linear-gradient(145deg, ${accent}, #fff2)`, border: "1px solid rgba(255,255,255,.25)" }}
+        >
+          {data.owner.login.slice(0, 2).toUpperCase()}
+        </div>
       </div>
     </a>
   )
