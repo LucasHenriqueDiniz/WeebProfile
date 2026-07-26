@@ -71,6 +71,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
         footerProps={{ ...ctrl.footerProps, isEditMode }}
         selectedPlugin={workspace.selectedPlugin}
         name={name}
+        kind="profile"
         size={size}
         setSize={setSize}
         contentCount={pluginsWithSections.length}

@@ -13,7 +13,10 @@ import Image from "@/src/compat/next-image"
 interface WizardShellProps {
   activeTab: "plugins" | "style"
   onTabChange: (tab: "plugins" | "style") => void
-  pluginsList: ReactNode
+  // null/undefined quando o wizard não tem uma lista de plugins pra escolher (ex:
+  // Repository, que só tem um "plugin" fixo) - nesse caso a coluna some por completo
+  // em vez de ficar vazia.
+  pluginsList: ReactNode | null
   pluginDetail: ReactNode
   styleConfig: ReactNode
   preview: ReactNode
@@ -22,6 +25,9 @@ interface WizardShellProps {
   // Store-agnostic: caller (Profile or Repository wizard) supplies its own slice, so this
   // shell has no direct dependency on either wizard-store.
   name: string
+  // Rótulo curto mostrado ao lado do nome no header (ex: "Profile" / "Repository") -
+  // substitui o antigo bloco de texto explicativo dentro da coluna de plugins.
+  kind: "profile" | "repository"
   size: "half" | "full"
   setSize: (size: "half" | "full") => void
   contentCount: number
@@ -40,6 +46,7 @@ export function WizardShell({
   footerProps,
   selectedPlugin,
   name,
+  kind,
   size,
   setSize,
   contentCount,
@@ -47,7 +54,7 @@ export function WizardShell({
   const t = useTranslations("wizard.plugins")
   const router = useRouter()
   const contentWidth = size === "half" ? 415 : 830
-  const [mobileStep, setMobileStep] = useState<MobileStep>("list")
+  const [mobileStep, setMobileStep] = useState<MobileStep>(pluginsList ? "list" : "detail")
   const detailScrollRef = useRef<HTMLDivElement>(null)
 
   // Ao trocar de plugin selecionado: volta o painel de detalhe ao topo (novo plugin,
@@ -144,7 +151,7 @@ export function WizardShell({
   )
 
   return (
-    <div className="flex flex-col h-dvh bg-background relative">
+    <div className="flex flex-col h-dvh overflow-hidden bg-background relative">
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-[radial-gradient(circle,_rgba(6,182,212,0.08),_transparent_65%)]" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[radial-gradient(circle,_rgba(168,85,247,0.07),_transparent_65%)]" />
@@ -153,15 +160,18 @@ export function WizardShell({
       <Header
         variant="dashboard"
         title={
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 min-w-0">
             <button
               onClick={() => router.push("/dashboard")}
-              className="text-slate-400 hover:text-slate-200 transition-colors -ml-1 p-1"
+              className="text-slate-400 hover:text-slate-200 transition-colors -ml-1 p-1 flex-shrink-0"
               aria-label="Voltar"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            {name || "Novo SVG"}
+            <span className="flex-shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              {kind === "repository" ? "Repository" : "Profile"}
+            </span>
+            <span className="truncate">{name || "Novo SVG"}</span>
           </span>
         }
         description={contentCount > 0 ? `${contentCount} plugin(s) ativo(s)` : undefined}
@@ -209,7 +219,7 @@ export function WizardShell({
       <div className="lg:hidden flex-shrink-0 flex border-b border-border bg-muted/30">
         {(activeTab === "plugins"
           ? ([
-              ["list", "Plugins", Puzzle],
+              ...(pluginsList ? ([["list", "Plugins", Puzzle]] as const) : []),
               ["detail", "Configurar", Settings2],
               ["preview", "Preview", ListFilter],
             ] as const)
@@ -235,24 +245,26 @@ export function WizardShell({
           aba Estilo esta ativa (estilo | preview). Larguras fixas por breakpoint em vez de
           grid-template-columns com valores arbitrarios multi-valor, que nao geram regra
           CSS de forma confiavel neste projeto. */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex min-h-0 overflow-hidden">
         {/* As quatro colunas (lista, detalhe, estilo, preview) ficam sempre montadas; a aba
             ativa so alterna qual fica visivel via className. Antes, activeTab==="plugins"
             escolhia entre dois ramos JSX estruturalmente diferentes, entao trocar de aba
             desmontava e remontava o LivePreview inteiro (o SVG "reiniciava" visualmente). */}
         <div className="mx-auto flex w-full max-w-[1700px] overflow-hidden">
-          <div
-            className={cn(
-              "lg:w-64 xl:w-72 lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
-              activeTab === "plugins"
-                ? mobileStep === "list"
-                  ? "block lg:block"
-                  : "hidden lg:block"
-                : "hidden"
-            )}
-          >
-            {pluginsList}
-          </div>
+          {pluginsList && (
+            <div
+              className={cn(
+                "lg:w-64 xl:w-72 lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
+                activeTab === "plugins"
+                  ? mobileStep === "list"
+                    ? "block lg:block"
+                    : "hidden lg:block"
+                  : "hidden"
+              )}
+            >
+              {pluginsList}
+            </div>
+          )}
           <div
             ref={detailScrollRef}
             className={cn(

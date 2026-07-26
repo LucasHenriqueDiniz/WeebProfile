@@ -41,14 +41,7 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
     <WizardShell
       activeTab={activeTab}
       onTabChange={setActiveTab}
-      pluginsList={
-        <div className="p-4 space-y-2">
-          <p className="text-sm font-semibold text-foreground">Repository Card</p>
-          <p className="text-xs text-muted-foreground">
-            A standalone card with stats for a single GitHub repository — separate from your Profile SVGs.
-          </p>
-        </div>
-      }
+      pluginsList={null}
       pluginDetail={<RepositoryConfigPanel />}
       styleConfig={
         <StyleConfiguration
@@ -73,6 +66,7 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
       footerProps={{ ...ctrl.footerProps, isEditMode }}
       selectedPlugin={owner && repo ? "github_repo" : null}
       name={owner && repo ? `${owner}/${repo}` : ""}
+      kind="repository"
       size={size}
       setSize={setSize}
       // Mesma lógica do plugin habilitado em RepositoryLivePreview: o preview usa dado
