@@ -70,9 +70,10 @@ export function Topics({ config, data, style = "default", size = "half" }: Topic
   const hideTitle = config.topics_hide_title ?? false
   const maxTopics = Math.min(config.max_topics ?? TOPICS_DISPLAY_LIMIT, TOPICS_DISPLAY_LIMIT)
   const variant = config.topics_variant ?? "chips"
+  const extraHeight = config.topics_height ?? 0
 
   return (
-    <section id="github-repo-topics">
+    <section id="github-repo-topics" style={{ paddingBottom: extraHeight || undefined }}>
       <RenderBasedOnStyle
         style={style}
         defaultComponent={

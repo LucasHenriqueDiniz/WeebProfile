@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { NumberInput } from "@/components/ui/number-input"
@@ -113,14 +113,17 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
 
   if (options.length === 0) return null
 
-  const handleSave = () => {
-    onConfigChange(localConfig)
-    setOpen(false)
+  // Sem "Salvar": cada mudança já propaga pro pai (que alimenta o preview ao vivo),
+  // o drawer só junta os campos - fechar ou continuar aberto não muda o resultado.
+  const updateConfig = (patch: Record<string, any>) => {
+    const next = { ...localConfig, ...patch }
+    setLocalConfig(next)
+    onConfigChange(next)
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
@@ -130,17 +133,17 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
         >
           <Settings className="w-3 h-3" />
         </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>
             Configurações:{" "}
             {sectionMetadata?.i18nKey?.name
               ? tWithFallback(sectionMetadata.i18nKey.name.replace(/^plugins\./, ""), section.name)
               : section.name}
-          </DialogTitle>
-          <DialogDescription>Configure opções específicas desta seção</DialogDescription>
-        </DialogHeader>
+          </SheetTitle>
+          <SheetDescription>As mudanças aparecem no preview em tempo real.</SheetDescription>
+        </SheetHeader>
         <div className="space-y-4 py-4">
           {options.map((option) => {
             const value = localConfig[option.key] ?? option.defaultValue
@@ -217,12 +220,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                     <NumberInput
                       id={option.key}
                       value={typeof value === "number" ? value : option.defaultValue || 0}
-                      onChange={(newValue) =>
-                        setLocalConfig({
-                          ...localConfig,
-                          [option.key]: newValue,
-                        })
-                      }
+                      onChange={(newValue) => updateConfig({ [option.key]: newValue })}
                       min={option.min}
                       max={option.max}
                       step={option.step}
@@ -236,12 +234,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                     <Switch
                       id={option.key}
                       checked={value}
-                      onCheckedChange={(checked) =>
-                        setLocalConfig({
-                          ...localConfig,
-                          [option.key]: checked,
-                        })
-                      }
+                      onCheckedChange={(checked) => updateConfig({ [option.key]: checked })}
                     />
                     <Label htmlFor={option.key} className="cursor-pointer">
                       {value ? "Ativado" : "Desativado"}
@@ -253,23 +246,13 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                     id={option.key}
                     type="text"
                     value={value}
-                    onChange={(e) =>
-                      setLocalConfig({
-                        ...localConfig,
-                        [option.key]: e.target.value,
-                      })
-                    }
+                    onChange={(e) => updateConfig({ [option.key]: e.target.value })}
                   />
                 )}
                 {option.type === "select" && option.options && (
                   <Select
                     value={value || option.defaultValue}
-                    onValueChange={(newValue) =>
-                      setLocalConfig({
-                        ...localConfig,
-                        [option.key]: newValue,
-                      })
-                    }
+                    onValueChange={(newValue) => updateConfig({ [option.key]: newValue })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione uma opção" />
@@ -293,12 +276,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                 {option.type === "array" && (
                   <ArrayInput
                     value={Array.isArray(value) ? value : []}
-                    onChange={(newArray) =>
-                      setLocalConfig({
-                        ...localConfig,
-                        [option.key]: newArray,
-                      })
-                    }
+                    onChange={(newArray) => updateConfig({ [option.key]: newArray })}
                     placeholder={option.description || "Digite um valor e pressione Enter"}
                   />
                 )}
@@ -306,14 +284,8 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
             )
           })}
         </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave}>Salvar</Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
 

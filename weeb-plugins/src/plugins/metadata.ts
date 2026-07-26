@@ -1781,7 +1781,8 @@ export const PLUGINS_METADATA = {
             { value: "split", label: "Split (two columns, tech bars on the side)" },
             { value: "blueprint", label: "Blueprint (technical frame, monospace uppercase)" },
             { value: "ribbon", label: "Ribbon (circular mark + bottom info strip)" },
-            { value: "social", label: "Social (wide layout for link previews)" }
+            { value: "social", label: "Social (wide layout for link previews)" },
+            { value: "hero", label: "Hero (extra tall, meant to sit at the top of the project)" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_variant.label",
@@ -1798,7 +1799,8 @@ export const PLUGINS_METADATA = {
               "split": "plugins.github_repo.sections.banner.config.banner_variant.options.split",
               "blueprint": "plugins.github_repo.sections.banner.config.banner_variant.options.blueprint",
               "ribbon": "plugins.github_repo.sections.banner.config.banner_variant.options.ribbon",
-              "social": "plugins.github_repo.sections.banner.config.banner_variant.options.social"
+              "social": "plugins.github_repo.sections.banner.config.banner_variant.options.social",
+              "hero": "plugins.github_repo.sections.banner.config.banner_variant.options.hero"
             }
           }
         },
@@ -1820,6 +1822,20 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_show_languages.label",
             tooltip: "plugins.github_repo.sections.banner.config.banner_show_languages.tooltip"
+          }
+        },
+        {
+          key: "banner_height",
+          label: "Extra height",
+          type: "number",
+          defaultValue: 0,
+          min: 0,
+          max: 160,
+          step: 8,
+          tooltip: "Extra space (px) added at the bottom of the banner, on top of its normal size.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_height.label",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_height.tooltip"
           }
         }
         ]
@@ -1867,6 +1883,20 @@ export const PLUGINS_METADATA = {
               "inline": "plugins.github_repo.sections.stats.config.stats_variant.options.inline",
               "grid": "plugins.github_repo.sections.stats.config.stats_variant.options.grid"
             }
+          }
+        },
+        {
+          key: "stats_height",
+          label: "Extra height",
+          type: "number",
+          defaultValue: 0,
+          min: 0,
+          max: 160,
+          step: 8,
+          tooltip: "Extra space (px) added at the bottom of this section.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.stats.config.stats_height.label",
+            tooltip: "plugins.github_repo.sections.stats.config.stats_height.tooltip"
           }
         }
         ]
@@ -1921,6 +1951,34 @@ export const PLUGINS_METADATA = {
               "gradient": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.gradient"
             }
           }
+        },
+        {
+          key: "star_graph_chart_height",
+          label: "Chart height",
+          type: "number",
+          defaultValue: 120,
+          min: 60,
+          max: 260,
+          step: 10,
+          tooltip: "Height (px) of the chart itself, not just the section padding.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.star_graph.config.star_graph_chart_height.label",
+            tooltip: "plugins.github_repo.sections.star_graph.config.star_graph_chart_height.tooltip"
+          }
+        },
+        {
+          key: "star_graph_height",
+          label: "Extra height",
+          type: "number",
+          defaultValue: 0,
+          min: 0,
+          max: 160,
+          step: 8,
+          tooltip: "Extra space (px) added at the bottom of this section, on top of the chart height above.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.star_graph.config.star_graph_height.label",
+            tooltip: "plugins.github_repo.sections.star_graph.config.star_graph_height.tooltip"
+          }
         }
         ]
       },
@@ -1973,14 +2031,30 @@ export const PLUGINS_METADATA = {
           defaultValue: "bars",
           options: [
             { value: "bars", label: "Bars (thin bar + inline legend)" },
-            { value: "spectrum", label: "Spectrum (thicker bar + two-column legend)" }
+            { value: "spectrum", label: "Spectrum (thicker bar + two-column legend)" },
+            { value: "badges", label: "Badges (solid shields.io-style tags)" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.languages.config.languages_variant.label",
             options: {
               "bars": "plugins.github_repo.sections.languages.config.languages_variant.options.bars",
-              "spectrum": "plugins.github_repo.sections.languages.config.languages_variant.options.spectrum"
+              "spectrum": "plugins.github_repo.sections.languages.config.languages_variant.options.spectrum",
+              "badges": "plugins.github_repo.sections.languages.config.languages_variant.options.badges"
             }
+          }
+        },
+        {
+          key: "languages_height",
+          label: "Extra height",
+          type: "number",
+          defaultValue: 0,
+          min: 0,
+          max: 160,
+          step: 8,
+          tooltip: "Extra space (px) added at the bottom of this section.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.languages.config.languages_height.label",
+            tooltip: "plugins.github_repo.sections.languages.config.languages_height.tooltip"
           }
         }
         ]
@@ -2045,6 +2119,20 @@ export const PLUGINS_METADATA = {
               "cloud": "plugins.github_repo.sections.topics.config.topics_variant.options.cloud"
             }
           }
+        },
+        {
+          key: "topics_height",
+          label: "Extra height",
+          type: "number",
+          defaultValue: 0,
+          min: 0,
+          max: 160,
+          step: 8,
+          tooltip: "Extra space (px) added at the bottom of this section.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.topics.config.topics_height.label",
+            tooltip: "plugins.github_repo.sections.topics.config.topics_height.tooltip"
+          }
         }
         ]
       },
@@ -2069,6 +2157,20 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.github_repo.sections.overview.config.overview_max_languages.label",
             tooltip: "plugins.github_repo.sections.overview.config.overview_max_languages.tooltip"
+          }
+        },
+        {
+          key: "overview_height",
+          label: "Extra height",
+          type: "number",
+          defaultValue: 0,
+          min: 0,
+          max: 160,
+          step: 8,
+          tooltip: "Extra space (px) added at the bottom of this section.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.overview.config.overview_height.label",
+            tooltip: "plugins.github_repo.sections.overview.config.overview_height.tooltip"
           }
         }
         ]

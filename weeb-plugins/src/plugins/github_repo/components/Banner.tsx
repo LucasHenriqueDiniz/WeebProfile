@@ -533,6 +533,49 @@ function SocialBanner({ data, config }: { data: GithubRepoData; config: GithubRe
   )
 }
 
+// "hero" (banner de topo de projeto): bem mais alto que os outros, avatar grande,
+// nome enorme - pensado pra ser a primeira coisa vista, tipo capa/hero section, não
+// mais um cabeçalho compacto entre outras seções.
+function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
+  const accent = data.primaryLanguage?.color || "#8957e5"
+  const showDescription = config.banner_show_description ?? true
+  const showLanguages = config.banner_show_languages ?? true
+  const languages = showLanguages ? data.languages.slice(0, 5) : []
+
+  return (
+    <a
+      href={data.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block overflow-hidden rounded-lg border border-default-border p-6"
+      style={{ background: `linear-gradient(160deg, ${accent}22 0%, ${accent}06 55%, transparent 100%)` }}
+    >
+      <div className="flex items-center gap-4">
+        <OwnerAvatar data={data} accent={accent} size={64} />
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm text-default-muted">{data.owner.login}</div>
+          <div className="truncate text-4xl font-extrabold leading-tight text-default-text">{data.name}</div>
+        </div>
+      </div>
+
+      {showDescription && data.description && (
+        <p className="mt-4 text-base leading-relaxed text-default-muted line-clamp-2">{data.description}</p>
+      )}
+
+      <div className="mt-5 flex flex-wrap items-center gap-4">
+        <span className="flex items-center gap-1.5 text-sm text-default-muted">★ {data.stargazerCount} stars</span>
+        <span className="flex items-center gap-1.5 text-sm text-default-muted">⑂ {data.forkCount} forks</span>
+        {languages.map((lang) => (
+          <span key={lang.name} className="flex items-center gap-1.5 text-sm text-default-muted">
+            <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full" style={{ background: lang.color }} />
+            {lang.name}
+          </span>
+        ))}
+      </div>
+    </a>
+  )
+}
+
 function DefaultBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const variant = config.banner_variant ?? "large"
   if (variant === "compact") return <CompactBanner data={data} config={config} />
@@ -546,14 +589,17 @@ function DefaultBanner({ data, config }: { data: GithubRepoData; config: GithubR
   if (variant === "blueprint") return <BlueprintBanner data={data} config={config} />
   if (variant === "ribbon") return <RibbonBanner data={data} config={config} />
   if (variant === "social") return <SocialBanner data={data} config={config} />
+  if (variant === "hero") return <HeroBanner data={data} config={config} />
   return <LargeBanner data={data} config={config} />
 }
 
 export function Banner({ config, data, style = "default", size = "half" }: BannerProps): React.ReactElement {
   if (!config.enabled || !data) return <></>
 
+  const extraHeight = config.banner_height ?? 0
+
   return (
-    <section id="github-repo-banner">
+    <section id="github-repo-banner" style={{ paddingBottom: extraHeight || undefined }}>
       <RenderBasedOnStyle
         style={style}
         defaultComponent={<DefaultBanner data={data} config={config} />}

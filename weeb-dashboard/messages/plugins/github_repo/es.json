@@ -11,6 +11,10 @@
   "sections": {
     "banner": {
       "config": {
+        "banner_height": {
+          "label": "Extra height",
+          "tooltip": "Extra space (px) added at the bottom of the banner, on top of its normal size."
+        },
         "banner_show_description": {
           "label": "Show description"
         },
@@ -28,6 +32,7 @@
             "clean": "Clean (name, description and techs in one bordered row)",
             "compact": "Compact (single row)",
             "editorial": "Editorial (color rail + serif headline)",
+            "hero": "Hero (extra tall, meant to sit at the top of the project)",
             "large": "Large (avatar + gradient background)",
             "minimal": "Minimal (text only, no background)",
             "mono": "Mono (dark monospace, GitHub terminal style)",
@@ -73,6 +78,10 @@
     },
     "languages": {
       "config": {
+        "languages_height": {
+          "label": "Extra height",
+          "tooltip": "Extra space (px) added at the bottom of this section."
+        },
         "languages_hide_title": {
           "label": "Hide title"
         },
@@ -83,6 +92,7 @@
         "languages_variant": {
           "label": "Style",
           "options": {
+            "badges": "Badges (solid shields.io-style tags)",
             "bars": "Bars (thin bar + inline legend)",
             "spectrum": "Spectrum (thicker bar + two-column legend)"
           }
@@ -97,6 +107,10 @@
     },
     "overview": {
       "config": {
+        "overview_height": {
+          "label": "Extra height",
+          "tooltip": "Extra space (px) added at the bottom of this section."
+        },
         "overview_max_languages": {
           "label": "Maximum languages",
           "tooltip": "Languages beyond this limit are omitted from the mini technologies bar."
@@ -140,6 +154,14 @@
     },
     "star_graph": {
       "config": {
+        "star_graph_chart_height": {
+          "label": "Chart height",
+          "tooltip": "Height (px) of the chart itself, not just the section padding."
+        },
+        "star_graph_height": {
+          "label": "Extra height",
+          "tooltip": "Extra space (px) added at the bottom of this section, on top of the chart height above."
+        },
         "star_graph_hide_title": {
           "label": "Hide title"
         },
@@ -163,6 +185,10 @@
     },
     "stats": {
       "config": {
+        "stats_height": {
+          "label": "Extra height",
+          "tooltip": "Extra space (px) added at the bottom of this section."
+        },
         "stats_hide_title": {
           "label": "Hide title"
         },
@@ -187,6 +213,10 @@
           "description": "Maximum 6 topics",
           "label": "Maximum topics",
           "tooltip": "Topics beyond this limit are summarized as '+N more'."
+        },
+        "topics_height": {
+          "label": "Extra height",
+          "tooltip": "Extra space (px) added at the bottom of this section."
         },
         "topics_hide_title": {
           "label": "Hide title"

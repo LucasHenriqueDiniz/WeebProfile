@@ -74,11 +74,15 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
         h += 24 + 70 + (hasDescription ? 16 : 0) + 34
       } else if (variant === "social") {
         h += 24 + 110
+      } else if (variant === "hero") {
+        // avatar/nome grandes + padding generoso (p-6) + descrição maior + linha de stats/techs
+        h += 24 + 24 + 64 + (hasDescription ? 44 : 0) + 44
       } else {
         // large: avatar/name row + border, + description block (border-top + 2-line text)
         h += 24 + 68
         if (hasDescription) h += 56
       }
+      h += cfg.banner_height ?? 0
     }
 
     if (cfg.sections.includes("stats")) {
@@ -86,25 +90,35 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       const statsVariant = cfg.stats_variant ?? "inline"
       const bodyHeight = statsVariant === "grid" ? 76 : 40
       h += isTerminal ? 84 + 28 : 24 + (hideTitle ? 0 : 40) + bodyHeight
+      h += cfg.stats_height ?? 0
     }
 
     if (cfg.sections.includes("star_graph") && repo.starHistory && repo.starHistory.length >= 2) {
       const hideTitle = cfg.star_graph_hide_title ?? false
-      h += isTerminal ? 84 + 64 : 24 + (hideTitle ? 0 : 40) + 88
+      // Corpo do gráfico é configurável (star_graph_chart_height) - a caixa em volta
+      // soma padding (p-4 = 32) ao tamanho real do SVG.
+      const chartHeight = cfg.star_graph_chart_height ?? 120
+      h += isTerminal ? 84 + chartHeight + 8 : 24 + (hideTitle ? 0 : 40) + chartHeight + 32
+      h += cfg.star_graph_height ?? 0
     }
 
     if (cfg.sections.includes("languages") && repo.languages && repo.languages.length > 0) {
       const hideTitle = cfg.languages_hide_title ?? false
-      h += isTerminal ? 84 + 40 : 24 + (hideTitle ? 0 : 40) + 32
+      const languagesVariant = cfg.languages_variant ?? "bars"
+      const bodyHeight = languagesVariant === "badges" ? 28 : 32
+      h += isTerminal ? 84 + 40 : 24 + (hideTitle ? 0 : 40) + bodyHeight
+      h += cfg.languages_height ?? 0
     }
 
     if (cfg.sections.includes("topics") && repo.topics && repo.topics.length > 0) {
       const hideTitle = cfg.topics_hide_title ?? false
       h += isTerminal ? 84 + 32 : 24 + (hideTitle ? 0 : 40) + 24
+      h += cfg.topics_height ?? 0
     }
 
     if (cfg.sections.includes("overview")) {
       h += isTerminal ? 84 + 24 : 24 + 220
+      h += cfg.overview_height ?? 0
     }
 
     return h

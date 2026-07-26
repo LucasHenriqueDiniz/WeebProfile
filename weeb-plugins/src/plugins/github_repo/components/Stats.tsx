@@ -61,9 +61,10 @@ export function Stats({ config, data, style = "default", size = "half" }: StatsP
   const title = config.stats_title ?? "Stats"
   const hideTitle = config.stats_hide_title ?? false
   const variant = config.stats_variant ?? "inline"
+  const extraHeight = config.stats_height ?? 0
 
   return (
-    <section id="github-repo-stats">
+    <section id="github-repo-stats" style={{ paddingBottom: extraHeight || undefined }}>
       <RenderBasedOnStyle
         style={style}
         defaultComponent={

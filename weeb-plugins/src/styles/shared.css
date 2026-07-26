@@ -218,6 +218,10 @@
   margin-top: 1rem
 }
 
+#svg-main .mt-5 {
+  margin-top: 1.25rem
+}
+
 #svg-main .mt-\[0\.25rem\] {
   margin-top: 0.25rem
 }
@@ -446,6 +450,10 @@
 
 #svg-main .w-2 {
   width: 0.5rem
+}
+
+#svg-main .w-2\.5 {
+  width: 0.625rem
 }
 
 #svg-main .w-20 {
@@ -853,6 +861,10 @@
   border-radius: 1rem
 }
 
+#svg-main .rounded-\[3px\] {
+  border-radius: 3px
+}
+
 #svg-main .rounded-full {
   border-radius: 9999px
 }
@@ -1066,6 +1078,10 @@
   padding: 1rem
 }
 
+#svg-main .p-6 {
+  padding: 1.5rem
+}
+
 #svg-main .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem
@@ -1190,6 +1206,11 @@
 #svg-main .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem
+}
+
+#svg-main .text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem
 }
 
 #svg-main .text-\[0\.75rem\] {

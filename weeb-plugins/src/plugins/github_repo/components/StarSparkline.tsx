@@ -5,6 +5,7 @@ interface StarSparklineProps {
   points: StarHistoryPoint[]
   color: string
   variant?: StarGraphVariant
+  height?: number
 }
 
 function computeCoords(points: StarHistoryPoint[], width: number, height: number) {
@@ -13,10 +14,13 @@ function computeCoords(points: StarHistoryPoint[], width: number, height: number
   const max = Math.max(...counts)
   const range = max - min || 1
   const stepX = width / (points.length - 1)
+  // Margem vertical proporcional à altura - com o gráfico configurável pra ficar bem
+  // maior, uma margem fixa de poucos px deixava de fazer sentido em alturas grandes.
+  const padding = Math.max(4, height * 0.08)
 
   return points.map((p, i) => ({
     x: Math.round(i * stepX),
-    y: Math.round(height - ((p.count - min) / range) * (height - 4) - 2),
+    y: Math.round(height - ((p.count - min) / range) * (height - padding * 2) - padding),
     count: p.count,
   }))
 }
@@ -75,8 +79,8 @@ function MilestonesChart({ points, color, width, height }: { points: StarHistory
             <circle cx={c.x} cy={c.y} r={4} fill="var(--default-color-surface, #fff)" stroke={color} strokeWidth={2.5} />
             <text
               x={Math.min(Math.max(c.x, 14), width - 14)}
-              y={isLast ? Math.max(c.y - 8, 9) : Math.min(c.y + 16, height - 2)}
-              fontSize={9}
+              y={isLast ? Math.max(c.y - 10, 10) : Math.min(c.y + 18, height - 2)}
+              fontSize={Math.min(11, Math.max(9, height * 0.09))}
               textAnchor="middle"
               fill="currentColor"
               opacity={0.65}
@@ -133,15 +137,22 @@ function GradientChart({ points, color, width, height, gradientId }: { points: S
 
 // Dados reais amostrados em fetchGithubRepo.ts, não uma curva inventada - cada
 // variante só muda a forma de desenhar os mesmos pontos.
-export function StarSparkline({ points, color, variant = "area" }: StarSparklineProps): React.ReactElement | null {
+// Altura default subiu de 56 pra 120 - o gráfico era pequeno/apagado demais pra ser
+// a peça central da seção; height é configurável via star_graph_chart_height.
+export function StarSparkline({ points, color, variant = "area", height = 120 }: StarSparklineProps): React.ReactElement | null {
   const gradientId = React.useId()
   if (points.length < 2) return null
 
   const width = 300
-  const height = 56
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="h-14 w-full" preserveAspectRatio="none" aria-hidden="true">
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      className="w-full"
+      style={{ height }}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
       {variant === "line" && <LineChart points={points} color={color} width={width} height={height} />}
       {variant === "milestones" && <MilestonesChart points={points} color={color} width={width} height={height} />}
       {variant === "bars" && <BarsChart points={points} color={color} width={width} height={height} />}

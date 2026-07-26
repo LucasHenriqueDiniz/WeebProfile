@@ -21,16 +21,18 @@ export function StarGraph({ config, data, style = "default", size = "half" }: St
   const hideTitle = config.star_graph_hide_title ?? false
   const accent = data.primaryLanguage?.color || "#8957e5"
   const variant = config.star_graph_variant ?? "area"
+  const chartHeight = config.star_graph_chart_height ?? 120
+  const extraHeight = config.star_graph_height ?? 0
 
   return (
-    <section id="github-repo-star_graph">
+    <section id="github-repo-star_graph" style={{ paddingBottom: extraHeight || undefined }}>
       <RenderBasedOnStyle
         style={style}
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaChartLine />} />}
             <div className="rounded-lg border border-default-border p-4">
-              <StarSparkline points={data.starHistory} color={accent} variant={variant} />
+              <StarSparkline points={data.starHistory} color={accent} variant={variant} height={chartHeight} />
             </div>
           </>
         }
@@ -38,7 +40,7 @@ export function StarGraph({ config, data, style = "default", size = "half" }: St
           <>
             <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "star_graph", size })} />
             <div className="px-1 pb-1">
-              <StarSparkline points={data.starHistory} color={accent} variant={variant} />
+              <StarSparkline points={data.starHistory} color={accent} variant={variant} height={chartHeight} />
             </div>
           </>
         }

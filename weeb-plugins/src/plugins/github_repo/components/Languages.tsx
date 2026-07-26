@@ -15,6 +15,39 @@ interface LanguagesProps {
   size?: "half" | "full"
 }
 
+// Contraste simples (luminância relativa) pra decidir texto preto ou branco em cima
+// da cor da linguagem - sem isso, badges em cores claras (JS amarelo, etc) ficam ilegíveis.
+function readableTextColor(hexColor: string): string {
+  const hex = hexColor.replace("#", "")
+  if (hex.length !== 6) return "#ffffff"
+  const r = parseInt(hex.slice(0, 2), 16)
+  const g = parseInt(hex.slice(2, 4), 16)
+  const b = parseInt(hex.slice(4, 6), 16)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance > 0.6 ? "#1a1a1a" : "#ffffff"
+}
+
+// "badges" (shields.io style): retângulos sólidos na cor da linguagem, como os badges
+// de README - mais "carimbo de tecnologia" do que barra de proporção.
+function LanguageBadges({ languages, max }: { languages: GithubRepoData["languages"]; max: number }): React.ReactElement | null {
+  const visible = languages.slice(0, max)
+  if (visible.length === 0) return null
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {visible.map((lang) => (
+        <span
+          key={lang.name}
+          className="rounded-[3px] px-2 py-1 text-[11px] font-semibold leading-none"
+          style={{ background: lang.color, color: readableTextColor(lang.color) }}
+        >
+          {lang.name}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 function LanguageBars({ languages, max }: { languages: GithubRepoData["languages"]; max: number }): React.ReactElement | null {
   const visible = languages.slice(0, max)
   if (visible.length === 0) return null
@@ -74,19 +107,18 @@ export function Languages({ config, data, style = "default", size = "half" }: La
   const hideTitle = config.languages_hide_title ?? false
   const maxLanguages = Math.min(config.max_languages ?? LANGUAGES_DISPLAY_LIMIT, LANGUAGES_DISPLAY_LIMIT)
   const variant = config.languages_variant ?? "bars"
+  const extraHeight = config.languages_height ?? 0
 
   return (
-    <section id="github-repo-languages">
+    <section id="github-repo-languages" style={{ paddingBottom: extraHeight || undefined }}>
       <RenderBasedOnStyle
         style={style}
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaCode />} />}
-            {variant === "spectrum" ? (
-              <LanguageSpectrum languages={data.languages} max={maxLanguages} />
-            ) : (
-              <LanguageBars languages={data.languages} max={maxLanguages} />
-            )}
+            {variant === "spectrum" && <LanguageSpectrum languages={data.languages} max={maxLanguages} />}
+            {variant === "badges" && <LanguageBadges languages={data.languages} max={maxLanguages} />}
+            {variant === "bars" && <LanguageBars languages={data.languages} max={maxLanguages} />}
           </>
         }
         terminalComponent={

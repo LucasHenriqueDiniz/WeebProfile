@@ -50,7 +50,7 @@ function DefaultOverview({ data, config }: { data: GithubRepoData; config: Githu
         <div className="flex flex-col gap-2">
           <div className="rounded-lg border border-default-border p-2.5">
             <div className="mb-1.5 text-[9px] text-default-muted">STAR GROWTH</div>
-            <StarSparkline points={data.starHistory} color={accent} variant="area" />
+            <StarSparkline points={data.starHistory} color={accent} variant="area" height={40} />
           </div>
           <div className="rounded-lg border border-default-border p-2.5">
             <div className="mb-1.5 text-[9px] text-default-muted">TECHNOLOGIES</div>
@@ -69,8 +69,10 @@ function DefaultOverview({ data, config }: { data: GithubRepoData; config: Githu
 export function Overview({ config, data, style = "default", size = "half" }: OverviewProps): React.ReactElement {
   if (!config.enabled || !data) return <></>
 
+  const extraHeight = config.overview_height ?? 0
+
   return (
-    <section id="github-repo-overview">
+    <section id="github-repo-overview" style={{ paddingBottom: extraHeight || undefined }}>
       <RenderBasedOnStyle
         style={style}
         defaultComponent={<DefaultOverview data={data} config={config} />}
