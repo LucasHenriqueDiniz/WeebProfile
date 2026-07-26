@@ -7,17 +7,19 @@ interface ScaledBoxProps {
 }
 
 // Escala o conteúdo inteiro (fonte, ícones, gráfico, padding, borda) com um único
-// transform:scale - mais simples e consistente do que reescrever cada classe de
-// tamanho em cada variante. O truque do width:100/factor% compensa a mudança de
-// largura visual do scale, mantendo o conteúdo ocupando 100% do card real.
-// calculateHeight (index.tsx) precisa multiplicar pela mesma escala.
+// `zoom` - mais simples e consistente do que reescrever cada classe de tamanho em
+// cada variante.
+//
+// Importante: isso usa `zoom`, não `transform:scale`. transform:scale só afeta o
+// resultado visual - a caixa continua ocupando o tamanho ORIGINAL (não escalado) no
+// layout do pai, então o conteúdo aumentado (lg) vazava pra fora da section/
+// foreignObject (cortado pelo overflow:hidden) e o reduzido (sm) deixava um vão vazio
+// embaixo. `zoom` participa do layout de verdade - o container flex-column
+// (#svg-main section) reserva a altura já escalada, batendo com o calculateHeight()
+// (index.tsx), que soma exatamente essa mesma escala.
 export function ScaledBox({ size = "md", children }: ScaledBoxProps): React.ReactElement {
   const factor = CONTENT_SIZE_SCALE[size]
   if (factor === 1) return children
 
-  return (
-    <div style={{ transform: `scale(${factor})`, transformOrigin: "top left", width: `${100 / factor}%` }}>
-      {children}
-    </div>
-  )
+  return <div style={{ zoom: factor }}>{children}</div>
 }
