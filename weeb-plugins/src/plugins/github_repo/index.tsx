@@ -8,7 +8,7 @@ import React from "react"
 import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
-import type { GithubRepoConfig, GithubRepoData } from "./types"
+import { CONTENT_SIZE_SCALE, type GithubRepoConfig, type GithubRepoData } from "./types"
 import { RenderGithubRepo } from "./components/RenderGithubRepo"
 import { fetchGithubRepoData } from "./services/fetchGithubRepo"
 
@@ -17,7 +17,9 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
   essentialConfigKeys: ["pat"], // Shared with the "github" plugin's PAT via alias resolution
   config: {
     enabled: false,
-    sections: ["banner", "stats", "star_graph", "languages", "topics"],
+    // Repositório é um item único, não uma pilha de seções como o Profile - "sections"
+    // sempre tem no máximo 1 entrada (ver types.ts).
+    sections: ["banner"],
     owner: "",
     repo: "",
   } as PluginConfig & GithubRepoConfig,
@@ -41,6 +43,9 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     const cfg = config as GithubRepoConfig
     const repo = data as GithubRepoData
     const isTerminal = (config as { style?: string }).style === "terminal"
+    // Mesmo fator aplicado visualmente pelo ScaledBox - a seção inteira (fonte, ícones,
+    // gráfico, padding) escala junto, então a altura calculada precisa escalar igual.
+    const scale = CONTENT_SIZE_SCALE[cfg.content_size ?? "md"]
 
     let h = 0
 
@@ -48,77 +53,78 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       const variant = cfg.banner_variant ?? "large"
       const showDescription = cfg.banner_show_description ?? true
       const hasDescription = showDescription && !!repo.description
+      let sectionH = 0
 
       if (isTerminal) {
         // TerminalCommand + name line + (description line, unless compact)
-        h += 84 + 24 + (hasDescription && variant !== "compact" ? 24 : 0)
+        sectionH = 84 + 24 + (hasDescription && variant !== "compact" ? 24 : 0)
       } else if (variant === "minimal") {
-        h += 24 + (hasDescription ? 48 : 24)
+        sectionH = 24 + (hasDescription ? 48 : 24)
       } else if (variant === "compact") {
-        h += 24 + 44
+        sectionH = 24 + 44
       } else if (variant === "clean") {
         const showLanguages = cfg.banner_show_languages ?? true
         const hasLanguages = showLanguages && repo.languages && repo.languages.length > 0
-        h += 24 + 48 + (hasDescription ? 16 : 0) + (hasLanguages ? 20 : 0)
+        sectionH = 24 + 48 + (hasDescription ? 16 : 0) + (hasLanguages ? 20 : 0)
       } else if (variant === "editorial" || variant === "mono" || variant === "aurora" || variant === "blueprint") {
         // Header row + optional description line + optional tech row - similar shape
         // across these variants (single card, no separate description block).
         const showLanguages = cfg.banner_show_languages ?? true
         const hasLanguages = showLanguages && repo.languages && repo.languages.length > 0
-        h += 24 + 60 + (hasDescription ? 20 : 0) + (hasLanguages ? 24 : 0)
+        sectionH = 24 + 60 + (hasDescription ? 20 : 0) + (hasLanguages ? 24 : 0)
       } else if (variant === "bold") {
-        h += 24 + 84 + (hasDescription ? 16 : 0)
+        sectionH = 24 + 84 + (hasDescription ? 16 : 0)
       } else if (variant === "split") {
-        h += 24 + 100
+        sectionH = 24 + 100
       } else if (variant === "ribbon") {
-        h += 24 + 70 + (hasDescription ? 16 : 0) + 34
+        sectionH = 24 + 70 + (hasDescription ? 16 : 0) + 34
       } else if (variant === "social") {
-        h += 24 + 110
+        sectionH = 24 + 110
       } else if (variant === "hero") {
         // avatar/nome grandes + padding generoso (p-6) + descrição maior + linha de stats/techs
-        h += 24 + 24 + 64 + (hasDescription ? 44 : 0) + 44
+        sectionH = 24 + 24 + 64 + (hasDescription ? 44 : 0) + 44
       } else {
         // large: avatar/name row + border, + description block (border-top + 2-line text)
-        h += 24 + 68
-        if (hasDescription) h += 56
+        sectionH = 24 + 68
+        if (hasDescription) sectionH += 56
       }
-      h += cfg.banner_height ?? 0
+      h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("stats")) {
       const hideTitle = cfg.stats_hide_title ?? false
       const statsVariant = cfg.stats_variant ?? "inline"
       const bodyHeight = statsVariant === "grid" ? 76 : 40
-      h += isTerminal ? 84 + 28 : 24 + (hideTitle ? 0 : 40) + bodyHeight
-      h += cfg.stats_height ?? 0
+      const sectionH = isTerminal ? 84 + 28 : 24 + (hideTitle ? 0 : 40) + bodyHeight
+      h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("star_graph") && repo.starHistory && repo.starHistory.length >= 2) {
       const hideTitle = cfg.star_graph_hide_title ?? false
-      // Corpo do gráfico é configurável (star_graph_chart_height) - a caixa em volta
-      // soma padding (p-4 = 32) ao tamanho real do SVG.
-      const chartHeight = cfg.star_graph_chart_height ?? 120
-      h += isTerminal ? 84 + chartHeight + 8 : 24 + (hideTitle ? 0 : 40) + chartHeight + 32
-      h += cfg.star_graph_height ?? 0
+      // Corpo do gráfico é fixo em 120 (baseline "md") - o content_size escala isso
+      // junto com o resto via ScaledBox, sem precisar de um controle de altura separado.
+      const chartHeight = 120
+      const sectionH = isTerminal ? 84 + chartHeight + 8 : 24 + (hideTitle ? 0 : 40) + chartHeight + 32
+      h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("languages") && repo.languages && repo.languages.length > 0) {
       const hideTitle = cfg.languages_hide_title ?? false
       const languagesVariant = cfg.languages_variant ?? "bars"
       const bodyHeight = languagesVariant === "badges" ? 28 : 32
-      h += isTerminal ? 84 + 40 : 24 + (hideTitle ? 0 : 40) + bodyHeight
-      h += cfg.languages_height ?? 0
+      const sectionH = isTerminal ? 84 + 40 : 24 + (hideTitle ? 0 : 40) + bodyHeight
+      h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("topics") && repo.topics && repo.topics.length > 0) {
       const hideTitle = cfg.topics_hide_title ?? false
-      h += isTerminal ? 84 + 32 : 24 + (hideTitle ? 0 : 40) + 24
-      h += cfg.topics_height ?? 0
+      const sectionH = isTerminal ? 84 + 32 : 24 + (hideTitle ? 0 : 40) + 24
+      h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("overview")) {
-      h += isTerminal ? 84 + 24 : 24 + 220
-      h += cfg.overview_height ?? 0
+      const sectionH = isTerminal ? 84 + 24 : 24 + 220
+      h += Math.round(sectionH * scale)
     }
 
     return h

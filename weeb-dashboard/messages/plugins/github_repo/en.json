@@ -40,6 +40,15 @@
             "social": "Social (wide layout for link previews)",
             "split": "Split (two columns, tech bars on the side)"
           }
+        },
+        "content_size": {
+          "label": "Size",
+          "options": {
+            "lg": "Large",
+            "md": "Medium (default)",
+            "sm": "Small"
+          },
+          "tooltip": "Scales font size, icons, chart and spacing together."
         }
       },
       "description": "Header banner with owner avatar, repository name and description, tinted by the primary language",
@@ -78,6 +87,15 @@
     },
     "languages": {
       "config": {
+        "content_size": {
+          "label": "Size",
+          "options": {
+            "lg": "Large",
+            "md": "Medium (default)",
+            "sm": "Small"
+          },
+          "tooltip": "Scales font size, icons, chart and spacing together."
+        },
         "languages_height": {
           "label": "Extra height",
           "tooltip": "Extra space (px) added at the bottom of this section."
@@ -107,6 +125,15 @@
     },
     "overview": {
       "config": {
+        "content_size": {
+          "label": "Size",
+          "options": {
+            "lg": "Large",
+            "md": "Medium (default)",
+            "sm": "Small"
+          },
+          "tooltip": "Scales font size, icons, chart and spacing together."
+        },
         "overview_height": {
           "label": "Extra height",
           "tooltip": "Extra space (px) added at the bottom of this section."
@@ -154,6 +181,15 @@
     },
     "star_graph": {
       "config": {
+        "content_size": {
+          "label": "Size",
+          "options": {
+            "lg": "Large",
+            "md": "Medium (default)",
+            "sm": "Small"
+          },
+          "tooltip": "Scales font size, icons, chart and spacing together."
+        },
         "star_graph_chart_height": {
           "label": "Chart height",
           "tooltip": "Height (px) of the chart itself, not just the section padding."
@@ -185,6 +221,15 @@
     },
     "stats": {
       "config": {
+        "content_size": {
+          "label": "Size",
+          "options": {
+            "lg": "Large",
+            "md": "Medium (default)",
+            "sm": "Small"
+          },
+          "tooltip": "Scales font size, icons, chart and spacing together."
+        },
         "stats_height": {
           "label": "Extra height",
           "tooltip": "Extra space (px) added at the bottom of this section."
@@ -209,6 +254,15 @@
     },
     "topics": {
       "config": {
+        "content_size": {
+          "label": "Size",
+          "options": {
+            "lg": "Large",
+            "md": "Medium (default)",
+            "sm": "Small"
+          },
+          "tooltip": "Scales font size, icons, chart and spacing together."
+        },
         "max_topics": {
           "description": "Maximum 6 topics",
           "label": "Maximum topics",

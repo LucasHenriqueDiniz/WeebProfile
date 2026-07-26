@@ -11,6 +11,21 @@
  * 2. Execute: pnpm --filter @weeb/weeb-plugins run generate-metadata
  */
 
+// Compartilhado por todas as seções (só uma fica ativa por vez) - escala fonte,
+// ícones, gráfico e padding juntos, não só um espaço extra.
+const CONTENT_SIZE_OPTION = {
+  key: "content_size",
+  label: "Size",
+  type: "select" as const,
+  defaultValue: "md",
+  options: [
+    { value: "sm", label: "Small" },
+    { value: "md", label: "Medium (default)" },
+    { value: "lg", label: "Large" },
+  ],
+  tooltip: "Scales font size, icons, chart and spacing together.",
+}
+
 export const githubRepoPluginMetadata = {
   displayName: "Repository",
   description: "Show a card with stats for a single GitHub repository",
@@ -71,16 +86,7 @@ export const githubRepoPluginMetadata = {
           defaultValue: true,
           tooltip: "Only used by the Clean style - shows the repository's top languages inline.",
         },
-        {
-          key: "banner_height",
-          label: "Extra height",
-          type: "number" as const,
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of the banner, on top of its normal size.",
-        },
+        CONTENT_SIZE_OPTION,
       ],
     },
     {
@@ -110,16 +116,7 @@ export const githubRepoPluginMetadata = {
             { value: "grid", label: "Grid (Stars, Forks, Issues, Watchers in blocks)" },
           ],
         },
-        {
-          key: "stats_height",
-          label: "Extra height",
-          type: "number" as const,
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section.",
-        },
+        CONTENT_SIZE_OPTION,
       ],
     },
     {
@@ -152,26 +149,7 @@ export const githubRepoPluginMetadata = {
             { value: "gradient", label: "Gradient (two-tone stroke, dashed baseline)" },
           ],
         },
-        {
-          key: "star_graph_chart_height",
-          label: "Chart height",
-          type: "number" as const,
-          defaultValue: 120,
-          min: 60,
-          max: 260,
-          step: 10,
-          tooltip: "Height (px) of the chart itself, not just the section padding.",
-        },
-        {
-          key: "star_graph_height",
-          label: "Extra height",
-          type: "number" as const,
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section, on top of the chart height above.",
-        },
+        CONTENT_SIZE_OPTION,
       ],
     },
     {
@@ -212,16 +190,7 @@ export const githubRepoPluginMetadata = {
             { value: "badges", label: "Badges (solid shields.io-style tags)" },
           ],
         },
-        {
-          key: "languages_height",
-          label: "Extra height",
-          type: "number" as const,
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section.",
-        },
+        CONTENT_SIZE_OPTION,
       ],
     },
     {
@@ -262,16 +231,7 @@ export const githubRepoPluginMetadata = {
             { value: "cloud", label: "Cloud (first topics featured/highlighted)" },
           ],
         },
-        {
-          key: "topics_height",
-          label: "Extra height",
-          type: "number" as const,
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section.",
-        },
+        CONTENT_SIZE_OPTION,
       ],
     },
     {
@@ -289,16 +249,7 @@ export const githubRepoPluginMetadata = {
           step: 1,
           tooltip: "Languages beyond this limit are omitted from the mini technologies bar.",
         },
-        {
-          key: "overview_height",
-          label: "Extra height",
-          type: "number" as const,
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section.",
-        },
+        CONTENT_SIZE_OPTION,
       ],
     },
   ],

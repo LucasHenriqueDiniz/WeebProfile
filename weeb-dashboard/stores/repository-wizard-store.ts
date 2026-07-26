@@ -1,36 +1,10 @@
 import { create } from "zustand"
 
-// Lista completa de seções - usada como fallback ao carregar configs antigas
-// que não tinham "sections" salvo (comportamento pré-refactor).
-const DEFAULT_SECTIONS = ["banner", "stats", "star_graph", "languages", "topics"]
-
-// Presets mostrados no topo do wizard: cada um pré-seleciona sections + config do
-// banner de uma vez, pra quem só quer "um banner simples" não acabar montando sem
-// querer o showcase completo (que era o default antes deste preset existir).
-export const REPOSITORY_PRESETS = {
-  banner: {
-    label: "Banner",
-    sections: ["banner"],
-    sectionConfigs: { banner: { banner_variant: "clean", banner_show_languages: true } },
-  },
-  stats: {
-    label: "Stats",
-    sections: ["banner", "stats"],
-    sectionConfigs: { banner: { banner_variant: "compact" } },
-  },
-  starGrowth: {
-    label: "Star Growth",
-    sections: ["banner", "star_graph"],
-    sectionConfigs: { banner: { banner_variant: "compact" } },
-  },
-  fullShowcase: {
-    label: "Full Showcase",
-    sections: [...DEFAULT_SECTIONS],
-    sectionConfigs: {},
-  },
-} as const satisfies Record<string, { label: string; sections: string[]; sectionConfigs: Record<string, Record<string, any>> }>
-
-export type RepositoryPresetId = keyof typeof REPOSITORY_PRESETS
+// O Repository é um item único (Banner OU Stats OU Star Graph OU Technologies OU
+// Topics OU Overview) - nunca uma pilha de seções como o Profile. "sections" continua
+// sendo um array só pra reaproveitar PreviewRenderer/flattenSectionConfigs sem
+// adaptação, mas o wizard nunca deixa ele ter mais de 1 item.
+const DEFAULT_SECTION = "banner"
 
 export interface RepositoryWizardState {
   name: string
@@ -57,9 +31,9 @@ export interface RepositoryWizardState {
   previewUrl: string | null
 
   setOwnerRepo: (owner: string, repo: string) => void
-  toggleSection: (sectionId: string) => void
+  // Substitui a seção ativa (nunca adiciona/acumula) - o Repository é sempre um item só.
+  selectSection: (sectionId: string) => void
   setSectionConfig: (sectionId: string, config: Record<string, any>) => void
-  applyPreset: (presetId: RepositoryPresetId) => void
   setStyle: (style: "default" | "terminal") => void
   setSize: (size: "half" | "full") => void
   setTheme: (theme: string) => void
@@ -86,15 +60,18 @@ const initialState = {
   repo: "",
   artifactType: "repository_card" as const,
   style: "default" as const,
-  size: "half" as const,
+  // Default largura completa - o Repository não é mais uma pilha de seções que
+  // se beneficia de "meia largura"; é um item único, então full é o normal, e
+  // meia largura vira a opção pra quem quiser.
+  size: "full" as const,
   theme: "default",
   hideTerminalEmojis: false,
   hideTerminalHeader: false,
   hideTerminalCommand: false,
   customCss: "",
   customThemeColors: {},
-  sections: [...REPOSITORY_PRESETS.banner.sections],
-  sectionConfigs: { ...REPOSITORY_PRESETS.banner.sectionConfigs },
+  sections: [DEFAULT_SECTION],
+  sectionConfigs: {},
   previewUrl: null,
 }
 
@@ -103,22 +80,12 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
 
   setOwnerRepo: (owner, repo) => set({ owner, repo }),
 
-  toggleSection: (sectionId) =>
-    set((state) => ({
-      sections: state.sections.includes(sectionId)
-        ? state.sections.filter((id) => id !== sectionId)
-        : [...state.sections, sectionId],
-    })),
+  selectSection: (sectionId) => set({ sections: [sectionId] }),
 
   setSectionConfig: (sectionId, config) =>
     set((state) => ({
       sectionConfigs: { ...state.sectionConfigs, [sectionId]: config },
     })),
-
-  applyPreset: (presetId) => {
-    const preset = REPOSITORY_PRESETS[presetId]
-    set({ sections: [...preset.sections], sectionConfigs: { ...preset.sectionConfigs } })
-  },
 
   setStyle: (style) => set({ style }),
   setSize: (size) => set({ size }),
@@ -131,26 +98,23 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
   resetCustomThemeColors: () => set({ customThemeColors: {} }),
   setPreviewUrl: (url) => set({ previewUrl: url }),
 
-  reset: () =>
-    set({
-      ...initialState,
-      customThemeColors: {},
-      sections: [...REPOSITORY_PRESETS.banner.sections],
-      sectionConfigs: { ...REPOSITORY_PRESETS.banner.sectionConfigs },
-    }),
+  reset: () => set({ ...initialState, customThemeColors: {}, sections: [DEFAULT_SECTION], sectionConfigs: {} }),
 
   loadFromSvg: (svg) => {
     const repoConfig = svg.pluginsConfig?.github_repo || {}
     const loadedSections = Array.isArray(repoConfig.sections) ? repoConfig.sections : []
+    // Configs antigas podem ter mais de uma seção salva (de quando o Repository ainda
+    // empilhava seções) - normaliza pra só a primeira, já que agora é sempre um item só.
+    const section = loadedSections[0] || DEFAULT_SECTION
     set({
       name: svg.name,
       style: (svg.style as "default" | "terminal") || "default",
-      size: (svg.size as "half" | "full") || "half",
+      size: (svg.size as "half" | "full") || "full",
       theme: svg.theme || "default",
       customCss: svg.customCss || "",
       owner: repoConfig.owner || "",
       repo: repoConfig.repo || "",
-      sections: loadedSections.length > 0 ? loadedSections : [...DEFAULT_SECTIONS],
+      sections: [section],
       sectionConfigs: repoConfig.sectionConfigs || {},
     })
   },

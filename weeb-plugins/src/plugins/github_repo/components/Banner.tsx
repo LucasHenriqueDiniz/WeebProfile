@@ -3,6 +3,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
+import { ScaledBox } from "./ScaledBox"
 
 interface BannerProps {
   config: GithubRepoConfig
@@ -596,29 +597,29 @@ function DefaultBanner({ data, config }: { data: GithubRepoData; config: GithubR
 export function Banner({ config, data, style = "default", size = "half" }: BannerProps): React.ReactElement {
   if (!config.enabled || !data) return <></>
 
-  const extraHeight = config.banner_height ?? 0
-
   return (
-    <section id="github-repo-banner" style={{ paddingBottom: extraHeight || undefined }}>
-      <RenderBasedOnStyle
-        style={style}
-        defaultComponent={<DefaultBanner data={data} config={config} />}
-        terminalComponent={
-          <>
-            <TerminalCommand
-              command={getPseudoCommands({ plugin: "github_repo", section: "banner", size })}
-            />
-            <div className="flex items-baseline gap-2 px-1 py-1">
-              <span className="text-terminal-highlight font-bold">{data.nameWithOwner}</span>
-            </div>
-            {(config.banner_show_description ?? true) &&
-              data.description &&
-              (config.banner_variant ?? "large") !== "compact" && (
-                <p className="px-1 pb-1 text-sm text-terminal-muted">{data.description}</p>
-              )}
-          </>
-        }
-      />
+    <section id="github-repo-banner">
+      <ScaledBox size={config.content_size}>
+        <RenderBasedOnStyle
+          style={style}
+          defaultComponent={<DefaultBanner data={data} config={config} />}
+          terminalComponent={
+            <>
+              <TerminalCommand
+                command={getPseudoCommands({ plugin: "github_repo", section: "banner", size })}
+              />
+              <div className="flex items-baseline gap-2 px-1 py-1">
+                <span className="text-terminal-highlight font-bold">{data.nameWithOwner}</span>
+              </div>
+              {(config.banner_show_description ?? true) &&
+                data.description &&
+                (config.banner_variant ?? "large") !== "compact" && (
+                  <p className="px-1 pb-1 text-sm text-terminal-muted">{data.description}</p>
+                )}
+            </>
+          }
+        />
+      </ScaledBox>
     </section>
   )
 }

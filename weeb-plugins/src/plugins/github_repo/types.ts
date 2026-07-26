@@ -21,46 +21,47 @@ export type StatsVariant = "inline" | "grid"
 export type LanguagesVariant = "bars" | "spectrum" | "badges"
 export type TopicsVariant = "chips" | "cloud"
 
+// Escala real de conteúdo (fonte, ícones, altura do gráfico, padding - tudo junto),
+// não só um espaço extra. Aplicada via transform:scale no componente inteiro da seção
+// ativa (ver ScaledBox.tsx), e o mesmo fator entra em calculateHeight.
+export type ContentSize = "sm" | "md" | "lg"
+export const CONTENT_SIZE_SCALE: Record<ContentSize, number> = { sm: 0.82, md: 1, lg: 1.3 }
+
 export interface GithubRepoConfig {
   enabled: boolean
+  // O repositório é um item único (Banner OU Stats OU Star Graph OU Technologies OU
+  // Topics OU Overview), nunca uma pilha de seções como o Profile - "sections" aqui
+  // sempre tem no máximo 1 entrada; o array só existe pra reaproveitar o mesmo formato
+  // sections+sectionConfigs do wizard genérico.
   sections: string[]
   owner: string
   repo: string
+  // Tamanho de conteúdo, compartilhado pelo item ativo (qualquer que ele seja).
+  content_size?: ContentSize
   // Banner
   banner_variant?: BannerVariant
   banner_show_description?: boolean
   banner_show_languages?: boolean
-  // Todas as seções abaixo têm um "*_height": espaço extra (em px) adicionado no
-  // fim da seção, pra quem quiser dar mais respiro sem trocar o resto do layout.
-  banner_height?: number
   // Stats (star/fork counters)
   stats_hide_title?: boolean
   stats_title?: string
   stats_variant?: StatsVariant
-  stats_height?: number
   // Star growth graph
   star_graph_hide_title?: boolean
   star_graph_title?: string
   star_graph_variant?: StarGraphVariant
-  // Altura real do gráfico (px) - diferente do *_height genérico das outras seções,
-  // esse controla o tamanho do SVG em si, não só um padding extra.
-  star_graph_chart_height?: number
-  star_graph_height?: number
   // Language/tech breakdown
   languages_hide_title?: boolean
   languages_title?: string
   languages_variant?: LanguagesVariant
   max_languages?: number
-  languages_height?: number
   // Topics
   topics_hide_title?: boolean
   topics_title?: string
   topics_variant?: TopicsVariant
   max_topics?: number
-  topics_height?: number
   // Overview (compact multi-metric panel combining stats + star graph + languages)
   overview_max_languages?: number
-  overview_height?: number
 }
 
 export interface StarHistoryPoint {

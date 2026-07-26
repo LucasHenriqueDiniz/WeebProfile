@@ -6,6 +6,7 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
+import { ScaledBox } from "./ScaledBox"
 
 interface StatsProps {
   config: GithubRepoConfig
@@ -61,28 +62,29 @@ export function Stats({ config, data, style = "default", size = "half" }: StatsP
   const title = config.stats_title ?? "Stats"
   const hideTitle = config.stats_hide_title ?? false
   const variant = config.stats_variant ?? "inline"
-  const extraHeight = config.stats_height ?? 0
 
   return (
-    <section id="github-repo-stats" style={{ paddingBottom: extraHeight || undefined }}>
-      <RenderBasedOnStyle
-        style={style}
-        defaultComponent={
-          <>
-            {!hideTitle && <DefaultTitle title={title} icon={<FaStar />} />}
-            {variant === "grid" ? <GridStats data={data} /> : <InlineStats data={data} />}
-          </>
-        }
-        terminalComponent={
-          <>
-            <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "stats", size })} />
-            <div className="flex items-center gap-4 px-1 py-1 text-sm">
-              <span className="text-terminal-highlight">⭐ {abbreviateNumber(data.stargazerCount)}</span>
-              <span className="text-terminal-muted">🍴 {abbreviateNumber(data.forkCount)}</span>
-            </div>
-          </>
-        }
-      />
+    <section id="github-repo-stats">
+      <ScaledBox size={config.content_size}>
+        <RenderBasedOnStyle
+          style={style}
+          defaultComponent={
+            <>
+              {!hideTitle && <DefaultTitle title={title} icon={<FaStar />} />}
+              {variant === "grid" ? <GridStats data={data} /> : <InlineStats data={data} />}
+            </>
+          }
+          terminalComponent={
+            <>
+              <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "stats", size })} />
+              <div className="flex items-center gap-4 px-1 py-1 text-sm">
+                <span className="text-terminal-highlight">⭐ {abbreviateNumber(data.stargazerCount)}</span>
+                <span className="text-terminal-muted">🍴 {abbreviateNumber(data.forkCount)}</span>
+              </div>
+            </>
+          }
+        />
+      </ScaledBox>
     </section>
   )
 }

@@ -1825,17 +1825,24 @@ export const PLUGINS_METADATA = {
           }
         },
         {
-          key: "banner_height",
-          label: "Extra height",
-          type: "number",
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of the banner, on top of its normal size.",
+          key: "content_size",
+          label: "Size",
+          type: "select",
+          defaultValue: "md",
+          tooltip: "Scales font size, icons, chart and spacing together.",
+          options: [
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium (default)" },
+            { value: "lg", label: "Large" }
+          ],
           i18nKey: {
-            label: "plugins.github_repo.sections.banner.config.banner_height.label",
-            tooltip: "plugins.github_repo.sections.banner.config.banner_height.tooltip"
+            label: "plugins.github_repo.sections.banner.config.content_size.label",
+            tooltip: "plugins.github_repo.sections.banner.config.content_size.tooltip",
+            options: {
+              "sm": "plugins.github_repo.sections.banner.config.content_size.options.sm",
+              "md": "plugins.github_repo.sections.banner.config.content_size.options.md",
+              "lg": "plugins.github_repo.sections.banner.config.content_size.options.lg"
+            }
           }
         }
         ]
@@ -1886,17 +1893,24 @@ export const PLUGINS_METADATA = {
           }
         },
         {
-          key: "stats_height",
-          label: "Extra height",
-          type: "number",
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section.",
+          key: "content_size",
+          label: "Size",
+          type: "select",
+          defaultValue: "md",
+          tooltip: "Scales font size, icons, chart and spacing together.",
+          options: [
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium (default)" },
+            { value: "lg", label: "Large" }
+          ],
           i18nKey: {
-            label: "plugins.github_repo.sections.stats.config.stats_height.label",
-            tooltip: "plugins.github_repo.sections.stats.config.stats_height.tooltip"
+            label: "plugins.github_repo.sections.stats.config.content_size.label",
+            tooltip: "plugins.github_repo.sections.stats.config.content_size.tooltip",
+            options: {
+              "sm": "plugins.github_repo.sections.stats.config.content_size.options.sm",
+              "md": "plugins.github_repo.sections.stats.config.content_size.options.md",
+              "lg": "plugins.github_repo.sections.stats.config.content_size.options.lg"
+            }
           }
         }
         ]
@@ -1953,31 +1967,24 @@ export const PLUGINS_METADATA = {
           }
         },
         {
-          key: "star_graph_chart_height",
-          label: "Chart height",
-          type: "number",
-          defaultValue: 120,
-          min: 60,
-          max: 260,
-          step: 10,
-          tooltip: "Height (px) of the chart itself, not just the section padding.",
+          key: "content_size",
+          label: "Size",
+          type: "select",
+          defaultValue: "md",
+          tooltip: "Scales font size, icons, chart and spacing together.",
+          options: [
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium (default)" },
+            { value: "lg", label: "Large" }
+          ],
           i18nKey: {
-            label: "plugins.github_repo.sections.star_graph.config.star_graph_chart_height.label",
-            tooltip: "plugins.github_repo.sections.star_graph.config.star_graph_chart_height.tooltip"
-          }
-        },
-        {
-          key: "star_graph_height",
-          label: "Extra height",
-          type: "number",
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section, on top of the chart height above.",
-          i18nKey: {
-            label: "plugins.github_repo.sections.star_graph.config.star_graph_height.label",
-            tooltip: "plugins.github_repo.sections.star_graph.config.star_graph_height.tooltip"
+            label: "plugins.github_repo.sections.star_graph.config.content_size.label",
+            tooltip: "plugins.github_repo.sections.star_graph.config.content_size.tooltip",
+            options: {
+              "sm": "plugins.github_repo.sections.star_graph.config.content_size.options.sm",
+              "md": "plugins.github_repo.sections.star_graph.config.content_size.options.md",
+              "lg": "plugins.github_repo.sections.star_graph.config.content_size.options.lg"
+            }
           }
         }
         ]
@@ -2044,17 +2051,24 @@ export const PLUGINS_METADATA = {
           }
         },
         {
-          key: "languages_height",
-          label: "Extra height",
-          type: "number",
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section.",
+          key: "content_size",
+          label: "Size",
+          type: "select",
+          defaultValue: "md",
+          tooltip: "Scales font size, icons, chart and spacing together.",
+          options: [
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium (default)" },
+            { value: "lg", label: "Large" }
+          ],
           i18nKey: {
-            label: "plugins.github_repo.sections.languages.config.languages_height.label",
-            tooltip: "plugins.github_repo.sections.languages.config.languages_height.tooltip"
+            label: "plugins.github_repo.sections.languages.config.content_size.label",
+            tooltip: "plugins.github_repo.sections.languages.config.content_size.tooltip",
+            options: {
+              "sm": "plugins.github_repo.sections.languages.config.content_size.options.sm",
+              "md": "plugins.github_repo.sections.languages.config.content_size.options.md",
+              "lg": "plugins.github_repo.sections.languages.config.content_size.options.lg"
+            }
           }
         }
         ]
@@ -2121,17 +2135,24 @@ export const PLUGINS_METADATA = {
           }
         },
         {
-          key: "topics_height",
-          label: "Extra height",
-          type: "number",
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section.",
+          key: "content_size",
+          label: "Size",
+          type: "select",
+          defaultValue: "md",
+          tooltip: "Scales font size, icons, chart and spacing together.",
+          options: [
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium (default)" },
+            { value: "lg", label: "Large" }
+          ],
           i18nKey: {
-            label: "plugins.github_repo.sections.topics.config.topics_height.label",
-            tooltip: "plugins.github_repo.sections.topics.config.topics_height.tooltip"
+            label: "plugins.github_repo.sections.topics.config.content_size.label",
+            tooltip: "plugins.github_repo.sections.topics.config.content_size.tooltip",
+            options: {
+              "sm": "plugins.github_repo.sections.topics.config.content_size.options.sm",
+              "md": "plugins.github_repo.sections.topics.config.content_size.options.md",
+              "lg": "plugins.github_repo.sections.topics.config.content_size.options.lg"
+            }
           }
         }
         ]
@@ -2160,17 +2181,24 @@ export const PLUGINS_METADATA = {
           }
         },
         {
-          key: "overview_height",
-          label: "Extra height",
-          type: "number",
-          defaultValue: 0,
-          min: 0,
-          max: 160,
-          step: 8,
-          tooltip: "Extra space (px) added at the bottom of this section.",
+          key: "content_size",
+          label: "Size",
+          type: "select",
+          defaultValue: "md",
+          tooltip: "Scales font size, icons, chart and spacing together.",
+          options: [
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium (default)" },
+            { value: "lg", label: "Large" }
+          ],
           i18nKey: {
-            label: "plugins.github_repo.sections.overview.config.overview_height.label",
-            tooltip: "plugins.github_repo.sections.overview.config.overview_height.tooltip"
+            label: "plugins.github_repo.sections.overview.config.content_size.label",
+            tooltip: "plugins.github_repo.sections.overview.config.content_size.tooltip",
+            options: {
+              "sm": "plugins.github_repo.sections.overview.config.content_size.options.sm",
+              "md": "plugins.github_repo.sections.overview.config.content_size.options.md",
+              "lg": "plugins.github_repo.sections.overview.config.content_size.options.lg"
+            }
           }
         }
         ]

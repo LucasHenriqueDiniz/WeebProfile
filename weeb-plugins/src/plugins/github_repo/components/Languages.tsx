@@ -5,6 +5,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
+import { ScaledBox } from "./ScaledBox"
 
 const LANGUAGES_DISPLAY_LIMIT = 5
 
@@ -107,29 +108,30 @@ export function Languages({ config, data, style = "default", size = "half" }: La
   const hideTitle = config.languages_hide_title ?? false
   const maxLanguages = Math.min(config.max_languages ?? LANGUAGES_DISPLAY_LIMIT, LANGUAGES_DISPLAY_LIMIT)
   const variant = config.languages_variant ?? "bars"
-  const extraHeight = config.languages_height ?? 0
 
   return (
-    <section id="github-repo-languages" style={{ paddingBottom: extraHeight || undefined }}>
-      <RenderBasedOnStyle
-        style={style}
-        defaultComponent={
-          <>
-            {!hideTitle && <DefaultTitle title={title} icon={<FaCode />} />}
-            {variant === "spectrum" && <LanguageSpectrum languages={data.languages} max={maxLanguages} />}
-            {variant === "badges" && <LanguageBadges languages={data.languages} max={maxLanguages} />}
-            {variant === "bars" && <LanguageBars languages={data.languages} max={maxLanguages} />}
-          </>
-        }
-        terminalComponent={
-          <>
-            <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "languages", size })} />
-            <div className="px-1 pb-1">
-              <LanguageBars languages={data.languages} max={maxLanguages} />
-            </div>
-          </>
-        }
-      />
+    <section id="github-repo-languages">
+      <ScaledBox size={config.content_size}>
+        <RenderBasedOnStyle
+          style={style}
+          defaultComponent={
+            <>
+              {!hideTitle && <DefaultTitle title={title} icon={<FaCode />} />}
+              {variant === "spectrum" && <LanguageSpectrum languages={data.languages} max={maxLanguages} />}
+              {variant === "badges" && <LanguageBadges languages={data.languages} max={maxLanguages} />}
+              {variant === "bars" && <LanguageBars languages={data.languages} max={maxLanguages} />}
+            </>
+          }
+          terminalComponent={
+            <>
+              <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "languages", size })} />
+              <div className="px-1 pb-1">
+                <LanguageBars languages={data.languages} max={maxLanguages} />
+              </div>
+            </>
+          }
+        />
+      </ScaledBox>
     </section>
   )
 }

@@ -5,6 +5,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
+import { ScaledBox } from "./ScaledBox"
 
 const TOPICS_DISPLAY_LIMIT = 6
 
@@ -70,31 +71,32 @@ export function Topics({ config, data, style = "default", size = "half" }: Topic
   const hideTitle = config.topics_hide_title ?? false
   const maxTopics = Math.min(config.max_topics ?? TOPICS_DISPLAY_LIMIT, TOPICS_DISPLAY_LIMIT)
   const variant = config.topics_variant ?? "chips"
-  const extraHeight = config.topics_height ?? 0
 
   return (
-    <section id="github-repo-topics" style={{ paddingBottom: extraHeight || undefined }}>
-      <RenderBasedOnStyle
-        style={style}
-        defaultComponent={
-          <>
-            {!hideTitle && <DefaultTitle title={title} icon={<FaTag />} />}
-            {variant === "cloud" ? (
-              <TopicCloud topics={data.topics} max={maxTopics} />
-            ) : (
-              <TopicChips topics={data.topics} max={maxTopics} />
-            )}
-          </>
-        }
-        terminalComponent={
-          <>
-            <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "topics", size })} />
-            <div className="px-1 pb-1">
-              <TopicChips topics={data.topics} max={maxTopics} />
-            </div>
-          </>
-        }
-      />
+    <section id="github-repo-topics">
+      <ScaledBox size={config.content_size}>
+        <RenderBasedOnStyle
+          style={style}
+          defaultComponent={
+            <>
+              {!hideTitle && <DefaultTitle title={title} icon={<FaTag />} />}
+              {variant === "cloud" ? (
+                <TopicCloud topics={data.topics} max={maxTopics} />
+              ) : (
+                <TopicChips topics={data.topics} max={maxTopics} />
+              )}
+            </>
+          }
+          terminalComponent={
+            <>
+              <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "topics", size })} />
+              <div className="px-1 pb-1">
+                <TopicChips topics={data.topics} max={maxTopics} />
+              </div>
+            </>
+          }
+        />
+      </ScaledBox>
     </section>
   )
 }

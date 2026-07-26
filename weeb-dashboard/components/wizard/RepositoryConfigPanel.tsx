@@ -2,11 +2,10 @@
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { REPOSITORY_PRESETS, useRepositoryWizardStore, type RepositoryPresetId } from "@/stores/repository-wizard-store"
+import { useRepositoryWizardStore } from "@/stores/repository-wizard-store"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { getSectionPreview } from "@/lib/config/section-previews"
 import { cn } from "@/lib/utils"
-import { Check, Sparkles } from "lucide-react"
 import { useState } from "react"
 import { SectionConfigDialog } from "./SectionConfigDialog"
 
@@ -36,24 +35,18 @@ function parseRepoInput(value: string): { owner: string; repo: string } | null {
   return null
 }
 
-// Painel de config do Repository - lista as seções reais do plugin (Banner, Insights:
-// star graph, contadores, tecnologias...) como cards que ligam/desligam, igual o
-// wizard de Profile faz para qualquer outro plugin multi-seção (ver PluginCard.tsx).
-// Antes disso era só uma lista fixa de toggles amarrada a uma única seção hardcoded
-// ("repository_card"), que não refletia o design real do card.
+// Painel de config do Repository - diferente do Profile, aqui não é uma pilha de
+// seções que se ligam junto: o repositório é sempre UM item só (Banner OU Stats OU
+// Star Graph OU Technologies OU Topics OU Overview). A lista abaixo é uma escolha
+// única (como um radio) em vez de checkboxes multi-seleção.
 export function RepositoryConfigPanel() {
-  const { owner, repo, style, sections, sectionConfigs, setOwnerRepo, toggleSection, setSectionConfig, applyPreset } =
+  const { owner, repo, style, sections, sectionConfigs, setOwnerRepo, selectSection, setSectionConfig } =
     useRepositoryWizardStore()
   const [rawInput, setRawInput] = useState(owner && repo ? `${owner}/${repo}` : "")
   const [error, setError] = useState<string | null>(null)
-  const [activePreset, setActivePreset] = useState<RepositoryPresetId>("banner")
 
   const metadata = PLUGINS_METADATA.github_repo
-
-  const handlePresetClick = (presetId: RepositoryPresetId) => {
-    setActivePreset(presetId)
-    applyPreset(presetId)
-  }
+  const activeSectionId = sections[0]
 
   const handleInputChange = (value: string) => {
     setRawInput(value)
@@ -88,49 +81,21 @@ export function RepositoryConfigPanel() {
         {error && <p className="text-xs text-destructive">{error}</p>}
       </div>
 
-      <div className="space-y-2">
-        <Label className="text-sm font-semibold text-foreground">Template</Label>
-        <div className="flex flex-wrap gap-2">
-          {(Object.keys(REPOSITORY_PRESETS) as RepositoryPresetId[]).map((presetId) => {
-            const preset = REPOSITORY_PRESETS[presetId]
-            const isActive = activePreset === presetId
-            return (
-              <button
-                key={presetId}
-                type="button"
-                onClick={() => handlePresetClick(presetId)}
-                className={cn(
-                  "rounded-full border px-3 py-1 text-xs font-medium transition-all",
-                  isActive
-                    ? "bg-primary/10 text-primary border-primary/40"
-                    : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50 hover:border-primary/20"
-                )}
-              >
-                {preset.label}
-              </button>
-            )
-          })}
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Pick a starting point, then fine-tune the sections below.
-        </p>
-      </div>
-
       <div className="space-y-2.5">
-        <p className="text-xs font-semibold text-foreground flex items-center gap-2">
-          <Sparkles className="h-3 w-3" />
-          Sections ({sections.length}/{metadata.sections.length})
+        <Label className="text-sm font-semibold text-foreground">Template</Label>
+        <p className="text-xs text-muted-foreground">
+          Choose one visual for the repository - not a stack of sections like the Profile card.
         </p>
         <div className="grid grid-cols-1 gap-3">
           {metadata.sections.map((section) => {
-            const isSelected = sections.includes(section.id)
+            const isSelected = activeSectionId === section.id
             const hasConfigs = section.configOptions && section.configOptions.length > 0
             const previewImage = getSectionPreview("github_repo", section.id, style)
 
             return (
               <div
                 key={section.id}
-                onClick={() => toggleSection(section.id)}
+                onClick={() => selectSection(section.id)}
                 className={cn(
                   "flex flex-col gap-2.5 p-3 rounded-lg border cursor-pointer transition-all",
                   isSelected
@@ -139,16 +104,25 @@ export function RepositoryConfigPanel() {
                 )}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span
+                      className={cn(
+                        "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border",
+                        isSelected ? "border-primary" : "border-muted-foreground/40"
+                      )}
+                      aria-hidden="true"
+                    >
+                      {isSelected && <span className="h-2 w-2 rounded-full bg-primary" />}
+                    </span>
                     <input
-                      type="checkbox"
+                      type="radio"
+                      name="repository-template"
                       className="sr-only"
                       checked={isSelected}
-                      onChange={() => toggleSection(section.id)}
+                      onChange={() => selectSection(section.id)}
                       onClick={(e) => e.stopPropagation()}
-                      aria-label={`${isSelected ? "Deselect" : "Select"} ${section.name}`}
+                      aria-label={`Select ${section.name}`}
                     />
-                    {isSelected && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
                     <span className="text-sm font-medium truncate">{section.name}</span>
                   </div>
                   {hasConfigs && isSelected && (
@@ -170,7 +144,7 @@ export function RepositoryConfigPanel() {
                     className="rounded-md overflow-hidden border border-border bg-background aspect-video"
                     onClick={(e) => {
                       e.stopPropagation()
-                      toggleSection(section.id)
+                      selectSection(section.id)
                     }}
                   >
                     <img
