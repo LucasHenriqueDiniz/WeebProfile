@@ -2,6 +2,7 @@ import React from "react"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { Banner } from "./Banner"
 import { Languages } from "./Languages"
+import { Overview } from "./Overview"
 import { StarGraph } from "./StarGraph"
 import { Stats } from "./Stats"
 import { Topics } from "./Topics"
@@ -36,6 +37,8 @@ export function RenderGithubRepo({ config, data, style = "default", size = "half
             return <Languages key={section} config={config} data={data} style={style} size={size} />
           case "topics":
             return <Topics key={section} config={config} data={data} style={style} size={size} />
+          case "overview":
+            return <Overview key={section} config={config} data={data} style={style} size={size} />
           default:
             return null
         }

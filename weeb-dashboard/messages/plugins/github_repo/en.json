@@ -14,13 +14,26 @@
         "banner_show_description": {
           "label": "Show description"
         },
+        "banner_show_languages": {
+          "label": "Show technologies",
+          "tooltip": "Only used by the Clean style - shows the repository's top languages inline."
+        },
         "banner_variant": {
           "description": "Choose how big and prominent the banner is",
           "label": "Style",
           "options": {
+            "aurora": "Aurora (dark gradient with glass panel)",
+            "blueprint": "Blueprint (technical frame, monospace uppercase)",
+            "bold": "Bold (large headline, minimal detail)",
+            "clean": "Clean (name, description and techs in one bordered row)",
             "compact": "Compact (single row)",
+            "editorial": "Editorial (color rail + serif headline)",
             "large": "Large (avatar + gradient background)",
-            "minimal": "Minimal (text only, no background)"
+            "minimal": "Minimal (text only, no background)",
+            "mono": "Mono (dark monospace, GitHub terminal style)",
+            "ribbon": "Ribbon (circular mark + bottom info strip)",
+            "social": "Social (wide layout for link previews)",
+            "split": "Split (two columns, tech bars on the side)"
           }
         }
       },
@@ -67,6 +80,13 @@
           "defaultValue": "Technologies",
           "label": "Title"
         },
+        "languages_variant": {
+          "label": "Style",
+          "options": {
+            "bars": "Bars (thin bar + inline legend)",
+            "spectrum": "Spectrum (thicker bar + two-column legend)"
+          }
+        },
         "max_languages": {
           "label": "Maximum languages",
           "tooltip": "Languages beyond this limit are omitted from the breakdown bar."
@@ -74,6 +94,16 @@
       },
       "description": "Language/technology breakdown bar, by bytes of code",
       "name": "Technologies"
+    },
+    "overview": {
+      "config": {
+        "overview_max_languages": {
+          "label": "Maximum languages",
+          "tooltip": "Languages beyond this limit are omitted from the mini technologies bar."
+        }
+      },
+      "description": "Compact combined card: identity, key metrics, mini star growth and mini technologies panel",
+      "name": "Overview"
     },
     "repository_card": {
       "config": {
@@ -116,6 +146,16 @@
         "star_graph_title": {
           "defaultValue": "Star growth",
           "label": "Title"
+        },
+        "star_graph_variant": {
+          "label": "Style",
+          "options": {
+            "area": "Area (filled line, current default)",
+            "bars": "Bars (growth between sampled points)",
+            "gradient": "Gradient (two-tone stroke, dashed baseline)",
+            "line": "Line (clean line with light grid)",
+            "milestones": "Milestones (marks a few key points)"
+          }
         }
       },
       "description": "A real graph of the repository's star growth over time",
@@ -129,6 +169,13 @@
         "stats_title": {
           "defaultValue": "Stats",
           "label": "Title"
+        },
+        "stats_variant": {
+          "label": "Style",
+          "options": {
+            "grid": "Grid (Stars, Forks, Issues, Watchers in blocks)",
+            "inline": "Inline (Stars and Forks side by side)"
+          }
         }
       },
       "description": "Star and fork counters",
@@ -147,6 +194,13 @@
         "topics_title": {
           "defaultValue": "Topics",
           "label": "Title"
+        },
+        "topics_variant": {
+          "label": "Style",
+          "options": {
+            "chips": "Chips (flat list, all equal weight)",
+            "cloud": "Cloud (first topics featured/highlighted)"
+          }
         }
       },
       "description": "Repository topic tags",

@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useRepositoryWizardStore } from "@/stores/repository-wizard-store"
+import { REPOSITORY_PRESETS, useRepositoryWizardStore, type RepositoryPresetId } from "@/stores/repository-wizard-store"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { getSectionPreview } from "@/lib/config/section-previews"
 import { cn } from "@/lib/utils"
@@ -42,12 +42,18 @@ function parseRepoInput(value: string): { owner: string; repo: string } | null {
 // Antes disso era só uma lista fixa de toggles amarrada a uma única seção hardcoded
 // ("repository_card"), que não refletia o design real do card.
 export function RepositoryConfigPanel() {
-  const { owner, repo, style, sections, sectionConfigs, setOwnerRepo, toggleSection, setSectionConfig } =
+  const { owner, repo, style, sections, sectionConfigs, setOwnerRepo, toggleSection, setSectionConfig, applyPreset } =
     useRepositoryWizardStore()
   const [rawInput, setRawInput] = useState(owner && repo ? `${owner}/${repo}` : "")
   const [error, setError] = useState<string | null>(null)
+  const [activePreset, setActivePreset] = useState<RepositoryPresetId>("banner")
 
   const metadata = PLUGINS_METADATA.github_repo
+
+  const handlePresetClick = (presetId: RepositoryPresetId) => {
+    setActivePreset(presetId)
+    applyPreset(presetId)
+  }
 
   const handleInputChange = (value: string) => {
     setRawInput(value)
@@ -80,6 +86,34 @@ export function RepositoryConfigPanel() {
           className="font-mono text-sm"
         />
         {error && <p className="text-xs text-destructive">{error}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold text-foreground">Template</Label>
+        <div className="flex flex-wrap gap-2">
+          {(Object.keys(REPOSITORY_PRESETS) as RepositoryPresetId[]).map((presetId) => {
+            const preset = REPOSITORY_PRESETS[presetId]
+            const isActive = activePreset === presetId
+            return (
+              <button
+                key={presetId}
+                type="button"
+                onClick={() => handlePresetClick(presetId)}
+                className={cn(
+                  "rounded-full border px-3 py-1 text-xs font-medium transition-all",
+                  isActive
+                    ? "bg-primary/10 text-primary border-primary/40"
+                    : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50 hover:border-primary/20"
+                )}
+              >
+                {preset.label}
+              </button>
+            )
+          })}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Pick a starting point, then fine-tune the sections below.
+        </p>
       </div>
 
       <div className="space-y-2.5">

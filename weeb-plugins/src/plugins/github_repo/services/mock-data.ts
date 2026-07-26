@@ -16,6 +16,8 @@ export async function getMockGithubRepoData(): Promise<GithubRepoData> {
     },
     stargazerCount: 128,
     forkCount: 24,
+    openIssuesCount: 12,
+    watcherCount: 9,
     licenseInfo: {
       name: "MIT License",
       spdxId: "MIT",

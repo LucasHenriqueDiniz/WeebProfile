@@ -1,6 +1,36 @@
 import { create } from "zustand"
 
+// Lista completa de seções - usada como fallback ao carregar configs antigas
+// que não tinham "sections" salvo (comportamento pré-refactor).
 const DEFAULT_SECTIONS = ["banner", "stats", "star_graph", "languages", "topics"]
+
+// Presets mostrados no topo do wizard: cada um pré-seleciona sections + config do
+// banner de uma vez, pra quem só quer "um banner simples" não acabar montando sem
+// querer o showcase completo (que era o default antes deste preset existir).
+export const REPOSITORY_PRESETS = {
+  banner: {
+    label: "Banner",
+    sections: ["banner"],
+    sectionConfigs: { banner: { banner_variant: "clean", banner_show_languages: true } },
+  },
+  stats: {
+    label: "Stats",
+    sections: ["banner", "stats"],
+    sectionConfigs: { banner: { banner_variant: "compact" } },
+  },
+  starGrowth: {
+    label: "Star Growth",
+    sections: ["banner", "star_graph"],
+    sectionConfigs: { banner: { banner_variant: "compact" } },
+  },
+  fullShowcase: {
+    label: "Full Showcase",
+    sections: [...DEFAULT_SECTIONS],
+    sectionConfigs: {},
+  },
+} as const satisfies Record<string, { label: string; sections: string[]; sectionConfigs: Record<string, Record<string, any>> }>
+
+export type RepositoryPresetId = keyof typeof REPOSITORY_PRESETS
 
 export interface RepositoryWizardState {
   name: string
@@ -29,6 +59,7 @@ export interface RepositoryWizardState {
   setOwnerRepo: (owner: string, repo: string) => void
   toggleSection: (sectionId: string) => void
   setSectionConfig: (sectionId: string, config: Record<string, any>) => void
+  applyPreset: (presetId: RepositoryPresetId) => void
   setStyle: (style: "default" | "terminal") => void
   setSize: (size: "half" | "full") => void
   setTheme: (theme: string) => void
@@ -62,8 +93,8 @@ const initialState = {
   hideTerminalCommand: false,
   customCss: "",
   customThemeColors: {},
-  sections: [...DEFAULT_SECTIONS],
-  sectionConfigs: {},
+  sections: [...REPOSITORY_PRESETS.banner.sections],
+  sectionConfigs: { ...REPOSITORY_PRESETS.banner.sectionConfigs },
   previewUrl: null,
 }
 
@@ -84,6 +115,11 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
       sectionConfigs: { ...state.sectionConfigs, [sectionId]: config },
     })),
 
+  applyPreset: (presetId) => {
+    const preset = REPOSITORY_PRESETS[presetId]
+    set({ sections: [...preset.sections], sectionConfigs: { ...preset.sectionConfigs } })
+  },
+
   setStyle: (style) => set({ style }),
   setSize: (size) => set({ size }),
   setTheme: (theme) => set({ theme }),
@@ -95,7 +131,13 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
   resetCustomThemeColors: () => set({ customThemeColors: {} }),
   setPreviewUrl: (url) => set({ previewUrl: url }),
 
-  reset: () => set({ ...initialState, customThemeColors: {}, sections: [...DEFAULT_SECTIONS], sectionConfigs: {} }),
+  reset: () =>
+    set({
+      ...initialState,
+      customThemeColors: {},
+      sections: [...REPOSITORY_PRESETS.banner.sections],
+      sectionConfigs: { ...REPOSITORY_PRESETS.banner.sectionConfigs },
+    }),
 
   loadFromSvg: (svg) => {
     const repoConfig = svg.pluginsConfig?.github_repo || {}

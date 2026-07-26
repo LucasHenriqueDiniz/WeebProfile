@@ -56,6 +56,24 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
         h += 24 + (hasDescription ? 48 : 24)
       } else if (variant === "compact") {
         h += 24 + 44
+      } else if (variant === "clean") {
+        const showLanguages = cfg.banner_show_languages ?? true
+        const hasLanguages = showLanguages && repo.languages && repo.languages.length > 0
+        h += 24 + 48 + (hasDescription ? 16 : 0) + (hasLanguages ? 20 : 0)
+      } else if (variant === "editorial" || variant === "mono" || variant === "aurora" || variant === "blueprint") {
+        // Header row + optional description line + optional tech row - similar shape
+        // across these variants (single card, no separate description block).
+        const showLanguages = cfg.banner_show_languages ?? true
+        const hasLanguages = showLanguages && repo.languages && repo.languages.length > 0
+        h += 24 + 60 + (hasDescription ? 20 : 0) + (hasLanguages ? 24 : 0)
+      } else if (variant === "bold") {
+        h += 24 + 84 + (hasDescription ? 16 : 0)
+      } else if (variant === "split") {
+        h += 24 + 100
+      } else if (variant === "ribbon") {
+        h += 24 + 70 + (hasDescription ? 16 : 0) + 34
+      } else if (variant === "social") {
+        h += 24 + 110
       } else {
         // large: avatar/name row + border, + description block (border-top + 2-line text)
         h += 24 + 68
@@ -65,7 +83,9 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
 
     if (cfg.sections.includes("stats")) {
       const hideTitle = cfg.stats_hide_title ?? false
-      h += isTerminal ? 84 + 28 : 24 + (hideTitle ? 0 : 40) + 72
+      const statsVariant = cfg.stats_variant ?? "inline"
+      const bodyHeight = statsVariant === "grid" ? 76 : 40
+      h += isTerminal ? 84 + 28 : 24 + (hideTitle ? 0 : 40) + bodyHeight
     }
 
     if (cfg.sections.includes("star_graph") && repo.starHistory && repo.starHistory.length >= 2) {
@@ -75,12 +95,16 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
 
     if (cfg.sections.includes("languages") && repo.languages && repo.languages.length > 0) {
       const hideTitle = cfg.languages_hide_title ?? false
-      h += isTerminal ? 84 + 40 : 24 + (hideTitle ? 0 : 40) + 64
+      h += isTerminal ? 84 + 40 : 24 + (hideTitle ? 0 : 40) + 32
     }
 
     if (cfg.sections.includes("topics") && repo.topics && repo.topics.length > 0) {
       const hideTitle = cfg.topics_hide_title ?? false
-      h += isTerminal ? 84 + 32 : 24 + (hideTitle ? 0 : 40) + 56
+      h += isTerminal ? 84 + 32 : 24 + (hideTitle ? 0 : 40) + 24
+    }
+
+    if (cfg.sections.includes("overview")) {
+      h += isTerminal ? 84 + 24 : 24 + 220
     }
 
     return h

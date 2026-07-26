@@ -36,10 +36,14 @@ export function RepositoryLivePreview() {
 
   const previewWidth = size === "half" ? 415 : 830
 
+  // O preview do wizard sempre usa dados mock (ver useMockPluginData - dev=true para
+  // todos os plugins), então mesmo sem owner/repo preenchidos dá pra mostrar o exemplo
+  // (o próprio WeebProfile, hardcoded em mock-data.ts) em vez de ficar em branco.
+  // O dado real do repositório do usuário só entra na geração de verdade (com PAT).
   const plugins = React.useMemo(
     () => ({
       github_repo: {
-        enabled: !!(owner && repo),
+        enabled: sections.length > 0,
         sections,
         owner,
         repo,

@@ -1772,7 +1772,16 @@ export const PLUGINS_METADATA = {
           options: [
             { value: "large", label: "Large (avatar + gradient background)" },
             { value: "compact", label: "Compact (single row)" },
-            { value: "minimal", label: "Minimal (text only, no background)" }
+            { value: "minimal", label: "Minimal (text only, no background)" },
+            { value: "clean", label: "Clean (name, description and techs in one bordered row)" },
+            { value: "editorial", label: "Editorial (color rail + serif headline)" },
+            { value: "mono", label: "Mono (dark monospace, GitHub terminal style)" },
+            { value: "aurora", label: "Aurora (dark gradient with glass panel)" },
+            { value: "bold", label: "Bold (large headline, minimal detail)" },
+            { value: "split", label: "Split (two columns, tech bars on the side)" },
+            { value: "blueprint", label: "Blueprint (technical frame, monospace uppercase)" },
+            { value: "ribbon", label: "Ribbon (circular mark + bottom info strip)" },
+            { value: "social", label: "Social (wide layout for link previews)" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_variant.label",
@@ -1780,7 +1789,16 @@ export const PLUGINS_METADATA = {
             options: {
               "large": "plugins.github_repo.sections.banner.config.banner_variant.options.large",
               "compact": "plugins.github_repo.sections.banner.config.banner_variant.options.compact",
-              "minimal": "plugins.github_repo.sections.banner.config.banner_variant.options.minimal"
+              "minimal": "plugins.github_repo.sections.banner.config.banner_variant.options.minimal",
+              "clean": "plugins.github_repo.sections.banner.config.banner_variant.options.clean",
+              "editorial": "plugins.github_repo.sections.banner.config.banner_variant.options.editorial",
+              "mono": "plugins.github_repo.sections.banner.config.banner_variant.options.mono",
+              "aurora": "plugins.github_repo.sections.banner.config.banner_variant.options.aurora",
+              "bold": "plugins.github_repo.sections.banner.config.banner_variant.options.bold",
+              "split": "plugins.github_repo.sections.banner.config.banner_variant.options.split",
+              "blueprint": "plugins.github_repo.sections.banner.config.banner_variant.options.blueprint",
+              "ribbon": "plugins.github_repo.sections.banner.config.banner_variant.options.ribbon",
+              "social": "plugins.github_repo.sections.banner.config.banner_variant.options.social"
             }
           }
         },
@@ -1791,6 +1809,17 @@ export const PLUGINS_METADATA = {
           defaultValue: true,
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_show_description.label"
+          }
+        },
+        {
+          key: "banner_show_languages",
+          label: "Show technologies",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Only used by the Clean style - shows the repository's top languages inline.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_show_languages.label",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_show_languages.tooltip"
           }
         }
         ]
@@ -1822,6 +1851,23 @@ export const PLUGINS_METADATA = {
             label: "plugins.github_repo.sections.stats.config.stats_title.label",
             defaultValue: "plugins.github_repo.sections.stats.config.stats_title.defaultValue"
           }
+        },
+        {
+          key: "stats_variant",
+          label: "Style",
+          type: "select",
+          defaultValue: "inline",
+          options: [
+            { value: "inline", label: "Inline (Stars and Forks side by side)" },
+            { value: "grid", label: "Grid (Stars, Forks, Issues, Watchers in blocks)" }
+          ],
+          i18nKey: {
+            label: "plugins.github_repo.sections.stats.config.stats_variant.label",
+            options: {
+              "inline": "plugins.github_repo.sections.stats.config.stats_variant.options.inline",
+              "grid": "plugins.github_repo.sections.stats.config.stats_variant.options.grid"
+            }
+          }
         }
         ]
       },
@@ -1851,6 +1897,29 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.github_repo.sections.star_graph.config.star_graph_title.label",
             defaultValue: "plugins.github_repo.sections.star_graph.config.star_graph_title.defaultValue"
+          }
+        },
+        {
+          key: "star_graph_variant",
+          label: "Style",
+          type: "select",
+          defaultValue: "area",
+          options: [
+            { value: "area", label: "Area (filled line, current default)" },
+            { value: "line", label: "Line (clean line with light grid)" },
+            { value: "milestones", label: "Milestones (marks a few key points)" },
+            { value: "bars", label: "Bars (growth between sampled points)" },
+            { value: "gradient", label: "Gradient (two-tone stroke, dashed baseline)" }
+          ],
+          i18nKey: {
+            label: "plugins.github_repo.sections.star_graph.config.star_graph_variant.label",
+            options: {
+              "area": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.area",
+              "line": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.line",
+              "milestones": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.milestones",
+              "bars": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.bars",
+              "gradient": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.gradient"
+            }
           }
         }
         ]
@@ -1895,6 +1964,23 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.github_repo.sections.languages.config.max_languages.label",
             tooltip: "plugins.github_repo.sections.languages.config.max_languages.tooltip"
+          }
+        },
+        {
+          key: "languages_variant",
+          label: "Style",
+          type: "select",
+          defaultValue: "bars",
+          options: [
+            { value: "bars", label: "Bars (thin bar + inline legend)" },
+            { value: "spectrum", label: "Spectrum (thicker bar + two-column legend)" }
+          ],
+          i18nKey: {
+            label: "plugins.github_repo.sections.languages.config.languages_variant.label",
+            options: {
+              "bars": "plugins.github_repo.sections.languages.config.languages_variant.options.bars",
+              "spectrum": "plugins.github_repo.sections.languages.config.languages_variant.options.spectrum"
+            }
           }
         }
         ]
@@ -1941,6 +2027,48 @@ export const PLUGINS_METADATA = {
             label: "plugins.github_repo.sections.topics.config.max_topics.label",
             description: "plugins.github_repo.sections.topics.config.max_topics.description",
             tooltip: "plugins.github_repo.sections.topics.config.max_topics.tooltip"
+          }
+        },
+        {
+          key: "topics_variant",
+          label: "Style",
+          type: "select",
+          defaultValue: "chips",
+          options: [
+            { value: "chips", label: "Chips (flat list, all equal weight)" },
+            { value: "cloud", label: "Cloud (first topics featured/highlighted)" }
+          ],
+          i18nKey: {
+            label: "plugins.github_repo.sections.topics.config.topics_variant.label",
+            options: {
+              "chips": "plugins.github_repo.sections.topics.config.topics_variant.options.chips",
+              "cloud": "plugins.github_repo.sections.topics.config.topics_variant.options.cloud"
+            }
+          }
+        }
+        ]
+      },
+      {
+        id: "overview",
+        name: "Overview",
+        description: "Compact combined card: identity, key metrics, mini star growth and mini technologies panel",
+        i18nKey: {
+          name: "plugins.github_repo.sections.overview.name",
+          description: "plugins.github_repo.sections.overview.description"
+        },
+        configOptions: [
+        {
+          key: "overview_max_languages",
+          label: "Maximum languages",
+          type: "number",
+          defaultValue: 4,
+          min: 0,
+          max: 4,
+          step: 1,
+          tooltip: "Languages beyond this limit are omitted from the mini technologies bar.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.overview.config.overview_max_languages.label",
+            tooltip: "plugins.github_repo.sections.overview.config.overview_max_languages.tooltip"
           }
         }
         ]

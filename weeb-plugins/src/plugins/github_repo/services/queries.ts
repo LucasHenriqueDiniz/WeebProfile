@@ -15,6 +15,12 @@ query repositoryCard($owner: String!, $repo: String!) {
     }
     stargazerCount
     forkCount
+    openIssuesCount: issues(states: OPEN) {
+      totalCount
+    }
+    watchers {
+      totalCount
+    }
     licenseInfo {
       name
       spdxId

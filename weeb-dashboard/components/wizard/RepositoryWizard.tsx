@@ -19,6 +19,7 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
   const {
     owner,
     repo,
+    sections,
     style,
     size,
     theme,
@@ -74,7 +75,10 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
       name={owner && repo ? `${owner}/${repo}` : ""}
       size={size}
       setSize={setSize}
-      contentCount={owner && repo ? 1 : 0}
+      // Mesma lógica do plugin habilitado em RepositoryLivePreview: o preview usa dado
+      // mock (WeebProfile) mesmo sem owner/repo preenchidos, então o frame não deveria
+      // ficar escondido atrás do placeholder "habilite um plugin" só por falta de owner/repo.
+      contentCount={sections.length > 0 ? 1 : 0}
     />
   )
 }

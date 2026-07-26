@@ -159,6 +159,8 @@ interface RepositoryCardResponse {
     primaryLanguage: { name: string; color: string } | null
     stargazerCount: number
     forkCount: number
+    openIssuesCount: { totalCount: number } | null
+    watchers: { totalCount: number } | null
     licenseInfo: { name: string; spdxId: string | null } | null
     repositoryTopics: { nodes: Array<{ topic: { name: string } }> }
     languages: { totalSize: number; edges: Array<{ size: number; node: { name: string; color: string | null } }> } | null
@@ -230,6 +232,8 @@ export async function fetchGithubRepoData(config: GithubRepoConfig, dev = false,
       primaryLanguage: repo.primaryLanguage,
       stargazerCount,
       forkCount: repo.forkCount || 0,
+      openIssuesCount: repo.openIssuesCount?.totalCount || 0,
+      watcherCount: repo.watchers?.totalCount || 0,
       licenseInfo: repo.licenseInfo
         ? { name: repo.licenseInfo.name, spdxId: repo.licenseInfo.spdxId }
         : null,

@@ -14,9 +14,9 @@ interface StatsProps {
   size?: "half" | "full"
 }
 
-function DefaultStats({ data }: { data: GithubRepoData }): React.ReactElement {
+function InlineStats({ data }: { data: GithubRepoData }): React.ReactElement {
   return (
-    <div className="flex items-center gap-6 rounded-lg border border-default-border p-4">
+    <div className="flex items-center gap-6">
       <div className="flex flex-col">
         <span className="text-xl font-bold leading-none text-default-text">{abbreviateNumber(data.stargazerCount)}</span>
         <span className="mt-1 flex items-center gap-1 text-xs text-default-muted">
@@ -33,11 +33,34 @@ function DefaultStats({ data }: { data: GithubRepoData }): React.ReactElement {
   )
 }
 
+// "grid" (14 Repository Stats): quatro blocos com borda individual - Stars, Forks,
+// Issues, Watchers. Sem contador de contribuidores (exigiria uma chamada REST extra
+// só pra isso).
+function GridStats({ data }: { data: GithubRepoData }): React.ReactElement {
+  const items = [
+    { label: "Stars", value: data.stargazerCount },
+    { label: "Forks", value: data.forkCount },
+    { label: "Issues", value: data.openIssuesCount },
+    { label: "Watchers", value: data.watcherCount },
+  ]
+  return (
+    <div className="grid grid-cols-4 gap-2.5">
+      {items.map((item) => (
+        <div key={item.label} className="rounded-lg border border-default-border p-3">
+          <span className="block text-xl font-bold leading-none text-default-text">{abbreviateNumber(item.value)}</span>
+          <span className="mt-1 block text-[10px] text-default-muted">{item.label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function Stats({ config, data, style = "default", size = "half" }: StatsProps): React.ReactElement {
   if (!config.enabled || !data) return <></>
 
   const title = config.stats_title ?? "Stats"
   const hideTitle = config.stats_hide_title ?? false
+  const variant = config.stats_variant ?? "inline"
 
   return (
     <section id="github-repo-stats">
@@ -46,7 +69,7 @@ export function Stats({ config, data, style = "default", size = "half" }: StatsP
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaStar />} />}
-            <DefaultStats data={data} />
+            {variant === "grid" ? <GridStats data={data} /> : <InlineStats data={data} />}
           </>
         }
         terminalComponent={
