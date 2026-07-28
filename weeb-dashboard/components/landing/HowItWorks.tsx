@@ -62,30 +62,23 @@ export function HowItWorks() {
           return (
             <div
               key={step.title}
-              className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 ${s.hover}`}
+              className={`group rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 ${s.hover}`}
             >
-              {/* Numeral fantasma no canto — identidade sem ocupar layout */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute -right-2 -top-5 font-heading text-[88px] font-extrabold leading-none text-foreground/[0.04] transition-colors group-hover:text-foreground/[0.07]"
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div className="relative flex items-center justify-between">
+              <div className="flex items-center justify-between">
                 <span
                   className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br transition-transform group-hover:scale-110 ${s.tile}`}
                 >
                   <Icon className="h-5 w-5" />
                 </span>
-                <span className="whitespace-nowrap rounded-full border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground/80">
-                  {step.tag}
+                <span className={`font-mono text-sm font-extrabold tracking-wider ${s.accent}`}>
+                  {String(i + 1).padStart(2, "0")}
                 </span>
               </div>
-              <h3 className="relative mt-4 flex items-baseline gap-2 font-heading text-[17px] font-bold text-foreground">
-                <span className={`font-mono text-xs font-extrabold ${s.accent}`}>{String(i + 1).padStart(2, "0")}</span>
-                {step.title}
-              </h3>
-              <p className="relative mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{step.body}</p>
+              <h3 className="mt-4 font-heading text-[17px] font-bold text-foreground">{step.title}</h3>
+              <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{step.body}</p>
+              <span className="mt-3.5 inline-block whitespace-nowrap rounded-full border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground/80">
+                {step.tag}
+              </span>
             </div>
           )
         })}

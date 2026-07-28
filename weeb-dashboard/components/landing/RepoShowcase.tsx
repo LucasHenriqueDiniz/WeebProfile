@@ -32,28 +32,45 @@ export function RepoShowcase() {
           </div>
 
           {/* Colagem de previews reais — sem molduras rotuladas; os SVGs falam por si,
-              com glow atrás e leve rotação que endireita no hover. */}
+              com glow atrás e leve rotação que endireita no hover. Duas colunas
+              defasadas para mostrar mais visuais sem virar uma grade rígida. */}
           <div aria-hidden className="relative">
-            <div className="absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary opacity-[0.14] blur-[110px] dark:opacity-20" />
-            <div className="relative flex flex-col gap-5">
-              <img
-                src="/previews/github_repo/default/banner.svg"
-                alt=""
-                loading="lazy"
-                className="w-[88%] -rotate-1 self-start rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.02]"
-              />
-              <img
-                src="/previews/github_repo/terminal/languages.svg"
-                alt=""
-                loading="lazy"
-                className="w-[80%] rotate-1 self-end rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.02]"
-              />
-              <img
-                src="/previews/github_repo/terminal/banner.svg"
-                alt=""
-                loading="lazy"
-                className="w-[84%] -rotate-1 self-start rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.02]"
-              />
+            <div className="absolute left-1/2 top-1/2 h-[75%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary opacity-[0.14] blur-[110px] dark:opacity-20" />
+            <div className="relative grid grid-cols-2 items-start gap-5">
+              <div className="flex flex-col gap-5">
+                <img
+                  src="/previews/github_repo/default/banner.svg"
+                  alt=""
+                  loading="lazy"
+                  className="-rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
+                />
+                <img
+                  src="/previews/github_repo/terminal/languages.svg"
+                  alt=""
+                  loading="lazy"
+                  className="rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.03]"
+                />
+                <img
+                  src="/previews/github_repo/default/languages.svg"
+                  alt=""
+                  loading="lazy"
+                  className="-rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
+                />
+              </div>
+              <div className="mt-8 flex flex-col gap-5">
+                <img
+                  src="/previews/github_repo/terminal/banner.svg"
+                  alt=""
+                  loading="lazy"
+                  className="rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.03]"
+                />
+                <img
+                  src="/previews/github_repo/terminal/stats.svg"
+                  alt=""
+                  loading="lazy"
+                  className="-rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.03]"
+                />
+              </div>
             </div>
           </div>
         </div>

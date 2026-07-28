@@ -93,54 +93,74 @@ export function Header({ className, variant, title, description, actions }: Head
         }
         className={cn("fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl transition-all", className)}
       >
-        <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Alinhado ao grid da landing (max-w-6xl/px-6), nao ao container full-width —
+            o header antigo desalinhava com todo o conteudo abaixo dele. */}
+        <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-6">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group" locale={undefined}>
+          <Link href="/" className="group flex flex-shrink-0 items-center gap-2" locale={undefined}>
             <motion.div className="relative" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <img src="/sora/sora-head.png" alt="Sora" className="w-8 h-8 object-contain drop-shadow-lg" />
             </motion.div>
-            <span className="text-xl font-black bg-gradient-to-r from-violet-600 via-pink-600 to-cyan-600 dark:from-purple-400 dark:via-pink-400 dark:to-cyan-400 bg-clip-text text-transparent font-sora">
+            <span className="font-sora text-lg font-black bg-gradient-to-r from-violet-600 via-pink-600 to-cyan-600 dark:from-purple-400 dark:via-pink-400 dark:to-cyan-400 bg-clip-text text-transparent">
               WeebProfile
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            {navigation.map((item) => (
-              <Button
-                key={item.name}
-                variant="ghost"
-                size="sm"
-                asChild
-                className="text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-              >
-                {item.anchor ? <a href={item.href}>{item.name}</a> : <Link href={item.href}>{item.name}</Link>}
-              </Button>
-            ))}
+          {/* Desktop Navigation — links de texto simples, sem caixas de botao */}
+          <div className="hidden flex-1 items-center gap-5 md:flex">
+            {navigation.map((item) =>
+              item.anchor ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {item.name}
+                </Link>
+              )
+            )}
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
-              <Link href="https://github.com/LucasHenriqueDiniz/WeebProfile" target="_blank" rel="noopener noreferrer">
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Github />
-                  </TooltipTrigger>
-                  <TooltipContent>Github</TooltipContent>
-                </Tooltip>
-              </Link>
-            </Button>
+          <div className="ml-auto flex items-center gap-1.5">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" asChild className="hidden h-9 w-9 sm:inline-flex">
+                  <Link
+                    href="https://github.com/LucasHenriqueDiniz/WeebProfile"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Github className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>GitHub</TooltipContent>
+            </Tooltip>
 
             {/* Language Selector Button */}
             <Button
               variant="ghost"
-              size="sm"
-              className="hidden sm:inline-flex"
+              size="icon"
+              className="hidden h-9 w-9 sm:inline-flex"
               onClick={() => setLanguageSelectorOpen(true)}
             >
               <Languages className="w-4 h-4" />
             </Button>
+
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
+
+            <span className="mx-1 hidden h-5 w-px bg-border sm:block" />
 
             {user ? (
               <>
@@ -199,20 +219,21 @@ export function Header({ className, variant, title, description, actions }: Head
               </>
             ) : (
               <>
-                <Button variant="outline" size="sm" asChild className="hidden sm:inline-flex">
+                <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
                   <Link href="/login" locale={undefined}>
-                    Sign in
+                    {tLanding("signIn")}
                   </Link>
                 </Button>
 
+                {/* Mesmo gradiente violeta→rosa dos CTAs da landing, nao o triplo antigo */}
                 <Button
                   size="sm"
                   asChild
-                  className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 hover:from-purple-600 hover:via-pink-600 hover:to-cyan-600 shadow-lg shadow-pink-500/20"
+                  className="bg-gradient-to-r from-primary to-secondary text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] hover:opacity-90"
                 >
                   <Link href="/login" locale={undefined}>
                     <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                    Get Started
+                    {tLanding("cta")}
                   </Link>
                 </Button>
               </>
