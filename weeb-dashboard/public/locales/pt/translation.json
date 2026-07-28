@@ -31,10 +31,10 @@
     "ready": "Pronto",
     "sortBy": "Ordenar por",
     "status": {
-      "failed": "Erro",
+      "ready": "Pronto",
       "generating": "Gerando",
       "pending": "Pendente",
-      "ready": "Pronto"
+      "failed": "Erro"
     },
     "subtitle": "Cole o markdown gerado no topo do seu README do GitHub",
     "title": "Meus SVGs",
@@ -52,7 +52,23 @@
     },
     "total": "total",
     "updated": "Atualizado",
-    "view": "Visualizar"
+    "view": "Visualizar",
+    "quota": {
+      "title": "Plano grátis",
+      "label": "{{count}} de {{max}} SVGs usados",
+      "hint": "Cada SVG se atualiza sozinho em ciclo. Precisa de inspiração?",
+      "templates": "Explorar templates",
+      "docs": "Documentação"
+    },
+    "newPage": {
+      "title": "Criar novo",
+      "subtitle": "Que tipo de card você quer?",
+      "profileTitle": "Perfil",
+      "profileDesc": "Um card completo de stats pessoais combinando plugins de código, anime, música e jogos.",
+      "repoTitle": "Repositório",
+      "repoDesc": "Um card independente para um repositório do GitHub — banner, stats, curva de estrelas.",
+      "cta": "Começar"
+    }
   },
   "header": {
     "changeLanguage": "Trocar idioma",

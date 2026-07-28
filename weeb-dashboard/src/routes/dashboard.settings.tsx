@@ -127,6 +127,7 @@ export default function SettingsPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
+                className="rounded-2xl border border-border bg-card p-6"
               >
                 <p className="text-sm text-muted-foreground mb-6">{t("profile.description")}</p>
 
@@ -183,7 +184,7 @@ export default function SettingsPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-8"
+                className="space-y-8 rounded-2xl border border-border bg-card p-6"
               >
                 <p className="text-sm text-muted-foreground -mt-2">{t("appearance.description")}</p>
 
@@ -200,7 +201,9 @@ export default function SettingsPage() {
                           onClick={() => setTheme(option.id)}
                           className={cn(
                             "rounded-lg border p-2 text-left transition-colors",
-                            isActive ? "border-cyan-400/60 ring-1 ring-cyan-400/30" : "border-border/50 hover:border-border"
+                            isActive
+                              ? "border-cyan-400/60 ring-1 ring-cyan-400/30"
+                              : "border-border/50 hover:border-border"
                           )}
                         >
                           <ThemePreviewSwatch id={option.id} />
@@ -254,6 +257,7 @@ export default function SettingsPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
+                className="rounded-2xl border border-border bg-card p-6"
               >
                 <p className="text-sm text-muted-foreground mb-6">{t("account.description")}</p>
                 <div className="max-w-md rounded-xl border border-destructive/30 bg-destructive/5 p-4">

@@ -31,10 +31,10 @@
     "ready": "Ready",
     "sortBy": "Sort by",
     "status": {
-      "failed": "Failed",
+      "ready": "Ready",
       "generating": "Generating",
       "pending": "Pending",
-      "ready": "Ready"
+      "failed": "Failed"
     },
     "title": "My SVGs",
     "toast": {
@@ -51,7 +51,23 @@
     },
     "total": "total",
     "updated": "Updated",
-    "view": "View"
+    "view": "View",
+    "quota": {
+      "title": "Free plan",
+      "label": "{{count}} of {{max}} SVGs used",
+      "hint": "Each SVG updates itself on a cycle. Need inspiration?",
+      "templates": "Explore templates",
+      "docs": "Documentation"
+    },
+    "newPage": {
+      "title": "Create new",
+      "subtitle": "What kind of card do you want?",
+      "profileTitle": "Profile",
+      "profileDesc": "A complete personal stats card combining code, anime, music and gaming plugins.",
+      "repoTitle": "Repository",
+      "repoDesc": "A standalone card for a single GitHub repository — banner, stats, star curve.",
+      "cta": "Start"
+    }
   },
   "header": {
     "changeLanguage": "Change language",
