@@ -44,19 +44,13 @@ export function RepoShowcase() {
                   src="/previews/github_repo/default/banner.svg"
                   alt=""
                   loading="lazy"
-                  className="-rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
+                  className="-rotate-1 rounded transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
                 />
                 <img
                   src="/previews/github_repo/default/banner_split.svg"
                   alt=""
                   loading="lazy"
-                  className="rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
-                />
-                <img
-                  src="/previews/github_repo/default/topics.svg"
-                  alt=""
-                  loading="lazy"
-                  className="-rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
+                  className="rotate-1 rounded transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
                 />
               </div>
               <div className="mt-8 flex flex-col gap-5">
@@ -64,13 +58,13 @@ export function RepoShowcase() {
                   src="/previews/github_repo/default/banner_aurora.svg"
                   alt=""
                   loading="lazy"
-                  className="rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.03]"
+                  className="rotate-1 rounded transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.03]"
                 />
                 <img
-                  src="/previews/github_repo/default/star_graph.svg"
+                  src="/previews/github_repo/default/languages.svg"
                   alt=""
                   loading="lazy"
-                  className="-rotate-1 rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
+                  className="-rotate-1 rounded transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.03]"
                 />
               </div>
             </div>

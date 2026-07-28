@@ -25,8 +25,9 @@ const COLUMN_DOWN = [
 ]
 
 function PreviewColumn({ sources }: { sources: string[] }) {
-  // Sem moldura (border/bg): qualquer overshoot de altura do SVG viraria uma faixa
-  // vazia dentro da caixa. drop-shadow segue o alpha do proprio SVG, nao a caixa.
+  // Sem moldura por card (border/bg): overshoot de altura do SVG viraria faixa vazia.
+  // Radius bem leve + drop-shadow que segue o alpha do proprio SVG; o fundo fica no
+  // painel da esteira inteira, la no container.
   return (
     <>
       {sources.map((src) => (
@@ -34,7 +35,7 @@ function PreviewColumn({ sources }: { sources: string[] }) {
           key={src}
           src={src}
           alt=""
-          className="mb-3.5 block w-full overflow-hidden rounded-xl [filter:drop-shadow(0_6px_20px_rgba(0,0,0,0.3))]"
+          className="mb-3.5 block w-full overflow-hidden rounded [filter:drop-shadow(0_4px_14px_rgba(0,0,0,0.25))]"
         />
       ))}
     </>
@@ -48,6 +49,8 @@ export function LandingHero() {
     <section id="top" className="relative flex min-h-[640px] items-center overflow-hidden">
       {/* Marquee card columns (decorative) */}
       <div aria-hidden className="absolute bottom-0 right-0 top-0 hidden w-[min(760px,58%)] md:block">
+        {/* Fundo da esteira: painel sutil que ancora as colunas em vez de cards soltos */}
+        <div className="absolute inset-y-0 left-6 right-0 rounded-l-3xl border-l border-border/40 bg-gradient-to-l from-primary/[0.07] via-muted/40 to-transparent dark:from-primary/10 dark:via-white/[0.03]" />
         <div className="absolute inset-0 flex justify-end gap-[18px] pr-[60px] opacity-85">
           <div className="h-full w-[300px] overflow-hidden">
             <div className="animate-marquee-up flex flex-col">

@@ -37,8 +37,10 @@ export function FeaturesGrid() {
       <SectionHeading kicker={t("kicker")} title={t("title")} />
       <div className="mt-10 grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
         {/* Primeira feature em destaque: mostra literalmente "a uma linha" no README */}
+        {/* 2x2 no lg: com 5 cards simples ao lado o grid fecha exato (2 col x 2 row + 5 = 3x3),
+            sem card orfao na ultima linha */}
         {first && (
-          <div className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-violet-500/40 hover:shadow-[0_10px_36px_-14px_rgba(139,92,246,0.4)] sm:col-span-2">
+          <div className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-violet-500/40 hover:shadow-[0_10px_36px_-14px_rgba(139,92,246,0.4)] sm:col-span-2 lg:row-span-2">
             <div className="flex items-start gap-4">
               <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-500/5 text-violet-500 transition-transform group-hover:scale-110">
                 <Zap className="h-5 w-5" />
@@ -67,7 +69,9 @@ export function FeaturesGrid() {
           return (
             <div
               key={item.title}
-              className={`group rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 ${s.hover}`}
+              className={`group rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 ${s.hover} ${
+                i === rest.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""
+              }`}
             >
               <span
                 className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br transition-transform group-hover:scale-110 ${s.tile}`}

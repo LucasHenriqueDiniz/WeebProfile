@@ -787,6 +787,15 @@
       "terms": "Terms",
       "privacy": "Privacy",
       "license": "License"
+    },
+    "pluginsPage": {
+      "title": "Plugins & sections",
+      "subtitle": "Every plugin ships ready-made sections — this is the full gallery, rendered by the real generator.",
+      "sections": "sections",
+      "viewTerminal": "terminal",
+      "viewDefault": "default",
+      "backHome": "Back to home",
+      "cta": "Create my SVG"
     }
   }
 }

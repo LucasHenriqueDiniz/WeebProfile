@@ -22,7 +22,7 @@ export function LandingFooter() {
       heading: t("footer.project"),
       links: [
         { label: t("footer.repo"), href: GITHUB_REPO_URL, external: true },
-        { label: t("footer.gallery"), href: `${GITHUB_REPO_URL}/blob/main/docs/plugins.md`, external: true },
+        { label: t("footer.gallery"), href: "/plugins" },
         { label: t("footer.discussions"), href: `${GITHUB_REPO_URL}/discussions`, external: true },
       ],
     },
@@ -55,6 +55,14 @@ export function LandingFooter() {
                   >
                     {link.label}
                   </a>
+                ) : link.href.startsWith("/") ? (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.label}
+                  </Link>
                 ) : (
                   <a
                     key={link.label}

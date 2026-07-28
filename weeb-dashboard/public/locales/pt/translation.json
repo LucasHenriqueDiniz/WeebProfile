@@ -787,6 +787,15 @@
       "terms": "Termos",
       "privacy": "Privacidade",
       "license": "Licença"
+    },
+    "pluginsPage": {
+      "title": "Plugins & seções",
+      "subtitle": "Cada plugin traz seções prontas — esta é a galeria completa, renderizada pelo gerador de verdade.",
+      "sections": "seções",
+      "viewTerminal": "terminal",
+      "viewDefault": "default",
+      "backHome": "Voltar ao início",
+      "cta": "Criar meu SVG"
     }
   }
 }

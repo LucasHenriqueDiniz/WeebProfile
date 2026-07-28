@@ -3,6 +3,7 @@
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ArrowUpRight } from "lucide-react"
 import { getPluginIcon } from "@/lib/plugin-icons"
+import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
 import { SectionHeading } from "./SectionHeading"
 
@@ -70,14 +71,9 @@ export function PluginsShowcase() {
               subtitle={t("subtitle")}
             />
           </div>
-          <a
-            href={`${GITHUB_REPO_URL}/blob/main/docs/plugins.md`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="whitespace-nowrap text-sm font-semibold text-cyan-500 hover:text-cyan-400"
-          >
+          <Link href="/plugins" className="whitespace-nowrap text-sm font-semibold text-cyan-500 hover:text-cyan-400">
             {t("gallery")} →
-          </a>
+          </Link>
         </div>
         <div className="mt-9 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {plugins.map((plugin) => {
@@ -105,20 +101,25 @@ export function PluginsShowcase() {
               </div>
             )
           })}
+          {/* Hover com borda em gradiente girando: o conic-gradient vive num ::before
+              maior que a caixa (inset -80%) que roda continuamente; a mascara e o p-px */}
           <a
             href={GITHUB_REPO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col justify-center gap-1.5 rounded-xl border border-dashed border-border p-5 transition-colors hover:border-muted-foreground/50"
+            className="group relative overflow-hidden rounded-xl p-px transition-transform hover:-translate-y-1 before:absolute before:inset-[-80%] before:animate-[spin_3s_linear_infinite] before:bg-[conic-gradient(from_0deg,transparent_0%,#8b5cf6_20%,#ec4899_35%,#06b6d4_50%,transparent_70%)] before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100"
           >
-            <div className="font-heading text-[15px] font-bold text-foreground">{t("missingTitle")}</div>
-            <div className="text-[12.5px] leading-relaxed text-muted-foreground">
-              {t("missingBody")}{" "}
-              <span className="inline-flex items-center text-cyan-500">
-                {t("missingLink")}
-                <ArrowUpRight className="h-3.5 w-3.5" />
+            <span className="pointer-events-none absolute inset-0 rounded-xl border border-dashed border-border transition-opacity duration-300 group-hover:opacity-0" />
+            <span className="relative flex h-full flex-col justify-center gap-1.5 rounded-[11px] bg-card p-5">
+              <span className="font-heading text-[15px] font-bold text-foreground">{t("missingTitle")}</span>
+              <span className="text-[12.5px] leading-relaxed text-muted-foreground">
+                {t("missingBody")}{" "}
+                <span className="inline-flex items-center text-cyan-500">
+                  {t("missingLink")}
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </span>
               </span>
-            </div>
+            </span>
           </a>
         </div>
       </div>
