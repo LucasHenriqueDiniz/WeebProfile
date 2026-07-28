@@ -376,17 +376,19 @@
   },
   "view": {
     "backToDashboard": "Voltar ao Dashboard",
-    "completed": "✓ Concluída",
+    "completed": "Ready",
     "cooldownWarning": "Cooldown ativo: aguarde {{minutes}} minuto(s) antes de gerar novamente. Use \"Regenerar\" para ignorar.",
     "created": "Criado",
-    "error": "✗ Erro",
-    "generating": "⟳ Gerando...",
+    "error": "Failed",
+    "generating": "Generating",
     "info": {
       "createdAt": "Criado em",
       "lastGenerated": "Última geração",
       "size": "Tamanho",
       "style": "Estilo",
-      "title": "Informações"
+      "title": "Informações",
+      "plugins": "Plugins",
+      "url": "Hosted URL"
     },
     "markdown": {
       "copied": "Copiado!",
@@ -434,7 +436,8 @@
       "toastCopiedDescription": "URL copiada para a área de transferência",
       "toastError": "Erro",
       "toastErrorDescription": "Não foi possível copiar a URL"
-    }
+    },
+    "edit": "Edit"
   },
   "wizard": {
     "error": {

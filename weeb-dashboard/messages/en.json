@@ -374,17 +374,19 @@
   },
   "view": {
     "backToDashboard": "Back to Dashboard",
-    "completed": "✓ Completed",
+    "completed": "Ready",
     "cooldownWarning": "Cooldown active: wait {{minutes}} minute(s) before generating again. Use \"Regenerate\" to override.",
     "created": "Created",
-    "error": "✗ Error",
-    "generating": "⟳ Generating...",
+    "error": "Failed",
+    "generating": "Generating",
     "info": {
       "createdAt": "Created at",
       "lastGenerated": "Last generated",
       "size": "Size",
       "style": "Style",
-      "title": "Information"
+      "title": "Information",
+      "plugins": "Plugins",
+      "url": "Hosted URL"
     },
     "markdown": {
       "copied": "Copied!",
@@ -432,7 +434,8 @@
       "toastCopiedDescription": "URL copied to clipboard",
       "toastError": "Error",
       "toastErrorDescription": "Could not copy the URL"
-    }
+    },
+    "edit": "Edit"
   },
   "wizard": {
     "error": {
