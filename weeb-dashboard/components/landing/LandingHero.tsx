@@ -3,50 +3,33 @@
 import { ArrowRight, Check } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
-import {
-  MockAnimeFavorites,
-  MockCodeHabits,
-  MockRepoCard,
-  MockSteamGames,
-  MockTerminalCalendar,
-  MockTerminalStats,
-  MockTopArtists,
-} from "./hero-mock-cards"
 
-function ColumnUp() {
+// Real section previews (the same SVGs the generator produces), straight from
+// public/previews — the hero shows the actual product, not mockups.
+const COLUMN_UP = [
+  "/previews/lastfm/default/top_artists.svg",
+  "/previews/github/terminal/code_habits.svg",
+  "/previews/steam/default/statistics.svg",
+  "/previews/duolingo/terminal/current_streak.svg",
+  "/previews/myanimelist/default/statistics_simple.svg",
+]
+
+const COLUMN_DOWN = [
+  "/previews/github/default/calendar.svg",
+  "/previews/lastfm/terminal/recent_tracks.svg",
+  "/previews/myanimelist/default/anime_favorites.svg",
+  "/previews/lyfta/terminal/overview.svg",
+  "/previews/codeforces/default/rating_rank.svg",
+]
+
+function PreviewColumn({ sources }: { sources: string[] }) {
   return (
     <>
-      <MockTopArtists />
-      <MockTerminalCalendar />
-      <MockSteamGames />
-      <MockTerminalStats
-        command="weeb duolingo"
-        rows={[
-          ["Streak", "412"],
-          ["Total XP", "38.2K"],
-          ["Languages", "3"],
-        ]}
-        footer="ja · es · de"
-      />
-    </>
-  )
-}
-
-function ColumnDown() {
-  return (
-    <>
-      <MockRepoCard />
-      <MockAnimeFavorites />
-      <MockCodeHabits />
-      <MockTerminalStats
-        command="weeb lyfta"
-        rows={[
-          ["Workouts", "212"],
-          ["Volume", "1.2M kg"],
-          ["PRs", "18"],
-        ]}
-        footer="last: push day"
-      />
+      {sources.map((src) => (
+        <div key={src} className="mb-3.5 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <img src={src} alt="" className="block w-full" />
+        </div>
+      ))}
     </>
   )
 }
@@ -59,16 +42,16 @@ export function LandingHero() {
       {/* Marquee card columns (decorative) */}
       <div aria-hidden className="absolute bottom-0 right-0 top-0 hidden w-[min(760px,58%)] md:block">
         <div className="absolute inset-0 flex justify-end gap-[18px] pr-[60px] opacity-85">
-          <div className="h-full w-[270px] overflow-hidden">
+          <div className="h-full w-[300px] overflow-hidden">
             <div className="animate-marquee-up flex flex-col">
-              <ColumnUp />
-              <ColumnUp />
+              <PreviewColumn sources={COLUMN_UP} />
+              <PreviewColumn sources={COLUMN_UP} />
             </div>
           </div>
-          <div className="h-full w-[270px] overflow-hidden">
+          <div className="h-full w-[300px] overflow-hidden">
             <div className="animate-marquee-down flex flex-col">
-              <ColumnDown />
-              <ColumnDown />
+              <PreviewColumn sources={COLUMN_DOWN} />
+              <PreviewColumn sources={COLUMN_DOWN} />
             </div>
           </div>
         </div>
@@ -76,7 +59,7 @@ export function LandingHero() {
       {/* Fades so the copy stays readable over the marquee */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background from-[44%] via-background/95 via-[60%] to-background/60 md:block"
+        className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background from-[42%] via-background/80 via-[56%] to-background/25 md:block"
       />
       <div
         aria-hidden
