@@ -37,7 +37,10 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthDecoration title="Crie sua conta">
+    <AuthDecoration
+      title="Crie sua conta"
+      subtitle="Monte cards com seus stats de código, anime e música em poucos minutos — grátis."
+    >
       <SignUp
         routing="path"
         path="/signup"
@@ -47,7 +50,7 @@ export default function SignupPage() {
       />
 
       {/* Switch to Login */}
-      <p className="text-[13px] text-center text-slate-400 mt-6">
+      <p className="text-[13px] text-center text-muted-foreground mt-6">
         Já tem conta?{" "}
         <Link href="/login" className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
           Entrar
