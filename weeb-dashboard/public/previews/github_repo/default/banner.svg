@@ -586,7 +586,11 @@
 
 /* We only need utilities, not base or components */
 
-.visible {
+.pointer-events-none {
+  pointer-events: none
+}
+
+#svg-main .visible {
   visibility: visible
 }
 
@@ -608,6 +612,54 @@
 
 #svg-main .inset-0 {
   inset: 0px
+}
+
+#svg-main .-bottom-10 {
+  bottom: -2.5rem
+}
+
+#svg-main .-bottom-14 {
+  bottom: -3.5rem
+}
+
+#svg-main .-bottom-px {
+  bottom: -1px
+}
+
+#svg-main .-left-8 {
+  left: -2rem
+}
+
+#svg-main .-left-px {
+  left: -1px
+}
+
+#svg-main .-right-14 {
+  right: -3.5rem
+}
+
+#svg-main .-right-8 {
+  right: -2rem
+}
+
+#svg-main .-right-px {
+  right: -1px
+}
+
+#svg-main .-top-10 {
+  top: -2.5rem
+}
+
+#svg-main .-top-12 {
+  top: -3rem
+}
+
+#svg-main .-top-px {
+  top: -1px
+}
+
+#svg-main .left-2 {
+  left: 0.5rem
 }
 
 #svg-main .right-0 {
@@ -726,12 +778,20 @@
   margin-top: 0.5rem
 }
 
+#svg-main .mt-2\.5 {
+  margin-top: 0.625rem
+}
+
 #svg-main .mt-3 {
   margin-top: 0.75rem
 }
 
 #svg-main .mt-4 {
   margin-top: 1rem
+}
+
+#svg-main .mt-5 {
+  margin-top: 1.25rem
 }
 
 #svg-main .mt-\[0\.25rem\] {
@@ -796,8 +856,20 @@
   aspect-ratio: 16 / 9
 }
 
+#svg-main .h-1 {
+  height: 0.25rem
+}
+
+#svg-main .h-1\.5 {
+  height: 0.375rem
+}
+
 #svg-main .h-10 {
   height: 2.5rem
+}
+
+#svg-main .h-11 {
+  height: 2.75rem
 }
 
 #svg-main .h-12 {
@@ -824,6 +896,10 @@
   height: 5rem
 }
 
+#svg-main .h-28 {
+  height: 7rem
+}
+
 #svg-main .h-3 {
   height: 0.75rem
 }
@@ -836,8 +912,16 @@
   height: 8rem
 }
 
+#svg-main .h-36 {
+  height: 9rem
+}
+
 #svg-main .h-4 {
   height: 1rem
+}
+
+#svg-main .h-48 {
+  height: 12rem
 }
 
 #svg-main .h-5 {
@@ -854,6 +938,10 @@
 
 #svg-main .h-8 {
   height: 2rem
+}
+
+#svg-main .h-9 {
+  height: 2.25rem
 }
 
 #svg-main .h-\[100px\] {
@@ -888,6 +976,10 @@
   max-height: 50px
 }
 
+#svg-main .min-h-\[110px\] {
+  min-height: 110px
+}
+
 #svg-main .min-h-\[120px\] {
   min-height: 120px
 }
@@ -904,8 +996,20 @@
   min-height: 80px
 }
 
+#svg-main .w-1 {
+  width: 0.25rem
+}
+
+#svg-main .w-1\.5 {
+  width: 0.375rem
+}
+
 #svg-main .w-10 {
   width: 2.5rem
+}
+
+#svg-main .w-11 {
+  width: 2.75rem
 }
 
 #svg-main .w-12 {
@@ -924,8 +1028,16 @@
   width: 0.5rem
 }
 
+#svg-main .w-2\.5 {
+  width: 0.625rem
+}
+
 #svg-main .w-20 {
   width: 5rem
+}
+
+#svg-main .w-28 {
+  width: 7rem
 }
 
 #svg-main .w-3 {
@@ -940,8 +1052,16 @@
   width: 8rem
 }
 
+#svg-main .w-36 {
+  width: 9rem
+}
+
 #svg-main .w-4 {
   width: 1rem
+}
+
+#svg-main .w-48 {
+  width: 12rem
 }
 
 #svg-main .w-5 {
@@ -987,6 +1107,10 @@
 
 #svg-main .max-w-\[60\%\] {
   max-width: 60%
+}
+
+#svg-main .max-w-\[80\%\] {
+  max-width: 80%
 }
 
 #svg-main .max-w-full {
@@ -1069,12 +1193,28 @@
   grid-template-columns: repeat(8, minmax(0, 1fr))
 }
 
+#svg-main .grid-cols-\[1\.25fr_\.75fr\] {
+  grid-template-columns: 1.25fr .75fr
+}
+
+#svg-main .grid-cols-\[1\.3fr_\.7fr\] {
+  grid-template-columns: 1.3fr .7fr
+}
+
+#svg-main .grid-cols-\[130px_1fr\] {
+  grid-template-columns: 130px 1fr
+}
+
 #svg-main .grid-cols-\[30px_1fr\] {
   grid-template-columns: 30px 1fr
 }
 
 #svg-main .grid-cols-\[30px_min-content_1fr\] {
   grid-template-columns: 30px min-content 1fr
+}
+
+#svg-main .grid-cols-\[4px_1fr\] {
+  grid-template-columns: 4px 1fr
 }
 
 #svg-main .grid-cols-\[75px_1fr\] {
@@ -1165,12 +1305,20 @@
   gap: 0.5rem
 }
 
+#svg-main .gap-2\.5 {
+  gap: 0.625rem
+}
+
 #svg-main .gap-3 {
   gap: 0.75rem
 }
 
 #svg-main .gap-4 {
   gap: 1rem
+}
+
+#svg-main .gap-6 {
+  gap: 1.5rem
 }
 
 #svg-main .gap-\[1px\] {
@@ -1180,6 +1328,29 @@
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
+}
+
+#svg-main .gap-x-2\.5 {
+  -moz-column-gap: 0.625rem;
+       column-gap: 0.625rem
+}
+
+#svg-main .gap-x-3 {
+  -moz-column-gap: 0.75rem;
+       column-gap: 0.75rem
+}
+
+#svg-main .gap-x-4 {
+  -moz-column-gap: 1rem;
+       column-gap: 1rem
+}
+
+#svg-main .gap-y-1 {
+  row-gap: 0.25rem
+}
+
+#svg-main .gap-y-1\.5 {
+  row-gap: 0.375rem
 }
 
 #svg-main .gap-y-2 {
@@ -1266,6 +1437,10 @@
   border-radius: 1rem
 }
 
+#svg-main .rounded-\[3px\] {
+  border-radius: 3px
+}
+
 #svg-main .rounded-full {
   border-radius: 9999px
 }
@@ -1310,6 +1485,10 @@
 
 #svg-main .border-b {
   border-bottom-width: 1px
+}
+
+#svg-main .border-t {
+  border-top-width: 1px
 }
 
 #svg-main .border-solid {
@@ -1447,6 +1626,10 @@
   padding: 0px
 }
 
+#svg-main .p-0\.5 {
+  padding: 0.125rem
+}
+
 #svg-main .p-1 {
   padding: 0.25rem
 }
@@ -1455,12 +1638,28 @@
   padding: 0.5rem
 }
 
+#svg-main .p-2\.5 {
+  padding: 0.625rem
+}
+
 #svg-main .p-3 {
   padding: 0.75rem
 }
 
+#svg-main .p-3\.5 {
+  padding: 0.875rem
+}
+
 #svg-main .p-4 {
   padding: 1rem
+}
+
+#svg-main .p-5 {
+  padding: 1.25rem
+}
+
+#svg-main .p-6 {
+  padding: 1.5rem
 }
 
 #svg-main .px-1 {
@@ -1531,6 +1730,10 @@
   padding-bottom: 0.125rem
 }
 
+#svg-main .pb-1 {
+  padding-bottom: 0.25rem
+}
+
 #svg-main .pb-2 {
   padding-bottom: 0.5rem
 }
@@ -1583,6 +1786,11 @@
 #svg-main .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem
+}
+
+#svg-main .text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem
 }
 
 #svg-main .text-\[0\.75rem\] {
@@ -1642,6 +1850,10 @@
   font-weight: 700
 }
 
+#svg-main .font-extrabold {
+  font-weight: 800
+}
+
 #svg-main .font-medium {
   font-weight: 500
 }
@@ -1681,6 +1893,22 @@
 
 #svg-main .leading-tight {
   line-height: 1.25
+}
+
+#svg-main .tracking-\[0\.11em\] {
+  letter-spacing: 0.11em
+}
+
+#svg-main .tracking-\[0\.14em\] {
+  letter-spacing: 0.14em
+}
+
+#svg-main .tracking-\[0\.16em\] {
+  letter-spacing: 0.16em
+}
+
+#svg-main .tracking-\[0\.2em\] {
+  letter-spacing: 0.2em
 }
 
 #svg-main .tracking-tight {
@@ -1903,6 +2131,16 @@
 
 #svg-main .blur {
   --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .blur-2xl {
+  --tw-blur: blur(40px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .blur-sm {
+  --tw-blur: blur(4px);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
 }
 
@@ -2169,4 +2407,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-repo-banner"><a href="https://github.com/LucasHenriqueDiniz/WeebProfile" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-lg border border-default-border"><div class="flex items-center gap-3 p-4" style="background:linear-gradient(135deg, #3178c630 0%, #3178c608 60%, transparent 100%)"><div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold" style="background:#3178c625;color:#3178c6">LU</div><div class="min-w-0 flex-1"><div class="truncate text-xs text-default-muted">LucasHenriqueDiniz</div><div class="truncate text-lg font-bold leading-tight text-default-text">WeebProfile</div></div><div class="h-9 w-1 flex-shrink-0 rounded-full" style="background:#3178c6"></div></div><p class="border-t border-default-border/50 px-4 py-3 text-sm leading-relaxed text-default-muted line-clamp-2">Generate SVG stat cards for your GitHub profile — code, anime, music and gaming stats.</p></a></section></div></div></div></div></foreignObject></svg>
+</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-repo-banner"><a href="https://github.com/LucasHenriqueDiniz/WeebProfile" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-lg border border-default-border"><div class="flex items-center gap-3 p-4" style="background:linear-gradient(135deg, #3178c630 0%, #3178c608 60%, transparent 100%)"><div class="flex flex-shrink-0 items-center justify-center rounded-full font-bold" style="width:44px;height:44px;background:#3178c625;color:#3178c6;font-size:17.6px">LU</div><div class="min-w-0 flex-1"><div class="truncate text-xs text-default-muted">LucasHenriqueDiniz</div><div class="truncate text-lg font-bold leading-tight text-default-text">WeebProfile</div></div><div class="h-9 w-1 flex-shrink-0 rounded-full" style="background:#3178c6"></div></div><p class="border-t border-default-border/50 px-4 py-3 text-sm leading-relaxed text-default-muted line-clamp-2">Generate SVG stat cards for your GitHub profile — code, anime, music and gaming stats.</p></a></section></div></div></div></div></foreignObject></svg>

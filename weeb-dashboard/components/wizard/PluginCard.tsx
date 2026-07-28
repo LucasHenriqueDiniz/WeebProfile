@@ -230,7 +230,11 @@ export const PluginCard = React.memo(
         {/* Cabecalho do plugin selecionado */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
-            {PluginIcon && <PluginIcon className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />}
+            {PluginIcon && (
+              <span className="mt-0.5 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-cyan-500/10 text-primary">
+                <PluginIcon className="h-5 w-5" />
+              </span>
+            )}
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-base font-semibold text-foreground">{displayName}</h2>
@@ -250,9 +254,9 @@ export const PluginCard = React.memo(
           <button
             onClick={handleTogglePlugin}
             className={cn(
-              "flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all border",
+              "flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
               state.enabled
-                ? "bg-primary text-primary-foreground border-primary"
+                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/40"
                 : "bg-background text-muted-foreground border-border hover:bg-muted hover:border-primary/30"
             )}
             aria-label={`${state.enabled ? "Desativar" : "Ativar"} ${displayName} plugin`}
@@ -423,7 +427,10 @@ export const PluginCard = React.memo(
                   // (Codeforces, Codewars, etc.) como se fosse o Duolingo.
                   let fieldMetadata: any = {
                     key: field,
-                    label: field === "username" ? `${metadata.displayName} Username` : field.replace(/([A-Z])/g, " $1").trim(),
+                    label:
+                      field === "username"
+                        ? `${metadata.displayName} Username`
+                        : field.replace(/([A-Z])/g, " $1").trim(),
                     type: "text" as const,
                   }
 

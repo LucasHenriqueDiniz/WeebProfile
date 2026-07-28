@@ -60,6 +60,7 @@ export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean;
     star_graph: { default: true, terminal: true },
     languages: { default: true, terminal: true },
     topics: { default: true, terminal: true },
+    overview: { default: true, terminal: true },
   },
 
   lastfm: {

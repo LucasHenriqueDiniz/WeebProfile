@@ -1,11 +1,13 @@
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "@/i18n/navigation"
 import LoadingScreen from "@/components/loading/LoadingScreen"
-import { Header } from "@/components/layout/Header"
-import { UserCircle2, BookMarked } from "lucide-react"
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { useTranslations } from "@/i18n/use-translations"
+import { ArrowRight, BookMarked, UserCircle2 } from "lucide-react"
 import { useEffect } from "react"
 
 export default function NewArtifactChooserPage() {
+  const t = useTranslations("dashboard.newPage")
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
 
@@ -18,55 +20,68 @@ export default function NewArtifactChooserPage() {
   if (authLoading) return <LoadingScreen />
   if (!user) return null
 
+  const options = [
+    {
+      key: "profile",
+      title: t("profileTitle"),
+      description: t("profileDesc"),
+      icon: UserCircle2,
+      iconClass: "from-cyan-500/20 to-cyan-500/5 text-cyan-400",
+      preview: "/template-previews/e66831e1-abab-4877-ba6a-92cbd0bd17d6.svg",
+      previewClass: "object-cover object-top",
+      href: "/dashboard/new/profile",
+    },
+    {
+      key: "repository",
+      title: t("repoTitle"),
+      description: t("repoDesc"),
+      icon: BookMarked,
+      iconClass: "from-violet-500/20 to-violet-500/5 text-violet-400",
+      preview: "/previews/github_repo/default/banner.svg",
+      previewClass: "object-contain p-4",
+      href: "/dashboard/new/repository",
+    },
+  ] as const
+
   return (
-    <div className="flex flex-col min-h-dvh bg-background">
-      <Header variant="dashboard" title="Create new" />
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl w-full">
-          <button
-            onClick={() => router.push("/dashboard/new/profile")}
-            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:border-primary hover:bg-primary/5"
-          >
-            <div className="h-40 w-full overflow-hidden border-b border-border bg-muted/40">
-              <img
-                src="/template-previews/e66831e1-abab-4877-ba6a-92cbd0bd17d6.svg"
-                alt="Exemplo de card de perfil"
-                className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
-              />
-            </div>
-            <div className="flex flex-col items-start gap-3 p-6">
-              <UserCircle2 className="w-8 h-8 text-cyan-400" />
-              <div>
-                <p className="text-base font-semibold text-foreground">Profile</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Build a complete personal stats image combining code, anime, music and gaming plugins.
-                </p>
-              </div>
-            </div>
-          </button>
-          <button
-            onClick={() => router.push("/dashboard/new/repository")}
-            className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:border-primary hover:bg-primary/5"
-          >
-            <div className="flex h-40 w-full items-center justify-center overflow-hidden border-b border-border bg-muted/40 p-4">
-              <img
-                src="/previews/github_repo/default/banner.svg"
-                alt="Exemplo de card de repositório"
-                className="w-full object-contain transition-transform duration-300 group-hover:scale-105"
-              />
-            </div>
-            <div className="flex flex-col items-start gap-3 p-6">
-              <BookMarked className="w-8 h-8 text-violet-400" />
-              <div>
-                <p className="text-base font-semibold text-foreground">Repository</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Create a standalone card for a single GitHub repository.
-                </p>
-              </div>
-            </div>
-          </button>
+    <DashboardLayout title={t("title")} description={t("subtitle")}>
+      <div className="flex min-h-full items-center justify-center px-6 py-10">
+        <div className="grid w-full max-w-3xl grid-cols-1 gap-5 sm:grid-cols-2">
+          {options.map((option) => {
+            const Icon = option.icon
+            return (
+              <button
+                key={option.key}
+                onClick={() => router.push(option.href)}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-left transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-[0_8px_40px_-12px_rgba(139,92,246,0.35)]"
+              >
+                <div className="h-44 w-full overflow-hidden border-b border-border bg-muted/40">
+                  <img
+                    src={option.preview}
+                    alt=""
+                    className={`h-full w-full transition-transform duration-300 group-hover:scale-[1.03] ${option.previewClass}`}
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-3 p-6">
+                  <span
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${option.iconClass}`}
+                  >
+                    <Icon className="h-6 w-6" />
+                  </span>
+                  <div className="flex-1">
+                    <p className="font-heading text-base font-bold text-foreground">{option.title}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{option.description}</p>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                    {t("cta")}
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </div>
+              </button>
+            )
+          })}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }

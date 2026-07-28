@@ -142,6 +142,8 @@ async function generatePreviewSvg(pluginName: string, sectionId: string, style: 
       pluginsOrder: [pluginName],
       essentialConfigs: Object.keys(essentialConfig).length > 0 ? { [pluginName.toLowerCase()]: essentialConfig } : undefined,
       mock: true, // Usar dados mock para previews
+      // Espelha o default do produto: header do terminal escondido (opt-in no wizard).
+      hideTerminalHeader: true,
     }
 
     const response = await fetch(SVG_GENERATOR_URL, {

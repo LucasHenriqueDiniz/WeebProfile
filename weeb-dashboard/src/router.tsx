@@ -25,6 +25,7 @@ const SvgViewPage = Lazy(() => import("./routes/dashboard.$id"))
 const EditSvgPage = Lazy(() => import("./routes/dashboard.$id.edit"))
 const SettingsPage = Lazy(() => import("./routes/dashboard.settings"))
 const TemplatesPage = Lazy(() => import("./routes/templates"))
+const PluginsGalleryPage = Lazy(() => import("./routes/plugins"))
 const TemplateDetailPage = Lazy(() => import("./routes/templates.$id"))
 
 // Root layout
@@ -115,6 +116,12 @@ const templatesRoute = createRoute({
   component: TemplatesPage,
 })
 
+const pluginsGalleryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/plugins",
+  component: PluginsGalleryPage,
+})
+
 const templateDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/templates/$id",
@@ -135,6 +142,7 @@ const routeTree = rootRoute.addChildren([
   editSvgRoute,
   settingsRoute,
   templatesRoute,
+  pluginsGalleryRoute,
   templateDetailRoute,
 ])
 

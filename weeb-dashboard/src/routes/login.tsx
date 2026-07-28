@@ -30,6 +30,20 @@ export default function LoginPage() {
     }
   }, [])
 
+  // Sem a publishable key do Clerk o isLoaded nunca resolve e a página ficaria num
+  // loading infinito — falha explícita em vez de spinner eterno.
+  if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
+    return (
+      <AuthDecoration title="Login indisponível">
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3">
+          <p className="text-sm text-amber-300">
+            Autenticação não configurada neste ambiente (VITE_CLERK_PUBLISHABLE_KEY ausente no build).
+          </p>
+        </div>
+      </AuthDecoration>
+    )
+  }
+
   // Mostrar loading enquanto verifica autenticação
   if (authLoading) {
     return <LoadingScreen />

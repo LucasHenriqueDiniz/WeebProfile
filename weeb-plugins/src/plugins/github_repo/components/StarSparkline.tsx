@@ -146,7 +146,11 @@ export function StarSparkline({ points, color, variant = "area", height = 120 }:
   const width = 300
 
   return (
+    // xmlns é obrigatório: este svg vive dentro do foreignObject (namespace XHTML) do
+    // SVG final — sem declarar o namespace ele vira elemento XHTML desconhecido e o
+    // gráfico simplesmente não pinta quando o arquivo é servido como .svg.
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       viewBox={`0 0 ${width} ${height}`}
       className="w-full"
       style={{ height }}

@@ -21,12 +21,16 @@ export function useTranslations(namespace?: string) {
     const fullKey = namespace ? `${namespace}.${key}` : key
     // i18next stores the resolved resource; getResourceBundle returns the entire namespace
     const parts = fullKey.split(".")
-    let value: any = i18n.getDataByLanguage(i18n.language)
-    if (!value) return []
-    for (const part of parts) {
-      value = value?.[part]
+    // getDataByLanguage returns resources keyed by namespace — walk from the default one,
+    // falling back to the fallback language when the key is missing (e.g. locale not translated yet).
+    const lookup = (lng: string) => {
+      let value: any = i18n.getDataByLanguage(lng)?.translation
+      for (const part of parts) {
+        value = value?.[part]
+      }
+      return value
     }
-    return value ?? []
+    return lookup(i18n.language) ?? lookup("en") ?? []
   }
 
   /**
