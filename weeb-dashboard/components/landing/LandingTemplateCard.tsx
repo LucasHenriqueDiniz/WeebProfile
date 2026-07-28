@@ -1,8 +1,16 @@
 "use client"
 
+import { useState } from "react"
 import { Link } from "@/i18n/navigation"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import type { Template } from "@/types/template"
+
+// Preview local usada quando o template da API vem sem previewUrl ou com URL quebrada —
+// o card nunca renderiza uma area vazia/imagem quebrada.
+const PREVIEW_FALLBACK: Record<string, string> = {
+  default: "/previews/github/default/calendar.svg",
+  terminal: "/previews/lastfm/terminal/recent_tracks.svg",
+}
 
 /**
  * Template card in the landing's visual language (border/card/chips), replacing the
@@ -11,6 +19,8 @@ import type { Template } from "@/types/template"
  * inside a fixed window (duration scales with nothing — slow and constant reads best).
  */
 export function LandingTemplateCard({ template, href }: { template: Template; href?: string }) {
+  const fallbackSrc = PREVIEW_FALLBACK[template.style] ?? PREVIEW_FALLBACK.default
+  const [previewSrc, setPreviewSrc] = useState(template.preview || fallbackSrc)
   const plugins = (
     Array.isArray(template.pluginsOrder)
       ? template.pluginsOrder
@@ -27,18 +37,15 @@ export function LandingTemplateCard({ template, href }: { template: Template; hr
       className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_8px_40px_-12px_rgba(139,92,246,0.3)]"
     >
       <div className="relative h-[196px] overflow-hidden border-b border-border bg-background">
-        {template.preview ? (
-          <img
-            src={template.preview}
-            alt=""
-            loading="lazy"
-            className="w-full min-h-full object-cover object-top transition-transform duration-[4000ms] ease-linear group-hover:[transform:translateY(min(0px,calc(196px-100%)))]"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <img src="/sora/sora-head.png" alt="" className="h-10 w-10 object-contain opacity-30" />
-          </div>
-        )}
+        <img
+          src={previewSrc}
+          alt=""
+          loading="lazy"
+          onError={() => {
+            if (previewSrc !== fallbackSrc) setPreviewSrc(fallbackSrc)
+          }}
+          className="w-full min-h-full object-cover object-top transition-transform duration-[4000ms] ease-linear group-hover:[transform:translateY(min(0px,calc(196px-100%)))]"
+        />
       </div>
       <div className="flex flex-1 flex-col p-5">
         <div className="font-heading text-base font-bold text-foreground">{template.name}</div>
