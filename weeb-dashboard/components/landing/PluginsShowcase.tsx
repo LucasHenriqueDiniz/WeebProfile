@@ -37,7 +37,7 @@ export function PluginsShowcase() {
   const plugins = PLUGIN_ORDER.map((id) => PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]).filter(Boolean)
 
   return (
-    <section id="plugins" className="border-t border-border/60 bg-muted/30">
+    <section id="plugins" className="border-t border-border/60 bg-muted/50 dark:bg-muted/30">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
         <div className="flex flex-wrap items-end justify-between gap-7">
           <div className="max-w-[560px]">

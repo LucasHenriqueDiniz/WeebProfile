@@ -59,10 +59,11 @@ export function Header({ className, variant, title, description, actions }: Head
       return "home"
     })()
 
+  // Opacidade controlada via MotionValue numerico + CSS var: os valores antigos eram
+  // rgba fixos de tema escuro, entao no tema claro o header escurecia ao rolar.
   const { scrollY } = useScroll()
-
-  const headerBg = useTransform(scrollY, [0, 100], ["rgba(2, 6, 23, 0)", "rgba(2, 6, 23, 0.8)"])
-  const headerBorder = useTransform(scrollY, [0, 100], ["rgba(148, 163, 184, 0)", "rgba(148, 163, 184, 0.1)"])
+  const headerBgAlpha = useTransform(scrollY, [0, 100], [0, 0.85])
+  const headerBorderAlpha = useTransform(scrollY, [0, 100], [0, 0.6])
 
   // Home nav mirrors the landing sections (in-page anchors) plus the external docs.
   const navigation = [
@@ -82,10 +83,14 @@ export function Header({ className, variant, title, description, actions }: Head
   if (detectedVariant === "home") {
     return (
       <motion.header
-        style={{
-          backgroundColor: headerBg,
-          borderBottomColor: headerBorder,
-        }}
+        style={
+          {
+            "--header-bg-alpha": headerBgAlpha,
+            "--header-border-alpha": headerBorderAlpha,
+            backgroundColor: "hsl(var(--background) / var(--header-bg-alpha))",
+            borderBottomColor: "hsl(var(--border) / var(--header-border-alpha))",
+          } as any
+        }
         className={cn("fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-xl transition-all", className)}
       >
         <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -94,7 +99,7 @@ export function Header({ className, variant, title, description, actions }: Head
             <motion.div className="relative" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
               <img src="/sora/sora-head.png" alt="Sora" className="w-8 h-8 object-contain drop-shadow-lg" />
             </motion.div>
-            <span className="text-xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent font-sora">
+            <span className="text-xl font-black bg-gradient-to-r from-violet-600 via-pink-600 to-cyan-600 dark:from-purple-400 dark:via-pink-400 dark:to-cyan-400 bg-clip-text text-transparent font-sora">
               WeebProfile
             </span>
           </Link>

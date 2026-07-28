@@ -7,16 +7,18 @@ export function RepoShowcase() {
   const t = useTranslations("landing.repos")
   const chips = [t("banner"), t("stats"), t("starGrowth"), t("languages"), t("topics")]
 
-  // Real github_repo section previews from the generator.
+  // Real github_repo section previews from the generator — curated to the ones that
+  // actually render rich content (star_graph/topics come out mostly empty in the
+  // static previews, so they'd sell the feature short).
   const previews = [
     { label: t("banner"), src: "/previews/github_repo/default/banner.svg" },
-    { label: t("stats"), src: "/previews/github_repo/default/stats.svg" },
-    { label: t("starGrowth"), src: "/previews/github_repo/default/star_graph.svg" },
     { label: t("languages"), src: "/previews/github_repo/default/languages.svg" },
+    { label: t("stats"), src: "/previews/github_repo/default/stats.svg" },
+    { label: `${t("banner")} · terminal`, src: "/previews/github_repo/terminal/banner.svg" },
   ]
 
   return (
-    <section id="repos" className="border-t border-border/60 bg-muted/30">
+    <section id="repos" className="border-t border-border/60 bg-muted/50 dark:bg-muted/30">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
           <div>

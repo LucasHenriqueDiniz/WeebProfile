@@ -29,7 +29,7 @@ export function LandingFooter() {
   ]
 
   return (
-    <footer className="border-t border-border/60 bg-muted/30">
+    <footer className="border-t border-border/60 bg-muted/50 dark:bg-muted/30">
       <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-10 px-6 py-11">
         <div className="max-w-[280px]">
           <Link href="/" className="flex items-center gap-2.5">
