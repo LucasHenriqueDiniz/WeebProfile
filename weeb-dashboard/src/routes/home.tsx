@@ -5,6 +5,7 @@ import { CTASection } from "@/components/sections/CTASection"
 import { HeroSection } from "@/components/sections/HeroSection"
 import { HowItWorksSection } from "@/components/sections/HowItWorksSection"
 import { PlatformsSection } from "@/components/sections/PlatformsSection"
+import { PlatformStrip } from "@/components/sections/PlatformStrip"
 import { SectionDivider } from "@/components/sections/SectionDivider"
 import { TemplatesGallery } from "@/components/sections/TemplatesGallery"
 import { usePublicTemplatesStore } from "@/lib/stores/public-templates.store"
@@ -22,10 +23,11 @@ export default function HomePageClient() {
     <div className="bg-background">
       <Header />
       <HeroSection />
-      <SectionDivider variant="gradient" />
-      <PlatformsSection />
+      <PlatformStrip />
       <SectionDivider />
       <HowItWorksSection />
+      <SectionDivider />
+      <PlatformsSection />
       <SectionDivider />
       <TemplatesGallery templates={templates} loading={loading} />
       <SectionDivider />

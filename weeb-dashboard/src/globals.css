@@ -181,6 +181,33 @@ input[type="color"]::-moz-color-swatch {
   border-color: hsl(var(--ring));
 }
 
+/* Hero marquee (HeroMarquee.tsx) — colunas verticais em loop contínuo */
+@keyframes hero-marquee-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes hero-marquee-down {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-marquee-up {
+  animation: hero-marquee-up 30s linear infinite;
+}
+
+.animate-hero-marquee-down {
+  animation: hero-marquee-down 34s linear infinite;
+}
+
 /* Pixel rendering for loading animation */
 .pixelated {
   image-rendering: pixelated;

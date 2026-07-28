@@ -8,35 +8,47 @@ import { useTranslations } from "@/i18n/use-translations"
 export function CTASection() {
   const t = useTranslations("homepage.cta")
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-pink-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
+    <section className="border-t border-border/60">
+      <div className="container mx-auto px-4 py-16 sm:px-6 md:py-24 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-center space-y-6"
+          className="relative overflow-hidden rounded-[20px] border border-border bg-card px-6 py-14 text-center sm:px-10"
         >
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+          {/* Glow radial no topo do card */}
+          <div
+            className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[620px] -translate-x-1/2 rounded-full"
+            style={{ background: "radial-gradient(closest-side, rgba(139,92,246,0.35), transparent 70%)" }}
+            aria-hidden="true"
+          />
+
+          <h2 className="relative mx-auto max-w-2xl font-heading text-4xl font-extrabold tracking-tight text-foreground md:text-[42px] md:leading-[1.1]">
             {t("title")}
           </h2>
-          <p className="text-xl text-muted-foreground">{t("description")}</p>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex justify-center">
+          <p className="relative mx-auto mt-4 max-w-[460px] text-base leading-relaxed text-muted-foreground md:text-lg">
+            {t("description")}
+          </p>
+          <div className="relative mt-8 flex flex-wrap justify-center gap-3">
             <Button
               asChild
               size="lg"
-              className="text-lg px-8 py-6 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 hover:from-purple-600 hover:via-pink-600 hover:to-cyan-600 shadow-lg shadow-pink-500/30 transition-all hover:shadow-pink-500/50"
+              className="bg-gradient-to-r from-violet-500 to-pink-500 px-7 py-6 text-base font-semibold text-white shadow-[0_0_34px_rgba(139,92,246,0.45)] transition-shadow hover:shadow-[0_0_44px_rgba(139,92,246,0.6)]"
             >
               <Link href="/login">{t("buttonText")}</Link>
             </Button>
-          </motion.div>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="border-border bg-background px-6 py-6 text-base font-semibold"
+            >
+              <Link href="https://github.com/LucasHenriqueDiniz/WeebProfile" target="_blank" rel="noopener noreferrer">
+                {t("githubButton")}
+              </Link>
+            </Button>
+          </div>
         </motion.div>
       </div>
     </section>

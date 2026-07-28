@@ -117,12 +117,20 @@
       "buttonHref": "/login",
       "buttonText": "Create Your Profile",
       "description": "Create your first card in under 2 minutes. No install, no YAML, no Actions.",
-      "title": "Ready to level up your profile?"
+      "title": "Ready to level up your profile?",
+      "githubButton": "View on GitHub"
     },
     "hero": {
       "ctaPrimary": "Get started free",
-      "subtitle": "A visual builder for your GitHub, anime, gaming, books and music stats. No YAML, no Actions — just click, preview and paste.",
-      "title": "One SVG to showcase your whole nerd life"
+      "subtitle": "Code, anime, music, games and repos as SVG cards that update themselves. One line of markdown and you're done.",
+      "title": "One SVG to showcase your whole nerd life",
+      "badge": "{{count}} plugins · 60+ sections · profile & repos",
+      "titleLine": "Your README, {highlight}",
+      "highlight": "alive",
+      "ctaSecondary": "See all sections",
+      "trust1": "3 SVGs on the free plan",
+      "trust2": "No GitHub Action, no YAML",
+      "trust3": "Sign in with GitHub"
     },
     "howItWorks": {
       "badge": "How it works",
@@ -304,6 +312,9 @@
         "customColors": "Custom Colors",
         "applied": "Applied"
       }
+    },
+    "platformStrip": {
+      "label": "Pulls data from"
     }
   },
   "languageSelector": {
