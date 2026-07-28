@@ -104,6 +104,22 @@ export function StyleConfiguration({
       ? ["default", "purple", "pink", "cyan", "orange", "blue", "green", "red", "custom"]
       : ["default", "dracula", "monokai"]
 
+  // Swatch de cor por tema — o chip mostra a cor real em vez de pedir que o usuario
+  // decore o nome. "default" e "custom" usam gradiente (marca / arco-iris).
+  const themeSwatches: Record<string, string> = {
+    default: "linear-gradient(135deg,#8b5cf6,#06b6d4)",
+    purple: "#8b5cf6",
+    pink: "#ec4899",
+    cyan: "#06b6d4",
+    orange: "#f97316",
+    blue: "#3b82f6",
+    green: "#10b981",
+    red: "#ef4444",
+    custom: "conic-gradient(#ef4444,#f97316,#10b981,#06b6d4,#8b5cf6,#ec4899,#ef4444)",
+    dracula: "#bd93f9",
+    monokai: "#a6e22e",
+  }
+
   return (
     <div className="divide-y divide-border/60">
       {/* Style selector */}
@@ -161,12 +177,17 @@ export function StyleConfiguration({
               key={t}
               onClick={() => setTheme(t)}
               className={cn(
-                "px-3 py-1.5 rounded-full text-xs font-medium transition-all capitalize",
+                "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium capitalize transition-all",
                 theme === t
-                  ? "bg-gradient-to-r from-violet-500 to-cyan-500 text-white"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  ? "border-primary/60 bg-primary/10 text-foreground ring-1 ring-primary/30"
+                  : "border-transparent bg-muted text-muted-foreground hover:bg-muted/80"
               )}
             >
+              <span
+                aria-hidden
+                className="h-2.5 w-2.5 flex-shrink-0 rounded-full ring-1 ring-black/10 dark:ring-white/20"
+                style={{ background: themeSwatches[t] ?? "#8b5cf6" }}
+              />
               {t}
             </button>
           ))}
