@@ -23,12 +23,33 @@ const PLUGIN_ORDER = [
   "github_repo",
 ]
 
-const CATEGORY_COLORS: Record<string, string> = {
-  coding: "text-violet-400",
-  music: "text-pink-500",
-  anime: "text-cyan-500",
-  gaming: "text-emerald-500",
-  repository: "text-violet-400",
+// Identidade por categoria: rótulo, tile do ícone e o glow do hover.
+const CATEGORY_STYLE: Record<string, { label: string; tile: string; hover: string }> = {
+  coding: {
+    label: "text-violet-500 dark:text-violet-400",
+    tile: "from-violet-500/20 to-violet-500/5 text-violet-500 dark:text-violet-400",
+    hover: "hover:border-violet-500/50 hover:shadow-[0_10px_36px_-14px_rgba(139,92,246,0.5)]",
+  },
+  music: {
+    label: "text-pink-500",
+    tile: "from-pink-500/20 to-pink-500/5 text-pink-500",
+    hover: "hover:border-pink-500/50 hover:shadow-[0_10px_36px_-14px_rgba(236,72,153,0.5)]",
+  },
+  anime: {
+    label: "text-cyan-500",
+    tile: "from-cyan-500/20 to-cyan-500/5 text-cyan-500",
+    hover: "hover:border-cyan-500/50 hover:shadow-[0_10px_36px_-14px_rgba(6,182,212,0.5)]",
+  },
+  gaming: {
+    label: "text-emerald-500",
+    tile: "from-emerald-500/20 to-emerald-500/5 text-emerald-500",
+    hover: "hover:border-emerald-500/50 hover:shadow-[0_10px_36px_-14px_rgba(16,185,129,0.5)]",
+  },
+  repository: {
+    label: "text-amber-500",
+    tile: "from-amber-500/20 to-amber-500/5 text-amber-500",
+    hover: "hover:border-amber-500/50 hover:shadow-[0_10px_36px_-14px_rgba(245,158,11,0.5)]",
+  },
 }
 
 export function PluginsShowcase() {
@@ -61,17 +82,21 @@ export function PluginsShowcase() {
         <div className="mt-9 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {plugins.map((plugin) => {
             const Icon = getPluginIcon(plugin.name)
+            const cat = CATEGORY_STYLE[plugin.category] ?? CATEGORY_STYLE.coding
             return (
-              <div key={plugin.name} className="rounded-xl border border-border bg-card p-5">
+              <div
+                key={plugin.name}
+                className={`group rounded-xl border border-border bg-card p-5 transition-all hover:-translate-y-1 ${cat.hover}`}
+              >
                 <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-lg bg-muted text-foreground">
+                  <span
+                    className={`flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-gradient-to-br transition-transform group-hover:scale-110 ${cat.tile}`}
+                  >
                     {Icon ? <Icon className="h-5 w-5" /> : null}
                   </span>
                   <div>
                     <div className="font-heading text-[15px] font-bold text-foreground">{plugin.displayName}</div>
-                    <div className={`text-[11px] font-medium ${CATEGORY_COLORS[plugin.category] ?? "text-violet-400"}`}>
-                      {t(`categories.${plugin.category}`)}
-                    </div>
+                    <div className={`text-[11px] font-medium ${cat.label}`}>{t(`categories.${plugin.category}`)}</div>
                   </div>
                 </div>
                 <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">

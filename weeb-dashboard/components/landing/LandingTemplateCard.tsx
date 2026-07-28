@@ -10,7 +10,7 @@ import type { Template } from "@/types/template"
  * the rest of the page. Hover = a plain CSS "elevator" scroll of the tall preview
  * inside a fixed window (duration scales with nothing — slow and constant reads best).
  */
-export function LandingTemplateCard({ template }: { template: Template }) {
+export function LandingTemplateCard({ template, href }: { template: Template; href?: string }) {
   const plugins = (
     Array.isArray(template.pluginsOrder)
       ? template.pluginsOrder
@@ -23,7 +23,7 @@ export function LandingTemplateCard({ template }: { template: Template }) {
 
   return (
     <Link
-      href={`/templates/${template.id}`}
+      href={href ?? `/templates/${template.id}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_8px_40px_-12px_rgba(139,92,246,0.3)]"
     >
       <div className="relative h-[196px] overflow-hidden border-b border-border bg-background">

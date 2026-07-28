@@ -1,5 +1,6 @@
 "use client"
 
+import { ClipboardCopy, LogIn, Palette, Puzzle } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
 import { SectionHeading } from "./SectionHeading"
 
@@ -9,7 +10,32 @@ interface Step {
   body: string
 }
 
-const STEP_COLORS = ["text-violet-500", "text-violet-400", "text-pink-500", "text-cyan-500"]
+const STEP_STYLE = [
+  {
+    icon: LogIn,
+    accent: "text-violet-500",
+    tile: "from-violet-500/20 to-violet-500/5 text-violet-500",
+    hover: "hover:border-violet-500/50 hover:shadow-[0_10px_40px_-12px_rgba(139,92,246,0.4)]",
+  },
+  {
+    icon: Puzzle,
+    accent: "text-fuchsia-500",
+    tile: "from-fuchsia-500/20 to-fuchsia-500/5 text-fuchsia-500",
+    hover: "hover:border-fuchsia-500/50 hover:shadow-[0_10px_40px_-12px_rgba(217,70,239,0.4)]",
+  },
+  {
+    icon: Palette,
+    accent: "text-pink-500",
+    tile: "from-pink-500/20 to-pink-500/5 text-pink-500",
+    hover: "hover:border-pink-500/50 hover:shadow-[0_10px_40px_-12px_rgba(236,72,153,0.4)]",
+  },
+  {
+    icon: ClipboardCopy,
+    accent: "text-cyan-500",
+    tile: "from-cyan-500/20 to-cyan-500/5 text-cyan-500",
+    hover: "hover:border-cyan-500/50 hover:shadow-[0_10px_40px_-12px_rgba(6,182,212,0.4)]",
+  },
+]
 
 export function HowItWorks() {
   const t = useTranslations("landing.how")
@@ -30,20 +56,39 @@ export function HowItWorks() {
         subtitle={t("subtitle")}
       />
       <div className="mt-11 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {steps.map((step, i) => (
-          <div key={step.title} className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center justify-between">
-              <span className={`font-mono text-[13px] font-extrabold ${STEP_COLORS[i % STEP_COLORS.length]}`}>
+        {steps.map((step, i) => {
+          const s = STEP_STYLE[i % STEP_STYLE.length]
+          const Icon = s.icon
+          return (
+            <div
+              key={step.title}
+              className={`group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 ${s.hover}`}
+            >
+              {/* Numeral fantasma no canto — identidade sem ocupar layout */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -right-2 -top-5 font-heading text-[88px] font-extrabold leading-none text-foreground/[0.04] transition-colors group-hover:text-foreground/[0.07]"
+              >
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <span className="whitespace-nowrap rounded-full border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground/80">
-                {step.tag}
-              </span>
+              <div className="relative flex items-center justify-between">
+                <span
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br transition-transform group-hover:scale-110 ${s.tile}`}
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <span className="whitespace-nowrap rounded-full border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground/80">
+                  {step.tag}
+                </span>
+              </div>
+              <h3 className="relative mt-4 flex items-baseline gap-2 font-heading text-[17px] font-bold text-foreground">
+                <span className={`font-mono text-xs font-extrabold ${s.accent}`}>{String(i + 1).padStart(2, "0")}</span>
+                {step.title}
+              </h3>
+              <p className="relative mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{step.body}</p>
             </div>
-            <h3 className="mt-4 font-heading text-[17px] font-bold text-foreground">{step.title}</h3>
-            <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">{step.body}</p>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </section>
   )

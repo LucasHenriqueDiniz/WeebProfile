@@ -1,7 +1,8 @@
-import { FaGithub, FaSteam, FaLastfmSquare, FaCode, FaSpotify, FaBookOpen } from "react-icons/fa"
+import { FaGithub, FaSteam, FaLastfmSquare, FaSpotify } from "react-icons/fa"
 import { TbNumber16Small } from "react-icons/tb"
-import { SiMyanimelist, SiStackoverflow } from "react-icons/si"
+import { SiMyanimelist, SiStackoverflow, SiCodeforces, SiCodewars, SiDuolingo } from "react-icons/si"
 import { GiWeightLiftingUp } from "react-icons/gi"
+import { GoRepo } from "react-icons/go"
 import type { ComponentType } from "react"
 
 /**
@@ -17,11 +18,12 @@ const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   "16personalities": TbNumber16Small,
   lyfta: GiWeightLiftingUp,
   steam: FaSteam,
-  codewars: FaCode,
-  codeforces: FaCode,
+  codewars: SiCodewars,
+  codeforces: SiCodeforces,
   stackoverflow: SiStackoverflow,
-  duolingo: FaBookOpen,
+  duolingo: SiDuolingo,
   spotify: FaSpotify,
+  github_repo: GoRepo,
 }
 
 /**

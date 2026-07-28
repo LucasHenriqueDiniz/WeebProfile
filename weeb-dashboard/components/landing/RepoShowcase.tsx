@@ -7,20 +7,10 @@ export function RepoShowcase() {
   const t = useTranslations("landing.repos")
   const chips = [t("banner"), t("stats"), t("starGrowth"), t("languages"), t("topics")]
 
-  // Real github_repo section previews from the generator — curated to the ones that
-  // actually render rich content (star_graph/topics come out mostly empty in the
-  // static previews, so they'd sell the feature short).
-  const previews = [
-    { label: t("banner"), src: "/previews/github_repo/default/banner.svg" },
-    { label: t("languages"), src: "/previews/github_repo/default/languages.svg" },
-    { label: t("stats"), src: "/previews/github_repo/default/stats.svg" },
-    { label: `${t("banner")} · terminal`, src: "/previews/github_repo/terminal/banner.svg" },
-  ]
-
   return (
     <section id="repos" className="border-t border-border/60 bg-muted/50 dark:bg-muted/30">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
-        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div>
             <SectionHeading
               align="left"
@@ -33,7 +23,7 @@ export function RepoShowcase() {
               {chips.map((chip) => (
                 <span
                   key={chip}
-                  className="whitespace-nowrap rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground"
+                  className="whitespace-nowrap rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-cyan-500/50 hover:text-cyan-500"
                 >
                   {chip}
                 </span>
@@ -41,15 +31,30 @@ export function RepoShowcase() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-            {previews.map((p) => (
-              <div key={p.label} className="overflow-hidden rounded-xl border border-border bg-card">
-                <div className="border-b border-border px-3.5 py-2.5 text-[11.5px] font-semibold text-muted-foreground">
-                  {p.label}
-                </div>
-                <img src={p.src} alt={p.label} className="block w-full" loading="lazy" />
-              </div>
-            ))}
+          {/* Colagem de previews reais — sem molduras rotuladas; os SVGs falam por si,
+              com glow atrás e leve rotação que endireita no hover. */}
+          <div aria-hidden className="relative">
+            <div className="absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary opacity-[0.14] blur-[110px] dark:opacity-20" />
+            <div className="relative flex flex-col gap-5">
+              <img
+                src="/previews/github_repo/default/banner.svg"
+                alt=""
+                loading="lazy"
+                className="w-[88%] -rotate-1 self-start rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.25))] hover:rotate-0 hover:scale-[1.02]"
+              />
+              <img
+                src="/previews/github_repo/terminal/languages.svg"
+                alt=""
+                loading="lazy"
+                className="w-[80%] rotate-1 self-end rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.02]"
+              />
+              <img
+                src="/previews/github_repo/terminal/banner.svg"
+                alt=""
+                loading="lazy"
+                className="w-[84%] -rotate-1 self-start rounded-xl transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.02]"
+              />
+            </div>
           </div>
         </div>
       </div>

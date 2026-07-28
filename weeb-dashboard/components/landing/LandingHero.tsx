@@ -5,30 +5,37 @@ import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
 
 // Real section previews (the same SVGs the generator produces), straight from
-// public/previews — the hero shows the actual product, not mockups.
+// public/previews — the hero shows the actual product, not mockups. Curated to the
+// tightly-sized, data-rich ones: several previews declare more height than they paint
+// (static calculateHeight overshoot), which reads as ugly empty padding in a frame.
 const COLUMN_UP = [
   "/previews/lastfm/default/top_artists.svg",
-  "/previews/github/terminal/code_habits.svg",
-  "/previews/steam/default/statistics.svg",
-  "/previews/duolingo/terminal/current_streak.svg",
-  "/previews/myanimelist/default/statistics_simple.svg",
+  "/previews/duolingo/terminal/total_xp.svg",
+  "/previews/myanimelist/default/statistics.svg",
+  "/previews/codewars/terminal/completed_kata.svg",
+  "/previews/codeforces/default/rating_rank.svg",
 ]
 
 const COLUMN_DOWN = [
   "/previews/github/default/calendar.svg",
   "/previews/lastfm/terminal/recent_tracks.svg",
-  "/previews/myanimelist/default/anime_favorites.svg",
-  "/previews/lyfta/terminal/overview.svg",
-  "/previews/codeforces/default/rating_rank.svg",
+  "/previews/github/default/activity.svg",
+  "/previews/myanimelist/terminal/manga_bar.svg",
+  "/previews/github_repo/terminal/languages.svg",
 ]
 
 function PreviewColumn({ sources }: { sources: string[] }) {
+  // Sem moldura (border/bg): qualquer overshoot de altura do SVG viraria uma faixa
+  // vazia dentro da caixa. drop-shadow segue o alpha do proprio SVG, nao a caixa.
   return (
     <>
       {sources.map((src) => (
-        <div key={src} className="mb-3.5 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-          <img src={src} alt="" className="block w-full" />
-        </div>
+        <img
+          key={src}
+          src={src}
+          alt=""
+          className="mb-3.5 block w-full overflow-hidden rounded-xl [filter:drop-shadow(0_6px_20px_rgba(0,0,0,0.3))]"
+        />
       ))}
     </>
   )
