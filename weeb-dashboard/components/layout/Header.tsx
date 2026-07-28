@@ -43,6 +43,7 @@ const AvatarFallback = ({ className, children }: { className?: string; children:
 
 export function Header({ className, variant, title, description, actions }: HeaderProps) {
   const t = useTranslations("header")
+  const tLanding = useTranslations("landing.nav")
   const pathname = usePathname()
   const router = useRouter()
   const { user, signOut } = useAuth()
@@ -63,9 +64,13 @@ export function Header({ className, variant, title, description, actions }: Head
   const headerBg = useTransform(scrollY, [0, 100], ["rgba(2, 6, 23, 0)", "rgba(2, 6, 23, 0.8)"])
   const headerBorder = useTransform(scrollY, [0, 100], ["rgba(148, 163, 184, 0)", "rgba(148, 163, 184, 0.1)"])
 
+  // Home nav mirrors the landing sections (in-page anchors) plus the external docs.
   const navigation = [
-    { name: t("nav.templates"), href: "/templates" },
-    { name: "Docs", href: "/docs" },
+    { name: tLanding("plugins"), href: "#plugins", anchor: true },
+    { name: tLanding("templates"), href: "#templates", anchor: true },
+    { name: tLanding("repos"), href: "#repos", anchor: true },
+    { name: tLanding("styles"), href: "#styles", anchor: true },
+    { name: tLanding("docs"), href: "https://github.com/LucasHenriqueDiniz/WeebProfile", anchor: true },
   ]
 
   const handleSignOut = async () => {
@@ -97,15 +102,15 @@ export function Header({ className, variant, title, description, actions }: Head
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             {navigation.map((item) => (
-              <Link key={item.name} href={item.href}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-                >
-                  {item.name}
-                </Button>
-              </Link>
+              <Button
+                key={item.name}
+                variant="ghost"
+                size="sm"
+                asChild
+                className="text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+              >
+                {item.anchor ? <a href={item.href}>{item.name}</a> : <Link href={item.href}>{item.name}</Link>}
+              </Button>
             ))}
           </div>
 
@@ -230,16 +235,16 @@ export function Header({ className, variant, title, description, actions }: Head
           >
             <div className="container mx-auto px-4 py-4 space-y-2">
               {navigation.map((item) => (
-                <Link key={item.name} href={item.href}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start text-muted-foreground hover:text-foreground"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Button>
-                </Link>
+                <Button
+                  key={item.name}
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="w-full justify-start text-muted-foreground hover:text-foreground"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.anchor ? <a href={item.href}>{item.name}</a> : <Link href={item.href}>{item.name}</Link>}
+                </Button>
               ))}
               <div className="pt-2 border-t border-border/50">
                 <Button variant="ghost" size="sm" asChild className="w-full justify-start sm:hidden">

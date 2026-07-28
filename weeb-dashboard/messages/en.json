@@ -597,5 +597,173 @@
       "customColors": "Custom Colors",
       "applied": "Applied"
     }
+  },
+  "landing": {
+    "nav": {
+      "plugins": "Plugins",
+      "templates": "Templates",
+      "repos": "Repositories",
+      "styles": "Styles",
+      "docs": "Docs",
+      "signIn": "Sign in",
+      "cta": "Create my SVG"
+    },
+    "hero": {
+      "badge": "11 plugins · 60+ sections · profile & repository",
+      "title": "Your README,",
+      "titleHighlight": "alive",
+      "subtitle": "Code, anime, music, games and repositories in SVG cards that update themselves. One line of markdown and you're done.",
+      "ctaPrimary": "Create my SVG — free",
+      "ctaSecondary": "See all sections",
+      "check1": "3 SVGs on the free plan",
+      "check2": "No GitHub Action, no YAML",
+      "check3": "Sign in with GitHub"
+    },
+    "platforms": {
+      "label": "PULLS DATA FROM"
+    },
+    "how": {
+      "kicker": "HOW IT WORKS",
+      "title": "From zero to a ready README in",
+      "titleHighlight": "4 steps",
+      "subtitle": "You configure it once. After that the card updates itself.",
+      "steps": [
+        {
+          "tag": "~1 min",
+          "title": "Sign in and connect",
+          "body": "GitHub, Google or e-mail. Authorize the platforms you want to show — revocable at any time."
+        },
+        {
+          "tag": "no code",
+          "title": "Pick your sections",
+          "body": "Start from a template or build from scratch: each plugin ships several sections and you enable only what you care about."
+        },
+        {
+          "tag": "live preview",
+          "title": "Tune the look",
+          "body": "Default or terminal style, color theme, half or full width — all with the real SVG right next to you."
+        },
+        {
+          "tag": "auto-update",
+          "title": "Paste one line",
+          "body": "Copy the markdown and paste it into your README. We host the SVG and refresh it on a cycle — or on demand."
+        }
+      ]
+    },
+    "plugins": {
+      "kicker": "PLUGINS",
+      "title": "Connect the platforms that define you",
+      "subtitle": "Each plugin ships a set of ready-made sections. Enable as many as you want on the same card.",
+      "gallery": "See the full gallery",
+      "missingTitle": "Missing yours?",
+      "missingBody": "Plugins are open source —",
+      "missingLink": "write your own",
+      "categories": {
+        "coding": "Coding",
+        "music": "Music",
+        "anime": "Anime",
+        "gaming": "Gaming",
+        "profile": "Profile",
+        "repository": "Repository",
+        "fitness": "Fitness",
+        "languages": "Languages"
+      },
+      "descriptions": {
+        "github": "Repositories, activity and your contribution calendar.",
+        "lastfm": "Recent tracks, top artists, albums and songs.",
+        "myanimelist": "Anime and manga stats, favorites and activity.",
+        "steam": "Recent games, most played and library hours.",
+        "codeforces": "Competitive programming rating and stats.",
+        "codewars": "Katas solved, rank and languages.",
+        "stackoverflow": "Reputation, badges and answer activity.",
+        "duolingo": "Streak, XP and the languages you're learning.",
+        "lyfta": "Workouts, volume and recent exercises.",
+        "16personalities": "Your personality type as a badge.",
+        "github_repo": "Banner, counters, star curve, languages and topics."
+      }
+    },
+    "templates": {
+      "kicker": "TEMPLATES",
+      "title": "No time to start from scratch",
+      "subtitle": "Ready-made combos of plugins, sections and theme. Pick one and tweak it later.",
+      "explore": "Explore all templates",
+      "popular": "POPULAR"
+    },
+    "repos": {
+      "kicker": "NOT JUST YOUR PROFILE",
+      "title": "Cards for your repositories too",
+      "subtitle": "In {mode} mode you pick a single visual — banner, counters, star curve or stack — and paste it into the project README. Each visual has its own size and detail options.",
+      "mode": "Repository",
+      "banner": "Banner",
+      "stats": "Stats",
+      "starGrowth": "Star growth",
+      "languages": "Languages",
+      "topics": "Topics",
+      "updated": "updated 2h ago"
+    },
+    "styles": {
+      "kicker": "STYLES",
+      "title": "The same content, any skin you like",
+      "subtitle": "Switching styles takes one click and loses nothing — sections and data stay exactly the same.",
+      "defaultTag": "DEFAULT",
+      "graphic": "graphic",
+      "mono": "monospace",
+      "soon": "coming soon",
+      "pluggable": "pluggable",
+      "soonTitle": "New styles on the way",
+      "soonBody": "Styles are pluggable: the same content, another skin. Suggest the next one in the discussions.",
+      "check1": "9 color themes + your own CSS",
+      "check2": "415px or 830px wide",
+      "check3": "Per-section options: order, count, detail"
+    },
+    "features": {
+      "kicker": "WHY THIS WAY",
+      "title": "Nothing in your repository but one line",
+      "items": [
+        {
+          "title": "No GitHub Action",
+          "body": "No workflow, no YAML, no gist to configure. We host the SVG for you."
+        },
+        {
+          "title": "Updates itself",
+          "body": "Automatic refresh on a cycle, plus a button to regenerate instantly whenever you want."
+        },
+        {
+          "title": "Preview before publishing",
+          "body": "The editor shows the real SVG, at real size, while you tweak the options."
+        },
+        {
+          "title": "Your keys stay yours",
+          "body": "OAuth where it exists, API key where it's needed — revocable at any time."
+        },
+        {
+          "title": "Repositories too",
+          "body": "Banner, counters and star curve for a specific repo, not just your profile."
+        },
+        {
+          "title": "Open source",
+          "body": "Generator, plugins and dashboard under Apache 2.0. Write a new plugin if yours is missing."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to level up your",
+      "titleHighlight": "profile",
+      "subtitle": "First card in under 2 minutes. Three SVGs on the free plan, no credit card.",
+      "primary": "Create my SVG — free",
+      "secondary": "View on GitHub"
+    },
+    "footer": {
+      "tagline": "Dynamic SVG cards for your README. Apache 2.0 · 2024–2026.",
+      "product": "PRODUCT",
+      "project": "PROJECT",
+      "legal": "LEGAL",
+      "repo": "Repository",
+      "gallery": "Plugin gallery",
+      "discussions": "Discussions",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "license": "License"
+    }
   }
 }

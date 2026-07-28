@@ -201,6 +201,48 @@ input[type="color"]::-moz-color-swatch {
   display: none; /* Chrome, Safari, Opera*/
 }
 
+/* Landing hero — vertical card marquee (content is duplicated once, so -50% loops seamlessly) */
+@keyframes landing-marquee-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes landing-marquee-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-marquee-up {
+  animation: landing-marquee-up 30s linear infinite;
+}
+
+.animate-marquee-down {
+  animation: landing-marquee-down 34s linear infinite;
+}
+
+/* Landing ambient glow orbs */
+@keyframes landing-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.animate-landing-pulse {
+  animation: landing-pulse 10s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

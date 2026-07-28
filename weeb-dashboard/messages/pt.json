@@ -597,5 +597,173 @@
       "customColors": "Cores Customizadas",
       "applied": "Aplicado"
     }
+  },
+  "landing": {
+    "nav": {
+      "plugins": "Plugins",
+      "templates": "Templates",
+      "repos": "Repositórios",
+      "styles": "Estilos",
+      "docs": "Docs",
+      "signIn": "Entrar",
+      "cta": "Criar meu SVG"
+    },
+    "hero": {
+      "badge": "11 plugins · 60+ seções · perfil e repositório",
+      "title": "Seu README,",
+      "titleHighlight": "vivo",
+      "subtitle": "Código, anime, música, jogos e repositórios em cards SVG que se atualizam sozinhos. Uma linha de markdown e pronto.",
+      "ctaPrimary": "Criar meu SVG grátis",
+      "ctaSecondary": "Ver todas as seções",
+      "check1": "3 SVGs no plano grátis",
+      "check2": "Sem GitHub Action, sem YAML",
+      "check3": "Login com GitHub"
+    },
+    "platforms": {
+      "label": "PUXA DADOS DE"
+    },
+    "how": {
+      "kicker": "COMO FUNCIONA",
+      "title": "De zero ao README pronto em",
+      "titleHighlight": "4 passos",
+      "subtitle": "Você configura uma vez. Depois disso o card se atualiza sozinho.",
+      "steps": [
+        {
+          "tag": "~1 min",
+          "title": "Entre e conecte",
+          "body": "GitHub, Google ou e-mail. Autorize as plataformas que quiser exibir — revogável a qualquer momento."
+        },
+        {
+          "tag": "sem código",
+          "title": "Escolha as seções",
+          "body": "Comece de um template ou monte do zero: cada plugin traz várias seções e você liga só o que interessa."
+        },
+        {
+          "tag": "preview vivo",
+          "title": "Ajuste o visual",
+          "body": "Estilo default ou terminal, tema de cor, meia ou largura completa — tudo com o SVG real ao lado."
+        },
+        {
+          "tag": "auto-update",
+          "title": "Cole uma linha",
+          "body": "Copie o markdown e cole no README. A gente hospeda o SVG e atualiza em ciclo — ou na hora que você pedir."
+        }
+      ]
+    },
+    "plugins": {
+      "kicker": "PLUGINS",
+      "title": "Conecte as plataformas que te definem",
+      "subtitle": "Cada plugin traz um conjunto de seções prontas. Ligue quantos quiser no mesmo card.",
+      "gallery": "Ver a galeria completa",
+      "missingTitle": "Falta o seu?",
+      "missingBody": "Plugins são open source —",
+      "missingLink": "escreva o seu",
+      "categories": {
+        "coding": "Código",
+        "music": "Música",
+        "anime": "Anime",
+        "gaming": "Jogos",
+        "profile": "Perfil",
+        "repository": "Repositório",
+        "fitness": "Treino",
+        "languages": "Idiomas"
+      },
+      "descriptions": {
+        "github": "Repositórios, atividade e calendário de contribuições.",
+        "lastfm": "Faixas recentes, top artistas, álbuns e músicas.",
+        "myanimelist": "Estatísticas de anime e manga, favoritos e atividade.",
+        "steam": "Jogos recentes, mais jogados e horas na biblioteca.",
+        "codeforces": "Rating e estatísticas de programação competitiva.",
+        "codewars": "Katas resolvidos, rank e linguagens.",
+        "stackoverflow": "Reputação, medalhas e atividade nas respostas.",
+        "duolingo": "Ofensiva, XP e idiomas que você está aprendendo.",
+        "lyfta": "Treinos, cargas e exercícios recentes.",
+        "16personalities": "Seu tipo de personalidade como badge.",
+        "github_repo": "Banner, contadores, curva de estrelas, linguagens e tópicos."
+      }
+    },
+    "templates": {
+      "kicker": "TEMPLATES",
+      "title": "Sem tempo para começar do zero",
+      "subtitle": "Combinações prontas de plugins, seções e tema. Escolha uma e ajuste depois.",
+      "explore": "Explorar todos os templates",
+      "popular": "POPULAR"
+    },
+    "repos": {
+      "kicker": "NÃO SÓ O PERFIL",
+      "title": "Cards para os seus repositórios também",
+      "subtitle": "No modo {mode} você escolhe um visual só — banner, contadores, curva de estrelas ou stack — e cola no README do projeto. Cada visual tem opções próprias de tamanho e detalhe.",
+      "mode": "Repository",
+      "banner": "Banner",
+      "stats": "Stats",
+      "starGrowth": "Star growth",
+      "languages": "Languages",
+      "topics": "Topics",
+      "updated": "atualizado há 2h"
+    },
+    "styles": {
+      "kicker": "ESTILOS",
+      "title": "O mesmo conteúdo, a pele que você quiser",
+      "subtitle": "O estilo troca com um clique e não perde nenhuma configuração — as seções e os dados continuam iguais.",
+      "defaultTag": "PADRÃO",
+      "graphic": "gráfico",
+      "mono": "monoespaçado",
+      "soon": "em breve",
+      "pluggable": "plugável",
+      "soonTitle": "Novos estilos a caminho",
+      "soonBody": "Estilos são plugáveis: o mesmo conteúdo, outra pele. Sugira o próximo nas discussões.",
+      "check1": "9 temas de cor + CSS próprio",
+      "check2": "415px ou 830px de largura",
+      "check3": "Opções por seção: ordem, quantidade, detalhe"
+    },
+    "features": {
+      "kicker": "POR QUE ASSIM",
+      "title": "Nada no seu repositório além de uma linha",
+      "items": [
+        {
+          "title": "Sem GitHub Action",
+          "body": "Nenhum workflow, nenhum YAML, nenhum gist para configurar. O SVG é hospedado por nós."
+        },
+        {
+          "title": "Atualiza sozinho",
+          "body": "Refresh em ciclo automático, e um botão para regenerar na hora quando você quiser."
+        },
+        {
+          "title": "Preview antes de publicar",
+          "body": "O editor mostra o SVG real, no tamanho real, enquanto você mexe nas opções."
+        },
+        {
+          "title": "Suas chaves ficam suas",
+          "body": "OAuth onde existe, chave de API onde é preciso — e revogação a qualquer momento."
+        },
+        {
+          "title": "Também para repositórios",
+          "body": "Banner, contadores e curva de estrelas de um repo específico, não só do seu perfil."
+        },
+        {
+          "title": "Open source",
+          "body": "Gerador, plugins e dashboard sob Apache 2.0. Escreva um plugin novo se faltar o seu."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Pronto para elevar seu",
+      "titleHighlight": "perfil",
+      "subtitle": "Primeiro card em menos de 2 minutos. Três SVGs no plano grátis, sem cartão.",
+      "primary": "Criar meu SVG grátis",
+      "secondary": "Ver no GitHub"
+    },
+    "footer": {
+      "tagline": "Cards SVG dinâmicos para o seu README. Apache 2.0 · 2024–2026.",
+      "product": "PRODUTO",
+      "project": "PROJETO",
+      "legal": "LEGAL",
+      "repo": "Repositório",
+      "gallery": "Galeria de plugins",
+      "discussions": "Discussões",
+      "terms": "Termos",
+      "privacy": "Privacidade",
+      "license": "Licença"
+    }
   }
 }
