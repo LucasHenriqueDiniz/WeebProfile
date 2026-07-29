@@ -66,7 +66,8 @@ const initialState = {
   size: "full" as const,
   theme: "default",
   hideTerminalEmojis: false,
-  hideTerminalHeader: false,
+  // Header do terminal escondido por padrao (mesma decisao do wizard de perfil).
+  hideTerminalHeader: true,
   hideTerminalCommand: false,
   customCss: "",
   customThemeColors: {},

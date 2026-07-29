@@ -50,15 +50,19 @@ export function WizardFooter({
       <Tooltip>
         <TooltipTrigger asChild>
           <div className={compact ? undefined : "w-full"}>
+            {/* Disabled usa outline neutro — "secondary" e rosa neste tema e fazia a acao
+                principal parecer um botao destrutivo/de erro. */}
             <Button
               onClick={onFinish}
               disabled={isDisabled}
-              variant={isDisabled ? "secondary" : "default"}
+              variant={isDisabled ? "outline" : "default"}
               size={compact ? "sm" : "lg"}
               className={cn(
                 "gap-2 transition-all",
                 compact ? "" : "w-full shadow-lg",
-                !isDisabled ? "bg-gradient-to-r from-violet-500 to-cyan-500 hover:opacity-90 text-white shadow-[0_0_16px_rgba(56,189,248,0.2)]" : ""
+                !isDisabled
+                  ? "bg-gradient-to-r from-violet-500 to-cyan-500 hover:opacity-90 text-white shadow-[0_0_16px_rgba(56,189,248,0.2)]"
+                  : "text-muted-foreground"
               )}
             >
               {isSaving ? (
@@ -68,7 +72,7 @@ export function WizardFooter({
                   className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
                 />
               ) : isDisabled ? (
-                <AlertTriangle className="w-4 h-4" />
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
               ) : (
                 <Check className="w-4 h-4" />
               )}

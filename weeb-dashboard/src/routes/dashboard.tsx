@@ -19,16 +19,12 @@ import { ApiException, svgApi } from "@/lib/api"
 import type { Svg } from "@/lib/db/schema"
 import { useSvgStore } from "@/stores/svg-store"
 import { generateMarkdown } from "@/lib/utils/markdown"
+import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import { ArrowUpDown, Filter, Loader2, Plus } from "lucide-react"
 import { Link, useRouter } from "@/i18n/navigation"
 import { useEffect, useMemo, useState, useRef } from "react"
 import { useTranslations } from "@/i18n/use-translations"
-
-const styleColors: Record<string, string> = {
-  default: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-  terminal: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
-}
 
 // DEV-ONLY mock data for the ?mock=full preview state. Never imported in production
 // (the whole call site is gated behind import.meta.env.DEV, which Vite strips).
@@ -100,6 +96,8 @@ const MOCK_SVGS = [
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString(),
   },
 ]
+
+const MAX_SVGS_FREE_TIER = 3
 
 type SortOption = "newest" | "oldest" | "name" | "status"
 type FilterStatus = "all" | "completed" | "generating" | "pending"
@@ -362,54 +360,54 @@ export default function DashboardPage() {
             <DashboardEmptyState />
           </div>
         ) : (
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 space-y-5">
-          {/* Filters - apenas quando houver muitos SVGs */}
-          {showAdvancedControls && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05, duration: 0.2 }}
-              className="flex flex-col sm:flex-row gap-3 mb-5"
-            >
-              <div className="relative w-full sm:w-[180px]">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
-                <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
-                  <SelectTrigger className="w-full pl-9">
-                    <SelectValue placeholder={t("filterByStatus")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t("allStatus")}</SelectItem>
-                    <SelectItem value="completed">{t("completed")}</SelectItem>
-                    <SelectItem value="generating">{t("generating")}</SelectItem>
-                    <SelectItem value="pending">{t("pending")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="relative w-full sm:w-[180px]">
-                <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
-                <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                  <SelectTrigger className="w-full pl-9">
-                    <SelectValue placeholder={t("sortBy")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="newest">{t("newestFirst")}</SelectItem>
-                    <SelectItem value="oldest">{t("oldestFirst")}</SelectItem>
-                    <SelectItem value="name">{t("nameAZ")}</SelectItem>
-                    <SelectItem value="status">{t("status")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </motion.div>
-          )}
+          <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 space-y-5">
+            {/* Filters - apenas quando houver muitos SVGs */}
+            {showAdvancedControls && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05, duration: 0.2 }}
+                className="flex flex-col sm:flex-row gap-3 mb-5"
+              >
+                <div className="relative w-full sm:w-[180px]">
+                  <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                  <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
+                    <SelectTrigger className="w-full pl-9">
+                      <SelectValue placeholder={t("filterByStatus")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t("allStatus")}</SelectItem>
+                      <SelectItem value="completed">{t("completed")}</SelectItem>
+                      <SelectItem value="generating">{t("generating")}</SelectItem>
+                      <SelectItem value="pending">{t("pending")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="relative w-full sm:w-[180px]">
+                  <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+                    <SelectTrigger className="w-full pl-9">
+                      <SelectValue placeholder={t("sortBy")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="newest">{t("newestFirst")}</SelectItem>
+                      <SelectItem value="oldest">{t("oldestFirst")}</SelectItem>
+                      <SelectItem value="name">{t("nameAZ")}</SelectItem>
+                      <SelectItem value="status">{t("status")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </motion.div>
+            )}
 
-          {/* Biblioteca de SVGs - lista de linhas (asset library). Só chega aqui quando
+            {/* Biblioteca de SVGs - lista de linhas (asset library). Só chega aqui quando
               !isTrulyEmpty (ver branch acima que renderiza o onboarding). */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.2 }}
-            className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden"
-          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15, duration: 0.2 }}
+              className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden"
+            >
               {svgsLoading && svgs.length === 0
                 ? Array.from({ length: 4 }).map((_, index) => (
                     <div key={`skeleton-${index}`} className="p-3">
@@ -450,37 +448,81 @@ export default function DashboardPage() {
                     <SvgCardSkeleton index={filteredAndSortedSvgs.length + index} />
                   </div>
                 ))}
-          </motion.div>
-
-          {/* Empty State (filtro sem resultados - diferente do onboarding acima, só
-              acontece quando já existem SVGs mas o filtro ativo não bate com nenhum) */}
-          {filteredAndSortedSvgs.length === 0 && !svgsLoading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.15, duration: 0.2 }}
-              className="text-center py-16 md:py-20"
-            >
-              <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-violet-500/10 to-cyan-500/10 mb-6">
-                <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
-              </div>
-              <h3 className="text-xl md:text-2xl font-bold mb-2">{t("noResultsFound")}</h3>
-              <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-                {t("noResultsDescription")}
-              </p>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  setStatusFilter("all")
-                  setSortBy("newest")
-                }}
-              >
-                {t("clearFilter")}
-              </Button>
             </motion.div>
-          )}
-        </div>
+
+            {/* Quota + atalhos - preenche o rodapé da lista com informação útil em vez de
+              espaço morto: uso do plano grátis e caminhos de descoberta */}
+            {!svgsLoading && filteredAndSortedSvgs.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25, duration: 0.2 }}
+                className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 px-5 py-4 sm:flex-row sm:items-center"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-foreground">{t("quota.title")}</span>
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {t("quota.label", { count: total, max: MAX_SVGS_FREE_TIER })}
+                    </span>
+                  </div>
+                  <div className="mt-2 h-1.5 max-w-xs overflow-hidden rounded-full bg-muted">
+                    <span
+                      className={cn(
+                        "block h-full rounded-full transition-all",
+                        total >= MAX_SVGS_FREE_TIER ? "bg-amber-400" : "bg-gradient-to-r from-violet-500 to-cyan-500"
+                      )}
+                      style={{ width: `${Math.min(100, (total / MAX_SVGS_FREE_TIER) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-shrink-0 items-center gap-2 text-sm">
+                  <span className="hidden text-xs text-muted-foreground xl:inline">{t("quota.hint")}</span>
+                  <Button asChild variant="outline" size="sm">
+                    <Link href="/templates">{t("quota.templates")}</Link>
+                  </Button>
+                  <Button asChild variant="ghost" size="sm">
+                    <a
+                      href="https://github.com/LucasHenriqueDiniz/WeebProfile"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t("quota.docs")}
+                    </a>
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Empty State (filtro sem resultados - diferente do onboarding acima, só
+              acontece quando já existem SVGs mas o filtro ativo não bate com nenhum) */}
+            {filteredAndSortedSvgs.length === 0 && !svgsLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.15, duration: 0.2 }}
+                className="text-center py-16 md:py-20"
+              >
+                <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-violet-500/10 to-cyan-500/10 mb-6">
+                  <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold mb-2">{t("noResultsFound")}</h3>
+                <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
+                  {t("noResultsDescription")}
+                </p>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => {
+                    setStatusFilter("all")
+                    setSortBy("newest")
+                  }}
+                >
+                  {t("clearFilter")}
+                </Button>
+              </motion.div>
+            )}
+          </div>
         )}
 
         {/* Delete Confirmation Dialog */}

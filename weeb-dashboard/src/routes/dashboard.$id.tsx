@@ -2,22 +2,24 @@ import { useEffect, useState } from "react"
 import { useSearchParams, useParams } from "@/src/compat/next-navigation"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { useAuth } from "@/hooks/useAuth"
-import { useTranslations } from "@/i18n/use-translations"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useTranslations, useLocale } from "@/i18n/use-translations"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { STATUS_DOT } from "@/components/dashboard/SvgLibraryRow"
+import { getPluginIcon } from "@/lib/plugin-icons"
+import { formatRelative } from "@/lib/utils/relative-time"
+import { cn } from "@/lib/utils"
 import {
   Loader2,
   Copy,
   CheckCircle2,
   ExternalLink,
-  Edit,
   RefreshCw,
   ArrowLeft,
-  Calendar,
-  Image as ImageIcon,
+  Clock,
+  Edit2,
   Code2,
   Link2,
+  Info,
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
@@ -28,8 +30,33 @@ import LoadingScreen from "@/components/loading/LoadingScreen"
 import { SvgViewSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import { generateMarkdown } from "@/lib/utils/markdown"
 
+/** Compact card shell shared by the side panels — quieter than the shadcn Card headers. */
+function PanelCard({
+  icon: Icon,
+  title,
+  action,
+  children,
+}: {
+  icon: typeof Code2
+  title: string
+  action?: React.ReactNode
+  children: React.ReactNode
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-card">
+      <div className="flex items-center gap-2 border-b border-border/60 px-4 py-3">
+        <Icon className="h-4 w-4 text-primary" />
+        <span className="text-sm font-semibold text-foreground">{title}</span>
+        {action ? <span className="ml-auto">{action}</span> : null}
+      </div>
+      <div className="p-4">{children}</div>
+    </div>
+  )
+}
+
 export default function SvgViewPage() {
   const t = useTranslations("view")
+  const locale = useLocale()
   const params = useParams<{ id: string }>()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -234,6 +261,46 @@ export default function SvgViewPage() {
     }
   }
 
+  const handleRetryGenerate = async () => {
+    try {
+      setGenerating(true)
+      await svgApi.generate(svgId, false)
+      updateSvg(svgId, { status: "generating" })
+      setSvg({ ...svg, status: "generating" })
+      toast({
+        title: t("toast.generating"),
+        description: t("toast.generatingDescription"),
+      })
+      // Recarregar após um delay com force para pegar dados atualizados
+      setTimeout(() => {
+        loadSvg(true) // force refresh
+      }, 2000)
+    } catch (error) {
+      let errorMessage = t("toast.errorMessage")
+      let errorTitle = t("toast.error")
+
+      if (error instanceof ApiException) {
+        // Verificar se é um timeout do Vercel (serviço "acordando")
+        if (error.data.code === "VERCEL_TIMEOUT" || error.data.retryable) {
+          errorTitle = t("toast.serviceStarting")
+          errorMessage = error.data.message || t("toast.serviceStartingDescription")
+        } else {
+          errorMessage = error.data.message || error.data.error || error.message
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+
+      toast({
+        title: errorTitle,
+        description: errorMessage,
+        variant: "destructive",
+      })
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   // Calcular cooldown restante
   const getCooldownRemaining = () => {
     if (!svg?.lastGeneratedAt) return null
@@ -260,18 +327,15 @@ export default function SvgViewPage() {
   if (!svg && !urlFromQuery) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle>{t("notFound.title")}</CardTitle>
-              <CardDescription>{t("notFound.description")}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => router.push("/dashboard")} className="w-full">
-                {t("backToDashboard")}
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="flex min-h-[60vh] items-center justify-center px-6">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center">
+            <img src="/sora/sora-head.png" alt="" className="mx-auto mb-4 h-12 w-12 object-contain opacity-60" />
+            <h2 className="font-heading text-lg font-bold text-foreground">{t("notFound.title")}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{t("notFound.description")}</p>
+            <Button onClick={() => router.push("/dashboard")} className="mt-6 w-full">
+              {t("backToDashboard")}
+            </Button>
+          </div>
         </div>
       </DashboardLayout>
     )
@@ -298,26 +362,37 @@ export default function SvgViewPage() {
         })
       : `![${svg?.name || "Profile"}](${baseImageUrl || imageUrl})`
 
+  const plugins: string[] = (svg?.pluginsOrder || "")
+    .split(",")
+    .map((p: string) => p.trim())
+    .filter(Boolean)
+
+  const statusLabel =
+    svg?.status === "completed" ? t("completed") : svg?.status === "generating" ? t("generating") : t("error")
+
   const headerTitle = (
     <span className="flex items-center gap-2">
       <button
         onClick={() => router.push("/dashboard")}
-        className="text-slate-400 hover:text-slate-200 transition-colors -ml-1 p-1"
+        className="-ml-1 p-1 text-muted-foreground transition-colors hover:text-foreground"
         aria-label={t("backToDashboard")}
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="h-4 w-4" />
       </button>
       {svg?.name || t("title")}
     </span>
   )
 
   const headerActions = svg ? (
-    <div className="flex items-center gap-2">
-      <Badge
-        variant={svg.status === "completed" ? "default" : svg.status === "generating" ? "secondary" : "destructive"}
-      >
-        {svg.status === "completed" ? t("completed") : svg.status === "generating" ? t("generating") : t("error")}
-      </Badge>
+    <div className="flex items-center gap-3">
+      <span className="hidden items-center gap-1.5 sm:flex">
+        <span className={cn("h-1.5 w-1.5 rounded-full", STATUS_DOT[svg.status] ?? "bg-muted-foreground")} />
+        <span className="text-xs text-muted-foreground">{statusLabel}</span>
+      </span>
+      <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/${svgId}/edit`)} className="gap-1.5">
+        <Edit2 className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">{t("edit")}</span>
+      </Button>
       <Button
         variant="outline"
         size="sm"
@@ -325,11 +400,7 @@ export default function SvgViewPage() {
         disabled={generating || svg.status === "generating"}
         className="gap-1.5"
       >
-        {generating ? (
-          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-        ) : (
-          <RefreshCw className="w-3.5 h-3.5" />
-        )}
+        {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
         <span className="hidden sm:inline">{t("regenerate")}</span>
       </Button>
     </div>
@@ -338,278 +409,208 @@ export default function SvgViewPage() {
   return (
     <DashboardLayout
       title={headerTitle}
-      description={svg ? `${t("created")} ${new Date(svg.createdAt).toLocaleDateString()}` : undefined}
+      description={svg ? `${t("created")} ${formatRelative(svg.createdAt, locale)}` : undefined}
       actions={headerActions}
     >
-      <div className="w-full min-h-screen bg-background">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8">
-          {/* Cooldown Warning */}
-          {svg && cooldownRemaining !== null && cooldownRemaining > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-sm text-yellow-700 dark:text-yellow-400 mb-6 flex items-center gap-2"
-            >
-              <span className="text-lg">⏱️</span>
-              <span>{t("cooldownWarning", { minutes: cooldownRemaining })}</span>
-            </motion.div>
-          )}
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8">
+        {/* Cooldown Warning */}
+        {svg && cooldownRemaining !== null && cooldownRemaining > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 flex items-center gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-400"
+          >
+            <Clock className="h-4 w-4 flex-shrink-0" />
+            <span>{t("cooldownWarning", { minutes: cooldownRemaining })}</span>
+          </motion.div>
+        )}
 
-          {/* Layout Desktop: PREVIEW | DADOS */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* PREVIEW Column - Takes 2 columns on large screens */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1, duration: 0.3 }}
-              className="lg:col-span-2 space-y-6"
-            >
-              <Card className="border-border bg-card shadow-none">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-2">
-                    <ImageIcon className="w-5 h-5 text-primary" />
-                    <CardTitle className="text-xl">{t("preview.title")}</CardTitle>
-                  </div>
-                  <CardDescription>{t("preview.description")}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {imageUrl ? (
-                    <div className="border-2 border-dashed border-border/50 rounded-xl p-6 md:p-8 bg-gradient-to-br from-muted/30 to-muted/10 flex items-center justify-center min-h-[400px] relative overflow-hidden">
-                      {/* Background pattern */}
-                      <div
-                        className="absolute inset-0 opacity-5"
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/svg%3E")`,
-                        }}
-                      />
-                      <motion.img
-                        key={`${svg?.id}-${cacheBuster}`}
-                        src={imageUrl}
-                        alt={svg?.name || "Profile SVG"}
-                        className="max-w-full h-auto rounded-lg shadow-2xl relative z-10"
-                        style={{ maxHeight: "500px" }}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3 }}
-                        onError={(e) => {
-                          const target = e.currentTarget
-                          target.style.display = "none"
-                          const parent = target.parentElement
-                          if (parent) {
-                            const errorMsg = t("preview.errorLoading")
-                            const errorDesc = t("preview.errorLoadingDescription")
-                            parent.innerHTML = `
-                            <div class="flex flex-col items-center justify-center p-8 text-center relative z-10">
-                              <div class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-                                <svg class="w-8 h-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                </svg>
-                              </div>
-                              <p class="text-foreground font-medium mb-2">${errorMsg}</p>
-                              <p class="text-sm text-muted-foreground">${errorDesc}</p>
-                            </div>
-                          `
-                          }
-                        }}
-                      />
-                    </div>
-                  ) : svg?.status === "failed" ? (
-                    <div className="border rounded-lg p-12 bg-destructive/10 flex flex-col items-center justify-center">
-                      <p className="text-destructive font-medium mb-2">{t("preview.errorGenerating")}</p>
-                      {svg.lastError && (
-                        <div className="text-sm text-destructive/80 mb-4 p-3 bg-destructive/5 rounded border border-destructive/20 max-w-md">
-                          <p className="font-medium mb-1">{t("preview.errorDetails")}</p>
-                          <p className="text-xs break-words">{svg.lastError}</p>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Preview — the SVG on a dot-grid canvas, no chrome fighting for attention */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05, duration: 0.25 }}
+            className="lg:col-span-2"
+          >
+            <div className="overflow-hidden rounded-2xl border border-border bg-card">
+              {imageUrl ? (
+                <div className="relative flex min-h-[420px] items-center justify-center p-6 md:p-10">
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 bg-[radial-gradient(hsl(var(--foreground)/0.06)_1px,transparent_1px)] [background-size:18px_18px]"
+                  />
+                  <motion.img
+                    key={`${svg?.id}-${cacheBuster}`}
+                    src={imageUrl}
+                    alt={svg?.name || "Profile SVG"}
+                    className="relative z-10 h-auto max-w-full rounded-lg shadow-2xl"
+                    style={{ maxHeight: "560px" }}
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    onError={(e) => {
+                      const target = e.currentTarget
+                      target.style.display = "none"
+                      const parent = target.parentElement
+                      if (parent) {
+                        const errorMsg = t("preview.errorLoading")
+                        const errorDesc = t("preview.errorLoadingDescription")
+                        parent.innerHTML = `
+                        <div class="flex flex-col items-center justify-center p-8 text-center relative z-10">
+                          <div class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                          </div>
+                          <p class="text-foreground font-medium mb-2">${errorMsg}</p>
+                          <p class="text-sm text-muted-foreground">${errorDesc}</p>
                         </div>
-                      )}
-                      <p className="text-sm text-muted-foreground text-center mb-4">{t("preview.errorTryAgain")}</p>
-                      <Button
-                        variant="outline"
-                        onClick={async () => {
-                          try {
-                            setGenerating(true)
-                            await svgApi.generate(svgId, false)
-                            updateSvg(svgId, { status: "generating" })
-                            setSvg({ ...svg, status: "generating" })
-                            toast({
-                              title: t("toast.generating"),
-                              description: t("toast.generatingDescription"),
-                            })
-                            // Recarregar após um delay com force para pegar dados atualizados
-                            setTimeout(() => {
-                              loadSvg(true) // force refresh
-                            }, 2000)
-                          } catch (error) {
-                            let errorMessage = "Não foi possível iniciar a geração"
-                            let errorTitle = "Erro"
-
-                            if (error instanceof ApiException) {
-                              // Verificar se é um timeout do Vercel (serviço "acordando")
-                              if (error.data.code === "VERCEL_TIMEOUT" || error.data.retryable) {
-                                errorTitle = "Serviço iniciando"
-                                errorMessage =
-                                  error.data.message ||
-                                  "O serviço de geração está acordando. Por favor, aguarde alguns segundos e tente novamente."
-                              } else {
-                                errorMessage = error.data.message || error.data.error || error.message
-                              }
-                            } else if (error instanceof Error) {
-                              errorMessage = error.message
-                            }
-
-                            toast({
-                              title: errorTitle,
-                              description: errorMessage,
-                              variant: "destructive",
-                            })
-                          } finally {
-                            setGenerating(false)
-                          }
-                        }}
-                        disabled={generating}
-                      >
-                        {generating ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            {t("toast.generating")}
-                          </>
-                        ) : (
-                          t("preview.tryAgain")
-                        )}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="border rounded-lg p-12 bg-muted/50 flex flex-col items-center justify-center">
-                      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mb-4" />
-                      <p className="text-muted-foreground mb-2">
-                        {svg?.status === "generating" ? t("preview.generating") : t("preview.waiting")}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{t("preview.waitingDescription")}</p>
+                      `
+                      }
+                    }}
+                  />
+                </div>
+              ) : svg?.status === "failed" ? (
+                <div className="flex flex-col items-center justify-center p-12 text-center">
+                  <p className="mb-2 font-medium text-destructive">{t("preview.errorGenerating")}</p>
+                  {svg.lastError && (
+                    <div className="mb-4 max-w-md rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive/80">
+                      <p className="mb-1 font-medium">{t("preview.errorDetails")}</p>
+                      <p className="break-words text-xs">{svg.lastError}</p>
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            </motion.div>
+                  <p className="mb-4 text-sm text-muted-foreground">{t("preview.errorTryAgain")}</p>
+                  <Button variant="outline" onClick={handleRetryGenerate} disabled={generating}>
+                    {generating ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t("toast.generating")}
+                      </>
+                    ) : (
+                      t("preview.tryAgain")
+                    )}
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex min-h-[420px] flex-col items-center justify-center p-12 text-center">
+                  <span className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/15 to-cyan-500/15">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  </span>
+                  <p className="mb-1 text-sm font-medium text-foreground">
+                    {svg?.status === "generating" ? t("preview.generating") : t("preview.waiting")}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{t("preview.waitingDescription")}</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
 
-            {/* DADOS Column - Takes 1 column on large screens */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.3 }}
-              className="space-y-6"
+          {/* Side panels */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12, duration: 0.25 }}
+            className="space-y-4"
+          >
+            {/* Markdown */}
+            <PanelCard
+              icon={Code2}
+              title={t("markdown.title")}
+              action={
+                <Button
+                  variant={copied ? "default" : "outline"}
+                  size="sm"
+                  onClick={handleCopyMarkdown}
+                  className="h-7 gap-1.5 px-2.5 text-xs"
+                >
+                  {copied ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied ? t("markdown.copied") : t("markdown.copy")}
+                </Button>
+              }
             >
-              {/* Markdown Code */}
-              <Card className="border-border bg-card shadow-none">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Code2 className="w-5 h-5 text-primary" />
-                      <CardTitle className="text-xl">{t("markdown.title")}</CardTitle>
-                    </div>
-                    <Button
-                      variant={copied ? "default" : "outline"}
-                      size="sm"
-                      onClick={handleCopyMarkdown}
-                      className="gap-2"
-                    >
-                      {copied ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4" />
-                          {t("markdown.copied")}
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4" />
-                          {t("markdown.copy")}
-                        </>
-                      )}
+              <p className="mb-3 text-xs text-muted-foreground">{t("markdown.description")}</p>
+              <pre className="overflow-x-auto rounded-lg border border-border/50 bg-muted/50 p-3 font-mono text-xs">
+                <code className="text-foreground">{markdownCode}</code>
+              </pre>
+            </PanelCard>
+
+            {/* URL */}
+            {imageUrl && (
+              <PanelCard
+                icon={Link2}
+                title={t("url.title")}
+                action={
+                  <span className="flex items-center gap-1">
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={handleCopyUrl}>
+                      <Copy className="h-3.5 w-3.5" />
                     </Button>
-                  </div>
-                  <CardDescription>{t("markdown.description")}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative">
-                    <pre className="p-4 bg-muted/50 rounded-lg font-mono text-xs md:text-sm overflow-x-auto border border-border/50">
-                      <code className="text-foreground">{markdownCode}</code>
-                    </pre>
-                  </div>
-                </CardContent>
-              </Card>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-7 p-0"
+                      onClick={() => window.open(imageUrl, "_blank")}
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  </span>
+                }
+              >
+                <code className="block break-all rounded-lg border border-border/50 bg-muted/50 p-3 text-xs text-muted-foreground">
+                  {imageUrl}
+                </code>
+              </PanelCard>
+            )}
 
-              {/* URL */}
-              {imageUrl && (
-                <Card className="border-border bg-card shadow-none">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2">
-                      <Link2 className="w-5 h-5 text-primary" />
-                      <CardTitle className="text-xl">{t("url.title")}</CardTitle>
+            {/* Info */}
+            {svg && (
+              <PanelCard icon={Info} title={t("info.title")}>
+                <dl className="space-y-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <dt className="text-xs uppercase tracking-wide text-muted-foreground">{t("info.style")}</dt>
+                    <dd className="font-mono text-xs text-foreground">
+                      {svg.style || "default"} · {svg.size === "full" ? "830px" : "415px"}
+                    </dd>
+                  </div>
+                  {plugins.length > 0 && (
+                    <div className="flex items-center justify-between gap-4">
+                      <dt className="text-xs uppercase tracking-wide text-muted-foreground">{t("info.plugins")}</dt>
+                      <dd className="flex items-center gap-1">
+                        {plugins.map((plugin) => {
+                          const Icon = getPluginIcon(plugin)
+                          return Icon ? (
+                            <span
+                              key={plugin}
+                              title={plugin}
+                              className="flex h-6 w-6 items-center justify-center rounded bg-muted text-muted-foreground"
+                            >
+                              <Icon className="h-3.5 w-3.5" />
+                            </span>
+                          ) : null
+                        })}
+                      </dd>
                     </div>
-                    <CardDescription>{t("url.description")}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <Button variant="outline" size="sm" onClick={handleCopyUrl} className="flex-1 gap-2">
-                        <Copy className="w-4 h-4" />
-                        {t("url.copyUrl")}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(imageUrl, "_blank")}
-                        className="flex-1 gap-2"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        {t("url.open")}
-                      </Button>
+                  )}
+                  {svg.lastGeneratedAt && (
+                    <div className="flex items-center justify-between gap-4 border-t border-border/50 pt-3">
+                      <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                        {t("info.lastGenerated")}
+                      </dt>
+                      <dd className="text-xs text-foreground" title={new Date(svg.lastGeneratedAt).toLocaleString()}>
+                        {formatRelative(svg.lastGeneratedAt, locale)}
+                      </dd>
                     </div>
-                    <div className="p-3 bg-muted/50 rounded-lg border border-border/50">
-                      <code className="text-xs break-all text-foreground">{imageUrl}</code>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Info Card - Moved here for better layout */}
-              {svg && (
-                <Card className="border-border bg-card shadow-none">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-primary" />
-                      <CardTitle className="text-xl">{t("info.title")}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <div className="text-xs text-muted-foreground uppercase tracking-wide">{t("info.style")}</div>
-                          <div className="font-semibold capitalize">{svg.style || "default"}</div>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-xs text-muted-foreground uppercase tracking-wide">{t("info.size")}</div>
-                          <div className="font-semibold capitalize">{svg.size || "half"}</div>
-                        </div>
-                      </div>
-                      {svg.lastGeneratedAt && (
-                        <div className="space-y-1 pt-2 border-t border-border/50">
-                          <div className="text-xs text-muted-foreground uppercase tracking-wide">
-                            {t("info.lastGenerated")}
-                          </div>
-                          <div className="font-semibold text-sm">{new Date(svg.lastGeneratedAt).toLocaleString()}</div>
-                        </div>
-                      )}
-                      <div className="space-y-1 pt-2 border-t border-border/50">
-                        <div className="text-xs text-muted-foreground uppercase tracking-wide">
-                          {t("info.createdAt")}
-                        </div>
-                        <div className="font-semibold text-sm">{new Date(svg.createdAt).toLocaleString()}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </motion.div>
-          </div>
+                  )}
+                  <div className="flex items-center justify-between gap-4 border-t border-border/50 pt-3">
+                    <dt className="text-xs uppercase tracking-wide text-muted-foreground">{t("info.createdAt")}</dt>
+                    <dd className="text-xs text-foreground" title={new Date(svg.createdAt).toLocaleString()}>
+                      {formatRelative(svg.createdAt, locale)}
+                    </dd>
+                  </div>
+                </dl>
+              </PanelCard>
+            )}
+          </motion.div>
         </div>
       </div>
     </DashboardLayout>

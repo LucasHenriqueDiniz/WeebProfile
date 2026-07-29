@@ -1818,7 +1818,7 @@ export const PLUGINS_METADATA = {
           label: "Show technologies",
           type: "boolean",
           defaultValue: true,
-          tooltip: "Only used by the Clean style - shows the repository's top languages inline.",
+          tooltip: "Shows the repository's top languages in styles that display technologies (Clean, Editorial, Mono, Aurora, Bold, Blueprint, Ribbon, Hero).",
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_show_languages.label",
             tooltip: "plugins.github_repo.sections.banner.config.banner_show_languages.tooltip"

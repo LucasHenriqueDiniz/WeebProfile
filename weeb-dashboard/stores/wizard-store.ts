@@ -128,7 +128,8 @@ const initialState = {
   size: "half" as const,
   theme: "default",
   hideTerminalEmojis: false,
-  hideTerminalHeader: false,
+  // Header do terminal escondido por padrao — o chrome "weeb@profile:~" e opt-in.
+  hideTerminalHeader: true,
   hideTerminalCommand: false,
   customCss: "",
   customThemeColors: {},
@@ -498,7 +499,7 @@ export const useWizardStore = create<WizardState>()(
           if (templateData.uiConfig) {
             set({
               hideTerminalEmojis: templateData.uiConfig.hideTerminalEmojis || false,
-              hideTerminalHeader: templateData.uiConfig.hideTerminalHeader || false,
+              hideTerminalHeader: templateData.uiConfig.hideTerminalHeader ?? true,
               hideTerminalCommand: templateData.uiConfig.hideTerminalCommand || false,
               customThemeColors: templateData.uiConfig.customThemeColors || {},
             })

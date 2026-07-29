@@ -59,19 +59,26 @@ export function PluginRow({ plugin, state, isSelected, missingConfigs, onSelect 
         hasMissingRequired && "border-l-2 border-l-amber-400 dark:border-l-amber-500"
       )}
     >
-      {isSelected && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-primary" />}
-      {PluginIcon ? (
-        <PluginIcon
-          className={cn("h-4 w-4 flex-shrink-0", isSelected ? "text-primary" : "text-muted-foreground")}
-        />
-      ) : (
-        <span className="w-4 flex-shrink-0" />
+      {isSelected && (
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-primary" />
       )}
+      <span
+        className={cn(
+          "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-colors",
+          isSelected ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+        )}
+      >
+        {PluginIcon ? <PluginIcon className="h-4 w-4" /> : null}
+      </span>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <span className={cn("text-sm font-medium truncate", isSelected && "text-primary")}>{displayName}</span>
-          {hasApiKey && <span className="text-[9px] font-mono text-muted-foreground flex-shrink-0">KEY</span>}
+          {hasApiKey && (
+            <span className="flex-shrink-0 rounded border border-border px-1 py-px font-mono text-[9px] leading-none text-muted-foreground">
+              KEY
+            </span>
+          )}
         </div>
         <p className="text-xs text-muted-foreground truncate">{description}</p>
       </div>

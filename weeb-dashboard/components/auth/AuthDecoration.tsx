@@ -1,7 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
-import { ArrowLeft } from "lucide-react"
+import { motion, useReducedMotion } from "framer-motion"
+import { ArrowLeft, Sparkles } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import type { ReactNode } from "react"
 
@@ -45,85 +45,66 @@ const sparkles = [
   { id: 12, top: "15%", left: "92%", size: 4, delay: 0.9 },
 ]
 
-// Dots configuration (CSS-based)
-const dots = [
-  { id: 1, top: "10%", left: "25%", size: 2 },
-  { id: 2, top: "30%", left: "15%", size: 1.5 },
-  { id: 3, top: "5%", left: "60%", size: 2.5 },
-  { id: 4, top: "45%", left: "8%", size: 2 },
-  { id: 5, top: "70%", left: "20%", size: 1.5 },
-  { id: 6, top: "55%", left: "50%", size: 2 },
-  { id: 7, top: "25%", left: "80%", size: 1.5 },
-  { id: 8, top: "80%", left: "65%", size: 2 },
-  { id: 9, top: "40%", left: "90%", size: 2.5 },
-  { id: 10, top: "90%", left: "35%", size: 1.5 },
-]
-
 // Props around Sora character - organized distribution with proper sizes
 const soraProps = [
-  // Top area
-  { id: 1, src: "/sora/props/star.png", top: "-8%", left: "25%", width: 50, height: 50, delay: 0.5, duration: 6 },
+  { id: 1, src: "/sora/props/star.png", top: "-6%", left: "22%", width: 46, height: 46, delay: 0.5, duration: 6 },
   {
     id: 2,
     src: "/sora/props/sparkle-blue.png",
-    top: "-5%",
-    right: "20%",
-    width: 50,
-    height: 50,
+    top: "-3%",
+    right: "18%",
+    width: 46,
+    height: 46,
     delay: 0.7,
     duration: 4.5,
   },
-
-  // Left side
   {
     id: 3,
     src: "/sora/props/musical_note.png",
-    top: "20%",
-    left: "-10%",
-    width: 50,
-    height: 50,
+    top: "22%",
+    left: "-8%",
+    width: 46,
+    height: 46,
     delay: 0.3,
     duration: 5.5,
   },
   {
     id: 4,
     src: "/sora/props/musica_note_2.png",
-    top: "65%",
-    left: "-8%",
-    width: 70,
-    height: 70,
+    top: "62%",
+    left: "-6%",
+    width: 62,
+    height: 62,
     delay: 0.8,
     duration: 6.5,
   },
+  { id: 5, src: "/sora/props/love.png", top: "10%", right: "-6%", width: 46, height: 46, delay: 0, duration: 5 },
+  { id: 6, src: "/sora/props/ovni.png", top: "28%", right: "4%", width: 84, height: 62, delay: 0.4, duration: 7 },
+  { id: 7, src: "/sora/props/lollipop.png", top: "48%", right: "0%", width: 46, height: 46, delay: 0.9, duration: 5.2 },
+  { id: 8, src: "/sora/props/rocket.png", top: "66%", right: "4%", width: 72, height: 88, delay: 0.6, duration: 5.8 },
+  { id: 9, src: "/sora/props/bell.png", top: "82%", left: "14%", width: 46, height: 46, delay: 1.2, duration: 4.8 },
+]
 
-  // Right side
-  { id: 5, src: "/sora/props/love.png", top: "10%", right: "-8%", width: 50, height: 50, delay: 0, duration: 5 },
-  { id: 6, src: "/sora/props/ovni.png", top: "28%", right: "6%", width: 92, height: 68, delay: 0.4, duration: 7 }, // Largo
-  {
-    id: 7,
-    src: "/sora/props/lollipop.png",
-    top: "50%",
-    right: "1%",
-    width: 50,
-    height: 50,
-    delay: 0.9,
-    duration: 5.2,
-  },
-  { id: 8, src: "/sora/props/rocket.png", top: "70%", right: "6%", width: 80, height: 97, delay: 0.6, duration: 5.8 }, // Alto
-
-  // Bottom area
-  { id: 9, src: "/sora/props/bell.png", top: "85%", left: "15%", width: 50, height: 50, delay: 1.2, duration: 4.8 },
+// Chips de features exibidos sob a Sora — dão contexto de produto na tela de auth.
+const featureChips = [
+  { id: 1, label: "GitHub Stats" },
+  { id: 2, label: "Anime & Mangá" },
+  { id: 3, label: "Música" },
+  { id: 4, label: "Games" },
 ]
 
 interface AuthDecorationProps {
   title: string
+  subtitle?: string
   children: ReactNode
 }
 
 // Fundo decorativo compartilhado entre /login e /signup (estrelas, sparkles, mascote Sora).
-export function AuthDecoration({ title, children }: AuthDecorationProps) {
+export function AuthDecoration({ title, subtitle, children }: AuthDecorationProps) {
+  const reducedMotion = useReducedMotion()
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-background relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 py-16 lg:py-8 bg-background relative overflow-hidden">
       {/* Back to Home Button */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -133,17 +114,33 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
       >
         <Link
           href="/"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-cyan-500/30 bg-card/80 backdrop-blur-xl text-cyan-400 hover:text-cyan-300 hover:border-cyan-400/50 transition-all hover:bg-accent/80"
+          className="group flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card/60 backdrop-blur-xl text-muted-foreground hover:text-cyan-300 hover:border-cyan-400/50 transition-all"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
           <span className="text-sm font-medium">Voltar</span>
         </Link>
       </motion.div>
-      {/* Layer 1: Base gradients - Galaxy vibe */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,_rgba(6,182,212,0.15),_transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_60%,_rgba(168,85,247,0.12),_transparent_55%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(139,92,246,0.08),_transparent_70%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/40 pointer-events-none" />
+
+      {/* Layer 1: Aurora blobs - profundidade animada atrás de tudo */}
+      <motion.div
+        aria-hidden
+        className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-cyan-500/15 blur-3xl pointer-events-none"
+        animate={reducedMotion ? undefined : { scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute -bottom-40 -right-24 w-[520px] h-[520px] rounded-full bg-purple-500/15 blur-3xl pointer-events-none"
+        animate={reducedMotion ? undefined : { scale: [1.1, 1, 1.1], opacity: [0.6, 0.9, 0.6] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-pink-500/10 blur-3xl pointer-events-none"
+        animate={reducedMotion ? undefined : { scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/60 pointer-events-none" />
 
       {/* Subtle stars */}
       {stars.map((star) => (
@@ -157,10 +154,9 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
             height: `${star.size}px`,
             opacity: star.opacity,
           }}
-          animate={{
-            y: [0, -4, 0],
-            opacity: [star.opacity, star.opacity * 1.5, star.opacity],
-          }}
+          animate={
+            reducedMotion ? undefined : { y: [0, -4, 0], opacity: [star.opacity, star.opacity * 1.5, star.opacity] }
+          }
           transition={{
             duration: 8 + star.id * 0.3,
             repeat: Infinity,
@@ -181,11 +177,9 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
             width: `${sparkle.size * 8}px`,
             height: `${sparkle.size * 8}px`,
           }}
-          animate={{
-            opacity: [0, 1, 0],
-            scale: [0.5, 1, 0.5],
-            rotate: [0, 180, 360],
-          }}
+          animate={
+            reducedMotion ? { opacity: 0.4 } : { opacity: [0, 1, 0], scale: [0.5, 1, 0.5], rotate: [0, 180, 360] }
+          }
           transition={{
             duration: 3 + sparkle.delay,
             repeat: Infinity,
@@ -203,34 +197,9 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
         </motion.div>
       ))}
 
-      {/* Dots (CSS-based) */}
-      {dots.map((dot) => (
-        <motion.div
-          key={dot.id}
-          className="absolute rounded-full bg-cyan-300/40 pointer-events-none"
-          style={{
-            top: dot.top,
-            left: dot.left,
-            width: `${dot.size}px`,
-            height: `${dot.size}px`,
-            boxShadow: "0 0 6px rgba(56,189,248,0.6)",
-          }}
-          animate={{
-            y: [0, -8, 0],
-            opacity: [0.4, 0.8, 0.4],
-          }}
-          transition={{
-            duration: 4 + dot.id * 0.2,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: dot.id * 0.3,
-          }}
-        />
-      ))}
-
       {/* Layer 3: Foreground - Sora + Auth Card. max-w keeps illustration and form close
           together as one composition instead of each claiming half the viewport. */}
-      <div className="relative z-10 w-full max-w-4xl flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-16">
+      <div className="relative z-10 w-full max-w-4xl flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14">
         {/* Sora Illustration Panel - Desktop Only */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -238,6 +207,12 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
           transition={{ duration: 0.5 }}
           className="hidden lg:flex flex-col items-center justify-center w-[340px] flex-shrink-0 relative"
         >
+          {/* Halo atrás da Sora — ancora a ilustração em vez de deixá-la flutuando no vazio */}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 top-1/2 -translate-y-1/2 mx-auto w-[320px] h-[320px] rounded-full bg-[radial-gradient(circle,_rgba(56,189,248,0.18),_rgba(168,85,247,0.12)_55%,_transparent_75%)] blur-xl pointer-events-none"
+          />
+
           {/* Props around Sora */}
           {soraProps.map((prop) => (
             <motion.img
@@ -253,10 +228,7 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
                 height: `${prop.height}px`,
                 filter: "drop-shadow(0 0 12px rgba(56,189,248,0.35)) drop-shadow(0 0 6px rgba(255,255,255,0.2))",
               }}
-              animate={{
-                y: [-8, 8, -8],
-                rotate: [0, 5, -5, 0],
-              }}
+              animate={reducedMotion ? undefined : { y: [-8, 8, -8], rotate: [0, 5, -5, 0] }}
               transition={{
                 duration: prop.duration,
                 repeat: Infinity,
@@ -267,61 +239,81 @@ export function AuthDecoration({ title, children }: AuthDecorationProps) {
           ))}
 
           <motion.div
-            animate={{
-              y: [0, -10, 0],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            animate={reducedMotion ? undefined : { y: [0, -10, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             className="relative z-10"
           >
             <img
               src="/sora/login/sora_login.png"
               alt="Sora"
-              className="w-[300px] h-auto max-h-[560px] object-contain drop-shadow-[0_0_40px_rgba(56,189,248,0.3)] drop-shadow-[0_0_20px_rgba(168,85,247,0.2)]"
+              className="w-[280px] h-auto max-h-[520px] object-contain drop-shadow-[0_0_40px_rgba(56,189,248,0.3)] drop-shadow-[0_0_20px_rgba(168,85,247,0.2)]"
             />
+          </motion.div>
+
+          {/* Feature chips — contexto do produto direto na tela de auth */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="relative z-10 mt-6 flex flex-wrap items-center justify-center gap-2 max-w-[280px]"
+          >
+            {featureChips.map((chip) => (
+              <span
+                key={chip.id}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-border bg-card/60 backdrop-blur-sm text-[11px] font-medium text-muted-foreground"
+              >
+                <Sparkles className="w-3 h-3 text-cyan-400/70" />
+                {chip.label}
+              </span>
+            ))}
           </motion.div>
         </motion.div>
 
-        {/* Auth form - integrated directly into the page, no modal-like card around it.
-            Structure comes from width, alignment, spacing and a thin divider instead of
-            a bordered box; OAuth buttons and inputs keep their own surfaces via
+        {/* Auth panel - glass card com hairline gradiente. Dá superfície própria ao form
+            sem parecer modal; OAuth buttons e inputs mantêm suas superfícies via
             clerk-appearance.ts. */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="w-full lg:w-[440px] flex flex-col items-center lg:items-start justify-center px-2"
+          className="w-full lg:w-[440px] flex-shrink-0"
         >
-          <div className="w-full max-w-sm">
-            {/* Header */}
-            <div className="text-center lg:text-left mb-6">
-              <div className="inline-flex items-center gap-1.5 mb-3">
-                <img src="/sora/sora-head.png" alt="" className="w-4 h-4 object-contain" />
-                <span className="text-[11px] font-bold tracking-[0.25em] uppercase font-heading bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+          <div className="relative rounded-3xl p-[1px] bg-gradient-to-b from-cyan-500/40 via-purple-500/25 to-transparent shadow-[0_0_60px_-15px_rgba(56,189,248,0.25)]">
+            <div className="rounded-3xl bg-card/80 backdrop-blur-2xl px-6 py-8 sm:px-8">
+              {/* Header */}
+              <div className="text-center mb-7">
+                <motion.img
+                  src="/sora/sora-head.png"
+                  alt=""
+                  className="w-12 h-12 object-contain mx-auto mb-4 drop-shadow-[0_0_16px_rgba(56,189,248,0.45)]"
+                  animate={reducedMotion ? undefined : { y: [0, -4, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <span className="block text-[11px] font-bold tracking-[0.3em] uppercase font-heading bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent mb-2">
                   WeebProfile
                 </span>
+                <h1 className="text-[26px] sm:text-[28px] leading-tight font-heading font-extrabold text-foreground">
+                  {title}
+                </h1>
+                {subtitle && (
+                  <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-[320px] mx-auto">{subtitle}</p>
+                )}
               </div>
-              <h1 className="text-[26px] sm:text-[28px] leading-tight font-heading font-extrabold text-foreground">
-                {title}
-              </h1>
+
+              {children}
+
+              {/* Footer */}
+              <p className="text-[11px] text-center text-muted-foreground mt-7 leading-relaxed">
+                Ao continuar, você concorda com nossos{" "}
+                <a
+                  href="#"
+                  className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 decoration-cyan-400/40 transition-colors"
+                >
+                  termos de serviço
+                </a>
+                .
+              </p>
             </div>
-
-            <div className="border-t border-border pt-6">{children}</div>
-
-            {/* Footer */}
-            <p className="text-[11px] text-center lg:text-left text-muted-foreground mt-7 leading-relaxed">
-              Ao continuar, você concorda com nossos{" "}
-              <a
-                href="#"
-                className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 decoration-cyan-400/40 transition-colors"
-              >
-                termos de serviço
-              </a>
-              .
-            </p>
           </div>
         </motion.div>
       </div>

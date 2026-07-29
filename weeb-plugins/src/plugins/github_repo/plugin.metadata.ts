@@ -84,7 +84,7 @@ export const githubRepoPluginMetadata = {
           label: "Show technologies",
           type: "boolean" as const,
           defaultValue: true,
-          tooltip: "Only used by the Clean style - shows the repository's top languages inline.",
+          tooltip: "Shows the repository's top languages in styles that display technologies (Clean, Editorial, Mono, Aurora, Bold, Blueprint, Ribbon, Hero).",
         },
         CONTENT_SIZE_OPTION,
       ],

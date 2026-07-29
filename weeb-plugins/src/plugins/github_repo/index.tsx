@@ -56,8 +56,10 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       let sectionH = 0
 
       if (isTerminal) {
-        // TerminalCommand + name line + (description line, unless compact)
-        sectionH = 84 + 24 + (hasDescription && variant !== "compact" ? 24 : 0)
+        // Custo cheio da seção medido no render real (Chromium): comando + linha do
+        // nome = 50, descrição com line-clamp-2 = +44. No terminal cada seção carrega
+        // seu espaçamento completo; o pad global do manager (+24) é compensado no fim.
+        sectionH = 50 + (hasDescription && variant !== "compact" ? 44 : 0)
       } else if (variant === "minimal") {
         sectionH = 24 + (hasDescription ? 48 : 24)
       } else if (variant === "compact") {
@@ -95,7 +97,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       const hideTitle = cfg.stats_hide_title ?? false
       const statsVariant = cfg.stats_variant ?? "inline"
       const bodyHeight = statsVariant === "grid" ? 76 : 40
-      const sectionH = isTerminal ? 84 + 28 : 24 + (hideTitle ? 0 : 40) + bodyHeight
+      const sectionH = isTerminal ? 52 : 24 + (hideTitle ? 0 : 40) + bodyHeight
       h += Math.round(sectionH * scale)
     }
 
@@ -104,7 +106,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       // Corpo do gráfico é fixo em 120 (baseline "md") - o content_size escala isso
       // junto com o resto via ScaledBox, sem precisar de um controle de altura separado.
       const chartHeight = 120
-      const sectionH = isTerminal ? 84 + chartHeight + 8 : 24 + (hideTitle ? 0 : 40) + chartHeight + 32
+      const sectionH = isTerminal ? chartHeight + 33 : 24 + (hideTitle ? 0 : 40) + chartHeight + 32
       h += Math.round(sectionH * scale)
     }
 
@@ -112,19 +114,30 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       const hideTitle = cfg.languages_hide_title ?? false
       const languagesVariant = cfg.languages_variant ?? "bars"
       const bodyHeight = languagesVariant === "badges" ? 28 : 32
-      const sectionH = isTerminal ? 84 + 40 : 24 + (hideTitle ? 0 : 40) + bodyHeight
+      const sectionH = isTerminal ? 76 : 24 + (hideTitle ? 0 : 40) + bodyHeight
       h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("topics") && repo.topics && repo.topics.length > 0) {
       const hideTitle = cfg.topics_hide_title ?? false
-      const sectionH = isTerminal ? 84 + 32 : 24 + (hideTitle ? 0 : 40) + 24
+      const sectionH = isTerminal ? 74 : 24 + (hideTitle ? 0 : 40) + 24
       h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("overview")) {
-      const sectionH = isTerminal ? 84 + 24 : 24 + 220
+      const sectionH = isTerminal ? 72 : 24 + 220
       h += Math.round(sectionH * scale)
+    }
+
+    if (isTerminal && h > 0) {
+      // As constantes do terminal já incluem o espaçamento completo de cada seção -
+      // desconta o pad global (+24) que o PluginManager soma no total.
+      h -= 24
+      // Header do terminal (janela com os três botões) é renderizado uma única vez
+      // por SVG, fora do ScaledBox - 32px fixos, sem escalar, apenas quando visível.
+      if (!(config as { hideTerminalHeader?: boolean }).hideTerminalHeader) {
+        h += 32
+      }
     }
 
     return h

@@ -12,6 +12,14 @@ interface BannerProps {
   size?: "half" | "full"
 }
 
+// Contadores no formato compacto do GitHub (1.2k, 34k) - números crus com 5+ dígitos
+// quebram o layout dos banners mais apertados.
+function formatCount(value: number): string {
+  if (value >= 10000) return `${Math.round(value / 1000)}k`
+  if (value >= 1000) return `${(value / 1000).toFixed(1).replace(/\.0$/, "")}k`
+  return String(value)
+}
+
 function OwnerAvatar({ data, accent, size }: { data: GithubRepoData; accent: string; size: number }): React.ReactElement {
   if (data.owner.avatarUrl) {
     return (
@@ -141,8 +149,8 @@ function CleanBanner({ data, config }: { data: GithubRepoData; config: GithubRep
         )}
       </div>
       <div className="flex flex-shrink-0 items-center gap-3 text-xs text-default-muted">
-        <span className="flex items-center gap-1">★ {data.stargazerCount}</span>
-        <span className="flex items-center gap-1">⑂ {data.forkCount}</span>
+        <span className="flex items-center gap-1">★ {formatCount(data.stargazerCount)}</span>
+        <span className="flex items-center gap-1">⑂ {formatCount(data.forkCount)}</span>
       </div>
     </a>
   )
@@ -153,7 +161,8 @@ function CleanBanner({ data, config }: { data: GithubRepoData; config: GithubRep
 function EditorialBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const accent = data.primaryLanguage?.color || "#ff5d2a"
   const showDescription = config.banner_show_description ?? true
-  const languages = data.languages.slice(0, 3)
+  const showLanguages = config.banner_show_languages ?? true
+  const languages = showLanguages ? data.languages.slice(0, 3) : []
 
   return (
     <a
@@ -215,8 +224,8 @@ function MonoBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
           </div>
         </div>
         <div className="flex flex-shrink-0 gap-3 text-xs" style={{ color: "#8b949e" }}>
-          <span>★ {data.stargazerCount}</span>
-          <span>⑂ {data.forkCount}</span>
+          <span>★ {formatCount(data.stargazerCount)}</span>
+          <span>⑂ {formatCount(data.forkCount)}</span>
         </div>
       </div>
       {showDescription && data.description && (
@@ -270,12 +279,21 @@ function AuroraBanner({ data, config }: { data: GithubRepoData; config: GithubRe
       >
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2.5">
-            <div
-              className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-              style={{ background: "linear-gradient(145deg,#38bdf8,#8b5cf6)" }}
-            >
-              {data.owner.login.slice(0, 2).toUpperCase()}
-            </div>
+            {data.owner.avatarUrl ? (
+              <img
+                src={data.owner.avatarUrl}
+                alt=""
+                className="h-8 w-8 flex-shrink-0 rounded-full"
+                style={{ border: "1px solid rgba(255,255,255,.25)" }}
+              />
+            ) : (
+              <div
+                className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                style={{ background: "linear-gradient(145deg,#38bdf8,#8b5cf6)" }}
+              >
+                {data.owner.login.slice(0, 2).toUpperCase()}
+              </div>
+            )}
             <div className="min-w-0">
               <div className="truncate text-[10px]" style={{ color: "#9fb2dc" }}>
                 {data.owner.login} /
@@ -284,8 +302,8 @@ function AuroraBanner({ data, config }: { data: GithubRepoData; config: GithubRe
             </div>
           </div>
           <div className="flex flex-shrink-0 gap-3 text-xs text-white">
-            <span>★ {data.stargazerCount}</span>
-            <span>⑂ {data.forkCount}</span>
+            <span>★ {formatCount(data.stargazerCount)}</span>
+            <span>⑂ {formatCount(data.forkCount)}</span>
           </div>
         </div>
         {showDescription && data.description && (
@@ -315,7 +333,8 @@ function AuroraBanner({ data, config }: { data: GithubRepoData; config: GithubRe
 // barra de linguagens + badge de estrelas grande no rodapé.
 function BoldBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
-  const languages = data.languages.slice(0, 4)
+  const showLanguages = config.banner_show_languages ?? true
+  const languages = showLanguages ? data.languages.slice(0, 4) : []
 
   return (
     <a
@@ -348,7 +367,7 @@ function BoldBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
           </div>
         )}
         <div className="flex-shrink-0 text-2xl font-black" style={{ color: "#fb923c" }}>
-          {data.stargazerCount}★
+          {formatCount(data.stargazerCount)}★
         </div>
       </div>
     </a>
@@ -380,8 +399,8 @@ function SplitBanner({ data, config }: { data: GithubRepoData; config: GithubRep
           </p>
         )}
         <div className="mt-3 flex gap-4 text-xs" style={{ color: "#10243f" }}>
-          <span>★ {data.stargazerCount} Stars</span>
-          <span>⑂ {data.forkCount} Forks</span>
+          <span>★ {formatCount(data.stargazerCount)} Stars</span>
+          <span>⑂ {formatCount(data.forkCount)} Forks</span>
         </div>
       </div>
       <div className="flex flex-col justify-center gap-2 p-4" style={{ background: "#10243f" }}>
@@ -405,7 +424,8 @@ function SplitBanner({ data, config }: { data: GithubRepoData; config: GithubRep
 // visual de "planta baixa" de projeto de programação.
 function BlueprintBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
-  const languages = data.languages.slice(0, 3)
+  const showLanguages = config.banner_show_languages ?? true
+  const languages = showLanguages ? data.languages.slice(0, 3) : []
 
   return (
     <a
@@ -426,9 +446,9 @@ function BlueprintBanner({ data, config }: { data: GithubRepoData; config: Githu
             <div className="mt-1 truncate text-xl font-bold">{data.name.toUpperCase()}</div>
           </div>
           <div className="flex-shrink-0 text-right text-[11px]" style={{ color: "#70d9f7" }}>
-            STARS_{String(data.stargazerCount).padStart(3, "0")}
+            STARS_{formatCount(data.stargazerCount).padStart(3, "0")}
             <br />
-            FORKS_{String(data.forkCount).padStart(3, "0")}
+            FORKS_{formatCount(data.forkCount).padStart(3, "0")}
           </div>
         </div>
         {showDescription && data.description && (
@@ -452,7 +472,8 @@ function BlueprintBanner({ data, config }: { data: GithubRepoData; config: Githu
 // separa identidade (topo) de metadados (rodapé).
 function RibbonBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
-  const languages = data.languages.slice(0, 3)
+  const showLanguages = config.banner_show_languages ?? true
+  const languages = showLanguages ? data.languages.slice(0, 3) : []
 
   return (
     <a href={data.url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-lg" style={{ background: "#171717" }}>
@@ -472,14 +493,18 @@ function RibbonBanner({ data, config }: { data: GithubRepoData; config: GithubRe
           className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full p-0.5"
           style={{ background: "conic-gradient(#f43f5e,#8b5cf6,#22d3ee,#f43f5e)" }}
         >
-          <div className="flex h-full w-full items-center justify-center rounded-full text-[10px] font-bold text-white" style={{ background: "#171717" }}>
-            {data.owner.login.slice(0, 2).toUpperCase()}
-          </div>
+          {data.owner.avatarUrl ? (
+            <img src={data.owner.avatarUrl} alt="" className="h-full w-full rounded-full" style={{ border: "2px solid #171717" }} />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center rounded-full text-[10px] font-bold text-white" style={{ background: "#171717" }}>
+              {data.owner.login.slice(0, 2).toUpperCase()}
+            </div>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-4 px-4 py-2 text-[11px] font-semibold" style={{ background: "#f5f5f5", color: "#171717" }}>
-        <span>★ {data.stargazerCount}</span>
-        <span>⑂ {data.forkCount}</span>
+        <span>★ {formatCount(data.stargazerCount)}</span>
+        <span>⑂ {formatCount(data.forkCount)}</span>
         {languages.length > 0 && <span className="ml-auto truncate">{languages.map((l) => l.name).join(" · ")}</span>}
       </div>
     </a>
@@ -515,8 +540,8 @@ function SocialBanner({ data, config }: { data: GithubRepoData; config: GithubRe
           </p>
         )}
         <div className="mt-3 flex items-center gap-3 text-xs" style={{ color: "#171717" }}>
-          <span>★ {data.stargazerCount}</span>
-          <span>⑂ {data.forkCount}</span>
+          <span>★ {formatCount(data.stargazerCount)}</span>
+          <span>⑂ {formatCount(data.forkCount)}</span>
           {data.primaryLanguage && (
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-full" style={{ background: accent }} />
@@ -533,12 +558,21 @@ function SocialBanner({ data, config }: { data: GithubRepoData; config: GithubRe
           className="absolute h-28 w-28 rounded-full blur-2xl"
           style={{ background: `${accent}55` }}
         />
-        <div
-          className="relative flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold text-white"
-          style={{ background: `linear-gradient(145deg, ${accent}, #fff2)`, border: "1px solid rgba(255,255,255,.25)" }}
-        >
-          {data.owner.login.slice(0, 2).toUpperCase()}
-        </div>
+        {data.owner.avatarUrl ? (
+          <img
+            src={data.owner.avatarUrl}
+            alt=""
+            className="relative h-16 w-16 rounded-full"
+            style={{ border: "2px solid rgba(255,255,255,.35)" }}
+          />
+        ) : (
+          <div
+            className="relative flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold text-white"
+            style={{ background: `linear-gradient(145deg, ${accent}, #fff2)`, border: "1px solid rgba(255,255,255,.25)" }}
+          >
+            {data.owner.login.slice(0, 2).toUpperCase()}
+          </div>
+        )}
       </div>
     </a>
   )
@@ -574,8 +608,8 @@ function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
       )}
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
-        <span className="flex items-center gap-1.5 text-sm text-default-muted">★ {data.stargazerCount} stars</span>
-        <span className="flex items-center gap-1.5 text-sm text-default-muted">⑂ {data.forkCount} forks</span>
+        <span className="flex items-center gap-1.5 text-sm text-default-muted">★ {formatCount(data.stargazerCount)} stars</span>
+        <span className="flex items-center gap-1.5 text-sm text-default-muted">⑂ {formatCount(data.forkCount)} forks</span>
         {languages.map((lang) => (
           <span key={lang.name} className="flex items-center gap-1.5 text-sm text-default-muted">
             <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full" style={{ background: lang.color }} />
@@ -624,7 +658,7 @@ export function Banner({ config, data, style = "default", size = "half" }: Banne
               {(config.banner_show_description ?? true) &&
                 data.description &&
                 (config.banner_variant ?? "large") !== "compact" && (
-                  <p className="px-1 pb-1 text-sm text-terminal-muted">{data.description}</p>
+                  <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{data.description}</p>
                 )}
             </>
           }

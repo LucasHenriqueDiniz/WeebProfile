@@ -30,13 +30,30 @@ export default function LoginPage() {
     }
   }, [])
 
+  // Sem a publishable key do Clerk o isLoaded nunca resolve e a página ficaria num
+  // loading infinito — falha explícita em vez de spinner eterno.
+  if (!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY) {
+    return (
+      <AuthDecoration title="Login indisponível">
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3">
+          <p className="text-sm text-amber-300">
+            Autenticação não configurada neste ambiente (VITE_CLERK_PUBLISHABLE_KEY ausente no build).
+          </p>
+        </div>
+      </AuthDecoration>
+    )
+  }
+
   // Mostrar loading enquanto verifica autenticação
   if (authLoading) {
     return <LoadingScreen />
   }
 
   return (
-    <AuthDecoration title="Bem-vindo de volta">
+    <AuthDecoration
+      title="Bem-vindo de volta"
+      subtitle="Entre para gerenciar seus cards e manter seu perfil do GitHub sempre atualizado."
+    >
       {errorMessage && (
         <div className="mb-3 px-2.5 py-1.5 rounded-lg border border-red-500/40 bg-red-500/10">
           <p className="text-xs text-red-300">{errorMessage}</p>
@@ -52,7 +69,7 @@ export default function LoginPage() {
       />
 
       {/* Switch to Signup */}
-      <p className="text-[13px] text-center text-slate-400 mt-6">
+      <p className="text-[13px] text-center text-muted-foreground mt-6">
         Não tem conta?{" "}
         <Link href="/signup" className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
           Criar conta

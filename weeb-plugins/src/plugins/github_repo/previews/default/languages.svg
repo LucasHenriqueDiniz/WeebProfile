@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="152" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="120" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
     #svg-main {
   --default-color-surface: #ffffff;
   --default-color-background: #ffffff;
@@ -586,7 +586,11 @@
 
 /* We only need utilities, not base or components */
 
-.visible {
+.pointer-events-none {
+  pointer-events: none
+}
+
+#svg-main .visible {
   visibility: visible
 }
 
@@ -608,6 +612,54 @@
 
 #svg-main .inset-0 {
   inset: 0px
+}
+
+#svg-main .-bottom-10 {
+  bottom: -2.5rem
+}
+
+#svg-main .-bottom-14 {
+  bottom: -3.5rem
+}
+
+#svg-main .-bottom-px {
+  bottom: -1px
+}
+
+#svg-main .-left-8 {
+  left: -2rem
+}
+
+#svg-main .-left-px {
+  left: -1px
+}
+
+#svg-main .-right-14 {
+  right: -3.5rem
+}
+
+#svg-main .-right-8 {
+  right: -2rem
+}
+
+#svg-main .-right-px {
+  right: -1px
+}
+
+#svg-main .-top-10 {
+  top: -2.5rem
+}
+
+#svg-main .-top-12 {
+  top: -3rem
+}
+
+#svg-main .-top-px {
+  top: -1px
+}
+
+#svg-main .left-2 {
+  left: 0.5rem
 }
 
 #svg-main .right-0 {
@@ -726,12 +778,20 @@
   margin-top: 0.5rem
 }
 
+#svg-main .mt-2\.5 {
+  margin-top: 0.625rem
+}
+
 #svg-main .mt-3 {
   margin-top: 0.75rem
 }
 
 #svg-main .mt-4 {
   margin-top: 1rem
+}
+
+#svg-main .mt-5 {
+  margin-top: 1.25rem
 }
 
 #svg-main .mt-\[0\.25rem\] {
@@ -796,6 +856,10 @@
   aspect-ratio: 16 / 9
 }
 
+#svg-main .h-1 {
+  height: 0.25rem
+}
+
 #svg-main .h-1\.5 {
   height: 0.375rem
 }
@@ -832,6 +896,10 @@
   height: 5rem
 }
 
+#svg-main .h-28 {
+  height: 7rem
+}
+
 #svg-main .h-3 {
   height: 0.75rem
 }
@@ -844,8 +912,16 @@
   height: 8rem
 }
 
+#svg-main .h-36 {
+  height: 9rem
+}
+
 #svg-main .h-4 {
   height: 1rem
+}
+
+#svg-main .h-48 {
+  height: 12rem
 }
 
 #svg-main .h-5 {
@@ -900,6 +976,10 @@
   max-height: 50px
 }
 
+#svg-main .min-h-\[110px\] {
+  min-height: 110px
+}
+
 #svg-main .min-h-\[120px\] {
   min-height: 120px
 }
@@ -918,6 +998,10 @@
 
 #svg-main .w-1 {
   width: 0.25rem
+}
+
+#svg-main .w-1\.5 {
+  width: 0.375rem
 }
 
 #svg-main .w-10 {
@@ -944,8 +1028,16 @@
   width: 0.5rem
 }
 
+#svg-main .w-2\.5 {
+  width: 0.625rem
+}
+
 #svg-main .w-20 {
   width: 5rem
+}
+
+#svg-main .w-28 {
+  width: 7rem
 }
 
 #svg-main .w-3 {
@@ -960,8 +1052,16 @@
   width: 8rem
 }
 
+#svg-main .w-36 {
+  width: 9rem
+}
+
 #svg-main .w-4 {
   width: 1rem
+}
+
+#svg-main .w-48 {
+  width: 12rem
 }
 
 #svg-main .w-5 {
@@ -1007,6 +1107,10 @@
 
 #svg-main .max-w-\[60\%\] {
   max-width: 60%
+}
+
+#svg-main .max-w-\[80\%\] {
+  max-width: 80%
 }
 
 #svg-main .max-w-full {
@@ -1089,12 +1193,28 @@
   grid-template-columns: repeat(8, minmax(0, 1fr))
 }
 
+#svg-main .grid-cols-\[1\.25fr_\.75fr\] {
+  grid-template-columns: 1.25fr .75fr
+}
+
+#svg-main .grid-cols-\[1\.3fr_\.7fr\] {
+  grid-template-columns: 1.3fr .7fr
+}
+
+#svg-main .grid-cols-\[130px_1fr\] {
+  grid-template-columns: 130px 1fr
+}
+
 #svg-main .grid-cols-\[30px_1fr\] {
   grid-template-columns: 30px 1fr
 }
 
 #svg-main .grid-cols-\[30px_min-content_1fr\] {
   grid-template-columns: 30px min-content 1fr
+}
+
+#svg-main .grid-cols-\[4px_1fr\] {
+  grid-template-columns: 4px 1fr
 }
 
 #svg-main .grid-cols-\[75px_1fr\] {
@@ -1185,6 +1305,10 @@
   gap: 0.5rem
 }
 
+#svg-main .gap-2\.5 {
+  gap: 0.625rem
+}
+
 #svg-main .gap-3 {
   gap: 0.75rem
 }
@@ -1206,13 +1330,27 @@
        column-gap: 0.5rem
 }
 
+#svg-main .gap-x-2\.5 {
+  -moz-column-gap: 0.625rem;
+       column-gap: 0.625rem
+}
+
 #svg-main .gap-x-3 {
   -moz-column-gap: 0.75rem;
        column-gap: 0.75rem
 }
 
+#svg-main .gap-x-4 {
+  -moz-column-gap: 1rem;
+       column-gap: 1rem
+}
+
 #svg-main .gap-y-1 {
   row-gap: 0.25rem
+}
+
+#svg-main .gap-y-1\.5 {
+  row-gap: 0.375rem
 }
 
 #svg-main .gap-y-2 {
@@ -1297,6 +1435,10 @@
 
 #svg-main .rounded-2xl {
   border-radius: 1rem
+}
+
+#svg-main .rounded-\[3px\] {
+  border-radius: 3px
 }
 
 #svg-main .rounded-full {
@@ -1484,6 +1626,10 @@
   padding: 0px
 }
 
+#svg-main .p-0\.5 {
+  padding: 0.125rem
+}
+
 #svg-main .p-1 {
   padding: 0.25rem
 }
@@ -1492,12 +1638,28 @@
   padding: 0.5rem
 }
 
+#svg-main .p-2\.5 {
+  padding: 0.625rem
+}
+
 #svg-main .p-3 {
   padding: 0.75rem
 }
 
+#svg-main .p-3\.5 {
+  padding: 0.875rem
+}
+
 #svg-main .p-4 {
   padding: 1rem
+}
+
+#svg-main .p-5 {
+  padding: 1.25rem
+}
+
+#svg-main .p-6 {
+  padding: 1.5rem
 }
 
 #svg-main .px-1 {
@@ -1626,6 +1788,11 @@
   line-height: 2.25rem
 }
 
+#svg-main .text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem
+}
+
 #svg-main .text-\[0\.75rem\] {
   font-size: 0.75rem
 }
@@ -1683,6 +1850,10 @@
   font-weight: 700
 }
 
+#svg-main .font-extrabold {
+  font-weight: 800
+}
+
 #svg-main .font-medium {
   font-weight: 500
 }
@@ -1722,6 +1893,22 @@
 
 #svg-main .leading-tight {
   line-height: 1.25
+}
+
+#svg-main .tracking-\[0\.11em\] {
+  letter-spacing: 0.11em
+}
+
+#svg-main .tracking-\[0\.14em\] {
+  letter-spacing: 0.14em
+}
+
+#svg-main .tracking-\[0\.16em\] {
+  letter-spacing: 0.16em
+}
+
+#svg-main .tracking-\[0\.2em\] {
+  letter-spacing: 0.2em
 }
 
 #svg-main .tracking-tight {
@@ -1944,6 +2131,16 @@
 
 #svg-main .blur {
   --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .blur-2xl {
+  --tw-blur: blur(40px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+#svg-main .blur-sm {
+  --tw-blur: blur(4px);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
 }
 
@@ -2210,4 +2407,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-repo-languages"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Technologies</h2></div></div><div class="rounded-lg border border-default-border p-4"><div class="flex flex-col gap-1.5"><div class="flex h-1.5 w-full overflow-hidden rounded-full bg-default-muted/10"><div style="width:68.4%;background:#3178c6"></div><div style="width:18.2%;background:#61dafb"></div><div style="width:9.1%;background:#563d7c"></div><div style="width:4.3%;background:#f1e05a"></div></div><div class="flex flex-wrap items-center gap-x-3 gap-y-1"><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#3178c6"></span>TypeScript<span class="text-default-muted/70">68.4<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#61dafb"></span>React<span class="text-default-muted/70">18.2<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#563d7c"></span>CSS<span class="text-default-muted/70">9.1<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#f1e05a"></span>JavaScript<span class="text-default-muted/70">4.3<!-- -->%</span></span></div></div></div></section></div></div></div></div></foreignObject></svg>
+</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-repo-languages"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Technologies</h2></div></div><div class="flex flex-col gap-1.5"><div class="flex h-1.5 w-full overflow-hidden rounded-full bg-default-muted/10"><div style="width:68.4%;background:#3178c6"></div><div style="width:18.2%;background:#61dafb"></div><div style="width:9.1%;background:#563d7c"></div><div style="width:4.3%;background:#f1e05a"></div></div><div class="flex flex-wrap items-center gap-x-3 gap-y-1"><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#3178c6"></span>TypeScript<span class="text-default-muted/70">68.4<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#61dafb"></span>React<span class="text-default-muted/70">18.2<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#563d7c"></span>CSS<span class="text-default-muted/70">9.1<!-- -->%</span></span><span class="flex items-center gap-1 text-xs text-default-muted"><span class="h-2 w-2 flex-shrink-0 rounded-full" style="background:#f1e05a"></span>JavaScript<span class="text-default-muted/70">4.3<!-- -->%</span></span></div></div></section></div></div></div></div></foreignObject></svg>

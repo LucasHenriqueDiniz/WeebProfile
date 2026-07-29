@@ -33,7 +33,9 @@ export const clerkAppearance = {
     socialButtonsBlockButtonText: "text-foreground text-sm font-medium",
     dividerRow: "my-1",
     dividerLine: "bg-border",
-    dividerText: "text-[10px] font-semibold tracking-[0.15em] uppercase text-muted-foreground bg-background px-3",
+    // bg-card (não bg-background): o form agora vive dentro do glass card de AuthDecoration,
+    // então o "recorte" atrás do texto do divider precisa casar com essa superfície.
+    dividerText: "text-[10px] font-semibold tracking-[0.15em] uppercase text-muted-foreground bg-card px-3 rounded",
     formFieldLabel: "text-xs font-medium text-muted-foreground",
     formFieldInput:
       "rounded-xl border border-border bg-muted/60 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-500 transition",
@@ -44,7 +46,6 @@ export const clerkAppearance = {
     formResendCodeLink: "text-cyan-400 hover:text-cyan-300",
     otpCodeFieldInput: "border border-border bg-muted/60 text-foreground rounded-lg",
     formFieldAction: "text-cyan-400 hover:text-cyan-300",
-    alternativeMethodsBlockButton:
-      "rounded-xl border border-border bg-muted/60 hover:bg-accent text-foreground",
+    alternativeMethodsBlockButton: "rounded-xl border border-border bg-muted/60 hover:bg-accent text-foreground",
   },
 } as const

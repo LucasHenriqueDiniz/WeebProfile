@@ -35,7 +35,9 @@ export function PluginDetailPanel({ workspace }: PluginDetailPanelProps) {
   if (!selectedPlugin || !selectedPluginEntry) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12">
-        <Puzzle className="w-8 h-8 text-muted-foreground/40 mb-3" />
+        <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/15 to-cyan-500/10">
+          <Puzzle className="w-6 h-6 text-primary/70" />
+        </span>
         <p className="text-sm font-medium text-foreground mb-1">Selecione um plugin</p>
         <p className="text-xs text-muted-foreground max-w-[220px]">
           Escolha um plugin na lista ao lado para configurar seus campos e seções.
