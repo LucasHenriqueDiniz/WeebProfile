@@ -491,6 +491,10 @@
       "hideEmojisDescription": "Eliminar iconos de emoji de la salida de la terminal",
       "hideHeader": "Ocultar Encabezado",
       "hideHeaderDescription": "Eliminar la barra de encabezado de la terminal",
+      "font": "Fuente",
+      "fontDescription": "Fuente utilizada en la tarjeta",
+      "terminalHeaderText": "Texto del Encabezado de la Terminal",
+      "terminalHeaderTextDescription": "Título personalizado para la barra de encabezado de la terminal",
       "reset": "Restablecer",
       "options": {
         "default": "predeterminado",

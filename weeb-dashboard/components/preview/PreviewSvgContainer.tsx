@@ -14,6 +14,8 @@ interface PreviewSvgContainerProps {
   theme?: string
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
+  fontFamily?: string
+  terminalHeaderText?: string
   customCss?: string
   customThemeColors?: Record<string, string> // Custom theme colors (only used when theme === 'custom')
   plugins?: Record<string, any> // Plugin configs for CSS loading
@@ -32,6 +34,8 @@ export function PreviewSvgContainer({
   theme,
   hideTerminalEmojis,
   hideTerminalHeader,
+  fontFamily,
+  terminalHeaderText,
   customCss,
   customThemeColors,
   plugins,
@@ -132,6 +136,8 @@ ${cssVariables}
         terminalTheme={style === "terminal" ? theme || "default" : undefined}
         defaultTheme={style === "default" ? theme || "default" : undefined}
         hideTerminalHeader={hideTerminalHeader}
+        fontFamily={fontFamily}
+        terminalHeaderText={terminalHeaderText}
         customThemeColors={customThemeColors}
       >
         {children}

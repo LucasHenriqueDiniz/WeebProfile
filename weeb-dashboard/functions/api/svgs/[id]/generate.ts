@@ -130,6 +130,8 @@ function getTerminalConfigs(uiConfig: Record<string, any> | null | undefined) {
     hideTerminalEmojis: config.hideTerminalEmojis ?? false,
     hideTerminalHeader: config.hideTerminalHeader ?? false,
     hideTerminalCommand: config.hideTerminalCommand ?? false,
+    fontFamily: config.fontFamily ?? "poppins",
+    terminalHeaderText: typeof config.terminalHeaderText === "string" ? config.terminalHeaderText.trim() : "",
   }
 }
 
@@ -217,6 +219,8 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         hideTerminalEmojis: terminalConfigs.hideTerminalEmojis,
         hideTerminalHeader: terminalConfigs.hideTerminalHeader,
         hideTerminalCommand: terminalConfigs.hideTerminalCommand,
+        fontFamily: terminalConfigs.fontFamily,
+        terminalHeaderText: terminalConfigs.terminalHeaderText || undefined,
         customThemeColors: uiConfig.customThemeColors || undefined,
         userId,
         mock: false,

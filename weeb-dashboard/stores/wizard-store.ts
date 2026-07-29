@@ -32,6 +32,8 @@ export interface WizardState {
   hideTerminalEmojis: boolean
   hideTerminalHeader: boolean
   hideTerminalCommand: boolean
+  fontFamily: string
+  terminalHeaderText: string
   customCss: string
   customThemeColors: Record<string, string> // Custom theme colors (only used when theme === 'custom')
 
@@ -66,6 +68,8 @@ export interface WizardState {
   setHideTerminalEmojis: (hide: boolean) => void
   setHideTerminalHeader: (hide: boolean) => void
   setHideTerminalCommand: (hide: boolean) => void
+  setFontFamily: (fontFamily: string) => void
+  setTerminalHeaderText: (text: string) => void
   setCustomThemeColor: (variable: string, color: string) => void
   resetCustomThemeColors: () => void
   setPreviewUrl: (url: string | null) => void
@@ -131,6 +135,8 @@ const initialState = {
   // Header do terminal escondido por padrao — o chrome "weeb@profile:~" e opt-in.
   hideTerminalHeader: true,
   hideTerminalCommand: false,
+  fontFamily: "poppins",
+  terminalHeaderText: "",
   customCss: "",
   customThemeColors: {},
   previewUrl: null,
@@ -368,6 +374,14 @@ export const useWizardStore = create<WizardState>()(
         set({ hideTerminalCommand: hide })
       },
 
+      setFontFamily: (fontFamily) => {
+        set({ fontFamily })
+      },
+
+      setTerminalHeaderText: (text) => {
+        set({ terminalHeaderText: text })
+      },
+
       setCustomThemeColor: (variable, color) => {
         set((state) => ({
           customThemeColors: {
@@ -501,6 +515,8 @@ export const useWizardStore = create<WizardState>()(
               hideTerminalEmojis: templateData.uiConfig.hideTerminalEmojis || false,
               hideTerminalHeader: templateData.uiConfig.hideTerminalHeader ?? true,
               hideTerminalCommand: templateData.uiConfig.hideTerminalCommand || false,
+              fontFamily: templateData.uiConfig.fontFamily || "poppins",
+              terminalHeaderText: templateData.uiConfig.terminalHeaderText || "",
               customThemeColors: templateData.uiConfig.customThemeColors || {},
             })
           }
@@ -557,6 +573,8 @@ export const useWizardStore = create<WizardState>()(
         hideTerminalEmojis: state.hideTerminalEmojis,
         hideTerminalHeader: state.hideTerminalHeader,
         hideTerminalCommand: state.hideTerminalCommand,
+        fontFamily: state.fontFamily,
+        terminalHeaderText: state.terminalHeaderText,
         customCss: state.customCss,
         customThemeColors: state.customThemeColors,
         previewUrl: state.previewUrl,

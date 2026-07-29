@@ -21,6 +21,8 @@ export interface Template {
   size: TemplateSize
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
+  fontFamily?: string
+  terminalHeaderText?: string
   customCss?: string
   customThemeColors?: Record<string, string>
   likes?: number

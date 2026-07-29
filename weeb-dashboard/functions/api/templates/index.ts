@@ -27,6 +27,8 @@ function setTerminalConfigs(
     hideTerminalEmojis?: boolean
     hideTerminalHeader?: boolean
     hideTerminalCommand?: boolean
+    fontFamily?: string
+    terminalHeaderText?: string
   }
 ): Record<string, any> {
   return {
@@ -34,6 +36,8 @@ function setTerminalConfigs(
     ...(configs.hideTerminalEmojis !== undefined && { hideTerminalEmojis: configs.hideTerminalEmojis }),
     ...(configs.hideTerminalHeader !== undefined && { hideTerminalHeader: configs.hideTerminalHeader }),
     ...(configs.hideTerminalCommand !== undefined && { hideTerminalCommand: configs.hideTerminalCommand }),
+    ...(configs.fontFamily !== undefined && { fontFamily: configs.fontFamily }),
+    ...(configs.terminalHeaderText !== undefined && { terminalHeaderText: configs.terminalHeaderText }),
   }
 }
 
@@ -156,6 +160,8 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       hideTerminalEmojis,
       hideTerminalHeader,
       hideTerminalCommand,
+      fontFamily,
+      terminalHeaderText,
       customCss,
       pluginsOrder,
       pluginsConfig,
@@ -166,11 +172,19 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
     if (!name) return badRequest("Name is required")
 
     let finalUiConfig = { ...(uiConfig || {}) }
-    if (hideTerminalEmojis !== undefined || hideTerminalHeader !== undefined || hideTerminalCommand !== undefined) {
+    if (
+      hideTerminalEmojis !== undefined ||
+      hideTerminalHeader !== undefined ||
+      hideTerminalCommand !== undefined ||
+      fontFamily !== undefined ||
+      terminalHeaderText !== undefined
+    ) {
       finalUiConfig = setTerminalConfigs(finalUiConfig, {
         hideTerminalEmojis,
         hideTerminalHeader,
         hideTerminalCommand,
+        fontFamily,
+        terminalHeaderText,
       })
     }
 

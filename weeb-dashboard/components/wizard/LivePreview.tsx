@@ -16,6 +16,8 @@ export function LivePreview() {
     theme,
     hideTerminalEmojis,
     hideTerminalHeader,
+    fontFamily,
+    terminalHeaderText,
     customCss,
     customThemeColors,
   } = useWizardStore(
@@ -27,6 +29,8 @@ export function LivePreview() {
       theme: state.theme,
       hideTerminalEmojis: state.hideTerminalEmojis,
       hideTerminalHeader: state.hideTerminalHeader,
+      fontFamily: state.fontFamily,
+      terminalHeaderText: state.terminalHeaderText,
       customCss: state.customCss,
       customThemeColors: state.customThemeColors,
     }))
@@ -126,6 +130,8 @@ export function LivePreview() {
           theme={theme}
           hideTerminalEmojis={hideTerminalEmojis}
           hideTerminalHeader={hideTerminalHeader}
+          fontFamily={fontFamily}
+          terminalHeaderText={terminalHeaderText}
           customCss={customCss}
           customThemeColors={theme === "custom" ? customThemeColors : undefined}
         />

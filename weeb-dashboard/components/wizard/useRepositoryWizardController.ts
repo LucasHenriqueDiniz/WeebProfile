@@ -28,6 +28,8 @@ export function useRepositoryWizardController({
     hideTerminalEmojis,
     hideTerminalHeader,
     hideTerminalCommand,
+    fontFamily,
+    terminalHeaderText,
     customCss,
     customThemeColors,
     sections,
@@ -83,7 +85,13 @@ export function useRepositoryWizardController({
 
       const uiConfig = setTerminalConfigs(
         {},
-        { hideTerminalEmojis, hideTerminalHeader, hideTerminalCommand }
+        {
+          hideTerminalEmojis,
+          hideTerminalHeader,
+          hideTerminalCommand,
+          fontFamily,
+          terminalHeaderText: terminalHeaderText.trim() || undefined,
+        }
       )
       if (theme === "custom" && Object.keys(customThemeColors).length > 0) {
         uiConfig.customThemeColors = customThemeColors

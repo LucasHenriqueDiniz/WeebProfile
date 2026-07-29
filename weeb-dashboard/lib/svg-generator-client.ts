@@ -16,6 +16,8 @@ interface GenerateSvgRequest {
   defaultTheme?: string
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
+  fontFamily?: string
+  terminalHeaderText?: string
   customThemeColors?: Record<string, string>
   userId?: string // userId para buscar essential configs no Supabase
   mock?: boolean

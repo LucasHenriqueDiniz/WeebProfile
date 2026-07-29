@@ -13,12 +13,16 @@ export function getTerminalConfigs(uiConfig: UiConfig | null | undefined): {
   hideTerminalEmojis: boolean
   hideTerminalHeader: boolean
   hideTerminalCommand: boolean
+  fontFamily: string
+  terminalHeaderText: string
 } {
   const config = uiConfig || {}
   return {
     hideTerminalEmojis: config.hideTerminalEmojis ?? false,
     hideTerminalHeader: config.hideTerminalHeader ?? false,
     hideTerminalCommand: config.hideTerminalCommand ?? false,
+    fontFamily: config.fontFamily ?? "poppins",
+    terminalHeaderText: config.terminalHeaderText ?? "",
   }
 }
 
@@ -31,6 +35,8 @@ export function setTerminalConfigs(
     hideTerminalEmojis?: boolean
     hideTerminalHeader?: boolean
     hideTerminalCommand?: boolean
+    fontFamily?: string
+    terminalHeaderText?: string
   }
 ): UiConfig {
   const current = uiConfig || {}
@@ -39,6 +45,8 @@ export function setTerminalConfigs(
     ...(configs.hideTerminalEmojis !== undefined && { hideTerminalEmojis: configs.hideTerminalEmojis }),
     ...(configs.hideTerminalHeader !== undefined && { hideTerminalHeader: configs.hideTerminalHeader }),
     ...(configs.hideTerminalCommand !== undefined && { hideTerminalCommand: configs.hideTerminalCommand }),
+    ...(configs.fontFamily !== undefined && { fontFamily: configs.fontFamily }),
+    ...(configs.terminalHeaderText !== undefined && { terminalHeaderText: configs.terminalHeaderText }),
   }
 }
 

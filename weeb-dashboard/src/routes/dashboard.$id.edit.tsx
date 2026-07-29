@@ -39,6 +39,8 @@ export default function EditSvgPage() {
     setHideTerminalEmojis,
     setHideTerminalHeader,
     setHideTerminalCommand,
+    setFontFamily,
+    setTerminalHeaderText,
     setCustomCss,
     reorderPlugins,
   } = useWizardStore()
@@ -136,6 +138,8 @@ export default function EditSvgPage() {
     setHideTerminalEmojis(terminalConfigs.hideTerminalEmojis)
     setHideTerminalHeader(terminalConfigs.hideTerminalHeader)
     setHideTerminalCommand(terminalConfigs.hideTerminalCommand)
+    setFontFamily(terminalConfigs.fontFamily)
+    setTerminalHeaderText(terminalConfigs.terminalHeaderText)
 
     setCustomCss(svg.customCss || "")
 

@@ -12,6 +12,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { RotateCcw } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
@@ -22,6 +23,8 @@ export interface StyleConfigurationProps {
   theme: string
   hideTerminalEmojis: boolean
   hideTerminalHeader: boolean
+  fontFamily: string
+  terminalHeaderText: string
   customCss: string
   customThemeColors: Record<string, string>
   setStyle: (style: "default" | "terminal") => void
@@ -29,6 +32,8 @@ export interface StyleConfigurationProps {
   setTheme: (theme: string) => void
   setHideTerminalEmojis: (value: boolean) => void
   setHideTerminalHeader: (value: boolean) => void
+  setFontFamily: (value: string) => void
+  setTerminalHeaderText: (value: string) => void
   setCustomCss: (css: string) => void
   setCustomThemeColor: (variable: string, value: string) => void
   resetCustomThemeColors: () => void
@@ -42,6 +47,8 @@ export function StyleConfiguration({
   theme,
   hideTerminalEmojis,
   hideTerminalHeader,
+  fontFamily,
+  terminalHeaderText,
   customCss,
   customThemeColors,
   setStyle,
@@ -49,6 +56,8 @@ export function StyleConfiguration({
   setTheme,
   setHideTerminalEmojis,
   setHideTerminalHeader,
+  setFontFamily,
+  setTerminalHeaderText,
   setCustomCss,
   setCustomThemeColor,
   resetCustomThemeColors,
@@ -194,6 +203,23 @@ export function StyleConfiguration({
         </div>
       </div>
 
+      {/* Font selector */}
+      <div className="py-4 space-y-2.5">
+        <p className="text-sm font-semibold text-foreground">{t("font")}</p>
+        <p className="text-xs text-muted-foreground">{t("fontDescription")}</p>
+        <Select value={fontFamily} onValueChange={setFontFamily}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="poppins">Poppins</SelectItem>
+            <SelectItem value="system">System</SelectItem>
+            <SelectItem value="serif">Serif</SelectItem>
+            <SelectItem value="mono">Mono</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* Custom Theme Colors */}
       {theme === "custom" && style === "default" && (
         <div className="py-4 space-y-2.5">
@@ -254,6 +280,19 @@ export function StyleConfiguration({
               <p className="text-xs text-muted-foreground">{t("hideHeaderDescription")}</p>
             </div>
             <Switch id="hide-header" checked={hideTerminalHeader} onCheckedChange={setHideTerminalHeader} />
+          </div>
+          <div className="space-y-1.5 py-1.5">
+            <Label htmlFor="terminal-header-text" className="text-sm font-medium cursor-pointer">
+              {t("terminalHeaderText")}
+            </Label>
+            <p className="text-xs text-muted-foreground">{t("terminalHeaderTextDescription")}</p>
+            <Input
+              id="terminal-header-text"
+              type="text"
+              value={terminalHeaderText}
+              onChange={(e) => setTerminalHeaderText(e.target.value)}
+              placeholder="weeb@profile:~"
+            />
           </div>
         </div>
       )}

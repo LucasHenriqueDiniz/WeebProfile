@@ -19,6 +19,8 @@ export interface RepositoryWizardState {
   hideTerminalEmojis: boolean
   hideTerminalHeader: boolean
   hideTerminalCommand: boolean
+  fontFamily: string
+  terminalHeaderText: string
   customCss: string
   customThemeColors: Record<string, string>
 
@@ -40,6 +42,8 @@ export interface RepositoryWizardState {
   setCustomCss: (css: string) => void
   setHideTerminalEmojis: (hide: boolean) => void
   setHideTerminalHeader: (hide: boolean) => void
+  setFontFamily: (fontFamily: string) => void
+  setTerminalHeaderText: (text: string) => void
   setCustomThemeColor: (variable: string, color: string) => void
   resetCustomThemeColors: () => void
   setPreviewUrl: (url: string | null) => void
@@ -69,6 +73,8 @@ const initialState = {
   // Header do terminal escondido por padrao (mesma decisao do wizard de perfil).
   hideTerminalHeader: true,
   hideTerminalCommand: false,
+  fontFamily: "poppins",
+  terminalHeaderText: "",
   customCss: "",
   customThemeColors: {},
   sections: [DEFAULT_SECTION],
@@ -94,6 +100,8 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
   setCustomCss: (css) => set({ customCss: css }),
   setHideTerminalEmojis: (hide) => set({ hideTerminalEmojis: hide }),
   setHideTerminalHeader: (hide) => set({ hideTerminalHeader: hide }),
+  setFontFamily: (fontFamily) => set({ fontFamily }),
+  setTerminalHeaderText: (text) => set({ terminalHeaderText: text }),
   setCustomThemeColor: (variable, color) =>
     set((state) => ({ customThemeColors: { ...state.customThemeColors, [variable]: color } })),
   resetCustomThemeColors: () => set({ customThemeColors: {} }),

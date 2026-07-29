@@ -248,6 +248,8 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
                           theme={template.theme}
                           hideTerminalEmojis={template.hideTerminalEmojis}
                           hideTerminalHeader={template.hideTerminalHeader}
+                          fontFamily={template.fontFamily}
+                          terminalHeaderText={template.terminalHeaderText}
                           customCss={template.customCss}
                           customThemeColors={template.customThemeColors}
                         />

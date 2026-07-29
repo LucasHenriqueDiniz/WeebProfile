@@ -22,6 +22,8 @@ interface PreviewRendererProps {
   theme?: string
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
+  fontFamily?: string
+  terminalHeaderText?: string
   customCss?: string
   customThemeColors?: Record<string, string>
   width?: number // Largura fixa opcional (sobrescreve size)
@@ -71,6 +73,8 @@ export function PreviewRenderer({
   theme,
   hideTerminalEmojis,
   hideTerminalHeader,
+  fontFamily,
+  terminalHeaderText,
   customCss,
   customThemeColors,
   width: propWidth,
@@ -269,6 +273,8 @@ export function PreviewRenderer({
         theme={theme}
         hideTerminalEmojis={hideTerminalEmojis}
         hideTerminalHeader={hideTerminalHeader}
+        fontFamily={fontFamily}
+        terminalHeaderText={terminalHeaderText}
         customCss={customCss}
         customThemeColors={customThemeColors}
         plugins={plugins}

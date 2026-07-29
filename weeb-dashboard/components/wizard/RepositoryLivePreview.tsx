@@ -14,6 +14,8 @@ export function RepositoryLivePreview() {
     theme,
     hideTerminalEmojis,
     hideTerminalHeader,
+    fontFamily,
+    terminalHeaderText,
     customCss,
     customThemeColors,
     sections,
@@ -27,6 +29,8 @@ export function RepositoryLivePreview() {
       theme: state.theme,
       hideTerminalEmojis: state.hideTerminalEmojis,
       hideTerminalHeader: state.hideTerminalHeader,
+      fontFamily: state.fontFamily,
+      terminalHeaderText: state.terminalHeaderText,
       customCss: state.customCss,
       customThemeColors: state.customThemeColors,
       sections: state.sections,
@@ -64,6 +68,8 @@ export function RepositoryLivePreview() {
           theme={theme}
           hideTerminalEmojis={hideTerminalEmojis}
           hideTerminalHeader={hideTerminalHeader}
+          fontFamily={fontFamily}
+          terminalHeaderText={terminalHeaderText}
           customCss={customCss}
           customThemeColors={theme === "custom" ? customThemeColors : undefined}
         />

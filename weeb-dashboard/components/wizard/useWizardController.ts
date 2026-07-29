@@ -47,6 +47,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     hideTerminalEmojis,
     hideTerminalHeader,
     hideTerminalCommand,
+    fontFamily,
+    terminalHeaderText,
     customCss,
     customThemeColors,
     setBasicInfo,
@@ -166,6 +168,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
           hideTerminalEmojis,
           hideTerminalHeader,
           hideTerminalCommand,
+          fontFamily,
+          terminalHeaderText: terminalHeaderText.trim() || undefined,
         }
       )
 
