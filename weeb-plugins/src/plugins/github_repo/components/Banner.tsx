@@ -5,6 +5,7 @@ import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { resolveBannerVariant } from "../types"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
+import { Card, Delta, DotSep, Eyebrow, HL, HL_SOFT, HL_SOFTER, LangDot, computeStarDelta, formatCount } from "./redesign"
 
 interface BannerProps {
   config: GithubRepoConfig
@@ -13,506 +14,195 @@ interface BannerProps {
   size?: "half" | "full"
 }
 
-// Contadores no formato compacto do GitHub (1.2k, 34k) - números crus com 5+ dígitos
-// quebram o layout dos banners mais apertados.
-function formatCount(value: number): string {
-  if (value >= 10000) return `${Math.round(value / 1000)}k`
-  if (value >= 1000) return `${(value / 1000).toFixed(1).replace(/\.0$/, "")}k`
-  return String(value)
+// Linha de metadados compartilhada: linguagem primária, stars, forks, licença.
+function MetaRow({ data, showLanguage }: { data: GithubRepoData; showLanguage: boolean }): React.ReactElement {
+  return (
+    <div className="flex items-center gap-3.5 text-xs text-default-muted">
+      {showLanguage && data.primaryLanguage && (
+        <span className="flex items-center gap-1.5">
+          <LangDot color={data.primaryLanguage.color} />
+          {data.primaryLanguage.name}
+        </span>
+      )}
+      {showLanguage && data.primaryLanguage && <DotSep />}
+      <span>
+        <b className="font-semibold text-default-text">{formatCount(data.stargazerCount)}</b> stars
+      </span>
+      <DotSep />
+      <span>
+        <b className="font-semibold text-default-text">{formatCount(data.forkCount)}</b> forks
+      </span>
+      {data.licenseInfo?.spdxId && (
+        <>
+          <DotSep />
+          <span>{data.licenseInfo.spdxId}</span>
+        </>
+      )}
+    </div>
+  )
 }
 
-function OwnerAvatar({ data, accent, size }: { data: GithubRepoData; accent: string; size: number }): React.ReactElement {
+// Marca quadrada com a inicial do repo (ou a imagem custom/avatar, se existir).
+function Mark({ data, size }: { data: GithubRepoData; size: number }): React.ReactElement {
   if (data.owner.avatarUrl) {
     return (
       <img
         src={data.owner.avatarUrl}
         alt=""
-        className="flex-shrink-0 rounded-full border border-default-border"
+        className="flex-shrink-0 rounded-[10px]"
         style={{ width: size, height: size }}
       />
     )
   }
   return (
     <div
-      className="flex flex-shrink-0 items-center justify-center rounded-full font-bold"
-      style={{ width: size, height: size, background: `${accent}25`, color: accent, fontSize: size * 0.4 }}
+      className="flex flex-shrink-0 items-center justify-center rounded-[10px] font-bold"
+      style={{ width: size, height: size, background: HL_SOFT, color: HL, fontSize: size * 0.42 }}
     >
-      {data.owner.login.slice(0, 2).toUpperCase()}
+      {data.name.slice(0, 1).toUpperCase()}
     </div>
   )
 }
 
-// "large" (default): bloco cheio com gradiente na cor da linguagem, avatar grande e
-// nome em destaque - o "cabeçalho" visual do card.
-function LargeBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const accent = data.primaryLanguage?.color || "#8957e5"
+// "hero" (default): accent bar no topo, nome grande, descrição e meta row.
+function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
+  const showLanguage = config.banner_show_languages ?? true
 
   return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block overflow-hidden rounded-lg border border-default-border"
-    >
+    <Card>
       <div
-        className="flex items-center gap-3 p-4"
-        style={{ background: `linear-gradient(135deg, ${accent}30 0%, ${accent}08 60%, transparent 100%)` }}
-      >
-        <OwnerAvatar data={data} accent={accent} size={44} />
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-xs text-default-muted">{data.owner.login}</div>
-          <div className="truncate text-lg font-bold leading-tight text-default-text">{data.name}</div>
+        className="h-[3px]"
+        style={{ background: `linear-gradient(90deg, ${HL}, color-mix(in srgb, ${HL} 30%, transparent))` }}
+      />
+      <div className="px-[18px] py-4">
+        <div className="truncate text-[22px] font-semibold leading-tight tracking-[-0.02em] text-default-text">
+          <span className="font-normal text-default-muted">{data.owner.login} /</span> {data.name}
         </div>
-        <div className="h-9 w-1 flex-shrink-0 rounded-full" style={{ background: accent }} />
+        {showDescription && data.description && (
+          <p className="mt-1.5 text-[13px] leading-[1.55] text-default-muted line-clamp-2">{data.description}</p>
+        )}
+        <div className="mt-3">
+          <MetaRow data={data} showLanguage={showLanguage} />
+        </div>
       </div>
-
-      {showDescription && data.description && (
-        <p className="border-t border-default-border/50 px-4 py-3 text-sm leading-relaxed text-default-muted line-clamp-2">
-          {data.description}
-        </p>
-      )}
-    </a>
+    </Card>
   )
 }
 
-// "minimal": só texto, sem fundo/borda/gradiente - pra quem quer o nome do repo como
-// um título simples dentro do card, sem chamar tanta atenção quanto as outras seções.
+// "minimal": linha única - marca/avatar, nome, descrição truncada, stars à direita.
 function MinimalBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
 
   return (
-    <a href={data.url} target="_blank" rel="noopener noreferrer" className="block">
-      <div className="truncate text-base font-bold text-default-text">{data.nameWithOwner}</div>
-      {showDescription && data.description && (
-        <p className="mt-1 text-sm leading-relaxed text-default-muted line-clamp-2">{data.description}</p>
-      )}
-    </a>
-  )
-}
-
-// "clean": o banner pensado para ser usado sozinho num README - fundo quase branco,
-// uma única borda, sem gradiente tingindo a caixa inteira. Nome + descrição + techs
-// (linguagens já vêm no fetch) cabem numa única faixa, sem seções extras.
-function CleanBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const accent = data.primaryLanguage?.color || "#8957e5"
-  const showDescription = config.banner_show_description ?? true
-  const showLanguages = config.banner_show_languages ?? true
-  const languages = showLanguages ? data.languages.slice(0, 4) : []
-
-  return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center gap-3 rounded-lg border border-default-border p-3"
-    >
-      <OwnerAvatar data={data} accent={accent} size={32} />
+    <Card className="flex flex-row items-center gap-3.5 px-[18px] py-3.5">
+      <Mark data={data} size={40} />
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-bold text-default-text">{data.nameWithOwner}</div>
+        <div className="truncate text-[15px] font-semibold leading-tight text-default-text">{data.nameWithOwner}</div>
         {showDescription && data.description && (
-          <p className="truncate text-xs text-default-muted">{data.description}</p>
-        )}
-        {languages.length > 0 && (
-          <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1">
-            {languages.map((lang) => (
-              <span key={lang.name} className="flex items-center gap-1 text-[11px] text-default-muted">
-                <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ background: lang.color }} />
-                {lang.name}
-              </span>
-            ))}
-          </div>
+          <div className="truncate text-xs text-default-muted">{data.description}</div>
         )}
       </div>
-      <div className="flex flex-shrink-0 items-center gap-3 text-xs text-default-muted">
-        <span className="flex items-center gap-1">★ {formatCount(data.stargazerCount)}</span>
-        <span className="flex items-center gap-1">⑂ {formatCount(data.forkCount)}</span>
+      <div className="flex-shrink-0 text-xs text-default-muted">
+        <b className="font-semibold text-default-text">★ {formatCount(data.stargazerCount)}</b>
       </div>
-    </a>
+    </Card>
   )
 }
 
-// "editorial" (02): régua colorida lateral + tipografia serifada, no estilo de
-// manchete de editorial - lista as techs como texto simples, sem chips.
-function EditorialBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const accent = data.primaryLanguage?.color || "#ff5d2a"
-  const showDescription = config.banner_show_description ?? true
-  const showLanguages = config.banner_show_languages ?? true
-  const languages = showLanguages ? data.languages.slice(0, 3) : []
-
-  return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="grid grid-cols-[4px_1fr] overflow-hidden rounded-lg"
-      style={{ background: "#f6f4ef" }}
-    >
-      <div style={{ background: accent }} />
-      <div className="p-4">
-        <div className="text-[9px] font-extrabold uppercase tracking-[0.16em]" style={{ color: accent }}>
-          Open-source repository
-        </div>
-        <div className="mt-1.5 truncate text-2xl font-bold" style={{ color: "#171717", fontFamily: "Georgia, serif" }}>
-          {data.name}
-        </div>
-        {showDescription && data.description && (
-          <p className="mt-1.5 truncate text-xs" style={{ color: "#67645f" }}>
-            {data.description}
-          </p>
-        )}
-        {languages.length > 0 && (
-          <div className="mt-2.5 flex flex-wrap gap-3 text-[11px]" style={{ color: "#555" }}>
-            {languages.map((lang) => (
-              <span key={lang.name}>
-                {lang.name} {lang.percentage}%
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-    </a>
-  )
-}
-
-// "aurora" (04): fundo escuro com dois blobs de gradiente + painel de vidro
-// (glassmorphism) por cima - o mais "chamativo" das variantes.
-function AuroraBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const showDescription = config.banner_show_description ?? true
-  const showLanguages = config.banner_show_languages ?? true
-  const languages = showLanguages ? data.languages.slice(0, 4) : []
-
-  return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="relative block overflow-hidden rounded-lg p-4"
-      style={{ background: "linear-gradient(135deg,#0c1830,#182654 56%,#31205f)" }}
-    >
-      <div
-        className="pointer-events-none absolute -left-8 -top-10 h-32 w-32 rounded-full blur-2xl"
-        style={{ background: "rgba(34,211,238,.35)" }}
-      />
-      <div
-        className="pointer-events-none absolute -bottom-14 -right-8 h-36 w-36 rounded-full blur-2xl"
-        style={{ background: "rgba(236,72,153,.3)" }}
-      />
-      <div
-        className="relative rounded-lg p-3.5"
-        style={{ border: "1px solid rgba(255,255,255,.16)", background: "rgba(255,255,255,.07)" }}
-      >
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-2.5">
-            {data.owner.avatarUrl ? (
-              <img
-                src={data.owner.avatarUrl}
-                alt=""
-                className="h-8 w-8 flex-shrink-0 rounded-full"
-                style={{ border: "1px solid rgba(255,255,255,.25)" }}
-              />
-            ) : (
-              <div
-                className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                style={{ background: "linear-gradient(145deg,#38bdf8,#8b5cf6)" }}
-              >
-                {data.owner.login.slice(0, 2).toUpperCase()}
-              </div>
-            )}
-            <div className="min-w-0">
-              <div className="truncate text-[10px]" style={{ color: "#9fb2dc" }}>
-                {data.owner.login} /
-              </div>
-              <div className="truncate text-lg font-bold text-white">{data.name}</div>
-            </div>
-          </div>
-          <div className="flex flex-shrink-0 gap-3 text-xs text-white">
-            <span>★ {formatCount(data.stargazerCount)}</span>
-            <span>⑂ {formatCount(data.forkCount)}</span>
-          </div>
-        </div>
-        {showDescription && data.description && (
-          <p className="mt-2.5 truncate text-xs" style={{ color: "#c8d4f2" }}>
-            {data.description}
-          </p>
-        )}
-        {languages.length > 0 && (
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {languages.map((lang) => (
-              <span
-                key={lang.name}
-                className="rounded-full px-2 py-0.5 text-[11px] text-white"
-                style={{ background: "rgba(255,255,255,.07)", border: "1px solid rgba(255,255,255,.18)" }}
-              >
-                {lang.name}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-    </a>
-  )
-}
-
-// "split" (06): duas colunas - nome/descrição/stats à esquerda, painel escuro com
-// as tecnologias em barras individuais à direita.
+// "split": conteúdo à esquerda + painel soft de stars com delta à direita.
 function SplitBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
-  const languages = data.languages.slice(0, 3)
+  const delta = computeStarDelta(data.starHistory)
 
   return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="grid grid-cols-[1.25fr_.75fr] overflow-hidden rounded-lg"
-      style={{ background: "#edf6ff", color: "#10243f" }}
-    >
-      <div className="p-4">
-        <div className="text-[11px]" style={{ color: "#57718f" }}>
-          {data.owner.login} / repository
-        </div>
-        <div className="mt-1 truncate text-xl font-bold">{data.name}</div>
+    <Card className="flex flex-row">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 px-[18px] py-4">
+        <Eyebrow>Repository</Eyebrow>
+        <div className="truncate text-lg font-semibold tracking-[-0.02em] text-default-text">{data.name}</div>
         {showDescription && data.description && (
-          <p className="mt-1.5 truncate text-xs" style={{ color: "#5b708a" }}>
-            {data.description}
-          </p>
+          <p className="text-xs leading-normal text-default-muted line-clamp-2">{data.description}</p>
         )}
-        <div className="mt-3 flex gap-4 text-xs" style={{ color: "#10243f" }}>
-          <span>★ {formatCount(data.stargazerCount)} Stars</span>
-          <span>⑂ {formatCount(data.forkCount)} Forks</span>
+      </div>
+      <div
+        className="flex w-[132px] flex-shrink-0 flex-col items-center justify-center gap-0.5 border-l border-default-border"
+        style={{ background: HL_SOFTER }}
+      >
+        <div className="text-2xl font-semibold leading-none tracking-[-0.02em]" style={{ color: HL }}>
+          {formatCount(data.stargazerCount)}
         </div>
+        <Eyebrow>stars</Eyebrow>
+        <Delta delta={delta} className="mt-0.5" />
       </div>
-      <div className="flex flex-col justify-center gap-2 p-4" style={{ background: "#10243f" }}>
-        {languages.map((lang) => (
-          <div key={lang.name}>
-            <div className="flex items-center justify-between text-[11px] text-white">
-              <span>{lang.name}</span>
-              <span>{lang.percentage}%</span>
-            </div>
-            <div className="mt-1 h-1 overflow-hidden rounded-full" style={{ background: "#294564" }}>
-              <div className="h-full rounded-full" style={{ width: `${lang.percentage}%`, background: "#58c7ff" }} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </a>
+    </Card>
   )
 }
 
-// "blueprint" (07): moldura técnica com cantos marcados, tudo em monospace maiúsculo -
-// visual de "planta baixa" de projeto de programação.
-function BlueprintBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const showDescription = config.banner_show_description ?? true
-  const showLanguages = config.banner_show_languages ?? true
-  const languages = showLanguages ? data.languages.slice(0, 3) : []
+// "display": tipografia gigante + letra fantasma no fundo.
+function DisplayBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
+  const showLanguage = config.banner_show_languages ?? true
 
   return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="relative block overflow-hidden rounded-lg p-4"
-      style={{ background: "#061b2d", color: "#dff7ff", fontFamily: "ui-monospace, monospace" }}
-    >
-      <div className="relative border p-3.5" style={{ borderColor: "#1e6f8e" }}>
-        <span className="absolute -left-px -top-px h-3 w-3" style={{ borderLeft: "3px solid #65dfff", borderTop: "3px solid #65dfff" }} />
-        <span className="absolute -bottom-px -right-px h-3 w-3" style={{ borderRight: "3px solid #65dfff", borderBottom: "3px solid #65dfff" }} />
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="text-[10px] tracking-[0.11em]" style={{ color: "#69b7ce" }}>
-              {data.owner.login.toUpperCase()}_REPOSITORY
-            </div>
-            <div className="mt-1 truncate text-xl font-bold">{data.name.toUpperCase()}</div>
-          </div>
-          <div className="flex-shrink-0 text-right text-[11px]" style={{ color: "#70d9f7" }}>
-            STARS_{formatCount(data.stargazerCount).padStart(3, "0")}
-            <br />
-            FORKS_{formatCount(data.forkCount).padStart(3, "0")}
-          </div>
-        </div>
-        {showDescription && data.description && (
-          <p className="mt-2.5 max-w-[80%] truncate text-[11px]" style={{ color: "#9ad0df" }}>
-            {data.description}
-          </p>
-        )}
-        {languages.length > 0 && (
-          <div className="mt-2.5 flex flex-wrap gap-2 text-[10px]">
-            {languages.map((lang) => (
-              <span key={lang.name}>[ {lang.name.toUpperCase()} ]</span>
-            ))}
-          </div>
-        )}
+    <Card className="relative flex flex-col justify-center">
+      <div
+        className="pointer-events-none absolute -right-7 -top-9 select-none text-[150px] font-bold leading-none tracking-[-0.05em]"
+        style={{ color: HL, opacity: 0.07 }}
+      >
+        {data.name.slice(0, 1).toUpperCase()}
       </div>
-    </a>
+      <div className="px-[18px] py-4">
+        <Eyebrow style={{ color: HL }}>{data.owner.login} / repository</Eyebrow>
+        <div className="mt-1 truncate text-[32px] font-bold leading-[1.05] tracking-[-0.035em] text-default-text">
+          {data.name}
+        </div>
+        <div className="mt-2.5">
+          <MetaRow data={data} showLanguage={showLanguage} />
+        </div>
+      </div>
+    </Card>
   )
 }
 
-// "ribbon" (08): marca circular (conic-gradient) + faixa inferior com stats/techs -
-// separa identidade (topo) de metadados (rodapé).
-function RibbonBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
+// "dark": card escuro fixo com barra highlight lateral + contagem de stars.
+function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
-  const showLanguages = config.banner_show_languages ?? true
-  const languages = showLanguages ? data.languages.slice(0, 3) : []
 
   return (
-    <a href={data.url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-lg" style={{ background: "#171717" }}>
-      <div className="flex items-center justify-between gap-4 p-4">
-        <div className="min-w-0">
-          <div className="truncate text-[11px]" style={{ color: "#a3a3a3" }}>
+    <Card
+      className="flex flex-row items-center border-0"
+      style={{ background: "#111318", boxShadow: "0 0 0 0.5px #2a2e37" }}
+    >
+      <div className="self-stretch" style={{ width: 4, background: HL }} />
+      <div className="min-w-0 flex-1 px-[18px] py-4">
+        <div className="truncate text-lg font-semibold tracking-[-0.02em]" style={{ color: "#f0f2f6" }}>
+          <span className="font-normal" style={{ color: "#8b93a3" }}>
             {data.owner.login} /
-          </div>
-          <div className="truncate text-xl font-bold text-white">{data.name}</div>
-          {showDescription && data.description && (
-            <p className="mt-1.5 truncate text-xs" style={{ color: "#b8b8b8" }}>
-              {data.description}
-            </p>
-          )}
-        </div>
-        <div
-          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full p-0.5"
-          style={{ background: "conic-gradient(#f43f5e,#8b5cf6,#22d3ee,#f43f5e)" }}
-        >
-          {data.owner.avatarUrl ? (
-            <img src={data.owner.avatarUrl} alt="" className="h-full w-full rounded-full" style={{ border: "2px solid #171717" }} />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center rounded-full text-[10px] font-bold text-white" style={{ background: "#171717" }}>
-              {data.owner.login.slice(0, 2).toUpperCase()}
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="flex items-center gap-4 px-4 py-2 text-[11px] font-semibold" style={{ background: "#f5f5f5", color: "#171717" }}>
-        <span>★ {formatCount(data.stargazerCount)}</span>
-        <span>⑂ {formatCount(data.forkCount)}</span>
-        {languages.length > 0 && <span className="ml-auto truncate">{languages.map((l) => l.name).join(" · ")}</span>}
-      </div>
-    </a>
-  )
-}
-
-// "social" (18): layout tipo Open Graph - conteúdo à esquerda, marca circular
-// centralizada à direita sobre um fundo com glow (em vez dos anéis ocos cortados da
-// v1, que pareciam bug). Pensado pra size="full"; em "half" o bloco à direita fica
-// mais estreito mas a marca continua centralizada e legível.
-function SocialBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const accent = data.primaryLanguage?.color || "#8957e5"
-  const showDescription = config.banner_show_description ?? true
-
-  return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="grid grid-cols-[1.3fr_.7fr] overflow-hidden rounded-lg border border-default-border"
-      style={{ background: "#fcfcfc" }}
-    >
-      <div className="flex flex-col justify-center p-5">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: accent }}>
-          Open-source project
-        </div>
-        <div className="mt-1.5 truncate text-2xl font-bold" style={{ color: "#171717" }}>
+          </span>{" "}
           {data.name}
         </div>
         {showDescription && data.description && (
-          <p className="mt-2 line-clamp-2 text-xs leading-relaxed" style={{ color: "#626262" }}>
+          <div className="mt-1 truncate text-xs" style={{ color: "#8b93a3" }}>
             {data.description}
-          </p>
-        )}
-        <div className="mt-3 flex items-center gap-3 text-xs" style={{ color: "#171717" }}>
-          <span>★ {formatCount(data.stargazerCount)}</span>
-          <span>⑂ {formatCount(data.forkCount)}</span>
-          {data.primaryLanguage && (
-            <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full" style={{ background: accent }} />
-              {data.primaryLanguage.name}
-            </span>
-          )}
-        </div>
-      </div>
-      <div
-        className="relative flex min-h-[110px] items-center justify-center overflow-hidden"
-        style={{ background: `linear-gradient(160deg, #161d2d, ${accent}25 130%)` }}
-      >
-        <div
-          className="absolute h-28 w-28 rounded-full blur-2xl"
-          style={{ background: `${accent}55` }}
-        />
-        {data.owner.avatarUrl ? (
-          <img
-            src={data.owner.avatarUrl}
-            alt=""
-            className="relative h-16 w-16 rounded-full"
-            style={{ border: "2px solid rgba(255,255,255,.35)" }}
-          />
-        ) : (
-          <div
-            className="relative flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold text-white"
-            style={{ background: `linear-gradient(145deg, ${accent}, #fff2)`, border: "1px solid rgba(255,255,255,.25)" }}
-          >
-            {data.owner.login.slice(0, 2).toUpperCase()}
           </div>
         )}
       </div>
-    </a>
-  )
-}
-
-// "hero" (banner de topo de projeto): bem mais alto que os outros, avatar grande,
-// nome enorme - pensado pra ser a primeira coisa vista, tipo capa/hero section, não
-// mais um cabeçalho compacto entre outras seções.
-function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const accent = data.primaryLanguage?.color || "#8957e5"
-  const showDescription = config.banner_show_description ?? true
-  const showLanguages = config.banner_show_languages ?? true
-  const languages = showLanguages ? data.languages.slice(0, 5) : []
-
-  return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block overflow-hidden rounded-lg border border-default-border p-6"
-      style={{ background: `linear-gradient(160deg, ${accent}22 0%, ${accent}06 55%, transparent 100%)` }}
-    >
-      <div className="flex items-center gap-4">
-        <OwnerAvatar data={data} accent={accent} size={64} />
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-sm text-default-muted">{data.owner.login}</div>
-          <div className="truncate text-4xl font-extrabold leading-tight text-default-text">{data.name}</div>
+      <div className="flex-shrink-0 px-[18px] text-right">
+        <div className="text-2xl font-semibold leading-tight" style={{ color: HL }}>
+          {formatCount(data.stargazerCount)}
         </div>
+        <Eyebrow style={{ color: "#8b93a3" }}>stars</Eyebrow>
       </div>
-
-      {showDescription && data.description && (
-        <p className="mt-4 text-base leading-relaxed text-default-muted line-clamp-2">{data.description}</p>
-      )}
-
-      <div className="mt-5 flex flex-wrap items-center gap-4">
-        <span className="flex items-center gap-1.5 text-sm text-default-muted">★ {formatCount(data.stargazerCount)} stars</span>
-        <span className="flex items-center gap-1.5 text-sm text-default-muted">⑂ {formatCount(data.forkCount)} forks</span>
-        {languages.map((lang) => (
-          <span key={lang.name} className="flex items-center gap-1.5 text-sm text-default-muted">
-            <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full" style={{ background: lang.color }} />
-            {lang.name}
-          </span>
-        ))}
-      </div>
-    </a>
+    </Card>
   )
 }
 
 function DefaultBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const variant = resolveBannerVariant(config.banner_variant)
   if (variant === "minimal") return <MinimalBanner data={data} config={config} />
-  if (variant === "clean") return <CleanBanner data={data} config={config} />
-  if (variant === "editorial") return <EditorialBanner data={data} config={config} />
-  if (variant === "aurora") return <AuroraBanner data={data} config={config} />
   if (variant === "split") return <SplitBanner data={data} config={config} />
-  if (variant === "blueprint") return <BlueprintBanner data={data} config={config} />
-  if (variant === "ribbon") return <RibbonBanner data={data} config={config} />
-  if (variant === "social") return <SocialBanner data={data} config={config} />
-  if (variant === "hero") return <HeroBanner data={data} config={config} />
-  return <LargeBanner data={data} config={config} />
+  if (variant === "display") return <DisplayBanner data={data} config={config} />
+  if (variant === "dark") return <DarkBanner data={data} config={config} />
+  return <HeroBanner data={data} config={config} />
 }
 
 export function Banner({ config, data, style = "default", size = "half" }: BannerProps): React.ReactElement {

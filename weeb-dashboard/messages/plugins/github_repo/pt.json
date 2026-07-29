@@ -36,6 +36,8 @@
             "bold": "Bold (large headline, minimal detail)",
             "clean": "Clean (name, description and techs in one bordered row)",
             "compact": "Compact (single row)",
+            "dark": "Dark (fixed dark card with highlight bar)",
+            "display": "Display (giant typography with ghost letter)",
             "editorial": "Editorial (color rail + serif headline)",
             "hero": "Hero (extra tall, meant to sit at the top of the project)",
             "large": "Large (avatar + gradient background)",
@@ -117,6 +119,8 @@
           "options": {
             "badges": "Badges (solid shields.io-style tags)",
             "bars": "Bars (thin bar + inline legend)",
+            "blocks": "Blocks (proportional mosaic)",
+            "donut": "Donut (ring chart + legend column)",
             "spectrum": "Spectrum (thicker bar + two-column legend)"
           }
         },
@@ -215,9 +219,12 @@
           "options": {
             "area": "Area (filled line, current default)",
             "bars": "Bars (growth between sampled points)",
+            "dots": "Dots (sampled points over dashed grid)",
             "gradient": "Gradient (two-tone stroke, dashed baseline)",
             "line": "Line (clean line with light grid)",
-            "milestones": "Milestones (marks a few key points)"
+            "milestones": "Milestones (marks a few key points)",
+            "sparkline": "Sparkline (compact row, count + trend)",
+            "steps": "Steps (staircase line)"
           }
         }
       },
@@ -249,8 +256,10 @@
         "stats_variant": {
           "label": "Style",
           "options": {
+            "featured": "Featured (highlighted stars block)",
             "grid": "Grid (Stars, Forks, Issues, Watchers in blocks)",
-            "inline": "Inline (Stars and Forks side by side)"
+            "inline": "Inline (Stars and Forks side by side)",
+            "sparkstats": "Sparkstats (grid with star sparkline)"
           }
         }
       },
@@ -288,7 +297,8 @@
           "label": "Style",
           "options": {
             "chips": "Chips (flat list, all equal weight)",
-            "cloud": "Cloud (first topics featured/highlighted)"
+            "cloud": "Cloud (first topics featured/highlighted)",
+            "hash": "Hash (#hashtags as colored text)"
           }
         }
       },

@@ -1,11 +1,11 @@
 import React from "react"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
-import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
-import { StarSparkline } from "./StarSparkline"
+import { HlFillGradient } from "./StarGraph"
+import { Card, Delta, DotSep, HL, LangDot, computeStarDelta, formatCount, starCoords } from "./redesign"
 
 interface OverviewProps {
   config: GithubRepoConfig
@@ -14,56 +14,75 @@ interface OverviewProps {
   size?: "half" | "full"
 }
 
-// "overview" (17 Compact Full Showcase): um único card combinando identidade, três
-// métricas e mini-painéis de star growth + tecnologias - pensado como alternativa
-// mais compacta a empilhar banner+stats+star_graph+languages como seções separadas.
-function DefaultOverview({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const accent = data.primaryLanguage?.color || "#8957e5"
-  const metrics = [
-    { label: "Stars", value: data.stargazerCount },
-    { label: "Forks", value: data.forkCount },
-    { label: "Issues", value: data.openIssuesCount },
-  ]
-  const languages = data.languages.slice(0, config.overview_max_languages ?? 4)
+// "overview": card único - identidade + meta row + número gigante de stars + área de
+// crescimento full-bleed no rodapé. Alternativa compacta a empilhar várias seções.
+function DefaultOverview({ data }: { data: GithubRepoData }): React.ReactElement {
+  const gradientId = React.useId()
+  const delta = computeStarDelta(data.starHistory)
+  const hasChart = data.starHistory.length >= 2
+  const W = 415
+  const H = 92
+  const coords = hasChart ? starCoords(data.starHistory, W, H, 0.12) : []
+  const line = hasChart ? `M ${coords.map((c) => `${c.x},${c.y}`).join(" L ")}` : ""
 
   return (
-    <a href={data.url} target="_blank" rel="noopener noreferrer" className="block rounded-lg border border-default-border p-4">
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="truncate text-xs text-default-muted">{data.owner.login} /</div>
-          <div className="truncate text-lg font-bold text-default-text">{data.name}</div>
+    <Card className="flex flex-col">
+      <div className="px-[18px] pb-2.5 pt-4">
+        <div className="truncate text-[19px] font-semibold tracking-[-0.02em] text-default-text">
+          <span className="font-normal text-default-muted">{data.owner.login} /</span> {data.name}
         </div>
-        <div className="flex flex-shrink-0 gap-3 text-xs text-default-muted">
-          <span>★ {abbreviateNumber(data.stargazerCount)}</span>
-          <span>⑂ {abbreviateNumber(data.forkCount)}</span>
-        </div>
-      </div>
-
-      <div className="mt-3 grid grid-cols-[130px_1fr] gap-3">
-        <div className="flex flex-col gap-2">
-          {metrics.map((metric) => (
-            <div key={metric.label} className="rounded-lg border border-default-border p-2.5">
-              <span className="block text-base font-bold leading-none text-default-text">{abbreviateNumber(metric.value)}</span>
-              <span className="mt-1 block text-[9px] text-default-muted">{metric.label}</span>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="rounded-lg border border-default-border p-2.5">
-            <div className="mb-1.5 text-[9px] text-default-muted">STAR GROWTH</div>
-            <StarSparkline points={data.starHistory} color={accent} variant="area" height={40} />
-          </div>
-          <div className="rounded-lg border border-default-border p-2.5">
-            <div className="mb-1.5 text-[9px] text-default-muted">TECHNOLOGIES</div>
-            <div className="flex h-2 w-full overflow-hidden rounded-full">
-              {languages.map((lang) => (
-                <div key={lang.name} style={{ width: `${lang.percentage}%`, background: lang.color }} />
-              ))}
-            </div>
-          </div>
+        {data.description && (
+          <div className="mt-1 truncate text-xs leading-normal text-default-muted">{data.description}</div>
+        )}
+        <div className="mt-2.5 flex items-center gap-3.5 text-xs text-default-muted">
+          {data.primaryLanguage && (
+            <>
+              <span className="flex items-center gap-1.5">
+                <LangDot color={data.primaryLanguage.color} />
+                {data.primaryLanguage.name}
+              </span>
+              <DotSep />
+            </>
+          )}
+          <span>
+            <b className="font-semibold text-default-text">{formatCount(data.forkCount)}</b> forks
+          </span>
+          <DotSep />
+          <span>
+            <b className="font-semibold text-default-text">{formatCount(data.openIssuesCount)}</b> issues
+          </span>
+          {data.licenseInfo?.spdxId && (
+            <>
+              <DotSep />
+              <span>{data.licenseInfo.spdxId}</span>
+            </>
+          )}
         </div>
       </div>
-    </a>
+      <div className="flex items-baseline justify-between px-[18px]">
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-semibold leading-none tracking-[-0.02em] text-default-text">
+            {formatCount(data.stargazerCount)}
+          </span>
+          <span className="text-xs text-default-muted">stars</span>
+        </div>
+        <Delta delta={delta} />
+      </div>
+      {hasChart && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox={`0 0 ${W} ${H}`}
+          preserveAspectRatio="none"
+          className="mt-1.5 w-full"
+          style={{ height: H }}
+          aria-hidden="true"
+        >
+          <HlFillGradient id={gradientId} strength={0.2} />
+          <path d={`${line} L ${W},${H} L 0,${H} Z`} fill={`url(#${gradientId})`} />
+          <path d={line} fill="none" stroke={HL} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
+    </Card>
   )
 }
 
@@ -75,7 +94,7 @@ export function Overview({ config, data, style = "default", size = "half" }: Ove
       <ScaledBox size={config.content_size}>
         <RenderBasedOnStyle
           style={style}
-          defaultComponent={<DefaultOverview data={data} config={config} />}
+          defaultComponent={<DefaultOverview data={data} />}
           terminalComponent={
             <>
               <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "overview", size })} />

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="268" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="276" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
     #svg-main {
   --default-color-surface: #ffffff;
   --default-color-background: #ffffff;
@@ -614,6 +614,11 @@
   inset: 0px
 }
 
+#svg-main .inset-y-0 {
+  top: 0px;
+  bottom: 0px
+}
+
 #svg-main .-bottom-10 {
   bottom: -2.5rem
 }
@@ -638,6 +643,10 @@
   right: -3.5rem
 }
 
+#svg-main .-right-7 {
+  right: -1.75rem
+}
+
 #svg-main .-right-8 {
   right: -2rem
 }
@@ -654,8 +663,20 @@
   top: -3rem
 }
 
+#svg-main .-top-9 {
+  top: -2.25rem
+}
+
 #svg-main .-top-px {
   top: -1px
+}
+
+#svg-main .bottom-\[22\%\] {
+  bottom: 22%
+}
+
+#svg-main .left-0 {
+  left: 0px
 }
 
 #svg-main .left-2 {
@@ -664,6 +685,18 @@
 
 #svg-main .right-0 {
   right: 0px
+}
+
+#svg-main .top-\[-4px\] {
+  top: -4px
+}
+
+#svg-main .top-\[-6px\] {
+  top: -6px
+}
+
+#svg-main .top-\[22\%\] {
+  top: 22%
 }
 
 #svg-main .isolate {
@@ -694,6 +727,11 @@
 #svg-main .mx-\[3px\] {
   margin-left: 3px;
   margin-right: 3px
+}
+
+#svg-main .mx-auto {
+  margin-left: auto;
+  margin-right: auto
 }
 
 #svg-main .my-1 {
@@ -784,6 +822,10 @@
 
 #svg-main .mt-3 {
   margin-top: 0.75rem
+}
+
+#svg-main .mt-3\.5 {
+  margin-top: 0.875rem
 }
 
 #svg-main .mt-4 {
@@ -956,6 +998,10 @@
   height: 15px
 }
 
+#svg-main .h-\[3px\] {
+  height: 3px
+}
+
 #svg-main .h-\[50px\] {
   height: 50px
 }
@@ -976,10 +1022,6 @@
   max-height: 50px
 }
 
-#svg-main .min-h-\[110px\] {
-  min-height: 110px
-}
-
 #svg-main .min-h-\[120px\] {
   min-height: 120px
 }
@@ -998,10 +1040,6 @@
 
 #svg-main .w-1 {
   width: 0.25rem
-}
-
-#svg-main .w-1\.5 {
-  width: 0.375rem
 }
 
 #svg-main .w-10 {
@@ -1026,10 +1064,6 @@
 
 #svg-main .w-2 {
   width: 0.5rem
-}
-
-#svg-main .w-2\.5 {
-  width: 0.625rem
 }
 
 #svg-main .w-20 {
@@ -1084,6 +1118,18 @@
   width: 0.60rem
 }
 
+#svg-main .w-\[132px\] {
+  width: 132px
+}
+
+#svg-main .w-\[150px\] {
+  width: 150px
+}
+
+#svg-main .w-\[3px\] {
+  width: 3px
+}
+
 #svg-main .w-\[50px\] {
   width: 50px
 }
@@ -1101,16 +1147,16 @@
   width: 100%
 }
 
+#svg-main .w-px {
+  width: 1px
+}
+
 #svg-main .min-w-0 {
   min-width: 0px
 }
 
 #svg-main .max-w-\[60\%\] {
   max-width: 60%
-}
-
-#svg-main .max-w-\[80\%\] {
-  max-width: 80%
 }
 
 #svg-main .max-w-full {
@@ -1193,28 +1239,12 @@
   grid-template-columns: repeat(8, minmax(0, 1fr))
 }
 
-#svg-main .grid-cols-\[1\.25fr_\.75fr\] {
-  grid-template-columns: 1.25fr .75fr
-}
-
-#svg-main .grid-cols-\[1\.3fr_\.7fr\] {
-  grid-template-columns: 1.3fr .7fr
-}
-
-#svg-main .grid-cols-\[130px_1fr\] {
-  grid-template-columns: 130px 1fr
-}
-
 #svg-main .grid-cols-\[30px_1fr\] {
   grid-template-columns: 30px 1fr
 }
 
 #svg-main .grid-cols-\[30px_min-content_1fr\] {
   grid-template-columns: 30px min-content 1fr
-}
-
-#svg-main .grid-cols-\[4px_1fr\] {
-  grid-template-columns: 4px 1fr
 }
 
 #svg-main .grid-cols-\[75px_1fr\] {
@@ -1265,6 +1295,10 @@
   align-items: baseline
 }
 
+#svg-main .items-stretch {
+  align-items: stretch
+}
+
 #svg-main .justify-start {
   justify-content: flex-start
 }
@@ -1313,6 +1347,10 @@
   gap: 0.75rem
 }
 
+#svg-main .gap-3\.5 {
+  gap: 0.875rem
+}
+
 #svg-main .gap-4 {
   gap: 1rem
 }
@@ -1325,14 +1363,17 @@
   gap: 1px
 }
 
+#svg-main .gap-\[3px\] {
+  gap: 3px
+}
+
+#svg-main .gap-\[7px\] {
+  gap: 7px
+}
+
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
-}
-
-#svg-main .gap-x-2\.5 {
-  -moz-column-gap: 0.625rem;
-       column-gap: 0.625rem
 }
 
 #svg-main .gap-x-3 {
@@ -1381,6 +1422,10 @@
 
 #svg-main .self-center {
   align-self: center
+}
+
+#svg-main .self-stretch {
+  align-self: stretch
 }
 
 #svg-main .overflow-hidden {
@@ -1437,8 +1482,8 @@
   border-radius: 1rem
 }
 
-#svg-main .rounded-\[3px\] {
-  border-radius: 3px
+#svg-main .rounded-\[10px\] {
+  border-radius: 10px
 }
 
 #svg-main .rounded-full {
@@ -1466,6 +1511,11 @@
   border-bottom-right-radius: 0.5rem
 }
 
+#svg-main .rounded-t-\[5px\] {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px
+}
+
 #svg-main .rounded-t-md {
   border-top-left-radius: 0.375rem;
   border-top-right-radius: 0.375rem
@@ -1485,6 +1535,10 @@
 
 #svg-main .border-b {
   border-bottom-width: 1px
+}
+
+#svg-main .border-l {
+  border-left-width: 1px
 }
 
 #svg-main .border-t {
@@ -1626,10 +1680,6 @@
   padding: 0px
 }
 
-#svg-main .p-0\.5 {
-  padding: 0.125rem
-}
-
 #svg-main .p-1 {
   padding: 0.25rem
 }
@@ -1638,16 +1688,8 @@
   padding: 0.5rem
 }
 
-#svg-main .p-2\.5 {
-  padding: 0.625rem
-}
-
 #svg-main .p-3 {
   padding: 0.75rem
-}
-
-#svg-main .p-3\.5 {
-  padding: 0.875rem
 }
 
 #svg-main .p-4 {
@@ -1687,9 +1729,19 @@
   padding-right: 0.75rem
 }
 
+#svg-main .px-3\.5 {
+  padding-left: 0.875rem;
+  padding-right: 0.875rem
+}
+
 #svg-main .px-4 {
   padding-left: 1rem;
   padding-right: 1rem
+}
+
+#svg-main .px-\[18px\] {
+  padding-left: 18px;
+  padding-right: 18px
 }
 
 #svg-main .py-0 {
@@ -1712,14 +1764,29 @@
   padding-bottom: 0.5rem
 }
 
+#svg-main .py-2\.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem
+}
+
 #svg-main .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem
 }
 
+#svg-main .py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem
+}
+
 #svg-main .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem
+}
+
+#svg-main .py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem
 }
 
 #svg-main .pb-0 {
@@ -1738,12 +1805,28 @@
   padding-bottom: 0.5rem
 }
 
+#svg-main .pb-2\.5 {
+  padding-bottom: 0.625rem
+}
+
+#svg-main .pb-3 {
+  padding-bottom: 0.75rem
+}
+
+#svg-main .pb-4 {
+  padding-bottom: 1rem
+}
+
 #svg-main .pl-1 {
   padding-left: 0.25rem
 }
 
 #svg-main .pl-3 {
   padding-left: 0.75rem
+}
+
+#svg-main .pl-\[18px\] {
+  padding-left: 18px
 }
 
 #svg-main .pr-1 {
@@ -1758,8 +1841,20 @@
   padding-top: 0.25rem
 }
 
+#svg-main .pt-1\.5 {
+  padding-top: 0.375rem
+}
+
 #svg-main .pt-2 {
   padding-top: 0.5rem
+}
+
+#svg-main .pt-3 {
+  padding-top: 0.75rem
+}
+
+#svg-main .pt-4 {
+  padding-top: 1rem
 }
 
 #svg-main .text-center {
@@ -1807,6 +1902,42 @@
 
 #svg-main .text-\[12px\] {
   font-size: 12px
+}
+
+#svg-main .text-\[13px\] {
+  font-size: 13px
+}
+
+#svg-main .text-\[150px\] {
+  font-size: 150px
+}
+
+#svg-main .text-\[15px\] {
+  font-size: 15px
+}
+
+#svg-main .text-\[19px\] {
+  font-size: 19px
+}
+
+#svg-main .text-\[21px\] {
+  font-size: 21px
+}
+
+#svg-main .text-\[22px\] {
+  font-size: 22px
+}
+
+#svg-main .text-\[26px\] {
+  font-size: 26px
+}
+
+#svg-main .text-\[28px\] {
+  font-size: 28px
+}
+
+#svg-main .text-\[32px\] {
+  font-size: 32px
 }
 
 #svg-main .text-\[8px\] {
@@ -1858,6 +1989,10 @@
   font-weight: 500
 }
 
+#svg-main .font-normal {
+  font-weight: 400
+}
+
 #svg-main .font-semibold {
   font-weight: 600
 }
@@ -1879,8 +2014,24 @@
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
 }
 
+#svg-main .leading-\[1\.05\] {
+  line-height: 1.05
+}
+
+#svg-main .leading-\[1\.55\] {
+  line-height: 1.55
+}
+
+#svg-main .leading-\[1\.9\] {
+  line-height: 1.9
+}
+
 #svg-main .leading-none {
   line-height: 1
+}
+
+#svg-main .leading-normal {
+  line-height: 1.5
 }
 
 #svg-main .leading-relaxed {
@@ -1895,16 +2046,28 @@
   line-height: 1.25
 }
 
-#svg-main .tracking-\[0\.11em\] {
-  letter-spacing: 0.11em
+#svg-main .tracking-\[-0\.01em\] {
+  letter-spacing: -0.01em
+}
+
+#svg-main .tracking-\[-0\.02em\] {
+  letter-spacing: -0.02em
+}
+
+#svg-main .tracking-\[-0\.035em\] {
+  letter-spacing: -0.035em
+}
+
+#svg-main .tracking-\[-0\.05em\] {
+  letter-spacing: -0.05em
 }
 
 #svg-main .tracking-\[0\.14em\] {
   letter-spacing: 0.14em
 }
 
-#svg-main .tracking-\[0\.16em\] {
-  letter-spacing: 0.16em
+#svg-main .tracking-\[0\.1em\] {
+  letter-spacing: 0.1em
 }
 
 #svg-main .tracking-tight {
@@ -2123,6 +2286,12 @@
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+
+#svg-main .ring {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)
 }
 
 #svg-main .blur {
@@ -2403,4 +2572,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-repo-overview"><a href="https://github.com/LucasHenriqueDiniz/WeebProfile" target="_blank" rel="noopener noreferrer" class="block rounded-lg border border-default-border p-4"><div class="flex items-center justify-between gap-3"><div class="min-w-0"><div class="truncate text-xs text-default-muted">LucasHenriqueDiniz<!-- --> /</div><div class="truncate text-lg font-bold text-default-text">WeebProfile</div></div><div class="flex flex-shrink-0 gap-3 text-xs text-default-muted"><span>★ <!-- -->128</span><span>⑂ <!-- -->24</span></div></div><div class="mt-3 grid grid-cols-[130px_1fr] gap-3"><div class="flex flex-col gap-2"><div class="rounded-lg border border-default-border p-2.5"><span class="block text-base font-bold leading-none text-default-text">128</span><span class="mt-1 block text-[9px] text-default-muted">Stars</span></div><div class="rounded-lg border border-default-border p-2.5"><span class="block text-base font-bold leading-none text-default-text">24</span><span class="mt-1 block text-[9px] text-default-muted">Forks</span></div><div class="rounded-lg border border-default-border p-2.5"><span class="block text-base font-bold leading-none text-default-text">12</span><span class="mt-1 block text-[9px] text-default-muted">Issues</span></div></div><div class="flex flex-col gap-2"><div class="rounded-lg border border-default-border p-2.5"><div class="mb-1.5 text-[9px] text-default-muted">STAR GROWTH</div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 40" class="w-full" style="height:40px" preserveAspectRatio="none" aria-hidden="true"><path d="M 0,36 L 38,32 L 75,28 L 113,24 L 150,19 L 188,14 L 225,10 L 263,7 L 300,4 L 300,40 L 0,40 Z" fill="#3178c6" opacity="0.16"></path><path d="M 0,36 L 38,32 L 75,28 L 113,24 L 150,19 L 188,14 L 225,10 L 263,7 L 300,4" fill="none" stroke="#3178c6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path></svg></div><div class="rounded-lg border border-default-border p-2.5"><div class="mb-1.5 text-[9px] text-default-muted">TECHNOLOGIES</div><div class="flex h-2 w-full overflow-hidden rounded-full"><div style="width:68.4%;background:#3178c6"></div><div style="width:18.2%;background:#61dafb"></div><div style="width:9.1%;background:#563d7c"></div><div style="width:4.3%;background:#f1e05a"></div></div></div></div></div></a></section></div></div></div></div></foreignObject></svg>
+</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-repo-overview"><div class="overflow-hidden rounded-xl border border-default-border flex flex-col" style="background:var(--default-color-surface)"><div class="px-[18px] pb-2.5 pt-4"><div class="truncate text-[19px] font-semibold tracking-[-0.02em] text-default-text"><span class="font-normal text-default-muted">LucasHenriqueDiniz<!-- --> /</span> <!-- -->WeebProfile</div><div class="mt-1 truncate text-xs leading-normal text-default-muted">Generate SVG stat cards for your GitHub profile — code, anime, music and gaming stats.</div><div class="mt-2.5 flex items-center gap-3.5 text-xs text-default-muted"><span class="flex items-center gap-1.5"><span class="inline-block flex-shrink-0 rounded-full" style="width:8px;height:8px;background:#3178c6"></span>TypeScript</span><span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-default-muted-light"></span><span><b class="font-semibold text-default-text">24</b> forks</span><span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-default-muted-light"></span><span><b class="font-semibold text-default-text">12</b> issues</span><span class="h-[3px] w-[3px] flex-shrink-0 rounded-full bg-default-muted-light"></span><span>MIT</span></div></div><div class="flex items-baseline justify-between px-[18px]"><div class="flex items-baseline gap-2"><span class="text-2xl font-semibold leading-none tracking-[-0.02em] text-default-text">128</span><span class="text-xs text-default-muted">stars</span></div><span class="text-xs font-medium " style="color:var(--default-color-success)">▲ +10%</span></div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 415 92" preserveAspectRatio="none" class="mt-1.5 w-full" style="height:92px" aria-hidden="true"><defs><linearGradient id="_R_1q_" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--default-color-highlight)" stop-opacity="0.2"></stop><stop offset="1" stop-color="var(--default-color-highlight)" stop-opacity="0"></stop></linearGradient></defs><path d="M 0,81 L 51.9,73.1 L 103.8,63.5 L 155.6,53.9 L 207.5,43.2 L 259.4,33 L 311.3,25.1 L 363.1,17.8 L 415,11 L 415,92 L 0,92 Z" fill="url(#_R_1q_)"></path><path d="M 0,81 L 51.9,73.1 L 103.8,63.5 L 155.6,53.9 L 207.5,43.2 L 259.4,33 L 311.3,25.1 L 363.1,17.8 L 415,11" fill="none" stroke="var(--default-color-highlight)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></section></div></div></div></div></foreignObject></svg>

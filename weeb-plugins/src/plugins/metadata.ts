@@ -1757,7 +1757,7 @@ export const PLUGINS_METADATA = {
       {
         id: "banner",
         name: "Banner",
-        description: "Header banner with owner avatar, repository name and description, tinted by the primary language",
+        description: "Repository header card: name, description and key metadata, tinted by the theme highlight",
         i18nKey: {
           name: "plugins.github_repo.sections.banner.name",
           description: "plugins.github_repo.sections.banner.description"
@@ -1767,48 +1767,25 @@ export const PLUGINS_METADATA = {
           key: "banner_variant",
           label: "Style",
           type: "select",
-          defaultValue: "large",
-          description: "Choose how big and prominent the banner is",
+          defaultValue: "hero",
+          description: "Choose the banner layout",
           options: [
-            { value: "large", label: "Large (avatar + gradient background)" },
-            { value: "minimal", label: "Minimal (text only, no background)" },
-            { value: "clean", label: "Clean (name, description and techs in one bordered row)" },
-            { value: "editorial", label: "Editorial (color rail + serif headline)" },
-            { value: "aurora", label: "Aurora (dark gradient with glass panel)" },
-            { value: "split", label: "Split (two columns, tech bars on the side)" },
-            { value: "blueprint", label: "Blueprint (technical frame, monospace uppercase)" },
-            { value: "ribbon", label: "Ribbon (circular mark + bottom info strip)" },
-            { value: "social", label: "Social (wide layout for link previews)" },
-            { value: "hero", label: "Hero (extra tall, meant to sit at the top of the project)" }
+            { value: "hero", label: "Hero (accent bar, big name, description and meta row)" },
+            { value: "minimal", label: "Minimal (single row with mark, name and stars)" },
+            { value: "split", label: "Split (content left, star panel with growth right)" },
+            { value: "display", label: "Display (giant typography with ghost letter)" },
+            { value: "dark", label: "Dark (fixed dark card with highlight bar)" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_variant.label",
             description: "plugins.github_repo.sections.banner.config.banner_variant.description",
             options: {
-              "large": "plugins.github_repo.sections.banner.config.banner_variant.options.large",
+              "hero": "plugins.github_repo.sections.banner.config.banner_variant.options.hero",
               "minimal": "plugins.github_repo.sections.banner.config.banner_variant.options.minimal",
-              "clean": "plugins.github_repo.sections.banner.config.banner_variant.options.clean",
-              "editorial": "plugins.github_repo.sections.banner.config.banner_variant.options.editorial",
-              "aurora": "plugins.github_repo.sections.banner.config.banner_variant.options.aurora",
               "split": "plugins.github_repo.sections.banner.config.banner_variant.options.split",
-              "blueprint": "plugins.github_repo.sections.banner.config.banner_variant.options.blueprint",
-              "ribbon": "plugins.github_repo.sections.banner.config.banner_variant.options.ribbon",
-              "social": "plugins.github_repo.sections.banner.config.banner_variant.options.social",
-              "hero": "plugins.github_repo.sections.banner.config.banner_variant.options.hero"
+              "display": "plugins.github_repo.sections.banner.config.banner_variant.options.display",
+              "dark": "plugins.github_repo.sections.banner.config.banner_variant.options.dark"
             }
-          }
-        },
-        {
-          key: "banner_image",
-          label: "Custom image (URL)",
-          type: "string",
-          defaultValue: "",
-          description: "Optional image URL (project logo etc.) shown instead of the owner avatar",
-          tooltip: "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
-          i18nKey: {
-            label: "plugins.github_repo.sections.banner.config.banner_image.label",
-            description: "plugins.github_repo.sections.banner.config.banner_image.description",
-            tooltip: "plugins.github_repo.sections.banner.config.banner_image.tooltip"
           }
         },
         {
@@ -1822,13 +1799,26 @@ export const PLUGINS_METADATA = {
         },
         {
           key: "banner_show_languages",
-          label: "Show technologies",
+          label: "Show primary language",
           type: "boolean",
           defaultValue: true,
-          tooltip: "Shows the repository's top languages in styles that display technologies (Clean, Editorial, Mono, Aurora, Bold, Blueprint, Ribbon, Hero).",
+          tooltip: "Shows the primary language dot in the meta row (Hero and Display styles).",
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_show_languages.label",
             tooltip: "plugins.github_repo.sections.banner.config.banner_show_languages.tooltip"
+          }
+        },
+        {
+          key: "banner_image",
+          label: "Custom image (URL)",
+          type: "string",
+          defaultValue: "",
+          description: "Optional image URL (project logo etc.) shown instead of the repository mark",
+          tooltip: "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_image.label",
+            description: "plugins.github_repo.sections.banner.config.banner_image.description",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_image.tooltip"
           }
         },
         {
@@ -1857,45 +1847,30 @@ export const PLUGINS_METADATA = {
       {
         id: "stats",
         name: "Stats",
-        description: "Star and fork counters",
+        description: "Stars, forks, issues and watchers",
         i18nKey: {
           name: "plugins.github_repo.sections.stats.name",
           description: "plugins.github_repo.sections.stats.description"
         },
         configOptions: [
         {
-          key: "stats_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false,
-          i18nKey: {
-            label: "plugins.github_repo.sections.stats.config.stats_hide_title.label"
-          }
-        },
-        {
-          key: "stats_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Stats",
-          i18nKey: {
-            label: "plugins.github_repo.sections.stats.config.stats_title.label",
-            defaultValue: "plugins.github_repo.sections.stats.config.stats_title.defaultValue"
-          }
-        },
-        {
           key: "stats_variant",
           label: "Style",
           type: "select",
-          defaultValue: "inline",
+          defaultValue: "grid",
           options: [
-            { value: "inline", label: "Inline (Stars and Forks side by side)" },
-            { value: "grid", label: "Grid (Stars, Forks, Issues, Watchers in blocks)" }
+            { value: "grid", label: "Grid (four cells with thin dividers)" },
+            { value: "inline", label: "Inline (single strip with growth)" },
+            { value: "sparkstats", label: "Sparkstats (grid with star sparkline)" },
+            { value: "featured", label: "Featured (highlighted stars block)" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.stats.config.stats_variant.label",
             options: {
+              "grid": "plugins.github_repo.sections.stats.config.stats_variant.options.grid",
               "inline": "plugins.github_repo.sections.stats.config.stats_variant.options.inline",
-              "grid": "plugins.github_repo.sections.stats.config.stats_variant.options.grid"
+              "sparkstats": "plugins.github_repo.sections.stats.config.stats_variant.options.sparkstats",
+              "featured": "plugins.github_repo.sections.stats.config.stats_variant.options.featured"
             }
           }
         },
@@ -1932,44 +1907,27 @@ export const PLUGINS_METADATA = {
         },
         configOptions: [
         {
-          key: "star_graph_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false,
-          i18nKey: {
-            label: "plugins.github_repo.sections.star_graph.config.star_graph_hide_title.label"
-          }
-        },
-        {
-          key: "star_graph_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Star growth",
-          i18nKey: {
-            label: "plugins.github_repo.sections.star_graph.config.star_graph_title.label",
-            defaultValue: "plugins.github_repo.sections.star_graph.config.star_graph_title.defaultValue"
-          }
-        },
-        {
           key: "star_graph_variant",
           label: "Style",
           type: "select",
           defaultValue: "area",
           options: [
-            { value: "area", label: "Area (filled line, current default)" },
-            { value: "line", label: "Line (clean line with light grid)" },
-            { value: "milestones", label: "Milestones (marks a few key points)" },
-            { value: "bars", label: "Bars (growth between sampled points)" },
-            { value: "gradient", label: "Gradient (two-tone stroke, dashed baseline)" }
+            { value: "area", label: "Area (filled curve with live point)" },
+            { value: "bars", label: "Bars (growth per period, fading in)" },
+            { value: "milestones", label: "Milestones (progress ruler with real marks)" },
+            { value: "sparkline", label: "Sparkline (compact row, count + trend)" },
+            { value: "steps", label: "Steps (staircase line)" },
+            { value: "dots", label: "Dots (sampled points over dashed grid)" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.star_graph.config.star_graph_variant.label",
             options: {
               "area": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.area",
-              "line": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.line",
-              "milestones": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.milestones",
               "bars": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.bars",
-              "gradient": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.gradient"
+              "milestones": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.milestones",
+              "sparkline": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.sparkline",
+              "steps": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.steps",
+              "dots": "plugins.github_repo.sections.star_graph.config.star_graph_variant.options.dots"
             }
           }
         },
@@ -1999,31 +1957,12 @@ export const PLUGINS_METADATA = {
       {
         id: "languages",
         name: "Technologies",
-        description: "Language/technology breakdown bar, by bytes of code",
+        description: "Language/technology breakdown, by bytes of code",
         i18nKey: {
           name: "plugins.github_repo.sections.languages.name",
           description: "plugins.github_repo.sections.languages.description"
         },
         configOptions: [
-        {
-          key: "languages_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false,
-          i18nKey: {
-            label: "plugins.github_repo.sections.languages.config.languages_hide_title.label"
-          }
-        },
-        {
-          key: "languages_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Technologies",
-          i18nKey: {
-            label: "plugins.github_repo.sections.languages.config.languages_title.label",
-            defaultValue: "plugins.github_repo.sections.languages.config.languages_title.defaultValue"
-          }
-        },
         {
           key: "max_languages",
           label: "Maximum languages",
@@ -2032,7 +1971,7 @@ export const PLUGINS_METADATA = {
           min: 0,
           max: 5,
           step: 1,
-          tooltip: "Languages beyond this limit are omitted from the breakdown bar.",
+          tooltip: "Languages beyond this limit are omitted from the breakdown.",
           i18nKey: {
             label: "plugins.github_repo.sections.languages.config.max_languages.label",
             tooltip: "plugins.github_repo.sections.languages.config.max_languages.tooltip"
@@ -2042,18 +1981,20 @@ export const PLUGINS_METADATA = {
           key: "languages_variant",
           label: "Style",
           type: "select",
-          defaultValue: "bars",
+          defaultValue: "spectrum",
           options: [
-            { value: "bars", label: "Bars (thin bar + inline legend)" },
-            { value: "spectrum", label: "Spectrum (thicker bar + two-column legend)" },
-            { value: "badges", label: "Badges (solid shields.io-style tags)" }
+            { value: "spectrum", label: "Spectrum (segmented bar + legend)" },
+            { value: "bars", label: "Bars (one row per language)" },
+            { value: "donut", label: "Donut (ring chart + legend column)" },
+            { value: "blocks", label: "Blocks (proportional mosaic)" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.languages.config.languages_variant.label",
             options: {
-              "bars": "plugins.github_repo.sections.languages.config.languages_variant.options.bars",
               "spectrum": "plugins.github_repo.sections.languages.config.languages_variant.options.spectrum",
-              "badges": "plugins.github_repo.sections.languages.config.languages_variant.options.badges"
+              "bars": "plugins.github_repo.sections.languages.config.languages_variant.options.bars",
+              "donut": "plugins.github_repo.sections.languages.config.languages_variant.options.donut",
+              "blocks": "plugins.github_repo.sections.languages.config.languages_variant.options.blocks"
             }
           }
         },
@@ -2090,25 +2031,6 @@ export const PLUGINS_METADATA = {
         },
         configOptions: [
         {
-          key: "topics_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false,
-          i18nKey: {
-            label: "plugins.github_repo.sections.topics.config.topics_hide_title.label"
-          }
-        },
-        {
-          key: "topics_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Topics",
-          i18nKey: {
-            label: "plugins.github_repo.sections.topics.config.topics_title.label",
-            defaultValue: "plugins.github_repo.sections.topics.config.topics_title.defaultValue"
-          }
-        },
-        {
           key: "max_topics",
           label: "Maximum topics",
           type: "number",
@@ -2117,7 +2039,7 @@ export const PLUGINS_METADATA = {
           max: 6,
           step: 1,
           description: "Maximum 6 topics",
-          tooltip: "Topics beyond this limit are summarized as '+N more'.",
+          tooltip: "Topics beyond this limit are summarized as '+N'.",
           i18nKey: {
             label: "plugins.github_repo.sections.topics.config.max_topics.label",
             description: "plugins.github_repo.sections.topics.config.max_topics.description",
@@ -2130,14 +2052,16 @@ export const PLUGINS_METADATA = {
           type: "select",
           defaultValue: "chips",
           options: [
-            { value: "chips", label: "Chips (flat list, all equal weight)" },
-            { value: "cloud", label: "Cloud (first topics featured/highlighted)" }
+            { value: "chips", label: "Chips (soft highlight pills)" },
+            { value: "cloud", label: "Cloud (mixed weights, centered)" },
+            { value: "hash", label: "Hash (#hashtags as colored text)" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.topics.config.topics_variant.label",
             options: {
               "chips": "plugins.github_repo.sections.topics.config.topics_variant.options.chips",
-              "cloud": "plugins.github_repo.sections.topics.config.topics_variant.options.cloud"
+              "cloud": "plugins.github_repo.sections.topics.config.topics_variant.options.cloud",
+              "hash": "plugins.github_repo.sections.topics.config.topics_variant.options.hash"
             }
           }
         },
@@ -2167,26 +2091,12 @@ export const PLUGINS_METADATA = {
       {
         id: "overview",
         name: "Overview",
-        description: "Compact combined card: identity, key metrics, mini star growth and mini technologies panel",
+        description: "Single combined card: identity, meta row, star count and growth chart",
         i18nKey: {
           name: "plugins.github_repo.sections.overview.name",
           description: "plugins.github_repo.sections.overview.description"
         },
         configOptions: [
-        {
-          key: "overview_max_languages",
-          label: "Maximum languages",
-          type: "number",
-          defaultValue: 4,
-          min: 0,
-          max: 4,
-          step: 1,
-          tooltip: "Languages beyond this limit are omitted from the mini technologies bar.",
-          i18nKey: {
-            label: "plugins.github_repo.sections.overview.config.overview_max_languages.label",
-            tooltip: "plugins.github_repo.sections.overview.config.overview_max_languages.tooltip"
-          }
-        },
         {
           key: "content_size",
           label: "Size",

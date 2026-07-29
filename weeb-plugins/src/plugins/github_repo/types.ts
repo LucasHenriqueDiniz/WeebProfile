@@ -1,36 +1,89 @@
-// Ids seguem a galeria de referência (01 Minimal White = clean, 04 Aurora Glass =
-// aurora, etc.) - ver PR/discussão de design. Da primeira leva, as variantes que
-// ficaram visualmente redundantes foram cortadas e viraram aliases (compact→clean,
-// mono→blueprint, bold→editorial) pra não quebrar configs salvas.
+// Redesign 2026-07: cada seção é um card autocontido dirigido pelo tema
+// (--default-color-*). Variantes antigas viraram aliases pros layouts novos mais
+// próximos - configs salvas continuam válidas, só rendem o visual novo.
 export type BannerVariant =
-  | "large"
-  | "minimal"
-  | "clean" // 01 Minimal White
-  | "editorial" // 02 Editorial Accent
-  | "aurora" // 04 Aurora Glass
-  | "split" // 06 Split Technologies
-  | "blueprint" // 07 Blueprint
-  | "ribbon" // 08 Dark Ribbon
-  | "social" // 18 Social/OG
-  | "hero" // banner grande pra ficar no topo do projeto - nome grande, primeira coisa vista
-  // Aliases legados (renderizam como a variante equivalente):
-  | "compact" // → clean
-  | "mono" // → blueprint
-  | "bold" // → editorial
+  // variantes atuais
+  | "hero" // accent bar + nome grande + descrição + meta row (default)
+  | "minimal" // linha única: marca/avatar + nome + descrição + stars
+  | "split" // conteúdo à esquerda, painel de stars com delta à direita
+  | "display" // tipografia gigante + letra fantasma de fundo
+  | "dark" // card escuro fixo com barra highlight lateral
+  // aliases legados → layout novo equivalente
+  | "large" // → hero
+  | "social" // → hero
+  | "clean" // → minimal
+  | "compact" // → minimal
+  | "editorial" // → display
+  | "bold" // → display
+  | "aurora" // → dark
+  | "mono" // → dark
+  | "blueprint" // → dark
+  | "ribbon" // → dark
+
+export type ResolvedBannerVariant = "hero" | "minimal" | "split" | "display" | "dark"
 
 // Normaliza os aliases legados - usar SEMPRE isto antes de decidir layout/altura,
 // pra render e calculateHeight nunca divergirem.
-export function resolveBannerVariant(variant?: BannerVariant): Exclude<BannerVariant, "compact" | "mono" | "bold"> {
-  if (variant === "compact") return "clean"
-  if (variant === "mono") return "blueprint"
-  if (variant === "bold") return "editorial"
-  return variant ?? "large"
+export function resolveBannerVariant(variant?: BannerVariant): ResolvedBannerVariant {
+  switch (variant) {
+    case "minimal":
+    case "clean":
+    case "compact":
+      return "minimal"
+    case "split":
+      return "split"
+    case "display":
+    case "editorial":
+    case "bold":
+      return "display"
+    case "dark":
+    case "aurora":
+    case "mono":
+    case "blueprint":
+    case "ribbon":
+      return "dark"
+    default:
+      return "hero"
+  }
 }
 
-export type StarGraphVariant = "line" | "area" | "milestones" | "bars" | "gradient"
-export type StatsVariant = "inline" | "grid"
-export type LanguagesVariant = "bars" | "spectrum" | "badges"
-export type TopicsVariant = "chips" | "cloud"
+export type StarGraphVariant =
+  | "area"
+  | "bars"
+  | "milestones"
+  | "sparkline"
+  | "steps"
+  | "dots"
+  // aliases legados
+  | "line" // → dots
+  | "gradient" // → sparkline
+
+export type ResolvedStarGraphVariant = "area" | "bars" | "milestones" | "sparkline" | "steps" | "dots"
+
+export function resolveStarGraphVariant(variant?: StarGraphVariant): ResolvedStarGraphVariant {
+  if (variant === "line") return "dots"
+  if (variant === "gradient") return "sparkline"
+  return variant ?? "area"
+}
+
+export type StatsVariant = "grid" | "inline" | "sparkstats" | "featured"
+
+export type LanguagesVariant =
+  | "spectrum"
+  | "bars"
+  | "donut"
+  | "blocks"
+  // alias legado
+  | "badges" // → spectrum
+
+export type ResolvedLanguagesVariant = "spectrum" | "bars" | "donut" | "blocks"
+
+export function resolveLanguagesVariant(variant?: LanguagesVariant): ResolvedLanguagesVariant {
+  if (variant === "badges") return "spectrum"
+  return variant ?? "spectrum"
+}
+
+export type TopicsVariant = "chips" | "cloud" | "hash"
 
 // Escala real de conteúdo (fonte, ícones, altura do gráfico, padding - tudo junto),
 // não só um espaço extra. Aplicada via transform:scale no componente inteiro da seção

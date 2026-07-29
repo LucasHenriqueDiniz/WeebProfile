@@ -8,7 +8,14 @@ import React from "react"
 import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
-import { CONTENT_SIZE_SCALE, resolveBannerVariant, type GithubRepoConfig, type GithubRepoData } from "./types"
+import {
+  CONTENT_SIZE_SCALE,
+  resolveBannerVariant,
+  resolveLanguagesVariant,
+  resolveStarGraphVariant,
+  type GithubRepoConfig,
+  type GithubRepoData,
+} from "./types"
 import { RenderGithubRepo } from "./components/RenderGithubRepo"
 import { fetchGithubRepoData } from "./services/fetchGithubRepo"
 
@@ -61,67 +68,62 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
         // seu espaçamento completo; o pad global do manager (+24) é compensado no fim.
         sectionH = 50 + (hasDescription ? 44 : 0)
       } else if (variant === "minimal") {
-        sectionH = 24 + (hasDescription ? 48 : 24)
-      } else if (variant === "clean") {
-        const showLanguages = cfg.banner_show_languages ?? true
-        const hasLanguages = showLanguages && repo.languages && repo.languages.length > 0
-        sectionH = 24 + 48 + (hasDescription ? 16 : 0) + (hasLanguages ? 20 : 0)
-      } else if (variant === "editorial" || variant === "aurora" || variant === "blueprint") {
-        // Header row + optional description line + optional tech row - similar shape
-        // across these variants (single card, no separate description block).
-        const showLanguages = cfg.banner_show_languages ?? true
-        const hasLanguages = showLanguages && repo.languages && repo.languages.length > 0
-        sectionH = 24 + 60 + (hasDescription ? 20 : 0) + (hasLanguages ? 24 : 0)
-      } else if (variant === "split") {
-        sectionH = 24 + 100
-      } else if (variant === "ribbon") {
-        sectionH = 24 + 70 + (hasDescription ? 16 : 0) + 34
-      } else if (variant === "social") {
-        sectionH = 24 + 110
-      } else if (variant === "hero") {
-        // avatar/nome grandes + padding generoso (p-6) + descrição maior + linha de stats/techs
-        sectionH = 24 + 24 + 64 + (hasDescription ? 44 : 0) + 44
-      } else {
-        // large: avatar/name row + border, + description block (border-top + 2-line text)
         sectionH = 24 + 68
-        if (hasDescription) sectionH += 56
+      } else if (variant === "split") {
+        sectionH = 24 + (hasDescription ? 120 : 88)
+      } else if (variant === "display") {
+        sectionH = 24 + 118
+      } else if (variant === "dark") {
+        sectionH = 24 + (hasDescription ? 92 : 76)
+      } else {
+        // hero
+        sectionH = 24 + 96 + (hasDescription ? 40 : 0)
       }
       h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("stats")) {
-      const hideTitle = cfg.stats_hide_title ?? false
-      const statsVariant = cfg.stats_variant ?? "inline"
-      const bodyHeight = statsVariant === "grid" ? 76 : 40
-      const sectionH = isTerminal ? 52 : 24 + (hideTitle ? 0 : 40) + bodyHeight
+      const statsVariant = cfg.stats_variant ?? "grid"
+      let bodyHeight = 86
+      if (statsVariant === "inline") bodyHeight = 48
+      if (statsVariant === "sparkstats") bodyHeight = 110
+      if (statsVariant === "featured") bodyHeight = 96
+      const sectionH = isTerminal ? 52 : 24 + bodyHeight
       h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("star_graph") && repo.starHistory && repo.starHistory.length >= 2) {
-      const hideTitle = cfg.star_graph_hide_title ?? false
-      // Corpo do gráfico é fixo em 120 (baseline "md") - o content_size escala isso
-      // junto com o resto via ScaledBox, sem precisar de um controle de altura separado.
-      const chartHeight = 120
-      const sectionH = isTerminal ? chartHeight + 33 : 24 + (hideTitle ? 0 : 40) + chartHeight + 32
+      const variant = resolveStarGraphVariant(cfg.star_graph_variant)
+      let bodyHeight = 180 // area/steps/dots: head + gráfico 110
+      if (variant === "bars") bodyHeight = 180
+      if (variant === "milestones") bodyHeight = 130
+      if (variant === "sparkline") bodyHeight = 76
+      const sectionH = isTerminal ? 153 : 24 + bodyHeight
       h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("languages") && repo.languages && repo.languages.length > 0) {
-      const hideTitle = cfg.languages_hide_title ?? false
-      const languagesVariant = cfg.languages_variant ?? "bars"
-      const bodyHeight = languagesVariant === "badges" ? 28 : 32
-      const sectionH = isTerminal ? 76 : 24 + (hideTitle ? 0 : 40) + bodyHeight
+      const variant = resolveLanguagesVariant(cfg.languages_variant)
+      const count = Math.min(cfg.max_languages ?? 5, repo.languages.length)
+      let bodyHeight = 104
+      if (variant === "bars") bodyHeight = 32 + count * 22
+      if (variant === "donut") bodyHeight = 128
+      if (variant === "blocks") bodyHeight = 118
+      const sectionH = isTerminal ? 78 : 24 + bodyHeight
       h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("topics") && repo.topics && repo.topics.length > 0) {
-      const hideTitle = cfg.topics_hide_title ?? false
-      const sectionH = isTerminal ? 74 : 24 + (hideTitle ? 0 : 40) + 24
+      const variant = cfg.topics_variant ?? "chips"
+      let bodyHeight = 62
+      if (variant === "hash") bodyHeight = 56
+      const sectionH = isTerminal ? 44 : 24 + bodyHeight
       h += Math.round(sectionH * scale)
     }
 
     if (cfg.sections.includes("overview")) {
-      const sectionH = isTerminal ? 72 : 24 + 220
+      const hasChart = repo.starHistory && repo.starHistory.length >= 2
+      const sectionH = isTerminal ? 72 : 24 + (hasChart ? 228 : 130)
       h += Math.round(sectionH * scale)
     }
 

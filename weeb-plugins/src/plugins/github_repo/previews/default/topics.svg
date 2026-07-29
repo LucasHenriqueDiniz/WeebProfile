@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="112" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="110" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
     #svg-main {
   --default-color-surface: #ffffff;
   --default-color-background: #ffffff;
@@ -614,6 +614,11 @@
   inset: 0px
 }
 
+#svg-main .inset-y-0 {
+  top: 0px;
+  bottom: 0px
+}
+
 #svg-main .-bottom-10 {
   bottom: -2.5rem
 }
@@ -638,6 +643,10 @@
   right: -3.5rem
 }
 
+#svg-main .-right-7 {
+  right: -1.75rem
+}
+
 #svg-main .-right-8 {
   right: -2rem
 }
@@ -654,8 +663,20 @@
   top: -3rem
 }
 
+#svg-main .-top-9 {
+  top: -2.25rem
+}
+
 #svg-main .-top-px {
   top: -1px
+}
+
+#svg-main .bottom-\[22\%\] {
+  bottom: 22%
+}
+
+#svg-main .left-0 {
+  left: 0px
 }
 
 #svg-main .left-2 {
@@ -664,6 +685,18 @@
 
 #svg-main .right-0 {
   right: 0px
+}
+
+#svg-main .top-\[-4px\] {
+  top: -4px
+}
+
+#svg-main .top-\[-6px\] {
+  top: -6px
+}
+
+#svg-main .top-\[22\%\] {
+  top: 22%
 }
 
 #svg-main .isolate {
@@ -694,6 +727,11 @@
 #svg-main .mx-\[3px\] {
   margin-left: 3px;
   margin-right: 3px
+}
+
+#svg-main .mx-auto {
+  margin-left: auto;
+  margin-right: auto
 }
 
 #svg-main .my-1 {
@@ -784,6 +822,10 @@
 
 #svg-main .mt-3 {
   margin-top: 0.75rem
+}
+
+#svg-main .mt-3\.5 {
+  margin-top: 0.875rem
 }
 
 #svg-main .mt-4 {
@@ -956,6 +998,10 @@
   height: 15px
 }
 
+#svg-main .h-\[3px\] {
+  height: 3px
+}
+
 #svg-main .h-\[50px\] {
   height: 50px
 }
@@ -976,10 +1022,6 @@
   max-height: 50px
 }
 
-#svg-main .min-h-\[110px\] {
-  min-height: 110px
-}
-
 #svg-main .min-h-\[120px\] {
   min-height: 120px
 }
@@ -998,10 +1040,6 @@
 
 #svg-main .w-1 {
   width: 0.25rem
-}
-
-#svg-main .w-1\.5 {
-  width: 0.375rem
 }
 
 #svg-main .w-10 {
@@ -1026,10 +1064,6 @@
 
 #svg-main .w-2 {
   width: 0.5rem
-}
-
-#svg-main .w-2\.5 {
-  width: 0.625rem
 }
 
 #svg-main .w-20 {
@@ -1084,6 +1118,18 @@
   width: 0.60rem
 }
 
+#svg-main .w-\[132px\] {
+  width: 132px
+}
+
+#svg-main .w-\[150px\] {
+  width: 150px
+}
+
+#svg-main .w-\[3px\] {
+  width: 3px
+}
+
 #svg-main .w-\[50px\] {
   width: 50px
 }
@@ -1101,16 +1147,16 @@
   width: 100%
 }
 
+#svg-main .w-px {
+  width: 1px
+}
+
 #svg-main .min-w-0 {
   min-width: 0px
 }
 
 #svg-main .max-w-\[60\%\] {
   max-width: 60%
-}
-
-#svg-main .max-w-\[80\%\] {
-  max-width: 80%
 }
 
 #svg-main .max-w-full {
@@ -1193,28 +1239,12 @@
   grid-template-columns: repeat(8, minmax(0, 1fr))
 }
 
-#svg-main .grid-cols-\[1\.25fr_\.75fr\] {
-  grid-template-columns: 1.25fr .75fr
-}
-
-#svg-main .grid-cols-\[1\.3fr_\.7fr\] {
-  grid-template-columns: 1.3fr .7fr
-}
-
-#svg-main .grid-cols-\[130px_1fr\] {
-  grid-template-columns: 130px 1fr
-}
-
 #svg-main .grid-cols-\[30px_1fr\] {
   grid-template-columns: 30px 1fr
 }
 
 #svg-main .grid-cols-\[30px_min-content_1fr\] {
   grid-template-columns: 30px min-content 1fr
-}
-
-#svg-main .grid-cols-\[4px_1fr\] {
-  grid-template-columns: 4px 1fr
 }
 
 #svg-main .grid-cols-\[75px_1fr\] {
@@ -1265,6 +1295,10 @@
   align-items: baseline
 }
 
+#svg-main .items-stretch {
+  align-items: stretch
+}
+
 #svg-main .justify-start {
   justify-content: flex-start
 }
@@ -1313,6 +1347,10 @@
   gap: 0.75rem
 }
 
+#svg-main .gap-3\.5 {
+  gap: 0.875rem
+}
+
 #svg-main .gap-4 {
   gap: 1rem
 }
@@ -1325,14 +1363,17 @@
   gap: 1px
 }
 
+#svg-main .gap-\[3px\] {
+  gap: 3px
+}
+
+#svg-main .gap-\[7px\] {
+  gap: 7px
+}
+
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
-}
-
-#svg-main .gap-x-2\.5 {
-  -moz-column-gap: 0.625rem;
-       column-gap: 0.625rem
 }
 
 #svg-main .gap-x-3 {
@@ -1381,6 +1422,10 @@
 
 #svg-main .self-center {
   align-self: center
+}
+
+#svg-main .self-stretch {
+  align-self: stretch
 }
 
 #svg-main .overflow-hidden {
@@ -1437,8 +1482,8 @@
   border-radius: 1rem
 }
 
-#svg-main .rounded-\[3px\] {
-  border-radius: 3px
+#svg-main .rounded-\[10px\] {
+  border-radius: 10px
 }
 
 #svg-main .rounded-full {
@@ -1466,6 +1511,11 @@
   border-bottom-right-radius: 0.5rem
 }
 
+#svg-main .rounded-t-\[5px\] {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px
+}
+
 #svg-main .rounded-t-md {
   border-top-left-radius: 0.375rem;
   border-top-right-radius: 0.375rem
@@ -1485,6 +1535,10 @@
 
 #svg-main .border-b {
   border-bottom-width: 1px
+}
+
+#svg-main .border-l {
+  border-left-width: 1px
 }
 
 #svg-main .border-t {
@@ -1626,10 +1680,6 @@
   padding: 0px
 }
 
-#svg-main .p-0\.5 {
-  padding: 0.125rem
-}
-
 #svg-main .p-1 {
   padding: 0.25rem
 }
@@ -1638,16 +1688,8 @@
   padding: 0.5rem
 }
 
-#svg-main .p-2\.5 {
-  padding: 0.625rem
-}
-
 #svg-main .p-3 {
   padding: 0.75rem
-}
-
-#svg-main .p-3\.5 {
-  padding: 0.875rem
 }
 
 #svg-main .p-4 {
@@ -1687,9 +1729,19 @@
   padding-right: 0.75rem
 }
 
+#svg-main .px-3\.5 {
+  padding-left: 0.875rem;
+  padding-right: 0.875rem
+}
+
 #svg-main .px-4 {
   padding-left: 1rem;
   padding-right: 1rem
+}
+
+#svg-main .px-\[18px\] {
+  padding-left: 18px;
+  padding-right: 18px
 }
 
 #svg-main .py-0 {
@@ -1712,14 +1764,29 @@
   padding-bottom: 0.5rem
 }
 
+#svg-main .py-2\.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem
+}
+
 #svg-main .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem
 }
 
+#svg-main .py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem
+}
+
 #svg-main .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem
+}
+
+#svg-main .py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem
 }
 
 #svg-main .pb-0 {
@@ -1738,12 +1805,28 @@
   padding-bottom: 0.5rem
 }
 
+#svg-main .pb-2\.5 {
+  padding-bottom: 0.625rem
+}
+
+#svg-main .pb-3 {
+  padding-bottom: 0.75rem
+}
+
+#svg-main .pb-4 {
+  padding-bottom: 1rem
+}
+
 #svg-main .pl-1 {
   padding-left: 0.25rem
 }
 
 #svg-main .pl-3 {
   padding-left: 0.75rem
+}
+
+#svg-main .pl-\[18px\] {
+  padding-left: 18px
 }
 
 #svg-main .pr-1 {
@@ -1758,8 +1841,20 @@
   padding-top: 0.25rem
 }
 
+#svg-main .pt-1\.5 {
+  padding-top: 0.375rem
+}
+
 #svg-main .pt-2 {
   padding-top: 0.5rem
+}
+
+#svg-main .pt-3 {
+  padding-top: 0.75rem
+}
+
+#svg-main .pt-4 {
+  padding-top: 1rem
 }
 
 #svg-main .text-center {
@@ -1807,6 +1902,42 @@
 
 #svg-main .text-\[12px\] {
   font-size: 12px
+}
+
+#svg-main .text-\[13px\] {
+  font-size: 13px
+}
+
+#svg-main .text-\[150px\] {
+  font-size: 150px
+}
+
+#svg-main .text-\[15px\] {
+  font-size: 15px
+}
+
+#svg-main .text-\[19px\] {
+  font-size: 19px
+}
+
+#svg-main .text-\[21px\] {
+  font-size: 21px
+}
+
+#svg-main .text-\[22px\] {
+  font-size: 22px
+}
+
+#svg-main .text-\[26px\] {
+  font-size: 26px
+}
+
+#svg-main .text-\[28px\] {
+  font-size: 28px
+}
+
+#svg-main .text-\[32px\] {
+  font-size: 32px
 }
 
 #svg-main .text-\[8px\] {
@@ -1858,6 +1989,10 @@
   font-weight: 500
 }
 
+#svg-main .font-normal {
+  font-weight: 400
+}
+
 #svg-main .font-semibold {
   font-weight: 600
 }
@@ -1879,8 +2014,24 @@
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
 }
 
+#svg-main .leading-\[1\.05\] {
+  line-height: 1.05
+}
+
+#svg-main .leading-\[1\.55\] {
+  line-height: 1.55
+}
+
+#svg-main .leading-\[1\.9\] {
+  line-height: 1.9
+}
+
 #svg-main .leading-none {
   line-height: 1
+}
+
+#svg-main .leading-normal {
+  line-height: 1.5
 }
 
 #svg-main .leading-relaxed {
@@ -1895,16 +2046,28 @@
   line-height: 1.25
 }
 
-#svg-main .tracking-\[0\.11em\] {
-  letter-spacing: 0.11em
+#svg-main .tracking-\[-0\.01em\] {
+  letter-spacing: -0.01em
+}
+
+#svg-main .tracking-\[-0\.02em\] {
+  letter-spacing: -0.02em
+}
+
+#svg-main .tracking-\[-0\.035em\] {
+  letter-spacing: -0.035em
+}
+
+#svg-main .tracking-\[-0\.05em\] {
+  letter-spacing: -0.05em
 }
 
 #svg-main .tracking-\[0\.14em\] {
   letter-spacing: 0.14em
 }
 
-#svg-main .tracking-\[0\.16em\] {
-  letter-spacing: 0.16em
+#svg-main .tracking-\[0\.1em\] {
+  letter-spacing: 0.1em
 }
 
 #svg-main .tracking-tight {
@@ -2123,6 +2286,12 @@
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+
+#svg-main .ring {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)
 }
 
 #svg-main .blur {
@@ -2403,4 +2572,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-repo-topics"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Topics</h2></div></div><div class="flex flex-wrap items-center gap-1.5"><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">github-profile</span><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">svg</span><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">readme</span><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">cloudflare-workers</span><span class="rounded-full border border-default-primary/20 bg-default-primary/10 px-2 py-0.5 text-xs text-default-primary">react</span></div></section></div></div></div></div></foreignObject></svg>
+</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-repo-topics"><div class="overflow-hidden rounded-xl border border-default-border flex flex-wrap items-center gap-2 px-[18px] py-4" style="background:var(--default-color-surface)"><span class="rounded-full text-xs font-medium" style="background:color-mix(in srgb, var(--default-color-highlight) 7%, transparent);color:color-mix(in srgb, var(--default-color-highlight) 75%, var(--default-color-default));border:0.5px solid color-mix(in srgb, var(--default-color-highlight) 30%, transparent);padding:5px 12px">github-profile</span><span class="rounded-full text-xs font-medium" style="background:color-mix(in srgb, var(--default-color-highlight) 7%, transparent);color:color-mix(in srgb, var(--default-color-highlight) 75%, var(--default-color-default));border:0.5px solid color-mix(in srgb, var(--default-color-highlight) 30%, transparent);padding:5px 12px">svg</span><span class="rounded-full text-xs font-medium" style="background:color-mix(in srgb, var(--default-color-highlight) 7%, transparent);color:color-mix(in srgb, var(--default-color-highlight) 75%, var(--default-color-default));border:0.5px solid color-mix(in srgb, var(--default-color-highlight) 30%, transparent);padding:5px 12px">readme</span><span class="rounded-full text-xs font-medium" style="background:color-mix(in srgb, var(--default-color-highlight) 7%, transparent);color:color-mix(in srgb, var(--default-color-highlight) 75%, var(--default-color-default));border:0.5px solid color-mix(in srgb, var(--default-color-highlight) 30%, transparent);padding:5px 12px">cloudflare-workers</span><span class="rounded-full text-xs font-medium" style="background:color-mix(in srgb, var(--default-color-highlight) 7%, transparent);color:color-mix(in srgb, var(--default-color-highlight) 75%, var(--default-color-default));border:0.5px solid color-mix(in srgb, var(--default-color-highlight) 30%, transparent);padding:5px 12px">react</span></div></section></div></div></div></div></foreignObject></svg>

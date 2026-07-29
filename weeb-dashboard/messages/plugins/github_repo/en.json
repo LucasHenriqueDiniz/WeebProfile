@@ -16,7 +16,7 @@
           "tooltip": "Extra space (px) added at the bottom of the banner, on top of its normal size."
         },
         "banner_image": {
-          "description": "Optional image URL (project logo etc.) shown instead of the owner avatar",
+          "description": "Optional image URL (project logo etc.) shown instead of the repository mark",
           "label": "Custom image (URL)",
           "tooltip": "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar."
         },
@@ -24,11 +24,11 @@
           "label": "Show description"
         },
         "banner_show_languages": {
-          "label": "Show technologies",
-          "tooltip": "Shows the repository's top languages in styles that display technologies (Clean, Editorial, Mono, Aurora, Bold, Blueprint, Ribbon, Hero)."
+          "label": "Show primary language",
+          "tooltip": "Shows the primary language dot in the meta row (Hero and Display styles)."
         },
         "banner_variant": {
-          "description": "Choose how big and prominent the banner is",
+          "description": "Choose the banner layout",
           "label": "Style",
           "options": {
             "aurora": "Aurora (dark gradient with glass panel)",
@@ -36,14 +36,16 @@
             "bold": "Bold (large headline, minimal detail)",
             "clean": "Clean (name, description and techs in one bordered row)",
             "compact": "Compact (single row)",
+            "dark": "Dark (fixed dark card with highlight bar)",
+            "display": "Display (giant typography with ghost letter)",
             "editorial": "Editorial (color rail + serif headline)",
-            "hero": "Hero (extra tall, meant to sit at the top of the project)",
+            "hero": "Hero (accent bar, big name, description and meta row)",
             "large": "Large (avatar + gradient background)",
-            "minimal": "Minimal (text only, no background)",
+            "minimal": "Minimal (single row with mark, name and stars)",
             "mono": "Mono (dark monospace, GitHub terminal style)",
             "ribbon": "Ribbon (circular mark + bottom info strip)",
             "social": "Social (wide layout for link previews)",
-            "split": "Split (two columns, tech bars on the side)"
+            "split": "Split (content left, star panel with growth right)"
           }
         },
         "content_size": {
@@ -56,7 +58,7 @@
           "tooltip": "Scales font size, icons, chart and spacing together."
         }
       },
-      "description": "Header banner with owner avatar, repository name and description, tinted by the primary language",
+      "description": "Repository header card: name, description and key metadata, tinted by the theme highlight",
       "name": "Banner"
     },
     "insights": {
@@ -116,16 +118,18 @@
           "label": "Style",
           "options": {
             "badges": "Badges (solid shields.io-style tags)",
-            "bars": "Bars (thin bar + inline legend)",
-            "spectrum": "Spectrum (thicker bar + two-column legend)"
+            "bars": "Bars (one row per language)",
+            "blocks": "Blocks (proportional mosaic)",
+            "donut": "Donut (ring chart + legend column)",
+            "spectrum": "Spectrum (segmented bar + legend)"
           }
         },
         "max_languages": {
           "label": "Maximum languages",
-          "tooltip": "Languages beyond this limit are omitted from the breakdown bar."
+          "tooltip": "Languages beyond this limit are omitted from the breakdown."
         }
       },
-      "description": "Language/technology breakdown bar, by bytes of code",
+      "description": "Language/technology breakdown, by bytes of code",
       "name": "Technologies"
     },
     "overview": {
@@ -148,7 +152,7 @@
           "tooltip": "Languages beyond this limit are omitted from the mini technologies bar."
         }
       },
-      "description": "Compact combined card: identity, key metrics, mini star growth and mini technologies panel",
+      "description": "Single combined card: identity, meta row, star count and growth chart",
       "name": "Overview"
     },
     "repository_card": {
@@ -213,11 +217,14 @@
         "star_graph_variant": {
           "label": "Style",
           "options": {
-            "area": "Area (filled line, current default)",
-            "bars": "Bars (growth between sampled points)",
+            "area": "Area (filled curve with live point)",
+            "bars": "Bars (growth per period, fading in)",
+            "dots": "Dots (sampled points over dashed grid)",
             "gradient": "Gradient (two-tone stroke, dashed baseline)",
             "line": "Line (clean line with light grid)",
-            "milestones": "Milestones (marks a few key points)"
+            "milestones": "Milestones (progress ruler with real marks)",
+            "sparkline": "Sparkline (compact row, count + trend)",
+            "steps": "Steps (staircase line)"
           }
         }
       },
@@ -249,12 +256,14 @@
         "stats_variant": {
           "label": "Style",
           "options": {
-            "grid": "Grid (Stars, Forks, Issues, Watchers in blocks)",
-            "inline": "Inline (Stars and Forks side by side)"
+            "featured": "Featured (highlighted stars block)",
+            "grid": "Grid (four cells with thin dividers)",
+            "inline": "Inline (single strip with growth)",
+            "sparkstats": "Sparkstats (grid with star sparkline)"
           }
         }
       },
-      "description": "Star and fork counters",
+      "description": "Stars, forks, issues and watchers",
       "name": "Stats"
     },
     "topics": {
@@ -271,7 +280,7 @@
         "max_topics": {
           "description": "Maximum 6 topics",
           "label": "Maximum topics",
-          "tooltip": "Topics beyond this limit are summarized as '+N more'."
+          "tooltip": "Topics beyond this limit are summarized as '+N'."
         },
         "topics_height": {
           "label": "Extra height",
@@ -287,8 +296,9 @@
         "topics_variant": {
           "label": "Style",
           "options": {
-            "chips": "Chips (flat list, all equal weight)",
-            "cloud": "Cloud (first topics featured/highlighted)"
+            "chips": "Chips (soft highlight pills)",
+            "cloud": "Cloud (mixed weights, centered)",
+            "hash": "Hash (#hashtags as colored text)"
           }
         }
       },
