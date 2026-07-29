@@ -20,7 +20,7 @@
         },
         "banner_show_languages": {
           "label": "Show technologies",
-          "tooltip": "Only used by the Clean style - shows the repository's top languages inline."
+          "tooltip": "Shows the repository's top languages in styles that display technologies (Clean, Editorial, Mono, Aurora, Bold, Blueprint, Ribbon, Hero)."
         },
         "banner_variant": {
           "description": "Choose how big and prominent the banner is",
