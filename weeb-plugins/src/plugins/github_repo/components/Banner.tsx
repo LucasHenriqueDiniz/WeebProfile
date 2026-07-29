@@ -68,6 +68,7 @@ function Mark({ data, size }: { data: GithubRepoData; size: number }): React.Rea
 function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
   const showLanguage = config.banner_show_languages ?? true
+  const showAvatar = config.banner_show_avatar ?? true
 
   return (
     <Card>
@@ -76,7 +77,7 @@ function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
         style={{ background: `linear-gradient(90deg, ${HL}, color-mix(in srgb, ${HL} 30%, transparent))` }}
       />
       <div className="flex items-start gap-3.5 px-[18px] py-4">
-        <Mark data={data} size={44} />
+        {showAvatar && <Mark data={data} size={44} />}
         <div className="min-w-0 flex-1">
           <div className="truncate text-[22px] font-semibold leading-tight tracking-[-0.02em] text-default-text">
             <span className="font-normal text-default-muted">{data.owner.login} /</span> {data.name}
@@ -96,10 +97,11 @@ function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
 // "minimal": linha única - marca/avatar, nome, descrição truncada, stars à direita.
 function MinimalBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
+  const showAvatar = config.banner_show_avatar ?? true
 
   return (
     <Card className="flex flex-row items-center gap-3.5 px-[18px] py-3.5">
-      <Mark data={data} size={40} />
+      {showAvatar && <Mark data={data} size={40} />}
       <div className="min-w-0 flex-1">
         <div className="truncate text-[15px] font-semibold leading-tight text-default-text">{data.nameWithOwner}</div>
         {showDescription && data.description && (
@@ -169,6 +171,7 @@ function DisplayBanner({ data, config }: { data: GithubRepoData; config: GithubR
 // "dark": card escuro fixo com barra highlight lateral + contagem de stars.
 function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
+  const showAvatar = config.banner_show_avatar ?? true
 
   return (
     <Card
@@ -176,9 +179,11 @@ function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
       style={{ background: "#111318", boxShadow: "0 0 0 0.5px #2a2e37" }}
     >
       <div className="self-stretch" style={{ width: 4, background: HL }} />
-      <div className="flex-shrink-0 pl-[18px]">
-        <Mark data={data} size={36} />
-      </div>
+      {showAvatar && (
+        <div className="flex-shrink-0 pl-[18px]">
+          <Mark data={data} size={36} />
+        </div>
+      )}
       <div className="min-w-0 flex-1 px-3.5 py-4">
         <div className="truncate text-lg font-semibold tracking-[-0.02em]" style={{ color: "#f0f2f6" }}>
           <span className="font-normal" style={{ color: "#8b93a3" }}>

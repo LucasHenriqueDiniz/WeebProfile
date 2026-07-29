@@ -79,6 +79,13 @@ export const githubRepoPluginMetadata = {
           tooltip: "Shows the primary language dot in the meta row (Hero and Display styles).",
         },
         {
+          key: "banner_show_avatar",
+          label: "Show avatar",
+          type: "boolean" as const,
+          defaultValue: true,
+          tooltip: "Shows the owner avatar / repository mark (Hero, Minimal and Dark styles).",
+        },
+        {
           key: "banner_image",
           label: "Custom image (URL)",
           type: "string" as const,

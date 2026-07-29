@@ -20,6 +20,10 @@
           "label": "Custom image (URL)",
           "tooltip": "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar."
         },
+        "banner_show_avatar": {
+          "label": "Show avatar",
+          "tooltip": "Shows the owner avatar / repository mark (Hero, Minimal and Dark styles)."
+        },
         "banner_show_description": {
           "label": "Show description"
         },

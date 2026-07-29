@@ -1809,6 +1809,17 @@ export const PLUGINS_METADATA = {
           }
         },
         {
+          key: "banner_show_avatar",
+          label: "Show avatar",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Shows the owner avatar / repository mark (Hero, Minimal and Dark styles).",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_show_avatar.label",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_show_avatar.tooltip"
+          }
+        },
+        {
           key: "banner_image",
           label: "Custom image (URL)",
           type: "string",

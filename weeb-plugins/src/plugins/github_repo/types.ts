@@ -106,6 +106,8 @@ export interface GithubRepoConfig {
   banner_variant?: BannerVariant
   banner_show_description?: boolean
   banner_show_languages?: boolean
+  // Esconde o avatar/marca nas variantes que o exibem (hero, minimal, dark).
+  banner_show_avatar?: boolean
   // URL de imagem custom (logo do projeto etc.) - substitui o avatar do owner no
   // banner. Em produção é convertida pra base64 no fetch (Gists não carregam URLs
   // externas dentro de SVG).
