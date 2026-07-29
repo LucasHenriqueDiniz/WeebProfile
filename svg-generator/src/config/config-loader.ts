@@ -49,6 +49,8 @@ export function normalizeConfig(config: Partial<SvgConfig>): SvgConfig {
     defaultTheme: config.defaultTheme || "default",
     hideTerminalEmojis: config.hideTerminalEmojis || false,
     hideTerminalHeader: config.hideTerminalHeader || false,
+    fontFamily: config.fontFamily || undefined,
+    terminalHeaderText: config.terminalHeaderText || undefined,
     primaryColor: config.primaryColor || "#ff7a00",
     dev: config.dev ?? false,
     essentialConfigs: config.essentialConfigs, // CRÍTICO: Preservar essentialConfigs (secrets/tokens)

@@ -215,8 +215,8 @@ function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
   )
 }
 
-// "centered": tudo centralizado - avatar em cima, nome grande no meio, meta row
-// embaixo. Simétrico, estilo capa de README.
+// "centered": tudo centralizado sobre um fundo com dois glows radiais suaves do
+// highlight - simétrico, estilo capa de README.
 function CenteredBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
   const showAvatar = config.banner_show_avatar ?? true
@@ -224,25 +224,115 @@ function CenteredBanner({ data, config }: { data: GithubRepoData; config: Github
   const showLanguage = config.banner_show_languages ?? true
 
   return (
-    <Card className="flex flex-col items-center px-[18px] py-5 text-center">
-      {showAvatar && <Mark data={data} size={48} />}
-      {showOwner && (
-        <div className={`text-xs text-default-muted ${showAvatar ? "mt-2.5" : ""}`}>{data.owner.login} /</div>
-      )}
+    <Card className="relative flex flex-col items-center px-[18px] py-5 text-center">
       <div
-        className={`max-w-full truncate text-[26px] font-bold leading-tight tracking-[-0.03em] text-default-text ${
-          !showAvatar && !showOwner ? "" : "mt-0.5"
-        }`}
-      >
-        {data.name}
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `radial-gradient(circle at 20% 0%, ${HL_SOFT}, transparent 55%), radial-gradient(circle at 85% 100%, ${HL_SOFTER}, transparent 50%)`,
+        }}
+      />
+      <div className="relative flex flex-col items-center">
+        {showAvatar && <Mark data={data} size={48} />}
+        {showOwner && (
+          <div className={`text-xs text-default-muted ${showAvatar ? "mt-2.5" : ""}`}>{data.owner.login} /</div>
+        )}
+        <div
+          className={`max-w-full truncate text-[26px] font-bold leading-tight tracking-[-0.03em] text-default-text ${
+            !showAvatar && !showOwner ? "" : "mt-0.5"
+          }`}
+        >
+          {data.name}
+        </div>
+        {showDescription && data.description && (
+          <p className="mt-1.5 max-w-[320px] text-[13px] leading-[1.55] text-default-muted line-clamp-2">
+            {data.description}
+          </p>
+        )}
+        <div className="mt-3 flex justify-center">
+          <MetaRow data={data} showLanguage={showLanguage} />
+        </div>
       </div>
-      {showDescription && data.description && (
-        <p className="mt-1.5 max-w-[320px] text-[13px] leading-[1.55] text-default-muted line-clamp-2">
-          {data.description}
-        </p>
-      )}
-      <div className="mt-3 flex justify-center">
-        <MetaRow data={data} showLanguage={showLanguage} />
+    </Card>
+  )
+}
+
+// "centered_dark": centralizado sobre card escuro com grid técnico + glow do
+// highlight vindo de cima.
+function CenteredDarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
+  const showDescription = config.banner_show_description ?? true
+  const showOwner = config.banner_show_owner ?? true
+
+  return (
+    <Card className="relative flex flex-col items-center justify-center border-0 px-6 py-6 text-center" style={{ background: "#0d1117", boxShadow: "0 0 0 0.5px #30363d" }}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <pattern id="centered-grid" width="26" height="26" patternUnits="userSpaceOnUse">
+            <path d="M26 0 L0 0 0 26" fill="none" stroke="#e6edf3" strokeOpacity="0.045" strokeWidth="1" />
+          </pattern>
+          <radialGradient id="centered-glow" cx="0.5" cy="0.1" r="0.9">
+            <stop offset="0" stopColor="var(--default-color-highlight)" stopOpacity="0.22" />
+            <stop offset="1" stopColor="var(--default-color-highlight)" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#centered-grid)" />
+        <rect width="100%" height="100%" fill="url(#centered-glow)" />
+      </svg>
+      <div className="relative flex flex-col items-center gap-[9px]">
+        {showOwner && <Eyebrow style={{ color: HL }}>{data.owner.login} / open source</Eyebrow>}
+        <div className="max-w-full truncate text-[28px] font-bold leading-none tracking-[-0.03em]" style={{ color: "#e6edf3" }}>
+          {data.name}
+        </div>
+        {showDescription && data.description && (
+          <p className="max-w-[300px] text-[12.5px] leading-[1.5] line-clamp-2" style={{ color: "#8b949e" }}>
+            {data.description}
+          </p>
+        )}
+      </div>
+    </Card>
+  )
+}
+
+// "centered_gradient": centralizado sobre gradiente cheio do highlight, com chips
+// translúcidos de stars/forks/linguagem.
+function CenteredGradientBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
+  const showDescription = config.banner_show_description ?? true
+  const showLanguage = config.banner_show_languages ?? true
+
+  const chip: React.CSSProperties = {
+    fontSize: 11,
+    fontWeight: 600,
+    padding: "4px 12px",
+    borderRadius: 99,
+    background: "rgba(255,255,255,.18)",
+  }
+
+  return (
+    <Card
+      className="flex flex-col items-center justify-center border-0 px-6 py-6 text-center text-white"
+      style={{ background: `linear-gradient(135deg, ${HL} 0%, color-mix(in srgb, ${HL} 65%, #c026d3) 100%)` }}
+    >
+      <div className="flex flex-col items-center gap-2">
+        <div
+          className="max-w-full truncate text-[27px] font-bold leading-none tracking-[-0.03em]"
+          style={{ textShadow: "0 1px 2px rgb(0 0 0 / .12)" }}
+        >
+          {data.name}
+        </div>
+        {showDescription && data.description && (
+          <p className="max-w-[310px] text-[12.5px] leading-[1.5] line-clamp-2" style={{ opacity: 0.9 }}>
+            {data.description}
+          </p>
+        )}
+        <div className="mt-1 flex gap-2">
+          <span style={chip}>★ {formatCount(data.stargazerCount)}</span>
+          <span style={chip}>⑂ {formatCount(data.forkCount)}</span>
+          {showLanguage && data.primaryLanguage && <span style={chip}>{data.primaryLanguage.name}</span>}
+        </div>
       </div>
     </Card>
   )
@@ -254,6 +344,8 @@ function DefaultBanner({ data, config }: { data: GithubRepoData; config: GithubR
   if (variant === "split") return <SplitBanner data={data} config={config} />
   if (variant === "display") return <DisplayBanner data={data} config={config} />
   if (variant === "centered") return <CenteredBanner data={data} config={config} />
+  if (variant === "centered_dark") return <CenteredDarkBanner data={data} config={config} />
+  if (variant === "centered_gradient") return <CenteredGradientBanner data={data} config={config} />
   if (variant === "dark") return <DarkBanner data={data} config={config} />
   return <HeroBanner data={data} config={config} />
 }

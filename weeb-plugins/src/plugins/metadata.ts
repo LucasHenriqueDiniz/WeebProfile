@@ -1774,7 +1774,9 @@ export const PLUGINS_METADATA = {
             { value: "minimal", label: "Minimal (single row with mark, name and stars)" },
             { value: "split", label: "Split (content left, star panel with growth right)" },
             { value: "display", label: "Display (giant typography with ghost letter)" },
-            { value: "centered", label: "Centered (avatar, name and meta centered)" },
+            { value: "centered", label: "Centered (soft radial glow, everything centered)" },
+            { value: "centered_dark", label: "Centered Dark (technical grid + highlight glow)" },
+            { value: "centered_gradient", label: "Centered Gradient (full highlight gradient, white chips)" },
             { value: "dark", label: "Dark (fixed dark card with highlight bar)" }
           ],
           i18nKey: {
@@ -1786,6 +1788,8 @@ export const PLUGINS_METADATA = {
               "split": "plugins.github_repo.sections.banner.config.banner_variant.options.split",
               "display": "plugins.github_repo.sections.banner.config.banner_variant.options.display",
               "centered": "plugins.github_repo.sections.banner.config.banner_variant.options.centered",
+              "centered_dark": "plugins.github_repo.sections.banner.config.banner_variant.options.centered_dark",
+              "centered_gradient": "plugins.github_repo.sections.banner.config.banner_variant.options.centered_gradient",
               "dark": "plugins.github_repo.sections.banner.config.banner_variant.options.dark"
             }
           }

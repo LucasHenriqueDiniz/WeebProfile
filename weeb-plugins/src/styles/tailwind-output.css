@@ -573,6 +573,14 @@
   min-width: 0px
 }
 
+.max-w-\[300px\] {
+  max-width: 300px
+}
+
+.max-w-\[310px\] {
+  max-width: 310px
+}
+
 .max-w-\[320px\] {
   max-width: 320px
 }
@@ -791,6 +799,10 @@
 
 .gap-\[7px\] {
   gap: 7px
+}
+
+.gap-\[9px\] {
+  gap: 9px
 }
 
 .gap-x-2 {
@@ -1161,6 +1173,11 @@
   padding-right: 1rem
 }
 
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem
+}
+
 .px-\[18px\] {
   padding-left: 18px;
   padding-right: 18px
@@ -1209,6 +1226,11 @@
 .py-5 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem
+}
+
+.py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem
 }
 
 .pb-0 {
@@ -1322,6 +1344,10 @@
   font-size: 11px
 }
 
+.text-\[12\.5px\] {
+  font-size: 12.5px
+}
+
 .text-\[12px\] {
   font-size: 12px
 }
@@ -1352,6 +1378,10 @@
 
 .text-\[26px\] {
   font-size: 26px
+}
+
+.text-\[27px\] {
+  font-size: 27px
 }
 
 .text-\[28px\] {
@@ -1442,6 +1472,10 @@
 
 .leading-\[1\.55\] {
   line-height: 1.55
+}
+
+.leading-\[1\.5\] {
+  line-height: 1.5
 }
 
 .leading-\[1\.9\] {

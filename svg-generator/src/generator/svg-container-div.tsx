@@ -10,10 +10,12 @@ interface SvgContainerDivProps {
   defaultTheme?: string
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
+  fontFamily?: string
+  terminalHeaderText?: string
 }
 
 export function createSvgContainerDiv(props: SvgContainerDivProps): React.ReactElement {
-  const { size, style, cssDefs, children, terminalTheme, defaultTheme, hideTerminalHeader } = props
+  const { size, style, cssDefs, children, terminalTheme, defaultTheme, hideTerminalHeader, fontFamily, terminalHeaderText } = props
 
   const svgWidth = size === "half" ? 415 : 830
   const containerClass = `${size} ${style} flex flex-col relative`
@@ -32,6 +34,8 @@ export function createSvgContainerDiv(props: SvgContainerDivProps): React.ReactE
         terminalTheme={terminalTheme}
         defaultTheme={defaultTheme}
         hideTerminalHeader={hideTerminalHeader}
+        fontFamily={fontFamily}
+        terminalHeaderText={terminalHeaderText}
       >
         {children}
       </PluginStyles>

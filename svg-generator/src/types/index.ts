@@ -31,6 +31,8 @@ export interface SvgConfig {
   defaultTheme?: string
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
+  fontFamily?: string
+  terminalHeaderText?: string
   primaryColor?: string // Custom primary color
   dev?: boolean // Development mode (uses mock data)
   // Essential configurations (API keys, tokens) per plugin

@@ -19,6 +19,8 @@ interface SvgContainerProps {
   defaultTheme?: string
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
+  fontFamily?: string
+  terminalHeaderText?: string
 }
 
 /**
@@ -27,7 +29,7 @@ interface SvgContainerProps {
  * Usa foreignObject para permitir HTML/CSS dentro do SVG
  */
 export function createSvgContainer(props: SvgContainerProps): React.ReactElement {
-  const { width, height, size, style, cssDefs, children, terminalTheme, defaultTheme, hideTerminalHeader } = props
+  const { width, height, size, style, cssDefs, children, terminalTheme, defaultTheme, hideTerminalHeader, fontFamily, terminalHeaderText } = props
 
   const containerClass = `${size} ${style} flex flex-col relative`
 
@@ -54,6 +56,8 @@ export function createSvgContainer(props: SvgContainerProps): React.ReactElement
             terminalTheme={terminalTheme}
             defaultTheme={defaultTheme}
             hideTerminalHeader={hideTerminalHeader}
+            fontFamily={fontFamily}
+            terminalHeaderText={terminalHeaderText}
           >
             {children}
           </PluginStyles>

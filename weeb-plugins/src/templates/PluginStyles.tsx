@@ -17,6 +17,19 @@ interface PluginStylesProps {
   defaultTheme?: string
   hideTerminalHeader?: boolean
   customThemeColors?: Record<string, string> // Custom colors for custom theme
+  // Fonte global do SVG - chaves de FONT_FAMILIES; valores desconhecidos caem no
+  // padrão do estilo. Apenas 'poppins' é embutida; as demais são stacks de sistema
+  // (renderizam offline em SVG-as-image sem embutir novos woff2).
+  fontFamily?: string
+  // Texto custom do título do header do terminal (janela com os três botões).
+  terminalHeaderText?: string
+}
+
+export const FONT_FAMILIES: Record<string, string> = {
+  poppins: "'Poppins', sans-serif",
+  system: "system-ui, -apple-system, 'Segoe UI', sans-serif",
+  serif: "Georgia, 'Times New Roman', serif",
+  mono: "ui-monospace, 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace",
 }
 
 // Style definitions (browser-compatible, no Node.js dependencies)
@@ -40,6 +53,8 @@ export function PluginStyles({
   defaultTheme = "default",
   hideTerminalHeader = false,
   customThemeColors,
+  fontFamily,
+  terminalHeaderText,
 }: PluginStylesProps): React.ReactElement {
   const styleDef = STYLE_DEFINITIONS[style] || STYLE_DEFINITIONS.default
 
@@ -56,9 +71,11 @@ export function PluginStyles({
   // Get background color for terminal style
   const terminalBackground = style === "terminal" ? themeVariables["--terminal-color-background"] : undefined
 
+  const resolvedFontFamily = (fontFamily && FONT_FAMILIES[fontFamily]) || styleDef.fontFamily
+
   // Build style object
   const themeStyles = {
-    fontFamily: styleDef.fontFamily,
+    fontFamily: resolvedFontFamily,
     WebkitFontSmoothing: "antialiased",
     MozOsxFontSmoothing: "grayscale",
     // Apply background color for terminal style
@@ -71,7 +88,7 @@ export function PluginStyles({
 
   return (
     <div className={styleDef.containerClass} data-style={styleDef.name} data-theme={theme} style={themeStyles}>
-      {showTerminalHeader && <TerminalHeader />}
+      {showTerminalHeader && <TerminalHeader title={terminalHeaderText?.trim() || undefined} />}
       {children}
     </div>
   )

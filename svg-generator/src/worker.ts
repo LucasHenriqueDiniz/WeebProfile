@@ -35,6 +35,8 @@ interface GenerateRequest {
   defaultTheme?: string
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
+  fontFamily?: string
+  terminalHeaderText?: string
   primaryColor?: string
   dev?: boolean
   mock?: boolean
@@ -147,6 +149,13 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
       style === "default" ? theme || requestData.defaultTheme || "default" : requestData.defaultTheme || undefined,
     hideTerminalEmojis: requestData.hideTerminalEmojis || undefined,
     hideTerminalHeader: requestData.hideTerminalHeader || undefined,
+    // Fonte global: apenas chaves conhecidas passam (validação final em PluginStyles).
+    fontFamily: typeof requestData.fontFamily === "string" ? requestData.fontFamily.slice(0, 32) : undefined,
+    // Título custom do header do terminal: texto puro, curto, sem markup.
+    terminalHeaderText:
+      typeof requestData.terminalHeaderText === "string"
+        ? requestData.terminalHeaderText.replace(/[<>]/g, "").slice(0, 60)
+        : undefined,
     primaryColor: requestData.primaryColor || "#ff7a00",
     essentialConfigs,
     dev: requestData.dev === true || requestData.mock === true,

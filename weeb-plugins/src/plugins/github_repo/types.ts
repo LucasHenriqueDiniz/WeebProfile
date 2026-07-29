@@ -7,7 +7,9 @@ export type BannerVariant =
   | "minimal" // linha única: marca/avatar + nome + descrição + stars
   | "split" // conteúdo à esquerda, painel de stars com delta à direita
   | "display" // tipografia gigante + letra fantasma de fundo
-  | "centered" // nome centralizado, meta row embaixo - simétrico, estilo capa
+  | "centered" // nome centralizado com glow radial suave - simétrico, estilo capa
+  | "centered_dark" // centralizado escuro: grid técnico + glow do highlight
+  | "centered_gradient" // centralizado sobre gradiente cheio do highlight, chips brancos
   | "dark" // card escuro fixo com barra highlight lateral
   // aliases legados → layout novo equivalente
   | "large" // → hero
@@ -21,7 +23,15 @@ export type BannerVariant =
   | "blueprint" // → dark
   | "ribbon" // → dark
 
-export type ResolvedBannerVariant = "hero" | "minimal" | "split" | "display" | "centered" | "dark"
+export type ResolvedBannerVariant =
+  | "hero"
+  | "minimal"
+  | "split"
+  | "display"
+  | "centered"
+  | "centered_dark"
+  | "centered_gradient"
+  | "dark"
 
 // Normaliza os aliases legados - usar SEMPRE isto antes de decidir layout/altura,
 // pra render e calculateHeight nunca divergirem.
@@ -35,6 +45,10 @@ export function resolveBannerVariant(variant?: BannerVariant): ResolvedBannerVar
       return "split"
     case "centered":
       return "centered"
+    case "centered_dark":
+      return "centered_dark"
+    case "centered_gradient":
+      return "centered_gradient"
     case "display":
     case "editorial":
     case "bold":

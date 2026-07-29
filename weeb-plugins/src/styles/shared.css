@@ -579,6 +579,14 @@
   min-width: 0px
 }
 
+#svg-main .max-w-\[300px\] {
+  max-width: 300px
+}
+
+#svg-main .max-w-\[310px\] {
+  max-width: 310px
+}
+
 #svg-main .max-w-\[320px\] {
   max-width: 320px
 }
@@ -797,6 +805,10 @@
 
 #svg-main .gap-\[7px\] {
   gap: 7px
+}
+
+#svg-main .gap-\[9px\] {
+  gap: 9px
 }
 
 #svg-main .gap-x-2 {
@@ -1167,6 +1179,11 @@
   padding-right: 1rem
 }
 
+#svg-main .px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem
+}
+
 #svg-main .px-\[18px\] {
   padding-left: 18px;
   padding-right: 18px
@@ -1215,6 +1232,11 @@
 #svg-main .py-5 {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem
+}
+
+#svg-main .py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem
 }
 
 #svg-main .pb-0 {
@@ -1328,6 +1350,10 @@
   font-size: 11px
 }
 
+#svg-main .text-\[12\.5px\] {
+  font-size: 12.5px
+}
+
 #svg-main .text-\[12px\] {
   font-size: 12px
 }
@@ -1358,6 +1384,10 @@
 
 #svg-main .text-\[26px\] {
   font-size: 26px
+}
+
+#svg-main .text-\[27px\] {
+  font-size: 27px
 }
 
 #svg-main .text-\[28px\] {
@@ -1448,6 +1478,10 @@
 
 #svg-main .leading-\[1\.55\] {
   line-height: 1.55
+}
+
+#svg-main .leading-\[1\.5\] {
+  line-height: 1.5
 }
 
 #svg-main .leading-\[1\.9\] {
