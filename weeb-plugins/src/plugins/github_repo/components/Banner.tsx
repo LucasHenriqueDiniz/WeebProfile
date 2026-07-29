@@ -658,7 +658,7 @@ export function Banner({ config, data, style = "default", size = "half" }: Banne
               {(config.banner_show_description ?? true) &&
                 data.description &&
                 (config.banner_variant ?? "large") !== "compact" && (
-                  <p className="px-1 pb-1 text-sm text-terminal-muted">{data.description}</p>
+                  <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{data.description}</p>
                 )}
             </>
           }
