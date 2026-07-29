@@ -75,15 +75,18 @@ function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
         className="h-[3px]"
         style={{ background: `linear-gradient(90deg, ${HL}, color-mix(in srgb, ${HL} 30%, transparent))` }}
       />
-      <div className="px-[18px] py-4">
-        <div className="truncate text-[22px] font-semibold leading-tight tracking-[-0.02em] text-default-text">
-          <span className="font-normal text-default-muted">{data.owner.login} /</span> {data.name}
-        </div>
-        {showDescription && data.description && (
-          <p className="mt-1.5 text-[13px] leading-[1.55] text-default-muted line-clamp-2">{data.description}</p>
-        )}
-        <div className="mt-3">
-          <MetaRow data={data} showLanguage={showLanguage} />
+      <div className="flex items-start gap-3.5 px-[18px] py-4">
+        <Mark data={data} size={44} />
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-[22px] font-semibold leading-tight tracking-[-0.02em] text-default-text">
+            <span className="font-normal text-default-muted">{data.owner.login} /</span> {data.name}
+          </div>
+          {showDescription && data.description && (
+            <p className="mt-1.5 text-[13px] leading-[1.55] text-default-muted line-clamp-2">{data.description}</p>
+          )}
+          <div className="mt-3">
+            <MetaRow data={data} showLanguage={showLanguage} />
+          </div>
         </div>
       </div>
     </Card>
@@ -173,7 +176,10 @@ function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
       style={{ background: "#111318", boxShadow: "0 0 0 0.5px #2a2e37" }}
     >
       <div className="self-stretch" style={{ width: 4, background: HL }} />
-      <div className="min-w-0 flex-1 px-[18px] py-4">
+      <div className="flex-shrink-0 pl-[18px]">
+        <Mark data={data} size={36} />
+      </div>
+      <div className="min-w-0 flex-1 px-3.5 py-4">
         <div className="truncate text-lg font-semibold tracking-[-0.02em]" style={{ color: "#f0f2f6" }}>
           <span className="font-normal" style={{ color: "#8b93a3" }}>
             {data.owner.login} /

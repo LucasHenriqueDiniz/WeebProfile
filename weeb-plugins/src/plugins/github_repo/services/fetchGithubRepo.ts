@@ -177,10 +177,14 @@ interface RepositoryCardResponse {
 export async function fetchGithubRepoData(config: GithubRepoConfig, dev = false, pat?: string): Promise<GithubRepoData> {
   if (dev) {
     const mock = await getMockGithubRepoData()
-    // Em dev/preview a imagem custom entra crua (sem fetch externo) - o wizard
-    // renderiza no browser, que carrega a URL normalmente.
-    if (config.banner_image?.trim()) {
-      mock.owner.avatarUrl = config.banner_image.trim()
+    // Imagem custom também precisa virar base64 no preview: o wizard exibe o SVG via
+    // <img>, e o browser bloqueia URLs externas dentro de SVG-as-image - uma URL crua
+    // simplesmente não renderiza. data: URIs passam direto.
+    const customImage = config.banner_image?.trim()
+    if (customImage) {
+      mock.owner.avatarUrl = customImage.startsWith("data:image/")
+        ? customImage
+        : ((await embedImageOrNull(customImage)) ?? mock.owner.avatarUrl)
     }
     return mock
   }
