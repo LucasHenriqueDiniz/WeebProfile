@@ -1774,6 +1774,7 @@ export const PLUGINS_METADATA = {
             { value: "minimal", label: "Minimal (single row with mark, name and stars)" },
             { value: "split", label: "Split (content left, star panel with growth right)" },
             { value: "display", label: "Display (giant typography with ghost letter)" },
+            { value: "centered", label: "Centered (avatar, name and meta centered)" },
             { value: "dark", label: "Dark (fixed dark card with highlight bar)" }
           ],
           i18nKey: {
@@ -1784,6 +1785,7 @@ export const PLUGINS_METADATA = {
               "minimal": "plugins.github_repo.sections.banner.config.banner_variant.options.minimal",
               "split": "plugins.github_repo.sections.banner.config.banner_variant.options.split",
               "display": "plugins.github_repo.sections.banner.config.banner_variant.options.display",
+              "centered": "plugins.github_repo.sections.banner.config.banner_variant.options.centered",
               "dark": "plugins.github_repo.sections.banner.config.banner_variant.options.dark"
             }
           }
@@ -1806,6 +1808,17 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_show_languages.label",
             tooltip: "plugins.github_repo.sections.banner.config.banner_show_languages.tooltip"
+          }
+        },
+        {
+          key: "banner_show_owner",
+          label: "Show owner",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Shows the owner login (e.g. \"LucasHenriqueDiniz /\") before the repository name.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_show_owner.label",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_show_owner.tooltip"
           }
         },
         {
@@ -1841,7 +1854,8 @@ export const PLUGINS_METADATA = {
           options: [
             { value: "sm", label: "Small" },
             { value: "md", label: "Medium (default)" },
-            { value: "lg", label: "Large" }
+            { value: "lg", label: "Large" },
+            { value: "xl", label: "Extra large" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.content_size.label",
@@ -1849,7 +1863,8 @@ export const PLUGINS_METADATA = {
             options: {
               "sm": "plugins.github_repo.sections.banner.config.content_size.options.sm",
               "md": "plugins.github_repo.sections.banner.config.content_size.options.md",
-              "lg": "plugins.github_repo.sections.banner.config.content_size.options.lg"
+              "lg": "plugins.github_repo.sections.banner.config.content_size.options.lg",
+              "xl": "plugins.github_repo.sections.banner.config.content_size.options.xl"
             }
           }
         }
@@ -1894,7 +1909,8 @@ export const PLUGINS_METADATA = {
           options: [
             { value: "sm", label: "Small" },
             { value: "md", label: "Medium (default)" },
-            { value: "lg", label: "Large" }
+            { value: "lg", label: "Large" },
+            { value: "xl", label: "Extra large" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.stats.config.content_size.label",
@@ -1902,7 +1918,8 @@ export const PLUGINS_METADATA = {
             options: {
               "sm": "plugins.github_repo.sections.stats.config.content_size.options.sm",
               "md": "plugins.github_repo.sections.stats.config.content_size.options.md",
-              "lg": "plugins.github_repo.sections.stats.config.content_size.options.lg"
+              "lg": "plugins.github_repo.sections.stats.config.content_size.options.lg",
+              "xl": "plugins.github_repo.sections.stats.config.content_size.options.xl"
             }
           }
         }
@@ -1951,7 +1968,8 @@ export const PLUGINS_METADATA = {
           options: [
             { value: "sm", label: "Small" },
             { value: "md", label: "Medium (default)" },
-            { value: "lg", label: "Large" }
+            { value: "lg", label: "Large" },
+            { value: "xl", label: "Extra large" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.star_graph.config.content_size.label",
@@ -1959,7 +1977,8 @@ export const PLUGINS_METADATA = {
             options: {
               "sm": "plugins.github_repo.sections.star_graph.config.content_size.options.sm",
               "md": "plugins.github_repo.sections.star_graph.config.content_size.options.md",
-              "lg": "plugins.github_repo.sections.star_graph.config.content_size.options.lg"
+              "lg": "plugins.github_repo.sections.star_graph.config.content_size.options.lg",
+              "xl": "plugins.github_repo.sections.star_graph.config.content_size.options.xl"
             }
           }
         }
@@ -2018,7 +2037,8 @@ export const PLUGINS_METADATA = {
           options: [
             { value: "sm", label: "Small" },
             { value: "md", label: "Medium (default)" },
-            { value: "lg", label: "Large" }
+            { value: "lg", label: "Large" },
+            { value: "xl", label: "Extra large" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.languages.config.content_size.label",
@@ -2026,7 +2046,8 @@ export const PLUGINS_METADATA = {
             options: {
               "sm": "plugins.github_repo.sections.languages.config.content_size.options.sm",
               "md": "plugins.github_repo.sections.languages.config.content_size.options.md",
-              "lg": "plugins.github_repo.sections.languages.config.content_size.options.lg"
+              "lg": "plugins.github_repo.sections.languages.config.content_size.options.lg",
+              "xl": "plugins.github_repo.sections.languages.config.content_size.options.xl"
             }
           }
         }
@@ -2085,7 +2106,8 @@ export const PLUGINS_METADATA = {
           options: [
             { value: "sm", label: "Small" },
             { value: "md", label: "Medium (default)" },
-            { value: "lg", label: "Large" }
+            { value: "lg", label: "Large" },
+            { value: "xl", label: "Extra large" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.topics.config.content_size.label",
@@ -2093,7 +2115,8 @@ export const PLUGINS_METADATA = {
             options: {
               "sm": "plugins.github_repo.sections.topics.config.content_size.options.sm",
               "md": "plugins.github_repo.sections.topics.config.content_size.options.md",
-              "lg": "plugins.github_repo.sections.topics.config.content_size.options.lg"
+              "lg": "plugins.github_repo.sections.topics.config.content_size.options.lg",
+              "xl": "plugins.github_repo.sections.topics.config.content_size.options.xl"
             }
           }
         }
@@ -2117,7 +2140,8 @@ export const PLUGINS_METADATA = {
           options: [
             { value: "sm", label: "Small" },
             { value: "md", label: "Medium (default)" },
-            { value: "lg", label: "Large" }
+            { value: "lg", label: "Large" },
+            { value: "xl", label: "Extra large" }
           ],
           i18nKey: {
             label: "plugins.github_repo.sections.overview.config.content_size.label",
@@ -2125,7 +2149,8 @@ export const PLUGINS_METADATA = {
             options: {
               "sm": "plugins.github_repo.sections.overview.config.content_size.options.sm",
               "md": "plugins.github_repo.sections.overview.config.content_size.options.md",
-              "lg": "plugins.github_repo.sections.overview.config.content_size.options.lg"
+              "lg": "plugins.github_repo.sections.overview.config.content_size.options.lg",
+              "xl": "plugins.github_repo.sections.overview.config.content_size.options.xl"
             }
           }
         }

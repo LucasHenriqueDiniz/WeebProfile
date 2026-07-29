@@ -573,6 +573,10 @@
   min-width: 0px
 }
 
+.max-w-\[320px\] {
+  max-width: 320px
+}
+
 .max-w-\[60\%\] {
   max-width: 60%
 }
@@ -1474,6 +1478,10 @@
 
 .tracking-\[-0\.035em\] {
   letter-spacing: -0.035em
+}
+
+.tracking-\[-0\.03em\] {
+  letter-spacing: -0.03em
 }
 
 .tracking-\[-0\.05em\] {

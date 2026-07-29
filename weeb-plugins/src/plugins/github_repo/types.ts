@@ -7,6 +7,7 @@ export type BannerVariant =
   | "minimal" // linha única: marca/avatar + nome + descrição + stars
   | "split" // conteúdo à esquerda, painel de stars com delta à direita
   | "display" // tipografia gigante + letra fantasma de fundo
+  | "centered" // nome centralizado, meta row embaixo - simétrico, estilo capa
   | "dark" // card escuro fixo com barra highlight lateral
   // aliases legados → layout novo equivalente
   | "large" // → hero
@@ -20,7 +21,7 @@ export type BannerVariant =
   | "blueprint" // → dark
   | "ribbon" // → dark
 
-export type ResolvedBannerVariant = "hero" | "minimal" | "split" | "display" | "dark"
+export type ResolvedBannerVariant = "hero" | "minimal" | "split" | "display" | "centered" | "dark"
 
 // Normaliza os aliases legados - usar SEMPRE isto antes de decidir layout/altura,
 // pra render e calculateHeight nunca divergirem.
@@ -32,6 +33,8 @@ export function resolveBannerVariant(variant?: BannerVariant): ResolvedBannerVar
       return "minimal"
     case "split":
       return "split"
+    case "centered":
+      return "centered"
     case "display":
     case "editorial":
     case "bold":
@@ -88,8 +91,8 @@ export type TopicsVariant = "chips" | "cloud" | "hash"
 // Escala real de conteúdo (fonte, ícones, altura do gráfico, padding - tudo junto),
 // não só um espaço extra. Aplicada via transform:scale no componente inteiro da seção
 // ativa (ver ScaledBox.tsx), e o mesmo fator entra em calculateHeight.
-export type ContentSize = "sm" | "md" | "lg"
-export const CONTENT_SIZE_SCALE: Record<ContentSize, number> = { sm: 0.82, md: 1, lg: 1.3 }
+export type ContentSize = "sm" | "md" | "lg" | "xl"
+export const CONTENT_SIZE_SCALE: Record<ContentSize, number> = { sm: 0.82, md: 1, lg: 1.3, xl: 1.6 }
 
 export interface GithubRepoConfig {
   enabled: boolean
@@ -108,6 +111,8 @@ export interface GithubRepoConfig {
   banner_show_languages?: boolean
   // Esconde o avatar/marca nas variantes que o exibem (hero, minimal, dark).
   banner_show_avatar?: boolean
+  // Esconde o login do owner ("LucasHenriqueDiniz /") antes do nome do repo.
+  banner_show_owner?: boolean
   // URL de imagem custom (logo do projeto etc.) - substitui o avatar do owner no
   // banner. Em produção é convertida pra base64 no fetch (Gists não carregam URLs
   // externas dentro de SVG).

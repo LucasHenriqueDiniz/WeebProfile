@@ -73,6 +73,10 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
         sectionH = 24 + (hasDescription ? 120 : 88)
       } else if (variant === "display") {
         sectionH = 24 + 118
+      } else if (variant === "centered") {
+        const showAvatar = cfg.banner_show_avatar ?? true
+        const showOwner = cfg.banner_show_owner ?? true
+        sectionH = 24 + 106 + (showAvatar ? 50 : 0) + (showOwner ? 18 : 0) + (hasDescription ? 44 : 0)
       } else if (variant === "dark") {
         sectionH = 24 + (hasDescription ? 92 : 76)
       } else {

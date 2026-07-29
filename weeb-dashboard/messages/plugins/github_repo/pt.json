@@ -31,6 +31,10 @@
           "label": "Show technologies",
           "tooltip": "Only used by the Clean style - shows the repository's top languages inline."
         },
+        "banner_show_owner": {
+          "label": "Show owner",
+          "tooltip": "Shows the owner login (e.g. \"LucasHenriqueDiniz /\") before the repository name."
+        },
         "banner_variant": {
           "description": "Choose how big and prominent the banner is",
           "label": "Style",
@@ -38,6 +42,7 @@
             "aurora": "Aurora (dark gradient with glass panel)",
             "blueprint": "Blueprint (technical frame, monospace uppercase)",
             "bold": "Bold (large headline, minimal detail)",
+            "centered": "Centered (avatar, name and meta centered)",
             "clean": "Clean (name, description and techs in one bordered row)",
             "compact": "Compact (single row)",
             "dark": "Dark (fixed dark card with highlight bar)",
@@ -57,7 +62,8 @@
           "options": {
             "lg": "Large",
             "md": "Medium (default)",
-            "sm": "Small"
+            "sm": "Small",
+            "xl": "Extra large"
           },
           "tooltip": "Scales font size, icons, chart and spacing together."
         }
@@ -103,7 +109,8 @@
           "options": {
             "lg": "Large",
             "md": "Medium (default)",
-            "sm": "Small"
+            "sm": "Small",
+            "xl": "Extra large"
           },
           "tooltip": "Scales font size, icons, chart and spacing together."
         },
@@ -143,7 +150,8 @@
           "options": {
             "lg": "Large",
             "md": "Medium (default)",
-            "sm": "Small"
+            "sm": "Small",
+            "xl": "Extra large"
           },
           "tooltip": "Scales font size, icons, chart and spacing together."
         },
@@ -199,7 +207,8 @@
           "options": {
             "lg": "Large",
             "md": "Medium (default)",
-            "sm": "Small"
+            "sm": "Small",
+            "xl": "Extra large"
           },
           "tooltip": "Scales font size, icons, chart and spacing together."
         },
@@ -242,7 +251,8 @@
           "options": {
             "lg": "Large",
             "md": "Medium (default)",
-            "sm": "Small"
+            "sm": "Small",
+            "xl": "Extra large"
           },
           "tooltip": "Scales font size, icons, chart and spacing together."
         },
@@ -277,7 +287,8 @@
           "options": {
             "lg": "Large",
             "md": "Medium (default)",
-            "sm": "Small"
+            "sm": "Small",
+            "xl": "Extra large"
           },
           "tooltip": "Scales font size, icons, chart and spacing together."
         },

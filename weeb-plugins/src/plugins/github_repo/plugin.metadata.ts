@@ -22,6 +22,7 @@ const CONTENT_SIZE_OPTION = {
     { value: "sm", label: "Small" },
     { value: "md", label: "Medium (default)" },
     { value: "lg", label: "Large" },
+    { value: "xl", label: "Extra large" },
   ],
   tooltip: "Scales font size, icons, chart and spacing together.",
 }
@@ -62,6 +63,7 @@ export const githubRepoPluginMetadata = {
             { value: "minimal", label: "Minimal (single row with mark, name and stars)" },
             { value: "split", label: "Split (content left, star panel with growth right)" },
             { value: "display", label: "Display (giant typography with ghost letter)" },
+            { value: "centered", label: "Centered (avatar, name and meta centered)" },
             { value: "dark", label: "Dark (fixed dark card with highlight bar)" },
           ],
         },
@@ -77,6 +79,13 @@ export const githubRepoPluginMetadata = {
           type: "boolean" as const,
           defaultValue: true,
           tooltip: "Shows the primary language dot in the meta row (Hero and Display styles).",
+        },
+        {
+          key: "banner_show_owner",
+          label: "Show owner",
+          type: "boolean" as const,
+          defaultValue: true,
+          tooltip: "Shows the owner login (e.g. \"LucasHenriqueDiniz /\") before the repository name.",
         },
         {
           key: "banner_show_avatar",
