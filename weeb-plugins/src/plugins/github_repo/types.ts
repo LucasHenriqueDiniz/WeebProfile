@@ -1,20 +1,31 @@
 // Ids seguem a galeria de referência (01 Minimal White = clean, 04 Aurora Glass =
-// aurora, etc.) - ver PR/discussão de design. Primeira leva: implementadas todas,
-// depois cortamos as que não performarem bem visualmente.
+// aurora, etc.) - ver PR/discussão de design. Da primeira leva, as variantes que
+// ficaram visualmente redundantes foram cortadas e viraram aliases (compact→clean,
+// mono→blueprint, bold→editorial) pra não quebrar configs salvas.
 export type BannerVariant =
   | "large"
-  | "compact"
   | "minimal"
   | "clean" // 01 Minimal White
   | "editorial" // 02 Editorial Accent
-  | "mono" // 03 GitHub Terminal
   | "aurora" // 04 Aurora Glass
-  | "bold" // 05 Bold Orange
   | "split" // 06 Split Technologies
   | "blueprint" // 07 Blueprint
   | "ribbon" // 08 Dark Ribbon
   | "social" // 18 Social/OG
   | "hero" // banner grande pra ficar no topo do projeto - nome grande, primeira coisa vista
+  // Aliases legados (renderizam como a variante equivalente):
+  | "compact" // → clean
+  | "mono" // → blueprint
+  | "bold" // → editorial
+
+// Normaliza os aliases legados - usar SEMPRE isto antes de decidir layout/altura,
+// pra render e calculateHeight nunca divergirem.
+export function resolveBannerVariant(variant?: BannerVariant): Exclude<BannerVariant, "compact" | "mono" | "bold"> {
+  if (variant === "compact") return "clean"
+  if (variant === "mono") return "blueprint"
+  if (variant === "bold") return "editorial"
+  return variant ?? "large"
+}
 
 export type StarGraphVariant = "line" | "area" | "milestones" | "bars" | "gradient"
 export type StatsVariant = "inline" | "grid"
@@ -42,6 +53,10 @@ export interface GithubRepoConfig {
   banner_variant?: BannerVariant
   banner_show_description?: boolean
   banner_show_languages?: boolean
+  // URL de imagem custom (logo do projeto etc.) - substitui o avatar do owner no
+  // banner. Em produção é convertida pra base64 no fetch (Gists não carregam URLs
+  // externas dentro de SVG).
+  banner_image?: string
   // Stats (star/fork counters)
   stats_hide_title?: boolean
   stats_title?: string

@@ -1600,10 +1600,6 @@
   letter-spacing: 0.16em
 }
 
-#svg-main .tracking-\[0\.2em\] {
-  letter-spacing: 0.2em
-}
-
 #svg-main .tracking-tight {
   letter-spacing: -0.025em
 }

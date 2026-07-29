@@ -1771,13 +1771,10 @@ export const PLUGINS_METADATA = {
           description: "Choose how big and prominent the banner is",
           options: [
             { value: "large", label: "Large (avatar + gradient background)" },
-            { value: "compact", label: "Compact (single row)" },
             { value: "minimal", label: "Minimal (text only, no background)" },
             { value: "clean", label: "Clean (name, description and techs in one bordered row)" },
             { value: "editorial", label: "Editorial (color rail + serif headline)" },
-            { value: "mono", label: "Mono (dark monospace, GitHub terminal style)" },
             { value: "aurora", label: "Aurora (dark gradient with glass panel)" },
-            { value: "bold", label: "Bold (large headline, minimal detail)" },
             { value: "split", label: "Split (two columns, tech bars on the side)" },
             { value: "blueprint", label: "Blueprint (technical frame, monospace uppercase)" },
             { value: "ribbon", label: "Ribbon (circular mark + bottom info strip)" },
@@ -1789,19 +1786,29 @@ export const PLUGINS_METADATA = {
             description: "plugins.github_repo.sections.banner.config.banner_variant.description",
             options: {
               "large": "plugins.github_repo.sections.banner.config.banner_variant.options.large",
-              "compact": "plugins.github_repo.sections.banner.config.banner_variant.options.compact",
               "minimal": "plugins.github_repo.sections.banner.config.banner_variant.options.minimal",
               "clean": "plugins.github_repo.sections.banner.config.banner_variant.options.clean",
               "editorial": "plugins.github_repo.sections.banner.config.banner_variant.options.editorial",
-              "mono": "plugins.github_repo.sections.banner.config.banner_variant.options.mono",
               "aurora": "plugins.github_repo.sections.banner.config.banner_variant.options.aurora",
-              "bold": "plugins.github_repo.sections.banner.config.banner_variant.options.bold",
               "split": "plugins.github_repo.sections.banner.config.banner_variant.options.split",
               "blueprint": "plugins.github_repo.sections.banner.config.banner_variant.options.blueprint",
               "ribbon": "plugins.github_repo.sections.banner.config.banner_variant.options.ribbon",
               "social": "plugins.github_repo.sections.banner.config.banner_variant.options.social",
               "hero": "plugins.github_repo.sections.banner.config.banner_variant.options.hero"
             }
+          }
+        },
+        {
+          key: "banner_image",
+          label: "Custom image (URL)",
+          type: "string",
+          defaultValue: "",
+          description: "Optional image URL (project logo etc.) shown instead of the owner avatar",
+          tooltip: "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_image.label",
+            description: "plugins.github_repo.sections.banner.config.banner_image.description",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_image.tooltip"
           }
         },
         {

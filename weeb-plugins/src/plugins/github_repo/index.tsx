@@ -8,7 +8,7 @@ import React from "react"
 import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
-import { CONTENT_SIZE_SCALE, type GithubRepoConfig, type GithubRepoData } from "./types"
+import { CONTENT_SIZE_SCALE, resolveBannerVariant, type GithubRepoConfig, type GithubRepoData } from "./types"
 import { RenderGithubRepo } from "./components/RenderGithubRepo"
 import { fetchGithubRepoData } from "./services/fetchGithubRepo"
 
@@ -50,7 +50,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     let h = 0
 
     if (cfg.sections.includes("banner")) {
-      const variant = cfg.banner_variant ?? "large"
+      const variant = resolveBannerVariant(cfg.banner_variant)
       const showDescription = cfg.banner_show_description ?? true
       const hasDescription = showDescription && !!repo.description
       let sectionH = 0
@@ -59,23 +59,19 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
         // Custo cheio da seção medido no render real (Chromium): comando + linha do
         // nome = 50, descrição com line-clamp-2 = +44. No terminal cada seção carrega
         // seu espaçamento completo; o pad global do manager (+24) é compensado no fim.
-        sectionH = 50 + (hasDescription && variant !== "compact" ? 44 : 0)
+        sectionH = 50 + (hasDescription ? 44 : 0)
       } else if (variant === "minimal") {
         sectionH = 24 + (hasDescription ? 48 : 24)
-      } else if (variant === "compact") {
-        sectionH = 24 + 44
       } else if (variant === "clean") {
         const showLanguages = cfg.banner_show_languages ?? true
         const hasLanguages = showLanguages && repo.languages && repo.languages.length > 0
         sectionH = 24 + 48 + (hasDescription ? 16 : 0) + (hasLanguages ? 20 : 0)
-      } else if (variant === "editorial" || variant === "mono" || variant === "aurora" || variant === "blueprint") {
+      } else if (variant === "editorial" || variant === "aurora" || variant === "blueprint") {
         // Header row + optional description line + optional tech row - similar shape
         // across these variants (single card, no separate description block).
         const showLanguages = cfg.banner_show_languages ?? true
         const hasLanguages = showLanguages && repo.languages && repo.languages.length > 0
         sectionH = 24 + 60 + (hasDescription ? 20 : 0) + (hasLanguages ? 24 : 0)
-      } else if (variant === "bold") {
-        sectionH = 24 + 84 + (hasDescription ? 16 : 0)
       } else if (variant === "split") {
         sectionH = 24 + 100
       } else if (variant === "ribbon") {

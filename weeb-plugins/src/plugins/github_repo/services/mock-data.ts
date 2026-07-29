@@ -1,5 +1,13 @@
 import type { GithubRepoData } from "../types"
 
+// Avatar fake embutido (data URI) - com null aqui, todos os previews/wizard caíam no
+// fallback de iniciais e o banner parecia quebrado ("avatar não carrega").
+const MOCK_AVATAR =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs><rect width="64" height="64" rx="32" fill="url(#g)"/><text x="32" y="41" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fff" text-anchor="middle">LD</text></svg>`
+  )
+
 export async function getMockGithubRepoData(): Promise<GithubRepoData> {
   return {
     name: "WeebProfile",
@@ -8,7 +16,7 @@ export async function getMockGithubRepoData(): Promise<GithubRepoData> {
     url: "https://github.com/LucasHenriqueDiniz/WeebProfile",
     owner: {
       login: "LucasHenriqueDiniz",
-      avatarUrl: null,
+      avatarUrl: MOCK_AVATAR,
     },
     primaryLanguage: {
       name: "TypeScript",

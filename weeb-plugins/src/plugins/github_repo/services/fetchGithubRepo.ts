@@ -176,7 +176,13 @@ interface RepositoryCardResponse {
  */
 export async function fetchGithubRepoData(config: GithubRepoConfig, dev = false, pat?: string): Promise<GithubRepoData> {
   if (dev) {
-    return await getMockGithubRepoData()
+    const mock = await getMockGithubRepoData()
+    // Em dev/preview a imagem custom entra crua (sem fetch externo) - o wizard
+    // renderiza no browser, que carrega a URL normalmente.
+    if (config.banner_image?.trim()) {
+      mock.owner.avatarUrl = config.banner_image.trim()
+    }
+    return mock
   }
 
   if (!pat) {
@@ -203,8 +209,17 @@ export async function fetchGithubRepoData(config: GithubRepoConfig, dev = false,
       throw new Error(`Repository not found: ${target.owner}/${target.repo}`)
     }
 
+    // Imagem custom do banner (logo do projeto) tem prioridade sobre o avatar do
+    // owner; ambas são embutidas em base64 (Gists não carregam URLs externas em SVG).
+    const customImage = config.banner_image?.trim()
+    const customImageBase64 = customImage
+      ? customImage.startsWith("data:image/")
+        ? customImage
+        : await embedImageOrNull(customImage)
+      : null
     const avatarUrl = repo.owner?.avatarUrl
-    const avatarUrlBase64 = avatarUrl && avatarUrl.startsWith("https://") ? await embedImageOrNull(avatarUrl) : null
+    const avatarUrlBase64 =
+      customImageBase64 ?? (avatarUrl && avatarUrl.startsWith("https://") ? await embedImageOrNull(avatarUrl) : null)
 
     const totalLanguageSize = repo.languages?.totalSize || 0
     const languages = (repo.languages?.edges || [])

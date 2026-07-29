@@ -2,6 +2,7 @@ import React from "react"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { resolveBannerVariant } from "../types"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
 
@@ -71,31 +72,6 @@ function LargeBanner({ data, config }: { data: GithubRepoData; config: GithubRep
           {data.description}
         </p>
       )}
-    </a>
-  )
-}
-
-// "compact": a mesma faixa colorida, mas em uma linha só, sem bloco de descrição
-// separado - pra quem quer o mesmo visual do banner grande ocupando menos altura.
-function CompactBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const accent = data.primaryLanguage?.color || "#8957e5"
-  const showDescription = config.banner_show_description ?? true
-
-  return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center gap-2.5 overflow-hidden rounded-lg border border-default-border p-2.5"
-      style={{ background: `linear-gradient(135deg, ${accent}22 0%, ${accent}05 70%, transparent 100%)` }}
-    >
-      <OwnerAvatar data={data} accent={accent} size={28} />
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold text-default-text">{data.nameWithOwner}</div>
-        {showDescription && data.description && (
-          <div className="truncate text-xs text-default-muted">{data.description}</div>
-        )}
-      </div>
     </a>
   )
 }
@@ -199,57 +175,6 @@ function EditorialBanner({ data, config }: { data: GithubRepoData; config: Githu
   )
 }
 
-// "mono" (03): estética "terminal do GitHub" mas aplicada ao estilo default -
-// monospace, fundo escuro fixo, chips com contorno e uma linha de comando falsa.
-function MonoBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const showDescription = config.banner_show_description ?? true
-  const showLanguages = config.banner_show_languages ?? true
-  const languages = showLanguages ? data.languages.slice(0, 3) : []
-
-  return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block overflow-hidden rounded-lg border p-4"
-      style={{ background: "#0d1117", borderColor: "#30363d", fontFamily: "ui-monospace, monospace" }}
-    >
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="truncate text-xs" style={{ color: "#8b949e" }}>
-            github.com/{data.owner.login}
-          </div>
-          <div className="truncate text-xl font-bold" style={{ color: "#f0f6fc" }}>
-            ./{data.name}
-          </div>
-        </div>
-        <div className="flex flex-shrink-0 gap-3 text-xs" style={{ color: "#8b949e" }}>
-          <span>★ {formatCount(data.stargazerCount)}</span>
-          <span>⑂ {formatCount(data.forkCount)}</span>
-        </div>
-      </div>
-      {showDescription && data.description && (
-        <p className="mt-2.5 truncate text-xs" style={{ color: "#a8b3c0" }}>
-          {data.description}
-        </p>
-      )}
-      {languages.length > 0 && (
-        <div className="mt-2.5 flex flex-wrap gap-2">
-          {languages.map((lang) => (
-            <span
-              key={lang.name}
-              className="rounded px-1.5 py-0.5 text-[11px]"
-              style={{ color: "#58a6ff", background: "#0d2340", border: "1px solid #1f6feb" }}
-            >
-              {lang.name}
-            </span>
-          ))}
-        </div>
-      )}
-    </a>
-  )
-}
-
 // "aurora" (04): fundo escuro com dois blobs de gradiente + painel de vidro
 // (glassmorphism) por cima - o mais "chamativo" das variantes.
 function AuroraBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
@@ -324,51 +249,6 @@ function AuroraBanner({ data, config }: { data: GithubRepoData; config: GithubRe
             ))}
           </div>
         )}
-      </div>
-    </a>
-  )
-}
-
-// "bold" (05): pouca informação, identidade forte - eyebrow laranja, nome gigante,
-// barra de linguagens + badge de estrelas grande no rodapé.
-function BoldBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const showDescription = config.banner_show_description ?? true
-  const showLanguages = config.banner_show_languages ?? true
-  const languages = showLanguages ? data.languages.slice(0, 4) : []
-
-  return (
-    <a
-      href={data.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block overflow-hidden rounded-lg p-4"
-      style={{ background: "#fff7ed", color: "#321709" }}
-    >
-      <div className="text-[9px] font-extrabold uppercase tracking-[0.2em]" style={{ color: "#ea580c" }}>
-        {data.owner.login} presents
-      </div>
-      <div className="mt-1.5 truncate text-3xl font-extrabold">{data.name}</div>
-      {showDescription && data.description && (
-        <p className="mt-1 truncate text-xs" style={{ color: "#7c4c31" }}>
-          {data.description}
-        </p>
-      )}
-      <div className="mt-3 flex items-end justify-between gap-3">
-        {languages.length > 0 && (
-          <div className="min-w-0 flex-1">
-            <div className="flex h-1.5 w-full overflow-hidden rounded-full">
-              {languages.map((lang) => (
-                <div key={lang.name} style={{ width: `${lang.percentage}%`, background: lang.color }} />
-              ))}
-            </div>
-            <div className="mt-1.5 truncate text-[10px]" style={{ color: "#8a4c2a" }}>
-              {languages.map((l) => l.name).join(" · ")}
-            </div>
-          </div>
-        )}
-        <div className="flex-shrink-0 text-2xl font-black" style={{ color: "#fb923c" }}>
-          {formatCount(data.stargazerCount)}★
-        </div>
       </div>
     </a>
   )
@@ -622,14 +502,11 @@ function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
 }
 
 function DefaultBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
-  const variant = config.banner_variant ?? "large"
-  if (variant === "compact") return <CompactBanner data={data} config={config} />
+  const variant = resolveBannerVariant(config.banner_variant)
   if (variant === "minimal") return <MinimalBanner data={data} config={config} />
   if (variant === "clean") return <CleanBanner data={data} config={config} />
   if (variant === "editorial") return <EditorialBanner data={data} config={config} />
-  if (variant === "mono") return <MonoBanner data={data} config={config} />
   if (variant === "aurora") return <AuroraBanner data={data} config={config} />
-  if (variant === "bold") return <BoldBanner data={data} config={config} />
   if (variant === "split") return <SplitBanner data={data} config={config} />
   if (variant === "blueprint") return <BlueprintBanner data={data} config={config} />
   if (variant === "ribbon") return <RibbonBanner data={data} config={config} />
@@ -656,8 +533,7 @@ export function Banner({ config, data, style = "default", size = "half" }: Banne
                 <span className="text-terminal-highlight font-bold">{data.nameWithOwner}</span>
               </div>
               {(config.banner_show_description ?? true) &&
-                data.description &&
-                (config.banner_variant ?? "large") !== "compact" && (
+                data.description && (
                   <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{data.description}</p>
                 )}
             </>

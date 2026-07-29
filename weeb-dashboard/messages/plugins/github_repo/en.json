@@ -15,6 +15,11 @@
           "label": "Extra height",
           "tooltip": "Extra space (px) added at the bottom of the banner, on top of its normal size."
         },
+        "banner_image": {
+          "description": "Optional image URL (project logo etc.) shown instead of the owner avatar",
+          "label": "Custom image (URL)",
+          "tooltip": "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar."
+        },
         "banner_show_description": {
           "label": "Show description"
         },
