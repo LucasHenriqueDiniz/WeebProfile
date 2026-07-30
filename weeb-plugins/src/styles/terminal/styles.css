@@ -1,5 +1,21 @@
 /* Terminal Style CSS */
 
+/*
+ * O preflight do Tailwind está desligado (tailwind.config.js), e é ele quem normalmente
+ * define box-sizing: border-box. Sem isso, `w-full` + `px-*` estoura o pai, porque o
+ * padding soma por cima da largura em vez de caber dentro dela.
+ *
+ * O estilo default já faz esse reset (styles/default/styles.css); o terminal nunca fez, e
+ * por isso conteúdo encostado na borda direita era cortado — .terminal-body renderizava
+ * 431px dentro de um SVG de 415px.
+ */
+#svg-main,
+#svg-main *,
+#svg-main ::before,
+#svg-main ::after {
+  box-sizing: border-box;
+}
+
 /* Container */
 #svg-main .terminal-container {
   --font-family:

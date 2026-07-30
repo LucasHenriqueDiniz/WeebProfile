@@ -66,6 +66,18 @@ function getBrowserChannel(): "msedge" | "chrome" | "chromium" | undefined {
   return "chrome"
 }
 
+/**
+ * Launch options for the audit browser.
+ *
+ * PLAYWRIGHT_EXECUTABLE_PATH points at a Chromium binary directly, for environments
+ * (containers, CI) that ship one but have no installed channel to resolve.
+ */
+function getLaunchOptions(): { channel?: string; executablePath?: string; headless: boolean } {
+  const executablePath = process.env.PLAYWRIGHT_EXECUTABLE_PATH
+  if (executablePath) return { executablePath, headless: true }
+  return { channel: getBrowserChannel(), headless: true }
+}
+
 async function measureHeight(browser: Browser, html: string, width: number): Promise<number> {
   const page = await browser.newPage({ viewport: { width, height: 100 } })
 
@@ -194,8 +206,9 @@ async function main() {
   const sizes: Size[] = filters.size ? [filters.size] : ["half", "full"]
   const styles: Style[] = filters.style ? [filters.style] : ["default", "terminal"]
 
-  console.log(`🚀 Launching browser (channel: ${getBrowserChannel()})...`)
-  const browser = await chromium.launch({ channel: getBrowserChannel(), headless: true })
+  const launchOptions = getLaunchOptions()
+  console.log(`🚀 Launching browser (${launchOptions.executablePath ?? `channel: ${launchOptions.channel}`})...`)
+  const browser = await chromium.launch(launchOptions)
 
   const results: AuditResult[] = []
 

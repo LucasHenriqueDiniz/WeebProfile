@@ -64,13 +64,9 @@ export function Websites({ data, config, style = "default", size = "half" }: Web
             {/* No terminal as três variantes colapsam numa lista só. TerminalLine
                 é usado no lugar de TerminalGrid porque suas duas colunas truncam:
                 a coluna de valor do grid é `whitespace-nowrap` e um domínio longo
-                estoura a largura do card.
-
-                O `pr-2` compensa o `.terminal-body` (px-2 sobre um elemento
-                `w-full`), que é 16px mais largo que o SVG em todos os plugins:
-                sem ele o último caractere do domínio fica fora da área visível. */}
+                estoura a largura do card. */}
             {websites.map((site) => (
-              <TerminalLine key={site.url} right={site.title} left={site.domain} className={{ left: "pr-2" }} />
+              <TerminalLine key={site.url} right={site.title} left={site.domain} />
             ))}
           </>
         }
