@@ -147,6 +147,23 @@ const DefaultCalendar = ({
     const firstRowWeeks = displayWeeks.slice(0, midpoint)
     const secondRowWeeks = shouldSplit ? displayWeeks.slice(midpoint) : []
 
+    // As duas linhas usam o mesmo número de colunas para que as células fiquem do
+    // mesmo tamanho nas duas — 53 semanas viram 27 + 26, e a segunda apenas deixa
+    // a última coluna vazia.
+    const columnsPerRow = Math.max(firstRowWeeks.length, secondRowWeeks.length)
+
+    // Grade de colunas iguais em vez de larguras fixas: com 27 colunas de 0.7rem e
+    // gap de 3px o total dá 380px, mais que os 368px disponíveis no half, e a última
+    // semana (mais o rótulo do mês) ficava cortada. Com `1fr` as colunas encolhem só
+    // quando falta espaço; o `maxWidth` mantém o tamanho original quando sobra, como
+    // no full. A altura não muda: as células continuam com `height: squareSize`.
+    const gridStyle: React.CSSProperties = {
+      display: "grid",
+      gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))`,
+      gap: gapSize,
+      maxWidth: `calc(${columnsPerRow} * ${squareSize} + ${columnsPerRow - 1} * ${gapSize})`,
+    }
+
     const renderWeekColumn = (week: any, weekIndex: number, allWeeksForRow: any[]) => {
       // Create array of 7 days, padding with nulls based on weekday
       const days: Array<any | null> = [null, null, null, null, null, null, null]
@@ -158,13 +175,13 @@ const DefaultCalendar = ({
       })
 
       return (
-        <div key={weekIndex} className="flex flex-col" style={{ gap: gapSize }}>
+        <div key={weekIndex} className="flex flex-col" style={{ gap: gapSize, minWidth: 0 }}>
           {days.map((day, dayIndex) => (
             <div
               key={dayIndex}
               className="rounded-sm"
               style={{
-                width: squareSize,
+                width: "100%",
                 height: squareSize,
                 backgroundColor: day ? getCalendarColor(day.color || "") : "transparent",
               }}
@@ -176,7 +193,7 @@ const DefaultCalendar = ({
     }
 
     const renderWeekRow = (rowWeeks: any[], rowIndex: number) => (
-      <div key={rowIndex} className="flex" style={{ gap: gapSize }}>
+      <div key={rowIndex} style={gridStyle}>
         {rowWeeks.map((week, weekIndex) => renderWeekColumn(week, weekIndex, rowWeeks))}
       </div>
     )
@@ -188,27 +205,27 @@ const DefaultCalendar = ({
     const renderMonthLabels = (monthLabels: Array<{ month: number; colspan: number; startWeekIndex: number }>) => {
       if (hideMonths || monthLabels.length === 0) return null
 
+      // Os rótulos usam a MESMA grade das semanas, posicionados por `grid-column`.
+      // Antes eram absolutos com posição em px derivada do tamanho fixo da célula;
+      // como as colunas agora podem encolher, essa conta sairia do lugar.
       return (
         <div
-          className="flex items-start"
-          style={{ marginLeft: hideWeeks ? "0" : "1.75rem", position: "relative", height: "0.8125rem" }}
+          style={{
+            ...gridStyle,
+            marginLeft: hideWeeks ? "0" : `calc(1.75rem + ${gapSize})`,
+            height: "0.8125rem",
+            alignItems: "start",
+          }}
         >
           {monthLabels.map((monthLabel, labelIndex) => {
-            // Calculate the width: (colspan * squareSize) + (colspan - 1) * gapSize
-            const width = `calc(${monthLabel.colspan} * ${squareSize} + ${monthLabel.colspan - 1} * ${gapSize})`
-            // Calculate the left position: (startWeekIndex * squareSize) + (startWeekIndex * gapSize)
-            const left = `calc(${monthLabel.startWeekIndex} * ${squareSize} + ${monthLabel.startWeekIndex} * ${gapSize})`
-
             return (
               <div
                 key={labelIndex}
                 className="text-xs text-default-muted font-medium"
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: left,
-                  width: width,
+                  gridColumn: `${monthLabel.startWeekIndex + 1} / span ${monthLabel.colspan}`,
                   lineHeight: "1",
+                  minWidth: 0,
                 }}
               >
                 {MONTH_LABELS[monthLabel.month]}
