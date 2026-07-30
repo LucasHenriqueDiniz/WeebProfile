@@ -3,21 +3,26 @@
 import { Header } from "@/components/layout/Header"
 import { motion } from "framer-motion"
 import { ReactNode, useEffect, useRef, useState } from "react"
-import { ArrowLeft, Columns2, ListFilter, Puzzle, Settings2, Square } from "lucide-react"
+import { ArrowLeft, Columns2, ListFilter, ListOrdered, Puzzle, Settings2, Square } from "lucide-react"
 import { useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "@/i18n/use-translations"
 import { WizardFooter, type WizardFooterProps } from "./WizardFooter"
 import Image from "@/src/compat/next-image"
 
+export type WizardTab = "plugins" | "order" | "style"
+
 interface WizardShellProps {
-  activeTab: "plugins" | "style"
-  onTabChange: (tab: "plugins" | "style") => void
+  activeTab: WizardTab
+  onTabChange: (tab: WizardTab) => void
   // null/undefined quando o wizard não tem uma lista de plugins pra escolher (ex:
   // Repository, que só tem um "plugin" fixo) - nesse caso a coluna some por completo
   // em vez de ficar vazia.
   pluginsList: ReactNode | null
   pluginDetail: ReactNode
+  // null/undefined quando o wizard nao tem cards pra reordenar (ex: Repository, que e
+  // sempre um item unico) - nesse caso a aba "Ordem" nem aparece.
+  orderConfig?: ReactNode | null
   styleConfig: ReactNode
   preview: ReactNode
   footerProps: WizardFooterProps
@@ -41,6 +46,7 @@ export function WizardShell({
   onTabChange,
   pluginsList,
   pluginDetail,
+  orderConfig,
   styleConfig,
   preview,
   footerProps,
@@ -52,6 +58,7 @@ export function WizardShell({
   contentCount,
 }: WizardShellProps) {
   const t = useTranslations("wizard.plugins")
+  const tOrder = useTranslations("wizard.order")
   const router = useRouter()
   const contentWidth = size === "half" ? 415 : 830
   const [mobileStep, setMobileStep] = useState<MobileStep>(pluginsList ? "list" : "detail")
@@ -202,6 +209,18 @@ export function WizardShell({
           <Puzzle className="w-3.5 h-3.5" />
           Plugins
         </button>
+        {orderConfig && (
+          <button
+            onClick={() => onTabChange("order")}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+              activeTab === "order" ? "bg-cyan-500/10 text-cyan-300" : "text-slate-400 hover:text-slate-200"
+            )}
+          >
+            <ListOrdered className="w-3.5 h-3.5" />
+            {tOrder("tab")}
+          </button>
+        )}
         <button
           onClick={() => onTabChange("style")}
           className={cn(
@@ -223,10 +242,15 @@ export function WizardShell({
               ["detail", "Configurar", Settings2],
               ["preview", "Preview", ListFilter],
             ] as const)
-          : ([
-              ["detail", "Estilo", Settings2],
-              ["preview", "Preview", ListFilter],
-            ] as const)
+          : activeTab === "order"
+            ? ([
+                ["detail", tOrder("tab"), ListOrdered],
+                ["preview", "Preview", ListFilter],
+              ] as const)
+            : ([
+                ["detail", "Estilo", Settings2],
+                ["preview", "Preview", ListFilter],
+              ] as const)
         ).map(([step, label, Icon]) => (
           <button
             key={step}
@@ -278,6 +302,20 @@ export function WizardShell({
           >
             {pluginDetail}
           </div>
+          {orderConfig && (
+            <div
+              className={cn(
+                "lg:w-[400px] xl:w-[460px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
+                activeTab === "order"
+                  ? mobileStep === "detail"
+                    ? "block lg:block"
+                    : "hidden lg:block"
+                  : "hidden"
+              )}
+            >
+              <div className="p-4 lg:p-5">{orderConfig}</div>
+            </div>
+          )}
           <div
             className={cn(
               "lg:w-[460px] xl:w-[600px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",

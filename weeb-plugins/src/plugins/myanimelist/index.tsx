@@ -10,6 +10,7 @@ import React from "react"
 import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { MyAnimeListConfig, MyAnimeListData } from "./types"
+import { DEFAULT_FAVORITES_MAX } from "./constants"
 import { RenderMyAnimeList } from "./components/RenderMyAnimeList"
 import { fetchMyAnimeListData } from "./services/fetchMyAnimeList"
 
@@ -139,25 +140,25 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
           break
         }
         case "anime_favorites": {
-          const max = cfg.anime_favorites_max ?? cfg.favorites_max ?? 20
+          const max = cfg.anime_favorites_max ?? cfg.favorites_max ?? DEFAULT_FAVORITES_MAX
           const n = Math.min(mal.favorites_full?.anime?.length ?? max, max)
           h += favoritesH(n, cfg.anime_favorites_list_style, "detailed", "anime")
           break
         }
         case "manga_favorites": {
-          const max = cfg.manga_favorites_max ?? cfg.favorites_max ?? 20
+          const max = cfg.manga_favorites_max ?? cfg.favorites_max ?? DEFAULT_FAVORITES_MAX
           const n = Math.min(mal.favorites_full?.manga?.length ?? max, max)
           h += favoritesH(n, cfg.manga_favorites_list_style, "detailed", "manga")
           break
         }
         case "character_favorites": {
-          const max = cfg.character_favorites_max ?? cfg.favorites_max ?? 20
+          const max = cfg.character_favorites_max ?? cfg.favorites_max ?? DEFAULT_FAVORITES_MAX
           const n = Math.min(mal.favorites?.characters?.length ?? max, max)
           h += favoritesH(n, cfg.character_favorites_list_style, "compact", "characters")
           break
         }
         case "people_favorites": {
-          const max = cfg.people_favorites_max ?? cfg.favorites_max ?? 20
+          const max = cfg.people_favorites_max ?? cfg.favorites_max ?? DEFAULT_FAVORITES_MAX
           const n = Math.min(mal.favorites?.people?.length ?? max, max)
           h += favoritesH(n, cfg.people_favorites_list_style, "compact", "people")
           break

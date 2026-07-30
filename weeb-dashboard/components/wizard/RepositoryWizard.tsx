@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { WizardShell } from "./WizardShell"
+import { WizardShell, type WizardTab } from "./WizardShell"
 import { StyleConfiguration } from "./StyleConfiguration"
 import { RepositoryConfigPanel } from "./RepositoryConfigPanel"
 import { RepositoryLivePreview } from "./RepositoryLivePreview"
@@ -14,7 +14,8 @@ interface RepositoryWizardProps {
 }
 
 export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWizardProps = {}) {
-  const [activeTab, setActiveTab] = useState<"plugins" | "style">("plugins")
+  // O Repository é sempre um card único, então não existe aba "Ordem" aqui.
+  const [activeTab, setActiveTab] = useState<WizardTab>("plugins")
   const ctrl = useRepositoryWizardController({ isEditMode, editSvgId })
   const {
     owner,

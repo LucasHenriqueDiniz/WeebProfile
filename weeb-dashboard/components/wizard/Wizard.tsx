@@ -1,5 +1,6 @@
 "use client"
 
+import { CardOrderPanel } from "./CardOrderPanel"
 import { LivePreview } from "./LivePreview"
 import { PluginListPanel } from "./PluginListPanel"
 import { PluginDetailPanel } from "./PluginDetailPanel"
@@ -52,6 +53,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
         onTabChange={ctrl.setActiveTab}
         pluginsList={<PluginListPanel workspace={workspace} />}
         pluginDetail={<PluginDetailPanel workspace={workspace} />}
+        orderConfig={<CardOrderPanel />}
         styleConfig={
           <StyleConfiguration
             style={style}

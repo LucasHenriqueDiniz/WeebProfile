@@ -30,6 +30,7 @@ import {
   FaVideo,
 } from "react-icons/fa"
 import { GoDotFill } from "react-icons/go"
+import { DEFAULT_FAVORITES_MAX } from "../constants"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -542,9 +543,9 @@ export function FavoritesList({
     return <></>
   }
 
-  // Limit based on configuration (default 20)
-  // Use specific max for section or fallback to favorites_max global or default 20
-  let MAX_ITEMS = 20
+  // Limit based on configuration (default DEFAULT_FAVORITES_MAX)
+  // Use specific max for section or fallback to favorites_max global or the plugin default
+  let MAX_ITEMS = DEFAULT_FAVORITES_MAX
   if (type === "anime" && config.anime_favorites_max !== undefined) {
     MAX_ITEMS = config.anime_favorites_max
   } else if (type === "manga" && config.manga_favorites_max !== undefined) {
@@ -554,7 +555,7 @@ export function FavoritesList({
   } else if (type === "characters" && config.character_favorites_max !== undefined) {
     MAX_ITEMS = config.character_favorites_max
   } else {
-    MAX_ITEMS = config.favorites_max ?? 20
+    MAX_ITEMS = config.favorites_max ?? DEFAULT_FAVORITES_MAX
   }
   const displayData = data.slice(0, MAX_ITEMS)
 

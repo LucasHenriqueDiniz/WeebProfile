@@ -205,11 +205,11 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
       // Update store with generated name/slug
       setBasicInfo(autoName, autoSlug, true)
 
-      // Check if pluginsOrder is customized (different from alphabetical order)
-      // Only consider enabled plugins in the order comparison
-      const enabledPluginsOrdered = [...enabledPluginNames].sort()
-      const currentOrderFiltered = pluginsOrder.filter((name) => enabledPluginNames.includes(name))
-      const isOrderCustomized = JSON.stringify(enabledPluginsOrdered) !== JSON.stringify(currentOrderFiltered)
+      // Ordem dos plugins - sempre persistida. A aba "Ordem" deixa o usuário definir
+      // essa sequência explicitamente, então ela não pode depender de uma heurística
+      // ("só salva se for diferente da ordem alfabética") que descartaria silenciosamente
+      // uma ordem escolhida a mão que por acaso coincida com a alfabética.
+      const orderedEnabledPlugins = pluginsOrder.filter((name) => enabledPluginNames.includes(name))
 
       // 3. Create/Update SVG (pluginsConfig has plugins only, uiConfig has global flags)
       const svgData: any = {
@@ -225,9 +225,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         uiConfig: uiConfig,
       }
 
-      // Only include pluginsOrder if customized (not alphabetical default)
-      if (isOrderCustomized) {
-        svgData.pluginsOrder = pluginsOrder.filter((name) => enabledPluginNames.includes(name)).join(",")
+      if (orderedEnabledPlugins.length > 0) {
+        svgData.pluginsOrder = orderedEnabledPlugins.join(",")
       }
 
       const data = isEditMode && editSvgId ? await svgApi.update(editSvgId, svgData) : await svgApi.create(svgData)

@@ -9,7 +9,7 @@ const STORAGE_KEY = "wizard-ui-state"
 
 interface WizardUIState {
   expandedPlugins: Set<string>
-  activeTab: "plugins" | "style"
+  activeTab: "plugins" | "order" | "style"
   category: string
   query: string
   onlyEnabled: boolean
@@ -70,7 +70,7 @@ export function useWizardUIState() {
     return saved.expandedPlugins || new Set()
   })
 
-  const [activeTab, setActiveTab] = useState<"plugins" | "style">(() => {
+  const [activeTab, setActiveTab] = useState<"plugins" | "order" | "style">(() => {
     const saved = loadFromStorage()
     return saved.activeTab || "plugins"
   })

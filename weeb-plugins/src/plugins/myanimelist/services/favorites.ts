@@ -1,4 +1,5 @@
 import type { BasicAnimeFavorite, BasicCharacterFavorite, BasicMangaFavorite, BasicPeopleFavorite, FullAnimeFavorite, FullMangaFavorite, MyAnimeListConfig } from "../types"
+import { DEFAULT_FAVORITES_MAX } from "../constants"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import type { EdgeFavorite, MalProfileResponse } from "./profile"
 
@@ -27,10 +28,10 @@ export async function fetchFavorites(profile: MalProfileResponse, config: MyAnim
   const sections = config.sections || []
   const none = { items: [], status: "complete" as FavoriteCategoryStatus }
   const results = await Promise.allSettled([
-    sections.includes("anime_favorites") ? Promise.resolve().then(() => category(profile.favorites.anime, config.anime_favorites_max ?? config.favorites_max ?? 20, (x, image) => ({ mal_id: x.mal_id, title: x.title || "Unknown", image, start_year: 0, type: x.type || "" }))) : Promise.resolve(none),
-    sections.includes("manga_favorites") ? Promise.resolve().then(() => category(profile.favorites.manga, config.manga_favorites_max ?? config.favorites_max ?? 20, (x, image) => ({ mal_id: x.mal_id, title: x.title || "Unknown", image, start_year: 0, type: x.type || "" }))) : Promise.resolve(none),
-    sections.includes("character_favorites") ? Promise.resolve().then(() => category(profile.favorites.characters, config.character_favorites_max ?? config.favorites_max ?? 20, (x, image) => ({ mal_id: x.mal_id, name: x.name || "Unknown", image }))) : Promise.resolve(none),
-    sections.includes("people_favorites") ? Promise.resolve().then(() => category(profile.favorites.people, config.people_favorites_max ?? config.favorites_max ?? 20, (x, image) => ({ mal_id: x.mal_id, name: x.name || "Unknown", image }))) : Promise.resolve(none),
+    sections.includes("anime_favorites") ? Promise.resolve().then(() => category(profile.favorites.anime, config.anime_favorites_max ?? config.favorites_max ?? DEFAULT_FAVORITES_MAX, (x, image) => ({ mal_id: x.mal_id, title: x.title || "Unknown", image, start_year: 0, type: x.type || "" }))) : Promise.resolve(none),
+    sections.includes("manga_favorites") ? Promise.resolve().then(() => category(profile.favorites.manga, config.manga_favorites_max ?? config.favorites_max ?? DEFAULT_FAVORITES_MAX, (x, image) => ({ mal_id: x.mal_id, title: x.title || "Unknown", image, start_year: 0, type: x.type || "" }))) : Promise.resolve(none),
+    sections.includes("character_favorites") ? Promise.resolve().then(() => category(profile.favorites.characters, config.character_favorites_max ?? config.favorites_max ?? DEFAULT_FAVORITES_MAX, (x, image) => ({ mal_id: x.mal_id, name: x.name || "Unknown", image }))) : Promise.resolve(none),
+    sections.includes("people_favorites") ? Promise.resolve().then(() => category(profile.favorites.people, config.people_favorites_max ?? config.favorites_max ?? DEFAULT_FAVORITES_MAX, (x, image) => ({ mal_id: x.mal_id, name: x.name || "Unknown", image }))) : Promise.resolve(none),
   ])
   const unwrap = <T>(result: PromiseSettledResult<{ items: T[]; status: FavoriteCategoryStatus }>) => result.status === "fulfilled" ? result.value : { items: [], status: "unavailable" as FavoriteCategoryStatus }
   const [anime, manga, characters, people] = [unwrap(results[0]), unwrap(results[1]), unwrap(results[2]), unwrap(results[3])]

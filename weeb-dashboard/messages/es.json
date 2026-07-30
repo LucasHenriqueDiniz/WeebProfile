@@ -476,7 +476,8 @@
     },
     "tabs": {
       "plugins": "Plugins",
-      "style": "Estilo"
+      "style": "Estilo",
+      "order": "Orden"
     },
     "style": {
       "title": "Estilo",
@@ -537,6 +538,18 @@
       "selectSection": "Seleccionar sección",
       "deselectSection": "Deseleccionar sección",
       "enablePluginToPreview": "Habilita al menos un plugin y selecciona secciones para ver la vista previa"
+    },
+    "order": {
+      "tab": "Orden",
+      "title": "Orden de las tarjetas",
+      "description": "Arrastra desde el asa (o usa las flechas) para cambiar el orden en que aparecen las tarjetas en tu SVG.",
+      "dragHandle": "Arrastra para reordenar",
+      "moveUp": "Mover arriba",
+      "moveDown": "Mover abajo",
+      "cardSingular": "tarjeta",
+      "cardPlural": "tarjetas",
+      "emptyTitle": "Aún no hay tarjetas para ordenar",
+      "emptyDescription": "Activa un plugin y selecciona al menos una sección para organizar el orden de las tarjetas."
     }
   },
   "templatesPage": {
