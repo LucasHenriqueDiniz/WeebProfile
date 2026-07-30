@@ -93,9 +93,7 @@ export function CurrentStreak({
             {/* Streak Card */}
             <div className="duolingo-streak-card" data-intensity={intensity}>
               {/* Background mascot decoration */}
-              <div className="duolingo-mascot-decoration">
-                <img src={mascotAsset} alt="" />
-              </div>
+              <div className="duolingo-mascot-decoration" style={{ backgroundImage: `url("${mascotAsset}")` }} />
 
               <div className="relative z-10 flex items-center gap-4">
                 {/* Duolingo Mascot */}

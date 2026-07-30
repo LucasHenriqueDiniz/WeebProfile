@@ -445,6 +445,19 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
 /* See src/styles/shared.css for all Tailwind utilities */
 
 /* Duolingo Plugin Styles */
+/*
+ * A mascote de fundo é pintada como background, e não como uma imagem escalada.
+ * O visual é o mesmo, mas um background nunca escapa da caixa do elemento: o
+ * \`transform: scale(1.5)\` que existia aqui deixava a caixa geométrica 1,5x maior
+ * que o card (568px dentro de 379px), visível para quem lê getBoundingClientRect.
+ *
+ * \`background-size: 150% auto\` reproduz o antigo \`object-fit: cover\` + \`scale(1.5)\`:
+ * o cover era dominado pela largura, então 150% da largura da caixa com a altura
+ * pelo aspect ratio dá exatamente o mesmo enquadramento, em half e em full.
+ *
+ * Atenção: este CSS é embutido dentro do SVG, que é XML — nada de sinais de menor
+ * ou maior nos comentários, nem em nome de tag, ou o SVG inteiro deixa de parsear.
+ */
 #svg-main .duolingo-mascot-decoration {
   position: absolute;
   top: 0;
@@ -455,14 +468,9 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-}
-
-#svg-main .duolingo-mascot-decoration img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center right;
-  transform: scale(1.5);
+  background-repeat: no-repeat;
+  background-size: 150% auto;
+  background-position: center center;
 }
 
 #svg-main .duolingo-streak-card {

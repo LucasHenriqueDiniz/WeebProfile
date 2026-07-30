@@ -37,9 +37,10 @@ export function TotalXP({ totalXP, config, style = "default", size = "half" }: T
             {/* XP Card */}
             <div className="duolingo-xp-card">
               {/* Background mascot decoration */}
-              <div className="duolingo-mascot-decoration">
-                <img src={duolingoAssets.amazed} alt="" />
-              </div>
+              <div
+                className="duolingo-mascot-decoration"
+                style={{ backgroundImage: `url("${duolingoAssets.amazed}")` }}
+              />
 
               <div className="relative z-10 flex items-center gap-4">
                 {/* Trophy Icon */}

@@ -14,6 +14,26 @@ const __dirname = dirname(__filename)
 const workspaceRoot = resolve(__dirname, "..")
 
 /**
+ * O CSS acaba embutido num `<style>` dentro do SVG, que é XML. Um "<" solto ali
+ * — mesmo dentro de um comentário CSS — quebra o parse do documento inteiro, e o
+ * gerador não percebe: ele devolve `success: true` com um SVG que nenhum
+ * renderizador consegue abrir. Barrar aqui é o jeito barato de nunca publicar isso.
+ */
+function assertXmlSafe(css: string, styleName: string): void {
+  const lines = css.split("\n")
+  const offenders = lines.map((line, i) => ({ line, n: i + 1 })).filter(({ line }) => line.includes("<"))
+
+  if (offenders.length === 0) return
+
+  console.error(`\n❌ ${styleName}/styles.css tem "<", que quebra o SVG (XML):`)
+  for (const { line, n } of offenders) {
+    console.error(`   linha ${n}: ${line.trim()}`)
+  }
+  console.error(`   Reescreva sem o sinal de menor (inclusive em comentários).\n`)
+  process.exit(1)
+}
+
+/**
  * Escape template literal string for embedding in TypeScript
  */
 function escapeTemplateLiteral(str: string): string {
@@ -43,6 +63,8 @@ function generateStyleIndex(styleName: "default" | "terminal"): void {
 
   // Read CSS file and trim trailing whitespace/newlines
   const cssContent = readFileSync(cssFile, "utf8").trimEnd()
+
+  assertXmlSafe(cssContent, styleName)
 
   // Read current index.ts to preserve the structure (only if it exists and is valid)
   let indexContent = ""

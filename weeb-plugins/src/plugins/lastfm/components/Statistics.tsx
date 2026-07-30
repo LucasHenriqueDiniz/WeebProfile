@@ -75,9 +75,12 @@ const DefaultStatistic = ({ title, value }: { title: string; value: string }) =>
 
 const TerminalFeaturedTrack = ({ track }: { track: { track: string; artist: string } }): React.ReactElement => {
   return (
-    <div className="flex flex-col items-start w-full whitespace-nowrap">
-      <span className="font-semibold text-terminal-warning shrink-0">Top Track:</span>
-      <span className="truncate text-terminal-muted-light">{`${track.track} by ${track.artist}`}</span>
+    // `items-start` dimensiona os filhos por fit-content: sem o `w-full`, o span
+    // fica tão largo quanto o texto inteiro e o `truncate` nunca chega a ellipsar —
+    // quem cortava era o overflow:hidden do card, no meio da palavra e sem "…".
+    <div className="flex w-full flex-col items-start">
+      <span className="shrink-0 whitespace-nowrap font-semibold text-terminal-warning">Top Track:</span>
+      <span className="w-full truncate text-terminal-muted-light">{`${track.track} by ${track.artist}`}</span>
     </div>
   )
 }
