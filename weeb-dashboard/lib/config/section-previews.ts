@@ -103,6 +103,10 @@ export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean;
     recent_games: { default: true, terminal: true },
     top_games: { default: true, terminal: true },
   },
+
+  websites: {
+    websites: { default: true, terminal: true },
+  },
 }
 
 export function getSectionPreview(plugin: string, section: string, style: "default" | "terminal" = "default"): string | null {

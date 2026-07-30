@@ -1,4 +1,4 @@
-import { FaGithub, FaSteam, FaLastfmSquare, FaSpotify } from "react-icons/fa"
+import { FaGithub, FaSteam, FaLastfmSquare, FaSpotify, FaGlobe } from "react-icons/fa"
 import { TbNumber16Small } from "react-icons/tb"
 import { SiMyanimelist, SiStackoverflow, SiCodeforces, SiCodewars, SiDuolingo } from "react-icons/si"
 import { GiWeightLiftingUp } from "react-icons/gi"
@@ -24,6 +24,7 @@ const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   duolingo: SiDuolingo,
   spotify: FaSpotify,
   github_repo: GoRepo,
+  websites: FaGlobe,
 }
 
 /**

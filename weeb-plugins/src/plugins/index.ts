@@ -38,6 +38,7 @@ export { duolingoPlugin } from "./duolingo/index"
 export { codewarsPlugin } from "./codewars/index"
 export { codeforcesPlugin } from "./codeforces/index"
 export { stackoverflowPlugin } from "./stackoverflow/index"
+export { websitesPlugin } from "./websites/index"
 
 // Export Plugin Registry (class)
 export {

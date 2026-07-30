@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import { urlToDataUriDirect, InvalidImageError, ImageTooLargeError } from "./image-to-base64"
 
-
 // Minimal valid file headers for magic-byte validation, padded to a plausible size.
 const JPEG_BYTES = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0])
 const PNG_BYTES = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0])
@@ -60,6 +59,28 @@ describe("urlToDataUriDirect", () => {
     expect(result.dataUri.startsWith("data:image/webp;base64,")).toBe(true)
   })
 
+  it("runs validateFinalUrl when a redirect changed the URL, and rejects on throw", async () => {
+    const redirected = { ...mockResponse(200, PNG_BYTES, "image/png"), url: "https://169.254.169.254/a.png" }
+    ;(global.fetch as any).mockResolvedValueOnce(redirected as unknown as Response)
+
+    const validateFinalUrl = vi.fn(() => {
+      throw new Error("not publicly routable")
+    })
+    await expect(urlToDataUriDirect("https://example.com/a.png", { validateFinalUrl })).rejects.toBeInstanceOf(
+      InvalidImageError
+    )
+    expect(validateFinalUrl).toHaveBeenCalledWith("https://169.254.169.254/a.png")
+  })
+
+  it("skips validateFinalUrl when there was no redirect", async () => {
+    const same = { ...mockResponse(200, PNG_BYTES, "image/png"), url: "https://example.com/a.png" }
+    ;(global.fetch as any).mockResolvedValueOnce(same as unknown as Response)
+
+    const validateFinalUrl = vi.fn()
+    await urlToDataUriDirect("https://example.com/a.png", { validateFinalUrl })
+    expect(validateFinalUrl).not.toHaveBeenCalled()
+  })
+
   it("rejects an unsupported Content-Type", async () => {
     ;(global.fetch as any).mockResolvedValueOnce(mockResponse(200, JPEG_BYTES, "text/html"))
     await expect(urlToDataUriDirect("https://example.com/a")).rejects.toBeInstanceOf(InvalidImageError)
@@ -115,5 +136,4 @@ describe("urlToDataUriDirect", () => {
     // Documents which path this environment actually took, without failing either way.
     expect(typeof hasNativeToBase64).toBe("boolean")
   })
-
 })

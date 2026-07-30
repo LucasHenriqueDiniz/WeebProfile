@@ -14,7 +14,11 @@ function bytesStartWith(bytes: Uint8Array, signature: number[]): boolean {
 }
 
 function isWebp(bytes: Uint8Array): boolean {
-  return bytes.length >= 12 && String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" && String.fromCharCode(...bytes.slice(8, 12)) === "WEBP"
+  return (
+    bytes.length >= 12 &&
+    String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" &&
+    String.fromCharCode(...bytes.slice(8, 12)) === "WEBP"
+  )
 }
 
 function matchesMagicBytes(bytes: Uint8Array, mime: AcceptedMimeType): boolean {
@@ -41,6 +45,12 @@ export interface DirectImageOptions {
   maxBytes?: number
   allowedMimeTypes?: readonly string[]
   timeout?: number
+  /**
+   * Called with the URL the request actually landed on, after redirects. Throw
+   * to reject the response. Needed when the URL comes from the user (the
+   * websites plugin), where a public host could redirect into a private one.
+   */
+  validateFinalUrl?: (finalUrl: string) => void
 }
 
 export interface DirectImageResult {
@@ -56,7 +66,7 @@ function encodeBase64(bytes: Uint8Array): string {
 }
 
 export async function urlToDataUriDirect(url: string, options: DirectImageOptions = {}): Promise<DirectImageResult> {
-  const { maxBytes, allowedMimeTypes = ACCEPTED_MIME_TYPES, timeout = 15_000 } = options
+  const { maxBytes, allowedMimeTypes = ACCEPTED_MIME_TYPES, timeout = 15_000, validateFinalUrl } = options
   if (!url.startsWith("https://")) throw new InvalidImageError("Only https:// image URLs are allowed")
 
   const controller = new AbortController()
@@ -65,11 +75,21 @@ export async function urlToDataUriDirect(url: string, options: DirectImageOption
   try {
     response = await fetch(url, { signal: controller.signal, headers: { "User-Agent": "WeebProfile/1.0" } })
   } catch (error) {
-    throw new InvalidImageError(error instanceof Error && error.name === "AbortError" ? "Image request timed out" : "Image request failed")
+    throw new InvalidImageError(
+      error instanceof Error && error.name === "AbortError" ? "Image request timed out" : "Image request failed"
+    )
   } finally {
     clearTimeout(timeoutId)
   }
   if (!response.ok) throw new InvalidImageError(`HTTP ${response.status}`)
+
+  if (validateFinalUrl && response.url && response.url !== url) {
+    try {
+      validateFinalUrl(response.url)
+    } catch (error) {
+      throw new InvalidImageError(error instanceof Error ? error.message : "Redirected to a disallowed URL")
+    }
+  }
 
   const headerMime = (response.headers.get("content-type") || "").split(";", 1)[0]!.trim().toLowerCase()
   // MAL CDN legitimately returns the non-standard but common image/jpg alias.
@@ -81,8 +101,10 @@ export async function urlToDataUriDirect(url: string, options: DirectImageOption
   }
 
   const bytes = new Uint8Array(await response.arrayBuffer())
-  if (maxBytes !== undefined && bytes.byteLength > maxBytes) throw new ImageTooLargeError(`Image exceeds maxBytes (${bytes.byteLength} > ${maxBytes})`)
-  if (!matchesMagicBytes(bytes, mime as AcceptedMimeType)) throw new InvalidImageError(`Content-Type ${mime} does not match image bytes`)
+  if (maxBytes !== undefined && bytes.byteLength > maxBytes)
+    throw new ImageTooLargeError(`Image exceeds maxBytes (${bytes.byteLength} > ${maxBytes})`)
+  if (!matchesMagicBytes(bytes, mime as AcceptedMimeType))
+    throw new InvalidImageError(`Content-Type ${mime} does not match image bytes`)
 
   return { dataUri: `data:${mime};base64,${encodeBase64(bytes)}`, mime, byteLength: bytes.byteLength }
 }

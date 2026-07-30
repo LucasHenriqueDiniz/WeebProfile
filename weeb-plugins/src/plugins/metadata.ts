@@ -49,12 +49,25 @@ export interface EssentialConfigKeyMetadata {
 }
 
 /**
+ * One field of an item inside an "object-array" config option
+ */
+export interface ObjectArrayItemField {
+  key: string
+  label: string
+  type: "string" | "boolean" | "number" | "select"
+  placeholder?: string
+  description?: string
+  required?: boolean
+  options?: { value: string; label: string }[]
+}
+
+/**
  * Configuration option for a section
  */
 export interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
   defaultValue?: any
   min?: number
   max?: number
@@ -64,6 +77,10 @@ export interface SectionConfigOption {
   required?: boolean
   tooltip?: string
   options?: { value: string; label: string }[]
+  /** Shape of each item when type === "object-array" */
+  itemFields?: ObjectArrayItemField[]
+  /** Maximum number of items when type === "object-array" */
+  maxItems?: number
   i18nKey?: I18nKeyMap
 }
 
@@ -3878,6 +3895,184 @@ export const PLUGINS_METADATA = {
         "recent_games",
         "top_games"
       ]
+    },
+  },
+
+  websites: {
+    name: "websites",
+    displayName: "Websites",
+    description: "Showcase your own websites, with thumbnails pulled from each page",
+    category: "coding",
+    icon: "Globe",
+    requiredFields: [],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "websites",
+        name: "Websites",
+        description: "A showcase of the websites you add, with page thumbnail, title and description",
+        i18nKey: {
+          name: "plugins.websites.sections.websites.name",
+          description: "plugins.websites.sections.websites.description"
+        },
+        configOptions: [
+        {
+          key: "websites_items",
+          label: "Websites",
+          type: "object-array",
+          defaultValue: [],
+          description: "The websites to show. Only the URL is required.",
+          tooltip: "Add one entry per website. Title, description and image are filled in automatically from the page's Open Graph tags when 'Fill in from the page' is on — anything you type here wins over what is detected.",
+          itemFields: [
+            {
+              key: "url",
+              label: "URL",
+              type: "string",
+              placeholder: "https://my-portfolio.dev",
+              description: "Must be an https:// address",
+              required: true
+            },
+            {
+              key: "title",
+              label: "Title",
+              type: "string",
+              placeholder: "My Portfolio"
+            },
+            {
+              key: "description",
+              label: "Description",
+              type: "string",
+              placeholder: "Personal site built with Astro"
+            },
+            {
+              key: "image",
+              label: "Thumbnail URL",
+              type: "string",
+              placeholder: "https://my-portfolio.dev/preview.png",
+              description: "Optional. Overrides the thumbnail detected on the page."
+            }
+          ],
+          maxItems: 12,
+          i18nKey: {
+            label: "plugins.websites.sections.websites.config.websites_items.label",
+            description: "plugins.websites.sections.websites.config.websites_items.description",
+            tooltip: "plugins.websites.sections.websites.config.websites_items.tooltip"
+          }
+        },
+        {
+          key: "websites_variant",
+          label: "Style",
+          type: "select",
+          defaultValue: "grid",
+          description: "Choose how the websites are laid out",
+          options: [
+            { value: "grid", label: "Grid (cards with a big thumbnail)" },
+            { value: "list", label: "List (compact rows with favicon)" },
+            { value: "featured", label: "Featured (first site highlighted, rest as a list)" }
+          ],
+          i18nKey: {
+            label: "plugins.websites.sections.websites.config.websites_variant.label",
+            description: "plugins.websites.sections.websites.config.websites_variant.description",
+            options: {
+              "grid": "plugins.websites.sections.websites.config.websites_variant.options.grid",
+              "list": "plugins.websites.sections.websites.config.websites_variant.options.list",
+              "featured": "plugins.websites.sections.websites.config.websites_variant.options.featured"
+            }
+          }
+        },
+        {
+          key: "websites_max",
+          label: "Maximum websites",
+          type: "number",
+          defaultValue: 6,
+          min: 1,
+          max: 12,
+          step: 1,
+          description: "Maximum 12 websites",
+          tooltip: "Websites beyond this limit are not fetched or displayed.",
+          i18nKey: {
+            label: "plugins.websites.sections.websites.config.websites_max.label",
+            description: "plugins.websites.sections.websites.config.websites_max.description",
+            tooltip: "plugins.websites.sections.websites.config.websites_max.tooltip"
+          }
+        },
+        {
+          key: "websites_autofill",
+          label: "Fill in from the page",
+          type: "boolean",
+          defaultValue: true,
+          description: "Read title, description and thumbnail from each page's Open Graph tags",
+          tooltip: "Turn this off to use only what you typed. With it on, each website is fetched once per generation to read its <meta> tags — that makes generation slower and depends on the site being reachable.",
+          i18nKey: {
+            label: "plugins.websites.sections.websites.config.websites_autofill.label",
+            description: "plugins.websites.sections.websites.config.websites_autofill.description",
+            tooltip: "plugins.websites.sections.websites.config.websites_autofill.tooltip"
+          }
+        },
+        {
+          key: "websites_show_thumbnail",
+          label: "Show thumbnail",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "When off, the Grid and Featured styles fall back to a favicon-only layout.",
+          i18nKey: {
+            label: "plugins.websites.sections.websites.config.websites_show_thumbnail.label",
+            tooltip: "plugins.websites.sections.websites.config.websites_show_thumbnail.tooltip"
+          }
+        },
+        {
+          key: "websites_show_description",
+          label: "Show description",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.websites.sections.websites.config.websites_show_description.label"
+          }
+        },
+        {
+          key: "websites_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.websites.sections.websites.config.websites_hide_title.label"
+          }
+        },
+        {
+          key: "websites_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Websites",
+          i18nKey: {
+            label: "plugins.websites.sections.websites.config.websites_title.label",
+            defaultValue: "plugins.websites.sections.websites.config.websites_title.defaultValue"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.websites.displayName",
+      description: "plugins.websites.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "sections": [
+        "websites"
+      ],
+      "websites_items": [
+        {
+          "url": "https://weebprofile.pages.dev"
+        },
+        {
+          "url": "https://github.com",
+          "title": "GitHub"
+        }
+      ],
+      "websites_variant": "grid"
     },
   },
 } as const satisfies Record<string, PluginMetadata>

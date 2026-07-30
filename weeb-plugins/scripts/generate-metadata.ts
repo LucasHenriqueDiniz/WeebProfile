@@ -80,7 +80,7 @@ interface PluginMetadataPartial {
     configOptions?: Array<{
       key: string
       label: string
-      type: "number" | "boolean" | "string" | "select" | "array"
+      type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
       defaultValue?: any
       min?: number
       max?: number
@@ -90,6 +90,16 @@ interface PluginMetadataPartial {
       required?: boolean
       tooltip?: string
       options?: Array<{ value: string; label: string }>
+      itemFields?: Array<{
+        key: string
+        label: string
+        type: "string" | "boolean" | "number" | "select"
+        placeholder?: string
+        description?: string
+        required?: boolean
+        options?: Array<{ value: string; label: string }>
+      }>
+      maxItems?: number
     }>
   }>
   globalConfigOptions?: Array<{
@@ -172,15 +182,47 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
           if (!opt.label) {
             errors.push(`sections[${index}].configOptions[${optIndex}]: missing label`)
           }
-          if (!opt.type || !["number", "boolean", "string", "select", "array"].includes(opt.type)) {
+          if (!opt.type || !["number", "boolean", "string", "select", "array", "object-array"].includes(opt.type)) {
             errors.push(
-              `sections[${index}].configOptions[${optIndex}]: invalid type. Must be 'number', 'boolean', 'string', 'select', or 'array'`
+              `sections[${index}].configOptions[${optIndex}]: invalid type. Must be 'number', 'boolean', 'string', 'select', 'array', or 'object-array'`
             )
           }
 
           // Validar opções para select
           if (opt.type === "select" && (!opt.options || !Array.isArray(opt.options))) {
             errors.push(`sections[${index}].configOptions[${optIndex}]: select type requires options array`)
+          }
+
+          // Validar itemFields para object-array
+          if (opt.type === "object-array") {
+            const prefix = `sections[${index}].configOptions[${optIndex}]`
+            if (!opt.itemFields || !Array.isArray(opt.itemFields) || opt.itemFields.length === 0) {
+              errors.push(`${prefix}: object-array type requires a non-empty itemFields array`)
+            } else {
+              const seenFieldKeys = new Set<string>()
+              opt.itemFields.forEach((field, fieldIndex) => {
+                const fieldPrefix = `${prefix}.itemFields[${fieldIndex}]`
+                if (!field.key) {
+                  errors.push(`${fieldPrefix}: missing key`)
+                } else if (seenFieldKeys.has(field.key)) {
+                  errors.push(`${fieldPrefix}: duplicate key '${field.key}'`)
+                } else {
+                  seenFieldKeys.add(field.key)
+                }
+                if (!field.label) {
+                  errors.push(`${fieldPrefix}: missing label`)
+                }
+                if (!field.type || !["string", "boolean", "number", "select"].includes(field.type)) {
+                  errors.push(`${fieldPrefix}: invalid type. Must be 'string', 'boolean', 'number', or 'select'`)
+                }
+                if (field.type === "select" && (!field.options || !Array.isArray(field.options))) {
+                  errors.push(`${fieldPrefix}: select type requires options array`)
+                }
+              })
+            }
+            if (opt.maxItems !== undefined && (typeof opt.maxItems !== "number" || opt.maxItems < 1)) {
+              errors.push(`${prefix}: maxItems must be a number >= 1`)
+            }
           }
 
           // Validar min/max para number
@@ -606,7 +648,7 @@ interface EnrichedMetadata extends PluginMetadataPartial {
     configOptions?: Array<{
       key: string
       label: string
-      type: "number" | "boolean" | "string" | "select" | "array"
+      type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
       defaultValue?: any
       min?: number
       max?: number
@@ -616,6 +658,16 @@ interface EnrichedMetadata extends PluginMetadataPartial {
       required?: boolean
       tooltip?: string
       options?: Array<{ value: string; label: string }>
+      itemFields?: Array<{
+        key: string
+        label: string
+        type: "string" | "boolean" | "number" | "select"
+        placeholder?: string
+        description?: string
+        required?: boolean
+        options?: Array<{ value: string; label: string }>
+      }>
+      maxItems?: number
       i18nKey?: {
         label?: string
         description?: string
@@ -763,12 +815,25 @@ export interface EssentialConfigKeyMetadata {
 }
 
 /**
+ * One field of an item inside an "object-array" config option
+ */
+export interface ObjectArrayItemField {
+  key: string
+  label: string
+  type: "string" | "boolean" | "number" | "select"
+  placeholder?: string
+  description?: string
+  required?: boolean
+  options?: { value: string; label: string }[]
+}
+
+/**
  * Configuration option for a section
  */
 export interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
   defaultValue?: any
   min?: number
   max?: number
@@ -778,6 +843,10 @@ export interface SectionConfigOption {
   required?: boolean
   tooltip?: string
   options?: { value: string; label: string }[]
+  /** Shape of each item when type === "object-array" */
+  itemFields?: ObjectArrayItemField[]
+  /** Maximum number of items when type === "object-array" */
+  maxItems?: number
   i18nKey?: I18nKeyMap
 }
 
@@ -897,6 +966,37 @@ export const PLUGINS_METADATA = {
                     .map((o) => `            { value: ${JSON.stringify(o.value)}, label: ${JSON.stringify(o.label)} }`)
                     .join(",\n")
                   optStr += `,\n          options: [\n${optionsStr}\n          ]`
+                }
+                if (opt.itemFields && Array.isArray(opt.itemFields)) {
+                  const itemFieldsStr = opt.itemFields
+                    .map((field) => {
+                      let fieldStr = `            {\n              key: ${JSON.stringify(field.key)},\n              label: ${JSON.stringify(field.label)},\n              type: ${JSON.stringify(field.type)}`
+                      if (field.placeholder) {
+                        fieldStr += `,\n              placeholder: ${JSON.stringify(field.placeholder)}`
+                      }
+                      if (field.description) {
+                        fieldStr += `,\n              description: ${JSON.stringify(field.description)}`
+                      }
+                      if (field.required !== undefined) {
+                        fieldStr += `,\n              required: ${field.required}`
+                      }
+                      if (field.options && Array.isArray(field.options)) {
+                        const fieldOptionsStr = field.options
+                          .map(
+                            (o) =>
+                              `                { value: ${JSON.stringify(o.value)}, label: ${JSON.stringify(o.label)} }`
+                          )
+                          .join(",\n")
+                        fieldStr += `,\n              options: [\n${fieldOptionsStr}\n              ]`
+                      }
+                      fieldStr += "\n            }"
+                      return fieldStr
+                    })
+                    .join(",\n")
+                  optStr += `,\n          itemFields: [\n${itemFieldsStr}\n          ]`
+                }
+                if (opt.maxItems !== undefined) {
+                  optStr += `,\n          maxItems: ${opt.maxItems}`
                 }
 
                 // Add i18nKey if available

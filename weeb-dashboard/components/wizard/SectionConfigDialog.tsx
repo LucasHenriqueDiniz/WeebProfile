@@ -21,6 +21,7 @@ import {
 import { Settings, X, Plus, HelpCircle, ExternalLink } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
+import { ObjectArrayInput, type ObjectArrayItem, type ObjectArrayItemField } from "./ObjectArrayInput"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -28,13 +29,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
   defaultValue?: any
   min?: number
   max?: number
   step?: number
   description?: string
   options?: { value: string; label: string }[]
+  itemFields?: ObjectArrayItemField[]
+  maxItems?: number
   helpUrl?: string
   tooltip?: string
   docUrl?: string
@@ -279,6 +282,18 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                     onChange={(newArray) => updateConfig({ [option.key]: newArray })}
                     placeholder={option.description || "Digite um valor e pressione Enter"}
                   />
+                )}
+                {option.type === "object-array" && option.itemFields && (
+                  <>
+                    <ObjectArrayInput
+                      value={(Array.isArray(value) ? value : []) as ObjectArrayItem[]}
+                      itemFields={option.itemFields}
+                      maxItems={option.maxItems}
+                      addLabel={`Adicionar ${optionLabel.toLowerCase()}`}
+                      onChange={(newItems) => updateConfig({ [option.key]: newItems })}
+                    />
+                    {optionDescription && <p className="text-xs text-muted-foreground">{optionDescription}</p>}
+                  </>
                 )}
               </div>
             )

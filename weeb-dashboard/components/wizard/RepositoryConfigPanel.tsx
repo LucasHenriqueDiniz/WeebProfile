@@ -19,7 +19,7 @@ function shortLabel(label: string): string {
 interface ConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
   defaultValue?: unknown
   options?: { value: string; label: string }[]
 }

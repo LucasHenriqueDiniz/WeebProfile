@@ -192,6 +192,46 @@ export default function SectionConfig({ pluginName, sectionId, config, onChange 
             )
           }
 
+          // Listas (array de strings e array de objetos) são editadas como JSON
+          // cru aqui - o editor com campos por item vive no dashboard.
+          if (option.type === "array" || option.type === "object-array") {
+            const raw = localConfig[option.key] ?? option.defaultValue ?? []
+            return (
+              <div key={option.key} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "13px", color: "#c9d1d9", fontWeight: "500" }}>
+                  {option.label}
+                  <span style={{ fontSize: "11px", color: "#8b949e", fontWeight: "normal", marginLeft: "8px" }}>
+                    (JSON{option.description ? ` - ${option.description}` : ""})
+                  </span>
+                </label>
+                <textarea
+                  defaultValue={JSON.stringify(raw, null, 2)}
+                  onBlur={(e) => {
+                    try {
+                      const parsed = JSON.parse(e.target.value)
+                      if (Array.isArray(parsed)) updateConfig(option.key, parsed)
+                    } catch {
+                      // JSON inválido: mantém o valor anterior.
+                    }
+                  }}
+                  rows={6}
+                  spellCheck={false}
+                  style={{
+                    background: "#0d1117",
+                    border: "1px solid #30363d",
+                    borderRadius: "4px",
+                    padding: "6px 10px",
+                    color: "#c9d1d9",
+                    fontSize: "13px",
+                    fontFamily: "monospace",
+                    width: "100%",
+                    resize: "vertical",
+                  }}
+                />
+              </div>
+            )
+          }
+
           return null
         })}
       </div>

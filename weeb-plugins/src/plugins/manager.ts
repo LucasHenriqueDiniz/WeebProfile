@@ -12,6 +12,7 @@ import { duolingoPlugin } from "./duolingo/index"
 import { codewarsPlugin } from "./codewars/index"
 import { codeforcesPlugin } from "./codeforces/index"
 import { stackoverflowPlugin } from "./stackoverflow/index"
+import { websitesPlugin } from "./websites/index"
 
 export class PluginManager {
   private static instance: PluginManager
@@ -31,6 +32,7 @@ export class PluginManager {
     this.register(codewarsPlugin)
     this.register(codeforcesPlugin)
     this.register(stackoverflowPlugin)
+    this.register(websitesPlugin)
   }
 
   public static getInstance(): PluginManager {

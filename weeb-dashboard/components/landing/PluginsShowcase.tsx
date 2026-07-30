@@ -21,6 +21,7 @@ const PLUGIN_ORDER = [
   "duolingo",
   "lyfta",
   "16personalities",
+  "websites",
   "github_repo",
 ]
 

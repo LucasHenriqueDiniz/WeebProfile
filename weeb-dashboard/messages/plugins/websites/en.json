@@ -1,0 +1,50 @@
+{
+  "description": "Showcase your own websites, with thumbnails pulled from each page",
+  "displayName": "Websites",
+  "sections": {
+    "websites": {
+      "config": {
+        "websites_autofill": {
+          "description": "Read title, description and thumbnail from each page's Open Graph tags",
+          "label": "Fill in from the page",
+          "tooltip": "Turn this off to use only what you typed. With it on, each website is fetched once per generation to read its <meta> tags — that makes generation slower and depends on the site being reachable."
+        },
+        "websites_hide_title": {
+          "label": "Hide title"
+        },
+        "websites_items": {
+          "description": "The websites to show. Only the URL is required.",
+          "label": "Websites",
+          "tooltip": "Add one entry per website. Title, description and image are filled in automatically from the page's Open Graph tags when 'Fill in from the page' is on — anything you type here wins over what is detected."
+        },
+        "websites_max": {
+          "description": "Maximum 12 websites",
+          "label": "Maximum websites",
+          "tooltip": "Websites beyond this limit are not fetched or displayed."
+        },
+        "websites_show_description": {
+          "label": "Show description"
+        },
+        "websites_show_thumbnail": {
+          "label": "Show thumbnail",
+          "tooltip": "When off, the Grid and Featured styles fall back to a favicon-only layout."
+        },
+        "websites_title": {
+          "defaultValue": "Websites",
+          "label": "Title"
+        },
+        "websites_variant": {
+          "description": "Choose how the websites are laid out",
+          "label": "Style",
+          "options": {
+            "featured": "Featured (first site highlighted, rest as a list)",
+            "grid": "Grid (cards with a big thumbnail)",
+            "list": "List (compact rows with favicon)"
+          }
+        }
+      },
+      "description": "A showcase of the websites you add, with page thumbnail, title and description",
+      "name": "Websites"
+    }
+  }
+}
