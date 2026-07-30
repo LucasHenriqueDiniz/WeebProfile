@@ -134,7 +134,7 @@ export function RenderMyAnimeList({
             config={config}
             style={style}
             size={size}
-            listStyle={config.people_favorites_list_style || "compact"}
+            listStyle={config.people_favorites_list_style || "simple"}
           />
         )
       case "character_favorites":
@@ -146,7 +146,7 @@ export function RenderMyAnimeList({
             config={config}
             style={style}
             size={size}
-            listStyle={config.character_favorites_list_style || "compact"}
+            listStyle={config.character_favorites_list_style || "simple"}
           />
         )
       default:

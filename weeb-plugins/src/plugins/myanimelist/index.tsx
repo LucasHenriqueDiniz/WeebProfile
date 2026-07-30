@@ -50,7 +50,7 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
     const favoritesH = (
       n: number,
       listStyle: string | undefined,
-      defaultListStyle: "detailed" | "compact",
+      defaultListStyle: "detailed" | "compact" | "simple",
       type: "anime" | "manga" | "characters" | "people"
     ): number => {
       if (n === 0) return 0
@@ -153,13 +153,13 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
         case "character_favorites": {
           const max = cfg.character_favorites_max ?? cfg.favorites_max ?? 20
           const n = Math.min(mal.favorites?.characters?.length ?? max, max)
-          h += favoritesH(n, cfg.character_favorites_list_style, "compact", "characters")
+          h += favoritesH(n, cfg.character_favorites_list_style, "simple", "characters")
           break
         }
         case "people_favorites": {
           const max = cfg.people_favorites_max ?? cfg.favorites_max ?? 20
           const n = Math.min(mal.favorites?.people?.length ?? max, max)
-          h += favoritesH(n, cfg.people_favorites_list_style, "compact", "people")
+          h += favoritesH(n, cfg.people_favorites_list_style, "simple", "people")
           break
         }
         default:
