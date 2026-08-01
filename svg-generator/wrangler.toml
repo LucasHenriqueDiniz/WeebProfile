@@ -4,6 +4,18 @@ compatibility_date = "2025-09-23"
 compatibility_flags = ["nodejs_compat"]
 
 # ============================================================
+# Sem rota pública. POST / não tem autenticação e lê os secrets do
+# usuário no D1 a partir do userId do body (ver src/worker.ts), então
+# qualquer um com um userId do Clerk queimaria as API keys de terceiros.
+#
+# O dashboard chega aqui pelo service binding SVG_GENERATOR
+# (weeb-dashboard/wrangler.toml), que não passa pela internet pública.
+# Cron Triggers e service bindings não dependem de rota, então continuam
+# funcionando. Dev local (`wrangler dev` em :3001) também não é afetado.
+# ============================================================
+workers_dev = false
+
+# ============================================================
 # D1 Database binding (read-only access to plugin_secrets)
 # Same database as weeb-dashboard/wrangler.toml
 # ============================================================
