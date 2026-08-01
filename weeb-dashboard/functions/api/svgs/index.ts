@@ -5,6 +5,7 @@ import { getDb } from "../_shared/db"
 import { svgs } from "../../../lib/db/schema"
 import { eq, count } from "drizzle-orm"
 import { assertPluginsMatchEntityType } from "../_shared/artifact-types"
+import { parseBody, svgCreateSchema } from "../_shared/validation"
 
 const MAX_SVGS_FREE_TIER = 3
 
@@ -53,17 +54,18 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
     const userId = await getAuthUserId(request, env)
     if (!userId) return unauthorized()
 
-    const body = (await request.json()) as Record<string, any>
+    const parsed = await parseBody(request, svgCreateSchema)
+    if (!parsed.ok) return parsed.response
     const {
       name,
-      entityType = "profile",
-      artifactType = "profile_card",
-      variant = "default",
-      pluginsConfig = {},
-      uiConfig = {},
-      style = "default",
-      size = "half",
-      theme = "default",
+      entityType,
+      artifactType,
+      variant,
+      pluginsConfig,
+      uiConfig,
+      style,
+      size,
+      theme,
       customCss,
       pluginsOrder,
       hideTerminalEmojis,
@@ -71,9 +73,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       hideTerminalCommand,
       fontFamily,
       terminalHeaderText,
-    } = body
-
-    if (!name) return badRequest("Name is required")
+    } = parsed.data
 
     const entityTypeError = assertPluginsMatchEntityType(entityType, pluginsConfig)
     if (entityTypeError) return badRequest(entityTypeError)

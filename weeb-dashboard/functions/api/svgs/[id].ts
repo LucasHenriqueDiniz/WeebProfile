@@ -6,6 +6,7 @@ import { deleteSvgFromR2 } from "../_shared/storage"
 import { svgs } from "../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
 import { assertPluginsMatchEntityType } from "../_shared/artifact-types"
+import { parseBody, svgUpdateSchema } from "../_shared/validation"
 
 /**
  * GET /api/svgs/[id] - Get a specific SVG
@@ -51,7 +52,9 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
 
     if (!existingSvg) return notFound("SVG")
 
-    const body = (await request.json()) as Record<string, any>
+    const parsed = await parseBody(request, svgUpdateSchema)
+    if (!parsed.ok) return parsed.response
+    const body = parsed.data
 
     const nextEntityType = body.entityType !== undefined ? body.entityType : existingSvg.entityType
     const nextPluginsConfig = body.pluginsConfig !== undefined ? body.pluginsConfig : existingSvg.pluginsConfig
