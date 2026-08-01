@@ -25,6 +25,7 @@ export const profiles = sqliteTable(
       .notNull(),
     updatedAt: text("updated_at")
       .$defaultFn(() => new Date().toISOString())
+      .$onUpdate(() => new Date().toISOString())
       .notNull(),
   },
   (table) => ({
@@ -51,6 +52,7 @@ export const essentialConfigs = sqliteTable(
       .notNull(),
     updatedAt: text("updated_at")
       .$defaultFn(() => new Date().toISOString())
+      .$onUpdate(() => new Date().toISOString())
       .notNull(),
   },
   (table) => ({
@@ -94,8 +96,13 @@ export const svgs = sqliteTable(
     forceRegenerate: integer("force_regenerate", { mode: "boolean" }).default(false).notNull(),
     dataHash: text("data_hash"),
     lastGeneratedAt: text("last_generated_at"),
+    // $onUpdate matters here beyond bookkeeping: the cron decides an SVG is stuck
+    // mid-generation by comparing updated_at against a 30-minute threshold. With
+    // only $defaultFn (insert-only) the column never moved, so a row marked
+    // "generating" carried a weeks-old timestamp and looked stuck immediately.
     updatedAt: text("updated_at")
       .$defaultFn(() => new Date().toISOString())
+      .$onUpdate(() => new Date().toISOString())
       .notNull(),
     nextRegenerationAt: text("next_regeneration_at"),
     lastPayloadHash: text("last_payload_hash"),
