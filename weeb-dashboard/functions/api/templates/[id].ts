@@ -2,6 +2,7 @@ import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
+import { parseBody, templateUpdateSchema } from "../_shared/validation"
 import { templates, svgs } from "../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
 
@@ -73,7 +74,8 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
 
     if (!existingTemplate) return notFound("Template")
 
-    const body = (await request.json()) as Record<string, any>
+    const parsed = await parseBody(request, templateUpdateSchema)
+    if (!parsed.ok) return parsed.response
     const {
       name,
       description,
@@ -90,7 +92,7 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
       pluginsConfig,
       uiConfig,
       isPublic,
-    } = body
+    } = parsed.data
 
     const existingUiConfig =
       (typeof (existingTemplate as any).uiConfig === "string"

@@ -83,6 +83,32 @@ export const svgCreateSchema = z.object({
   terminalHeaderText,
 })
 
+/**
+ * Templates carry the same presentation payload as an SVG, but a public one is
+ * read by other people -- customCss from here ends up applied in someone else's
+ * session -- so this is the shape that most warrants being pinned down.
+ */
+export const templateCreateSchema = z.object({
+  name,
+  description: z.string().max(500).nullable().optional(),
+  svgId: z.string().max(100).nullable().optional(),
+  style: style.optional(),
+  size: size.optional(),
+  theme: theme.optional(),
+  customCss,
+  pluginsOrder,
+  pluginsConfig: pluginsConfig.optional(),
+  uiConfig: uiConfig.optional(),
+  isPublic: z.boolean().default(false),
+  hideTerminalEmojis: z.boolean().optional(),
+  hideTerminalHeader: z.boolean().optional(),
+  hideTerminalCommand: z.boolean().optional(),
+  fontFamily,
+  terminalHeaderText,
+})
+
+export const templateUpdateSchema = templateCreateSchema.partial()
+
 export const svgUpdateSchema = z
   .object({
     name,

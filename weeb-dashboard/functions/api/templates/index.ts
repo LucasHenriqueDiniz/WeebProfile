@@ -1,7 +1,8 @@
 import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
-import { getAuthUserId, unauthorized, badRequest, serverError } from "../_shared/auth"
+import { getAuthUserId, unauthorized, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
+import { parseBody, templateCreateSchema } from "../_shared/validation"
 import { templates, templateLikes, svgs } from "../../../lib/db/schema"
 import { eq, and, inArray, ne } from "drizzle-orm"
 
@@ -149,7 +150,8 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
     const userId = await getAuthUserId(request, env)
     if (!userId) return unauthorized()
 
-    const body = (await request.json()) as Record<string, any>
+    const parsed = await parseBody(request, templateCreateSchema)
+    if (!parsed.ok) return parsed.response
     const {
       name,
       description,
@@ -166,10 +168,8 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       pluginsOrder,
       pluginsConfig,
       uiConfig,
-      isPublic = false,
-    } = body
-
-    if (!name) return badRequest("Name is required")
+      isPublic,
+    } = parsed.data
 
     let finalUiConfig = { ...(uiConfig || {}) }
     if (
