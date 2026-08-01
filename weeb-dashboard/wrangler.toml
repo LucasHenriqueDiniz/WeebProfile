@@ -24,6 +24,16 @@ bucket_name = "weebprofile-svgs"
 # Environment variables
 # Secrets (CLERK_SECRET_KEY, etc.) must be set via: wrangler pages secret put <KEY>
 # ============================================================
+# ============================================================
+# Service binding para o svg-generator.
+# Mantém a chamada fora da internet pública, para o gerador poder
+# desativar a rota workers.dev (ver functions/api/_shared/svg-generation.ts).
+# SVG_GENERATOR_URL fica como fallback de dev local.
+# ============================================================
+[[services]]
+binding = "SVG_GENERATOR"
+service = "weeb-svg-generator"
+
 [vars]
 # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: lido pelas Pages Functions (server-side, ver functions/api/_shared/auth.ts)
 # VITE_CLERK_PUBLISHABLE_KEY: lido pelo build do Vite (client-side, ver src/main.tsx) — mesmo valor, prefixo diferente
@@ -33,6 +43,10 @@ R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev"
 
 [env.preview]
 vars = { NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA", R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev", SVG_GENERATOR_URL = "https://weeb-svg-generator.lucas-hdo.workers.dev" }
+
+[[env.preview.services]]
+binding = "SVG_GENERATOR"
+service = "weeb-svg-generator"
 
 [[env.preview.d1_databases]]
 binding = "DB"

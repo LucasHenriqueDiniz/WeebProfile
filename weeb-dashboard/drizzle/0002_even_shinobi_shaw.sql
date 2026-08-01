@@ -1,0 +1,1 @@
+CREATE INDEX `idx_svgs_cron_due` ON `svgs` (`is_paused`,`next_regeneration_at`,`status`);

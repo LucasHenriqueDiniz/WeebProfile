@@ -112,6 +112,11 @@ export const svgs = sqliteTable(
     userIdSlugIdx: index("idx_svgs_user_id_slug").on(table.userId, table.slug),
     statusIdx: index("idx_svgs_status").on(table.status),
     forceRegenerateIdx: index("idx_svgs_force_regenerate").on(table.forceRegenerate),
+    // Covers the "which SVGs are due for regeneration" scan (see functions/api/cron/).
+    // Leading column is is_paused because it is the one AND-ed around the whole
+    // status/next_regeneration_at OR tree -- single-column indexes inside that OR
+    // are not usable by SQLite, so without this the cron falls back to a table scan.
+    cronDueIdx: index("idx_svgs_cron_due").on(table.isPaused, table.nextRegenerationAt, table.status),
   })
 )
 

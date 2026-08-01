@@ -6,6 +6,10 @@ export interface CloudflareEnv {
   CLERK_SECRET_KEY: string
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: string
   R2_PUBLIC_URL: string
+  // Service binding to the svg-generator Worker. Preferred over SVG_GENERATOR_URL:
+  // it keeps the call off the public internet so the generator can drop its
+  // workers.dev route entirely. The URL stays for local dev and as a fallback.
+  SVG_GENERATOR?: Fetcher
   SVG_GENERATOR_URL?: string
   CRON_SECRET?: string
   INTERNAL_SECRET?: string
