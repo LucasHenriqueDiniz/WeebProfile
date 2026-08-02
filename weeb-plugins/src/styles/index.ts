@@ -16,3 +16,9 @@ export type { StyleDefinition, StyleName } from "./registry"
 export { default as defaultStyle } from "./default/index"
 export { default as terminalStyle } from "./terminal/index"
 export { getPluginCSS, getPluginsCSS, getActivePluginsCSS }
+// The Tailwind utilities every plugin's markup depends on. getCompleteCSS pulls
+// this in on the server, but a browser consumer rendering plugins into a document
+// of its own (the wizard preview's iframe) has no other source for it -- the host
+// page's own Tailwind build does not cross a frame boundary. Safe here: it is a
+// plain string constant, unlike the rest of ./server.
+export { SHARED_CSS } from "./generated-shared-css.js"
