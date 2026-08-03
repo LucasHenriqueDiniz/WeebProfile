@@ -21,7 +21,9 @@ export interface Env {
   CRON_SECRET?: string
   DASHBOARD_URL?: string
   JIKAN_EDGE_BASE_URL?: string
-  SECRETS_ENCRYPTION_KEY?: string
+  // Required: getUserEssentialConfigs refuses to read plugin_secrets without it
+  // rather than falling back to treating the stored column as plain text.
+  SECRETS_ENCRYPTION_KEY: string
 }
 
 interface GenerateRequest {

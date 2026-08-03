@@ -27,13 +27,16 @@ async function importKey(keyB64: string): Promise<CryptoKey> {
 }
 
 export async function decryptSecret(stored: string, keyB64: string): Promise<string> {
+  // No plaintext fallback -- see the dashboard's copy of this file. plugin_secrets
+  // was verified empty on 2026-08-01, so the legacy path had nothing left to serve.
   if (!stored.startsWith(VERSION_PREFIX)) {
-    // Legacy plaintext row, written before encryption-at-rest existed.
-    return stored
+    throw new Error("Stored secret is not encrypted")
   }
 
   const [, ivB64, ciphertextB64] = stored.split(".")
-  if (!ivB64 || !ciphertextB64) return stored
+  if (!ivB64 || !ciphertextB64) {
+    throw new Error("Stored secret is malformed")
+  }
 
   const key = await importKey(keyB64)
   const iv = base64ToBytes(ivB64)

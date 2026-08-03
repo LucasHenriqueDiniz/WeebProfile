@@ -109,6 +109,27 @@ export const templateCreateSchema = z.object({
 
 export const templateUpdateSchema = templateCreateSchema.partial()
 
+/**
+ * Profile update. essentialConfigs is the plugin_secrets payload: one D1 upsert per
+ * leaf key, so the caps here are about bounding write amplification as much as they
+ * are about types. Values are secrets -- never echo them back in an error.
+ */
+export const profileUpdateSchema = z
+  .object({
+    username: z.string().trim().max(100).nullable().optional(),
+    essentialConfigs: z
+      .record(z.string().min(1).max(60), z.record(z.string().min(1).max(60), z.string().max(4_000)).optional())
+      .refine((configs) => Object.keys(configs).length <= 30, { message: "Too many plugins" })
+      .refine(
+        (configs) => Object.values(configs).every((keys) => !keys || Object.keys(keys).length <= 20),
+        { message: "Too many keys for a plugin" }
+      )
+      .optional(),
+  })
+  .refine((data) => data.username !== undefined || data.essentialConfigs !== undefined, {
+    message: "At least one field is required",
+  })
+
 export const svgUpdateSchema = z
   .object({
     name,

@@ -4,9 +4,11 @@
  *
  * Format: "v1." + base64(iv) + "." + base64(ciphertext+tag)
  *
- * Values written before this existed are plain text with no "v1." prefix;
- * decryptSecret() returns those unchanged so old rows keep working until
- * they're re-saved (or migrated) as encrypted.
+ * There is no plaintext fallback. An earlier version returned unprefixed values
+ * unchanged, to carry rows written before encryption-at-rest existed. plugin_secrets
+ * was verified empty on 2026-08-01, so that compatibility path had no rows left to
+ * serve and only stood to mask a misconfigured key by silently treating ciphertext,
+ * or anything else, as a usable secret.
  */
 
 const VERSION_PREFIX = "v1."
@@ -42,12 +44,13 @@ export async function encryptSecret(plaintext: string, keyB64: string): Promise<
 
 export async function decryptSecret(stored: string, keyB64: string): Promise<string> {
   if (!stored.startsWith(VERSION_PREFIX)) {
-    // Legacy plaintext row, written before encryption-at-rest existed.
-    return stored
+    throw new Error("Stored secret is not encrypted")
   }
 
   const [, ivB64, ciphertextB64] = stored.split(".")
-  if (!ivB64 || !ciphertextB64) return stored
+  if (!ivB64 || !ciphertextB64) {
+    throw new Error("Stored secret is malformed")
+  }
 
   const key = await importKey(keyB64)
   const iv = base64ToBytes(ivB64)

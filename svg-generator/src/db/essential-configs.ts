@@ -27,6 +27,14 @@ export async function getUserEssentialConfigs(
 ): Promise<EssentialConfigs> {
   if (!userId) return {}
 
+  // Fail closed, mirroring the write side. Without the key this used to hand the
+  // raw column value straight to the plugins, so a missing binding would surface
+  // as a plugin failing on a nonsense credential rather than as the config error
+  // it actually is.
+  if (!encryptionKey) {
+    throw new Error("SECRETS_ENCRYPTION_KEY is not configured; cannot read plugin secrets")
+  }
+
   try {
     const { results } = await db
       .prepare("SELECT plugin, key, value FROM plugin_secrets WHERE user_id = ?")
@@ -39,7 +47,7 @@ export async function getUserEssentialConfigs(
       const key = (row.key || "").toLowerCase()
       if (!pluginName || !key) continue
       if (!result[pluginName]) result[pluginName] = {}
-      result[pluginName]![key] = encryptionKey ? await decryptSecret(row.value, encryptionKey) : row.value
+      result[pluginName]![key] = await decryptSecret(row.value, encryptionKey)
     }
 
     // Alias resolution: if a plugin (e.g. "github_repo") has no secret of its own,

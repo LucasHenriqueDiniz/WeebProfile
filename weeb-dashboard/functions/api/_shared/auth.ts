@@ -13,7 +13,11 @@ export interface CloudflareEnv {
   SVG_GENERATOR_URL?: string
   CRON_SECRET?: string
   INTERNAL_SECRET?: string
-  SECRETS_ENCRYPTION_KEY?: string
+  // Required in every deployed environment: both the write path (profile) and the
+  // generator's read path now refuse to run without it, rather than falling back
+  // to plain text. Kept as a plain string so a missing binding is a type error at
+  // the call site instead of an optional nobody checks.
+  SECRETS_ENCRYPTION_KEY: string
 }
 
 // Cache the Clerk client at module scope so its JWKS cache survives across
