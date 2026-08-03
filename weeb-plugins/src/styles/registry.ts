@@ -52,25 +52,13 @@ export function getStyleCSS(styleName: string): string {
     return defaultStyle.getCSS()
   }
 
-  // Get base CSS
-  const baseCSS = style.getCSS()
-
-  // Add @font-face declarations for client-side rendering
-  // Use relative URLs that will be resolved by the consuming application
-  try {
-    const fontIds = getFontsForStyle(styleName)
-    if (fontIds.length > 0) {
-      // Use API route URL - dashboard serves fonts via /api/fonts
-      // Other apps can configure their own baseUrl
-      const fontCSS = getFontCssClient(fontIds, "/api/fonts")
-      return [fontCSS, baseCSS].filter(Boolean).join("\n\n")
-    }
-  } catch (error) {
-    // If fonts module is not available (shouldn't happen), just return base CSS
-    console.warn("[Styles] Could not load font CSS for client:", error)
-  }
-
-  return baseCSS
+  // Deliberately no @font-face here. This used to append URL-based declarations
+  // pointing at /api/fonts, which meant getCompleteCSS emitted two sets for the
+  // same faces -- the embedded data URIs it adds itself, plus these -- so every
+  // generated SVG carried four unresolvable rules and paid three failed requests
+  // per render. Callers now pick the one that suits their document: getFontCss
+  // (data URIs) on the server, getFontCssClient (URLs) in the browser.
+  return style.getCSS()
 }
 
 /**

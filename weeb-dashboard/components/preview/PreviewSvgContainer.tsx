@@ -3,7 +3,13 @@
 import React, { useEffect, useRef, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import { PluginStyles } from "@weeb/weeb-plugins/templates"
-import { getStyleCSS, getActivePluginsCSS as getPluginsCSS, SHARED_CSS } from "@weeb/weeb-plugins/styles"
+import {
+  getStyleCSS,
+  getActivePluginsCSS as getPluginsCSS,
+  SHARED_CSS,
+  getFontCssClient,
+  getFontsForStyle,
+} from "@weeb/weeb-plugins/styles"
 import { getDefaultThemeVariables, getTerminalThemeVariables } from "@weeb/weeb-plugins/themes"
 
 interface PreviewSvgContainerProps {
@@ -78,12 +84,18 @@ export function PreviewSvgContainer({
         // Get plugins CSS (only if plugins are provided)
         const activePluginsCSS = plugins ? await getPluginsCSS(plugins) : ""
 
+        // @font-face is requested explicitly now that getStyleCSS no longer bakes
+        // it in. The URL form is right for a browser document: /api/fonts serves
+        // the woff2 with an immutable cache header, so it is fetched once rather
+        // than re-parsed as a ~120KB data URI on every render.
+        const fontIds = getFontsForStyle(style)
+        const fontCSS = fontIds.length > 0 ? getFontCssClient(fontIds, "/api/fonts") : ""
+
         // SHARED_CSS carries the Tailwind utilities the plugin markup is written
         // against. While the preview rendered inside the dashboard document it
         // borrowed those from the host page's own Tailwind build; inside the frame
         // there is no such thing, and without this the preview renders unstyled.
-        // This mirrors what getCompleteCSS does on the server.
-        setPluginsCss([SHARED_CSS, styleCSS, activePluginsCSS].filter(Boolean).join("\n"))
+        setPluginsCss([fontCSS, SHARED_CSS, styleCSS, activePluginsCSS].filter(Boolean).join("\n"))
       } catch (error) {
         console.warn("Could not load CSS:", error)
         setPluginsCss("")

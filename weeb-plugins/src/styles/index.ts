@@ -22,3 +22,8 @@ export { getPluginCSS, getPluginsCSS, getActivePluginsCSS }
 // page's own Tailwind build does not cross a frame boundary. Safe here: it is a
 // plain string constant, unlike the rest of ./server.
 export { SHARED_CSS } from "./generated-shared-css.js"
+// Font @font-face for browser consumers. Pulled from the specific modules rather
+// than ../fonts/index.js, which is the server entry and drags the ~120KB embedded
+// font table along with it -- the whole point of the URL form is not shipping that.
+export { getFontCssClient } from "../fonts/getFontCssClient.js"
+export { getFontsForStyle } from "../fonts/registry.js"
