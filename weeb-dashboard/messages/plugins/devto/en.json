@@ -1,0 +1,51 @@
+{
+  "description": "Show your Dev.to profile and recent articles",
+  "displayName": "Dev.to",
+  "sections": {
+    "profile": {
+      "config": {
+        "profile_hide_title": {
+          "label": "Hide title"
+        },
+        "profile_title": {
+          "defaultValue": "Dev.to",
+          "label": "Title"
+        }
+      },
+      "description": "Name, avatar, location and join date",
+      "name": "Profile"
+    },
+    "recent_articles": {
+      "config": {
+        "recent_articles_hide_title": {
+          "label": "Hide title"
+        },
+        "recent_articles_max": {
+          "label": "Max items"
+        },
+        "recent_articles_title": {
+          "defaultValue": "Recent Articles",
+          "label": "Title"
+        }
+      },
+      "description": "Latest posts with reactions and comments",
+      "name": "Recent Articles"
+    },
+    "top_tags": {
+      "config": {
+        "top_tags_hide_title": {
+          "label": "Hide title"
+        },
+        "top_tags_max": {
+          "label": "Max tags"
+        },
+        "top_tags_title": {
+          "defaultValue": "Top Tags (recent posts)",
+          "label": "Title"
+        }
+      },
+      "description": "Most used tags across your recent posts. Counts that window, not your whole history.",
+      "name": "Top Tags"
+    }
+  }
+}

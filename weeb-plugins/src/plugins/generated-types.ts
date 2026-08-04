@@ -8,7 +8,7 @@
 /**
  * Union type of all available plugin names
  */
-export type PluginName = "16personalities" | "anilist" | "codeforces" | "codewars" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites"
+export type PluginName = "16personalities" | "anilist" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites"
 
 /**
  * Union type of all available categories
@@ -23,6 +23,7 @@ export type PluginSectionIds = {
   anilist: "statistics" | "favorites_anime" | "currently_watching"
   codeforces: "rating_rank" | "contests_participated" | "problems_solved" | "recent_submissions"
   codewars: "rank_honor" | "completed_kata" | "languages_proficiency" | "leaderboard_position"
+  devto: "profile" | "recent_articles" | "top_tags"
   duolingo: "current_streak" | "total_xp" | "languages_learning"
   github: "profile" | "activity" | "repositories" | "favorite_languages" | "favorite_license" | "calendar" | "code_habits" | "starred_repositories" | "gists" | "stargazers" | "top_repositories" | "star_lists" | "notable_contributions" | "recent_activity" | "introduction" | "featured_repositories" | "sponsorships" | "sponsors" | "people" | "repository_contributors"
   github_repo: "banner" | "stats" | "star_graph" | "languages" | "topics" | "overview"
@@ -42,6 +43,7 @@ export type PluginEssentialConfigKeys = {
   anilist: never
   codeforces: never
   codewars: never
+  devto: never
   duolingo: never
   github: "pat"
   github_repo: "pat"
@@ -77,7 +79,7 @@ export type PluginConfig<T extends PluginName> = {
  * Type guard to check if it's a valid plugin name
  */
 export function isValidPluginName(name: string): name is PluginName {
-  return name in ["16personalities","anilist","codeforces","codewars","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"]
+  return name in ["16personalities","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"]
 }
 
 /**

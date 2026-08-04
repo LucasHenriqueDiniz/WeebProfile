@@ -722,6 +722,141 @@ export const PLUGINS_METADATA = {
     },
   },
 
+  devto: {
+    name: "devto",
+    displayName: "Dev.to",
+    description: "Show your Dev.to profile and recent articles",
+    category: "coding",
+    icon: "PenLine",
+    requiredFields: ["username"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "profile",
+        name: "Profile",
+        description: "Name, avatar, location and join date",
+        i18nKey: {
+          name: "plugins.devto.sections.profile.name",
+          description: "plugins.devto.sections.profile.description"
+        },
+        configOptions: [
+        {
+          key: "profile_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.devto.sections.profile.config.profile_hide_title.label"
+          }
+        },
+        {
+          key: "profile_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Dev.to",
+          i18nKey: {
+            label: "plugins.devto.sections.profile.config.profile_title.label",
+            defaultValue: "plugins.devto.sections.profile.config.profile_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "recent_articles",
+        name: "Recent Articles",
+        description: "Latest posts with reactions and comments",
+        i18nKey: {
+          name: "plugins.devto.sections.recent_articles.name",
+          description: "plugins.devto.sections.recent_articles.description"
+        },
+        configOptions: [
+        {
+          key: "recent_articles_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.devto.sections.recent_articles.config.recent_articles_hide_title.label"
+          }
+        },
+        {
+          key: "recent_articles_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Recent Articles",
+          i18nKey: {
+            label: "plugins.devto.sections.recent_articles.config.recent_articles_title.label",
+            defaultValue: "plugins.devto.sections.recent_articles.config.recent_articles_title.defaultValue"
+          }
+        },
+        {
+          key: "recent_articles_max",
+          label: "Max items",
+          type: "number",
+          defaultValue: 5,
+          i18nKey: {
+            label: "plugins.devto.sections.recent_articles.config.recent_articles_max.label"
+          }
+        }
+        ]
+      },
+      {
+        id: "top_tags",
+        name: "Top Tags",
+        description: "Most used tags across your recent posts. Counts that window, not your whole history.",
+        i18nKey: {
+          name: "plugins.devto.sections.top_tags.name",
+          description: "plugins.devto.sections.top_tags.description"
+        },
+        configOptions: [
+        {
+          key: "top_tags_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.devto.sections.top_tags.config.top_tags_hide_title.label"
+          }
+        },
+        {
+          key: "top_tags_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Top Tags (recent posts)",
+          i18nKey: {
+            label: "plugins.devto.sections.top_tags.config.top_tags_title.label",
+            defaultValue: "plugins.devto.sections.top_tags.config.top_tags_title.defaultValue"
+          }
+        },
+        {
+          key: "top_tags_max",
+          label: "Max tags",
+          type: "number",
+          defaultValue: 8,
+          i18nKey: {
+            label: "plugins.devto.sections.top_tags.config.top_tags_max.label"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.devto.displayName",
+      description: "plugins.devto.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "username": "weebprofile",
+      "sections": [
+        "profile",
+        "recent_articles"
+      ]
+    },
+  },
+
   duolingo: {
     name: "duolingo",
     displayName: "Duolingo",
