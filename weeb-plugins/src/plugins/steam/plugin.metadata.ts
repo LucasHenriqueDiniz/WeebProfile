@@ -22,7 +22,12 @@ export const steamPluginMetadata = {
     {
       key: "steamId",
       label: "Steam ID64",
-      type: "text" as const,
+      // "oauth" renders a connect button; the wizard still shows the text field
+      // underneath, so signing in is the easy path and pasting the id stays a
+      // working one. Strictly this is OpenID 2.0, which returns only the SteamID64
+      // -- no token, no scope -- but the UI flow is the same.
+      type: "oauth" as const,
+      oauthProvider: "steam" as const,
       placeholder: "76561198000000000",
       description: "Your Steam ID64 (17 digits)",
       helpUrl: "https://steamid.io/",

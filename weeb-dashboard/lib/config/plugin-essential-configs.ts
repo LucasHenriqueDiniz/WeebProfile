@@ -20,7 +20,10 @@ export interface EssentialConfigKey {
   helpUrl?: string
   tooltip?: string
   docKey?: string
-  oauthProvider?: "spotify" // Provider OAuth quando type === "oauth"
+  // Provider quando type === "oauth". "steam" na verdade é OpenID 2.0, não OAuth:
+  // devolve só o SteamID64, sem token nem escopo. Fica sob o mesmo campo porque do
+  // ponto de vista da UI o fluxo é idêntico -- sai daqui, volta conectado.
+  oauthProvider?: "spotify" | "steam"
 }
 
 export interface PluginEssentialConfig {

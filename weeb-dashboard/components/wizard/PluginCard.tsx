@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { getPluginIcon } from "@/lib/plugin-icons"
-import { AlertCircle, Check, Music, HelpCircle, ExternalLink, Sparkles, Zap } from "lucide-react"
+import { AlertCircle, Check, Music, HelpCircle, ExternalLink, Sparkles, Zap, Gamepad2 } from "lucide-react"
 import React, { useCallback, useState } from "react"
 import { SectionConfigDialog } from "./SectionConfigDialog"
 import { cn } from "@/lib/utils"
@@ -320,32 +320,36 @@ export const PluginCard = React.memo(
                   ? tWithFallback(configKey.i18nKey.placeholder.replace(/^plugins\./, ""), configKey.placeholder)
                   : configKey.placeholder
 
-              if (configKey.type === "oauth") {
-                return (
-                  <div key={configKey.key} className="space-y-1">
-                    <Label className="text-xs font-medium">{configLabel}</Label>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full h-8 text-xs justify-start"
-                      onClick={() => {
-                        const currentPath = window.location.pathname + window.location.search
-                        window.location.href = `/api/auth/${configKey.oauthProvider || "spotify"}/authorize?returnTo=${encodeURIComponent(currentPath)}`
-                      }}
-                    >
-                      <Music className="h-3 w-3 mr-2" />
-                      Connect {configKey.oauthProvider || "OAuth"} Account
-                      <ExternalLink className="h-3 w-3 ml-auto" />
-                    </Button>
-                    {configDescription && <p className="text-xs text-muted-foreground">{configDescription}</p>}
-                  </div>
-                )
-              }
+              // Rendered above the field rather than instead of it. Connecting is
+              // the easier path, but for Steam the value is a public id anyone can
+              // paste, so removing the input would take away a working option from
+              // people who would rather not sign in.
+              const oauthProvider = configKey.type === "oauth" ? configKey.oauthProvider || "spotify" : null
+              const oauthButton = oauthProvider ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full h-8 text-xs justify-start"
+                  onClick={() => {
+                    const currentPath = window.location.pathname + window.location.search
+                    window.location.href = `/api/auth/${oauthProvider}/authorize?returnTo=${encodeURIComponent(currentPath)}`
+                  }}
+                >
+                  {oauthProvider === "steam" ? (
+                    <Gamepad2 className="h-3 w-3 mr-2" />
+                  ) : (
+                    <Music className="h-3 w-3 mr-2" />
+                  )}
+                  {oauthProvider === "steam" ? "Entrar com Steam" : "Conectar conta Spotify"}
+                  <ExternalLink className="h-3 w-3 ml-auto" />
+                </Button>
+              ) : null
 
               const updatedAt = secretPresence?.updatedAt
 
               return (
                 <div key={configKey.key} className="space-y-1">
+                  {oauthButton}
                   <SecretInput
                     plugin={plugin.name}
                     label={configLabel}

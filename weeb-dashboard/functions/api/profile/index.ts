@@ -3,9 +3,9 @@ import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, getClerkClient, unauthorized, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
 import { parseBody, profileUpdateSchema } from "../_shared/validation"
-import { profiles, essentialConfigs } from "../../../lib/db/schema"
-import { eq, and } from "drizzle-orm"
-import { encryptSecret } from "../_shared/secret-crypto"
+import { profiles } from "../../../lib/db/schema"
+import { eq } from "drizzle-orm"
+import { setEssentialConfigs } from "../_shared/secrets"
 
 async function getGitHubUsername(env: CloudflareEnv, userId: string): Promise<string | null> {
   try {
@@ -14,42 +14,6 @@ async function getGitHubUsername(env: CloudflareEnv, userId: string): Promise<st
     return user.username || user.externalAccounts.find((a) => String(a.provider).includes("github"))?.username || null
   } catch {
     return null
-  }
-}
-
-async function setEssentialConfigs(
-  db: ReturnType<typeof getDb>,
-  userId: string,
-  configs: Record<string, Record<string, string> | undefined>,
-  encryptionKey: string | undefined
-): Promise<void> {
-  // Fail closed. This used to fall through to writing the raw value with only a
-  // console.warn, which meant a deploy that forgot the binding would quietly start
-  // persisting API keys in plain text -- the failure nobody would notice.
-  if (!encryptionKey) {
-    throw new Error("SECRETS_ENCRYPTION_KEY is not configured; refusing to store plugin secrets")
-  }
-
-  for (const [plugin, pluginConfigs] of Object.entries(configs)) {
-    if (!pluginConfigs || typeof pluginConfigs !== "object") continue
-    for (const [key, value] of Object.entries(pluginConfigs)) {
-      if (value && typeof value === "string") {
-        const storedValue = await encryptSecret(value, encryptionKey)
-        await db
-          .insert(essentialConfigs)
-          .values({
-            userId,
-            plugin: plugin.toLowerCase(),
-            key: key.toLowerCase(),
-            value: storedValue,
-            updatedAt: new Date().toISOString(),
-          })
-          .onConflictDoUpdate({
-            target: [essentialConfigs.userId, essentialConfigs.plugin, essentialConfigs.key],
-            set: { value: storedValue, updatedAt: new Date().toISOString() },
-          })
-      }
-    }
   }
 }
 
