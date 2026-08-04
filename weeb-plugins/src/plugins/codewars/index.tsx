@@ -45,9 +45,13 @@ export const codewarsPlugin: Plugin<CodewarsConfig, PluginData & CodewarsData> =
         if (n === 0) continue
         h += isTerminal ? 56 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
       } else if (s === "leaderboard_position") {
+        // LeaderboardPosition returns <></> when there is no position, and that
+        // early return sits above the style branch -- so neither style renders
+        // anything. The terminal case used to reserve 32px anyway, which is dead
+        // space on every card whose Codewars profile has no ranking.
         const hasPosition = !!cwData.leaderboardPosition
-        if (isTerminal) h += hasPosition ? 54 : 32
-        else h += hasPosition ? 76 : 0
+        if (!hasPosition) continue
+        h += isTerminal ? 54 : 76
       }
     }
     return h
