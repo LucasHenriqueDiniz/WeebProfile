@@ -138,7 +138,11 @@ export default function ElementTab({ snapshot }: ElementTabProps) {
                 >
                   <span style={{ color: "#79c0ff" }}>{key}</span>
                   <span style={{ color: "#8b949e" }}>=</span>
-                  <span style={{ color: "#a5d6ff" }}>"{value}"</span>
+                  <span style={{ color: "#a5d6ff" }}>
+                    {'"'}
+                    {value}
+                    {'"'}
+                  </span>
                 </div>
               ))}
             </div>

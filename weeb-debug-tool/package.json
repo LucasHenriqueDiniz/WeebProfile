@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "concurrently -n \"vite,server\" -c \"cyan,magenta\" --kill-others-on-fail \"vite\" \"nodemon --exec tsx server/index.ts\"",
     "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
     "preview": "vite preview",
     "server": "tsx server/index.ts",
     "server:watch": "tsx --watch server/index.ts"

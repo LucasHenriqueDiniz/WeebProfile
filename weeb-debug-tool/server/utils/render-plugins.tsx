@@ -97,10 +97,14 @@ export async function renderPlugins(config: {
     )
   } else {
     try {
-      rendered = plugin.render(pluginConfig, pluginData)
-      if (!React.isValidElement(rendered)) {
+      // Validate before assigning, not after: render() is typed ReactNode, and
+      // isValidElement only narrows the value it is given. Assigning first left
+      // the check running at runtime while the type never matched.
+      const result = plugin.render(pluginConfig, pluginData)
+      if (!React.isValidElement(result)) {
         throw new Error(`Plugin returned invalid React element`)
       }
+      rendered = result
     } catch (error) {
       const { PluginError } = await import("../../../svg-generator/src/components/PluginError.js")
       rendered = (

@@ -15,6 +15,19 @@ export default function StylesTab({ snapshot }: StylesTabProps) {
   const [filter, setFilter] = useState("")
   const [mode, setMode] = useState<"important" | "all">("important")
 
+  // Above the early return, not below it. React identifies hooks by call order, so
+  // returning before useMemo meant this component ran a different number of hooks
+  // depending on whether an element was selected -- the crash that produces is
+  // "rendered fewer hooks than expected", and it only shows up on the transition.
+  const filteredStyles = useMemo(() => {
+    if (!snapshot) return []
+    const styles = Object.entries(snapshot.computedStyle)
+    if (!filter) return styles
+
+    const lowerFilter = filter.toLowerCase()
+    return styles.filter(([prop]) => prop.toLowerCase().includes(lowerFilter))
+  }, [snapshot, filter])
+
   if (!snapshot) {
     return <div style={{ padding: "16px", color: "#8b949e", textAlign: "center" }}>No element selected</div>
   }
@@ -22,15 +35,6 @@ export default function StylesTab({ snapshot }: StylesTabProps) {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).catch(console.error)
   }
-
-  // Filter styles
-  const filteredStyles = useMemo(() => {
-    const styles = Object.entries(snapshot.computedStyle)
-    if (!filter) return styles
-
-    const lowerFilter = filter.toLowerCase()
-    return styles.filter(([prop]) => prop.toLowerCase().includes(lowerFilter))
-  }, [snapshot.computedStyle, filter])
 
   // Inline styles
   const inlineStyles = Object.entries(snapshot.inlineStyle)

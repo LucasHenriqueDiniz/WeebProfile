@@ -18,7 +18,9 @@ import { generateSvgRoute } from "./routes/generate-svg.js"
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const PORT = process.env.PORT || 5001
+// Number, not `string | number`: process.env.PORT is a string, and app.listen has
+// no overload taking a union -- which is why this never type-checked.
+const PORT = Number(process.env.PORT) || 5001
 const app = express()
 
 // Middleware
@@ -91,13 +93,15 @@ watcher.on("change", (path) => {
 })
 
 // Start server
-app.listen(PORT, "0.0.0.0", () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Weeb Debug Tool server running on http://localhost:${PORT}`)
   console.log("👀 Watching for file changes to regenerate Tailwind CSS...")
 })
 
-// Handle errors
-app.on("error", (error: any) => {
+// On the http.Server, not on the express app: `app.on` only types "mount", so the
+// listener below was never attached and EADDRINUSE crashed with a raw stack trace
+// instead of the message it was written to print.
+server.on("error", (error: NodeJS.ErrnoException) => {
   if (error.code === "EADDRINUSE") {
     console.error(`❌ Port ${PORT} is already in use. Please stop the other process.`)
   } else {

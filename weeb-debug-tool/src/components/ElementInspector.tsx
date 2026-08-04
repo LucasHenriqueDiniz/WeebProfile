@@ -22,10 +22,12 @@ interface ElementInspectorProps {
 }
 
 export default function ElementInspector({ element, onClose }: ElementInspectorProps) {
-  if (!element) return null
-
+  // Above the early return: React identifies hooks by call order, so `return null`
+  // first made the hook count depend on whether an element was selected, which
+  // crashes on the transition rather than on first render.
   const { styleEntries, cssVariables } = useMemo(() => {
-    const allStyles = Object.entries(element.computedStyles || element.styles).sort(([a], [b]) => a.localeCompare(b))
+    const source = element?.computedStyles || element?.styles || {}
+    const allStyles = Object.entries(source).sort(([a], [b]) => a.localeCompare(b))
     const variables: Array<[string, string]> = []
     const styles: Array<[string, string]> = []
 
@@ -39,6 +41,8 @@ export default function ElementInspector({ element, onClose }: ElementInspectorP
 
     return { styleEntries: styles, cssVariables: variables }
   }, [element])
+
+  if (!element) return null
 
   return (
     <div
@@ -115,14 +119,23 @@ export default function ElementInspector({ element, onClose }: ElementInspectorP
               {element.id && (
                 <>
                   {" "}
-                  <span style={{ color: "#79c0ff" }}>id</span>=<span style={{ color: "#a5d6ff" }}>"{element.id}"</span>
+                  <span style={{ color: "#79c0ff" }}>id</span>=
+                  <span style={{ color: "#a5d6ff" }}>
+                    {'"'}
+                    {element.id}
+                    {'"'}
+                  </span>
                 </>
               )}
               {element.classes.length > 0 && (
                 <>
                   {" "}
                   <span style={{ color: "#79c0ff" }}>class</span>=
-                  <span style={{ color: "#a5d6ff" }}>"{element.classes.join(" ")}"</span>
+                  <span style={{ color: "#a5d6ff" }}>
+                    {'"'}
+                    {element.classes.join(" ")}
+                    {'"'}
+                  </span>
                 </>
               )}
               &gt;

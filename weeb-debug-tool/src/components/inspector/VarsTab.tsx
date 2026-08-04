@@ -15,6 +15,16 @@ interface VarsTabProps {
 export default function VarsTab({ snapshot, cssVarNames = [] }: VarsTabProps) {
   const [filter, setFilter] = useState("")
 
+  // Above the early return: React identifies hooks by call order, so returning
+  // first made the hook count depend on whether an element was selected.
+  const filteredVars = useMemo(() => {
+    const cssVars = Object.entries(snapshot?.cssVars || {})
+    if (!filter) return cssVars
+
+    const lowerFilter = filter.toLowerCase()
+    return cssVars.filter(([prop]) => prop.toLowerCase().includes(lowerFilter))
+  }, [snapshot, filter])
+
   if (!snapshot) {
     return <div style={{ padding: "16px", color: "#8b949e", textAlign: "center" }}>No element selected</div>
   }
@@ -22,17 +32,6 @@ export default function VarsTab({ snapshot, cssVarNames = [] }: VarsTabProps) {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).catch(console.error)
   }
-
-  // Get CSS vars from snapshot (already resolved values)
-  const cssVars = Object.entries(snapshot.cssVars || {})
-
-  // Filter vars
-  const filteredVars = useMemo(() => {
-    if (!filter) return cssVars
-
-    const lowerFilter = filter.toLowerCase()
-    return cssVars.filter(([prop]) => prop.toLowerCase().includes(lowerFilter))
-  }, [cssVars, filter])
 
   return (
     <div style={{ padding: "16px", overflowY: "auto", height: "100%" }}>
