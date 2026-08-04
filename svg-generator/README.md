@@ -1,226 +1,92 @@
 # @weeb/svg-generator
 
-Servidor HTTP Node.js para geração de SVGs usando React Server Components.
+Cloudflare Worker que renderiza SVGs a partir dos plugins do `@weeb/weeb-plugins`.
 
-## 🎯 Características
+> Este README foi reescrito em 08/2026. A versão anterior descrevia um servidor HTTP
+> Node rodando no Railway, com acesso ao D1 por REST API — nada disso é verdade
+> desde a migração para Workers, e contradizia o `AGENTS.md`.
 
-- ✅ **Sem browser** - Altura calculada estaticamente por plugin (`calculateHeight`), sem Playwright/Puppeteer
-- ✅ **React Server Components** - Renderização server-side com `react-dom/server`
-- ✅ **ES Modules** - Imports nativos
-- ✅ **Type Safe** - TypeScript rigoroso
-- ✅ **Railway Ready** - Configurado para deploy no Railway
-- ✅ **Seguro** - Busca essential configs diretamente do Cloudflare D1 (frontend nunca acessa)
+## Características
 
-## 📦 Instalação
+- **Worker, não servidor Node** — `wrangler deploy`, sem processo, sem `PORT`
+- **Sem browser** — altura calculada estaticamente por `calculateHeight()` de cada seção; nada de Playwright em runtime
+- **React no servidor** — `renderToString` do `react-dom/server`
+- **D1 por binding** — `env.DB`, sem REST API nem credenciais separadas
+- **Sem rota pública** — `workers_dev = false`; só o service binding do dashboard alcança
 
-```bash
-pnpm install
-```
-
-## 🚀 Uso
-
-### Desenvolvimento Local
+## Desenvolvimento
 
 ```bash
-# Build do projeto
-pnpm build
-
-# Rodar servidor em desenvolvimento (com watch)
-pnpm dev:server
-
-# Ou rodar servidor compilado
-pnpm start
+pnpm dev          # wrangler dev, em http://localhost:3001
+pnpm typecheck
+pnpm test         # vitest
 ```
 
-O servidor estará disponível em `http://localhost:3001`
-
-### Produção (Railway)
-
-O Railway detecta automaticamente a configuração e executa:
-
-1. `pnpm install` (instala dependências)
-2. `pnpm build` (compila TypeScript)
-3. `pnpm start` (inicia servidor)
-
-## 🔧 Configuração
-
-### Variáveis de Ambiente
-
-Crie um arquivo `.env` na raiz do `svg-generator` com:
-
-```env
-CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
-CLOUDFLARE_D1_DATABASE_ID=your-d1-database-id
-CLOUDFLARE_API_TOKEN=your-cloudflare-api-token-with-d1-edit
-SVG_GENERATOR_PORT=3001
-NODE_ENV=development
-```
-
-**Variáveis:**
-
-- `CLOUDFLARE_ACCOUNT_ID` - **OBRIGATÓRIO** - ID da conta Cloudflare (`weebprofile-db`)
-- `CLOUDFLARE_D1_DATABASE_ID` - **OBRIGATÓRIO** - ID do banco D1 (`weebprofile-db`, mesmo do `wrangler.toml` do dashboard)
-- `CLOUDFLARE_API_TOKEN` - **OBRIGATÓRIO** - Token de API Cloudflare com permissão de leitura/escrita em D1
-  - Crie em: Cloudflare Dashboard > My Profile > API Tokens > Create Token (template "Edit Cloudflare Workers" ou permissão customizada `D1:Edit`)
-  - Usado via D1 REST API, já que este serviço roda fora do Workers/Pages e não tem binding direto ao D1
-- `SVG_GENERATOR_PORT` - Porta do servidor (padrão: 3001)
-- `PORT` - Porta alternativa (Railway define automaticamente)
-- `NODE_ENV` - Ambiente (development/production)
-
-**Desenvolvimento Local:**
+## Deploy
 
 ```bash
-# Copiar exemplo
-cp .env.example .env
-
-# Editar .env e adicionar suas credenciais Cloudflare (CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID, CLOUDFLARE_API_TOKEN)
+pnpm deploy       # wrangler deploy
 ```
 
-**Railway (Produção):**
+## Configuração
 
-1. Vá em Variables no projeto do Railway
-2. Adicione `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_D1_DATABASE_ID` e `CLOUDFLARE_API_TOKEN`
-3. Railway define `PORT` automaticamente
+Não há `.env`. Bindings e vars ficam no `wrangler.toml`; segredos vão por
+`wrangler secret put`.
 
-**Importante**:
+| Binding / var            | Onde            | Para quê                                                                         |
+| ------------------------ | --------------- | -------------------------------------------------------------------------------- |
+| `DB`                     | `wrangler.toml` | D1 `weebprofile-db`, o mesmo do dashboard                                        |
+| `JIKAN_EDGE`             | `wrangler.toml` | service binding do proxy da API do MyAnimeList                                   |
+| `DASHBOARD_URL`          | `wrangler.toml` | destino da chamada de cron                                                       |
+| `CRON_SECRET`            | secret          | autentica essa chamada                                                           |
+| `SECRETS_ENCRYPTION_KEY` | secret          | **obrigatório** — decifra `plugin_secrets`; sem ele a leitura falha, não degrada |
+| `STEAM_API_KEY`          | secret          | credencial da aplicação para a Steam Web API (`src/db/app-credentials.ts`)       |
 
-- `CLOUDFLARE_D1_DATABASE_ID` deve ser o mesmo banco `weebprofile-db` usado pelo `weeb-dashboard` (ver `database_id` em `weeb-dashboard/wrangler.toml`)
+## API
 
-## 📏 Cálculo de Altura
+### `POST /`
 
-O `svg-generator` calcula a altura do SVG somando `calculateHeight()` de cada plugin habilitado (implementado em `weeb-plugins`), sem depender de browser/Playwright. Isso mantém o pacote leve e compatível com deploy como Cloudflare Worker.
+Alcançável apenas pelo service binding `SVG_GENERATOR` do dashboard. Recebe
+`{ style, size, plugins, pluginsOrder, theme, customCss, userId, ... }` e devolve
+`{ success, svg, width, height }`.
 
-Cada plugin retorna um upper-bound seguro em pixels com base em sua config e dados; o `PluginManager.calculateTotalHeight()` soma esses valores e adiciona um buffer de 24px de segurança.
+`503 { code: "D1_UNREACHABLE" }` quando `userId` é informado e o D1 não responde —
+distinguir isso de "segredo ausente" evita reportar falta de credencial que na
+verdade não pôde ser verificada.
 
-### Teste Local
+### `GET /test`
 
-```bash
-# Testar geração completa com dados mock
-pnpm test:generator
-```
+String fixa, para checagem de vida. É o que o `/api/health` do dashboard usa.
 
-## 📡 API
-
-### POST `/`
-
-Gera um SVG baseado na configuração fornecida.
-
-**Request Body:**
-
-```json
-{
-  "style": "default" | "terminal",
-  "size": "half" | "full",
-  "plugins": {
-    "github": {
-      "enabled": true,
-      "username": "octocat",
-      "sections": ["profile", "activity"]
-    },
-    "lastfm": {
-      "enabled": true,
-      "sections": ["recent_tracks", "top_artists_grid"]
-    },
-    "myanimelist": {
-      "enabled": true,
-      "username": "user",
-      "sections": ["statistics", "anime_favorites"]
-    }
-  },
-  "pluginsOrder": ["github", "lastfm", "myanimelist"],
-  "primaryColor": "#58a6ff",
-  "customCss": "...",
-  "terminalTheme": "dark",
-  "defaultTheme": "light",
-  "hideTerminalEmojis": false,
-  "hideTerminalHeader": false,
-  "userId": "user-id-here", // Para buscar essential configs do Cloudflare D1 (produção)
-  "mock": false // true para usar dados mockados
-}
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "svg": "<svg>...</svg>",
-  "width": 415,
-  "height": 800
-}
-```
-
-## 🔐 Segurança
-
-O svg-generator busca essential configs (API keys, tokens) diretamente do Cloudflare D1 quando recebe `userId`:
-
-1. **Produção**: Sempre enviar `userId` → svg-generator busca do D1
-2. **Testes**: Pode enviar `essentialConfigs` diretamente no JSON (apenas para desenvolvimento)
-
-O frontend **NUNCA** acessa essential configs diretamente. Tudo fica isolado no svg-generator.
-
-## 🏗️ Arquitetura
-
-### Fluxo de Geração
-
-1. **Request** → Recebe config + `userId` (ou `essentialConfigs` para testes)
-2. **Buscar Configs** → Se `userId` fornecido, busca essential configs do Cloudflare D1
-3. **Configuração** → Valida e normaliza config
-4. **Cálculo de Dimensões** → Soma `calculateHeight()` de cada plugin habilitado (sem browser)
-5. **Carregamento CSS** → Carrega fonts, tailwind, globals
-6. **Renderização Plugins** → Renderiza plugins ativos usando React
-7. **Criação SVG** → Cria container SVG com foreignObject
-8. **Renderização Final** → Converte React para string SVG usando `renderToString`
-
-### Estrutura
+## Fluxo de geração
 
 ```
-svg-generator/
-├── src/
-│   ├── db/
-│   │   ├── d1-client.ts          # Cliente REST do Cloudflare D1
-│   │   └── essential-configs.ts  # Busca essential configs (plugin_secrets) do D1
-│   ├── generator/
-│   │   ├── svg-generator.ts      # Gerador principal
-│   │   └── css-loader.tsx       # Carregamento de CSS
-│   ├── renderer/
-│   │   ├── react-renderer.tsx   # Renderização de plugins
-│   │   └── template-renderer.tsx # Criação do container SVG
-│   ├── config/
-│   │   └── config-loader.ts     # Validação e normalização
-│   ├── server.ts                # Servidor HTTP
-│   └── index.ts                 # Exports da biblioteca
-├── railway.json                 # Configuração Railway
-└── package.json
+POST /  (via service binding)
+  → getUserEssentialConfigs(env.DB, userId)   # segredos do usuário, decifrados
+  → withAppCredentials()                       # credenciais da aplicação (STEAM_API_KEY)
+  → validateRequiredConfig()                   # secrets e campos obrigatórios
+  → renderPlugins()                            # fetchData + React de cada plugin
+  → calculateTotalHeight()                     # soma calculateHeight(), sem browser
+  → createSvgContainer() → renderToString()
 ```
 
-## 🔌 Conexão com Cloudflare D1
+## Cron
 
-O svg-generator roda como serviço Node standalone no Railway, então não tem binding direto ao D1 (isso só existe dentro de Workers/Pages Functions). Por isso ele acessa o D1 via REST API:
+`crons = ["7 3 * * *"]` chama `POST /api/cron/generate-svgs` no dashboard, que é
+quem sabe quais SVGs estão devidos e escreve no R2.
 
-```typescript
-// src/db/d1-client.ts
-fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`, {
-  method: "POST",
-  headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
-  body: JSON.stringify({ sql, params }),
-})
-```
+⚠️ Um Cron Trigger é morto em **15 min de wall-clock**, e a CPU cai de 15 min para
+30s se o intervalo for menor que 1 hora. O loop atual gera em série; ver a coluna
+"Cron → Queues" no board antes de aumentar a frequência.
 
-`getUserEssentialConfigs()` usa esse cliente para ler a tabela `plugin_secrets` (a mesma usada pelo weeb-dashboard).
+## Auditoria de altura
 
-**Configuração no Railway:**
+`pnpm audit:heights` usa `playwright-core` para medir num browser real e comparar
+com o que o `calculateHeight()` prevê. É a única coisa aqui que usa Playwright, e é
+ferramenta de desenvolvimento — não entra no runtime.
 
-1. Adicione `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_D1_DATABASE_ID` e `CLOUDFLARE_API_TOKEN`
-2. `CLOUDFLARE_D1_DATABASE_ID` deve ser o mesmo `database_id` do `weebprofile-db` configurado em `weeb-dashboard/wrangler.toml`
-3. `CLOUDFLARE_API_TOKEN` precisa de permissão de leitura/escrita em D1 (Cloudflare Dashboard > My Profile > API Tokens)
+## Segurança
 
-## 🐛 Debug
-
-Para ver informações de debug na resposta, inclua `"debug": true` no request (ou `"mock": true`).
-
-A resposta incluirá:
-
-- Config sanitizada (sem API keys/tokens)
-- Dados dos plugins usados
-- Erros ocorridos (se houver)
+- Segredos vêm do D1 já decifrados e **nunca** voltam numa resposta HTTP
+- `utils/sanitize.ts` **não sanitiza input** — ele reda segredos em saída de debug. O nome engana
+- Logs são JSON estruturado via `utils/log.ts`, com `userId` redigido

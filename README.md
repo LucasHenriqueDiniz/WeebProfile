@@ -35,6 +35,8 @@ Your SVG refreshes automatically on a schedule, and you can trigger a manual ref
 | [16Personalities](docs/plugins.md#16personalities) | Coding   | Personality type badge                                  |
 | [LastFM](docs/plugins.md#lastfm)                   | Music    | Recent tracks, top artists/albums/tracks                |
 | [MyAnimeList](docs/plugins.md#myanimelist)         | Anime    | Anime/manga stats, favorites, and recent activity       |
+| [GitHub Repository](docs/plugins.md#github_repo)   | Coding   | Repository banner, stars, languages, and insights       |
+| [Websites](docs/plugins.md#websites)               | Coding   | Showcase your own sites with thumbnails                 |
 | [Steam](docs/plugins.md#steam)                     | Gaming   | Recent and most-played games, stats                     |
 | [Lyfta](docs/plugins.md#lyfta)                     | Gaming   | Workout stats and recent exercises                      |
 

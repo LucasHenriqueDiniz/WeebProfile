@@ -50,7 +50,7 @@ pnpm format:check
 pnpm check               # os três acima juntos
 
 # Geração de assets (rodar após alterar plugins)
-pnpm --filter @weeb/weeb-plugins run generate:metadata   # Regera metadata.ts centralizado
+pnpm --filter @weeb/weeb-plugins run generate-metadata   # Regera metadata.ts centralizado
 pnpm generate-previews                                    # Regera SVGs de preview
 ```
 
@@ -155,7 +155,7 @@ A altura do SVG é calculada **estaticamente** somando o `calculateHeight()` de 
 ### 6. Regenerar o metadata centralizado
 
 ```bash
-pnpm --filter @weeb/weeb-plugins run generate:metadata
+pnpm --filter @weeb/weeb-plugins run generate-metadata
 ```
 
 `metadata.ts` é **auto-gerado** — nunca editar manualmente.
@@ -169,9 +169,10 @@ pnpm --filter @weeb/weeb-plugins run generate:metadata
 **Fluxo de geração** (`POST /` — ver `src/worker.ts`):
 
 ```
-HTTP POST /
-  → sanitizeConfig() / validateRequiredConfig()   # valida e limpa o input
+HTTP POST /                                        # só via service binding — sem rota pública
   → getUserEssentialConfigs(env.DB, userId)       # busca segredos no D1 via binding (se userId fornecido)
+  → withAppCredentials()                           # injeta credenciais da aplicação (ex: STEAM_API_KEY)
+  → validateRequiredConfig()                      # valida secrets/campos obrigatórios
   → renderPlugins()                                # PluginManager → React → fetchData de cada plugin
   → calculateTotalHeight()                         # soma calculateHeight() de cada seção (sem browser)
   → createSvgContainer()                           # embala em SVG com dimensões corretas
@@ -180,7 +181,9 @@ HTTP POST /
 
 **Acesso ao D1:** binding `DB` definido em `svg-generator/wrangler.toml` (mesmo banco `weebprofile-db` do dashboard), sem REST API/credenciais separadas. Se o D1 estiver inacessível, o endpoint responde `503 { code: "D1_UNREACHABLE" }` quando `userId` é informado.
 
-**Imagens (otimização):** `weeb-plugins/src/utils/image-to-base64.ts` usa `@cf-wasm/photon` (WASM) em runtime Workers e `sharp` como fallback em Node (usado pelo `weeb-debug-tool` e scripts de preview).
+**Imagens:** `weeb-plugins/src/utils/image-to-base64.ts` embute os bytes exatos da imagem como data URI — **sem decode, resize ou recompressão**. Não usa Photon nem Sharp (a doc afirmava o contrário até 08/2026). Valida MIME, magic bytes e `maxBytes` antes de aceitar.
+
+**Autenticação:** o gerador não tem rota pública (`workers_dev = false`). O dashboard chega nele pelo service binding `SVG_GENERATOR`. Cron Triggers e service bindings não dependem de rota.
 
 **Dev local:** `pnpm dev:generator` (= `wrangler dev`).
 
@@ -269,7 +272,7 @@ Copiar de `.env.example` e preencher. **Nunca commitar valores reais.**
 
 ### Arquivos auto-gerados
 
-- `weeb-plugins/src/plugins/metadata.ts` — não editar, rodar `generate:metadata`
+- `weeb-plugins/src/plugins/metadata.ts` — não editar, rodar `generate-metadata`
 - `weeb-plugins/src/plugins/generated-types.ts` — não editar
 - Previews SVG em `plugins/*/previews/` — gerados por `generate-previews`
 
@@ -280,7 +283,7 @@ Copiar de `.env.example` e preencher. **Nunca commitar valores reais.**
 - **svg-generator não usa mais Playwright/Chromium** — a altura do SVG é calculada estaticamente somando `calculateHeight()` de cada seção. Qualquer mudança de layout que afete altura precisa atualizar essa função no plugin correspondente.
 - **Dev local do dashboard com D1:** usar `pnpm dev:pages` (= `wrangler pages dev dist`, **sem** `--d1`). Passar `--d1 DB=weebprofile-db` cria um banco SQLite local **diferente** do resolvido via `wrangler.toml`, e não terá as migrations aplicadas.
 - **Imagens externas nos SVGs:** converter para base64 é necessário para SVGs embutidos em Gists (GitHub não carrega URLs externas em SVGs). O utilitário está em `weeb-plugins/src/utils/image-to-base64.ts`.
-- **metadata.ts é singleton:** o `PluginRegistry` valida na inicialização que todo plugin registrado tem entrada em `PLUGINS_METADATA`. Se esquecer de rodar `generate:metadata`, o servidor vai lançar erro na inicialização.
+- **metadata.ts é singleton:** o `PluginRegistry` valida na inicialização que todo plugin registrado tem entrada em `PLUGINS_METADATA`. Se esquecer de rodar `generate-metadata`, o servidor vai lançar erro na inicialização.
 - **`weeb-dashboard/wrangler.toml` → `SVG_GENERATOR_URL`:** após o primeiro `pnpm deploy:generator`, atualizar para a URL real `https://<nome>.<subdomínio>.workers.dev` do Worker (o subdomínio só é conhecido após o deploy / `wrangler whoami`).
 
 ---
@@ -304,5 +307,6 @@ Copiar de `.env.example` e preencher. **Nunca commitar valores reais.**
 | Acesso ao D1 (Pages Functions)             | `weeb-dashboard/functions/api/_shared/db.ts`         |
 | Acesso ao R2 (SVGs)                        | `weeb-dashboard/functions/api/_shared/storage.ts`    |
 | Config Cloudflare (D1/R2/vars/secrets)     | `weeb-dashboard/wrangler.toml`                       |
-| Sanitização de input                       | `svg-generator/src/utils/sanitize.ts`                |
+| Redação de segredos em log/debug           | `svg-generator/src/utils/sanitize.ts`                |
+| Validação de body (zod)                    | `weeb-dashboard/functions/api/_shared/validation.ts` |
 | Design system do dashboard                 | `weeb-dashboard/BRAND.md`                            |

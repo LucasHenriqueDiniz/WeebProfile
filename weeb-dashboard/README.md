@@ -18,20 +18,23 @@ cp .env.local.example .env.local
 
 Preencha as variáveis no `.env.local`:
 
-- `NEXT_PUBLIC_SUPABASE_URL` - URL do seu projeto Supabase
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Chave anônima do Supabase
-- `SUPABASE_SERVICE_ROLE_KEY` - Chave de service role (para operações admin)
-- `DATABASE_URL` - URL de conexão do PostgreSQL (do Supabase)
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` / `VITE_CLERK_PUBLISHABLE_KEY` - mesma chave, prefixos diferentes (Functions e build do Vite)
+- `CLERK_SECRET_KEY` - autenticação server-side
+- `R2_PUBLIC_URL` - URL pública do bucket de SVGs
+- `SVG_GENERATOR_URL` - só para dev local; em produção o acesso é por service binding
 
-3. **Configurar banco de dados:**
+> D1 e R2 **não são variáveis de ambiente** — são bindings no `wrangler.toml`.
+> Segredos de produção vão por `wrangler pages secret put`, nunca no arquivo.
+
+3. **Banco de dados (Cloudflare D1, SQLite):**
 
 ```bash
-# Gerar migrations
-pnpm db:generate
-
-# Aplicar migrations (ou usar db:push para desenvolvimento)
-pnpm db:push
+pnpm db:generate                                      # gera migration Drizzle
+npx wrangler d1 migrations apply weebprofile-db --remote
 ```
+
+> As migrations reais vivem em `drizzle/`. Não existe `db:push` — isso era do
+> tempo do Postgres.
 
 4. **Rodar em desenvolvimento:**
 
@@ -43,29 +46,29 @@ pnpm dev
 
 ```
 weeb-dashboard/
-├── app/                    # Next.js App Router
-│   ├── auth/              # Rotas de autenticação
-│   ├── dashboard/         # Dashboard do usuário
-│   ├── api/               # API routes
-│   └── test/              # Páginas de teste
-├── lib/
-│   ├── db/                # Drizzle ORM (schema, queries)
-│   └── supabase/          # Clientes Supabase (client, server, admin)
+├── src/                    # SPA (Vite + TanStack Router)
+│   ├── routes/            # Rotas
+│   └── router.tsx         # Definição das rotas
+├── functions/api/         # Cloudflare Pages Functions (o backend)
+│   ├── _shared/           # auth, db, storage, validation, secrets, crypto
+│   ├── auth/steam/        # OpenID da Steam
+│   └── cron/              # regeneração agendada
+├── lib/db/                # Drizzle ORM (schema)
+├── drizzle/               # Migrations SQLite (as reais)
 ├── components/            # Componentes React
-├── hooks/                 # React hooks customizados
-├── stores/                # Zustand stores
-└── drizzle.config.ts      # Configuração do Drizzle Kit
+├── stores/                # Zustand
+└── wrangler.toml          # Bindings D1/R2, service binding, vars
 ```
 
-## ✅ O que está configurado
+## Stack
 
-- ✅ Next.js 16 com App Router
-- ✅ TypeScript
-- ✅ Tailwind CSS 4
-- ✅ Supabase Auth (GitHub OAuth)
-- ✅ Drizzle ORM
-- ✅ Middleware para sessões
-- ✅ Páginas de Login e Dashboard básicas
+- **Vite + TanStack Router** — SPA, não Next.js (a doc dizia Next até 08/2026)
+- **Cloudflare Pages Functions** — backend, em `functions/api/`
+- **Clerk** — autenticação
+- **Drizzle ORM sobre Cloudflare D1** (SQLite)
+- **Cloudflare R2** — armazenamento dos SVGs
+- **Tailwind CSS** + shadcn/ui
+- **react-i18next** — pt, en, es
 
 ## 🔄 Próximos passos
 

@@ -241,8 +241,11 @@ for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
   }
 }
 
-// 8. Heights.ts files are no longer required - height is now calculated dynamically using Playwright
-// (see svg-generator/src/layout/measure-height.ts)
+// 8. No heights.ts file is required. Height comes from each plugin's own
+// calculateHeight(), summed by PluginManager.calculateTotalHeight() -- statically,
+// with no browser. (This comment used to claim Playwright measured it at runtime
+// and to point at src/layout/measure-height.ts, which does not exist. Playwright
+// survives only in svg-generator's audit:heights, a development tool.)
 
 // Report warnings first
 if (warnings.length > 0) {
