@@ -2,8 +2,12 @@
 .hot-cache/
 
 # Build outputs
-lib/
-dist/
+# Anchored with a leading slash. Unanchored, "lib/" matches a directory of that
+# name at any depth, which silently excluded src/lib/ -- six source files that had
+# never been committed, so the package did not typecheck on a fresh clone. Found
+# the day CI started running its typecheck.
+/lib/
+/dist/
 node_modules/
 
 
