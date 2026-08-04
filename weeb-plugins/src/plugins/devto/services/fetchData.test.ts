@@ -59,7 +59,7 @@ describe("fetchDevToData", () => {
       { status: 200, body: [articleBody(1)] },
     ])
 
-    expect((await fetchDevToData(config())).recentArticles[0].reactions).toBe(10)
+    expect((await fetchDevToData(config())).recentArticles[0]!.reactions).toBe(10)
   })
 
   it("counts tags across the fetched window, most frequent first", async () => {
