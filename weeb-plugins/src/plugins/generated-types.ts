@@ -8,18 +8,19 @@
 /**
  * Union type of all available plugin names
  */
-export type PluginName = "16personalities" | "codeforces" | "codewars" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites"
+export type PluginName = "16personalities" | "anilist" | "codeforces" | "codewars" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites"
 
 /**
  * Union type of all available categories
  */
-export type PluginCategory = "coding" | "repository" | "music" | "gaming" | "anime"
+export type PluginCategory = "coding" | "anime" | "repository" | "music" | "gaming"
 
 /**
  * Union type of section IDs per plugin
  */
 export type PluginSectionIds = {
   ["16personalities"]: "personality"
+  anilist: "statistics" | "favorites_anime" | "currently_watching"
   codeforces: "rating_rank" | "contests_participated" | "problems_solved" | "recent_submissions"
   codewars: "rank_honor" | "completed_kata" | "languages_proficiency" | "leaderboard_position"
   duolingo: "current_streak" | "total_xp" | "languages_learning"
@@ -38,6 +39,7 @@ export type PluginSectionIds = {
  */
 export type PluginEssentialConfigKeys = {
   ["16personalities"]: never
+  anilist: never
   codeforces: never
   codewars: never
   duolingo: never
@@ -75,12 +77,12 @@ export type PluginConfig<T extends PluginName> = {
  * Type guard to check if it's a valid plugin name
  */
 export function isValidPluginName(name: string): name is PluginName {
-  return name in ["16personalities","codeforces","codewars","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"]
+  return name in ["16personalities","anilist","codeforces","codewars","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"]
 }
 
 /**
  * Type guard to check if it's a valid category
  */
 export function isValidCategory(category: string): category is PluginCategory {
-  return ["coding","repository","music","gaming","anime"].includes(category as PluginCategory)
+  return ["coding","anime","repository","music","gaming"].includes(category as PluginCategory)
 }

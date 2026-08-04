@@ -224,6 +224,160 @@ export const PLUGINS_METADATA = {
     },
   },
 
+  anilist: {
+    name: "anilist",
+    displayName: "AniList",
+    description: "Show your AniList anime and manga statistics",
+    category: "anime",
+    icon: "Tv",
+    requiredFields: ["username"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "statistics",
+        name: "Statistics",
+        description: "Anime and manga counts, time watched and mean scores",
+        i18nKey: {
+          name: "plugins.anilist.sections.statistics.name",
+          description: "plugins.anilist.sections.statistics.description"
+        },
+        configOptions: [
+        {
+          key: "statistics_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.anilist.sections.statistics.config.statistics_hide_title.label"
+          }
+        },
+        {
+          key: "statistics_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "AniList Statistics",
+          i18nKey: {
+            label: "plugins.anilist.sections.statistics.config.statistics_title.label",
+            defaultValue: "plugins.anilist.sections.statistics.config.statistics_title.defaultValue"
+          }
+        },
+        {
+          key: "statistics_media",
+          label: "Media",
+          type: "select",
+          defaultValue: "both",
+          options: [
+            { value: "both", label: "Anime and manga" },
+            { value: "anime", label: "Anime only" },
+            { value: "manga", label: "Manga only" }
+          ],
+          i18nKey: {
+            label: "plugins.anilist.sections.statistics.config.statistics_media.label",
+            options: {
+              "both": "plugins.anilist.sections.statistics.config.statistics_media.options.both",
+              "anime": "plugins.anilist.sections.statistics.config.statistics_media.options.anime",
+              "manga": "plugins.anilist.sections.statistics.config.statistics_media.options.manga"
+            }
+          }
+        }
+        ]
+      },
+      {
+        id: "favorites_anime",
+        name: "Favorite Anime",
+        description: "Cover grid of your favourited anime",
+        i18nKey: {
+          name: "plugins.anilist.sections.favorites_anime.name",
+          description: "plugins.anilist.sections.favorites_anime.description"
+        },
+        configOptions: [
+        {
+          key: "favorites_anime_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.anilist.sections.favorites_anime.config.favorites_anime_hide_title.label"
+          }
+        },
+        {
+          key: "favorites_anime_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Favorite Anime",
+          i18nKey: {
+            label: "plugins.anilist.sections.favorites_anime.config.favorites_anime_title.label",
+            defaultValue: "plugins.anilist.sections.favorites_anime.config.favorites_anime_title.defaultValue"
+          }
+        },
+        {
+          key: "favorites_anime_max",
+          label: "Max items",
+          type: "number",
+          defaultValue: 10,
+          i18nKey: {
+            label: "plugins.anilist.sections.favorites_anime.config.favorites_anime_max.label"
+          }
+        }
+        ]
+      },
+      {
+        id: "currently_watching",
+        name: "Currently Watching",
+        description: "In-progress anime with episode progress. Requires a public list.",
+        i18nKey: {
+          name: "plugins.anilist.sections.currently_watching.name",
+          description: "plugins.anilist.sections.currently_watching.description"
+        },
+        configOptions: [
+        {
+          key: "currently_watching_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.anilist.sections.currently_watching.config.currently_watching_hide_title.label"
+          }
+        },
+        {
+          key: "currently_watching_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Currently Watching",
+          i18nKey: {
+            label: "plugins.anilist.sections.currently_watching.config.currently_watching_title.label",
+            defaultValue: "plugins.anilist.sections.currently_watching.config.currently_watching_title.defaultValue"
+          }
+        },
+        {
+          key: "currently_watching_max",
+          label: "Max items",
+          type: "number",
+          defaultValue: 5,
+          i18nKey: {
+            label: "plugins.anilist.sections.currently_watching.config.currently_watching_max.label"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.anilist.displayName",
+      description: "plugins.anilist.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "username": "weebprofile",
+      "sections": [
+        "statistics",
+        "favorites_anime"
+      ]
+    },
+  },
+
   codeforces: {
     name: "codeforces",
     displayName: "Codeforces",

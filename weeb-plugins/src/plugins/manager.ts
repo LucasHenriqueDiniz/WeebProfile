@@ -1,5 +1,6 @@
 import type { PluginConfig, PluginData } from "../types/index"
 import { personality16Plugin } from "./16personalities/index"
+import { aniListPlugin } from "./anilist/index"
 import { githubPlugin } from "./github/index"
 import { githubRepoPlugin } from "./github_repo/index"
 import { lastFmPlugin } from "./lastfm/index"
@@ -25,6 +26,7 @@ export class PluginManager {
     this.register(githubRepoPlugin)
     this.register(lastFmPlugin)
     this.register(myAnimeListPlugin)
+    this.register(aniListPlugin)
     this.register(personality16Plugin)
     this.register(lyftaPlugin)
     this.register(steamPlugin)

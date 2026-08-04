@@ -1,0 +1,59 @@
+{
+  "description": "Show your AniList anime and manga statistics",
+  "displayName": "AniList",
+  "sections": {
+    "currently_watching": {
+      "config": {
+        "currently_watching_hide_title": {
+          "label": "Hide title"
+        },
+        "currently_watching_max": {
+          "label": "Max items"
+        },
+        "currently_watching_title": {
+          "defaultValue": "Currently Watching",
+          "label": "Title"
+        }
+      },
+      "description": "In-progress anime with episode progress. Requires a public list.",
+      "name": "Currently Watching"
+    },
+    "favorites_anime": {
+      "config": {
+        "favorites_anime_hide_title": {
+          "label": "Hide title"
+        },
+        "favorites_anime_max": {
+          "label": "Max items"
+        },
+        "favorites_anime_title": {
+          "defaultValue": "Favorite Anime",
+          "label": "Title"
+        }
+      },
+      "description": "Cover grid of your favourited anime",
+      "name": "Favorite Anime"
+    },
+    "statistics": {
+      "config": {
+        "statistics_hide_title": {
+          "label": "Hide title"
+        },
+        "statistics_media": {
+          "label": "Media",
+          "options": {
+            "anime": "Anime only",
+            "both": "Anime and manga",
+            "manga": "Manga only"
+          }
+        },
+        "statistics_title": {
+          "defaultValue": "AniList Statistics",
+          "label": "Title"
+        }
+      },
+      "description": "Anime and manga counts, time watched and mean scores",
+      "name": "Statistics"
+    }
+  }
+}
