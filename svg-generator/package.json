@@ -19,6 +19,7 @@
     "build:check": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
+    "test": "vitest run",
     "test:generator": "tsx scripts/test-svg-generator.ts",
     "audit:heights": "tsx scripts/audit-section-heights.ts",
     "audit:list-scaling": "tsx scripts/audit-list-scaling.ts",
@@ -44,6 +45,7 @@
     "playwright-core": "^1.40.0",
     "tsx": "^4.20.6",
     "typescript": "^5.4.0",
+    "vitest": "2.1.9",
     "wrangler": "^4.98.0"
   },
   "engines": {

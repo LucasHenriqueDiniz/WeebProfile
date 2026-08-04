@@ -54,6 +54,9 @@ jobs:
       - name: Tests (weeb-dashboard)
         run: pnpm --filter weeb-dashboard test
 
+      - name: Tests (svg-generator)
+        run: pnpm --filter @weeb/svg-generator test
+
       # Catches what typecheck alone does not: bundler resolution, missing exports
       # from the package's exports map, and anything that only fails at build time.
       - name: Build dashboard

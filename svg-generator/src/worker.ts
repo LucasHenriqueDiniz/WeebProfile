@@ -14,6 +14,7 @@ import { generateSvg, validateConfig, normalizeConfig } from "./index.js"
 import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
 import { getUserEssentialConfigs } from "./db/essential-configs.js"
 import { validateRequiredConfig } from "./validation/validate-required-config.js"
+import { log, hashUserId } from "./utils/log.js"
 
 export interface Env {
   DB: D1Database
@@ -80,12 +81,12 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
 
   const pluginsMap = requestData.plugins || {}
   const enabledPlugins = Object.keys(pluginsMap).filter((key) => pluginsMap[key]?.enabled)
-  console.log("📥 [WORKER] Request:", {
+  log.info("generate.request", {
     plugins: enabledPlugins,
     order: requestData.pluginsOrder,
     style: requestData.style,
     size: requestData.size,
-    hasUserId: !!requestData.userId,
+    authenticated: !!requestData.userId,
   })
 
   if (!requestData.style || !requestData.size) {
@@ -97,12 +98,14 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
   let essentialConfigs: Record<string, any> = {}
 
   if (requestData.userId) {
-    console.log(`🔐 [WORKER] Fetching essential configs (secrets) for userId: ${requestData.userId}`)
+    // The hash, never the id: this used to log the Clerk user id verbatim on every
+    // authenticated generation. It is stable and joins straight into plugin_secrets.
+    const user = await hashUserId(requestData.userId)
     try {
       essentialConfigs = await getUserEssentialConfigs(env.DB, requestData.userId, env.SECRETS_ENCRYPTION_KEY)
-      console.log(`✅ [WORKER] Essential configs found for plugins:`, Object.keys(essentialConfigs))
+      log.info("secrets.loaded", { user, plugins: Object.keys(essentialConfigs) })
     } catch (error) {
-      console.error(`❌ [WORKER] Error fetching essential configs:`, error)
+      log.error("secrets.unavailable", { user, reason: error instanceof Error ? error.message : String(error) })
       // DB unreachable ≠ missing secrets - return explicit error to avoid
       // "phantom missing secret" when it actually couldn't be verified.
       return json(
@@ -117,7 +120,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
     }
   } else if (requestData.essentialConfigs) {
     // Allow essentialConfigs only for tests (test page). In production, always use userId.
-    console.log("🧪 [WORKER] essentialConfigs provided directly (test mode)")
+    log.warn("secrets.inline", { note: "essentialConfigs provided in request body (test mode)" })
     essentialConfigs = requestData.essentialConfigs
   }
 
@@ -166,7 +169,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
   // Validate required secrets and fields
   const requiredConfigValidation = validateRequiredConfig(config.plugins, essentialConfigs)
   if (!requiredConfigValidation.isValid) {
-    console.error("❌ [WORKER] Missing required configs:", JSON.stringify(requiredConfigValidation.missing))
+    log.warn("generate.missing_config", { missing: requiredConfigValidation.missing })
     return json(
       {
         error: "MISSING_REQUIRED_CONFIG",
@@ -227,7 +230,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
 
     return json(response)
   } catch (error) {
-    console.error("Error generating SVG:", error)
+    log.error("generate.failed", { reason: error instanceof Error ? error.message : String(error) })
     return json(
       {
         error: "Failed to generate SVG",
@@ -246,7 +249,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
  */
 async function runScheduledGeneration(env: Env): Promise<void> {
   if (!env.CRON_SECRET) {
-    console.error("[CRON] CRON_SECRET not configured, skipping scheduled generation")
+    log.error("cron.skipped", { reason: "CRON_SECRET not configured" })
     return
   }
 
@@ -266,16 +269,16 @@ async function runScheduledGeneration(env: Env): Promise<void> {
       const result = (await response.json().catch(() => ({}))) as { processed?: number }
       batch = result.processed || 0
       totalProcessed += batch
-      console.log(`[CRON] Run ${run}: processed ${batch} (total ${totalProcessed})`)
+      log.info("cron.batch", { run, processed: batch, total: totalProcessed })
     } catch (error) {
-      console.error(`[CRON] Run ${run} failed:`, error instanceof Error ? error.message : error)
+      log.error("cron.batch_failed", { run, reason: error instanceof Error ? error.message : String(error) })
       break
     }
 
     if (batch < 50) break
   }
 
-  console.log(`[CRON] Scheduled generation complete. Total processed: ${totalProcessed}`)
+  log.info("cron.complete", { totalProcessed })
 }
 
 export default {
