@@ -46,8 +46,13 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Tests
+      # Named per package rather than `pnpm -r test`, so adding a package without
+      # tests cannot quietly shrink what CI runs.
+      - name: Tests (weeb-plugins)
         run: pnpm --filter @weeb/weeb-plugins test
+
+      - name: Tests (weeb-dashboard)
+        run: pnpm --filter weeb-dashboard test
 
       # Catches what typecheck alone does not: bundler resolution, missing exports
       # from the package's exports map, and anything that only fails at build time.
