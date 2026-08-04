@@ -4,9 +4,10 @@
  *
  * Format: "v1." + base64(iv) + "." + base64(ciphertext+tag)
  *
- * Values written before this existed are plain text with no "v1." prefix;
- * decryptSecret() returns those unchanged so old rows keep working until
- * they're re-saved (or migrated) as encrypted.
+ * Não há mais fallback para texto puro: um valor sem o prefixo "v1." faz
+ * decryptSecret() lançar. A tolerância a linhas antigas existiu até 01/08/2026,
+ * quando plugin_secrets foi verificada vazia e o caminho legado deixou de ter o
+ * que servir. (Esta docstring ainda descrevia o comportamento antigo.)
  *
  * Kept in sync with weeb-dashboard/functions/api/_shared/secret-crypto.ts --
  * both sides must use the same SECRETS_ENCRYPTION_KEY.

@@ -70,7 +70,15 @@ export function sanitizeConfig(config: any): any {
 }
 
 /**
- * Censors essentialConfigs (contains tokens and API keys)
+ * Censors essentialConfigs.
+ *
+ * Censura TODO valor, sem consultar a lista de chaves sensíveis do sanitizeConfig.
+ * Aquela lista casa por substring ("token", "apikey", "secret"...) e não cobria
+ * `pat` nem `steamid` -- ou seja, justamente os segredos de github, github_repo e
+ * steam saíam em texto puro no payload de debug. Aqui não há o que adivinhar:
+ * tudo que está em essentialConfigs veio de plugin_secrets e é segredo por
+ * definição, então a decisão certa é censurar por padrão em vez de por
+ * reconhecimento de nome.
  */
 export function sanitizeEssentialConfigs(essentialConfigs: Record<string, any>): Record<string, any> {
   if (!essentialConfigs || typeof essentialConfigs !== "object") {
@@ -80,8 +88,12 @@ export function sanitizeEssentialConfigs(essentialConfigs: Record<string, any>):
   const sanitized: Record<string, any> = {}
 
   for (const [pluginName, config] of Object.entries(essentialConfigs)) {
-    if (config && typeof config === "object") {
-      sanitized[pluginName] = sanitizeConfig(config)
+    if (config && typeof config === "object" && !Array.isArray(config)) {
+      const censoredPlugin: Record<string, any> = {}
+      for (const [key, value] of Object.entries(config)) {
+        censoredPlugin[key] = typeof value === "string" ? censorValue(value) : "***"
+      }
+      sanitized[pluginName] = censoredPlugin
     } else if (typeof config === "string") {
       sanitized[pluginName] = censorValue(config)
     } else {
