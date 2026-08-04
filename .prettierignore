@@ -16,3 +16,7 @@ weeb-plugins/src/fonts/generated-font-data.ts
 # next build.
 weeb-plugins/src/styles/shared.css
 weeb-plugins/src/styles/tailwind-output.css
+# Rewritten by weeb-plugins' generate-section-previews during build, which is the
+# step CI runs before format:check -- so a formatted copy here would be undone on
+# the runner and fail the check that just passed locally.
+weeb-dashboard/lib/config/section-previews.ts
