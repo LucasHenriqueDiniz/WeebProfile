@@ -5,7 +5,18 @@ import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { resolveBannerVariant } from "../types"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
-import { Card, Delta, DotSep, Eyebrow, HL, HL_SOFT, HL_SOFTER, LangDot, computeStarDelta, formatCount } from "./redesign"
+import {
+  Card,
+  Delta,
+  DotSep,
+  Eyebrow,
+  HL,
+  HL_SOFT,
+  HL_SOFTER,
+  LangDot,
+  computeStarDelta,
+  formatCount,
+} from "./redesign"
 
 interface BannerProps {
   config: GithubRepoConfig
@@ -105,7 +116,9 @@ function MinimalBanner({ data, config }: { data: GithubRepoData; config: GithubR
     <Card className="flex flex-row items-center gap-3.5 px-[18px] py-3.5">
       {showAvatar && <Mark data={data} size={40} />}
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[15px] font-semibold leading-tight text-default-text">{showOwner ? data.nameWithOwner : data.name}</div>
+        <div className="truncate text-[15px] font-semibold leading-tight text-default-text">
+          {showOwner ? data.nameWithOwner : data.name}
+        </div>
         {showDescription && data.description && (
           <div className="truncate text-xs text-default-muted">{data.description}</div>
         )}
@@ -263,7 +276,10 @@ function CenteredDarkBanner({ data, config }: { data: GithubRepoData; config: Gi
   const showOwner = config.banner_show_owner ?? true
 
   return (
-    <Card className="relative flex flex-col items-center justify-center border-0 px-6 py-6 text-center" style={{ background: "#0d1117", boxShadow: "0 0 0 0.5px #30363d" }}>
+    <Card
+      className="relative flex flex-col items-center justify-center border-0 px-6 py-6 text-center"
+      style={{ background: "#0d1117", boxShadow: "0 0 0 0.5px #30363d" }}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="pointer-events-none absolute inset-0 h-full w-full"
@@ -284,7 +300,10 @@ function CenteredDarkBanner({ data, config }: { data: GithubRepoData; config: Gi
       </svg>
       <div className="relative flex flex-col items-center gap-[9px]">
         {showOwner && <Eyebrow style={{ color: HL }}>{data.owner.login} / open source</Eyebrow>}
-        <div className="max-w-full truncate text-[28px] font-bold leading-none tracking-[-0.03em]" style={{ color: "#e6edf3" }}>
+        <div
+          className="max-w-full truncate text-[28px] font-bold leading-none tracking-[-0.03em]"
+          style={{ color: "#e6edf3" }}
+        >
           {data.name}
         </div>
         {showDescription && data.description && (
@@ -299,7 +318,13 @@ function CenteredDarkBanner({ data, config }: { data: GithubRepoData; config: Gi
 
 // "centered_gradient": centralizado sobre gradiente cheio do highlight, com chips
 // translúcidos de stars/forks/linguagem.
-function CenteredGradientBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
+function CenteredGradientBanner({
+  data,
+  config,
+}: {
+  data: GithubRepoData
+  config: GithubRepoConfig
+}): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
   const showLanguage = config.banner_show_languages ?? true
 
@@ -361,16 +386,13 @@ export function Banner({ config, data, style = "default", size = "half" }: Banne
           defaultComponent={<DefaultBanner data={data} config={config} />}
           terminalComponent={
             <>
-              <TerminalCommand
-                command={getPseudoCommands({ plugin: "github_repo", section: "banner", size })}
-              />
+              <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "banner", size })} />
               <div className="flex items-baseline gap-2 px-1 py-1">
                 <span className="text-terminal-highlight font-bold">{data.nameWithOwner}</span>
               </div>
-              {(config.banner_show_description ?? true) &&
-                data.description && (
-                  <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{data.description}</p>
-                )}
+              {(config.banner_show_description ?? true) && data.description && (
+                <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{data.description}</p>
+              )}
             </>
           }
         />

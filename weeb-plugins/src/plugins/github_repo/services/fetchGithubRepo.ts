@@ -58,7 +58,12 @@ function sampleEvenly(points: StarHistoryPoint[], sampleCount: number): StarHist
  * Ambos os caminhos buscam as páginas em paralelo (Promise.all) em vez de sequencial,
  * já que isso roda a cada geração de SVG.
  */
-async function fetchStarHistory(owner: string, repo: string, pat: string, totalStars: number): Promise<StarHistoryPoint[]> {
+async function fetchStarHistory(
+  owner: string,
+  repo: string,
+  pat: string,
+  totalStars: number
+): Promise<StarHistoryPoint[]> {
   if (totalStars <= 0) return []
 
   const totalPages = Math.max(1, Math.ceil(totalStars / STARGAZERS_PER_PAGE))
@@ -163,7 +168,10 @@ interface RepositoryCardResponse {
     watchers: { totalCount: number } | null
     licenseInfo: { name: string; spdxId: string | null } | null
     repositoryTopics: { nodes: Array<{ topic: { name: string } }> }
-    languages: { totalSize: number; edges: Array<{ size: number; node: { name: string; color: string | null } }> } | null
+    languages: {
+      totalSize: number
+      edges: Array<{ size: number; node: { name: string; color: string | null } }>
+    } | null
   } | null
 }
 
@@ -174,7 +182,11 @@ interface RepositoryCardResponse {
  * @param dev - Modo desenvolvimento (usa dados mock, ignora token)
  * @param pat - GitHub Classic Token do usuário (obrigatório em produção)
  */
-export async function fetchGithubRepoData(config: GithubRepoConfig, dev = false, pat?: string): Promise<GithubRepoData> {
+export async function fetchGithubRepoData(
+  config: GithubRepoConfig,
+  dev = false,
+  pat?: string
+): Promise<GithubRepoData> {
   if (dev) {
     const mock = await getMockGithubRepoData()
     // Imagem custom também precisa virar base64 no preview: o wizard exibe o SVG via
@@ -253,9 +265,7 @@ export async function fetchGithubRepoData(config: GithubRepoConfig, dev = false,
       forkCount: repo.forkCount || 0,
       openIssuesCount: repo.openIssuesCount?.totalCount || 0,
       watcherCount: repo.watchers?.totalCount || 0,
-      licenseInfo: repo.licenseInfo
-        ? { name: repo.licenseInfo.name, spdxId: repo.licenseInfo.spdxId }
-        : null,
+      licenseInfo: repo.licenseInfo ? { name: repo.licenseInfo.name, spdxId: repo.licenseInfo.spdxId } : null,
       topics: (repo.repositoryTopics?.nodes || []).map((n) => n.topic.name),
       languages,
       starHistory,

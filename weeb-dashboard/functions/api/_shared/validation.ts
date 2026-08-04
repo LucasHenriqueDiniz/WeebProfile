@@ -12,10 +12,7 @@ import { z } from "zod"
 
 export type ParseResult<T> = { ok: true; data: T } | { ok: false; response: Response }
 
-export async function parseBody<S extends z.ZodTypeAny>(
-  request: Request,
-  schema: S
-): Promise<ParseResult<z.infer<S>>> {
+export async function parseBody<S extends z.ZodTypeAny>(request: Request, schema: S): Promise<ParseResult<z.infer<S>>> {
   let raw: unknown
   try {
     raw = await request.json()
@@ -120,10 +117,9 @@ export const profileUpdateSchema = z
     essentialConfigs: z
       .record(z.string().min(1).max(60), z.record(z.string().min(1).max(60), z.string().max(4_000)).optional())
       .refine((configs) => Object.keys(configs).length <= 30, { message: "Too many plugins" })
-      .refine(
-        (configs) => Object.values(configs).every((keys) => !keys || Object.keys(keys).length <= 20),
-        { message: "Too many keys for a plugin" }
-      )
+      .refine((configs) => Object.values(configs).every((keys) => !keys || Object.keys(keys).length <= 20), {
+        message: "Too many keys for a plugin",
+      })
       .optional(),
   })
   .refine((data) => data.username !== undefined || data.essentialConfigs !== undefined, {

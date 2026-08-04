@@ -105,7 +105,10 @@ type PreviewStyle = (typeof STYLES)[number]
  * placeholder values for every requiredField / required secret or the
  * generator responds 400 MISSING_REQUIRED_SECRETS before ever touching mock data.
  */
-function buildPlaceholderConfig(pluginName: string): { fields: Record<string, string>; essentialConfig: Record<string, string> } {
+function buildPlaceholderConfig(pluginName: string): {
+  fields: Record<string, string>
+  essentialConfig: Record<string, string>
+} {
   const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
   const fields: Record<string, string> = {}
   const essentialConfig: Record<string, string> = {}
@@ -140,7 +143,8 @@ async function generatePreviewSvg(pluginName: string, sectionId: string, style: 
         },
       },
       pluginsOrder: [pluginName],
-      essentialConfigs: Object.keys(essentialConfig).length > 0 ? { [pluginName.toLowerCase()]: essentialConfig } : undefined,
+      essentialConfigs:
+        Object.keys(essentialConfig).length > 0 ? { [pluginName.toLowerCase()]: essentialConfig } : undefined,
       mock: true, // Usar dados mock para previews
       // Espelha o default do produto: header do terminal escondido (opt-in no wizard).
       hideTerminalHeader: true,
@@ -156,7 +160,9 @@ async function generatePreviewSvg(pluginName: string, sectionId: string, style: 
 
     if (!response.ok) {
       const error = await response.text()
-      console.error(`❌ Error generating preview for ${pluginName}/${sectionId} (${style}): ${response.status} ${error}`)
+      console.error(
+        `❌ Error generating preview for ${pluginName}/${sectionId} (${style}): ${response.status} ${error}`
+      )
       return null
     }
 

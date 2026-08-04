@@ -87,7 +87,7 @@ export const githubRepoPluginMetadata = {
           label: "Show owner",
           type: "boolean" as const,
           defaultValue: true,
-          tooltip: "Shows the owner login (e.g. \"LucasHenriqueDiniz /\") before the repository name.",
+          tooltip: 'Shows the owner login (e.g. "LucasHenriqueDiniz /") before the repository name.',
         },
         {
           key: "banner_show_avatar",
@@ -102,7 +102,8 @@ export const githubRepoPluginMetadata = {
           type: "string" as const,
           defaultValue: "",
           description: "Optional image URL (project logo etc.) shown instead of the repository mark",
-          tooltip: "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
+          tooltip:
+            "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
         },
         CONTENT_SIZE_OPTION,
       ],

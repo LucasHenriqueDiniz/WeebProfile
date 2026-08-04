@@ -40,14 +40,10 @@ export function useRepositoryWizardController({
   // github_repo's secret presence is aliased server-side to "github" (see
   // functions/api/secrets/presence.ts), so this reflects the shared PAT automatically.
   const { missingSecrets } = useWizardBootstrapStore()
-  const repoMissingSecrets = useMemo(
-    () => missingSecrets.find((m) => m.pluginName === "github_repo"),
-    [missingSecrets]
-  )
+  const repoMissingSecrets = useMemo(() => missingSecrets.find((m) => m.pluginName === "github_repo"), [missingSecrets])
   const hasMissingEssential = !!repoMissingSecrets && repoMissingSecrets.missingKeys.length > 0
   const missingConfigs = useMemo(
-    () =>
-      repoMissingSecrets?.missingKeys.map((k) => ({ plugin: "github_repo", field: k.key, label: k.label })) || [],
+    () => repoMissingSecrets?.missingKeys.map((k) => ({ plugin: "github_repo", field: k.key, label: k.label })) || [],
     [repoMissingSecrets]
   )
 

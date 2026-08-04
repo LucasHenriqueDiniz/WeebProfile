@@ -25,18 +25,18 @@ Your SVG refreshes automatically on a schedule, and you can trigger a manual ref
 
 ## 📦 Available plugins
 
-| Plugin                                                    | Category | Description                                             |
-| ---------------------------------------------------------- | -------- | -------------------------------------------------------- |
-| [GitHub](docs/plugins.md#github)                          | Coding   | Repositories, activity, contribution calendar, and more |
-| [Codeforces](docs/plugins.md#codeforces)                  | Coding   | Competitive programming rating and stats                |
-| [Codewars](docs/plugins.md#codewars)                      | Coding   | Kata solving stats and rank                              |
-| [Stack Overflow](docs/plugins.md#stackoverflow)            | Coding   | Reputation, badges, and activity                         |
-| [Duolingo](docs/plugins.md#duolingo)                       | Coding   | Streaks, XP, and languages being learned                 |
-| [16Personalities](docs/plugins.md#16personalities)         | Coding   | Personality type badge                                   |
-| [LastFM](docs/plugins.md#lastfm)                           | Music    | Recent tracks, top artists/albums/tracks                 |
-| [MyAnimeList](docs/plugins.md#myanimelist)                 | Anime    | Anime/manga stats, favorites, and recent activity        |
-| [Steam](docs/plugins.md#steam)                             | Gaming   | Recent and most-played games, stats                      |
-| [Lyfta](docs/plugins.md#lyfta)                             | Gaming   | Workout stats and recent exercises                       |
+| Plugin                                             | Category | Description                                             |
+| -------------------------------------------------- | -------- | ------------------------------------------------------- |
+| [GitHub](docs/plugins.md#github)                   | Coding   | Repositories, activity, contribution calendar, and more |
+| [Codeforces](docs/plugins.md#codeforces)           | Coding   | Competitive programming rating and stats                |
+| [Codewars](docs/plugins.md#codewars)               | Coding   | Kata solving stats and rank                             |
+| [Stack Overflow](docs/plugins.md#stackoverflow)    | Coding   | Reputation, badges, and activity                        |
+| [Duolingo](docs/plugins.md#duolingo)               | Coding   | Streaks, XP, and languages being learned                |
+| [16Personalities](docs/plugins.md#16personalities) | Coding   | Personality type badge                                  |
+| [LastFM](docs/plugins.md#lastfm)                   | Music    | Recent tracks, top artists/albums/tracks                |
+| [MyAnimeList](docs/plugins.md#myanimelist)         | Anime    | Anime/manga stats, favorites, and recent activity       |
+| [Steam](docs/plugins.md#steam)                     | Gaming   | Recent and most-played games, stats                     |
+| [Lyfta](docs/plugins.md#lyfta)                     | Gaming   | Workout stats and recent exercises                      |
 
 See the [plugin gallery](docs/plugins.md) for a full preview of every section, in both `default` and `terminal` styles.
 

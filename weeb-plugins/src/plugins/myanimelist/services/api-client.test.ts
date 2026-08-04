@@ -38,11 +38,15 @@ describe("jikanEdgeGet", () => {
   it("uses the service binding and preserves pathname/query without calling global fetch", async () => {
     process.env.JIKAN_EDGE_BASE_URL = "https://jikan-edge.example"
     const serviceFetch = vi.fn().mockResolvedValue(response(200, { data: { ok: true } }))
-    ;(globalThis as { __weebJikanEdgeFetcher?: { fetch: typeof serviceFetch } }).__weebJikanEdgeFetcher = { fetch: serviceFetch }
+    ;(globalThis as { __weebJikanEdgeFetcher?: { fetch: typeof serviceFetch } }).__weebJikanEdgeFetcher = {
+      fetch: serviceFetch,
+    }
     ;(globalThis as { __weebRequireJikanEdgeBinding?: boolean }).__weebRequireJikanEdgeBinding = true
     globalThis.fetch = vi.fn()
 
-    await expect(jikanEdgeGet<{ data: { ok: boolean } }>("/v1/users/Amayacrab/animelist?page=2&limit=100")).resolves.toEqual({ data: { ok: true } })
+    await expect(
+      jikanEdgeGet<{ data: { ok: boolean } }>("/v1/users/Amayacrab/animelist?page=2&limit=100")
+    ).resolves.toEqual({ data: { ok: true } })
 
     expect(globalThis.fetch).not.toHaveBeenCalled()
     const request = serviceFetch.mock.calls[0]![0]

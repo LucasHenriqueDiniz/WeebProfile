@@ -191,7 +191,11 @@ export function usePluginWorkspace() {
       } catch (error) {
         console.error("Error saving essential config:", error)
         await refreshSecretsPresence()
-        toast({ title: "Erro ao salvar", description: "Não foi possível salvar a configuração", variant: "destructive" })
+        toast({
+          title: "Erro ao salvar",
+          description: "Não foi possível salvar a configuração",
+          variant: "destructive",
+        })
       } finally {
         setSavingConfigs((prev) => {
           const next = new Set(prev)

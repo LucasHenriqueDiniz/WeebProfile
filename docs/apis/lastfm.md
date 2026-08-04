@@ -212,16 +212,16 @@ curl --get 'https://ws.audioscrobbler.com/2.0/' \
 
 Parâmetros comuns:
 
-| Parâmetro | Função |
-|---|---|
-| `method` | Método da API, como `artist.getInfo` |
-| `api_key` | Chave pública da aplicação |
-| `format` | `json` para receber JSON; sem ele, o padrão é XML |
-| `page` | Página da consulta |
-| `limit` | Quantidade de registros |
-| `autocorrect` | `1` para permitir correção automática de nomes |
-| `lang` | Idioma de biografias, quando suportado |
-| `callback` | Nome de callback JSONP; normalmente não deve ser usado |
+| Parâmetro     | Função                                                 |
+| ------------- | ------------------------------------------------------ |
+| `method`      | Método da API, como `artist.getInfo`                   |
+| `api_key`     | Chave pública da aplicação                             |
+| `format`      | `json` para receber JSON; sem ele, o padrão é XML      |
+| `page`        | Página da consulta                                     |
+| `limit`       | Quantidade de registros                                |
+| `autocorrect` | `1` para permitir correção automática de nomes         |
+| `lang`        | Idioma de biografias, quando suportado                 |
+| `callback`    | Nome de callback JSONP; normalmente não deve ser usado |
 
 ## 4.2 Requisição de escrita
 
@@ -277,12 +277,12 @@ Isso ajuda o Last.fm a identificar sua aplicação e reduz o risco de bloqueios 
 
 Existem quatro elementos que costumam ser confundidos.
 
-| Elemento | Origem | Função | Pode ir ao frontend? |
-|---|---|---|---|
-| `api_key` | Conta da API | Identifica a aplicação | Tecnicamente sim, mas pode ser abusada |
-| `shared secret` | Conta da API | Gera `api_sig` | **Não** |
-| `token` | Fluxo temporário de autorização | Troca por uma sessão | Apenas durante o fluxo |
-| `session key` / `sk` | `auth.getSession` | Representa a autorização do usuário | Preferencialmente não |
+| Elemento             | Origem                          | Função                              | Pode ir ao frontend?                   |
+| -------------------- | ------------------------------- | ----------------------------------- | -------------------------------------- |
+| `api_key`            | Conta da API                    | Identifica a aplicação              | Tecnicamente sim, mas pode ser abusada |
+| `shared secret`      | Conta da API                    | Gera `api_sig`                      | **Não**                                |
+| `token`              | Fluxo temporário de autorização | Troca por uma sessão                | Apenas durante o fluxo                 |
+| `session key` / `sk` | `auth.getSession`               | Representa a autorização do usuário | Preferencialmente não                  |
 
 ### Token temporário
 
@@ -416,23 +416,20 @@ md5(string_completa)
 ## 7.2 Implementação em TypeScript/Node.js
 
 ```ts
-import { createHash } from "node:crypto";
+import { createHash } from "node:crypto"
 
-type LastFmSignableValue = string | number | boolean;
+type LastFmSignableValue = string | number | boolean
 
-export function createLastFmSignature(
-  params: Record<string, LastFmSignableValue>,
-  sharedSecret: string,
-): string {
+export function createLastFmSignature(params: Record<string, LastFmSignableValue>, sharedSecret: string): string {
   const signatureBase = Object.entries(params)
     .filter(([key]) => key !== "format" && key !== "callback" && key !== "api_sig")
     .sort(([keyA], [keyB]) => keyA.localeCompare(keyB, "en", { sensitivity: "variant" }))
     .map(([key, value]) => `${key}${String(value)}`)
-    .join("");
+    .join("")
 
   return createHash("md5")
     .update(signatureBase + sharedSecret, "utf8")
-    .digest("hex");
+    .digest("hex")
 }
 ```
 
@@ -440,7 +437,7 @@ Para evitar diferenças de locale na ordenação, uma variante mais rígida:
 
 ```ts
 export function compareAscii(a: string, b: string): number {
-  return a < b ? -1 : a > b ? 1 : 0;
+  return a < b ? -1 : a > b ? 1 : 0
 }
 ```
 
@@ -482,12 +479,9 @@ const params = {
   api_key: process.env.LASTFM_API_KEY!,
   method: "auth.getSession",
   token,
-};
+}
 
-const apiSig = createLastFmSignature(
-  params,
-  process.env.LASTFM_SHARED_SECRET!,
-);
+const apiSig = createLastFmSignature(params, process.env.LASTFM_SHARED_SECRET!)
 ```
 
 ---
@@ -537,41 +531,39 @@ format=json
 Exemplo:
 
 ```ts
-import { createLastFmSignature } from "./lastfm-signature";
+import { createLastFmSignature } from "./lastfm-signature"
 
-const API_URL = "https://ws.audioscrobbler.com/2.0/";
+const API_URL = "https://ws.audioscrobbler.com/2.0/"
 
 interface LastFmSessionResponse {
   session?: {
-    name: string;
-    key: string;
-    subscriber: string;
-  };
-  error?: number;
-  message?: string;
+    name: string
+    key: string
+    subscriber: string
+  }
+  error?: number
+  message?: string
 }
 
-export async function exchangeTokenForSession(
-  token: string,
-): Promise<LastFmSessionResponse["session"]> {
-  const apiKey = process.env.LASTFM_API_KEY;
-  const secret = process.env.LASTFM_SHARED_SECRET;
+export async function exchangeTokenForSession(token: string): Promise<LastFmSessionResponse["session"]> {
+  const apiKey = process.env.LASTFM_API_KEY
+  const secret = process.env.LASTFM_SHARED_SECRET
 
   if (!apiKey || !secret) {
-    throw new Error("LASTFM_API_KEY ou LASTFM_SHARED_SECRET não configurado");
+    throw new Error("LASTFM_API_KEY ou LASTFM_SHARED_SECRET não configurado")
   }
 
   const signedParams = {
     api_key: apiKey,
     method: "auth.getSession",
     token,
-  };
+  }
 
   const body = new URLSearchParams({
     ...signedParams,
     api_sig: createLastFmSignature(signedParams, secret),
     format: "json",
-  });
+  })
 
   const response = await fetch(API_URL, {
     method: "POST",
@@ -580,17 +572,15 @@ export async function exchangeTokenForSession(
       "User-Agent": "MeuApp/1.0 (contato@exemplo.com)",
     },
     body,
-  });
+  })
 
-  const data = (await response.json()) as LastFmSessionResponse;
+  const data = (await response.json()) as LastFmSessionResponse
 
   if (!response.ok || data.error || !data.session) {
-    throw new Error(
-      `Falha ao criar sessão: ${data.error ?? response.status} ${data.message ?? ""}`,
-    );
+    throw new Error(`Falha ao criar sessão: ${data.error ?? response.status} ${data.message ?? ""}`)
   }
 
-  return data.session;
+  return data.session
 }
 ```
 
@@ -664,99 +654,91 @@ O exemplo abaixo implementa:
 - suporte a GET e POST.
 
 ```ts
-import { createHash } from "node:crypto";
+import { createHash } from "node:crypto"
 
-const LASTFM_API_URL = "https://ws.audioscrobbler.com/2.0/";
+const LASTFM_API_URL = "https://ws.audioscrobbler.com/2.0/"
 
-type Primitive = string | number | boolean;
-type Params = Record<string, Primitive | undefined>;
+type Primitive = string | number | boolean
+type Params = Record<string, Primitive | undefined>
 
 export class LastFmApiError extends Error {
-  public readonly code: number | null;
-  public readonly httpStatus: number;
+  public readonly code: number | null
+  public readonly httpStatus: number
 
   constructor(message: string, code: number | null, httpStatus: number) {
-    super(message);
-    this.name = "LastFmApiError";
-    this.code = code;
-    this.httpStatus = httpStatus;
+    super(message)
+    this.name = "LastFmApiError"
+    this.code = code
+    this.httpStatus = httpStatus
   }
 }
 
 interface LastFmErrorBody {
-  error?: number;
-  message?: string;
+  error?: number
+  message?: string
 }
 
 interface LastFmClientOptions {
-  apiKey: string;
-  sharedSecret?: string;
-  sessionKey?: string;
-  userAgent: string;
-  timeoutMs?: number;
+  apiKey: string
+  sharedSecret?: string
+  sessionKey?: string
+  userAgent: string
+  timeoutMs?: number
 }
 
 export class LastFmClient {
-  private readonly apiKey: string;
-  private readonly sharedSecret?: string;
-  private readonly sessionKey?: string;
-  private readonly userAgent: string;
-  private readonly timeoutMs: number;
+  private readonly apiKey: string
+  private readonly sharedSecret?: string
+  private readonly sessionKey?: string
+  private readonly userAgent: string
+  private readonly timeoutMs: number
 
   constructor(options: LastFmClientOptions) {
-    this.apiKey = options.apiKey;
-    this.sharedSecret = options.sharedSecret;
-    this.sessionKey = options.sessionKey;
-    this.userAgent = options.userAgent;
-    this.timeoutMs = options.timeoutMs ?? 10_000;
+    this.apiKey = options.apiKey
+    this.sharedSecret = options.sharedSecret
+    this.sessionKey = options.sessionKey
+    this.userAgent = options.userAgent
+    this.timeoutMs = options.timeoutMs ?? 10_000
   }
 
   private sign(params: Record<string, Primitive>): string {
     if (!this.sharedSecret) {
-      throw new Error("sharedSecret é obrigatório para chamadas assinadas");
+      throw new Error("sharedSecret é obrigatório para chamadas assinadas")
     }
 
     const base = Object.entries(params)
       .filter(([key]) => !["format", "callback", "api_sig"].includes(key))
       .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
       .map(([key, value]) => `${key}${String(value)}`)
-      .join("");
+      .join("")
 
     return createHash("md5")
       .update(base + this.sharedSecret, "utf8")
-      .digest("hex");
+      .digest("hex")
   }
 
   private cleanParams(params: Params): Record<string, string> {
     return Object.fromEntries(
       Object.entries(params)
         .filter((entry): entry is [string, Primitive] => entry[1] !== undefined)
-        .map(([key, value]) => [key, String(value)]),
-    );
+        .map(([key, value]) => [key, String(value)])
+    )
   }
 
   private async parseResponse<T>(response: Response): Promise<T> {
-    let data: T & LastFmErrorBody;
+    let data: T & LastFmErrorBody
 
     try {
-      data = (await response.json()) as T & LastFmErrorBody;
+      data = (await response.json()) as T & LastFmErrorBody
     } catch {
-      throw new LastFmApiError(
-        "O Last.fm retornou uma resposta que não é JSON válido",
-        null,
-        response.status,
-      );
+      throw new LastFmApiError("O Last.fm retornou uma resposta que não é JSON válido", null, response.status)
     }
 
     if (!response.ok || data.error !== undefined) {
-      throw new LastFmApiError(
-        data.message ?? `Erro HTTP ${response.status}`,
-        data.error ?? null,
-        response.status,
-      );
+      throw new LastFmApiError(data.message ?? `Erro HTTP ${response.status}`, data.error ?? null, response.status)
     }
 
-    return data;
+    return data
   }
 
   async get<T>(method: string, params: Params = {}): Promise<T> {
@@ -765,10 +747,10 @@ export class LastFmClient {
       api_key: this.apiKey,
       format: "json",
       ...this.cleanParams(params),
-    });
+    })
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), this.timeoutMs)
 
     try {
       const response = await fetch(`${LASTFM_API_URL}?${query}`, {
@@ -777,45 +759,39 @@ export class LastFmClient {
           Accept: "application/json",
         },
         signal: controller.signal,
-      });
+      })
 
-      return await this.parseResponse<T>(response);
+      return await this.parseResponse<T>(response)
     } finally {
-      clearTimeout(timeout);
+      clearTimeout(timeout)
     }
   }
 
-  async post<T>(
-    method: string,
-    params: Params = {},
-    requireSession = true,
-  ): Promise<T> {
+  async post<T>(method: string, params: Params = {}, requireSession = true): Promise<T> {
     const signable: Record<string, Primitive> = {
       method,
       api_key: this.apiKey,
       ...Object.fromEntries(
-        Object.entries(params).filter(
-          (entry): entry is [string, Primitive] => entry[1] !== undefined,
-        ),
+        Object.entries(params).filter((entry): entry is [string, Primitive] => entry[1] !== undefined)
       ),
-    };
+    }
 
     if (requireSession) {
       if (!this.sessionKey) {
-        throw new Error("sessionKey é obrigatória para esta chamada");
+        throw new Error("sessionKey é obrigatória para esta chamada")
       }
 
-      signable.sk = this.sessionKey;
+      signable.sk = this.sessionKey
     }
 
     const body = new URLSearchParams({
       ...this.cleanParams(signable),
       api_sig: this.sign(signable),
       format: "json",
-    });
+    })
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), this.timeoutMs)
 
     try {
       const response = await fetch(LASTFM_API_URL, {
@@ -827,11 +803,11 @@ export class LastFmClient {
         },
         body,
         signal: controller.signal,
-      });
+      })
 
-      return await this.parseResponse<T>(response);
+      return await this.parseResponse<T>(response)
     } finally {
-      clearTimeout(timeout);
+      clearTimeout(timeout)
     }
   }
 }
@@ -845,7 +821,7 @@ const lastFm = new LastFmClient({
   sharedSecret: process.env.LASTFM_SHARED_SECRET,
   sessionKey: process.env.LASTFM_SESSION_KEY,
   userAgent: "MeuApp/1.0 (contato@exemplo.com)",
-});
+})
 ```
 
 Consulta pública:
@@ -855,7 +831,7 @@ const result = await lastFm.get("user.getRecentTracks", {
   user: "RJ",
   limit: 20,
   extended: 1,
-});
+})
 ```
 
 Chamada autenticada:
@@ -864,7 +840,7 @@ Chamada autenticada:
 await lastFm.post("track.love", {
   artist: "Radiohead",
   track: "Paranoid Android",
-});
+})
 ```
 
 ---
@@ -887,15 +863,15 @@ curl --get 'https://ws.audioscrobbler.com/2.0/' \
 
 Parâmetros:
 
-| Parâmetro | Obrigatório | Descrição |
-|---|---:|---|
-| `user` | Sim | Nome do usuário |
-| `limit` | Não | Padrão 50; máximo documentado 200 |
-| `page` | Não | Página |
-| `from` | Não | Timestamp UNIX UTC inicial |
-| `to` | Não | Timestamp UNIX UTC final |
-| `extended` | Não | `1` inclui mais dados do artista e status de loved |
-| `api_key` | Sim | Chave da aplicação |
+| Parâmetro  | Obrigatório | Descrição                                          |
+| ---------- | ----------: | -------------------------------------------------- |
+| `user`     |         Sim | Nome do usuário                                    |
+| `limit`    |         Não | Padrão 50; máximo documentado 200                  |
+| `page`     |         Não | Página                                             |
+| `from`     |         Não | Timestamp UNIX UTC inicial                         |
+| `to`       |         Não | Timestamp UNIX UTC final                           |
+| `extended` |         Não | `1` inclui mais dados do artista e status de loved |
+| `api_key`  |         Sim | Chave da aplicação                                 |
 
 Não exige sessão.
 
@@ -916,7 +892,7 @@ Essa entrada pode não possuir o campo `date`, porque ainda não é um scrobble 
 Verificação segura:
 
 ```ts
-const isNowPlaying = track["@attr"]?.nowplaying === "true";
+const isNowPlaying = track["@attr"]?.nowplaying === "true"
 ```
 
 ## 10.2 `user.getTopArtists`
@@ -1057,7 +1033,7 @@ autocorrect=1
 O campo `match` normalmente vem como string e deve ser convertido para número.
 
 ```ts
-const similarity = Number(item.match);
+const similarity = Number(item.match)
 ```
 
 ## 10.8 `artist.getTopAlbums`
@@ -1125,7 +1101,7 @@ Também aceita `mbid`.
 A duração é normalmente retornada em milissegundos e como string:
 
 ```ts
-const durationMs = Number(track.duration);
+const durationMs = Number(track.duration)
 ```
 
 ## 10.12 `album.getInfo`
@@ -1234,29 +1210,29 @@ Segundo a documentação oficial:
 
 Exemplos:
 
-| Duração da faixa | Momento mínimo |
-|---:|---:|
-| 2 min | 1 min |
-| 5 min | 2 min 30 s |
-| 10 min | 4 min |
-| 30 s ou menos | Não deve ser scrobblada |
+| Duração da faixa |          Momento mínimo |
+| ---------------: | ----------------------: |
+|            2 min |                   1 min |
+|            5 min |              2 min 30 s |
+|           10 min |                   4 min |
+|    30 s ou menos | Não deve ser scrobblada |
 
 ## 11.2 `track.updateNowPlaying`
 
 Parâmetros:
 
-| Parâmetro | Obrigatório | Descrição |
-|---|---:|---|
-| `artist` | Sim | Nome do artista |
-| `track` | Sim | Nome da faixa |
-| `album` | Não | Álbum |
-| `trackNumber` | Não | Número no álbum |
-| `mbid` | Não | MusicBrainz Track ID |
-| `duration` | Não | Duração em segundos |
-| `albumArtist` | Não | Artista do álbum |
-| `api_key` | Sim | API key |
-| `api_sig` | Sim | Assinatura |
-| `sk` | Sim | Session key |
+| Parâmetro     | Obrigatório | Descrição            |
+| ------------- | ----------: | -------------------- |
+| `artist`      |         Sim | Nome do artista      |
+| `track`       |         Sim | Nome da faixa        |
+| `album`       |         Não | Álbum                |
+| `trackNumber` |         Não | Número no álbum      |
+| `mbid`        |         Não | MusicBrainz Track ID |
+| `duration`    |         Não | Duração em segundos  |
+| `albumArtist` |         Não | Artista do álbum     |
+| `api_key`     |         Sim | API key              |
+| `api_sig`     |         Sim | Assinatura           |
+| `sk`          |         Sim | Session key          |
 
 Requer `POST`.
 
@@ -1268,7 +1244,7 @@ await lastFm.post("track.updateNowPlaying", {
   albumArtist: "Radiohead",
   trackNumber: 2,
   duration: 387,
-});
+})
 ```
 
 Isso atualiza o perfil, mas não adiciona a reprodução aos charts por si só.
@@ -1277,25 +1253,25 @@ Isso atualiza o perfil, mas não adiciona a reprodução aos charts por si só.
 
 Parâmetros principais:
 
-| Parâmetro | Obrigatório | Descrição |
-|---|---:|---|
-| `artist` | Sim | Artista |
-| `track` | Sim | Faixa |
-| `timestamp` | Sim | Momento em que a faixa começou, em UNIX UTC |
-| `album` | Não | Álbum |
-| `chosenByUser` | Não | `1` se escolhida pelo usuário; `0` se veio de rádio/recomendação |
-| `trackNumber` | Não | Número da faixa |
-| `mbid` | Não | MBID |
-| `albumArtist` | Não | Artista do álbum |
-| `duration` | Não | Duração em segundos |
-| `api_key` | Sim | API key |
-| `api_sig` | Sim | Assinatura |
-| `sk` | Sim | Session key |
+| Parâmetro      | Obrigatório | Descrição                                                        |
+| -------------- | ----------: | ---------------------------------------------------------------- |
+| `artist`       |         Sim | Artista                                                          |
+| `track`        |         Sim | Faixa                                                            |
+| `timestamp`    |         Sim | Momento em que a faixa começou, em UNIX UTC                      |
+| `album`        |         Não | Álbum                                                            |
+| `chosenByUser` |         Não | `1` se escolhida pelo usuário; `0` se veio de rádio/recomendação |
+| `trackNumber`  |         Não | Número da faixa                                                  |
+| `mbid`         |         Não | MBID                                                             |
+| `albumArtist`  |         Não | Artista do álbum                                                 |
+| `duration`     |         Não | Duração em segundos                                              |
+| `api_key`      |         Sim | API key                                                          |
+| `api_sig`      |         Sim | Assinatura                                                       |
+| `sk`           |         Sim | Session key                                                      |
 
 O `timestamp` representa **quando a música começou**, não quando terminou.
 
 ```ts
-const startedAt = Math.floor(Date.now() / 1000);
+const startedAt = Math.floor(Date.now() / 1000)
 
 await lastFm.post("track.scrobble", {
   artist: "Radiohead",
@@ -1306,7 +1282,7 @@ await lastFm.post("track.scrobble", {
   duration: 387,
   chosenByUser: 1,
   timestamp: startedAt,
-});
+})
 ```
 
 ## 11.4 `chosenByUser`
@@ -1354,55 +1330,50 @@ Exemplo de montagem:
 
 ```ts
 interface ScrobbleInput {
-  artist: string;
-  track: string;
-  timestamp: number;
-  album?: string;
-  albumArtist?: string;
-  duration?: number;
-  chosenByUser?: 0 | 1;
+  artist: string
+  track: string
+  timestamp: number
+  album?: string
+  albumArtist?: string
+  duration?: number
+  chosenByUser?: 0 | 1
 }
 
-function buildBatchScrobbleParams(
-  scrobbles: ScrobbleInput[],
-): Record<string, string | number> {
+function buildBatchScrobbleParams(scrobbles: ScrobbleInput[]): Record<string, string | number> {
   if (scrobbles.length === 0 || scrobbles.length > 50) {
-    throw new Error("O lote deve conter entre 1 e 50 scrobbles");
+    throw new Error("O lote deve conter entre 1 e 50 scrobbles")
   }
 
-  const params: Record<string, string | number> = {};
+  const params: Record<string, string | number> = {}
 
   scrobbles.forEach((item, index) => {
-    params[`artist[${index}]`] = item.artist;
-    params[`track[${index}]`] = item.track;
-    params[`timestamp[${index}]`] = item.timestamp;
+    params[`artist[${index}]`] = item.artist
+    params[`track[${index}]`] = item.track
+    params[`timestamp[${index}]`] = item.timestamp
 
     if (item.album !== undefined) {
-      params[`album[${index}]`] = item.album;
+      params[`album[${index}]`] = item.album
     }
 
     if (item.albumArtist !== undefined) {
-      params[`albumArtist[${index}]`] = item.albumArtist;
+      params[`albumArtist[${index}]`] = item.albumArtist
     }
 
     if (item.duration !== undefined) {
-      params[`duration[${index}]`] = item.duration;
+      params[`duration[${index}]`] = item.duration
     }
 
     if (item.chosenByUser !== undefined) {
-      params[`chosenByUser[${index}]`] = item.chosenByUser;
+      params[`chosenByUser[${index}]`] = item.chosenByUser
     }
-  });
+  })
 
-  return params;
+  return params
 }
 ```
 
 ```ts
-await lastFm.post(
-  "track.scrobble",
-  buildBatchScrobbleParams(scrobbles),
-);
+await lastFm.post("track.scrobble", buildBatchScrobbleParams(scrobbles))
 ```
 
 ## 11.6 Cache local
@@ -1424,14 +1395,14 @@ Uma chamada pode retornar sucesso geral e ainda ignorar um scrobble individual.
 
 Códigos de `ignoredMessage` documentados:
 
-| Código | Significado |
-|---:|---|
-| `0` | Não ignorado |
-| `1` | Artista filtrado |
-| `2` | Faixa filtrada |
-| `3` | Timestamp antigo demais |
-| `4` | Timestamp futuro demais |
-| `5` | Limite diário de scrobbles excedido |
+| Código | Significado                         |
+| -----: | ----------------------------------- |
+|    `0` | Não ignorado                        |
+|    `1` | Artista filtrado                    |
+|    `2` | Faixa filtrada                      |
+|    `3` | Timestamp antigo demais             |
+|    `4` | Timestamp futuro demais             |
+|    `5` | Limite diário de scrobbles excedido |
 
 Portanto, não basta verificar apenas o HTTP status ou apenas a ausência de `error`.
 
@@ -1482,27 +1453,27 @@ Exemplo aproximado:
 Todos esses números podem chegar como strings.
 
 ```ts
-const totalPages = Number(data.recenttracks["@attr"].totalPages);
+const totalPages = Number(data.recenttracks["@attr"].totalPages)
 ```
 
 ### Iteração
 
 ```ts
 async function fetchAllPages<T>(
-  fetchPage: (page: number) => Promise<{ items: T[]; totalPages: number }>,
+  fetchPage: (page: number) => Promise<{ items: T[]; totalPages: number }>
 ): Promise<T[]> {
-  const all: T[] = [];
-  let page = 1;
-  let totalPages = 1;
+  const all: T[] = []
+  let page = 1
+  let totalPages = 1
 
   do {
-    const result = await fetchPage(page);
-    all.push(...result.items);
-    totalPages = result.totalPages;
-    page += 1;
-  } while (page <= totalPages);
+    const result = await fetchPage(page)
+    all.push(...result.items)
+    totalPages = result.totalPages
+    page += 1
+  } while (page <= totalPages)
 
-  return all;
+  return all
 }
 ```
 
@@ -1537,13 +1508,13 @@ A API usa timestamp UNIX em segundos UTC.
 Correto:
 
 ```ts
-const unixSeconds = Math.floor(Date.now() / 1000);
+const unixSeconds = Math.floor(Date.now() / 1000)
 ```
 
 Incorreto:
 
 ```ts
-const milliseconds = Date.now();
+const milliseconds = Date.now()
 ```
 
 O segundo valor é 1000 vezes maior e será interpretado como uma data futura inválida.
@@ -1551,7 +1522,7 @@ O segundo valor é 1000 vezes maior e será interpretado como uma data futura in
 Conversão:
 
 ```ts
-const date = new Date(unixSeconds * 1000);
+const date = new Date(unixSeconds * 1000)
 ```
 
 ---
@@ -1626,17 +1597,17 @@ Em algumas respostas, o atributo pode aparecer em `size`; em outras conversões 
 
 ```ts
 function toNumber(value: unknown, fallback = 0): number {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
+  const number = Number(value)
+  return Number.isFinite(number) ? number : fallback
 }
 
 function toBoolean01(value: unknown): boolean {
-  return value === 1 || value === "1" || value === true;
+  return value === 1 || value === "1" || value === true
 }
 
 function toArray<T>(value: T | T[] | undefined | null): T[] {
-  if (value == null) return [];
-  return Array.isArray(value) ? value : [value];
+  if (value == null) return []
+  return Array.isArray(value) ? value : [value]
 }
 ```
 
@@ -1646,26 +1617,24 @@ Utilitário:
 
 ```ts
 interface LastFmImage {
-  "#text"?: string;
-  size?: string;
+  "#text"?: string
+  size?: string
 }
 
 function getLargestImage(images: LastFmImage[] | undefined): string | null {
-  if (!images) return null;
+  if (!images) return null
 
-  const preferredOrder = ["mega", "extralarge", "large", "medium", "small"];
+  const preferredOrder = ["mega", "extralarge", "large", "medium", "small"]
 
   for (const size of preferredOrder) {
-    const found = images.find(
-      (image) => image.size === size && image["#text"]?.trim(),
-    );
+    const found = images.find((image) => image.size === size && image["#text"]?.trim())
 
     if (found?.["#text"]) {
-      return found["#text"];
+      return found["#text"]
     }
   }
 
-  return null;
+  return null
 }
 ```
 
@@ -1676,7 +1645,7 @@ Não dependa de imagens como identificadores. URLs podem ser vazias ou mudar.
 `mbid` é um identificador do MusicBrainz, mas pode estar vazio.
 
 ```ts
-const mbid = item.mbid?.trim() || null;
+const mbid = item.mbid?.trim() || null
 ```
 
 Não use apenas o MBID como chave obrigatória. Estratégias comuns:
@@ -1694,24 +1663,24 @@ MBID quando disponível
 
 Erros comuns documentados:
 
-| Código | Significado | Ação sugerida |
-|---:|---|---|
-| `2` | Serviço inválido | Corrigir `method` |
-| `3` | Método inválido | Corrigir nome do método |
-| `4` | Falha de autenticação | Revisar autorização e credenciais |
-| `5` | Formato inválido | Usar XML ou `format=json` |
-| `6` | Parâmetro obrigatório ausente | Corrigir requisição |
-| `7` | Recurso inválido | Validar usuário, artista ou item |
-| `8` | Operação falhou | Avaliar mensagem; retentar com cautela |
-| `9` | Session key inválida | Reautenticar usuário |
-| `10` | API key inválida | Corrigir chave |
-| `11` | Serviço offline | Retentar depois |
-| `13` | Assinatura inválida | Corrigir `api_sig` |
-| `14` | Token não autorizado | Usuário ainda não autorizou |
-| `15` | Token expirado | Reiniciar autenticação |
-| `16` | Erro temporário | Retentar com backoff |
-| `26` | API key suspensa | Contatar o Last.fm |
-| `29` | Rate limit excedido | Reduzir chamadas e aplicar backoff |
+| Código | Significado                   | Ação sugerida                          |
+| -----: | ----------------------------- | -------------------------------------- |
+|    `2` | Serviço inválido              | Corrigir `method`                      |
+|    `3` | Método inválido               | Corrigir nome do método                |
+|    `4` | Falha de autenticação         | Revisar autorização e credenciais      |
+|    `5` | Formato inválido              | Usar XML ou `format=json`              |
+|    `6` | Parâmetro obrigatório ausente | Corrigir requisição                    |
+|    `7` | Recurso inválido              | Validar usuário, artista ou item       |
+|    `8` | Operação falhou               | Avaliar mensagem; retentar com cautela |
+|    `9` | Session key inválida          | Reautenticar usuário                   |
+|   `10` | API key inválida              | Corrigir chave                         |
+|   `11` | Serviço offline               | Retentar depois                        |
+|   `13` | Assinatura inválida           | Corrigir `api_sig`                     |
+|   `14` | Token não autorizado          | Usuário ainda não autorizou            |
+|   `15` | Token expirado                | Reiniciar autenticação                 |
+|   `16` | Erro temporário               | Retentar com backoff                   |
+|   `26` | API key suspensa              | Contatar o Last.fm                     |
+|   `29` | Rate limit excedido           | Reduzir chamadas e aplicar backoff     |
 
 ### Não confie apenas no HTTP status
 
@@ -1745,36 +1714,31 @@ Não retente erros de validação, como `6`, sem corrigir a requisição.
 
 ```ts
 function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function withRetry<T>(
-  operation: () => Promise<T>,
-  maxAttempts = 5,
-): Promise<T> {
-  let lastError: unknown;
+async function withRetry<T>(operation: () => Promise<T>, maxAttempts = 5): Promise<T> {
+  let lastError: unknown
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      return await operation();
+      return await operation()
     } catch (error) {
-      lastError = error;
+      lastError = error
 
-      const retryable =
-        error instanceof LastFmApiError &&
-        [11, 16, 29].includes(error.code ?? -1);
+      const retryable = error instanceof LastFmApiError && [11, 16, 29].includes(error.code ?? -1)
 
       if (!retryable || attempt === maxAttempts) {
-        throw error;
+        throw error
       }
 
-      const baseDelay = 500 * 2 ** (attempt - 1);
-      const jitter = Math.floor(Math.random() * 250);
-      await sleep(baseDelay + jitter);
+      const baseDelay = 500 * 2 ** (attempt - 1)
+      const jitter = Math.floor(Math.random() * 250)
+      await sleep(baseDelay + jitter)
     }
   }
 
-  throw lastError;
+  throw lastError
 }
 ```
 
@@ -1792,105 +1756,105 @@ Legenda:
 
 ## 15.1 Álbum
 
-| Método | Tipo | Finalidade |
-|---|---|---|
-| `album.addTags` | Auth + POST | Adiciona tags pessoais a um álbum |
-| `album.getInfo` | Público | Metadados e tracklist de um álbum |
-| `album.getTags` | Público/contextual | Tags de um álbum; pode usar contexto de usuário |
-| `album.getTopTags` | Público | Tags mais populares de um álbum |
-| `album.removeTag` | Auth + POST | Remove tag pessoal |
-| `album.search` | Público | Pesquisa álbuns |
+| Método             | Tipo               | Finalidade                                      |
+| ------------------ | ------------------ | ----------------------------------------------- |
+| `album.addTags`    | Auth + POST        | Adiciona tags pessoais a um álbum               |
+| `album.getInfo`    | Público            | Metadados e tracklist de um álbum               |
+| `album.getTags`    | Público/contextual | Tags de um álbum; pode usar contexto de usuário |
+| `album.getTopTags` | Público            | Tags mais populares de um álbum                 |
+| `album.removeTag`  | Auth + POST        | Remove tag pessoal                              |
+| `album.search`     | Público            | Pesquisa álbuns                                 |
 
 ## 15.2 Artista
 
-| Método | Tipo | Finalidade |
-|---|---|---|
-| `artist.addTags` | Auth + POST | Adiciona tags pessoais |
-| `artist.getCorrection` | Público | Consulta correção de nome |
-| `artist.getInfo` | Público | Metadados, bio, tags e similares |
-| `artist.getSimilar` | Público | Artistas similares |
-| `artist.getTags` | Público/contextual | Tags associadas ao artista |
-| `artist.getTopAlbums` | Público | Álbuns mais populares |
-| `artist.getTopTags` | Público | Tags mais populares |
-| `artist.getTopTracks` | Público | Faixas mais populares |
-| `artist.removeTag` | Auth + POST | Remove tag pessoal |
-| `artist.search` | Público | Pesquisa artistas |
+| Método                 | Tipo               | Finalidade                       |
+| ---------------------- | ------------------ | -------------------------------- |
+| `artist.addTags`       | Auth + POST        | Adiciona tags pessoais           |
+| `artist.getCorrection` | Público            | Consulta correção de nome        |
+| `artist.getInfo`       | Público            | Metadados, bio, tags e similares |
+| `artist.getSimilar`    | Público            | Artistas similares               |
+| `artist.getTags`       | Público/contextual | Tags associadas ao artista       |
+| `artist.getTopAlbums`  | Público            | Álbuns mais populares            |
+| `artist.getTopTags`    | Público            | Tags mais populares              |
+| `artist.getTopTracks`  | Público            | Faixas mais populares            |
+| `artist.removeTag`     | Auth + POST        | Remove tag pessoal               |
+| `artist.search`        | Público            | Pesquisa artistas                |
 
 ## 15.3 Autenticação
 
-| Método | Tipo | Finalidade |
-|---|---|---|
-| `auth.getMobileSession` | Assinado + POST + HTTPS | Cria sessão usando credenciais |
-| `auth.getSession` | Assinado | Troca token autorizado por sessão |
-| `auth.getToken` | Assinado | Gera token para aplicação desktop |
+| Método                  | Tipo                    | Finalidade                        |
+| ----------------------- | ----------------------- | --------------------------------- |
+| `auth.getMobileSession` | Assinado + POST + HTTPS | Cria sessão usando credenciais    |
+| `auth.getSession`       | Assinado                | Troca token autorizado por sessão |
+| `auth.getToken`         | Assinado                | Gera token para aplicação desktop |
 
 ## 15.4 Charts globais
 
-| Método | Tipo | Finalidade |
-|---|---|---|
+| Método                | Tipo    | Finalidade                      |
+| --------------------- | ------- | ------------------------------- |
 | `chart.getTopArtists` | Público | Artistas globais mais populares |
-| `chart.getTopTags` | Público | Tags globais mais populares |
-| `chart.getTopTracks` | Público | Faixas globais mais populares |
+| `chart.getTopTags`    | Público | Tags globais mais populares     |
+| `chart.getTopTracks`  | Público | Faixas globais mais populares   |
 
 ## 15.5 Geografia
 
-| Método | Tipo | Finalidade |
-|---|---|---|
+| Método              | Tipo    | Finalidade                  |
+| ------------------- | ------- | --------------------------- |
 | `geo.getTopArtists` | Público | Artistas populares por país |
-| `geo.getTopTracks` | Público | Faixas populares por país |
+| `geo.getTopTracks`  | Público | Faixas populares por país   |
 
 ## 15.6 Biblioteca
 
-| Método | Tipo | Finalidade |
-|---|---|---|
+| Método               | Tipo    | Finalidade                           |
+| -------------------- | ------- | ------------------------------------ |
 | `library.getArtists` | Público | Artistas da biblioteca de um usuário |
 
 ## 15.7 Tags
 
-| Método | Tipo | Finalidade |
-|---|---|---|
-| `tag.getInfo` | Público | Informações sobre uma tag |
-| `tag.getSimilar` | Público | Tags similares |
-| `tag.getTopAlbums` | Público | Álbuns mais associados à tag |
-| `tag.getTopArtists` | Público | Artistas mais associados à tag |
-| `tag.getTopTags` | Público | Tags mais populares |
-| `tag.getTopTracks` | Público | Faixas mais associadas à tag |
+| Método                   | Tipo    | Finalidade                      |
+| ------------------------ | ------- | ------------------------------- |
+| `tag.getInfo`            | Público | Informações sobre uma tag       |
+| `tag.getSimilar`         | Público | Tags similares                  |
+| `tag.getTopAlbums`       | Público | Álbuns mais associados à tag    |
+| `tag.getTopArtists`      | Público | Artistas mais associados à tag  |
+| `tag.getTopTags`         | Público | Tags mais populares             |
+| `tag.getTopTracks`       | Público | Faixas mais associadas à tag    |
 | `tag.getWeeklyChartList` | Público | Intervalos semanais disponíveis |
 
 ## 15.8 Faixas
 
-| Método | Tipo | Finalidade |
-|---|---|---|
-| `track.addTags` | Auth + POST | Adiciona tags pessoais |
-| `track.getCorrection` | Público | Consulta correção de artista/faixa |
-| `track.getInfo` | Público | Metadados da faixa |
-| `track.getSimilar` | Público | Faixas similares |
-| `track.getTags` | Público/contextual | Tags da faixa |
-| `track.getTopTags` | Público | Tags mais populares |
-| `track.love` | Auth + POST | Marca faixa como loved |
-| `track.removeTag` | Auth + POST | Remove tag pessoal |
-| `track.scrobble` | Auth + POST | Registra uma ou até 50 reproduções |
-| `track.search` | Público | Pesquisa faixas |
-| `track.unlove` | Auth + POST | Remove loved |
-| `track.updateNowPlaying` | Auth + POST | Atualiza “tocando agora” |
+| Método                   | Tipo               | Finalidade                         |
+| ------------------------ | ------------------ | ---------------------------------- |
+| `track.addTags`          | Auth + POST        | Adiciona tags pessoais             |
+| `track.getCorrection`    | Público            | Consulta correção de artista/faixa |
+| `track.getInfo`          | Público            | Metadados da faixa                 |
+| `track.getSimilar`       | Público            | Faixas similares                   |
+| `track.getTags`          | Público/contextual | Tags da faixa                      |
+| `track.getTopTags`       | Público            | Tags mais populares                |
+| `track.love`             | Auth + POST        | Marca faixa como loved             |
+| `track.removeTag`        | Auth + POST        | Remove tag pessoal                 |
+| `track.scrobble`         | Auth + POST        | Registra uma ou até 50 reproduções |
+| `track.search`           | Público            | Pesquisa faixas                    |
+| `track.unlove`           | Auth + POST        | Remove loved                       |
+| `track.updateNowPlaying` | Auth + POST        | Atualiza “tocando agora”           |
 
 ## 15.9 Usuários
 
-| Método | Tipo | Finalidade |
-|---|---|---|
-| `user.getFriends` | Público | Amigos de um usuário |
-| `user.getInfo` | Público | Dados do perfil |
-| `user.getLovedTracks` | Público | Faixas marcadas como loved |
-| `user.getPersonalTags` | Público/contextual | Itens associados a tags pessoais |
-| `user.getRecentTracks` | Público | Histórico recente |
-| `user.getTopAlbums` | Público | Álbuns mais ouvidos |
-| `user.getTopArtists` | Público | Artistas mais ouvidos |
-| `user.getTopTags` | Público | Tags mais usadas pelo usuário |
-| `user.getTopTracks` | Público | Faixas mais ouvidas |
-| `user.getWeeklyAlbumChart` | Público | Ranking de álbuns em intervalo semanal |
-| `user.getWeeklyArtistChart` | Público | Ranking de artistas em intervalo semanal |
-| `user.getWeeklyChartList` | Público | Intervalos semanais disponíveis |
-| `user.getWeeklyTrackChart` | Público | Ranking de faixas em intervalo semanal |
+| Método                      | Tipo               | Finalidade                               |
+| --------------------------- | ------------------ | ---------------------------------------- |
+| `user.getFriends`           | Público            | Amigos de um usuário                     |
+| `user.getInfo`              | Público            | Dados do perfil                          |
+| `user.getLovedTracks`       | Público            | Faixas marcadas como loved               |
+| `user.getPersonalTags`      | Público/contextual | Itens associados a tags pessoais         |
+| `user.getRecentTracks`      | Público            | Histórico recente                        |
+| `user.getTopAlbums`         | Público            | Álbuns mais ouvidos                      |
+| `user.getTopArtists`        | Público            | Artistas mais ouvidos                    |
+| `user.getTopTags`           | Público            | Tags mais usadas pelo usuário            |
+| `user.getTopTracks`         | Público            | Faixas mais ouvidas                      |
+| `user.getWeeklyAlbumChart`  | Público            | Ranking de álbuns em intervalo semanal   |
+| `user.getWeeklyArtistChart` | Público            | Ranking de artistas em intervalo semanal |
+| `user.getWeeklyChartList`   | Público            | Intervalos semanais disponíveis          |
+| `user.getWeeklyTrackChart`  | Público            | Ranking de faixas em intervalo semanal   |
 
 Para parâmetros e erros específicos, consulte:
 
@@ -1961,22 +1925,19 @@ Estrutura simplificada:
 
 ```ts
 export interface Env {
-  LASTFM_API_KEY: string;
-  LASTFM_SHARED_SECRET: string;
+  LASTFM_API_KEY: string
+  LASTFM_SHARED_SECRET: string
 }
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
+    const url = new URL(request.url)
 
     if (url.pathname === "/api/lastfm/recent") {
-      const user = url.searchParams.get("user");
+      const user = url.searchParams.get("user")
 
       if (!user) {
-        return Response.json(
-          { error: "Parâmetro user é obrigatório" },
-          { status: 400 },
-        );
+        return Response.json({ error: "Parâmetro user é obrigatório" }, { status: 400 })
       }
 
       const params = new URLSearchParams({
@@ -1985,20 +1946,17 @@ export default {
         limit: "50",
         api_key: env.LASTFM_API_KEY,
         format: "json",
-      });
+      })
 
-      const response = await fetch(
-        `https://ws.audioscrobbler.com/2.0/?${params}`,
-        {
-          headers: {
-            "User-Agent": "MeuProjeto/1.0 (contato@exemplo.com)",
-          },
-          cf: {
-            cacheTtl: 60,
-            cacheEverything: true,
-          },
+      const response = await fetch(`https://ws.audioscrobbler.com/2.0/?${params}`, {
+        headers: {
+          "User-Agent": "MeuProjeto/1.0 (contato@exemplo.com)",
         },
-      );
+        cf: {
+          cacheTtl: 60,
+          cacheEverything: true,
+        },
+      })
 
       return new Response(response.body, {
         status: response.status,
@@ -2006,12 +1964,12 @@ export default {
           "Content-Type": "application/json; charset=utf-8",
           "Cache-Control": "public, max-age=60",
         },
-      });
+      })
     }
 
-    return new Response("Not found", { status: 404 });
+    return new Response("Not found", { status: 404 })
   },
-};
+}
 ```
 
 Não exponha `LASTFM_SHARED_SECRET` como variável `VITE_*`, `NEXT_PUBLIC_*` ou equivalente.
@@ -2046,14 +2004,14 @@ Os termos determinam que a aplicação respeite os headers HTTP de cache enviado
 
 Sugestões adicionais:
 
-| Tipo de dado | Cache sugerido |
-|---|---|
-| Artista/álbum/faixa | 1 hora a 1 dia |
-| Charts globais | 5 a 30 minutos |
-| Top pessoal | 5 a 30 minutos |
-| Recent tracks | 15 a 60 segundos |
-| Now playing | Polling moderado, por exemplo 15–30 segundos |
-| Tags e similares | 1 hora ou mais |
+| Tipo de dado        | Cache sugerido                               |
+| ------------------- | -------------------------------------------- |
+| Artista/álbum/faixa | 1 hora a 1 dia                               |
+| Charts globais      | 5 a 30 minutos                               |
+| Top pessoal         | 5 a 30 minutos                               |
+| Recent tracks       | 15 a 60 segundos                             |
+| Now playing         | Polling moderado, por exemplo 15–30 segundos |
+| Tags e similares    | 1 hora ou mais                               |
 
 Esses valores são sugestões de arquitetura, não limites oficiais.
 

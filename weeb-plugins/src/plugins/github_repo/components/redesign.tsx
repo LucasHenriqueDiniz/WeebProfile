@@ -57,7 +57,13 @@ export function Card({
   )
 }
 
-export function Eyebrow({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }): React.ReactElement {
+export function Eyebrow({
+  children,
+  style,
+}: {
+  children: React.ReactNode
+  style?: React.CSSProperties
+}): React.ReactElement {
   return (
     <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-default-muted-light" style={style}>
       {children}
@@ -65,7 +71,13 @@ export function Eyebrow({ children, style }: { children: React.ReactNode; style?
   )
 }
 
-export function Delta({ delta, className = "" }: { delta: { label: string } | null; className?: string }): React.ReactElement {
+export function Delta({
+  delta,
+  className = "",
+}: {
+  delta: { label: string } | null
+  className?: string
+}): React.ReactElement {
   if (!delta) return <></>
   return (
     <span className={`text-xs font-medium ${className}`} style={{ color: SUCCESS }}>
@@ -79,7 +91,12 @@ export function DotSep(): React.ReactElement {
 }
 
 export function LangDot({ color, size = 8 }: { color: string; size?: number }): React.ReactElement {
-  return <span className="inline-block flex-shrink-0 rounded-full" style={{ width: size, height: size, background: color }} />
+  return (
+    <span
+      className="inline-block flex-shrink-0 rounded-full"
+      style={{ width: size, height: size, background: color }}
+    />
+  )
 }
 
 // Coordenadas normalizadas do histórico de estrelas para desenhar em um viewBox

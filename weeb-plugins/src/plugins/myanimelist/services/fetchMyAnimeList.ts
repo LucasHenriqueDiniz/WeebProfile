@@ -96,11 +96,14 @@ export async function fetchMyAnimeListData(
     let lastActivityStatus: MyAnimeListData["lastActivityStatus"] = "complete"
     if ((config.sections || []).includes("last_activity")) {
       try {
-        const updates = await jikanEdgeGet<{ data: unknown }>(`/v1/users/${encodeURIComponent(config.username)}/userupdates`)
+        const updates = await jikanEdgeGet<{ data: unknown }>(
+          `/v1/users/${encodeURIComponent(config.username)}/userupdates`
+        )
         lastUpdates = await transformLastUpdates(updates as never, config)
       } catch (error) {
         lastActivityStatus = "unavailable"
-        if (!(error instanceof JikanEdgeError && error.status === 501 && error.code === "USER_UPDATES_UNSUPPORTED")) console.warn("[MyAnimeList] Recent updates unavailable", error)
+        if (!(error instanceof JikanEdgeError && error.status === 501 && error.code === "USER_UPDATES_UNSUPPORTED"))
+          console.warn("[MyAnimeList] Recent updates unavailable", error)
       }
     }
 

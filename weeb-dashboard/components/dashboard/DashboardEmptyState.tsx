@@ -103,8 +103,8 @@ export function DashboardEmptyState() {
           Seu primeiro card de perfil começa aqui
         </h2>
         <p className="mx-auto mb-8 max-w-md text-sm leading-relaxed text-white/70 md:text-base">
-          Conecte GitHub, anime, música, jogos e mais - gere um SVG dinâmico para o topo do seu README que se
-          atualiza sozinho.
+          Conecte GitHub, anime, música, jogos e mais - gere um SVG dinâmico para o topo do seu README que se atualiza
+          sozinho.
         </p>
 
         {/* Passos - lista compacta centralizada, ligados por uma linha vertical */}
@@ -121,7 +121,11 @@ export function DashboardEmptyState() {
                 className="relative z-10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border text-xs font-mono font-semibold transition-colors duration-200"
                 style={
                   activeStep === i
-                    ? { background: "linear-gradient(135deg,#7C3AED,#EC4899)", borderColor: "transparent", color: "#fff" }
+                    ? {
+                        background: "linear-gradient(135deg,#7C3AED,#EC4899)",
+                        borderColor: "transparent",
+                        color: "#fff",
+                      }
                     : { background: "#0a0f1e", borderColor: "rgba(34,211,238,0.4)", color: "#67e8f9" }
                 }
               >

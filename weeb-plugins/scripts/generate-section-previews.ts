@@ -243,7 +243,9 @@ async function main() {
   console.log(`   Plugins: ${pluginsData.size}`)
   console.log(`   Seções totais: ${totalSections}`)
   console.log(`   Com preview default: ${totalWithDefault} (${((totalWithDefault / totalSections) * 100).toFixed(1)}%)`)
-  console.log(`   Com preview terminal: ${totalWithTerminal} (${((totalWithTerminal / totalSections) * 100).toFixed(1)}%)`)
+  console.log(
+    `   Com preview terminal: ${totalWithTerminal} (${((totalWithTerminal / totalSections) * 100).toFixed(1)}%)`
+  )
 
   if (totalSections - totalWithDefault > 0) {
     console.log(`\n⚠️  Algumas seções não têm preview default. Execute "pnpm generate-preview-images" primeiro.`)

@@ -63,7 +63,11 @@ function BarsLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
   return (
     <Card className="flex flex-col gap-2.5 px-[18px] py-4">
       {langs.map((lang) => (
-        <div key={lang.name} className="grid items-center gap-2.5 text-xs" style={{ gridTemplateColumns: "86px 1fr 40px" }}>
+        <div
+          key={lang.name}
+          className="grid items-center gap-2.5 text-xs"
+          style={{ gridTemplateColumns: "86px 1fr 40px" }}
+        >
           <b className="truncate font-semibold text-default-text">{lang.name}</b>
           <div className="h-2 overflow-hidden rounded-full bg-default-muted/10">
             <div className="h-full rounded-full" style={{ width: `${lang.percentage}%`, background: lang.color }} />
@@ -94,7 +98,12 @@ function DonutLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
   return (
     <Card className="flex flex-row items-center gap-2">
       <div className="flex-shrink-0 py-4 pl-[18px]">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" style={{ width: 96, height: 96 }} aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 96 96"
+          style={{ width: 96, height: 96 }}
+          aria-hidden="true"
+        >
           <circle
             cx="48"
             cy="48"
@@ -156,7 +165,11 @@ function BlocksLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
       <div className="flex gap-[3px] px-3.5 pb-2 pt-3" style={{ height: 88 }}>
         <div
           className="flex flex-col justify-end rounded-lg px-3 py-2.5"
-          style={{ width: `${(firstW / total) * 100}%`, background: first.color, color: readableTextColor(first.color) }}
+          style={{
+            width: `${(firstW / total) * 100}%`,
+            background: first.color,
+            color: readableTextColor(first.color),
+          }}
         >
           <b className="truncate text-sm font-semibold">{first.name}</b>
           <span className="text-[11px]" style={{ opacity: 0.8 }}>

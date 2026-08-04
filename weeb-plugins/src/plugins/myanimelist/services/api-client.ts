@@ -37,7 +37,11 @@ function baseUrl(): string {
 }
 
 function diagnostics(response: Response): JikanEdgeDiagnostics {
-  return { requestId: response.headers.get("x-request-id"), workerVersion: response.headers.get("x-worker-version"), cacheStatus: response.headers.get("x-cache-status") }
+  return {
+    requestId: response.headers.get("x-request-id"),
+    workerVersion: response.headers.get("x-worker-version"),
+    cacheStatus: response.headers.get("x-cache-status"),
+  }
 }
 
 export async function jikanEdgeGet<T>(path: string, options: { timeoutMs?: number } = {}): Promise<T> {
@@ -52,11 +56,20 @@ export async function jikanEdgeGet<T>(path: string, options: { timeoutMs?: numbe
     if (binding) {
       response = await binding.fetch(new Request(url, init))
     } else {
-      if (runtime().__weebRequireJikanEdgeBinding) throw new JikanEdgeError("Jikan Edge service binding is unavailable", undefined, undefined, undefined, request)
+      if (runtime().__weebRequireJikanEdgeBinding)
+        throw new JikanEdgeError("Jikan Edge service binding is unavailable", undefined, undefined, undefined, request)
       response = await fetch(url, init)
     }
   } catch (error) {
-    throw new JikanEdgeError(error instanceof Error && error.name === "AbortError" ? "Jikan Edge request timed out" : "Jikan Edge request failed", undefined, undefined, undefined, request)
+    throw new JikanEdgeError(
+      error instanceof Error && error.name === "AbortError"
+        ? "Jikan Edge request timed out"
+        : "Jikan Edge request failed",
+      undefined,
+      undefined,
+      undefined,
+      request
+    )
   } finally {
     clearTimeout(timeoutId)
   }

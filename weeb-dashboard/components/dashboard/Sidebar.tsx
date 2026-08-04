@@ -77,7 +77,9 @@ export function DashboardSidebar() {
             alt="WeebProfile"
             className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(6,182,212,0.35)] transition-transform group-hover:scale-110"
           />
-          {expanded && <span className="font-heading font-bold text-sm text-foreground whitespace-nowrap">WeebProfile</span>}
+          {expanded && (
+            <span className="font-heading font-bold text-sm text-foreground whitespace-nowrap">WeebProfile</span>
+          )}
         </Link>
       </div>
 
@@ -112,9 +114,7 @@ export function DashboardSidebar() {
             <span
               className={cn(
                 "text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded-full",
-                svgCount >= MAX_SVGS_FREE_TIER
-                  ? "text-amber-400 bg-amber-400/10"
-                  : "text-cyan-300/80 bg-cyan-400/10"
+                svgCount >= MAX_SVGS_FREE_TIER ? "text-amber-400 bg-amber-400/10" : "text-cyan-300/80 bg-cyan-400/10"
               )}
             >
               {svgCount}/{MAX_SVGS_FREE_TIER}

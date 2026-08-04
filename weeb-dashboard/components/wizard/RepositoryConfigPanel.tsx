@@ -41,7 +41,8 @@ function ConfigSummary({
 
       let display: string
       if (option.type === "boolean") display = value ? "On" : "Off"
-      else if (option.type === "select") display = shortLabel(option.options?.find((o) => o.value === value)?.label ?? String(value))
+      else if (option.type === "select")
+        display = shortLabel(option.options?.find((o) => o.value === value)?.label ?? String(value))
       else display = String(value)
 
       return { key: option.key, label: option.label, display }
@@ -198,7 +199,10 @@ export function RepositoryConfigPanel() {
                   <p className="text-xs text-muted-foreground line-clamp-2">{section.description}</p>
                 )}
                 {isSelected && hasConfigs ? (
-                  <ConfigSummary configOptions={section.configOptions} sectionConfig={sectionConfigs[section.id] || {}} />
+                  <ConfigSummary
+                    configOptions={section.configOptions}
+                    sectionConfig={sectionConfigs[section.id] || {}}
+                  />
                 ) : (
                   previewImage && (
                     <div

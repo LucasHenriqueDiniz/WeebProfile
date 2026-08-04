@@ -15,7 +15,17 @@ interface SvgContainerDivProps {
 }
 
 export function createSvgContainerDiv(props: SvgContainerDivProps): React.ReactElement {
-  const { size, style, cssDefs, children, terminalTheme, defaultTheme, hideTerminalHeader, fontFamily, terminalHeaderText } = props
+  const {
+    size,
+    style,
+    cssDefs,
+    children,
+    terminalTheme,
+    defaultTheme,
+    hideTerminalHeader,
+    fontFamily,
+    terminalHeaderText,
+  } = props
 
   const svgWidth = size === "half" ? 415 : 830
   const containerClass = `${size} ${style} flex flex-col relative`

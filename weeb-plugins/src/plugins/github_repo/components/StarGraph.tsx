@@ -161,7 +161,13 @@ function MilestonesChart({ points }: { points: StarHistoryPoint[] }): React.Reac
   )
 }
 
-function SparklineChart({ points, gradientId }: { points: StarHistoryPoint[]; gradientId: string }): React.ReactElement {
+function SparklineChart({
+  points,
+  gradientId,
+}: {
+  points: StarHistoryPoint[]
+  gradientId: string
+}): React.ReactElement {
   const W = 240
   const H = 76
   const coords = starCoords(points, W, H, 0.12)

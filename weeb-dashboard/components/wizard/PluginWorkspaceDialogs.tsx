@@ -1,15 +1,29 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { ProfileConfigModal } from "./ProfileConfigModal"
 import type { PluginWorkspace } from "./usePluginWorkspace"
 
 // Dialogs compartilhados entre a lista e o detalhe (perfil, desbloqueio de secret) -
 // montados uma vez, nao duplicados em cada coluna.
 export function PluginWorkspaceDialogs({ workspace }: { workspace: PluginWorkspace }) {
-  const { showProfileModal, setShowProfileModal, enabledPlugins, unlockDialog, setUnlockDialog, confirmUnlock, refreshSecretsPresence } =
-    workspace
+  const {
+    showProfileModal,
+    setShowProfileModal,
+    enabledPlugins,
+    unlockDialog,
+    setUnlockDialog,
+    confirmUnlock,
+    refreshSecretsPresence,
+  } = workspace
 
   return (
     <>

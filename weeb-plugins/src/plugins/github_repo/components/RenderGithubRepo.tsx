@@ -18,7 +18,12 @@ interface RenderGithubRepoProps {
 // que aparecem em config.sections. Banner tem design próprio (não reusa o padrão
 // "header + card" dos outros plugins); Stats/StarGraph/Languages/Topics são blocos
 // independentes - alguém pode querer só o gráfico de estrelas sem o resto, por exemplo.
-export function RenderGithubRepo({ config, data, style = "default", size = "half" }: RenderGithubRepoProps): React.ReactElement {
+export function RenderGithubRepo({
+  config,
+  data,
+  style = "default",
+  size = "half",
+}: RenderGithubRepoProps): React.ReactElement {
   if (!config.enabled || !data) {
     return <></>
   }

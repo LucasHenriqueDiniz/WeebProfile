@@ -52,21 +52,21 @@ Para uma integração de perfil público, a melhor solução é combinar:
 
 ## Conjunto mínimo de chamadas
 
-| Informação | Endpoint |
-|---|---|
-| Perfil | `GET /users/{username}` |
-| Repositórios | `GET /users/{username}/repos` |
-| Organizações públicas | `GET /users/{username}/orgs` |
-| Gists públicos | `GET /users/{username}/gists` |
-| Redes sociais | `GET /users/{username}/social_accounts` |
-| Seguidores | `GET /users/{username}/followers` |
-| Seguindo | `GET /users/{username}/following` |
-| Atividade pública recente | `GET /users/{username}/events/public` |
-| Repositórios favoritados | `GET /users/{username}/starred` |
-| Linguagens de um repositório | `GET /repos/{owner}/{repo}/languages` |
-| Detalhes de um repositório | `GET /repos/{owner}/{repo}` |
-| README | `GET /repos/{owner}/{repo}/readme` |
-| Calendário de contribuições | GraphQL: `contributionsCollection` |
+| Informação                   | Endpoint                                |
+| ---------------------------- | --------------------------------------- |
+| Perfil                       | `GET /users/{username}`                 |
+| Repositórios                 | `GET /users/{username}/repos`           |
+| Organizações públicas        | `GET /users/{username}/orgs`            |
+| Gists públicos               | `GET /users/{username}/gists`           |
+| Redes sociais                | `GET /users/{username}/social_accounts` |
+| Seguidores                   | `GET /users/{username}/followers`       |
+| Seguindo                     | `GET /users/{username}/following`       |
+| Atividade pública recente    | `GET /users/{username}/events/public`   |
+| Repositórios favoritados     | `GET /users/{username}/starred`         |
+| Linguagens de um repositório | `GET /repos/{owner}/{repo}/languages`   |
+| Detalhes de um repositório   | `GET /repos/{owner}/{repo}`             |
+| README                       | `GET /repos/{owner}/{repo}/readme`      |
+| Calendário de contribuições  | GraphQL: `contributionsCollection`      |
 
 ## Recomendação de escopo
 
@@ -290,12 +290,12 @@ Browser -> OAuth/GitHub App -> API do WeebProfile -> GitHub
 
 Valores gerais da REST API:
 
-| Tipo | Limite geral |
-|---|---:|
-| Não autenticado | `60` requisições por hora, por IP |
-| Autenticado como usuário | `5.000` requisições por hora |
-| Alguns cenários Enterprise | até `15.000` por hora |
-| `GITHUB_TOKEN` em Actions | normalmente `1.000` por hora por repositório |
+| Tipo                       |                                 Limite geral |
+| -------------------------- | -------------------------------------------: |
+| Não autenticado            |            `60` requisições por hora, por IP |
+| Autenticado como usuário   |                 `5.000` requisições por hora |
+| Alguns cenários Enterprise |                        até `15.000` por hora |
+| `GITHUB_TOKEN` em Actions  | normalmente `1.000` por hora por repositório |
 
 Alguns recursos, especialmente pesquisa, possuem limites próprios mais restritivos.
 
@@ -314,9 +314,9 @@ x-ratelimit-resource
 Exemplo de leitura:
 
 ```ts
-const remaining = Number(response.headers.get("x-ratelimit-remaining"));
-const resetEpoch = Number(response.headers.get("x-ratelimit-reset"));
-const resetAt = new Date(resetEpoch * 1000);
+const remaining = Number(response.headers.get("x-ratelimit-remaining"))
+const resetEpoch = Number(response.headers.get("x-ratelimit-reset"))
+const resetAt = new Date(resetEpoch * 1000)
 ```
 
 ## Consultar o limite
@@ -380,53 +380,53 @@ curl -L \
 
 ## Campos importantes
 
-| Campo | Uso no WeebProfile |
-|---|---|
-| `id` | ID numérico estável da conta |
-| `node_id` | ID global usado pelo GraphQL |
-| `login` | username atual |
-| `name` | nome de exibição |
-| `avatar_url` | avatar |
-| `html_url` | link do perfil |
-| `bio` | biografia |
-| `company` | empresa |
-| `blog` | website informado no perfil |
-| `location` | localização |
-| `email` | e-mail público, frequentemente `null` |
+| Campo              | Uso no WeebProfile                                       |
+| ------------------ | -------------------------------------------------------- |
+| `id`               | ID numérico estável da conta                             |
+| `node_id`          | ID global usado pelo GraphQL                             |
+| `login`            | username atual                                           |
+| `name`             | nome de exibição                                         |
+| `avatar_url`       | avatar                                                   |
+| `html_url`         | link do perfil                                           |
+| `bio`              | biografia                                                |
+| `company`          | empresa                                                  |
+| `blog`             | website informado no perfil                              |
+| `location`         | localização                                              |
+| `email`            | e-mail público, frequentemente `null`                    |
 | `twitter_username` | username antigo/específico do Twitter, quando disponível |
-| `public_repos` | quantidade de repositórios públicos |
-| `public_gists` | quantidade de gists públicos |
-| `followers` | quantidade de seguidores |
-| `following` | quantidade de contas seguidas |
-| `created_at` | criação da conta |
-| `updated_at` | última atualização do perfil |
-| `type` | normalmente `User` ou `Organization` |
-| `site_admin` | indica administrador do GitHub |
+| `public_repos`     | quantidade de repositórios públicos                      |
+| `public_gists`     | quantidade de gists públicos                             |
+| `followers`        | quantidade de seguidores                                 |
+| `following`        | quantidade de contas seguidas                            |
+| `created_at`       | criação da conta                                         |
+| `updated_at`       | última atualização do perfil                             |
+| `type`             | normalmente `User` ou `Organization`                     |
+| `site_admin`       | indica administrador do GitHub                           |
 
 ## Exemplo TypeScript
 
 ```ts
 interface GitHubUser {
-  id: number;
-  node_id: string;
-  login: string;
-  name: string | null;
-  avatar_url: string;
-  html_url: string;
-  bio: string | null;
-  company: string | null;
-  blog: string;
-  location: string | null;
-  email: string | null;
-  twitter_username: string | null;
-  public_repos: number;
-  public_gists: number;
-  followers: number;
-  following: number;
-  created_at: string;
-  updated_at: string;
-  type: "User" | "Organization" | string;
-  site_admin: boolean;
+  id: number
+  node_id: string
+  login: string
+  name: string | null
+  avatar_url: string
+  html_url: string
+  bio: string | null
+  company: string | null
+  blog: string
+  location: string | null
+  email: string | null
+  twitter_username: string | null
+  public_repos: number
+  public_gists: number
+  followers: number
+  following: number
+  created_at: string
+  updated_at: string
+  type: "User" | "Organization" | string
+  site_admin: boolean
 }
 ```
 
@@ -513,13 +513,13 @@ GET /users/LucasHenriqueDiniz/repos?type=owner&sort=pushed&direction=desc&per_pa
 
 ## Parâmetros
 
-| Parâmetro | Valores | Uso |
-|---|---|---|
-| `type` | `all`, `owner`, `member` | relação do usuário com o repositório |
-| `sort` | `created`, `updated`, `pushed`, `full_name` | ordenação |
-| `direction` | `asc`, `desc` | direção |
-| `per_page` | até `100` | itens por página |
-| `page` | número da página | paginação |
+| Parâmetro   | Valores                                     | Uso                                  |
+| ----------- | ------------------------------------------- | ------------------------------------ |
+| `type`      | `all`, `owner`, `member`                    | relação do usuário com o repositório |
+| `sort`      | `created`, `updated`, `pushed`, `full_name` | ordenação                            |
+| `direction` | `asc`, `desc`                               | direção                              |
+| `per_page`  | até `100`                                   | itens por página                     |
+| `page`      | número da página                            | paginação                            |
 
 Para o perfil principal, normalmente use:
 
@@ -533,9 +533,7 @@ per_page=100
 Depois filtre no código:
 
 ```ts
-const visibleRepos = repositories.filter(
-  (repo) => !repo.fork && !repo.archived && !repo.disabled,
-);
+const visibleRepos = repositories.filter((repo) => !repo.fork && !repo.archived && !repo.disabled)
 ```
 
 A escolha de esconder forks e arquivados é de produto, não uma regra da API.
@@ -554,37 +552,37 @@ GET /repos/LucasHenriqueDiniz/heartopia-vite
 
 ## Campos importantes
 
-| Campo | Descrição |
-|---|---|
-| `id` | ID numérico |
-| `node_id` | ID GraphQL |
-| `name` | nome |
-| `full_name` | `owner/repo` |
-| `description` | descrição |
-| `html_url` | página no GitHub |
-| `homepage` | website do projeto |
-| `private` | visibilidade privada |
-| `visibility` | `public`, `private` ou `internal` |
-| `fork` | é fork |
-| `forks_count` | forks |
-| `stargazers_count` | estrelas |
-| `watchers_count` | historicamente equivale a estrelas |
-| `subscribers_count` | watchers reais/assinantes |
+| Campo               | Descrição                                           |
+| ------------------- | --------------------------------------------------- |
+| `id`                | ID numérico                                         |
+| `node_id`           | ID GraphQL                                          |
+| `name`              | nome                                                |
+| `full_name`         | `owner/repo`                                        |
+| `description`       | descrição                                           |
+| `html_url`          | página no GitHub                                    |
+| `homepage`          | website do projeto                                  |
+| `private`           | visibilidade privada                                |
+| `visibility`        | `public`, `private` ou `internal`                   |
+| `fork`              | é fork                                              |
+| `forks_count`       | forks                                               |
+| `stargazers_count`  | estrelas                                            |
+| `watchers_count`    | historicamente equivale a estrelas                  |
+| `subscribers_count` | watchers reais/assinantes                           |
 | `open_issues_count` | issues e PRs abertos combinados em alguns contextos |
-| `language` | linguagem principal |
-| `topics` | tópicos |
-| `license` | licença detectada |
-| `default_branch` | branch padrão |
-| `size` | tamanho aproximado em KB |
-| `created_at` | criação |
-| `updated_at` | atualização do objeto |
-| `pushed_at` | último push |
-| `archived` | arquivado |
-| `disabled` | desabilitado |
-| `has_issues` | issues habilitadas |
-| `has_wiki` | wiki habilitada |
-| `has_pages` | GitHub Pages |
-| `has_discussions` | Discussions |
+| `language`          | linguagem principal                                 |
+| `topics`            | tópicos                                             |
+| `license`           | licença detectada                                   |
+| `default_branch`    | branch padrão                                       |
+| `size`              | tamanho aproximado em KB                            |
+| `created_at`        | criação                                             |
+| `updated_at`        | atualização do objeto                               |
+| `pushed_at`         | último push                                         |
+| `archived`          | arquivado                                           |
+| `disabled`          | desabilitado                                        |
+| `has_issues`        | issues habilitadas                                  |
+| `has_wiki`          | wiki habilitada                                     |
+| `has_pages`         | GitHub Pages                                        |
+| `has_discussions`   | Discussions                                         |
 
 ## Stars, watchers e subscribers
 
@@ -642,14 +640,11 @@ Os valores representam **bytes de código detectados para cada linguagem**. Eles
 
 ```ts
 function languagePercentages(
-  languages: Record<string, number>,
+  languages: Record<string, number>
 ): Array<{ name: string; bytes: number; percentage: number }> {
-  const total = Object.values(languages).reduce(
-    (sum, bytes) => sum + bytes,
-    0,
-  );
+  const total = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0)
 
-  if (total === 0) return [];
+  if (total === 0) return []
 
   return Object.entries(languages)
     .map(([name, bytes]) => ({
@@ -657,25 +652,23 @@ function languagePercentages(
       bytes,
       percentage: (bytes / total) * 100,
     }))
-    .sort((a, b) => b.bytes - a.bytes);
+    .sort((a, b) => b.bytes - a.bytes)
 }
 ```
 
 ## Agregar linguagens de todos os repositórios
 
 ```ts
-function aggregateLanguages(
-  repositoryLanguages: Array<Record<string, number>>,
-): Record<string, number> {
-  const total: Record<string, number> = {};
+function aggregateLanguages(repositoryLanguages: Array<Record<string, number>>): Record<string, number> {
+  const total: Record<string, number> = {}
 
   for (const languages of repositoryLanguages) {
     for (const [language, bytes] of Object.entries(languages)) {
-      total[language] = (total[language] ?? 0) + bytes;
+      total[language] = (total[language] ?? 0) + bytes
     }
   }
 
-  return total;
+  return total
 }
 ```
 
@@ -735,16 +728,16 @@ O conteúdo normalmente é retornado em Base64.
 
 ```ts
 function decodeBase64Utf8(value: string): string {
-  const normalized = value.replace(/\n/g, "");
+  const normalized = value.replace(/\n/g, "")
 
   if (typeof Buffer !== "undefined") {
-    return Buffer.from(normalized, "base64").toString("utf8");
+    return Buffer.from(normalized, "base64").toString("utf8")
   }
 
-  const binary = atob(normalized);
-  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  const binary = atob(normalized)
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0))
 
-  return new TextDecoder().decode(bytes);
+  return new TextDecoder().decode(bytes)
 }
 ```
 
@@ -800,16 +793,16 @@ GET /repos/{owner}/{repo}/commits
 
 Parâmetros úteis:
 
-| Parâmetro | Uso |
-|---|---|
-| `sha` | branch ou SHA inicial |
-| `path` | filtrar commits que modificaram um caminho |
-| `author` | login ou e-mail do autor |
-| `committer` | login ou e-mail do committer |
-| `since` | início ISO 8601 |
-| `until` | fim ISO 8601 |
-| `per_page` | até 100 |
-| `page` | página |
+| Parâmetro   | Uso                                        |
+| ----------- | ------------------------------------------ |
+| `sha`       | branch ou SHA inicial                      |
+| `path`      | filtrar commits que modificaram um caminho |
+| `author`    | login ou e-mail do autor                   |
+| `committer` | login ou e-mail do committer               |
+| `since`     | início ISO 8601                            |
+| `until`     | fim ISO 8601                               |
+| `per_page`  | até 100                                    |
+| `page`      | página                                     |
 
 Exemplo:
 
@@ -1153,22 +1146,22 @@ GET /users/LucasHenriqueDiniz/events/public?per_page=30&page=1
 
 ## Tipos frequentes
 
-| Tipo | Significado aproximado |
-|---|---|
-| `PushEvent` | push |
-| `CreateEvent` | criação de branch, tag ou repositório |
-| `DeleteEvent` | exclusão de branch ou tag |
-| `ForkEvent` | fork |
-| `WatchEvent` | estrela adicionada |
-| `IssuesEvent` | ação em issue |
-| `IssueCommentEvent` | comentário |
-| `PullRequestEvent` | ação em pull request |
-| `PullRequestReviewEvent` | review |
-| `PullRequestReviewCommentEvent` | comentário em review |
-| `ReleaseEvent` | release |
-| `PublicEvent` | repositório tornou-se público |
-| `MemberEvent` | colaborador adicionado |
-| `CommitCommentEvent` | comentário em commit |
+| Tipo                            | Significado aproximado                |
+| ------------------------------- | ------------------------------------- |
+| `PushEvent`                     | push                                  |
+| `CreateEvent`                   | criação de branch, tag ou repositório |
+| `DeleteEvent`                   | exclusão de branch ou tag             |
+| `ForkEvent`                     | fork                                  |
+| `WatchEvent`                    | estrela adicionada                    |
+| `IssuesEvent`                   | ação em issue                         |
+| `IssueCommentEvent`             | comentário                            |
+| `PullRequestEvent`              | ação em pull request                  |
+| `PullRequestReviewEvent`        | review                                |
+| `PullRequestReviewCommentEvent` | comentário em review                  |
+| `ReleaseEvent`                  | release                               |
+| `PublicEvent`                   | repositório tornou-se público         |
+| `MemberEvent`                   | colaborador adicionado                |
+| `CommitCommentEvent`            | comentário em commit                  |
 
 O conteúdo de `payload` varia conforme `type`.
 
@@ -1202,12 +1195,12 @@ Para o WeebProfile, use o primeiro.
 
 ```ts
 interface ActivityItem {
-  id: string;
-  type: string;
-  repository: string;
-  createdAt: string;
-  action?: string;
-  url?: string;
+  id: string
+  type: string
+  repository: string
+  createdAt: string
+  action?: string
+  url?: string
 }
 ```
 
@@ -1256,11 +1249,7 @@ User-Agent: WeebProfile
 ## Consulta recomendada
 
 ```graphql
-query WeebProfileContributions(
-  $login: String!
-  $from: DateTime!
-  $to: DateTime!
-) {
+query WeebProfileContributions($login: String!, $from: DateTime!, $to: DateTime!) {
   user(login: $login) {
     login
 
@@ -1337,21 +1326,17 @@ query WeebProfileContributions(
 
 ```ts
 interface GraphQLErrorItem {
-  message: string;
-  path?: Array<string | number>;
-  type?: string;
+  message: string
+  path?: Array<string | number>
+  type?: string
 }
 
 interface GraphQLResponse<T> {
-  data?: T;
-  errors?: GraphQLErrorItem[];
+  data?: T
+  errors?: GraphQLErrorItem[]
 }
 
-async function githubGraphQL<T>(
-  query: string,
-  variables: Record<string, unknown>,
-  token: string,
-): Promise<T> {
+async function githubGraphQL<T>(query: string, variables: Record<string, unknown>, token: string): Promise<T> {
   const response = await fetch("https://api.github.com/graphql", {
     method: "POST",
     headers: {
@@ -1361,23 +1346,22 @@ async function githubGraphQL<T>(
       "User-Agent": "WeebProfile",
     },
     body: JSON.stringify({ query, variables }),
-  });
+  })
 
-  const payload = (await response.json()) as GraphQLResponse<T>;
+  const payload = (await response.json()) as GraphQLResponse<T>
 
   if (!response.ok || payload.errors?.length) {
     const message =
-      payload.errors?.map((error) => error.message).join("; ") ||
-      `GitHub GraphQL returned ${response.status}`;
+      payload.errors?.map((error) => error.message).join("; ") || `GitHub GraphQL returned ${response.status}`
 
-    throw new Error(message);
+    throw new Error(message)
   }
 
   if (!payload.data) {
-    throw new Error("GitHub GraphQL returned no data");
+    throw new Error("GitHub GraphQL returned no data")
   }
 
-  return payload.data;
+  return payload.data
 }
 ```
 
@@ -1453,54 +1437,48 @@ Não monte a próxima URL manualmente quando o `Link` estiver disponível.
 ## Parser simples
 
 ```ts
-function parseLinkHeader(
-  header: string | null,
-): Record<string, string> {
-  if (!header) return {};
+function parseLinkHeader(header: string | null): Record<string, string> {
+  if (!header) return {}
 
-  const links: Record<string, string> = {};
+  const links: Record<string, string> = {}
 
   for (const part of header.split(",")) {
-    const match = part.match(/<([^>]+)>\s*;\s*rel="([^"]+)"/);
+    const match = part.match(/<([^>]+)>\s*;\s*rel="([^"]+)"/)
 
     if (match) {
-      links[match[2]] = match[1];
+      links[match[2]] = match[1]
     }
   }
 
-  return links;
+  return links
 }
 ```
 
 ## Buscar todas as páginas
 
 ```ts
-async function fetchAllPages<T>(
-  initialUrl: string,
-  init: RequestInit,
-  maxPages = 10,
-): Promise<T[]> {
-  const items: T[] = [];
-  let url: string | undefined = initialUrl;
-  let page = 0;
+async function fetchAllPages<T>(initialUrl: string, init: RequestInit, maxPages = 10): Promise<T[]> {
+  const items: T[] = []
+  let url: string | undefined = initialUrl
+  let page = 0
 
   while (url && page < maxPages) {
-    const response = await fetch(url, init);
+    const response = await fetch(url, init)
 
     if (!response.ok) {
-      throw new Error(`GitHub returned ${response.status}`);
+      throw new Error(`GitHub returned ${response.status}`)
     }
 
-    const payload = (await response.json()) as T[];
+    const payload = (await response.json()) as T[]
 
-    items.push(...payload);
+    items.push(...payload)
 
-    const links = parseLinkHeader(response.headers.get("link"));
-    url = links.next;
-    page += 1;
+    const links = parseLinkHeader(response.headers.get("link"))
+    url = links.next
+    page += 1
   }
 
-  return items;
+  return items
 }
 ```
 
@@ -1511,9 +1489,9 @@ Não permita paginação infinita controlada pelo usuário.
 Exemplo:
 
 ```ts
-const MAX_REPOSITORY_PAGES = 5;
-const MAX_GIST_PAGES = 2;
-const MAX_EVENT_PAGES = 2;
+const MAX_REPOSITORY_PAGES = 5
+const MAX_GIST_PAGES = 2
+const MAX_EVENT_PAGES = 2
 ```
 
 ---
@@ -1554,45 +1532,41 @@ Quando a requisição condicional está corretamente autenticada e retorna `304`
 
 ```ts
 interface CacheEntry<T> {
-  etag: string | null;
-  value: T;
-  storedAt: number;
+  etag: string | null
+  value: T
+  storedAt: number
 }
 
-async function fetchWithEtag<T>(
-  url: string,
-  token: string,
-  cached?: CacheEntry<T>,
-): Promise<CacheEntry<T>> {
+async function fetchWithEtag<T>(url: string, token: string, cached?: CacheEntry<T>): Promise<CacheEntry<T>> {
   const headers = new Headers({
     Accept: "application/vnd.github+json",
     Authorization: `Bearer ${token}`,
     "X-GitHub-Api-Version": "2026-03-10",
     "User-Agent": "WeebProfile",
-  });
+  })
 
   if (cached?.etag) {
-    headers.set("If-None-Match", cached.etag);
+    headers.set("If-None-Match", cached.etag)
   }
 
-  const response = await fetch(url, { headers });
+  const response = await fetch(url, { headers })
 
   if (response.status === 304 && cached) {
     return {
       ...cached,
       storedAt: Date.now(),
-    };
+    }
   }
 
   if (!response.ok) {
-    throw new Error(`GitHub returned ${response.status}`);
+    throw new Error(`GitHub returned ${response.status}`)
   }
 
   return {
     etag: response.headers.get("etag"),
     value: (await response.json()) as T,
     storedAt: Date.now(),
-  };
+  }
 }
 ```
 
@@ -1600,20 +1574,20 @@ async function fetchWithEtag<T>(
 
 # 20. Erros e códigos HTTP
 
-| Status | Significado comum |
-|---:|---|
-| `200` | sucesso |
-| `201` | recurso criado |
-| `202` | aceito/processamento ainda pode estar ocorrendo |
-| `204` | sucesso sem corpo |
-| `304` | cache ainda válido |
-| `400` | requisição inválida |
-| `401` | token ausente, inválido ou expirado |
-| `403` | proibido, limite ou política |
-| `404` | não encontrado ou ocultado por falta de acesso |
-| `410` | versão/recurso removido |
-| `422` | validação falhou |
-| `429` | excesso de requisições |
+| Status | Significado comum                               |
+| -----: | ----------------------------------------------- |
+|  `200` | sucesso                                         |
+|  `201` | recurso criado                                  |
+|  `202` | aceito/processamento ainda pode estar ocorrendo |
+|  `204` | sucesso sem corpo                               |
+|  `304` | cache ainda válido                              |
+|  `400` | requisição inválida                             |
+|  `401` | token ausente, inválido ou expirado             |
+|  `403` | proibido, limite ou política                    |
+|  `404` | não encontrado ou ocultado por falta de acesso  |
+|  `410` | versão/recurso removido                         |
+|  `422` | validação falhou                                |
+|  `429` | excesso de requisições                          |
 
 ## `404` nem sempre significa inexistente
 
@@ -1623,29 +1597,27 @@ Para evitar revelar recursos privados, o GitHub pode retornar `404` quando o tok
 
 ```ts
 interface GitHubErrorBody {
-  message?: string;
-  documentation_url?: string;
-  status?: string;
+  message?: string
+  documentation_url?: string
+  status?: string
 }
 
 class GitHubApiError extends Error {
   constructor(
     public readonly status: number,
     message: string,
-    public readonly documentationUrl?: string,
+    public readonly documentationUrl?: string
   ) {
-    super(message);
-    this.name = "GitHubApiError";
+    super(message)
+    this.name = "GitHubApiError"
   }
 }
 
-async function readGitHubError(
-  response: Response,
-): Promise<GitHubApiError> {
-  let body: GitHubErrorBody = {};
+async function readGitHubError(response: Response): Promise<GitHubApiError> {
+  let body: GitHubErrorBody = {}
 
   try {
-    body = (await response.json()) as GitHubErrorBody;
+    body = (await response.json()) as GitHubErrorBody
   } catch {
     // A resposta pode não ser JSON.
   }
@@ -1653,8 +1625,8 @@ async function readGitHubError(
   return new GitHubApiError(
     response.status,
     body.message ?? `GitHub returned ${response.status}`,
-    body.documentation_url,
-  );
+    body.documentation_url
+  )
 }
 ```
 
@@ -1679,90 +1651,74 @@ Use backoff exponencial e respeite `Retry-After`.
 # 21. Cliente TypeScript reutilizável
 
 ```ts
-const GITHUB_API_BASE = "https://api.github.com";
-const GITHUB_API_VERSION = "2026-03-10";
+const GITHUB_API_BASE = "https://api.github.com"
+const GITHUB_API_VERSION = "2026-03-10"
 
 interface GitHubRequestOptions {
-  token?: string;
-  signal?: AbortSignal;
-  headers?: HeadersInit;
+  token?: string
+  signal?: AbortSignal
+  headers?: HeadersInit
 }
 
-function buildGitHubHeaders(
-  token?: string,
-  extra?: HeadersInit,
-): Headers {
-  const headers = new Headers(extra);
+function buildGitHubHeaders(token?: string, extra?: HeadersInit): Headers {
+  const headers = new Headers(extra)
 
-  headers.set("Accept", "application/vnd.github+json");
-  headers.set("X-GitHub-Api-Version", GITHUB_API_VERSION);
-  headers.set("User-Agent", "WeebProfile");
+  headers.set("Accept", "application/vnd.github+json")
+  headers.set("X-GitHub-Api-Version", GITHUB_API_VERSION)
+  headers.set("User-Agent", "WeebProfile")
 
   if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+    headers.set("Authorization", `Bearer ${token}`)
   }
 
-  return headers;
+  return headers
 }
 
 async function githubRest<T>(
   pathOrUrl: string,
-  options: GitHubRequestOptions = {},
+  options: GitHubRequestOptions = {}
 ): Promise<{
-  data: T;
-  etag: string | null;
+  data: T
+  etag: string | null
   rateLimit: {
-    limit: number | null;
-    remaining: number | null;
-    resetAt: Date | null;
-    resource: string | null;
-  };
+    limit: number | null
+    remaining: number | null
+    resetAt: Date | null
+    resource: string | null
+  }
 }> {
-  const url = pathOrUrl.startsWith("http")
-    ? pathOrUrl
-    : `${GITHUB_API_BASE}${pathOrUrl}`;
+  const url = pathOrUrl.startsWith("http") ? pathOrUrl : `${GITHUB_API_BASE}${pathOrUrl}`
 
   const response = await fetch(url, {
     method: "GET",
-    headers: buildGitHubHeaders(
-      options.token,
-      options.headers,
-    ),
+    headers: buildGitHubHeaders(options.token, options.headers),
     signal: options.signal,
-  });
+  })
 
   if (!response.ok) {
-    throw await readGitHubError(response);
+    throw await readGitHubError(response)
   }
 
-  const reset = response.headers.get("x-ratelimit-reset");
+  const reset = response.headers.get("x-ratelimit-reset")
 
   return {
     data: (await response.json()) as T,
     etag: response.headers.get("etag"),
     rateLimit: {
-      limit: toOptionalNumber(
-        response.headers.get("x-ratelimit-limit"),
-      ),
-      remaining: toOptionalNumber(
-        response.headers.get("x-ratelimit-remaining"),
-      ),
-      resetAt: reset
-        ? new Date(Number(reset) * 1000)
-        : null,
+      limit: toOptionalNumber(response.headers.get("x-ratelimit-limit")),
+      remaining: toOptionalNumber(response.headers.get("x-ratelimit-remaining")),
+      resetAt: reset ? new Date(Number(reset) * 1000) : null,
       resource: response.headers.get("x-ratelimit-resource"),
     },
-  };
+  }
 }
 
-function toOptionalNumber(
-  value: string | null,
-): number | null {
-  if (value === null) return null;
+function toOptionalNumber(value: string | null): number | null {
+  if (value === null) return null
 
-  const parsed = Number(value);
+  const parsed = Number(value)
 
-  return Number.isFinite(parsed) ? parsed : null;
+  return Number.isFinite(parsed) ? parsed : null
 }
 ```
 
@@ -1770,58 +1726,37 @@ function toOptionalNumber(
 
 ```ts
 function encodePathPart(value: string): string {
-  return encodeURIComponent(value);
+  return encodeURIComponent(value)
 }
 
-async function getUser(
-  username: string,
-  token?: string,
-): Promise<GitHubUser> {
-  const user = encodePathPart(username);
+async function getUser(username: string, token?: string): Promise<GitHubUser> {
+  const user = encodePathPart(username)
 
-  return (
-    await githubRest<GitHubUser>(
-      `/users/${user}`,
-      { token },
-    )
-  ).data;
+  return (await githubRest<GitHubUser>(`/users/${user}`, { token })).data
 }
 
-async function getUserRepositories(
-  username: string,
-  token?: string,
-): Promise<GitHubRepository[]> {
-  const user = encodePathPart(username);
+async function getUserRepositories(username: string, token?: string): Promise<GitHubRepository[]> {
+  const user = encodePathPart(username)
 
   const query = new URLSearchParams({
     type: "owner",
     sort: "pushed",
     direction: "desc",
     per_page: "100",
-  });
+  })
 
-  return (
-    await githubRest<GitHubRepository[]>(
-      `/users/${user}/repos?${query}`,
-      { token },
-    )
-  ).data;
+  return (await githubRest<GitHubRepository[]>(`/users/${user}/repos?${query}`, { token })).data
 }
 
 async function getRepositoryLanguages(
   owner: string,
   repository: string,
-  token?: string,
+  token?: string
 ): Promise<Record<string, number>> {
-  const safeOwner = encodePathPart(owner);
-  const safeRepo = encodePathPart(repository);
+  const safeOwner = encodePathPart(owner)
+  const safeRepo = encodePathPart(repository)
 
-  return (
-    await githubRest<Record<string, number>>(
-      `/repos/${safeOwner}/${safeRepo}/languages`,
-      { token },
-    )
-  ).data;
+  return (await githubRest<Record<string, number>>(`/repos/${safeOwner}/${safeRepo}/languages`, { token })).data
 }
 ```
 
@@ -1833,57 +1768,57 @@ async function getRepositoryLanguages(
 
 ```ts
 interface GitHubRepository {
-  id: number;
-  name: string;
-  full_name: string;
-  description: string | null;
-  html_url: string;
-  homepage: string | null;
-  fork: boolean;
-  archived: boolean;
-  disabled: boolean;
-  visibility: string;
-  language: string | null;
-  stargazers_count: number;
-  forks_count: number;
-  open_issues_count: number;
-  topics: string[];
-  default_branch: string;
-  created_at: string;
-  updated_at: string;
-  pushed_at: string | null;
+  id: number
+  name: string
+  full_name: string
+  description: string | null
+  html_url: string
+  homepage: string | null
+  fork: boolean
+  archived: boolean
+  disabled: boolean
+  visibility: string
+  language: string | null
+  stargazers_count: number
+  forks_count: number
+  open_issues_count: number
+  topics: string[]
+  default_branch: string
+  created_at: string
+  updated_at: string
+  pushed_at: string | null
 }
 
 interface GitHubOrganizationSummary {
-  id: number;
-  login: string;
-  avatar_url: string;
-  description: string | null;
-  url: string;
+  id: number
+  login: string
+  avatar_url: string
+  description: string | null
+  url: string
 }
 
 interface GitHubGistSummary {
-  id: string;
-  description: string | null;
-  public: boolean;
-  html_url: string;
-  created_at: string;
-  updated_at: string;
+  id: string
+  description: string | null
+  public: boolean
+  html_url: string
+  created_at: string
+  updated_at: string
   files: Record<
     string,
     {
-      filename: string;
-      language: string | null;
-      type: string;
-      size: number;
-      raw_url: string;
+      filename: string
+      language: string | null
+      type: string
+      size: number
+      raw_url: string
     }
-  >;
+  >
 }
 
 interface GitHubSocialAccount {
-  provider: string;
-  url: string;
+  provider: string
+  url: string
 }
 ```
 
@@ -1891,68 +1826,44 @@ interface GitHubSocialAccount {
 
 ```ts
 interface WeebProfileGitHubData {
-  user: GitHubUser;
-  repositories: GitHubRepository[];
-  organizations: GitHubOrganizationSummary[];
-  gists: GitHubGistSummary[];
-  socialAccounts: GitHubSocialAccount[];
+  user: GitHubUser
+  repositories: GitHubRepository[]
+  organizations: GitHubOrganizationSummary[]
+  gists: GitHubGistSummary[]
+  socialAccounts: GitHubSocialAccount[]
   languages: Array<{
-    name: string;
-    bytes: number;
-    percentage: number;
-  }>;
+    name: string
+    bytes: number
+    percentage: number
+  }>
 }
 
-async function getWeebProfileGitHubData(
-  username: string,
-  token: string,
-): Promise<WeebProfileGitHubData> {
-  const safeUsername = encodePathPart(username);
+async function getWeebProfileGitHubData(username: string, token: string): Promise<WeebProfileGitHubData> {
+  const safeUsername = encodePathPart(username)
 
-  const [
-    userResponse,
-    repositoriesResponse,
-    organizationsResponse,
-    gistsResponse,
-    socialResponse,
-  ] = await Promise.all([
-    githubRest<GitHubUser>(
-      `/users/${safeUsername}`,
-      { token },
-    ),
-    githubRest<GitHubRepository[]>(
-      `/users/${safeUsername}/repos?type=owner&sort=pushed&direction=desc&per_page=100`,
-      { token },
-    ),
-    githubRest<GitHubOrganizationSummary[]>(
-      `/users/${safeUsername}/orgs?per_page=100`,
-      { token },
-    ),
-    githubRest<GitHubGistSummary[]>(
-      `/users/${safeUsername}/gists?per_page=30`,
-      { token },
-    ),
-    githubRest<GitHubSocialAccount[]>(
-      `/users/${safeUsername}/social_accounts?per_page=100`,
-      { token },
-    ),
-  ]);
+  const [userResponse, repositoriesResponse, organizationsResponse, gistsResponse, socialResponse] = await Promise.all([
+    githubRest<GitHubUser>(`/users/${safeUsername}`, { token }),
+    githubRest<GitHubRepository[]>(`/users/${safeUsername}/repos?type=owner&sort=pushed&direction=desc&per_page=100`, {
+      token,
+    }),
+    githubRest<GitHubOrganizationSummary[]>(`/users/${safeUsername}/orgs?per_page=100`, { token }),
+    githubRest<GitHubGistSummary[]>(`/users/${safeUsername}/gists?per_page=30`, { token }),
+    githubRest<GitHubSocialAccount[]>(`/users/${safeUsername}/social_accounts?per_page=100`, { token }),
+  ])
 
-  const repositories = repositoriesResponse.data
-    .filter((repo) => !repo.fork && !repo.disabled)
-    .slice(0, 12);
+  const repositories = repositoriesResponse.data.filter((repo) => !repo.fork && !repo.disabled).slice(0, 12)
 
   // Limite a concorrência em produção. Este Promise.all é aceitável
   // para uma lista pequena previamente limitada.
   const languageMaps = await Promise.all(
     repositories.map(async (repo) => {
-      const [owner, name] = repo.full_name.split("/", 2);
+      const [owner, name] = repo.full_name.split("/", 2)
 
-      return getRepositoryLanguages(owner, name, token);
-    }),
-  );
+      return getRepositoryLanguages(owner, name, token)
+    })
+  )
 
-  const aggregate = aggregateLanguages(languageMaps);
+  const aggregate = aggregateLanguages(languageMaps)
 
   return {
     user: userResponse.data,
@@ -1961,7 +1872,7 @@ async function getWeebProfileGitHubData(
     gists: gistsResponse.data,
     socialAccounts: socialResponse.data,
     languages: languagePercentages(aggregate),
-  };
+  }
 }
 ```
 
@@ -1975,45 +1886,38 @@ Exemplo simples:
 async function mapWithConcurrency<T, R>(
   items: T[],
   concurrency: number,
-  mapper: (item: T, index: number) => Promise<R>,
+  mapper: (item: T, index: number) => Promise<R>
 ): Promise<R[]> {
-  const results = new Array<R>(items.length);
-  let nextIndex = 0;
+  const results = new Array<R>(items.length)
+  let nextIndex = 0
 
   async function worker(): Promise<void> {
     while (true) {
-      const index = nextIndex;
-      nextIndex += 1;
+      const index = nextIndex
+      nextIndex += 1
 
-      if (index >= items.length) return;
+      if (index >= items.length) return
 
-      results[index] = await mapper(items[index], index);
+      results[index] = await mapper(items[index], index)
     }
   }
 
-  const workers = Array.from(
-    { length: Math.min(concurrency, items.length) },
-    () => worker(),
-  );
+  const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => worker())
 
-  await Promise.all(workers);
+  await Promise.all(workers)
 
-  return results;
+  return results
 }
 ```
 
 Uso:
 
 ```ts
-const languages = await mapWithConcurrency(
-  repositories,
-  4,
-  async (repo) => {
-    const [owner, name] = repo.full_name.split("/", 2);
+const languages = await mapWithConcurrency(repositories, 4, async (repo) => {
+  const [owner, name] = repo.full_name.split("/", 2)
 
-    return getRepositoryLanguages(owner, name, token);
-  },
-);
+  return getRepositoryLanguages(owner, name, token)
+})
 ```
 
 ---
@@ -2025,90 +1929,90 @@ Não passe as respostas brutas do GitHub diretamente para toda a aplicação.
 ```ts
 interface WeebProfileGitHub {
   identity: {
-    githubId: number;
-    login: string;
-    displayName: string;
-    avatarUrl: string;
-    profileUrl: string;
-    bio?: string;
-    location?: string;
-    company?: string;
-    website?: string;
-    accountCreatedAt: string;
-  };
+    githubId: number
+    login: string
+    displayName: string
+    avatarUrl: string
+    profileUrl: string
+    bio?: string
+    location?: string
+    company?: string
+    website?: string
+    accountCreatedAt: string
+  }
 
   counts: {
-    publicRepositories: number;
-    publicGists: number;
-    followers: number;
-    following: number;
-    totalContributions?: number;
-    commits?: number;
-    issues?: number;
-    pullRequests?: number;
-    pullRequestReviews?: number;
-    privateContributions?: number;
-  };
+    publicRepositories: number
+    publicGists: number
+    followers: number
+    following: number
+    totalContributions?: number
+    commits?: number
+    issues?: number
+    pullRequests?: number
+    pullRequestReviews?: number
+    privateContributions?: number
+  }
 
   repositories: Array<{
-    id: number;
-    name: string;
-    fullName: string;
-    description?: string;
-    url: string;
-    homepage?: string;
-    stars: number;
-    forks: number;
-    openIssuesAndPullRequests: number;
-    primaryLanguage?: string;
-    topics: string[];
-    isFork: boolean;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    pushedAt?: string;
-  }>;
+    id: number
+    name: string
+    fullName: string
+    description?: string
+    url: string
+    homepage?: string
+    stars: number
+    forks: number
+    openIssuesAndPullRequests: number
+    primaryLanguage?: string
+    topics: string[]
+    isFork: boolean
+    isArchived: boolean
+    createdAt: string
+    updatedAt: string
+    pushedAt?: string
+  }>
 
   languageStats: Array<{
-    name: string;
-    bytes: number;
-    percentage: number;
-  }>;
+    name: string
+    bytes: number
+    percentage: number
+  }>
 
   organizations: Array<{
-    login: string;
-    avatarUrl: string;
-    description?: string;
-    profileUrl: string;
-  }>;
+    login: string
+    avatarUrl: string
+    description?: string
+    profileUrl: string
+  }>
 
   gists: Array<{
-    id: string;
-    description?: string;
-    url: string;
+    id: string
+    description?: string
+    url: string
     files: Array<{
-      name: string;
-      language?: string;
-      size: number;
-      rawUrl: string;
-    }>;
-    createdAt: string;
-    updatedAt: string;
-  }>;
+      name: string
+      language?: string
+      size: number
+      rawUrl: string
+    }>
+    createdAt: string
+    updatedAt: string
+  }>
 
   socialAccounts: Array<{
-    provider: string;
-    url: string;
-  }>;
+    provider: string
+    url: string
+  }>
 
   contributionCalendar?: Array<{
-    date: string;
-    count: number;
-    level: string;
-    color: string;
-  }>;
+    date: string
+    count: number
+    level: string
+    color: string
+  }>
 
-  fetchedAt: string;
+  fetchedAt: string
 }
 ```
 
@@ -2161,12 +2065,11 @@ Responsabilidades:
 Um login do GitHub não deve ser usado diretamente em caminho sem validação/escape.
 
 ```ts
-const GITHUB_LOGIN_PATTERN =
-  /^(?!-)(?!.*--)[A-Za-z0-9-]{1,39}(?<!-)$/;
+const GITHUB_LOGIN_PATTERN = /^(?!-)(?!.*--)[A-Za-z0-9-]{1,39}(?<!-)$/
 
 function assertGitHubLogin(value: string): void {
   if (!GITHUB_LOGIN_PATTERN.test(value)) {
-    throw new Error("Invalid GitHub username");
+    throw new Error("Invalid GitHub username")
   }
 }
 ```
@@ -2202,7 +2105,7 @@ Exemplo conceitual:
 
 ```ts
 interface Env {
-  GITHUB_TOKEN: string;
+  GITHUB_TOKEN: string
 }
 ```
 
@@ -2210,14 +2113,11 @@ No Worker:
 
 ```ts
 export default {
-  async fetch(
-    request: Request,
-    env: Env,
-  ): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     // env.GITHUB_TOKEN fica no servidor.
-    return new Response("...");
+    return new Response("...")
   },
-};
+}
 ```
 
 ---
@@ -2226,18 +2126,18 @@ export default {
 
 ## TTL sugerido
 
-| Recurso | TTL sugerido |
-|---|---:|
-| perfil | 30 min–6 h |
-| repositórios | 15 min–2 h |
-| linguagens | 6–24 h |
-| organizações | 6–24 h |
-| gists | 1–6 h |
-| redes sociais | 6–24 h |
-| estrelas | 1–6 h |
-| atividade recente | 5–15 min |
-| contribuições | 15–60 min |
-| README | 1–24 h |
+| Recurso           | TTL sugerido |
+| ----------------- | -----------: |
+| perfil            |   30 min–6 h |
+| repositórios      |   15 min–2 h |
+| linguagens        |       6–24 h |
+| organizações      |       6–24 h |
+| gists             |        1–6 h |
+| redes sociais     |       6–24 h |
+| estrelas          |        1–6 h |
+| atividade recente |     5–15 min |
+| contribuições     |    15–60 min |
+| README            |       1–24 h |
 
 Esses valores não são exigências do GitHub. São uma política recomendada para o produto.
 
@@ -2300,7 +2200,7 @@ Exemplo de metadata:
 Errado:
 
 ```ts
-const token = import.meta.env.VITE_GITHUB_TOKEN;
+const token = import.meta.env.VITE_GITHUB_TOKEN
 ```
 
 ## Não calcule contribuições pelo feed de eventos

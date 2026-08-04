@@ -82,7 +82,9 @@ export function PluginListPanel({ workspace }: PluginListPanelProps) {
               onClick={() => setCategory(cat)}
               className={cn(
                 "px-2 py-1 rounded-full text-[11px] font-medium transition-all capitalize",
-                category === cat ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                category === cat
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
               )}
             >
               {categoryLabels[cat] || cat}

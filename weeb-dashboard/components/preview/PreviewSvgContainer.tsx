@@ -211,12 +211,7 @@ ${cssVariables}
     const sync = () => {
       const frame = iframeRef.current
       if (!frame) return
-      const measured = Math.max(
-        mountNode.scrollHeight,
-        doc.body.scrollHeight,
-        doc.documentElement.scrollHeight,
-        height
-      )
+      const measured = Math.max(mountNode.scrollHeight, doc.body.scrollHeight, doc.documentElement.scrollHeight, height)
       if (Math.abs(parseFloat(frame.style.height || "0") - measured) > 1) {
         frame.style.height = `${measured}px`
       }

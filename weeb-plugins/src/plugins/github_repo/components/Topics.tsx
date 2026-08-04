@@ -72,7 +72,9 @@ function TopicCloud({ topics, max }: { topics: string[]; max: number }): React.R
               fontSize: big ? 13 : 12,
               padding: "5px 12px",
               background: big ? HL_SOFT : ghost ? "transparent" : HL_SOFTER,
-              color: ghost ? "var(--default-color-muted)" : `color-mix(in srgb, ${HL} 75%, var(--default-color-default))`,
+              color: ghost
+                ? "var(--default-color-muted)"
+                : `color-mix(in srgb, ${HL} 75%, var(--default-color-default))`,
               border: ghost
                 ? "0.5px solid color-mix(in srgb, var(--default-color-muted) 30%, transparent)"
                 : `0.5px solid color-mix(in srgb, ${HL} 30%, transparent)`,

@@ -1,0 +1,87 @@
+name: CI
+
+# No path filter, unlike the workflow this replaces: a change in weeb-plugins can
+# break weeb-dashboard's typecheck (they share types through dist/), and a change
+# in the dashboard can break nothing in plugins but everything at build time. The
+# only useful gate is the one that runs on every change.
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Format, lint, types, tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Must come before typecheck. weeb-dashboard imports @weeb/weeb-plugins/*,
+      # which resolves to dist/, so without this the type check runs against
+      # whatever happens to be there -- or fails outright on a clean checkout.
+      - name: Build weeb-plugins
+        run: pnpm build:deps
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Tests
+        run: pnpm --filter @weeb/weeb-plugins test
+
+      # Catches what typecheck alone does not: bundler resolution, missing exports
+      # from the package's exports map, and anything that only fails at build time.
+      - name: Build dashboard
+        run: pnpm build:dashboard
+
+  plugins:
+    name: Plugin metadata and previews
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate plugins
+        working-directory: weeb-plugins
+        run: pnpm validate
+
+      - name: Generate types
+        working-directory: weeb-plugins
+        run: pnpm generate-types
+
+      # Advisory: previews are generated out-of-band by the svg-generator, so a
+      # missing one is a reminder rather than a reason to block a merge.
+      - name: Validate section previews
+        working-directory: weeb-plugins
+        run: pnpm validate-previews --warn-only
+        continue-on-error: true

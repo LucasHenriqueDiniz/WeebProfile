@@ -175,7 +175,12 @@ describe("getBasicFavorites section status", () => {
       { previewMode: false }
     )
 
-    expect(result.sectionsStatus).toEqual({ anime: "complete", manga: "complete", characters: "complete", people: "complete" })
+    expect(result.sectionsStatus).toEqual({
+      anime: "complete",
+      manga: "complete",
+      characters: "complete",
+      people: "complete",
+    })
     expect(result.anime[0]?.image).toBe("data:image/jpeg;base64,AAAA")
     expect(result.manga[0]?.image).toBe("data:image/jpeg;base64,AAAA")
     expect(result.characters[0]?.image).toBe("data:image/jpeg;base64,AAAA")

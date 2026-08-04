@@ -11,3 +11,8 @@ weeb-plugins/src/plugins/generated-types.ts
 weeb-plugins/src/plugins/metadata.ts
 weeb-plugins/src/styles/generated-shared-css.ts
 weeb-plugins/src/fonts/generated-font-data.ts
+# Written by scripts/generate-tailwind-css.ts (shared.css is its final output,
+# tailwind-output.css the intermediate). Formatting them only lasts until the
+# next build.
+weeb-plugins/src/styles/shared.css
+weeb-plugins/src/styles/tailwind-output.css

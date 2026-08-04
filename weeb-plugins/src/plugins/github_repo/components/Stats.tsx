@@ -94,7 +94,14 @@ function SparkStats({ data }: { data: GithubRepoData }): React.ReactElement {
                 style={{ width: 60, height: 16 }}
                 aria-hidden="true"
               >
-                <path d={sparkPath} fill="none" stroke={HL} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d={sparkPath}
+                  fill="none"
+                  stroke={HL}
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             )}
           </div>

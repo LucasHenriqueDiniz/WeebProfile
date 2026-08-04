@@ -56,14 +56,14 @@ A MyAnimeList API v2 é a API REST oficial para consultar dados do catálogo da 
 
 Os grupos principais da API são:
 
-| Grupo | Exemplos |
-|---|---|
-| Anime | pesquisa, detalhes, rankings, temporadas e sugestões |
-| Mangá | pesquisa, detalhes e rankings |
-| Usuário | perfil do usuário autenticado |
-| Lista de anime | leitura, criação/atualização e remoção |
-| Lista de mangá | leitura, criação/atualização e remoção |
-| Fórum | boards, tópicos e mensagens de um tópico |
+| Grupo          | Exemplos                                             |
+| -------------- | ---------------------------------------------------- |
+| Anime          | pesquisa, detalhes, rankings, temporadas e sugestões |
+| Mangá          | pesquisa, detalhes e rankings                        |
+| Usuário        | perfil do usuário autenticado                        |
+| Lista de anime | leitura, criação/atualização e remoção               |
+| Lista de mangá | leitura, criação/atualização e remoção               |
+| Fórum          | boards, tópicos e mensagens de um tópico             |
 
 A API usa IDs numéricos da própria MyAnimeList. Por exemplo:
 
@@ -265,18 +265,18 @@ O token é associado ao usuário que autorizou a aplicação.
 
 ## 4.3 Matriz simplificada de autenticação
 
-| Operação | Client ID | OAuth Bearer |
-|---|---:|---:|
-| Pesquisar anime/mangá | Sim | Sim |
-| Consultar detalhes públicos | Sim | Sim |
-| Rankings e temporadas | Sim | Sim |
-| Lista pública de outro usuário | Sim | Sim |
-| Perfil `/users/@me` | Não | Sim |
-| Sugestões personalizadas | Não | Sim |
-| Ler a própria lista privada | Não | Sim |
-| Atualizar lista | Não | Sim |
-| Remover item da lista | Não | Sim |
-| Receber `my_list_status` pessoal | Não | Sim |
+| Operação                         | Client ID | OAuth Bearer |
+| -------------------------------- | --------: | -----------: |
+| Pesquisar anime/mangá            |       Sim |          Sim |
+| Consultar detalhes públicos      |       Sim |          Sim |
+| Rankings e temporadas            |       Sim |          Sim |
+| Lista pública de outro usuário   |       Sim |          Sim |
+| Perfil `/users/@me`              |       Não |          Sim |
+| Sugestões personalizadas         |       Não |          Sim |
+| Ler a própria lista privada      |       Não |          Sim |
+| Atualizar lista                  |       Não |          Sim |
+| Remover item da lista            |       Não |          Sim |
+| Receber `my_list_status` pessoal |       Não |          Sim |
 
 Quando uma requisição autenticada solicita `my_list_status`, a API pode incluir o estado daquele título na lista do usuário.
 
@@ -321,26 +321,24 @@ O `code_verifier` deve ser uma string aleatória de alta entropia, normalmente e
 Exemplo Node.js:
 
 ```ts
-import crypto from "node:crypto";
+import crypto from "node:crypto"
 
 export function randomUrlSafe(bytes = 64): string {
-  return crypto.randomBytes(bytes).toString("base64url");
+  return crypto.randomBytes(bytes).toString("base64url")
 }
 
-const state = randomUrlSafe(32);
-const codeVerifier = randomUrlSafe(64).slice(0, 128);
+const state = randomUrlSafe(32)
+const codeVerifier = randomUrlSafe(64).slice(0, 128)
 
 // A MAL suporta PKCE plain:
-const codeChallenge = codeVerifier;
+const codeChallenge = codeVerifier
 ```
 
 Armazene temporariamente, vinculado à sessão do navegador:
 
 ```ts
 {
-  state,
-  codeVerifier,
-  createdAt
+  ;(state, codeVerifier, createdAt)
 }
 ```
 
@@ -353,14 +351,14 @@ Não confunda:
 
 Parâmetros principais:
 
-| Parâmetro | Uso |
-|---|---|
-| `response_type` | deve ser `code` |
-| `client_id` | Client ID registrado |
-| `redirect_uri` | callback registrado |
-| `code_challenge` | igual ao verifier no modo `plain` |
-| `code_challenge_method` | `plain` |
-| `state` | valor aleatório vinculado à sessão |
+| Parâmetro               | Uso                                |
+| ----------------------- | ---------------------------------- |
+| `response_type`         | deve ser `code`                    |
+| `client_id`             | Client ID registrado               |
+| `redirect_uri`          | callback registrado                |
+| `code_challenge`        | igual ao verifier no modo `plain`  |
+| `code_challenge_method` | `plain`                            |
+| `state`                 | valor aleatório vinculado à sessão |
 
 Exemplo:
 
@@ -372,10 +370,9 @@ const params = new URLSearchParams({
   code_challenge: codeChallenge,
   code_challenge_method: "plain",
   state,
-});
+})
 
-const authorizationUrl =
-  `https://myanimelist.net/v1/oauth2/authorize?${params.toString()}`;
+const authorizationUrl = `https://myanimelist.net/v1/oauth2/authorize?${params.toString()}`
 ```
 
 Redirecione o usuário para essa URL.
@@ -689,17 +686,17 @@ Isso solicita 20 itens começando no deslocamento 40.
 
 ## 8.2 Limites máximos observados/documentados
 
-| Endpoint | Máximo conhecido de `limit` |
-|---|---:|
-| Pesquisa de anime | 100 |
-| Detalhes | não paginado |
-| Pesquisa de mangá | 100 |
-| Ranking de anime | 500 |
-| Ranking de mangá | 500 |
-| Anime por temporada | 500 |
-| Sugestões | 100 |
-| Lista de anime de usuário | 1000 |
-| Lista de mangá de usuário | 1000 |
+| Endpoint                  | Máximo conhecido de `limit` |
+| ------------------------- | --------------------------: |
+| Pesquisa de anime         |                         100 |
+| Detalhes                  |                não paginado |
+| Pesquisa de mangá         |                         100 |
+| Ranking de anime          |                         500 |
+| Ranking de mangá          |                         500 |
+| Anime por temporada       |                         500 |
+| Sugestões                 |                         100 |
+| Lista de anime de usuário |                        1000 |
+| Lista de mangá de usuário |                        1000 |
 
 A API pode alterar limites. Trate `400` como indicação de parâmetros inválidos e reduza o lote.
 
@@ -707,44 +704,37 @@ A API pode alterar limites. Trate `400` como indicação de parâmetros inválid
 
 ```ts
 type PagedResponse<T> = {
-  data: T[];
+  data: T[]
   paging?: {
-    previous?: string;
-    next?: string;
-  };
-};
+    previous?: string
+    next?: string
+  }
+}
 
-async function collectAll<T>(
-  firstUrl: string,
-  headers: HeadersInit,
-  maxItems = 20_000,
-): Promise<T[]> {
-  const items: T[] = [];
-  let url: string | undefined = firstUrl;
+async function collectAll<T>(firstUrl: string, headers: HeadersInit, maxItems = 20_000): Promise<T[]> {
+  const items: T[] = []
+  let url: string | undefined = firstUrl
 
   while (url && items.length < maxItems) {
-    const parsed = new URL(url);
+    const parsed = new URL(url)
 
     // Evita enviar o Bearer token para um host injetado na resposta.
-    if (
-      parsed.protocol !== "https:" ||
-      parsed.hostname !== "api.myanimelist.net"
-    ) {
-      throw new Error(`URL de paginação não confiável: ${url}`);
+    if (parsed.protocol !== "https:" || parsed.hostname !== "api.myanimelist.net") {
+      throw new Error(`URL de paginação não confiável: ${url}`)
     }
 
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, { headers })
 
     if (!response.ok) {
-      throw new Error(`MAL ${response.status}: ${await response.text()}`);
+      throw new Error(`MAL ${response.status}: ${await response.text()}`)
     }
 
-    const page = (await response.json()) as PagedResponse<T>;
-    items.push(...page.data);
-    url = page.paging?.next;
+    const page = (await response.json()) as PagedResponse<T>
+    items.push(...page.data)
+    url = page.paging?.next
   }
 
-  return items.slice(0, maxItems);
+  return items.slice(0, maxItems)
 }
 ```
 
@@ -776,15 +766,15 @@ Ou:
 
 ## 9.2 Códigos HTTP relevantes
 
-| Código | Significado provável |
-|---:|---|
-| `200` | sucesso |
-| `400` | parâmetro ausente, inválido ou fora do limite |
-| `401` | token ausente, inválido ou expirado |
-| `403` | proibido, lista privada, bloqueio antiabuso ou credencial inadequada |
-| `404` | anime, mangá, usuário ou tópico não encontrado |
-| `429` | excesso de requisições, quando usado pelo servidor |
-| `500–599` | falha temporária no servidor |
+|    Código | Significado provável                                                 |
+| --------: | -------------------------------------------------------------------- |
+|     `200` | sucesso                                                              |
+|     `400` | parâmetro ausente, inválido ou fora do limite                        |
+|     `401` | token ausente, inválido ou expirado                                  |
+|     `403` | proibido, lista privada, bloqueio antiabuso ou credencial inadequada |
+|     `404` | anime, mangá, usuário ou tópico não encontrado                       |
+|     `429` | excesso de requisições, quando usado pelo servidor                   |
+| `500–599` | falha temporária no servidor                                         |
 
 ## 9.3 Rate limit
 
@@ -806,46 +796,38 @@ Prática segura:
 Exemplo:
 
 ```ts
-const RETRYABLE_STATUS = new Set([403, 429, 500, 502, 503, 504]);
+const RETRYABLE_STATUS = new Set([403, 429, 500, 502, 503, 504])
 
-async function fetchWithRetry(
-  url: string,
-  init: RequestInit,
-  maxAttempts = 5,
-): Promise<Response> {
-  let lastError: unknown;
+async function fetchWithRetry(url: string, init: RequestInit, maxAttempts = 5): Promise<Response> {
+  let lastError: unknown
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      const response = await fetch(url, init);
+      const response = await fetch(url, init)
 
       if (!RETRYABLE_STATUS.has(response.status) || attempt === maxAttempts) {
-        return response;
+        return response
       }
 
-      const retryAfter = response.headers.get("retry-after");
-      const serverDelay = retryAfter ? Number(retryAfter) * 1000 : 0;
-      const exponential = 500 * 2 ** (attempt - 1);
-      const jitter = Math.floor(Math.random() * 250);
-      const delay = Math.max(serverDelay, exponential + jitter);
+      const retryAfter = response.headers.get("retry-after")
+      const serverDelay = retryAfter ? Number(retryAfter) * 1000 : 0
+      const exponential = 500 * 2 ** (attempt - 1)
+      const jitter = Math.floor(Math.random() * 250)
+      const delay = Math.max(serverDelay, exponential + jitter)
 
-      await new Promise((resolve) => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay))
     } catch (error) {
-      lastError = error;
+      lastError = error
 
       if (attempt === maxAttempts) {
-        throw error;
+        throw error
       }
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, 500 * 2 ** (attempt - 1)),
-      );
+      await new Promise((resolve) => setTimeout(resolve, 500 * 2 ** (attempt - 1)))
     }
   }
 
-  throw lastError instanceof Error
-    ? lastError
-    : new Error("Falha desconhecida ao chamar a MAL");
+  throw lastError instanceof Error ? lastError : new Error("Falha desconhecida ao chamar a MAL")
 }
 ```
 
@@ -863,51 +845,51 @@ https://api.myanimelist.net/v2
 
 ## 10.1 Anime
 
-| Método | Endpoint | Finalidade |
-|---|---|---|
-| `GET` | `/anime` | pesquisar anime |
-| `GET` | `/anime/{anime_id}` | detalhes de anime |
-| `GET` | `/anime/ranking` | ranking de anime |
-| `GET` | `/anime/season/{year}/{season}` | anime de uma temporada |
-| `GET` | `/anime/suggestions` | sugestões personalizadas |
+| Método | Endpoint                        | Finalidade               |
+| ------ | ------------------------------- | ------------------------ |
+| `GET`  | `/anime`                        | pesquisar anime          |
+| `GET`  | `/anime/{anime_id}`             | detalhes de anime        |
+| `GET`  | `/anime/ranking`                | ranking de anime         |
+| `GET`  | `/anime/season/{year}/{season}` | anime de uma temporada   |
+| `GET`  | `/anime/suggestions`            | sugestões personalizadas |
 
 ## 10.2 Lista de anime
 
-| Método | Endpoint | Finalidade |
-|---|---|---|
-| `GET` | `/users/{user_name}/animelist` | lista de anime |
+| Método        | Endpoint                           | Finalidade             |
+| ------------- | ---------------------------------- | ---------------------- |
+| `GET`         | `/users/{user_name}/animelist`     | lista de anime         |
 | `PATCH`/`PUT` | `/anime/{anime_id}/my_list_status` | adicionar ou atualizar |
-| `DELETE` | `/anime/{anime_id}/my_list_status` | remover da lista |
+| `DELETE`      | `/anime/{anime_id}/my_list_status` | remover da lista       |
 
 ## 10.3 Mangá
 
-| Método | Endpoint | Finalidade |
-|---|---|---|
-| `GET` | `/manga` | pesquisar mangá |
-| `GET` | `/manga/{manga_id}` | detalhes de mangá |
-| `GET` | `/manga/ranking` | ranking de mangá |
+| Método | Endpoint            | Finalidade        |
+| ------ | ------------------- | ----------------- |
+| `GET`  | `/manga`            | pesquisar mangá   |
+| `GET`  | `/manga/{manga_id}` | detalhes de mangá |
+| `GET`  | `/manga/ranking`    | ranking de mangá  |
 
 ## 10.4 Lista de mangá
 
-| Método | Endpoint | Finalidade |
-|---|---|---|
-| `GET` | `/users/{user_name}/mangalist` | lista de mangá |
+| Método        | Endpoint                           | Finalidade             |
+| ------------- | ---------------------------------- | ---------------------- |
+| `GET`         | `/users/{user_name}/mangalist`     | lista de mangá         |
 | `PATCH`/`PUT` | `/manga/{manga_id}/my_list_status` | adicionar ou atualizar |
-| `DELETE` | `/manga/{manga_id}/my_list_status` | remover da lista |
+| `DELETE`      | `/manga/{manga_id}/my_list_status` | remover da lista       |
 
 ## 10.5 Usuário
 
-| Método | Endpoint | Finalidade |
-|---|---|---|
-| `GET` | `/users/@me` | perfil do usuário autenticado |
+| Método | Endpoint     | Finalidade                    |
+| ------ | ------------ | ----------------------------- |
+| `GET`  | `/users/@me` | perfil do usuário autenticado |
 
 ## 10.6 Fórum
 
-| Método | Endpoint | Finalidade |
-|---|---|---|
-| `GET` | `/forum/boards` | categorias e boards |
-| `GET` | `/forum/topics` | buscar/listar tópicos |
-| `GET` | `/forum/topic/{topic_id}` | tópico e mensagens |
+| Método | Endpoint                  | Finalidade            |
+| ------ | ------------------------- | --------------------- |
+| `GET`  | `/forum/boards`           | categorias e boards   |
+| `GET`  | `/forum/topics`           | buscar/listar tópicos |
+| `GET`  | `/forum/topic/{topic_id}` | tópico e mensagens    |
 
 ---
 
@@ -921,13 +903,13 @@ GET /anime
 
 ### Parâmetros
 
-| Nome | Tipo | Obrigatório | Descrição |
-|---|---|---:|---|
-| `q` | string | Sim | texto pesquisado |
-| `limit` | inteiro | Não | quantidade, máximo conhecido 100 |
-| `offset` | inteiro | Não | deslocamento |
-| `fields` | string | Não | campos adicionais |
-| `nsfw` | boolean | Não | incluir conteúdo NSFW quando permitido |
+| Nome     | Tipo    | Obrigatório | Descrição                              |
+| -------- | ------- | ----------: | -------------------------------------- |
+| `q`      | string  |         Sim | texto pesquisado                       |
+| `limit`  | inteiro |         Não | quantidade, máximo conhecido 100       |
+| `offset` | inteiro |         Não | deslocamento                           |
+| `fields` | string  |         Não | campos adicionais                      |
+| `nsfw`   | boolean |         Não | incluir conteúdo NSFW quando permitido |
 
 ### Exemplo
 
@@ -986,10 +968,10 @@ GET /anime/{anime_id}
 
 ### Parâmetros
 
-| Nome | Tipo | Obrigatório |
-|---|---|---:|
-| `anime_id` | inteiro no path | Sim |
-| `fields` | string | Não |
+| Nome       | Tipo            | Obrigatório |
+| ---------- | --------------- | ----------: |
+| `anime_id` | inteiro no path |         Sim |
+| `fields`   | string          |         Não |
 
 ### Exemplo
 
@@ -1000,38 +982,38 @@ curl "https://api.myanimelist.net/v2/anime/5114?fields=alternative_titles,start_
 
 ### Campos relevantes
 
-| Campo | Significado |
-|---|---|
-| `id` | ID MAL |
-| `title` | título principal |
-| `main_picture` | imagens principal média e grande |
-| `alternative_titles` | sinônimos, inglês e japonês |
-| `start_date` | data de início, possivelmente parcial |
-| `end_date` | data final, possivelmente parcial |
-| `synopsis` | sinopse |
-| `mean` | média de notas |
-| `rank` | posição no ranking |
-| `popularity` | posição por popularidade |
-| `num_list_users` | usuários que adicionaram à lista |
-| `num_scoring_users` | usuários contabilizados na nota |
-| `nsfw` | classificação interna `white`, `gray` ou `black` |
-| `media_type` | TV, OVA, filme etc. |
-| `status` | situação de exibição |
-| `genres` | gêneros |
-| `num_episodes` | total de episódios; `0` pode significar desconhecido |
-| `start_season` | ano e estação |
-| `broadcast` | dia e horário de transmissão |
-| `source` | mídia de origem |
-| `average_episode_duration` | duração média em segundos |
-| `rating` | classificação indicativa |
-| `pictures` | imagens adicionais |
-| `background` | texto de contexto |
-| `related_anime` | obras de anime relacionadas |
-| `related_manga` | mangás relacionados |
-| `recommendations` | recomendações e quantidade de votos |
-| `studios` | estúdios |
-| `statistics` | distribuição por status nas listas |
-| `my_list_status` | estado do usuário autenticado |
+| Campo                      | Significado                                          |
+| -------------------------- | ---------------------------------------------------- |
+| `id`                       | ID MAL                                               |
+| `title`                    | título principal                                     |
+| `main_picture`             | imagens principal média e grande                     |
+| `alternative_titles`       | sinônimos, inglês e japonês                          |
+| `start_date`               | data de início, possivelmente parcial                |
+| `end_date`                 | data final, possivelmente parcial                    |
+| `synopsis`                 | sinopse                                              |
+| `mean`                     | média de notas                                       |
+| `rank`                     | posição no ranking                                   |
+| `popularity`               | posição por popularidade                             |
+| `num_list_users`           | usuários que adicionaram à lista                     |
+| `num_scoring_users`        | usuários contabilizados na nota                      |
+| `nsfw`                     | classificação interna `white`, `gray` ou `black`     |
+| `media_type`               | TV, OVA, filme etc.                                  |
+| `status`                   | situação de exibição                                 |
+| `genres`                   | gêneros                                              |
+| `num_episodes`             | total de episódios; `0` pode significar desconhecido |
+| `start_season`             | ano e estação                                        |
+| `broadcast`                | dia e horário de transmissão                         |
+| `source`                   | mídia de origem                                      |
+| `average_episode_duration` | duração média em segundos                            |
+| `rating`                   | classificação indicativa                             |
+| `pictures`                 | imagens adicionais                                   |
+| `background`               | texto de contexto                                    |
+| `related_anime`            | obras de anime relacionadas                          |
+| `related_manga`            | mangás relacionados                                  |
+| `recommendations`          | recomendações e quantidade de votos                  |
+| `studios`                  | estúdios                                             |
+| `statistics`               | distribuição por status nas listas                   |
+| `my_list_status`           | estado do usuário autenticado                        |
 
 ### Datas parciais
 
@@ -1055,27 +1037,27 @@ GET /anime/ranking
 
 ### Parâmetros
 
-| Nome | Obrigatório | Valores |
-|---|---:|---|
-| `ranking_type` | Sim | veja tabela abaixo |
-| `limit` | Não | máximo conhecido 500 |
-| `offset` | Não | inteiro |
-| `fields` | Não | seleção de campos |
-| `nsfw` | Não | boolean |
+| Nome           | Obrigatório | Valores              |
+| -------------- | ----------: | -------------------- |
+| `ranking_type` |         Sim | veja tabela abaixo   |
+| `limit`        |         Não | máximo conhecido 500 |
+| `offset`       |         Não | inteiro              |
+| `fields`       |         Não | seleção de campos    |
+| `nsfw`         |         Não | boolean              |
 
 ### Tipos
 
-| Valor | Significado |
-|---|---|
-| `all` | ranking geral |
-| `airing` | em exibição |
-| `upcoming` | futuros |
-| `tv` | TV |
-| `ova` | OVA |
-| `movie` | filmes |
-| `special` | especiais |
-| `bypopularity` | popularidade |
-| `favorite` | favoritos |
+| Valor          | Significado   |
+| -------------- | ------------- |
+| `all`          | ranking geral |
+| `airing`       | em exibição   |
+| `upcoming`     | futuros       |
+| `tv`           | TV            |
+| `ova`          | OVA           |
+| `movie`        | filmes        |
+| `special`      | especiais     |
+| `bypopularity` | popularidade  |
+| `favorite`     | favoritos     |
 
 ### Exemplo
 
@@ -1120,22 +1102,22 @@ fall
 
 Convenção:
 
-| Estação | Meses aproximados |
-|---|---|
-| `winter` | janeiro a março |
-| `spring` | abril a junho |
-| `summer` | julho a setembro |
-| `fall` | outubro a dezembro |
+| Estação  | Meses aproximados  |
+| -------- | ------------------ |
+| `winter` | janeiro a março    |
+| `spring` | abril a junho      |
+| `summer` | julho a setembro   |
+| `fall`   | outubro a dezembro |
 
 ### Parâmetros
 
-| Nome | Valores |
-|---|---|
-| `sort` | `anime_score` ou `anime_num_list_users` |
-| `limit` | máximo conhecido 500 |
-| `offset` | deslocamento |
-| `fields` | campos |
-| `nsfw` | boolean |
+| Nome     | Valores                                 |
+| -------- | --------------------------------------- |
+| `sort`   | `anime_score` ou `anime_num_list_users` |
+| `limit`  | máximo conhecido 500                    |
+| `offset` | deslocamento                            |
+| `fields` | campos                                  |
+| `nsfw`   | boolean                                 |
 
 ### Exemplo
 
@@ -1202,14 +1184,14 @@ Ou um nome público:
 
 ### Parâmetros
 
-| Nome | Valores |
-|---|---|
-| `status` | `watching`, `completed`, `on_hold`, `dropped`, `plan_to_watch` |
-| `sort` | `list_score`, `list_updated_at`, `anime_title`, `anime_start_date` |
-| `limit` | máximo conhecido 1000 |
-| `offset` | deslocamento |
-| `fields` | campos do anime e `list_status` |
-| `nsfw` | boolean, quando disponível |
+| Nome     | Valores                                                            |
+| -------- | ------------------------------------------------------------------ |
+| `status` | `watching`, `completed`, `on_hold`, `dropped`, `plan_to_watch`     |
+| `sort`   | `list_score`, `list_updated_at`, `anime_title`, `anime_start_date` |
+| `limit`  | máximo conhecido 1000                                              |
+| `offset` | deslocamento                                                       |
+| `fields` | campos do anime e `list_status`                                    |
+| `nsfw`   | boolean, quando disponível                                         |
 
 ### Exemplo
 
@@ -1268,19 +1250,19 @@ Content-Type: application/x-www-form-urlencoded
 
 ### Campos
 
-| Campo | Tipo | Faixa/valores |
-|---|---|---|
-| `status` | string | status de anime |
-| `is_rewatching` | boolean | `true`/`false` |
-| `score` | inteiro | `0–10`; `0` remove nota |
-| `num_watched_episodes` | inteiro | progresso |
-| `priority` | inteiro | `0–2` |
-| `num_times_rewatched` | inteiro | contagem |
-| `rewatch_value` | inteiro | `0–5` |
-| `tags` | string | tags separadas por vírgula |
-| `comments` | string | comentário |
-| `start_date` | data | `YYYY-MM-DD` |
-| `finish_date` | data | `YYYY-MM-DD` |
+| Campo                  | Tipo    | Faixa/valores              |
+| ---------------------- | ------- | -------------------------- |
+| `status`               | string  | status de anime            |
+| `is_rewatching`        | boolean | `true`/`false`             |
+| `score`                | inteiro | `0–10`; `0` remove nota    |
+| `num_watched_episodes` | inteiro | progresso                  |
+| `priority`             | inteiro | `0–2`                      |
+| `num_times_rewatched`  | inteiro | contagem                   |
+| `rewatch_value`        | inteiro | `0–5`                      |
+| `tags`                 | string  | tags separadas por vírgula |
+| `comments`             | string  | comentário                 |
+| `start_date`           | data    | `YYYY-MM-DD`               |
+| `finish_date`          | data    | `YYYY-MM-DD`               |
 
 ### Atenção ao nome do campo
 
@@ -1390,16 +1372,16 @@ GET /manga/{manga_id}
 
 Campos relevantes:
 
-| Campo | Significado |
-|---|---|
-| `num_volumes` | total de volumes; `0` pode significar desconhecido |
-| `num_chapters` | total de capítulos; `0` pode significar desconhecido |
-| `authors` | autores e seus papéis |
-| `serialization` | revistas/publicações de serialização |
-| `related_anime` | anime relacionado |
-| `related_manga` | mangá relacionado |
-| `recommendations` | recomendações |
-| `my_list_status` | estado do usuário autenticado |
+| Campo             | Significado                                          |
+| ----------------- | ---------------------------------------------------- |
+| `num_volumes`     | total de volumes; `0` pode significar desconhecido   |
+| `num_chapters`    | total de capítulos; `0` pode significar desconhecido |
+| `authors`         | autores e seus papéis                                |
+| `serialization`   | revistas/publicações de serialização                 |
+| `related_anime`   | anime relacionado                                    |
+| `related_manga`   | mangá relacionado                                    |
+| `recommendations` | recomendações                                        |
+| `my_list_status`  | estado do usuário autenticado                        |
 
 ### Exemplo
 
@@ -1433,18 +1415,18 @@ GET /manga/ranking
 
 ### Tipos de ranking
 
-| Valor | Significado |
-|---|---|
-| `all` | geral |
-| `manga` | mangá |
-| `novels` | novels |
-| `lightnovels` | light novels, quando aceito pela operação |
-| `oneshots` | one-shots |
-| `doujin` | doujinshi |
-| `manhwa` | manhwa |
-| `manhua` | manhua |
-| `bypopularity` | popularidade |
-| `favorite` | favoritos |
+| Valor          | Significado                               |
+| -------------- | ----------------------------------------- |
+| `all`          | geral                                     |
+| `manga`        | mangá                                     |
+| `novels`       | novels                                    |
+| `lightnovels`  | light novels, quando aceito pela operação |
+| `oneshots`     | one-shots                                 |
+| `doujin`       | doujinshi                                 |
+| `manhwa`       | manhwa                                    |
+| `manhua`       | manhua                                    |
+| `bypopularity` | popularidade                              |
+| `favorite`     | favoritos                                 |
 
 O conjunto exato aceito pode variar entre a especificação renderizada e clientes antigos; valide `lightnovels` no ambiente atual antes de depender dele.
 
@@ -1521,20 +1503,20 @@ PATCH /manga/{manga_id}/my_list_status
 
 ### Campos
 
-| Campo | Tipo |
-|---|---|
-| `status` | string |
-| `is_rereading` | boolean |
-| `score` | `0–10` |
-| `num_volumes_read` | inteiro |
-| `num_chapters_read` | inteiro |
-| `priority` | `0–2` |
-| `num_times_reread` | inteiro |
-| `reread_value` | `0–5` |
-| `tags` | string separada por vírgulas |
-| `comments` | string |
-| `start_date` | `YYYY-MM-DD` |
-| `finish_date` | `YYYY-MM-DD` |
+| Campo               | Tipo                         |
+| ------------------- | ---------------------------- |
+| `status`            | string                       |
+| `is_rereading`      | boolean                      |
+| `score`             | `0–10`                       |
+| `num_volumes_read`  | inteiro                      |
+| `num_chapters_read` | inteiro                      |
+| `priority`          | `0–2`                        |
+| `num_times_reread`  | inteiro                      |
+| `reread_value`      | `0–5`                        |
+| `tags`              | string separada por vírgulas |
+| `comments`          | string                       |
+| `start_date`        | `YYYY-MM-DD`                 |
+| `finish_date`       | `YYYY-MM-DD`                 |
 
 ### Exemplo
 
@@ -1743,18 +1725,18 @@ A grafia `forum_avator` pode aparecer em modelos históricos; preserve o nome re
 
 ```ts
 type Picture = {
-  medium?: string;
-  large?: string;
-};
+  medium?: string
+  large?: string
+}
 ```
 
 ## 17.2 `Paging`
 
 ```ts
 type Paging = {
-  previous?: string;
-  next?: string;
-};
+  previous?: string
+  next?: string
+}
 ```
 
 ## 17.3 Resposta paginada
@@ -1763,119 +1745,109 @@ type Paging = {
 type PagedResponse<TNode, TExtra extends object = object> = {
   data: Array<
     {
-      node: TNode;
+      node: TNode
     } & TExtra
-  >;
-  paging?: Paging;
-};
+  >
+  paging?: Paging
+}
 ```
 
 ## 17.4 Anime resumido
 
 ```ts
 type AnimeNode = {
-  id: number;
-  title: string;
-  main_picture?: Picture;
+  id: number
+  title: string
+  main_picture?: Picture
   alternative_titles?: {
-    synonyms?: string[];
-    en?: string;
-    ja?: string;
-  };
-  start_date?: string;
-  end_date?: string;
-  synopsis?: string;
-  mean?: number | null;
-  rank?: number | null;
-  popularity?: number | null;
-  num_list_users?: number;
-  num_scoring_users?: number;
-  nsfw?: "white" | "gray" | "black" | string;
-  created_at?: string;
-  updated_at?: string;
-  media_type?: string;
-  status?: string;
-  genres?: Array<{ id: number; name: string }>;
-  num_episodes?: number;
-};
+    synonyms?: string[]
+    en?: string
+    ja?: string
+  }
+  start_date?: string
+  end_date?: string
+  synopsis?: string
+  mean?: number | null
+  rank?: number | null
+  popularity?: number | null
+  num_list_users?: number
+  num_scoring_users?: number
+  nsfw?: "white" | "gray" | "black" | string
+  created_at?: string
+  updated_at?: string
+  media_type?: string
+  status?: string
+  genres?: Array<{ id: number; name: string }>
+  num_episodes?: number
+}
 ```
 
 ## 17.5 Status de anime
 
 ```ts
 type AnimeListStatus = {
-  status:
-    | "watching"
-    | "completed"
-    | "on_hold"
-    | "dropped"
-    | "plan_to_watch";
-  score: number;
-  num_episodes_watched: number;
-  is_rewatching: boolean;
-  updated_at: string;
-  start_date?: string;
-  finish_date?: string;
-  priority?: 0 | 1 | 2;
-  num_times_rewatched?: number;
-  rewatch_value?: 0 | 1 | 2 | 3 | 4 | 5;
-  tags?: string[];
-  comments?: string;
-};
+  status: "watching" | "completed" | "on_hold" | "dropped" | "plan_to_watch"
+  score: number
+  num_episodes_watched: number
+  is_rewatching: boolean
+  updated_at: string
+  start_date?: string
+  finish_date?: string
+  priority?: 0 | 1 | 2
+  num_times_rewatched?: number
+  rewatch_value?: 0 | 1 | 2 | 3 | 4 | 5
+  tags?: string[]
+  comments?: string
+}
 ```
 
 ## 17.6 Mangá resumido
 
 ```ts
 type MangaNode = {
-  id: number;
-  title: string;
-  main_picture?: Picture;
+  id: number
+  title: string
+  main_picture?: Picture
   alternative_titles?: {
-    synonyms?: string[];
-    en?: string;
-    ja?: string;
-  };
-  start_date?: string;
-  end_date?: string;
-  synopsis?: string;
-  mean?: number | null;
-  rank?: number | null;
-  popularity?: number | null;
-  num_list_users?: number;
-  num_scoring_users?: number;
-  nsfw?: "white" | "gray" | "black" | string;
-  media_type?: string;
-  status?: string;
-  genres?: Array<{ id: number; name: string }>;
-  num_volumes?: number;
-  num_chapters?: number;
-};
+    synonyms?: string[]
+    en?: string
+    ja?: string
+  }
+  start_date?: string
+  end_date?: string
+  synopsis?: string
+  mean?: number | null
+  rank?: number | null
+  popularity?: number | null
+  num_list_users?: number
+  num_scoring_users?: number
+  nsfw?: "white" | "gray" | "black" | string
+  media_type?: string
+  status?: string
+  genres?: Array<{ id: number; name: string }>
+  num_volumes?: number
+  num_chapters?: number
+}
 ```
 
 ## 17.7 Status de mangá
 
 ```ts
 type MangaListStatus = {
-  status:
-    | "reading"
-    | "completed"
-    | "on_hold"
-    | "dropped"
-    | "plan_to_read";
-  score: number;
-  num_volumes_read: number;
-  num_chapters_read: number;
-  is_rereading: boolean;
-  updated_at: string;
-  start_date?: string;
-  finish_date?: string;
-  priority?: 0 | 1 | 2;
-  num_times_reread?: number;
-  reread_value?: 0 | 1 | 2 | 3 | 4 | 5;
-  tags?: string[];
-  comments?: string;
-};
+  status: "reading" | "completed" | "on_hold" | "dropped" | "plan_to_read"
+  score: number
+  num_volumes_read: number
+  num_chapters_read: number
+  is_rereading: boolean
+  updated_at: string
+  start_date?: string
+  finish_date?: string
+  priority?: 0 | 1 | 2
+  num_times_reread?: number
+  reread_value?: 0 | 1 | 2 | 3 | 4 | 5
+  tags?: string[]
+  comments?: string
+}
 ```
 
 ## 17.8 Relacionamentos
@@ -1883,22 +1855,22 @@ type MangaListStatus = {
 ```ts
 type RelatedAnime = {
   node: {
-    id: number;
-    title: string;
-    main_picture?: Picture;
-  };
-  relation_type: string;
-  relation_type_formatted: string;
-};
+    id: number
+    title: string
+    main_picture?: Picture
+  }
+  relation_type: string
+  relation_type_formatted: string
+}
 ```
 
 ## 17.9 Recomendação
 
 ```ts
 type Recommendation<T> = {
-  node: T;
-  num_recommendations: number;
-};
+  node: T
+  num_recommendations: number
+}
 ```
 
 ---
@@ -1983,21 +1955,21 @@ Implemente fallback para valores novos.
 ## 18.7 Prioridade da lista
 
 | Valor | Interpretação |
-|---:|---|
-| `0` | baixa |
-| `1` | média |
-| `2` | alta |
+| ----: | ------------- |
+|   `0` | baixa         |
+|   `1` | média         |
+|   `2` | alta          |
 
 ## 18.8 Valor de rewatch/reread
 
 | Valor | Interpretação |
-|---:|---|
-| `0` | sem valor |
-| `1` | muito baixo |
-| `2` | baixo |
-| `3` | médio |
-| `4` | alto |
-| `5` | muito alto |
+| ----: | ------------- |
+|   `0` | sem valor     |
+|   `1` | muito baixo   |
+|   `2` | baixo         |
+|   `3` | médio         |
+|   `4` | alto          |
+|   `5` | muito alto    |
 
 ## 18.9 Nota
 
@@ -2014,79 +1986,67 @@ Implemente fallback para valores novos.
 ## 19.1 Cliente base
 
 ```ts
-const MAL_API_BASE = "https://api.myanimelist.net/v2";
+const MAL_API_BASE = "https://api.myanimelist.net/v2"
 
 export class MalApiError extends Error {
   constructor(
     public readonly status: number,
     public readonly code: string | undefined,
     message: string,
-    public readonly body: unknown,
+    public readonly body: unknown
   ) {
-    super(message);
-    this.name = "MalApiError";
+    super(message)
+    this.name = "MalApiError"
   }
 }
 
-type MalClientOptions =
-  | { clientId: string; accessToken?: never }
-  | { accessToken: string; clientId?: never };
+type MalClientOptions = { clientId: string; accessToken?: never } | { accessToken: string; clientId?: never }
 
 export class MalClient {
   constructor(private readonly options: MalClientOptions) {}
 
   private headers(extra?: HeadersInit): Headers {
-    const headers = new Headers(extra);
-    headers.set("Accept", "application/json");
+    const headers = new Headers(extra)
+    headers.set("Accept", "application/json")
 
     if ("accessToken" in this.options) {
-      headers.set("Authorization", `Bearer ${this.options.accessToken}`);
+      headers.set("Authorization", `Bearer ${this.options.accessToken}`)
     } else {
-      headers.set("X-MAL-CLIENT-ID", this.options.clientId);
+      headers.set("X-MAL-CLIENT-ID", this.options.clientId)
     }
 
-    return headers;
+    return headers
   }
 
-  async request<T>(
-    path: string,
-    init: RequestInit = {},
-  ): Promise<T> {
+  async request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const response = await fetch(`${MAL_API_BASE}${path}`, {
       ...init,
       headers: this.headers(init.headers),
-    });
+    })
 
-    const text = await response.text();
-    let body: unknown = null;
+    const text = await response.text()
+    let body: unknown = null
 
     if (text) {
       try {
-        body = JSON.parse(text);
+        body = JSON.parse(text)
       } catch {
-        body = text;
+        body = text
       }
     }
 
     if (!response.ok) {
-      const errorBody =
-        body && typeof body === "object"
-          ? (body as Record<string, unknown>)
-          : undefined;
+      const errorBody = body && typeof body === "object" ? (body as Record<string, unknown>) : undefined
 
       throw new MalApiError(
         response.status,
-        typeof errorBody?.error === "string"
-          ? errorBody.error
-          : undefined,
-        typeof errorBody?.message === "string"
-          ? errorBody.message
-          : `MyAnimeList respondeu HTTP ${response.status}`,
-        body,
-      );
+        typeof errorBody?.error === "string" ? errorBody.error : undefined,
+        typeof errorBody?.message === "string" ? errorBody.message : `MyAnimeList respondeu HTTP ${response.status}`,
+        body
+      )
     }
 
-    return body as T;
+    return body as T
   }
 }
 ```
@@ -2096,32 +2056,30 @@ export class MalClient {
 ```ts
 type AnimeSearchItem = {
   node: {
-    id: number;
-    title: string;
-    main_picture?: Picture;
-    mean?: number | null;
-    media_type?: string;
-  };
-};
+    id: number
+    title: string
+    main_picture?: Picture
+    mean?: number | null
+    media_type?: string
+  }
+}
 
 type AnimeSearchResponse = {
-  data: AnimeSearchItem[];
-  paging?: Paging;
-};
+  data: AnimeSearchItem[]
+  paging?: Paging
+}
 
 const mal = new MalClient({
   clientId: process.env.MAL_CLIENT_ID!,
-});
+})
 
 const query = new URLSearchParams({
   q: "Monster",
   limit: "10",
   fields: "mean,rank,popularity,media_type,status,genres",
-});
+})
 
-const result = await mal.request<AnimeSearchResponse>(
-  `/anime?${query.toString()}`,
-);
+const result = await mal.request<AnimeSearchResponse>(`/anime?${query.toString()}`)
 ```
 
 ## 19.3 Obter a própria lista
@@ -2129,19 +2087,18 @@ const result = await mal.request<AnimeSearchResponse>(
 ```ts
 const mal = new MalClient({
   accessToken,
-});
+})
 
 const params = new URLSearchParams({
   status: "watching",
   sort: "list_updated_at",
   limit: "100",
-  fields:
-    "list_status,num_episodes,mean,genres,media_type,status,start_season,broadcast",
-});
+  fields: "list_status,num_episodes,mean,genres,media_type,status,start_season,broadcast",
+})
 
-const page = await mal.request<
-  PagedResponse<AnimeNode, { list_status: AnimeListStatus }>
->(`/users/@me/animelist?${params.toString()}`);
+const page = await mal.request<PagedResponse<AnimeNode, { list_status: AnimeListStatus }>>(
+  `/users/@me/animelist?${params.toString()}`
+)
 ```
 
 ## 19.4 Atualizar anime
@@ -2151,35 +2108,30 @@ const body = new URLSearchParams({
   status: "watching",
   score: "8",
   num_watched_episodes: "7",
-});
+})
 
-const updated = await mal.request<AnimeListStatus>(
-  "/anime/5114/my_list_status",
-  {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body,
+const updated = await mal.request<AnimeListStatus>("/anime/5114/my_list_status", {
+  method: "PATCH",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
   },
-);
+  body,
+})
 ```
 
 ## 19.5 Não envie `undefined`
 
 ```ts
-function formBody(
-  values: Record<string, string | number | boolean | undefined>,
-): URLSearchParams {
-  const body = new URLSearchParams();
+function formBody(values: Record<string, string | number | boolean | undefined>): URLSearchParams {
+  const body = new URLSearchParams()
 
   for (const [key, value] of Object.entries(values)) {
     if (value !== undefined) {
-      body.set(key, String(value));
+      body.set(key, String(value))
     }
   }
 
-  return body;
+  return body
 }
 ```
 
@@ -2310,15 +2262,15 @@ Armazene tokens criptografados em repouso.
 
 Sugestão inicial:
 
-| Recurso | TTL aproximado |
-|---|---:|
-| Pesquisa | 5–30 min |
-| Detalhes de catálogo | 1–24 h |
-| Rankings | 15–60 min |
-| Temporada | 15–60 min |
-| Lista de usuário | curto ou sem cache |
-| Perfil do próprio usuário | 5–15 min |
-| Resultado de mutação | não cachear; invalidar relacionados |
+| Recurso                   |                      TTL aproximado |
+| ------------------------- | ----------------------------------: |
+| Pesquisa                  |                            5–30 min |
+| Detalhes de catálogo      |                              1–24 h |
+| Rankings                  |                           15–60 min |
+| Temporada                 |                           15–60 min |
+| Lista de usuário          |                  curto ou sem cache |
+| Perfil do próprio usuário |                            5–15 min |
+| Resultado de mutação      | não cachear; invalidar relacionados |
 
 Esses valores são decisões de arquitetura, não regras da MAL.
 

@@ -29,7 +29,19 @@ interface SvgContainerProps {
  * Usa foreignObject para permitir HTML/CSS dentro do SVG
  */
 export function createSvgContainer(props: SvgContainerProps): React.ReactElement {
-  const { width, height, size, style, cssDefs, children, terminalTheme, defaultTheme, hideTerminalHeader, fontFamily, terminalHeaderText } = props
+  const {
+    width,
+    height,
+    size,
+    style,
+    cssDefs,
+    children,
+    terminalTheme,
+    defaultTheme,
+    hideTerminalHeader,
+    fontFamily,
+    terminalHeaderText,
+  } = props
 
   const containerClass = `${size} ${style} flex flex-col relative`
 

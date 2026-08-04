@@ -43,13 +43,13 @@ Base publicada:
 https://jikan-edge.lucas-hdo.workers.dev
 ```
 
-| Método | Rota | Descrição |
-| --- | --- | --- |
-| `GET` | `/health` | Verifica saúde do Worker |
-| `GET` | `/v1/users/:username` | Perfil público normalizado |
-| `GET` | `/v1/users/:username/statistics` | Estatísticas extraídas da página de perfil |
-| `GET` | `/v1/users/:username/animelist?page=1&limit=100` | Lista de anime paginada localmente |
-| `GET` | `/v1/users/:username/mangalist?page=1&limit=100` | Lista de manga paginada localmente |
+| Método | Rota                                             | Descrição                                  |
+| ------ | ------------------------------------------------ | ------------------------------------------ |
+| `GET`  | `/health`                                        | Verifica saúde do Worker                   |
+| `GET`  | `/v1/users/:username`                            | Perfil público normalizado                 |
+| `GET`  | `/v1/users/:username/statistics`                 | Estatísticas extraídas da página de perfil |
+| `GET`  | `/v1/users/:username/animelist?page=1&limit=100` | Lista de anime paginada localmente         |
+| `GET`  | `/v1/users/:username/mangalist?page=1&limit=100` | Lista de manga paginada localmente         |
 
 Exemplo:
 
@@ -118,9 +118,9 @@ O `jikan-edge` só substitui uma lista quando o snapshot é aceito como completo
 
 # 6. Cache e atualização
 
-| Recurso | TTL |
-| --- | ---: |
-| Perfil e estatísticas | 6 horas |
+| Recurso                 |     TTL |
+| ----------------------- | ------: |
+| Perfil e estatísticas   | 6 horas |
 | Anime list e manga list | 2 horas |
 
 Em cache fresh, o Worker não consulta o MAL. Em cache stale, ele tenta atualizar; se a fonte falhar ou for suspeita, devolve o dado anterior com `stale: true`.
@@ -139,15 +139,15 @@ Erros seguem o formato:
 }
 ```
 
-| Status | Código típico | Significado |
-| ---: | --- | --- |
-| 400 | `INVALID_USERNAME` | username inválido |
-| 403 | `PRIVATE_PROFILE` | perfil não público/upstream 403 |
-| 404 | `NOT_FOUND` | perfil inexistente |
-| 429 | `RATE_LIMITED` / `UPSTREAM_RATE_LIMITED` | limite local ou da fonte |
-| 502 | `UPSTREAM_SUSPICIOUS` | HTML inesperado, challenge ou parser rejeitado |
-| 503 | `UPSTREAM_UNAVAILABLE` / `REFRESH_IN_PROGRESS` | fonte indisponível ou refresh concorrente |
-| 504 | `UPSTREAM_TIMEOUT` | timeout da fonte |
+| Status | Código típico                                  | Significado                                    |
+| -----: | ---------------------------------------------- | ---------------------------------------------- |
+|    400 | `INVALID_USERNAME`                             | username inválido                              |
+|    403 | `PRIVATE_PROFILE`                              | perfil não público/upstream 403                |
+|    404 | `NOT_FOUND`                                    | perfil inexistente                             |
+|    429 | `RATE_LIMITED` / `UPSTREAM_RATE_LIMITED`       | limite local ou da fonte                       |
+|    502 | `UPSTREAM_SUSPICIOUS`                          | HTML inesperado, challenge ou parser rejeitado |
+|    503 | `UPSTREAM_UNAVAILABLE` / `REFRESH_IN_PROGRESS` | fonte indisponível ou refresh concorrente      |
+|    504 | `UPSTREAM_TIMEOUT`                             | timeout da fonte                               |
 
 # 8. Limites, CORS e segurança
 
@@ -162,12 +162,12 @@ Antes de integrar a origem de produção do WeebProfile, ela deve ser adicionada
 
 # 9. Headers de diagnóstico
 
-| Header | Uso |
-| --- | --- |
-| `x-request-id` | Correlacionar a resposta com logs do Worker |
-| `x-worker-version` | Identificador declarativo da release |
-| `x-cache-status` | `hit`, `miss`, `stale`, `rate_limited` ou `unknown` |
-| `cf-ray` | Identificador Cloudflare/colo para incidentes de edge |
+| Header             | Uso                                                   |
+| ------------------ | ----------------------------------------------------- |
+| `x-request-id`     | Correlacionar a resposta com logs do Worker           |
+| `x-worker-version` | Identificador declarativo da release                  |
+| `x-cache-status`   | `hit`, `miss`, `stale`, `rate_limited` ou `unknown`   |
+| `cf-ray`           | Identificador Cloudflare/colo para incidentes de edge |
 
 # 10. O que não fazer
 
@@ -176,6 +176,7 @@ Antes de integrar a origem de produção do WeebProfile, ela deve ser adicionada
 - Não dependa de campos opcionais como se fossem sempre presentes.
 - Não trate `200` isoladamente como prova de conteúdo válido; consulte `meta` e reporte anomalias.
 - Não exponha dados pessoais capturados pelo perfil em logs ou relatórios de bug.
+
 ## Contrato implementado
 
 `GET /v1/users/:username/favorites` retorna `data` com `anime`, `manga`, `characters` e `people`. Cada item possui `mal_id`, `url`, `imageUrl` (`string | null`), `title` ou `name` e `type` quando aplicável.

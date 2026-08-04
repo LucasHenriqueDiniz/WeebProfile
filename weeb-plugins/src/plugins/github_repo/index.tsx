@@ -30,11 +30,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     owner: "",
     repo: "",
   } as PluginConfig & GithubRepoConfig,
-  fetchData: async (
-    config: PluginConfig & GithubRepoConfig,
-    dev = false,
-    essentialConfig?: EssentialPluginConfig
-  ) => {
+  fetchData: async (config: PluginConfig & GithubRepoConfig, dev = false, essentialConfig?: EssentialPluginConfig) => {
     const pat = essentialConfig?.pat
     if (!dev && !pat) {
       throw new Error("GitHub Classic Token is required. Please configure it in your profile settings.")
@@ -44,7 +40,9 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
   render: (config: PluginConfig & GithubRepoConfig, data: PluginData & GithubRepoData) => {
     const style = ((config as any).style || "default") as "default" | "terminal"
     const size = ((config as any).size || "half") as "half" | "full"
-    return <RenderGithubRepo config={config as GithubRepoConfig} data={data as GithubRepoData} style={style} size={size} />
+    return (
+      <RenderGithubRepo config={config as GithubRepoConfig} data={data as GithubRepoData} style={style} size={size} />
+    )
   },
   calculateHeight: (config, data, size = "half") => {
     const cfg = config as GithubRepoConfig

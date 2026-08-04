@@ -109,7 +109,11 @@ export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean;
   },
 }
 
-export function getSectionPreview(plugin: string, section: string, style: "default" | "terminal" = "default"): string | null {
+export function getSectionPreview(
+  plugin: string,
+  section: string,
+  style: "default" | "terminal" = "default"
+): string | null {
   const info = SECTION_PREVIEWS[plugin]?.[section]
   if (!info) return null
 

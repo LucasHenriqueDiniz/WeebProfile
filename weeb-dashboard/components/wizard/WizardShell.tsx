@@ -135,7 +135,10 @@ export function WizardShell({
                 className="relative rounded-lg border border-dashed border-border flex items-center justify-center"
                 style={{ width: Math.min(contentWidth, 360), height: 140 }}
               >
-                <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                >
                   <Image
                     src="/sora/sora_main.png"
                     alt="Sora"
@@ -279,11 +282,7 @@ export function WizardShell({
             <div
               className={cn(
                 "lg:w-64 xl:w-72 lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
-                activeTab === "plugins"
-                  ? mobileStep === "list"
-                    ? "block lg:block"
-                    : "hidden lg:block"
-                  : "hidden"
+                activeTab === "plugins" ? (mobileStep === "list" ? "block lg:block" : "hidden lg:block") : "hidden"
               )}
             >
               {pluginsList}
@@ -293,11 +292,7 @@ export function WizardShell({
             ref={detailScrollRef}
             className={cn(
               "lg:w-[400px] xl:w-[460px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
-              activeTab === "plugins"
-                ? mobileStep === "detail"
-                  ? "block lg:block"
-                  : "hidden lg:block"
-                : "hidden"
+              activeTab === "plugins" ? (mobileStep === "detail" ? "block lg:block" : "hidden lg:block") : "hidden"
             )}
           >
             {pluginDetail}
@@ -306,11 +301,7 @@ export function WizardShell({
             <div
               className={cn(
                 "lg:w-[400px] xl:w-[460px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
-                activeTab === "order"
-                  ? mobileStep === "detail"
-                    ? "block lg:block"
-                    : "hidden lg:block"
-                  : "hidden"
+                activeTab === "order" ? (mobileStep === "detail" ? "block lg:block" : "hidden lg:block") : "hidden"
               )}
             >
               <div className="p-4 lg:p-5">{orderConfig}</div>
@@ -319,11 +310,7 @@ export function WizardShell({
           <div
             className={cn(
               "lg:w-[460px] xl:w-[600px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
-              activeTab === "style"
-                ? mobileStep === "detail"
-                  ? "block lg:block"
-                  : "hidden lg:block"
-                : "hidden"
+              activeTab === "style" ? (mobileStep === "detail" ? "block lg:block" : "hidden lg:block") : "hidden"
             )}
           >
             <div className="p-4 lg:p-5">{styleConfig}</div>

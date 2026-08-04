@@ -31,7 +31,10 @@ async function imageDataUri(imageUrl: string | null): Promise<string | null> {
   }
 }
 
-export async function transformLastUpdates(response: EdgeUpdatesResponse, _config: MyAnimeListConfig): Promise<MalLastUpdates> {
+export async function transformLastUpdates(
+  response: EdgeUpdatesResponse,
+  _config: MyAnimeListConfig
+): Promise<MalLastUpdates> {
   const data = response.data
   return {
     anime: await Promise.all(

@@ -45,7 +45,11 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env,
 
     let previewUrl: string | null = null
     if (template.svgId) {
-      const [svgRow] = await db.select({ storageUrl: svgs.storageUrl }).from(svgs).where(eq(svgs.id, template.svgId)).limit(1)
+      const [svgRow] = await db
+        .select({ storageUrl: svgs.storageUrl })
+        .from(svgs)
+        .where(eq(svgs.id, template.svgId))
+        .limit(1)
       previewUrl = svgRow?.storageUrl || null
     }
 
