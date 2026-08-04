@@ -3,7 +3,10 @@
  *
  * Plugin para exibir estatísticas do MyAnimeList
  *
- * TODO: Completar migração do source original
+ * Nove seções: statistics, statistics_simple, anime_bar, manga_bar,
+ * last_activity e os quatro blocos de favoritos (anime, manga, personagens,
+ * pessoas). Todas declaradas em plugin.metadata.ts, tratadas em
+ * RenderMyAnimeList e medidas em calculateHeight.
  */
 
 import React from "react"
