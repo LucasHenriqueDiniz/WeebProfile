@@ -13,17 +13,12 @@ export const steamPluginMetadata = {
   category: "gaming" as const,
   icon: "Gamepad2",
   requiredFields: [],
-  essentialConfigKeys: ["apiKey", "steamId"],
+  // No apiKey. The Steam Web API key identifies the caller, not the account being
+  // read -- any valid key can fetch any public profile -- so the generator uses its
+  // own (see svg-generator/src/db/app-credentials.ts) instead of asking each user
+  // for a credential that also administers their game server tokens.
+  essentialConfigKeys: ["steamId"],
   essentialConfigKeysMetadata: [
-    {
-      key: "apiKey",
-      label: "Steam Web API Key",
-      type: "password" as const,
-      placeholder: "your-api-key",
-      description: "API Key from Steam Web API",
-      helpUrl: "https://steamcommunity.com/dev/apikey",
-      docKey: "steam.apiKey",
-    },
     {
       key: "steamId",
       label: "Steam ID64",

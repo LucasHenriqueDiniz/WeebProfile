@@ -2,11 +2,6 @@
   "description": "Mostre suas estatísticas de jogos do Steam",
   "displayName": "Steam",
   "essentialConfig": {
-    "apiKey": {
-      "description": "Chave de API da Steam Web API",
-      "label": "Chave de API Steam Web",
-      "placeholder": "sua-chave-api"
-    },
     "steamId": {
       "description": "Seu Steam ID64 (17 dígitos)",
       "label": "Steam ID64",

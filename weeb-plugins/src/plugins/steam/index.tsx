@@ -14,7 +14,12 @@ import { fetchSteamData } from "./services/fetchData"
 
 export const steamPlugin: Plugin<PluginConfig & SteamConfig, PluginData & SteamData> = {
   name: "steam",
-  essentialConfigKeys: ["apiKey", "steamId"],
+  // apiKey is deliberately absent: the Steam Web API key identifies the caller,
+  // not the account being read, so any valid key can fetch any public profile.
+  // Asking each user for theirs requested a credential that was both stronger
+  // than needed -- it can administer that account's game server tokens -- and
+  // not needed per-user. The generator supplies its own via app-credentials.ts.
+  essentialConfigKeys: ["steamId"],
   config: {
     enabled: false,
     sections: [],

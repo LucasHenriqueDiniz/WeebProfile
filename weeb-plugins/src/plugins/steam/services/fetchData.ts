@@ -32,9 +32,14 @@ export async function fetchSteamData(
     return (await convertImageUrlsToBase64(mockData, previewMode)) as SteamData
   }
 
-  // Validar que tem credenciais configuradas quando não estiver em modo dev/preview
-  if (!apiKey || !steamId) {
-    throw new Error("Steam API Key and Steam ID are required. Please configure them in your profile settings.")
+  // The two are no longer the same kind of problem, so they no longer share a
+  // message. steamId is the user's to provide; apiKey belongs to the deployment
+  // and its absence is an operator error the user can do nothing about.
+  if (!steamId) {
+    throw new Error("Steam ID is required. Please configure it in your profile settings.")
+  }
+  if (!apiKey) {
+    throw new Error("Steam is unavailable: the server has no Steam Web API key configured.")
   }
 
   try {

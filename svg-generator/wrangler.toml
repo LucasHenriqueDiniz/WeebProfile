@@ -37,6 +37,16 @@ service = "jikan-edge"
 [triggers]
 crons = ["7 3 * * *"]
 
+# ============================================================
+# Secrets (via `wrangler secret put <KEY>`, never here):
+#   CRON_SECRET             autentica a chamada ao endpoint de cron do dashboard
+#   SECRETS_ENCRYPTION_KEY  decifra plugin_secrets (obrigatória, ver db/secret-crypto.ts)
+#   STEAM_API_KEY           chave da aplicação para a Steam Web API, usada em nome de
+#                           todos os usuários — ver db/app-credentials.ts. Sem ela o
+#                           plugin Steam falha com mensagem de operador, e nenhum
+#                           usuário consegue resolver sozinho.
+# ============================================================
+
 [vars]
 DASHBOARD_URL = "https://weebprofile-dashboard.pages.dev"
 JIKAN_EDGE_BASE_URL = "https://jikan-edge.lucas-hdo.workers.dev"

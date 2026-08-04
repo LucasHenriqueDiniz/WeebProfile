@@ -3680,22 +3680,8 @@ export const PLUGINS_METADATA = {
     category: "gaming",
     icon: "Gamepad2",
     requiredFields: [],
-    essentialConfigKeys: ["apiKey","steamId"],
+    essentialConfigKeys: ["steamId"],
     essentialConfigKeysMetadata: [
-        {
-          key: "apiKey",
-          label: "Steam Web API Key",
-          type: "password",
-          placeholder: "your-api-key",
-          description: "API Key from Steam Web API",
-          helpUrl: "https://steamcommunity.com/dev/apikey",
-          docKey: "steam.apiKey",
-          i18nKey: {
-            label: "plugins.steam.essentialConfig.apiKey.label",
-            placeholder: "plugins.steam.essentialConfig.apiKey.placeholder",
-            description: "plugins.steam.essentialConfig.apiKey.description"
-          }
-        },
         {
           key: "steamId",
           label: "Steam ID64",

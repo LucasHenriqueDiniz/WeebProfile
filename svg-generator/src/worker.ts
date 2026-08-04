@@ -15,6 +15,7 @@ import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
 import { getUserEssentialConfigs } from "./db/essential-configs.js"
 import { validateRequiredConfig } from "./validation/validate-required-config.js"
 import { log, hashUserId } from "./utils/log.js"
+import { withAppCredentials } from "./db/app-credentials.js"
 
 export interface Env {
   DB: D1Database
@@ -25,6 +26,9 @@ export interface Env {
   // Required: getUserEssentialConfigs refuses to read plugin_secrets without it
   // rather than falling back to treating the stored column as plain text.
   SECRETS_ENCRYPTION_KEY: string
+  // Application-owned provider credential -- see db/app-credentials.ts. Optional
+  // so a deployment without it simply has no Steam data rather than failing.
+  STEAM_API_KEY?: string
 }
 
 interface GenerateRequest {
@@ -123,6 +127,10 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
     log.warn("secrets.inline", { note: "essentialConfigs provided in request body (test mode)" })
     essentialConfigs = requestData.essentialConfigs
   }
+
+  // Applied after the user's own secrets and regardless of whether a userId was
+  // given: an application credential is not tied to the account being rendered.
+  essentialConfigs = withAppCredentials(essentialConfigs, env)
 
   // Prepare plugins config - fully dynamic, iterates over all plugins in the request
   const plugins: Record<string, any> = {}
