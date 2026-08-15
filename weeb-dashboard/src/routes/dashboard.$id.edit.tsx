@@ -184,10 +184,29 @@ export default function EditSvgPage() {
         }
       })
 
-      // Carregar ordem dos plugins
-      if (svg.pluginsOrder) {
-        reorderPlugins(svg.pluginsOrder.split(","))
-      }
+      // Carregar ordem dos plugins.
+      //
+      // `selectEnabledPluginNames` deriva tudo de `pluginsOrder` -- um plugin
+      // habilitado que não esteja nessa lista é invisível para o preview e para a
+      // validação. E `resetForEdit` zera a ordem, então quando o SVG salvo não tem
+      // `plugins_order` (as linhas mais antigas do banco têm NULL) o wizard abria
+      // com preview vazio: "habilite pelo menos um plugin", com o plugin habilitado
+      // ali do lado. Voltava a aparecer só ao mexer numa seção, porque aí o
+      // togglePlugin insere o nome na ordem.
+      //
+      // Por isso a ordem salva é uma preferência, não a fonte da verdade: o que
+      // manda é quais plugins estão habilitados na config.
+      const ordemSalva = (svg.pluginsOrder || "")
+        .split(",")
+        .map((nome) => nome.trim())
+        .filter(Boolean)
+
+      const habilitados = Object.keys(pluginsConfig).filter((nome) => pluginsConfig[nome]?.enabled === true)
+
+      reorderPlugins([
+        ...ordemSalva.filter((nome) => habilitados.includes(nome)),
+        ...habilitados.filter((nome) => !ordemSalva.includes(nome)),
+      ])
     }
   }
 
