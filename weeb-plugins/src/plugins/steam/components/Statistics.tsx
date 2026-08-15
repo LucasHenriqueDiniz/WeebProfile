@@ -40,11 +40,15 @@ function getSteamImageUrl(game: { appid: number; header_image?: string }): strin
 }
 
 function getSteamCoverImageUrl(game: { appid: number; header_image?: string }): string | null {
-  if (game.header_image) {
-    return game.header_image
-  }
-  // Fallback: try to construct URL from appid
-  return `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/library_hero.jpg`
+  // Só o que já veio embutido como data URI. Aqui havia um fallback que montava
+  // `library_hero.jpg` a partir do appid, e essa URL ia crua para dentro do SVG --
+  // que num Gist do GitHub simplesmente não carrega, deixando o card com um buraco
+  // em vez de um layout sem imagem. Mesma decisão já tomada no plugin do Dev.to.
+  //
+  // O fallback disparava quando o header.jpg do jogo dá 404 (nem todo appid tem um)
+  // e o fetchData grava null. Sem imagem é resultado honesto; imagem quebrada, não.
+  // De quebra, library_hero costuma passar de 500 KB -- acima do teto de conversão.
+  return game.header_image || null
 }
 
 export function Statistics({ data, config, style = "default", size = "half" }: StatisticsProps): React.ReactElement {
