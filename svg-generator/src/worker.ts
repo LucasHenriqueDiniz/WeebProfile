@@ -261,7 +261,16 @@ async function runScheduledGeneration(env: Env): Promise<void> {
     return
   }
 
-  const dashboardUrl = env.DASHBOARD_URL || "https://weebprofile-dashboard.pages.dev"
+  // Sem default embutido, mesmo padrão fail-closed do CRON_SECRET acima. Um domínio
+  // hardcoded aqui sobrevive a uma troca de domínio e faz o cron seguir apontando para
+  // o endereço antigo sem nada no log -- justamente o erro que a migração do Clerk
+  // pode provocar (ver docs/clerk-production-migration.md).
+  const dashboardUrl = env.DASHBOARD_URL
+  if (!dashboardUrl) {
+    log.error("cron.skipped", { reason: "DASHBOARD_URL not configured" })
+    return
+  }
+
   let totalProcessed = 0
 
   for (let run = 1; run <= 20; run++) {

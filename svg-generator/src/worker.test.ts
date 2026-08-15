@@ -294,10 +294,23 @@ describe("scheduled() — cron", () => {
   const respondingWith = (processed: number) =>
     vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response(JSON.stringify({ processed })) as never)
 
+  /** O cron exige as duas configs; os testes de loop abaixo só variam a resposta. */
+  const cronEnv = (extra: Partial<Env> = {}) => env({ CRON_SECRET: "s", DASHBOARD_URL: "https://dash", ...extra })
+
   it("não chama o dashboard sem CRON_SECRET configurado", async () => {
     const spy = vi.spyOn(globalThis, "fetch")
 
-    await run(env())
+    await run(env({ DASHBOARD_URL: "https://dash" }))
+
+    expect(spy).not.toHaveBeenCalled()
+  })
+
+  // Sem default embutido: um domínio hardcoded sobreviveria a uma troca de domínio e
+  // faria o cron seguir apontando para o endereço antigo, sem nada no log.
+  it("não adivinha o dashboard quando DASHBOARD_URL não está configurada", async () => {
+    const spy = vi.spyOn(globalThis, "fetch")
+
+    await run(env({ CRON_SECRET: "s" }))
 
     expect(spy).not.toHaveBeenCalled()
   })
@@ -320,7 +333,7 @@ describe("scheduled() — cron", () => {
       .spyOn(globalThis, "fetch")
       .mockImplementation(async () => new Response(JSON.stringify({ processed: ++call < 3 ? 50 : 7 })) as never)
 
-    await run(env({ CRON_SECRET: "s" }))
+    await run(cronEnv())
 
     expect(spy).toHaveBeenCalledTimes(3)
   })
@@ -328,7 +341,7 @@ describe("scheduled() — cron", () => {
   it("para depois de 20 lotes cheios em vez de girar sem fim", async () => {
     const spy = respondingWith(50)
 
-    await run(env({ CRON_SECRET: "s" }))
+    await run(cronEnv())
 
     expect(spy).toHaveBeenCalledTimes(20)
   })
@@ -336,7 +349,7 @@ describe("scheduled() — cron", () => {
   it("desiste no primeiro erro de rede em vez de repetir 20 vezes", async () => {
     const spy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("offline"))
 
-    await run(env({ CRON_SECRET: "s" }))
+    await run(cronEnv())
 
     expect(spy).toHaveBeenCalledTimes(1)
   })
