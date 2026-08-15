@@ -1,23 +1,35 @@
 import type { SteamData, SteamGame, SteamPlayerSummary, SteamStatistics } from "../types"
 
+/**
+ * Ícones com hash real, para o preview mostrar o que a geração real mostra.
+ *
+ * Os outros jogos aqui ficam sem `icon_image` de propósito: nem todo appid tem
+ * ícone, e o preview precisa exibir os dois estados. Foi a divergência entre mock e
+ * realidade que escondeu três bugs de imagem neste plugin -- ver docs/steam-images.md.
+ */
+const ICONE = (appid: number, hash: string) =>
+  `https://media.steampowered.com/steamcommunity/public/images/apps/${appid}/${hash}.jpg`
+
 const baseGames: SteamGame[] = [
   {
     appid: 730,
     name: "Counter-Strike 2",
     playtime_forever: 1200,
     playtime_2weeks: 45,
-    img_icon_url: "6b0d000c5f0c0c5ed2c0c5ed2c0c5ed2",
+    img_icon_url: "8dbc71957312bbd3baea65848b545be9eae2a355",
     img_logo_url: "af890f85fd6a7c32d8b2c2b2c2b2c2b2",
     header_image: "https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg",
+    icon_image: ICONE(730, "8dbc71957312bbd3baea65848b545be9eae2a355"),
   },
   {
     appid: 440,
     name: "Team Fortress 2",
     playtime_forever: 850,
     playtime_2weeks: 0,
-    img_icon_url: "fcf6ee4f8b0c0c5ed2c0c5ed2c0c5ed2",
+    img_icon_url: "e3f595a92552da3d664ad00277fad2107345f743",
     img_logo_url: "af890f85fd6a7c32d8b2c2b2c2b2c2b2",
     header_image: "https://cdn.akamai.steamstatic.com/steam/apps/440/header.jpg",
+    icon_image: ICONE(440, "e3f595a92552da3d664ad00277fad2107345f743"),
   },
   {
     appid: 570,

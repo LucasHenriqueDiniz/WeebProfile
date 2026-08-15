@@ -9,9 +9,13 @@ export interface SteamGame {
   name: string
   playtime_forever: number
   playtime_2weeks?: number
+  /** Hash cru vindo da API; sozinho não é URL. Ver docs/steam-images.md. */
   img_icon_url?: string
   img_logo_url?: string
+  /** Capa larga (capsule/header), usada como fundo do card. */
   header_image?: string
+  /** Ícone quadrado 32x32, para a miniatura. Montado a partir de img_icon_url. */
+  icon_image?: string
 }
 
 export interface SteamPlayerSummary {

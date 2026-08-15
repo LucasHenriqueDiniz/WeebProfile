@@ -22,10 +22,9 @@ function formatPlaytime(minutes: number): string {
   return `${minutes}m`
 }
 
-// Note: img_logo_url and img_icon_url from Steam API are often invalid
-// We'll use header_image instead when available
-function getSteamImageUrl(game: { appid: number; header_image?: string }): string | null {
-  return game.header_image || null
+// Ver TopGames: a miniatura quadrada usa o ícone; a capa larga fica no fundo.
+function getSteamIconUrl(game: { icon_image?: string; header_image?: string }): string | null {
+  return game.icon_image || game.header_image || null
 }
 
 export function RecentGames({ data, config, style = "default", size = "half" }: RecentGamesProps): React.ReactElement {
@@ -83,7 +82,7 @@ export function RecentGames({ data, config, style = "default", size = "half" }: 
             ) : (
               <div className="flex flex-col gap-3 half:gap-2.5">
                 {recentGames.map((game) => {
-                  const gameIconUrl = getSteamImageUrl(game)
+                  const gameIconUrl = getSteamIconUrl(game)
 
                   return (
                     <div

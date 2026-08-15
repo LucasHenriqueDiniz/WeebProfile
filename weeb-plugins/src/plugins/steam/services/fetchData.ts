@@ -144,6 +144,21 @@ function steamImageUrl(appid: number, variante: "header" | "capsule"): string {
 }
 
 /**
+ * Ícone quadrado do jogo, 32x32 e ~1-3 KB.
+ *
+ * O `img_icon_url` que a API devolve é só um hash -- sozinho não é URL, e é por
+ * isso que o componente o marcava como "often invalid". A URL completa é
+ * `media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg`
+ * (ver docs/steam-images.md).
+ *
+ * A miniatura mostrava um recorte da capa larga, que cortava o logo no meio
+ * ("COUNTER STRIK", "DOT A"). O ícone é quadrado, que é a forma do espaço.
+ */
+function steamIconUrl(appid: number, hash: string): string {
+  return `https://media.steampowered.com/steamcommunity/public/images/apps/${appid}/${hash}.jpg`
+}
+
+/**
  * Preenche `header_image` nos jogos que vão aparecer.
  *
  * A API da Steam não devolve esse campo -- `GetOwnedGames` dá `img_icon_url` e
@@ -187,11 +202,17 @@ export function withHeaderImages(games: SteamGame[], config: SteamConfig): Steam
     .slice(0, topMax)
     .forEach((g) => comCapa.add(g.appid))
 
-  return games.map((g) =>
-    comCapa.has(g.appid)
-      ? { ...g, header_image: steamImageUrl(g.appid, g.appid === destaque ? "header" : "capsule") }
-      : g
-  )
+  return games.map((g) => {
+    if (!comCapa.has(g.appid)) return g
+
+    return {
+      ...g,
+      header_image: steamImageUrl(g.appid, g.appid === destaque ? "header" : "capsule"),
+      // Só quando a API mandou o hash: sem ele não há URL a montar, e inventar
+      // uma daria 404 e uma requisição perdida por jogo.
+      ...(g.img_icon_url ? { icon_image: steamIconUrl(g.appid, g.img_icon_url) } : {}),
+    }
+  })
 }
 
 function calculateStatistics(games: SteamGame[]): SteamStatistics {
@@ -231,7 +252,11 @@ async function convertImageUrlsToBase64(data: any, previewMode = false): Promise
     const result: any = {}
     for (const [key, value] of Object.entries(data)) {
       if (
-        (key === "avatar" || key === "avatarmedium" || key === "avatarfull" || key === "header_image") &&
+        (key === "avatar" ||
+          key === "avatarmedium" ||
+          key === "avatarfull" ||
+          key === "header_image" ||
+          key === "icon_image") &&
         typeof value === "string" &&
         (value.startsWith("http://") || value.startsWith("https://"))
       ) {

@@ -31,12 +31,9 @@ function formatHours(minutes: number): string {
   return `${minutes}m`
 }
 
-// Note: img_logo_url and img_icon_url from Steam API are often invalid
-// We'll use header_image instead when available, or show a placeholder
-function getSteamImageUrl(game: { appid: number; header_image?: string }): string | null {
-  // Use header_image as a small thumbnail instead of broken icon URLs
-  // We can create a smaller version or use the header directly
-  return game.header_image || null
+// Ver TopGames: a miniatura quadrada usa o ícone; a capa larga fica no fundo.
+function getSteamIconUrl(game: { icon_image?: string; header_image?: string }): string | null {
+  return game.icon_image || game.header_image || null
 }
 
 function getSteamCoverImageUrl(game: { appid: number; header_image?: string }): string | null {
@@ -121,7 +118,7 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
               <div className="relative overflow-hidden rounded-xl border border-default-border/50 min-h-[120px] half:min-h-[100px]">
                 {(() => {
                   const coverUrl = getSteamCoverImageUrl(featuredGame)
-                  const imageUrl = getSteamImageUrl(featuredGame)
+                  const imageUrl = getSteamIconUrl(featuredGame)
 
                   return coverUrl ? (
                     <>

@@ -24,10 +24,12 @@ function formatPlaytime(minutes: number): string {
   return `${hours}h`
 }
 
-// Note: img_logo_url and img_icon_url from Steam API are often invalid
-// We'll use header_image instead when available
-function getSteamImageUrl(game: { appid: number; header_image?: string }): string | null {
-  return game.header_image || null
+// A miniatura é quadrada, então quer o ícone quadrado -- não um recorte da capa
+// larga, que cortava o logo no meio ("COUNTER STRIK", "DOT A"). O `img_icon_url` da
+// API não era "invalid" como dizia o comentário antigo: é um hash, e a URL precisa
+// ser montada (ver docs/steam-images.md). A capa continua como fundo do card.
+function getSteamIconUrl(game: { icon_image?: string; header_image?: string }): string | null {
+  return game.icon_image || game.header_image || null
 }
 
 export function TopGames({ data, config, style = "default", size = "half" }: TopGamesProps): React.ReactElement {
@@ -85,7 +87,7 @@ export function TopGames({ data, config, style = "default", size = "half" }: Top
             ) : (
               <div className="flex flex-col gap-3 half:gap-2.5">
                 {topGames.map((game) => {
-                  const gameIconUrl = getSteamImageUrl(game)
+                  const gameIconUrl = getSteamIconUrl(game)
 
                   return (
                     <div
