@@ -10,7 +10,7 @@ import { clerkAppearance } from "@/components/auth/clerk-appearance"
 export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const router = useRouter()
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading: authLoading, authUnavailable } = useAuth()
 
   useEffect(() => {
     // Se o usuário estiver logado, redirecionar para dashboard
@@ -39,6 +39,28 @@ export default function LoginPage() {
           <p className="text-sm text-amber-300">
             Autenticação não configurada neste ambiente (VITE_CLERK_PUBLISHABLE_KEY ausente no build).
           </p>
+        </div>
+      </AuthDecoration>
+    )
+  }
+
+  // O SDK não carregou dentro do timeout. Sem isto o esqueleto do ClerkLoading
+  // abaixo giraria para sempre -- trocaria um spinner eterno por outro. O usuário
+  // não consegue resolver, mas precisa saber que o problema não é a senha dele.
+  if (authUnavailable) {
+    return (
+      <AuthDecoration title="Login indisponível">
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3">
+          <p className="text-sm text-amber-300">
+            Não foi possível carregar o serviço de autenticação. Isso costuma ser bloqueio de rede ou de extensão do
+            navegador (bloqueador de anúncios, proteção de rastreamento).
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-3 text-sm font-semibold text-cyan-400 transition-colors hover:text-cyan-300"
+          >
+            Tentar de novo
+          </button>
         </div>
       </AuthDecoration>
     )

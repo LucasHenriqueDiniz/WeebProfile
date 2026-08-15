@@ -1,6 +1,33 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { useUser, useClerk } from "@clerk/react"
+
+/**
+ * Quanto esperar o Clerk carregar antes de desistir.
+ *
+ * `isLoaded` nunca vira true se o clerk.browser.js não baixar, e o ClerkProvider
+ * envolve o RouterProvider inteiro (src/main.tsx) -- então a landing pública, que
+ * não precisa de sessão nenhuma, ficava num spinner eterno. Aconteceu em produção
+ * em 15/08/2026: bastou o navegador não alcançar o domínio do Clerk (bloqueador,
+ * extensão de privacidade, rede corporativa -- domínio de auth de terceiro é alvo
+ * comum de lista de bloqueio) para o site inteiro sumir para um visitante novo.
+ *
+ * 8s é folgado para uma conexão ruim e curto o bastante para não parecer travado.
+ */
+const AUTH_LOAD_TIMEOUT_MS = 8000
+
+function useLoadTimeout(isLoaded: boolean): boolean {
+  const [timedOut, setTimedOut] = useState(false)
+
+  useEffect(() => {
+    if (isLoaded) return
+    const id = setTimeout(() => setTimedOut(true), AUTH_LOAD_TIMEOUT_MS)
+    return () => clearTimeout(id)
+  }, [isLoaded])
+
+  return timedOut && !isLoaded
+}
 
 // DEV-ONLY preview bypass: ?mock=empty or ?mock=full lets us inspect authenticated
 // screens without a real session. import.meta.env.DEV is statically replaced by Vite,
@@ -44,12 +71,15 @@ const MOCK_USER: AuthUser = {
 export function useAuth() {
   const { user, isLoaded } = useUser()
   const { signOut } = useClerk()
+  // Antes de qualquer early return: hook não pode ficar atrás de condicional.
+  const authUnavailable = useLoadTimeout(isLoaded)
 
   const mockFlag = getMockFlag()
   if (mockFlag) {
     return {
       user: MOCK_USER,
       loading: false,
+      authUnavailable: false,
       signOut: () => signOut(),
     }
   }
@@ -75,7 +105,11 @@ export function useAuth() {
 
   return {
     user: mappedUser,
-    loading: !isLoaded,
+    // Deixa de carregar ao estourar o timeout, mesmo sem o Clerk ter respondido.
+    // Rota pública renderiza; rota protegida vê user null e manda para o login,
+    // que usa authUnavailable para dizer o que houve em vez de girar de novo.
+    loading: !isLoaded && !authUnavailable,
+    authUnavailable,
     signOut: () => signOut(),
   }
 }
