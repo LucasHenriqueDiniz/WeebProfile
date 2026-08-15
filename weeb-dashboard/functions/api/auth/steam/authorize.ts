@@ -3,7 +3,7 @@ import type { CloudflareEnv } from "../../_shared/auth"
 import { getAuthUserId, unauthorized, serverError } from "../../_shared/auth"
 import { buildAuthUrl } from "../../_shared/steam-openid"
 import { safeReturnTo } from "../../_shared/return-to"
-import { STATE_COOKIE, STATE_TTL_SECONDS, DEFAULT_RETURN_TO } from "./shared"
+import { STATE_COOKIE, STATE_TTL_SECONDS, DEFAULT_RETURN_TO, sealState } from "./shared"
 
 /**
  * GET /api/auth/steam/authorize - begin "Sign in through Steam".
@@ -37,13 +37,18 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
     callback.searchParams.set("state", state)
     callback.searchParams.set("returnTo", returnTo)
 
+    // Este é o único ponto do fluxo com sessão do Clerk garantida: a chamada é
+    // same-site. O callback chega do steamcommunity.com e não tem essa garantia,
+    // então a identidade viaja selada dentro do próprio cookie de state (ver sealState).
+    const sealed = await sealState(state, userId, env.SECRETS_ENCRYPTION_KEY)
+
     return new Response(null, {
       status: 302,
       headers: {
         Location: buildAuthUrl(callback.toString(), url.origin),
         // Lax, not Strict: the user comes back via a top-level redirect from
         // steamcommunity.com, and Strict withholds the cookie exactly then.
-        "Set-Cookie": `${STATE_COOKIE}=${state}; Path=/api/auth/steam; HttpOnly; Secure; SameSite=Lax; Max-Age=${STATE_TTL_SECONDS}`,
+        "Set-Cookie": `${STATE_COOKIE}=${sealed}; Path=/api/auth/steam; HttpOnly; Secure; SameSite=Lax; Max-Age=${STATE_TTL_SECONDS}`,
         "Cache-Control": "no-store",
       },
     })

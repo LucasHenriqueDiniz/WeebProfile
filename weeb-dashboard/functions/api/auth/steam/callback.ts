@@ -1,24 +1,29 @@
 import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../../_shared/auth"
-import { getAuthUserId, unauthorized, serverError } from "../../_shared/auth"
+import { serverError } from "../../_shared/auth"
 import { getDb } from "../../_shared/db"
 import { setPluginSecret } from "../../_shared/secrets"
 import { buildVerificationBody, isVerified, parseClaimedId, STEAM_VERIFY_URL } from "../../_shared/steam-openid"
 import { safeReturnTo } from "../../_shared/return-to"
-import { STATE_COOKIE, CLEAR_STATE_COOKIE, DEFAULT_RETURN_TO, readCookie } from "./shared"
+import { STATE_COOKIE, CLEAR_STATE_COOKIE, DEFAULT_RETURN_TO, readCookie, openState } from "./shared"
 
 /**
  * GET /api/auth/steam/callback - where Steam sends the user back.
  *
- * Three conditions must hold before anything is written, none of them optional:
+ * Duas condições antes de qualquer escrita, nenhuma opcional:
  *
- *  1. A WeebProfile session, so we know whose profile this attaches to.
- *  2. The nonce in the URL matches the cookie set when the flow started --
- *     otherwise a logged-in user could be walked onto a crafted callback and end
- *     up with someone else's Steam account on their card.
- *  3. Steam confirms it signed these parameters. Everything here arrives as query
- *     parameters the caller controls, so without this step anyone could claim any
- *     SteamID64 by editing a URL.
+ *  1. O cookie selado abre, e o nonce dentro dele bate com o da URL. Ele carrega
+ *     também o userId, posto lá pelo authorize, que exige sessão e roda same-site.
+ *     Isso cobre as duas coisas de uma vez: de quem é o perfil, e que o fluxo não
+ *     foi forjado -- sem o nonce, um usuário logado poderia ser levado a um callback
+ *     montado e terminar com a conta Steam de outro no card dele.
+ *  2. A Steam confirma que assinou estes parâmetros. Tudo aqui chega como query
+ *     string que o chamador controla, então sem esta etapa qualquer um reivindicaria
+ *     qualquer SteamID64 editando a URL.
+ *
+ * Não há checagem de sessão do Clerk aqui, e é deliberado: esta rota chega como
+ * navegação de topo do steamcommunity.com, e o cookie `__session` não sobrevive ao
+ * salto cross-site. Exigi-lo fazia todo login pelo Steam responder 401.
  *
  * Outcomes use the oauth_success / oauth_error shape the wizard already reads.
  */
@@ -38,9 +43,6 @@ function back(origin: string, returnTo: string, params: Record<string, string>):
 
 export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env }) => {
   try {
-    const userId = await getAuthUserId(request, env)
-    if (!userId) return unauthorized()
-
     const url = new URL(request.url)
     const origin = url.origin
     const returnTo = url.searchParams.get("returnTo") || DEFAULT_RETURN_TO
@@ -48,11 +50,17 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
     const fail = (reason: string, description: string) =>
       back(origin, returnTo, { oauth_error: "steam", error_description: description, reason })
 
-    const expectedState = readCookie(request, STATE_COOKIE)
+    // O cookie carrega nonce e identidade juntos. Nada aqui consulta a sessão do
+    // Clerk: esta rota chega como navegação de topo do steamcommunity.com, e o
+    // `__session` não sobrevive ao salto cross-site -- exigi-lo devolvia 401 em todo
+    // login pelo Steam. Quem provou identidade foi o authorize, same-site, ao selar
+    // este cookie; ver sealState em ./shared.
+    const sealed = await openState(readCookie(request, STATE_COOKIE), env.SECRETS_ENCRYPTION_KEY)
     const receivedState = url.searchParams.get("state")
-    if (!expectedState || !receivedState || expectedState !== receivedState) {
+    if (!sealed || !receivedState || sealed.state !== receivedState) {
       return fail("state_mismatch", "Sessão de conexão expirada. Tente novamente.")
     }
+    const userId = sealed.userId
 
     const verification = await fetch(STEAM_VERIFY_URL, {
       method: "POST",
