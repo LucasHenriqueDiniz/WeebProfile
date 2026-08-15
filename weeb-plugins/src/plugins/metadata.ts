@@ -2128,7 +2128,7 @@ export const PLUGINS_METADATA = {
           label: "Show owner",
           type: "boolean",
           defaultValue: true,
-          tooltip: "Shows the owner login (e.g. \"LucasHenriqueDiniz /\") before the repository name.",
+          tooltip: "Shows the owner login (e.g. \"weebprofile /\") before the repository name.",
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_show_owner.label",
             tooltip: "plugins.github_repo.sections.banner.config.banner_show_owner.tooltip"

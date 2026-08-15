@@ -78,6 +78,45 @@ export function usePluginWorkspace() {
     return () => window.removeEventListener("openProfileConfig", handleOpenProfileConfig)
   }, [])
 
+  /**
+   * Volta do "Entrar com Steam" (e de qualquer outro provedor).
+   *
+   * Antes só o ProfileConfigModal olhava isso, e com o provedor cravado em
+   * "spotify": voltar pelo Steam não dava aviso, não recarregava a presença dos
+   * segredos -- então o campo continuava com cara de vazio mesmo já configurado --
+   * e deixava `?oauth_success=steam` preso na URL. Aqui vale para qualquer provedor,
+   * e roda no workspace, que é para onde o callback devolve.
+   */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const sucesso = params.get("oauth_success")
+    const erro = params.get("oauth_error")
+    if (!sucesso && !erro) return
+
+    const nome = (p: string) => p.charAt(0).toUpperCase() + p.slice(1)
+
+    if (sucesso) {
+      toast({ title: `${nome(sucesso)} conectado`, description: "A configuração obrigatória foi preenchida." })
+      // O segredo acabou de ser gravado pelo callback; sem isto o campo só
+      // aparece como configurado no próximo carregamento da página.
+      refreshSecretsPresence()
+    } else if (erro) {
+      toast({
+        title: `Não foi possível conectar ${nome(erro)}`,
+        description: params.get("error_description") || "Tente novamente.",
+        variant: "destructive",
+      })
+    }
+
+    params.delete("oauth_success")
+    params.delete("oauth_error")
+    params.delete("error_description")
+    const query = params.toString()
+    window.history.replaceState({}, "", window.location.pathname + (query ? `?${query}` : ""))
+    // Só na montagem: os params são consumidos e apagados da URL em seguida.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const groupedPlugins = useMemo(() => getPluginsGroupedByCategory(), [])
 
   const allPlugins = useMemo(() => {

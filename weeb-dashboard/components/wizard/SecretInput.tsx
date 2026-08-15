@@ -131,6 +131,11 @@ export function SecretInput({
             type={isLocked ? "password" : type}
             className={cn(
               "h-8 text-xs pr-8",
+              // Placeholder bem mais apagado que o padrão. Vários deles são exemplos
+              // com cara de valor real ("76561198000000000" no Steam), e no contraste
+              // normal, dentro de um campo com borda vermelha de obrigatório, o campo
+              // parecia preenchido com valor inválido em vez de vazio.
+              "placeholder:text-muted-foreground/50",
               isLocked && "bg-muted/50 text-muted-foreground italic cursor-not-allowed",
               isMissing && "border-destructive focus-visible:ring-destructive"
             )}

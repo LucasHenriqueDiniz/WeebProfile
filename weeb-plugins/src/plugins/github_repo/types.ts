@@ -125,7 +125,7 @@ export interface GithubRepoConfig {
   banner_show_languages?: boolean
   // Esconde o avatar/marca nas variantes que o exibem (hero, minimal, dark).
   banner_show_avatar?: boolean
-  // Esconde o login do owner ("LucasHenriqueDiniz /") antes do nome do repo.
+  // Esconde o login do owner ("weebprofile /") antes do nome do repo.
   banner_show_owner?: boolean
   // URL de imagem custom (logo do projeto etc.) - substitui o avatar do owner no
   // banner. Em produção é convertida pra base64 no fetch (Gists não carregam URLs

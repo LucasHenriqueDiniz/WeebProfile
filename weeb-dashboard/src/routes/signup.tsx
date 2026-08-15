@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useRouter } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
-import { SignUp } from "@clerk/react"
+import { SignUp, ClerkLoaded, ClerkLoading } from "@clerk/react"
 import { Link } from "@/i18n/navigation"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { AuthDecoration } from "@/components/auth/AuthDecoration"
@@ -41,13 +41,32 @@ export default function SignupPage() {
       title="Crie sua conta"
       subtitle="Monte cards com seus stats de código, anime e música em poucos minutos — grátis."
     >
-      <SignUp
-        routing="path"
-        path="/signup"
-        signInUrl="/login"
-        appearance={clerkAppearance}
-        fallbackRedirectUrl="/dashboard"
-      />
+      {/* Mesmo esqueleto do login: sem ele o card fica com um vão de segundos e
+          depois salta quando o formulário do Clerk monta. */}
+      <ClerkLoading>
+        <div className="space-y-3" aria-hidden>
+          <div className="h-10 animate-pulse rounded-xl bg-muted/60" />
+          <div className="h-10 animate-pulse rounded-xl bg-muted/60" />
+          <div className="flex items-center gap-3 py-1">
+            <div className="h-px flex-1 bg-border" />
+            <div className="h-2 w-6 animate-pulse rounded bg-muted/60" />
+            <div className="h-px flex-1 bg-border" />
+          </div>
+          <div className="h-3 w-16 animate-pulse rounded bg-muted/60" />
+          <div className="h-10 animate-pulse rounded-xl bg-muted/60" />
+          <div className="h-10 animate-pulse rounded-xl bg-muted/40" />
+        </div>
+      </ClerkLoading>
+
+      <ClerkLoaded>
+        <SignUp
+          routing="path"
+          path="/signup"
+          signInUrl="/login"
+          appearance={clerkAppearance}
+          fallbackRedirectUrl="/dashboard"
+        />
+      </ClerkLoaded>
 
       {/* Switch to Login */}
       <p className="text-[13px] text-center text-muted-foreground mt-6">

@@ -87,7 +87,7 @@ export const githubRepoPluginMetadata = {
           label: "Show owner",
           type: "boolean" as const,
           defaultValue: true,
-          tooltip: 'Shows the owner login (e.g. "LucasHenriqueDiniz /") before the repository name.',
+          tooltip: 'Shows the owner login (e.g. "weebprofile /") before the repository name.',
         },
         {
           key: "banner_show_avatar",

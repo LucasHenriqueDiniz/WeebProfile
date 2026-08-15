@@ -2,7 +2,7 @@
 
 import { useTranslations } from "@/i18n/use-translations"
 import { FaGithub, FaLastfmSquare, FaSteam } from "react-icons/fa"
-import { SiMyanimelist, SiCodeforces, SiDuolingo } from "react-icons/si"
+import { SiMyanimelist, SiCodeforces, SiDuolingo, SiAnilist, SiDevdotto, SiCodewars } from "react-icons/si"
 import { GiWeightLiftingUp } from "react-icons/gi"
 import type { ComponentType } from "react"
 
@@ -13,12 +13,18 @@ interface PlatformChip {
   hover: string
 }
 
+// Lista curada, não a de plugins inteira: são os chips que cabem numa faixa só.
+// Mas ela envelheceu -- AniList, Dev.to e Codewars existiam e não apareciam aqui.
+// Ao adicionar um plugin, conferir se ele merece um chip.
 const PLATFORMS: PlatformChip[] = [
   { name: "GitHub", icon: FaGithub, hover: "hover:border-foreground/40 hover:text-foreground" },
   { name: "Last.fm", icon: FaLastfmSquare, hover: "hover:border-red-500/50 hover:text-red-500" },
   { name: "MyAnimeList", icon: SiMyanimelist, hover: "hover:border-blue-500/50 hover:text-blue-400" },
+  { name: "AniList", icon: SiAnilist, hover: "hover:border-indigo-500/50 hover:text-indigo-400" },
   { name: "Steam", icon: FaSteam, hover: "hover:border-sky-500/50 hover:text-sky-400" },
+  { name: "Dev.to", icon: SiDevdotto, hover: "hover:border-foreground/40 hover:text-foreground" },
   { name: "Codeforces", icon: SiCodeforces, hover: "hover:border-amber-500/50 hover:text-amber-500" },
+  { name: "Codewars", icon: SiCodewars, hover: "hover:border-rose-500/50 hover:text-rose-400" },
   { name: "Duolingo", icon: SiDuolingo, hover: "hover:border-emerald-500/50 hover:text-emerald-500" },
   { name: "Lyfta", icon: GiWeightLiftingUp, hover: "hover:border-violet-500/50 hover:text-violet-400" },
 ]

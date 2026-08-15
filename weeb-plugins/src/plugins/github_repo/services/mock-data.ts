@@ -8,11 +8,11 @@ const MOCK_AVATAR =
 export async function getMockGithubRepoData(): Promise<GithubRepoData> {
   return {
     name: "WeebProfile",
-    nameWithOwner: "LucasHenriqueDiniz/WeebProfile",
+    nameWithOwner: "weebprofile/WeebProfile",
     description: "Generate SVG stat cards for your GitHub profile — code, anime, music and gaming stats.",
-    url: "https://github.com/LucasHenriqueDiniz/WeebProfile",
+    url: "https://github.com/weebprofile/WeebProfile",
     owner: {
-      login: "LucasHenriqueDiniz",
+      login: "weebprofile",
       avatarUrl: MOCK_AVATAR,
     },
     primaryLanguage: {

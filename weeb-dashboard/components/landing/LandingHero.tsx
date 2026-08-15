@@ -1,6 +1,7 @@
 "use client"
 
 import { ArrowRight, Check } from "lucide-react"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
 
@@ -42,6 +43,18 @@ function PreviewColumn({ sources }: { sources: string[] }) {
   )
 }
 
+// Derivado de PLUGINS_METADATA, que é auto-gerado a cada plugin novo. O badge dizia
+// "11 plugins · 60+ seções" cravado na tradução, e ficou desatualizado sem ninguém
+// notar: já eram 14. Número em texto de marketing envelhece calado.
+const TOTAL_PLUGINS = Object.keys(PLUGINS_METADATA).length
+const TOTAL_SECOES = Object.values(PLUGINS_METADATA as Record<string, { sections?: unknown[] }>).reduce(
+  (soma, meta) => soma + (meta.sections?.length ?? 0),
+  0
+)
+// Arredonda para baixo na dezena: o "+" promete um piso, não uma contagem exata,
+// e assim o texto não muda a cada seção adicionada.
+const SECOES_ARREDONDADAS = Math.floor(TOTAL_SECOES / 10) * 10
+
 export function LandingHero() {
   const t = useTranslations("landing.hero")
 
@@ -80,7 +93,7 @@ export function LandingHero() {
         <div className="max-w-[600px]">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3.5 py-1.5 text-xs font-semibold text-muted-foreground">
             <img src="/sora/sora-head.png" alt="" className="h-4 w-4 object-contain" />
-            {t("badge")}
+            {t("badge", { plugins: TOTAL_PLUGINS, sections: SECOES_ARREDONDADAS })}
           </div>
           <h1 className="mt-6 font-heading text-5xl font-extrabold leading-[1.05] tracking-tight text-foreground [text-wrap:balance] md:text-6xl">
             {t("title")}{" "}

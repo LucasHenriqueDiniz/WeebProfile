@@ -33,7 +33,7 @@
         },
         "banner_show_owner": {
           "label": "Show owner",
-          "tooltip": "Shows the owner login (e.g. \"LucasHenriqueDiniz /\") before the repository name."
+          "tooltip": "Shows the owner login (e.g. \"weebprofile /\") before the repository name."
         },
         "banner_variant": {
           "description": "Choose the banner layout",

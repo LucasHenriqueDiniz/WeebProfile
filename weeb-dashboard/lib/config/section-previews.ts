@@ -11,6 +11,12 @@ export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean;
     personality: { default: true, terminal: true },
   },
 
+  anilist: {
+    statistics: { default: true, terminal: true },
+    favorites_anime: { default: true, terminal: true },
+    currently_watching: { default: true, terminal: true },
+  },
+
   codeforces: {
     rating_rank: { default: true, terminal: true },
     contests_participated: { default: true, terminal: true },
@@ -23,6 +29,12 @@ export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean;
     completed_kata: { default: true, terminal: true },
     languages_proficiency: { default: true, terminal: true },
     leaderboard_position: { default: true, terminal: true },
+  },
+
+  devto: {
+    profile: { default: true, terminal: true },
+    recent_articles: { default: true, terminal: true },
+    top_tags: { default: true, terminal: true },
   },
 
   duolingo: {

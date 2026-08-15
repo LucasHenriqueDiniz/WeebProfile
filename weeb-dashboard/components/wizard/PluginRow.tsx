@@ -30,9 +30,12 @@ export function PluginRow({ plugin, state, isSelected, missingConfigs, onSelect 
   const pluginMissingConfigs = missingConfigs.filter((m) => m.plugin === plugin.name)
   const hasMissingRequired = pluginMissingConfigs.length > 0 && state.enabled
 
-  const hasApiKey = metadata.essentialConfigKeysMetadata?.some(
-    (keyMeta: { type: string }) => keyMeta.type === "password" || keyMeta.type === "oauth"
-  )
+  // "KEY" e "LOGIN" dizem coisas diferentes ao usuário: um pede uma credencial que
+  // ele precisa ir buscar em outro site e colar; o outro é um botão de entrar.
+  // Antes os dois tipos caíam em "KEY", e o Steam -- que só faz login e usa chave da
+  // aplicação -- aparecia pedindo uma chave que ninguém precisa fornecer.
+  const keyTypes = metadata.essentialConfigKeysMetadata?.map((k: { type: string }) => k.type) ?? []
+  const credentialBadge = keyTypes.includes("password") ? "KEY" : keyTypes.includes("oauth") ? "LOGIN" : null
 
   const displayName = (() => {
     const meta = metadata as any
@@ -74,9 +77,9 @@ export function PluginRow({ plugin, state, isSelected, missingConfigs, onSelect 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <span className={cn("text-sm font-medium truncate", isSelected && "text-primary")}>{displayName}</span>
-          {hasApiKey && (
+          {credentialBadge && (
             <span className="flex-shrink-0 rounded border border-border px-1 py-px font-mono text-[9px] leading-none text-muted-foreground">
-              KEY
+              {credentialBadge}
             </span>
           )}
         </div>

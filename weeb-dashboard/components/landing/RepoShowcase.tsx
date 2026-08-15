@@ -55,7 +55,7 @@ export function RepoShowcase() {
               </div>
               <div className="mt-8 flex flex-col gap-5">
                 <img
-                  src="/previews/github_repo/default/banner_aurora.svg"
+                  src="/previews/github_repo/default/banner_centered_gradient.svg"
                   alt=""
                   loading="lazy"
                   className="rotate-1 rounded transition-transform duration-300 [filter:drop-shadow(0_10px_30px_rgba(0,0,0,0.3))] hover:rotate-0 hover:scale-[1.03]"

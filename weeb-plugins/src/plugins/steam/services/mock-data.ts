@@ -48,13 +48,19 @@ const baseGames: SteamGame[] = [
   },
 ]
 
+// Identidade sintética de propósito. Isto aqui era a conta real do dono do
+// projeto -- steamid, nome e avatar --, e o preview do wizard mostrava "Amayacrab,
+// 5 jogos na biblioteca" com cara de dado verdadeiro antes de qualquer busca
+// acontecer. Dado de exemplo precisa parecer exemplo.
+const AVATAR_PADRAO_STEAM = "https://avatars.fastly.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb"
+
 const basePlayerSummary: SteamPlayerSummary = {
-  steamid: "76561198056590170",
-  personaname: "Amayacrab",
-  profileurl: "https://steamcommunity.com/profiles/76561198056590170",
-  avatar: "https://avatars.fastly.steamstatic.com/50976fe302e8c0606b4721bf863b4df640cf44b1_full.jpg",
-  avatarmedium: "https://avatars.fastly.steamstatic.com/50976fe302e8c0606b4721bf863b4df640cf44b1_medium.jpg",
-  avatarfull: "https://avatars.fastly.steamstatic.com/50976fe302e8c0606b4721bf863b4df640cf44b1_full.jpg",
+  steamid: "76561190000000000",
+  personaname: "Weeb Profile",
+  profileurl: "https://steamcommunity.com/profiles/76561190000000000",
+  avatar: `${AVATAR_PADRAO_STEAM}_full.jpg`,
+  avatarmedium: `${AVATAR_PADRAO_STEAM}_medium.jpg`,
+  avatarfull: `${AVATAR_PADRAO_STEAM}_full.jpg`,
   personastate: 1,
   communityvisibilitystate: 3,
   profilestate: 1,

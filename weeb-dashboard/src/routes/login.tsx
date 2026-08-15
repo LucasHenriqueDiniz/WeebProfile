@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
-import { SignIn } from "@clerk/react"
+import { SignIn, ClerkLoaded, ClerkLoading } from "@clerk/react"
 import { Link } from "@/i18n/navigation"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { AuthDecoration } from "@/components/auth/AuthDecoration"
@@ -60,13 +60,34 @@ export default function LoginPage() {
         </div>
       )}
 
-      <SignIn
-        routing="path"
-        path="/login"
-        signUpUrl="/signup"
-        appearance={clerkAppearance}
-        fallbackRedirectUrl="/dashboard"
-      />
+      {/* O <SignIn> não pinta nada enquanto o Clerk carrega, e isso levava ~3s: o card
+          aparecia com título e "Não tem conta?" colados, com cara de quebrado, e depois
+          o formulário entrava empurrando o layout. O esqueleto ocupa a mesma altura,
+          então não há nem vão nem salto -- e é a primeira tela de quem chega. */}
+      <ClerkLoading>
+        <div className="space-y-3" aria-hidden>
+          <div className="h-10 animate-pulse rounded-xl bg-muted/60" />
+          <div className="h-10 animate-pulse rounded-xl bg-muted/60" />
+          <div className="flex items-center gap-3 py-1">
+            <div className="h-px flex-1 bg-border" />
+            <div className="h-2 w-6 animate-pulse rounded bg-muted/60" />
+            <div className="h-px flex-1 bg-border" />
+          </div>
+          <div className="h-3 w-16 animate-pulse rounded bg-muted/60" />
+          <div className="h-10 animate-pulse rounded-xl bg-muted/60" />
+          <div className="h-10 animate-pulse rounded-xl bg-muted/40" />
+        </div>
+      </ClerkLoading>
+
+      <ClerkLoaded>
+        <SignIn
+          routing="path"
+          path="/login"
+          signUpUrl="/signup"
+          appearance={clerkAppearance}
+          fallbackRedirectUrl="/dashboard"
+        />
+      </ClerkLoaded>
 
       {/* Switch to Signup */}
       <p className="text-[13px] text-center text-muted-foreground mt-6">

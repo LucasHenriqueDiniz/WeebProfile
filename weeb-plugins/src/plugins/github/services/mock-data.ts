@@ -5,9 +5,9 @@ export async function getMockGithubData(): Promise<GithubData> {
   // Dados reais copiados do real-data.json
   const realData: GithubData = {
     user: {
-      name: "Lucas HDO",
-      login: "LucasHenriqueDiniz",
-      avatarUrl: "https://avatars.githubusercontent.com/u/63087780?v=4",
+      name: "Weeb Profile",
+      login: "weebprofile",
+      avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
       createdAt: "2020-04-03T04:25:06Z",
       followers: 34,
       following: 11,
@@ -2090,7 +2090,7 @@ export async function getMockGithubData(): Promise<GithubData> {
           name: "WeebProfile",
           description:
             "A simple and customizable way to display code, anime, and music stats on your GitHub profile README.",
-          url: "https://github.com/LucasHenriqueDiniz/WeebProfile",
+          url: "https://github.com/weebprofile/WeebProfile",
           stargazerCount: 10,
           forkCount: 2,
           watchers: {
@@ -2106,9 +2106,9 @@ export async function getMockGithubData(): Promise<GithubData> {
           updatedAt: "2025-11-13T23:15:09Z",
         },
         {
-          name: "LucasHenriqueDiniz",
+          name: "weebprofile",
           description: "Config files for my GitHub profile.",
-          url: "https://github.com/LucasHenriqueDiniz/LucasHenriqueDiniz",
+          url: "https://github.com/weebprofile/weebprofile",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2121,9 +2121,9 @@ export async function getMockGithubData(): Promise<GithubData> {
           updatedAt: "2025-11-13T23:11:43Z",
         },
         {
-          name: "lucashdo",
+          name: "weebprofile-site",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/lucashdo",
+          url: "https://github.com/weebprofile/weebprofile-site",
           stargazerCount: 4,
           forkCount: 0,
           watchers: {
@@ -2141,7 +2141,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "picnic-challenge",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/picnic-challenge",
+          url: "https://github.com/weebprofile/picnic-challenge",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2159,7 +2159,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "BasicaoFullstack-End",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/BasicaoFullstack-End",
+          url: "https://github.com/weebprofile/BasicaoFullstack-End",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2177,7 +2177,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "reclame-mulher",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/reclame-mulher",
+          url: "https://github.com/weebprofile/reclame-mulher",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2195,7 +2195,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "roast-bot",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/roast-bot",
+          url: "https://github.com/weebprofile/roast-bot",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2213,7 +2213,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "tavern-sim-test",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/tavern-sim-test",
+          url: "https://github.com/weebprofile/tavern-sim-test",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2232,7 +2232,7 @@ export async function getMockGithubData(): Promise<GithubData> {
           name: "vscode-context-tools",
           description:
             "Copy current file/selection/open editors as fenced blocks, project tree, and diagnostics (Problems). Optimized for pasting into LLM/chat.",
-          url: "https://github.com/LucasHenriqueDiniz/vscode-context-tools",
+          url: "https://github.com/weebprofile/vscode-context-tools",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2250,7 +2250,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "loot-farm-bot",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/loot-farm-bot",
+          url: "https://github.com/weebprofile/loot-farm-bot",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2268,7 +2268,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "live2d-next",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/live2d-next",
+          url: "https://github.com/weebprofile/live2d-next",
           stargazerCount: 2,
           forkCount: 0,
           watchers: {
@@ -2286,7 +2286,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "mannco.store-enhancer-extension",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/mannco.store-enhancer-extension",
+          url: "https://github.com/weebprofile/mannco.store-enhancer-extension",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2304,7 +2304,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "siot-web-flasher",
           description: "Instalação de firmware e monitoramento serial para ESP32/ESP8266 via navegador web",
-          url: "https://github.com/LucasHenriqueDiniz/siot-web-flasher",
+          url: "https://github.com/weebprofile/siot-web-flasher",
           stargazerCount: 5,
           forkCount: 0,
           watchers: {
@@ -2322,7 +2322,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "php-laravel-crud",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/php-laravel-crud",
+          url: "https://github.com/weebprofile/php-laravel-crud",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2340,7 +2340,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "exemplo-firebase-login",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/exemplo-firebase-login",
+          url: "https://github.com/weebprofile/exemplo-firebase-login",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2359,7 +2359,7 @@ export async function getMockGithubData(): Promise<GithubData> {
           name: "cron-item-watcher",
           description:
             "Bot using Discord Webhook to inform user about items updates from specific websites using GitHub Actions",
-          url: "https://github.com/LucasHenriqueDiniz/cron-item-watcher",
+          url: "https://github.com/weebprofile/cron-item-watcher",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2377,7 +2377,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "QI-TEST-APP",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/QI-TEST-APP",
+          url: "https://github.com/weebprofile/QI-TEST-APP",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2395,7 +2395,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "sora-project",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/sora-project",
+          url: "https://github.com/weebprofile/sora-project",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2413,7 +2413,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "windowx-xp-online",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/windowx-xp-online",
+          url: "https://github.com/weebprofile/windowx-xp-online",
           stargazerCount: 3,
           forkCount: 0,
           watchers: {
@@ -2431,7 +2431,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "BasicaoFullstack-Start",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/BasicaoFullstack-Start",
+          url: "https://github.com/weebprofile/BasicaoFullstack-Start",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2449,7 +2449,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "AutoWabba",
           description: "Automatic download helper for Wabbajack mod lists from Nexus Mods with Electron",
-          url: "https://github.com/LucasHenriqueDiniz/AutoWabba",
+          url: "https://github.com/weebprofile/AutoWabba",
           stargazerCount: 4,
           forkCount: 0,
           watchers: {
@@ -2467,7 +2467,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "seuiot-new-design",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/seuiot-new-design",
+          url: "https://github.com/weebprofile/seuiot-new-design",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2486,7 +2486,7 @@ export async function getMockGithubData(): Promise<GithubData> {
           name: "Mannco.Store-Enhancer",
           description:
             "This extension aims to enhance your experience for the Mannco.store by providing various functionalities that connect, organize, and improve the platform. With our extension installed, you can enjoy an optimized and streamlined browsing experience on Mannco.store.",
-          url: "https://github.com/LucasHenriqueDiniz/Mannco.Store-Enhancer",
+          url: "https://github.com/weebprofile/Mannco.Store-Enhancer",
           stargazerCount: 5,
           forkCount: 0,
           watchers: {
@@ -2505,7 +2505,7 @@ export async function getMockGithubData(): Promise<GithubData> {
           name: "WeebProfile-old",
           description:
             "A simple and customizable way to display code, anime, and music stats on your GitHub profile README.",
-          url: "https://github.com/LucasHenriqueDiniz/WeebProfile-old",
+          url: "https://github.com/weebprofile/WeebProfile-old",
           stargazerCount: 2,
           forkCount: 0,
           watchers: {
@@ -2523,7 +2523,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "react-native-admob-starter",
           description: "Fast start react native admob",
-          url: "https://github.com/LucasHenriqueDiniz/react-native-admob-starter",
+          url: "https://github.com/weebprofile/react-native-admob-starter",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2541,7 +2541,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "WeebProfile-website",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/WeebProfile-website",
+          url: "https://github.com/weebprofile/WeebProfile-website",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2559,7 +2559,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "Biblioteca-Augusto-Severo",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/Biblioteca-Augusto-Severo",
+          url: "https://github.com/weebprofile/Biblioteca-Augusto-Severo",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2577,7 +2577,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "vercel-mal-app",
           description: '""',
-          url: "https://github.com/LucasHenriqueDiniz/vercel-mal-app",
+          url: "https://github.com/weebprofile/vercel-mal-app",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2596,7 +2596,7 @@ export async function getMockGithubData(): Promise<GithubData> {
           name: "backpacktf-ws-service-cockroach-db",
           description:
             "Builds a database of backpack.tf listings, automatically adding and deleting them from the public backpack.tf websocket. Uses CockroachDB",
-          url: "https://github.com/LucasHenriqueDiniz/backpacktf-ws-service-cockroach-db",
+          url: "https://github.com/weebprofile/backpacktf-ws-service-cockroach-db",
           stargazerCount: 2,
           forkCount: 0,
           watchers: {
@@ -2614,7 +2614,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "RandomCode",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/RandomCode",
+          url: "https://github.com/weebprofile/RandomCode",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2632,7 +2632,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "TFTbot",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/TFTbot",
+          url: "https://github.com/weebprofile/TFTbot",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2650,7 +2650,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "SteamGiftsAutoJoin",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/SteamGiftsAutoJoin",
+          url: "https://github.com/weebprofile/SteamGiftsAutoJoin",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2668,7 +2668,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "OldSteamBot",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/OldSteamBot",
+          url: "https://github.com/weebprofile/OldSteamBot",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2686,7 +2686,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "Old-Random-Discord-Bot",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/Old-Random-Discord-Bot",
+          url: "https://github.com/weebprofile/Old-Random-Discord-Bot",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2704,7 +2704,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "open-all-buyorders-test",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/open-all-buyorders-test",
+          url: "https://github.com/weebprofile/open-all-buyorders-test",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2722,7 +2722,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "basic-mannco-buyorder",
           description: "+0.01 buy order button  ",
-          url: "https://github.com/LucasHenriqueDiniz/basic-mannco-buyorder",
+          url: "https://github.com/weebprofile/basic-mannco-buyorder",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2740,7 +2740,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "skoob-autojoin",
           description: "Botao para entrar em todas as cortesias disponiveis no site Skoob",
-          url: "https://github.com/LucasHenriqueDiniz/skoob-autojoin",
+          url: "https://github.com/weebprofile/skoob-autojoin",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2758,7 +2758,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "Auto-BuyOrder-button-for-ManncoStore",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/Auto-BuyOrder-button-for-ManncoStore",
+          url: "https://github.com/weebprofile/Auto-BuyOrder-button-for-ManncoStore",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2777,7 +2777,7 @@ export async function getMockGithubData(): Promise<GithubData> {
           name: "Mannco.Store-Giveaway_Enhancer",
           description:
             "Mannco.Store Giveaway Enhancer is a browser extension that enhances the functionality of the giveaway pages on Mannco.Store. This extension adds several features to make it easier for users to join or leave giveaways, view all giveaways on one page, and keep track of which giveaways they have already joined.",
-          url: "https://github.com/LucasHenriqueDiniz/Mannco.Store-Giveaway_Enhancer",
+          url: "https://github.com/weebprofile/Mannco.Store-Giveaway_Enhancer",
           stargazerCount: 1,
           forkCount: 1,
           watchers: {
@@ -2796,7 +2796,7 @@ export async function getMockGithubData(): Promise<GithubData> {
           name: "Mannco.Store-Item_Page_Enhancer",
           description:
             "This extension enhances the item page of the mannco.store website by adding new functionalities and improvements. It provides a range of features that are designed to improve your browsing experience easier. With this extension, you can enjoy a more efficient and streamlined shopping experience on the Mannco Store website.",
-          url: "https://github.com/LucasHenriqueDiniz/Mannco.Store-Item_Page_Enhancer",
+          url: "https://github.com/weebprofile/Mannco.Store-Item_Page_Enhancer",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2814,7 +2814,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "mannco.store-profile_enhancer",
           description: "Add some functionalities to the profile page of the mannco.store",
-          url: "https://github.com/LucasHenriqueDiniz/mannco.store-profile_enhancer",
+          url: "https://github.com/weebprofile/mannco.store-profile_enhancer",
           stargazerCount: 1,
           forkCount: 0,
           watchers: {
@@ -2832,7 +2832,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "python-chatbot-test",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/python-chatbot-test",
+          url: "https://github.com/weebprofile/python-chatbot-test",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2850,7 +2850,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "Mannco.Store-Profit_Calculator_for_item_page",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/Mannco.Store-Profit_Calculator_for_item_page",
+          url: "https://github.com/weebprofile/Mannco.Store-Profit_Calculator_for_item_page",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2865,7 +2865,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "HypixelAutoSkipDaily",
           description: "Auto skip daily video for ranked hypixel users",
-          url: "https://github.com/LucasHenriqueDiniz/HypixelAutoSkipDaily",
+          url: "https://github.com/weebprofile/HypixelAutoSkipDaily",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2883,7 +2883,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "Steam-stats-for-Mannco.Store",
           description: "Some misc Extensions i made most of the time for personal use",
-          url: "https://github.com/LucasHenriqueDiniz/Steam-stats-for-Mannco.Store",
+          url: "https://github.com/weebprofile/Steam-stats-for-Mannco.Store",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2901,7 +2901,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "LucasDiniz.github.io",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/LucasDiniz.github.io",
+          url: "https://github.com/weebprofile/LucasDiniz.github.io",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2916,7 +2916,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "ListaDeExercicios-PythonBrasil",
           description: "https://wiki.python.org.br/ListaDeExercicios",
-          url: "https://github.com/LucasHenriqueDiniz/ListaDeExercicios-PythonBrasil",
+          url: "https://github.com/weebprofile/ListaDeExercicios-PythonBrasil",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -2934,7 +2934,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "CodeWars",
           description: "Meus codicos de pateta para o CodeWars",
-          url: "https://github.com/LucasHenriqueDiniz/CodeWars",
+          url: "https://github.com/weebprofile/CodeWars",
           stargazerCount: 0,
           forkCount: 0,
           watchers: {
@@ -5520,10 +5520,10 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
         {
           name: "vscode-context-tools",
-          nameWithOwner: "LucasHenriqueDiniz/vscode-context-tools",
+          nameWithOwner: "weebprofile/vscode-context-tools",
           description:
             "Copy current file/selection/open editors as fenced blocks, project tree, and diagnostics (Problems). Optimized for pasting into LLM/chat.",
-          url: "https://github.com/LucasHenriqueDiniz/vscode-context-tools",
+          url: "https://github.com/weebprofile/vscode-context-tools",
           stargazerCount: 1,
           forkCount: 0,
           primaryLanguage: {
@@ -5676,9 +5676,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
         {
           name: "BasicaoFullstack-Start",
-          nameWithOwner: "LucasHenriqueDiniz/BasicaoFullstack-Start",
+          nameWithOwner: "weebprofile/BasicaoFullstack-Start",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/BasicaoFullstack-Start",
+          url: "https://github.com/weebprofile/BasicaoFullstack-Start",
           stargazerCount: 1,
           forkCount: 0,
           primaryLanguage: {
@@ -5688,10 +5688,10 @@ export async function getMockGithubData(): Promise<GithubData> {
           updatedAt: "2025-06-28T20:39:07Z",
         },
         {
-          name: "lucashdo",
-          nameWithOwner: "LucasHenriqueDiniz/lucashdo",
+          name: "weebprofile-site",
+          nameWithOwner: "weebprofile/weebprofile-site",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/lucashdo",
+          url: "https://github.com/weebprofile/weebprofile-site",
           stargazerCount: 4,
           forkCount: 0,
           primaryLanguage: {
@@ -5702,9 +5702,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
         {
           name: "seuiot-new-design",
-          nameWithOwner: "LucasHenriqueDiniz/seuiot-new-design",
+          nameWithOwner: "weebprofile/seuiot-new-design",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/seuiot-new-design",
+          url: "https://github.com/weebprofile/seuiot-new-design",
           stargazerCount: 1,
           forkCount: 0,
           primaryLanguage: {
@@ -5715,9 +5715,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
         {
           name: "windowx-xp-online",
-          nameWithOwner: "LucasHenriqueDiniz/windowx-xp-online",
+          nameWithOwner: "weebprofile/windowx-xp-online",
           description: null,
-          url: "https://github.com/LucasHenriqueDiniz/windowx-xp-online",
+          url: "https://github.com/weebprofile/windowx-xp-online",
           stargazerCount: 3,
           forkCount: 0,
           primaryLanguage: {
@@ -5728,9 +5728,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
         {
           name: "AutoWabba",
-          nameWithOwner: "LucasHenriqueDiniz/AutoWabba",
+          nameWithOwner: "weebprofile/AutoWabba",
           description: "Automatic download helper for Wabbajack mod lists from Nexus Mods with Electron",
-          url: "https://github.com/LucasHenriqueDiniz/AutoWabba",
+          url: "https://github.com/weebprofile/AutoWabba",
           stargazerCount: 4,
           forkCount: 0,
           primaryLanguage: {
@@ -5741,9 +5741,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
         {
           name: "siot-web-flasher",
-          nameWithOwner: "LucasHenriqueDiniz/siot-web-flasher",
+          nameWithOwner: "weebprofile/siot-web-flasher",
           description: "Instalação de firmware e monitoramento serial para ESP32/ESP8266 via navegador web",
-          url: "https://github.com/LucasHenriqueDiniz/siot-web-flasher",
+          url: "https://github.com/weebprofile/siot-web-flasher",
           stargazerCount: 5,
           forkCount: 0,
           primaryLanguage: {
@@ -5770,9 +5770,9 @@ export async function getMockGithubData(): Promise<GithubData> {
     topRepositories: [
       {
         name: "weeb-profile",
-        nameWithOwner: "LucasHenriqueDiniz/weeb-profile",
+        nameWithOwner: "weebprofile/weeb-profile",
         description: "Dynamic SVG generator for GitHub profiles with support for multiple plugins",
-        url: "https://github.com/LucasHenriqueDiniz/weeb-profile",
+        url: "https://github.com/weebprofile/weeb-profile",
         stargazerCount: 450,
         forkCount: 32,
         primaryLanguage: {
@@ -5783,9 +5783,9 @@ export async function getMockGithubData(): Promise<GithubData> {
       },
       {
         name: "awesome-project",
-        nameWithOwner: "LucasHenriqueDiniz/awesome-project",
+        nameWithOwner: "weebprofile/awesome-project",
         description: "A collection of awesome resources and tools for developers",
-        url: "https://github.com/LucasHenriqueDiniz/awesome-project",
+        url: "https://github.com/weebprofile/awesome-project",
         stargazerCount: 320,
         forkCount: 45,
         primaryLanguage: {
@@ -5796,9 +5796,9 @@ export async function getMockGithubData(): Promise<GithubData> {
       },
       {
         name: "react-components",
-        nameWithOwner: "LucasHenriqueDiniz/react-components",
+        nameWithOwner: "weebprofile/react-components",
         description: "Reusable React components library with TypeScript support",
-        url: "https://github.com/LucasHenriqueDiniz/react-components",
+        url: "https://github.com/weebprofile/react-components",
         stargazerCount: 280,
         forkCount: 28,
         primaryLanguage: {
@@ -5809,9 +5809,9 @@ export async function getMockGithubData(): Promise<GithubData> {
       },
       {
         name: "typescript-utils",
-        nameWithOwner: "LucasHenriqueDiniz/typescript-utils",
+        nameWithOwner: "weebprofile/typescript-utils",
         description: "Utility functions and helpers for TypeScript projects",
-        url: "https://github.com/LucasHenriqueDiniz/typescript-utils",
+        url: "https://github.com/weebprofile/typescript-utils",
         stargazerCount: 150,
         forkCount: 12,
         primaryLanguage: {
@@ -5822,9 +5822,9 @@ export async function getMockGithubData(): Promise<GithubData> {
       },
       {
         name: "node-api",
-        nameWithOwner: "LucasHenriqueDiniz/node-api",
+        nameWithOwner: "weebprofile/node-api",
         description: "RESTful API built with Node.js and Express",
-        url: "https://github.com/LucasHenriqueDiniz/node-api",
+        url: "https://github.com/weebprofile/node-api",
         stargazerCount: 50,
         forkCount: 8,
         primaryLanguage: {
@@ -5865,7 +5865,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "Github.svg",
           description: "Github Profile Charts",
-          url: "https://gist.github.com/LucasHenriqueDiniz/8aacc3d1ccca110d8358e35517d8fe40",
+          url: "https://gist.github.com/weebprofile/8aacc3d1ccca110d8358e35517d8fe40",
           files: [
             {
               name: "Github.svg",
@@ -5886,7 +5886,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "myanimelist_data",
           description: "🌸 Anime & Manga Statistics",
-          url: "https://gist.github.com/LucasHenriqueDiniz/125444fda309e79f7f2aaa1ced3896a5",
+          url: "https://gist.github.com/weebprofile/125444fda309e79f7f2aaa1ced3896a5",
           files: [
             {
               name: "myanimelist_data",
@@ -5903,7 +5903,7 @@ export async function getMockGithubData(): Promise<GithubData> {
         {
           name: "myanimelist_data",
           description: "🌸 Last Updated Animes & Mangas",
-          url: "https://gist.github.com/LucasHenriqueDiniz/0e8c5e44d2d3e58f0a62ff64169559d3",
+          url: "https://gist.github.com/weebprofile/0e8c5e44d2d3e58f0a62ff64169559d3",
           files: [
             {
               name: "myanimelist_data",
@@ -5928,17 +5928,17 @@ export async function getMockGithubData(): Promise<GithubData> {
       ],
     },
     introduction: {
-      bio: "lucashdo@protonmail.com",
+      bio: "weebprofile-site@protonmail.com",
       location: "Brasil",
       company: "Looking for work",
-      websiteUrl: "www.lucashdo.com",
+      websiteUrl: "www.weebprofile-site.com",
     },
     recentActivity: [
       {
         type: "merged",
         title: "#42 Improve calendar rendering performance",
-        repository: "LucasHenriqueDiniz/WeebProfile",
-        url: "https://github.com/LucasHenriqueDiniz/WeebProfile/pull/42",
+        repository: "weebprofile/WeebProfile",
+        url: "https://github.com/weebprofile/WeebProfile/pull/42",
         date: "2025-01-15T10:30:00Z",
         filesChanged: {
           files: 5,
@@ -5949,15 +5949,15 @@ export async function getMockGithubData(): Promise<GithubData> {
       {
         type: "branch",
         title: "feature/add-new-component",
-        repository: "LucasHenriqueDiniz/weeb-profile",
-        url: "https://github.com/LucasHenriqueDiniz/weeb-profile/tree/feature/add-new-component",
+        repository: "weebprofile/weeb-profile",
+        url: "https://github.com/weebprofile/weeb-profile/tree/feature/add-new-component",
         date: "2025-01-14T15:20:00Z",
       },
       {
         type: "pr",
         title: "#41 Add last_6_months option to calendar",
-        repository: "LucasHenriqueDiniz/WeebProfile",
-        url: "https://github.com/LucasHenriqueDiniz/WeebProfile/pull/41",
+        repository: "weebprofile/WeebProfile",
+        url: "https://github.com/weebprofile/WeebProfile/pull/41",
         date: "2025-01-13T09:15:00Z",
         filesChanged: {
           files: 3,
@@ -5968,22 +5968,22 @@ export async function getMockGithubData(): Promise<GithubData> {
       {
         type: "branch",
         title: "fix/update-dependencies",
-        repository: "LucasHenriqueDiniz/react-components",
-        url: "https://github.com/LucasHenriqueDiniz/react-components/tree/fix/update-dependencies",
+        repository: "weebprofile/react-components",
+        url: "https://github.com/weebprofile/react-components/tree/fix/update-dependencies",
         date: "2025-01-12T14:45:00Z",
       },
       {
         type: "branch",
         title: "chore/refactor-utils",
-        repository: "LucasHenriqueDiniz/typescript-utils",
-        url: "https://github.com/LucasHenriqueDiniz/typescript-utils/tree/chore/refactor-utils",
+        repository: "weebprofile/typescript-utils",
+        url: "https://github.com/weebprofile/typescript-utils/tree/chore/refactor-utils",
         date: "2025-01-11T11:30:00Z",
       },
       {
         type: "commit",
         title: "163 commits",
-        repository: "LucasHenriqueDiniz/tavern-sim-test",
-        url: "https://github.com/LucasHenriqueDiniz/tavern-sim-test",
+        repository: "weebprofile/tavern-sim-test",
+        url: "https://github.com/weebprofile/tavern-sim-test",
         date: "2025-01-10T08:00:00Z",
         filesChanged: {
           files: 15,
@@ -5994,8 +5994,8 @@ export async function getMockGithubData(): Promise<GithubData> {
       {
         type: "commit",
         title: "129 commits",
-        repository: "LucasHenriqueDiniz/lucashdo",
-        url: "https://github.com/LucasHenriqueDiniz/lucashdo",
+        repository: "weebprofile/weebprofile-site",
+        url: "https://github.com/weebprofile/weebprofile-site",
         date: "2025-01-09T16:20:00Z",
         filesChanged: {
           files: 8,
@@ -6006,8 +6006,8 @@ export async function getMockGithubData(): Promise<GithubData> {
       {
         type: "commit",
         title: "26 commits",
-        repository: "LucasHenriqueDiniz/cron-item-watcher",
-        url: "https://github.com/LucasHenriqueDiniz/cron-item-watcher",
+        repository: "weebprofile/cron-item-watcher",
+        url: "https://github.com/weebprofile/cron-item-watcher",
         date: "2025-01-08T12:10:00Z",
         filesChanged: {
           files: 3,
@@ -6018,15 +6018,15 @@ export async function getMockGithubData(): Promise<GithubData> {
       {
         type: "commit",
         title: "21 commits",
-        repository: "LucasHenriqueDiniz/windowx-xp-online",
-        url: "https://github.com/LucasHenriqueDiniz/windowx-xp-online",
+        repository: "weebprofile/windowx-xp-online",
+        url: "https://github.com/weebprofile/windowx-xp-online",
         date: "2025-11-21T03:13:01.997Z",
       },
       {
         type: "commit",
         title: "21 commits",
-        repository: "LucasHenriqueDiniz/AutoWabba",
-        url: "https://github.com/LucasHenriqueDiniz/AutoWabba",
+        repository: "weebprofile/AutoWabba",
+        url: "https://github.com/weebprofile/AutoWabba",
         date: "2025-11-21T03:13:01.997Z",
       },
       {
@@ -6039,29 +6039,29 @@ export async function getMockGithubData(): Promise<GithubData> {
       {
         type: "commit",
         title: "13 commits",
-        repository: "LucasHenriqueDiniz/siot-web-flasher",
-        url: "https://github.com/LucasHenriqueDiniz/siot-web-flasher",
+        repository: "weebprofile/siot-web-flasher",
+        url: "https://github.com/weebprofile/siot-web-flasher",
         date: "2025-11-21T03:13:01.997Z",
       },
       {
         type: "commit",
         title: "12 commits",
-        repository: "LucasHenriqueDiniz/WeebProfile",
-        url: "https://github.com/LucasHenriqueDiniz/WeebProfile",
+        repository: "weebprofile/WeebProfile",
+        url: "https://github.com/weebprofile/WeebProfile",
         date: "2025-11-21T03:13:01.997Z",
       },
       {
         type: "commit",
         title: "10 commits",
-        repository: "LucasHenriqueDiniz/LucasHenriqueDiniz",
-        url: "https://github.com/LucasHenriqueDiniz/LucasHenriqueDiniz",
+        repository: "weebprofile/weebprofile",
+        url: "https://github.com/weebprofile/weebprofile",
         date: "2025-11-21T03:13:01.997Z",
       },
       {
         type: "commit",
         title: "9 commits",
-        repository: "LucasHenriqueDiniz/react-native-admob-starter",
-        url: "https://github.com/LucasHenriqueDiniz/react-native-admob-starter",
+        repository: "weebprofile/react-native-admob-starter",
+        url: "https://github.com/weebprofile/react-native-admob-starter",
         date: "2025-11-21T03:13:01.997Z",
       },
     ],
@@ -6070,9 +6070,9 @@ export async function getMockGithubData(): Promise<GithubData> {
       nodes: [
         {
           sponsorable: {
-            login: "LucasHenriqueDiniz",
-            name: "Lucas Henrique Diniz",
-            avatarUrl: "https://avatars.githubusercontent.com/u/63087780",
+            login: "weebprofile",
+            name: "Weeb Profile",
+            avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
           },
           tier: {
             name: "Tier 1",
@@ -6081,9 +6081,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
         {
           sponsorable: {
-            login: "LucasHenriqueDiniz",
-            name: "Lucas Henrique Diniz",
-            avatarUrl: "https://avatars.githubusercontent.com/u/63087780",
+            login: "weebprofile",
+            name: "Weeb Profile",
+            avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
           },
           tier: {
             name: "Tier 1",
@@ -6092,9 +6092,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
         {
           sponsorable: {
-            login: "LucasHenriqueDiniz",
-            name: "Lucas Henrique Diniz",
-            avatarUrl: "https://avatars.githubusercontent.com/u/63087780",
+            login: "weebprofile",
+            name: "Weeb Profile",
+            avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
           },
           tier: {
             name: "Tier 1",
@@ -6107,9 +6107,9 @@ export async function getMockGithubData(): Promise<GithubData> {
       totalCount: 3,
       nodes: [
         {
-          login: "LucasHenriqueDiniz",
-          name: "Lucas Henrique Diniz",
-          avatarUrl: "https://avatars.githubusercontent.com/u/63087780",
+          login: "weebprofile",
+          name: "Weeb Profile",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
           tier: {
             name: "Tier 1",
             monthlyPriceInDollars: 100,
@@ -6117,9 +6117,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
 
         {
-          login: "LucasHenriqueDiniz",
-          name: "Lucas Henrique Diniz",
-          avatarUrl: "https://avatars.githubusercontent.com/u/63087780",
+          login: "weebprofile",
+          name: "Weeb Profile",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
           tier: {
             name: "Tier 1",
             monthlyPriceInDollars: 100,
@@ -6127,9 +6127,9 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
 
         {
-          login: "LucasHenriqueDiniz",
-          name: "Lucas Henrique Diniz",
-          avatarUrl: "https://avatars.githubusercontent.com/u/63087780",
+          login: "weebprofile",
+          name: "Weeb Profile",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
           tier: {
             name: "Tier 1",
             monthlyPriceInDollars: 100,
@@ -6183,32 +6183,32 @@ export async function getMockGithubData(): Promise<GithubData> {
     ],
     notableContributions: [
       {
-        repository: "LucasHenriqueDiniz/tavern-sim-test",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/tavern-sim-test",
+        repository: "weebprofile/tavern-sim-test",
+        repositoryUrl: "https://github.com/weebprofile/tavern-sim-test",
         contributions: 163,
         type: "commits",
       },
       {
-        repository: "LucasHenriqueDiniz/lucashdo",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/lucashdo",
+        repository: "weebprofile/weebprofile-site",
+        repositoryUrl: "https://github.com/weebprofile/weebprofile-site",
         contributions: 129,
         type: "commits",
       },
       {
-        repository: "LucasHenriqueDiniz/cron-item-watcher",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/cron-item-watcher",
+        repository: "weebprofile/cron-item-watcher",
+        repositoryUrl: "https://github.com/weebprofile/cron-item-watcher",
         contributions: 26,
         type: "commits",
       },
       {
-        repository: "LucasHenriqueDiniz/windowx-xp-online",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/windowx-xp-online",
+        repository: "weebprofile/windowx-xp-online",
+        repositoryUrl: "https://github.com/weebprofile/windowx-xp-online",
         contributions: 21,
         type: "commits",
       },
       {
-        repository: "LucasHenriqueDiniz/AutoWabba",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/AutoWabba",
+        repository: "weebprofile/AutoWabba",
+        repositoryUrl: "https://github.com/weebprofile/AutoWabba",
         contributions: 21,
         type: "commits",
       },
@@ -6219,26 +6219,26 @@ export async function getMockGithubData(): Promise<GithubData> {
         type: "commits",
       },
       {
-        repository: "LucasHenriqueDiniz/siot-web-flasher",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/siot-web-flasher",
+        repository: "weebprofile/siot-web-flasher",
+        repositoryUrl: "https://github.com/weebprofile/siot-web-flasher",
         contributions: 13,
         type: "commits",
       },
       {
-        repository: "LucasHenriqueDiniz/WeebProfile",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/WeebProfile",
+        repository: "weebprofile/WeebProfile",
+        repositoryUrl: "https://github.com/weebprofile/WeebProfile",
         contributions: 12,
         type: "commits",
       },
       {
-        repository: "LucasHenriqueDiniz/LucasHenriqueDiniz",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/LucasHenriqueDiniz",
+        repository: "weebprofile/weebprofile",
+        repositoryUrl: "https://github.com/weebprofile/weebprofile",
         contributions: 10,
         type: "commits",
       },
       {
-        repository: "LucasHenriqueDiniz/react-native-admob-starter",
-        repositoryUrl: "https://github.com/LucasHenriqueDiniz/react-native-admob-starter",
+        repository: "weebprofile/react-native-admob-starter",
+        repositoryUrl: "https://github.com/weebprofile/react-native-admob-starter",
         contributions: 9,
         type: "commits",
       },
@@ -6246,10 +6246,10 @@ export async function getMockGithubData(): Promise<GithubData> {
     featuredRepositories: [
       {
         name: "WeebProfile",
-        nameWithOwner: "LucasHenriqueDiniz/WeebProfile",
+        nameWithOwner: "weebprofile/WeebProfile",
         description:
           "Dynamic SVG generator for GitHub profiles with support for multiple plugins (GitHub, LastFM, MyAnimeList) and customizable themes. Generate beautiful profile cards with real-time data.",
-        url: "https://github.com/LucasHenriqueDiniz/WeebProfile",
+        url: "https://github.com/weebprofile/WeebProfile",
         createdAt: "2024-01-15T10:00:00Z",
         stargazerCount: 1250,
         forkCount: 89,
@@ -6266,10 +6266,10 @@ export async function getMockGithubData(): Promise<GithubData> {
       },
       {
         name: "react-components",
-        nameWithOwner: "LucasHenriqueDiniz/react-components",
+        nameWithOwner: "weebprofile/react-components",
         description:
           "Reusable React components library with TypeScript support, comprehensive documentation, and Storybook integration",
-        url: "https://github.com/LucasHenriqueDiniz/react-components",
+        url: "https://github.com/weebprofile/react-components",
         createdAt: "2023-08-20T14:30:00Z",
         stargazerCount: 280,
         forkCount: 28,
@@ -6286,10 +6286,10 @@ export async function getMockGithubData(): Promise<GithubData> {
       },
       {
         name: "typescript-utils",
-        nameWithOwner: "LucasHenriqueDiniz/typescript-utils",
+        nameWithOwner: "weebprofile/typescript-utils",
         description:
           "Collection of utility functions and helpers for TypeScript projects. Includes type guards, formatters, validators, and more.",
-        url: "https://github.com/LucasHenriqueDiniz/typescript-utils",
+        url: "https://github.com/weebprofile/typescript-utils",
         createdAt: "2023-05-10T09:15:00Z",
         stargazerCount: 150,
         forkCount: 12,
@@ -6310,62 +6310,62 @@ export async function getMockGithubData(): Promise<GithubData> {
       totalCount: 34,
       nodes: [
         {
-          login: "FernandoEGV",
-          name: "FernandoEGV",
-          avatarUrl: "https://avatars.githubusercontent.com/u/104585876?u=53370abe7b42e891789ef25b7f34c32f3e5f87fb&v=4",
+          login: "kirino-dev",
+          name: "Kirino",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "sh-lucas",
-          name: "Lucas Schwalm Silva",
-          avatarUrl: "https://avatars.githubusercontent.com/u/57202598?u=07d28aa77c08dcef79364a50831a494c1b16fecf&v=4",
+          login: "sakura-codes",
+          name: "Sakura Ito",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "mikew194",
-          name: "Mike Wassermann",
-          avatarUrl: "https://avatars.githubusercontent.com/u/1824010?v=4",
+          login: "nanami-b",
+          name: "Nanami B.",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "motanelson",
-          name: "nelson jr mota",
-          avatarUrl: "https://avatars.githubusercontent.com/u/118323821?u=7d8591d3397b04783e1202947f719228163737d4&v=4",
+          login: "hoshino-dev",
+          name: "Hoshino",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "donjoo",
-          name: "DonJo",
-          avatarUrl: "https://avatars.githubusercontent.com/u/142510150?u=d7e949bc5a74fd061a1b75f4a146fbe2cbf4e8ef&v=4",
+          login: "rei-builds",
+          name: "Rei",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "kunleulysses",
-          name: "Ulysses",
-          avatarUrl: "https://avatars.githubusercontent.com/u/65002977?v=4",
+          login: "akira-ts",
+          name: "Akira",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "seplsy",
-          name: "Murphy",
-          avatarUrl: "https://avatars.githubusercontent.com/u/224399391?u=9b864bd71a864e4724409c62f0e0d2a65c5fcb76&v=4",
+          login: "yuki-sh",
+          name: "Yuki",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "rmtsixq",
+          login: "mio-dev",
           name: null,
-          avatarUrl: "https://avatars.githubusercontent.com/u/189560306?v=4",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "ranawasif896",
-          name: "Muhammad Wasif",
-          avatarUrl: "https://avatars.githubusercontent.com/u/196354093?u=e47a1060b053bbb47116115441e4ac7c08e81c35&v=4",
+          login: "haru-codes",
+          name: "Haru",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
         {
-          login: "Adeife004",
-          name: "Adebowale Jasmine",
-          avatarUrl: "https://avatars.githubusercontent.com/u/130067040?v=4",
+          login: "tsubasa-dev",
+          name: "Tsubasa",
+          avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         },
       ],
     },
     repositoryContributors: [
       {
-        login: "LucasHenriqueDiniz",
-        name: "Lucas HDO",
-        avatarUrl: "https://avatars.githubusercontent.com/u/63087780",
+        login: "weebprofile",
+        name: "Weeb Profile",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 156,
       },
       {
@@ -6377,49 +6377,49 @@ export async function getMockGithubData(): Promise<GithubData> {
       {
         login: "github",
         name: "GitHub",
-        avatarUrl: "https://avatars.githubusercontent.com/u/9919?v=4",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 45,
       },
       {
         login: "defunkt",
         name: "Chris Wanstrath",
-        avatarUrl: "https://avatars.githubusercontent.com/u/2?v=4",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 32,
       },
       {
         login: "pjhyett",
         name: "PJ Hyett",
-        avatarUrl: "https://avatars.githubusercontent.com/u/3?v=4",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 28,
       },
       {
         login: "wycats",
         name: "Yehuda Katz",
-        avatarUrl: "https://avatars.githubusercontent.com/u/4?v=4",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 24,
       },
       {
         login: "ezmobius",
         name: "Ezra Zygmuntowicz",
-        avatarUrl: "https://avatars.githubusercontent.com/u/5?v=4",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 18,
       },
       {
         login: "brynary",
         name: "Bryan Helmkamp",
-        avatarUrl: "https://avatars.githubusercontent.com/u/19?v=4",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 15,
       },
       {
         login: "kevinclark",
         name: "Kevin Clark",
-        avatarUrl: "https://avatars.githubusercontent.com/u/20?v=4",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 12,
       },
       {
         login: "technoweenie",
         name: "Rick Olson",
-        avatarUrl: "https://avatars.githubusercontent.com/u/21?v=4",
+        avatarUrl: "https://avatars.githubusercontent.com/u/583231?v=4",
         contributions: 10,
       },
     ],

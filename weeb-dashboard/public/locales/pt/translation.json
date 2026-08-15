@@ -649,7 +649,7 @@
       "cta": "Criar meu SVG"
     },
     "hero": {
-      "badge": "11 plugins · 60+ seções · perfil e repositório",
+      "badge": "{{plugins}} plugins · {{sections}}+ seções · perfil e repositório",
       "title": "Seu README,",
       "titleHighlight": "vivo",
       "subtitle": "Código, anime, música, jogos e repositórios em cards SVG que se atualizam sozinhos. Uma linha de markdown e pronto.",

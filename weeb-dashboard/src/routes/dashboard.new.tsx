@@ -55,12 +55,22 @@ export default function NewArtifactChooserPage() {
                 onClick={() => router.push(option.href)}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-left transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-[0_8px_40px_-12px_rgba(139,92,246,0.35)]"
               >
-                <div className="h-44 w-full overflow-hidden border-b border-border bg-muted/40">
+                <div className="relative h-44 w-full overflow-hidden border-b border-border bg-muted/40">
                   <img
                     src={option.preview}
                     alt=""
                     className={`h-full w-full transition-transform duration-300 group-hover:scale-[1.03] ${option.previewClass}`}
                   />
+                  {/* O card de perfil é mais alto que a moldura e é cortado no meio de
+                      uma linha de texto ("231 PRs Created"), o que parece falha de
+                      renderização. O esmaecimento faz o corte virar "tem mais abaixo".
+                      Só onde há corte: o de repositório usa object-contain e cabe inteiro. */}
+                  {option.previewClass.includes("object-cover") && (
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-card to-transparent"
+                    />
+                  )}
                 </div>
                 <div className="flex flex-1 flex-col gap-3 p-6">
                   <span
