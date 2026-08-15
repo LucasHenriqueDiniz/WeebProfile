@@ -21,16 +21,16 @@ export const steamPluginMetadata = {
   essentialConfigKeysMetadata: [
     {
       key: "steamId",
-      label: "Steam ID64",
-      // "oauth" renders a connect button; the wizard still shows the text field
-      // underneath, so signing in is the easy path and pasting the id stays a
-      // working one. Strictly this is OpenID 2.0, which returns only the SteamID64
-      // -- no token, no scope -- but the UI flow is the same.
-      type: "oauth" as const,
-      oauthProvider: "steam" as const,
-      placeholder: "76561198000000000",
-      description: "Your Steam ID64 (17 digits)",
-      helpUrl: "https://steamid.io/",
+      label: "Steam profile",
+      // Campo de texto, não botão de conexão. Aqui existiu um "Entrar com Steam"
+      // (OpenID 2.0) cujo único resultado era o SteamID64 -- identificador público,
+      // sem token nem escopo. Cinco arquivos, cookie de state e selo cifrado para
+      // obter um número que a pessoa pode colar. O atrito real era só que a URL de
+      // vanity não mostra o número; o servidor agora resolve isso (ver
+      // weeb-dashboard/functions/api/_shared/steam-id.ts).
+      type: "text" as const,
+      placeholder: "steamcommunity.com/id/seu-perfil",
+      description: "Paste your Steam profile URL (or the 17-digit SteamID64)",
       docKey: "steam.steamId",
     },
   ],

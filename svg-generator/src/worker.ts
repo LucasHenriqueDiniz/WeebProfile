@@ -250,6 +250,48 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
 }
 
 /**
+ * POST /steam/resolve-vanity - traduz um nome de vanity da Steam em SteamID64.
+ *
+ * Vive aqui, e não no dashboard, porque a STEAM_API_KEY é credencial da aplicação e
+ * mora neste worker (ver db/app-credentials.ts). O dashboard chega por service
+ * binding, então nada disso passa pela internet pública e o segredo não precisa ser
+ * duplicado em dois lugares -- onde uma cópia desatualizada viraria bug silencioso.
+ *
+ * Só o vanity: quando o usuário cola uma URL /profiles/, o ID já está na string e o
+ * dashboard nem chama (ver functions/api/_shared/steam-id.ts).
+ */
+async function handleResolveVanity(request: Request, env: Env): Promise<Response> {
+  if (!env.STEAM_API_KEY) {
+    log.error("steam.resolve.no_key", { reason: "STEAM_API_KEY not configured" })
+    return json({ error: "STEAM_UNAVAILABLE", message: "Steam is not configured on the server." }, 503)
+  }
+
+  let vanity: string
+  try {
+    vanity = String(((await request.json()) as { vanity?: string }).vanity || "").trim()
+  } catch {
+    return json({ error: "Invalid JSON body" }, 400)
+  }
+  if (!vanity) return json({ error: "vanity is required" }, 400)
+
+  const url = `${"https://api.steampowered.com"}/ISteamUser/ResolveVanityURL/v0001/?key=${encodeURIComponent(
+    env.STEAM_API_KEY
+  )}&vanityurl=${encodeURIComponent(vanity)}`
+
+  const response = await fetch(url)
+  if (!response.ok) {
+    log.warn("steam.resolve.upstream", { status: response.status })
+    return json({ error: "STEAM_UPSTREAM", message: `Steam responded ${response.status}.` }, 502)
+  }
+
+  // success: 1 achou, 42 não achou. Qualquer outro valor tratamos como não achou.
+  const body = (await response.json()) as { response?: { success?: number; steamid?: string } }
+  const steamId = body.response?.success === 1 ? body.response.steamid : undefined
+
+  return json({ steamId: steamId ?? null })
+}
+
+/**
  * Cron Trigger handler (see [triggers] in wrangler.toml): calls the dashboard's
  * cron endpoint (weeb-dashboard/functions/api/cron/generate-svgs.ts), which owns
  * the actual "which SVGs are due" + regenerate + save-to-R2 logic, and loops
@@ -315,6 +357,11 @@ export default {
 
     if (request.method !== "POST") {
       return json({ error: "Method not allowed" }, 405)
+    }
+
+    // Antes do handler genérico, que hoje atende POST em qualquer caminho.
+    if (url.pathname === "/steam/resolve-vanity") {
+      return handleResolveVanity(request, env)
     }
 
     return handleGenerate(request, env)

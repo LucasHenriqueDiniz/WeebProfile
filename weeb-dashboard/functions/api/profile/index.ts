@@ -1,11 +1,12 @@
 import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
-import { getAuthUserId, getClerkClient, unauthorized, serverError } from "../_shared/auth"
+import { getAuthUserId, getClerkClient, unauthorized, serverError, badRequest } from "../_shared/auth"
 import { getDb } from "../_shared/db"
 import { parseBody, profileUpdateSchema } from "../_shared/validation"
 import { profiles } from "../../../lib/db/schema"
 import { eq } from "drizzle-orm"
 import { setEssentialConfigs } from "../_shared/secrets"
+import { normalizeSteamSecret } from "../_shared/steam-vanity"
 
 async function getGitHubUsername(env: CloudflareEnv, userId: string): Promise<string | null> {
   try {
@@ -50,7 +51,17 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env 
 
     const parsed = await parseBody(request, profileUpdateSchema)
     if (!parsed.ok) return parsed.response
-    const { username, essentialConfigs: essentialConfigsInput } = parsed.data
+    const { username, essentialConfigs: rawEssentialConfigs } = parsed.data
+
+    // Resolve antes de qualquer escrita: o usuário cola a URL do perfil e a gente
+    // grava o SteamID64. Falha aqui vira 400 com mensagem, em vez de um valor
+    // inútil no banco que só quebra na próxima geração.
+    let essentialConfigsInput = rawEssentialConfigs
+    if (essentialConfigsInput) {
+      const normalizado = await normalizeSteamSecret(essentialConfigsInput, env)
+      if ("error" in normalizado) return badRequest(normalizado.error)
+      essentialConfigsInput = normalizado.configs
+    }
 
     const db = getDb(env)
     const [existingProfile] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1)

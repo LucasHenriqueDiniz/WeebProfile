@@ -3976,13 +3976,11 @@ export const PLUGINS_METADATA = {
     essentialConfigKeysMetadata: [
         {
           key: "steamId",
-          label: "Steam ID64",
-          type: "oauth",
-          placeholder: "76561198000000000",
-          description: "Your Steam ID64 (17 digits)",
-          helpUrl: "https://steamid.io/",
+          label: "Steam profile",
+          type: "text",
+          placeholder: "steamcommunity.com/id/seu-perfil",
+          description: "Paste your Steam profile URL (or the 17-digit SteamID64)",
           docKey: "steam.steamId",
-          oauthProvider: "steam",
           i18nKey: {
             label: "plugins.steam.essentialConfig.steamId.label",
             placeholder: "plugins.steam.essentialConfig.steamId.placeholder",

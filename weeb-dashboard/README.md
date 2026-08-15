@@ -51,7 +51,6 @@ weeb-dashboard/
 │   └── router.tsx         # Definição das rotas
 ├── functions/api/         # Cloudflare Pages Functions (o backend)
 │   ├── _shared/           # auth, db, storage, validation, secrets, crypto
-│   ├── auth/steam/        # OpenID da Steam
 │   └── cron/              # regeneração agendada
 ├── lib/db/                # Drizzle ORM (schema)
 ├── drizzle/               # Migrations SQLite (as reais)
