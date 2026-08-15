@@ -127,9 +127,20 @@ export async function fetchSteamData(
   }
 }
 
-/** Mesma URL que o mock usa; conferida respondendo 200 em 15/08/2026. */
-function headerImageUrl(appid: number): string {
-  return `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/header.jpg`
+/**
+ * Duas variantes da mesma capa, medidas em 15/08/2026 (média de 4 jogos):
+ *
+ *   header.jpg           460x215   35,3 KB
+ *   capsule_231x87.jpg   231x87    17,2 KB
+ *
+ * A lista usa a pequena. No layout em grade cada célula tem ~125px num card de
+ * 415px, e no layout em lista a imagem vira fundo desfocado -- nos dois casos a
+ * `header` estava superdimensionada, e cada imagem entra no SVG como base64, que
+ * ainda infla ~33%. Só o card de destaque, que aparece grande, fica com a `header`.
+ */
+function steamImageUrl(appid: number, variante: "header" | "capsule"): string {
+  const arquivo = variante === "header" ? "header.jpg" : "capsule_231x87.jpg"
+  return `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/${arquivo}`
 }
 
 /**
@@ -155,11 +166,18 @@ export function withHeaderImages(games: SteamGame[], config: SteamConfig): Steam
 
   const comCapa = new Set<number>()
 
-  games
+  const porRecentes = games
     .filter((g) => (g.playtime_2weeks || 0) > 0)
     .sort((a, b) => (b.playtime_2weeks || 0) - (a.playtime_2weeks || 0))
-    // +1 porque o card de destaque em Statistics mostra o mais jogado das 2 semanas
-    // mesmo quando a seção Recent Games está desligada ou com limite menor.
+
+  // Mesma escolha que Statistics faz para o card de destaque: o mais jogado nas
+  // últimas 2 semanas. É o único exibido grande, então é o único que ganha a
+  // imagem maior.
+  const destaque = porRecentes[0]?.appid ?? null
+
+  porRecentes
+    // Pelo menos 1: o destaque aparece mesmo com a seção Recent Games desligada
+    // ou com limite menor.
     .slice(0, Math.max(recentMax, 1))
     .forEach((g) => comCapa.add(g.appid))
 
@@ -169,7 +187,11 @@ export function withHeaderImages(games: SteamGame[], config: SteamConfig): Steam
     .slice(0, topMax)
     .forEach((g) => comCapa.add(g.appid))
 
-  return games.map((g) => (comCapa.has(g.appid) ? { ...g, header_image: headerImageUrl(g.appid) } : g))
+  return games.map((g) =>
+    comCapa.has(g.appid)
+      ? { ...g, header_image: steamImageUrl(g.appid, g.appid === destaque ? "header" : "capsule") }
+      : g
+  )
 }
 
 function calculateStatistics(games: SteamGame[]): SteamStatistics {

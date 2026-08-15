@@ -85,7 +85,32 @@ describe("withHeaderImages", () => {
       config()
     )
 
+    // Sozinho na lista, ele é o destaque -- por isso a variante grande.
     expect(resultado[0]!.header_image).toBe("https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg")
+  })
+
+  // A imagem entra no SVG como base64, que ainda infla ~33%. A `header` (35 KB) está
+  // superdimensionada para células de ~125px e para fundo desfocado; só o card de
+  // destaque aparece grande. Usar a pequena (17 KB) no resto corta metade do peso.
+  it("usa a capa pequena na lista e a grande só no destaque", () => {
+    const games: SteamGame[] = [
+      { appid: 1, name: "Destaque", playtime_forever: 50, playtime_2weeks: 100 },
+      { appid: 2, name: "Outro recente", playtime_forever: 40, playtime_2weeks: 10 },
+      { appid: 3, name: "Só top", playtime_forever: 999, playtime_2weeks: 0 },
+    ]
+
+    const r = withHeaderImages(games, config())
+    const capa = (appid: number) => r.find((g) => g.appid === appid)!.header_image
+
+    expect(capa(1)).toContain("/header.jpg")
+    expect(capa(2)).toContain("/capsule_231x87.jpg")
+    expect(capa(3)).toContain("/capsule_231x87.jpg")
+  })
+
+  it("não usa a variante grande quando não há jogo recente", () => {
+    const games: SteamGame[] = [{ appid: 9, name: "Antigo", playtime_forever: 500, playtime_2weeks: 0 }]
+
+    expect(withHeaderImages(games, config())[0]!.header_image).toContain("/capsule_231x87.jpg")
   })
 
   it("não altera a lista original", () => {
