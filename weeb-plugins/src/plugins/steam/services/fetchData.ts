@@ -79,13 +79,17 @@ export async function fetchSteamData(
     }
 
     // Merge recent games playtime into games list
-    const gamesWithRecent = games.map((game) => {
+    const gamesComRecentes = games.map((game) => {
       const recent = recentGames.find((rg) => rg.appid === game.appid)
       return {
         ...game,
         playtime_2weeks: recent?.playtime_2weeks || 0,
       }
     })
+
+    // Depois do merge: a janela de capas depende do playtime_2weeks que acabou de
+    // ser preenchido.
+    const gamesWithRecent = withHeaderImages(gamesComRecentes, config)
 
     // Calculate statistics
     const statistics = calculateStatistics(gamesWithRecent)
@@ -121,6 +125,51 @@ export async function fetchSteamData(
 
     return (await convertImageUrlsToBase64(mockData, previewMode)) as SteamData
   }
+}
+
+/** Mesma URL que o mock usa; conferida respondendo 200 em 15/08/2026. */
+function headerImageUrl(appid: number): string {
+  return `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/header.jpg`
+}
+
+/**
+ * Preenche `header_image` nos jogos que vão aparecer.
+ *
+ * A API da Steam não devolve esse campo -- `GetOwnedGames` dá `img_icon_url` e
+ * `img_logo_url`, que o próprio componente marca como "often invalid". Só o mock
+ * tinha `header_image`, então o preview mostrava capa e a geração real não: os cards
+ * saíam como retângulos escuros. A pista estava no comentário do componente, "we'll
+ * use header_image instead **when available**" -- nunca estava.
+ *
+ * Preenche só a janela renderizada, não a biblioteca inteira: converter imagem para
+ * base64 é uma requisição por jogo, e uma conta com 800 jogos faria 800 delas em
+ * série. O recorte espelha o que RecentGames e TopGames de fato fatiam, incluindo a
+ * ordenação, para não baixar imagem que ninguém vai ver.
+ */
+export function withHeaderImages(games: SteamGame[], config: SteamConfig): SteamGame[] {
+  // SteamConfig tem index signature `unknown`, então os limites chegam sem tipo.
+  // Coagir aqui evita que um valor inesperado vire um slice gigante.
+  const limite = (valor: unknown, padrao: number) => (typeof valor === "number" && valor > 0 ? valor : padrao)
+  const recentMax = limite(config.recent_games_max, 5)
+  const topMax = limite(config.top_games_max, 5)
+
+  const comCapa = new Set<number>()
+
+  games
+    .filter((g) => (g.playtime_2weeks || 0) > 0)
+    .sort((a, b) => (b.playtime_2weeks || 0) - (a.playtime_2weeks || 0))
+    // +1 porque o card de destaque em Statistics mostra o mais jogado das 2 semanas
+    // mesmo quando a seção Recent Games está desligada ou com limite menor.
+    .slice(0, Math.max(recentMax, 1))
+    .forEach((g) => comCapa.add(g.appid))
+
+  games
+    .filter((g) => g.playtime_forever > 0)
+    .sort((a, b) => b.playtime_forever - a.playtime_forever)
+    .slice(0, topMax)
+    .forEach((g) => comCapa.add(g.appid))
+
+  return games.map((g) => (comCapa.has(g.appid) ? { ...g, header_image: headerImageUrl(g.appid) } : g))
 }
 
 function calculateStatistics(games: SteamGame[]): SteamStatistics {
