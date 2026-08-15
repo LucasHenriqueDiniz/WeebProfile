@@ -14,7 +14,7 @@
   },
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy": "pnpm -w build:deps && wrangler deploy",
     "build:tsc": "tsc --skipLibCheck",
     "build:check": "tsc",
     "typecheck": "tsc --noEmit",
