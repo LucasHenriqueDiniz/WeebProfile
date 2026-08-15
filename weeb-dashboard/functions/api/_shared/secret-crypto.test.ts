@@ -26,6 +26,23 @@ describe("secret-crypto", () => {
     expect(await encryptSecret("same", key)).not.toBe(await encryptSecret("same", key))
   })
 
+  // Regressão de produção: a SECRETS_ENCRYPTION_KEY estava malformada e o único
+  // sinal era `InvalidCharacterError: atob()...` de dentro do Web Crypto, virando
+  // 500 genérico sem citar a variável. Como este é o único caminho que cifra,
+  // nenhum segredo de plugin pôde ser salvo -- e ninguém soube por semanas.
+  it("nomeia a variável quando a chave não é base64 válido", async () => {
+    await expect(encryptSecret("x", "não é base64!!")).rejects.toThrow(/SECRETS_ENCRYPTION_KEY.*base64/)
+  })
+
+  it("nomeia a variável quando a chave tem tamanho inválido para AES", async () => {
+    const curtaDemais = btoa("12345")
+    await expect(encryptSecret("x", curtaDemais)).rejects.toThrow(/SECRETS_ENCRYPTION_KEY.*16, 24 or 32/)
+  })
+
+  it("nomeia a variável quando a chave está ausente", async () => {
+    await expect(encryptSecret("x", "")).rejects.toThrow(/SECRETS_ENCRYPTION_KEY is not configured/)
+  })
+
   // The three below are the point of this file. An earlier version returned the
   // stored value unchanged when it could not decrypt, which meant a wrong key or a
   // tampered row surfaced as a plugin failing on a nonsense credential instead of

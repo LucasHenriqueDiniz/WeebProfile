@@ -26,8 +26,38 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary)
 }
 
+/**
+ * Valida a chave antes de usar.
+ *
+ * Sem isto, uma SECRETS_ENCRYPTION_KEY malformada só aparecia como
+ * `InvalidCharacterError: atob() called with invalid base64-encoded data` vindo de
+ * dentro do Web Crypto, virava 500 genérico e não citava nem a variável. Em produção
+ * isso passou despercebido por semanas: como nada além deste caminho cifra, o sintoma
+ * era só "salvar segredo dá erro" -- e plugin_secrets ficou vazia o tempo todo.
+ */
+function importKeyBytes(keyB64: string): Uint8Array {
+  if (!keyB64) {
+    throw new Error("SECRETS_ENCRYPTION_KEY is not configured")
+  }
+
+  let bytes: Uint8Array
+  try {
+    bytes = base64ToBytes(keyB64)
+  } catch {
+    throw new Error("SECRETS_ENCRYPTION_KEY is not valid base64")
+  }
+
+  // AES aceita 128/192/256 bits. Fora disso o importKey falharia com uma mensagem
+  // que também não diz de qual chave se trata.
+  if (bytes.length !== 16 && bytes.length !== 24 && bytes.length !== 32) {
+    throw new Error(`SECRETS_ENCRYPTION_KEY must decode to 16, 24 or 32 bytes (got ${bytes.length})`)
+  }
+
+  return bytes
+}
+
 async function importKey(keyB64: string): Promise<CryptoKey> {
-  const rawKey = base64ToBytes(keyB64)
+  const rawKey = importKeyBytes(keyB64)
   return crypto.subtle.importKey("raw", rawKey as BufferSource, "AES-GCM", false, ["encrypt", "decrypt"])
 }
 

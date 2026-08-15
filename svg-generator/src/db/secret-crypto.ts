@@ -22,8 +22,33 @@ function base64ToBytes(b64: string): Uint8Array {
   return bytes
 }
 
+/**
+ * Espelha a validação do lado do dashboard (functions/api/_shared/secret-crypto.ts).
+ * Sem ela, uma SECRETS_ENCRYPTION_KEY malformada aparece como
+ * `InvalidCharacterError` vindo de dentro do Web Crypto, sem citar a variável --
+ * e aqui isso vira um 503 D1_UNREACHABLE, que aponta para o banco em vez da chave.
+ */
+function importKeyBytes(keyB64: string): Uint8Array {
+  if (!keyB64) {
+    throw new Error("SECRETS_ENCRYPTION_KEY is not configured")
+  }
+
+  let bytes: Uint8Array
+  try {
+    bytes = base64ToBytes(keyB64)
+  } catch {
+    throw new Error("SECRETS_ENCRYPTION_KEY is not valid base64")
+  }
+
+  if (bytes.length !== 16 && bytes.length !== 24 && bytes.length !== 32) {
+    throw new Error(`SECRETS_ENCRYPTION_KEY must decode to 16, 24 or 32 bytes (got ${bytes.length})`)
+  }
+
+  return bytes
+}
+
 async function importKey(keyB64: string): Promise<CryptoKey> {
-  const rawKey = base64ToBytes(keyB64)
+  const rawKey = importKeyBytes(keyB64)
   return crypto.subtle.importKey("raw", rawKey as BufferSource, "AES-GCM", false, ["decrypt"])
 }
 
