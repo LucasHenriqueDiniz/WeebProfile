@@ -31,6 +31,11 @@ export const clerkAppearance = {
     socialButtonsBlockButton:
       "rounded-xl border border-border bg-muted/60 hover:bg-accent hover:border-cyan-500/40 text-foreground text-sm font-medium transition-all py-2.5",
     socialButtonsBlockButtonText: "text-foreground text-sm font-medium",
+    // Ícones monocromáticos (GitHub) o Clerk desenha como máscara CSS, e aí o
+    // background-color É a tinta -- o default dele é rgb(33,33,38), quase invisível
+    // sobre a nossa superfície escura (contraste ~1,1:1). Só o variante __github:
+    // o do Google é background-image colorido e ganharia um bloco sólido atrás.
+    socialButtonsProviderIcon__github: "bg-foreground",
     dividerRow: "my-1",
     dividerLine: "bg-border",
     // bg-card (não bg-background): o form agora vive dentro do glass card de AuthDecoration,
