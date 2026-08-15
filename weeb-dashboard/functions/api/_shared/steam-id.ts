@@ -20,8 +20,13 @@ const VANITY = /^[A-Za-z0-9_-]{2,64}$/
 
 export type SteamInput = { kind: "id"; steamId: string } | { kind: "vanity"; vanity: string }
 
-export function parseSteamInput(raw: string): SteamInput | null {
-  const input = (raw || "").trim()
+export function parseSteamInput(raw: unknown): SteamInput | null {
+  // `unknown`, não `string`: o corpo vem de JSON e o tipo é promessa, não garantia.
+  // O ProfileConfigModal, por exemplo, devolve os booleans do endpoint de presença
+  // ({ steam: { steamid: true } }), e um `.trim()` neles derrubava a rota inteira.
+  if (typeof raw !== "string") return null
+
+  const input = raw.trim()
   if (!input) return null
 
   if (STEAM_ID64.test(input)) return { kind: "id", steamId: input }
@@ -63,7 +68,7 @@ export interface ResolveResult {
  * de decisão testável sem rede.
  */
 export async function resolveSteamId(
-  raw: string,
+  raw: unknown,
   resolveVanity: (vanity: string) => Promise<string | null>
 ): Promise<ResolveResult> {
   const parsed = parseSteamInput(raw)

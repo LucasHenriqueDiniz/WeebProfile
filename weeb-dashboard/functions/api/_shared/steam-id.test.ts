@@ -43,6 +43,20 @@ describe("parseSteamInput", () => {
     expect(parseSteamInput("a")).toBeNull()
   })
 
+  // Regressao: o corpo vem de JSON, entao o tipo declarado nao garante nada. O
+  // ProfileConfigModal reenvia os booleans do endpoint de presenca
+  // ({ steam: { steamid: true } }), e um `.trim()` neles derrubava a rota com 500.
+  // O numero aqui e pequeno de proposito: um SteamID64 de verdade nao cabe num
+  // number do JS (passa de Number.MAX_SAFE_INTEGER), e por isso ele viaja como
+  // string do inicio ao fim. Um cliente que mandasse numero ja entregaria o valor
+  // corrompido -- mais uma razao para nao aceitar.
+  it("devolve null em vez de lancar quando a entrada nao e string", () => {
+    for (const entrada of [true, false, null, undefined, 12345, {}, []]) {
+      expect(() => parseSteamInput(entrada as never)).not.toThrow()
+      expect(parseSteamInput(entrada as never)).toBeNull()
+    }
+  })
+
   // Numero fora da faixa de conta individual nao vira "id". Vira vanity, e isso e
   // proposital: nome de vanity so com digitos e permitido pela Steam, e mandar para
   // a resolucao rende "a Steam nao encontrou esse perfil" -- mensagem melhor do que

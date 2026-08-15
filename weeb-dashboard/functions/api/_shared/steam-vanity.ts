@@ -46,8 +46,12 @@ export async function normalizeSteamSecret(
   // O metadata usa "steamId"; a escrita no banco minuscula. Aceita os dois para o
   // caso de o cliente mandar já normalizado.
   const chave = "steamId" in steam ? "steamId" : "steamid" in steam ? "steamid" : null
-  const bruto = chave ? steam[chave] : undefined
-  if (!chave || !bruto) return { configs }
+  const bruto: unknown = chave ? steam[chave] : undefined
+
+  // Só age sobre string não vazia. O ProfileConfigModal reenvia o objeto de presença,
+  // que traz booleans -- e o setEssentialConfigs sempre ignorou tudo que não é
+  // string. Rejeitar aqui transformaria em erro um caso que antes era inofensivo.
+  if (!chave || typeof bruto !== "string" || !bruto.trim()) return { configs }
 
   const resultado = await resolveSteamId(bruto, resolverViaGenerator(env))
   if (resultado.error || !resultado.steamId) {
