@@ -18,7 +18,7 @@
     "dev:dashboard": "pnpm --filter weeb-dashboard dev",
     "dev:generator": "pnpm --filter @weeb/svg-generator dev",
     "dev:debug-tool": "pnpm --filter weeb-debug-tool dev",
-    "deploy:generator": "pnpm --filter @weeb/svg-generator deploy",
+    "deploy:generator": "pnpm --filter @weeb/svg-generator run deploy",
     "build": "pnpm build:dashboard",
     "build:dashboard": "pnpm --filter weeb-dashboard build",
     "build:deps": "pnpm --filter @weeb/weeb-plugins build",
