@@ -10,6 +10,13 @@
  * Header e conteúdo passam a receber a MESMA classe a partir daqui. Se a largura
  * mudar, muda nos dois ao mesmo tempo, que é a única forma de isso não voltar a
  * divergir.
+ *
+ * Alinhado à esquerda, não centralizado. Centralizar fazia header e conteúdo
+ * concordarem entre si mas perderem a sidebar: no Settings a sidebar terminava em
+ * x=76 e o título aparecia em x=486, com 410px de vazio no meio. Numa navegação
+ * ancorada à esquerda, é a calha esquerda que amarra sidebar, header e conteúdo na
+ * mesma linha vertical. `max-width` continua existindo para limitar o comprimento
+ * da linha de texto — o espaço que sobra fica à direita, onde não separa nada.
  */
 
 /**
@@ -42,5 +49,6 @@ const WORKSPACE_PADDING_X = "px-4 lg:px-5"
 
 export function contentContainer(width: ContentWidth = "app"): string {
   const paddingX = width === "workspace" ? WORKSPACE_PADDING_X : CONTENT_PADDING_X
-  return `mx-auto w-full ${MAX_WIDTH[width]} ${paddingX}`
+  // Sem `mx-auto`: a calha esquerda é o que alinha com a sidebar (ver nota no topo).
+  return `w-full ${MAX_WIDTH[width]} ${paddingX}`
 }

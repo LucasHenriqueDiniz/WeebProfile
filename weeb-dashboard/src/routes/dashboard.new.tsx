@@ -45,7 +45,9 @@ export default function NewArtifactChooserPage() {
 
   return (
     <DashboardLayout title={t("title")} description={t("subtitle")} width="narrow">
-      <div className="flex min-h-full items-center justify-center py-6">
+      {/* Sem centralizar: os cards começam na mesma calha do título do header. Antes
+          ficavam no meio do container, soltos em relação ao título e à sidebar. */}
+      <div className="py-6">
         <div className="grid w-full max-w-3xl grid-cols-1 gap-5 sm:grid-cols-2">
           {options.map((option) => {
             const Icon = option.icon
