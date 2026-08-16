@@ -171,8 +171,16 @@
     },
     "statistics": {
       "config": {
+        "statistics_anime_title": {
+          "defaultValue": "Anime Statistics",
+          "label": "Anime title"
+        },
         "statistics_hide_title": {
           "label": "Ocultar título"
+        },
+        "statistics_manga_title": {
+          "defaultValue": "Manga Statistics",
+          "label": "Manga title"
         },
         "statistics_media": {
           "label": "Tipo de medio",

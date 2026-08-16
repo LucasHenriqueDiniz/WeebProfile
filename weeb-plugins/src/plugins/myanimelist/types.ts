@@ -153,6 +153,7 @@ export interface MyAnimeListConfig {
   statistics_anime_title?: string
   statistics_manga_title?: string
   last_activity_title?: string
+  last_activity_hide_title?: boolean
   last_activity_max?: number
   last_activity_hide_anime?: boolean
   last_activity_hide_manga?: boolean

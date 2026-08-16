@@ -153,6 +153,9 @@ export function LastUpdates({
 
   const title = config.last_activity_title || "Recent Anime Activity"
   const maxItems = config.last_activity_max ?? 6
+  // O metadata declarava last_activity_hide_title e nada lia: o toggle aparecia no
+  // diálogo e não escondia coisa nenhuma. Todas as outras seções respeitam o seu.
+  const hideTitle = config.last_activity_hide_title ?? false
 
   if (maxItems && allUpdates.length > maxItems) {
     allUpdates = allUpdates.slice(0, maxItems)
@@ -163,7 +166,7 @@ export function LastUpdates({
       <RenderBasedOnStyle
         defaultComponent={
           <>
-            <DefaultTitle title={title} icon={<FaList />} />
+            {!hideTitle && <DefaultTitle title={title} icon={<FaList />} />}
             <div className="flex flex-col gap-1">
               {allUpdates.map((update, index) => (
                 <DefaultUpdate key={index} update={update} />

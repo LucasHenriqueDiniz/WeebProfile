@@ -242,6 +242,11 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                     id={option.key}
                     type="text"
                     value={value}
+                    // O placeholder é o texto que o card mostra quando o campo está
+                    // vazio -- o `defaultValue` do metadata é o mesmo fallback que o
+                    // componente usa. Sem isso o campo ficava em branco e não havia
+                    // como saber qual header ele controla.
+                    placeholder={typeof option.defaultValue === "string" ? option.defaultValue : undefined}
                     onChange={(e) => updateConfig({ [option.key]: e.target.value })}
                   />
                 )}

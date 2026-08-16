@@ -3287,13 +3287,23 @@ export const PLUGINS_METADATA = {
           }
         },
         {
-          key: "statistics_title",
-          label: "Title",
+          key: "statistics_anime_title",
+          label: "Anime title",
           type: "string",
-          defaultValue: "Statistics",
+          defaultValue: "Anime Statistics",
           i18nKey: {
-            label: "plugins.myanimelist.sections.statistics.config.statistics_title.label",
-            defaultValue: "plugins.myanimelist.sections.statistics.config.statistics_title.defaultValue"
+            label: "plugins.myanimelist.sections.statistics.config.statistics_anime_title.label",
+            defaultValue: "plugins.myanimelist.sections.statistics.config.statistics_anime_title.defaultValue"
+          }
+        },
+        {
+          key: "statistics_manga_title",
+          label: "Manga title",
+          type: "string",
+          defaultValue: "Manga Statistics",
+          i18nKey: {
+            label: "plugins.myanimelist.sections.statistics.config.statistics_manga_title.label",
+            defaultValue: "plugins.myanimelist.sections.statistics.config.statistics_manga_title.defaultValue"
           }
         },
         {

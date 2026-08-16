@@ -94,6 +94,15 @@ jobs:
         run: pnpm validate-previews --warn-only
         continue-on-error: true
 
+      # Opção de config declarada que nenhum componente lê vira um campo no wizard
+      # que aceita valor e não muda nada -- foi assim que o MyAnimeList ficou com um
+      # "Title" decorativo. Advisory por enquanto: 7 casos herdados ainda esperam
+      # decisão (implementar a leitura ou remover a opção). Vira gate quando zerar.
+      - name: Validate config options
+        working-directory: weeb-plugins
+        run: pnpm validate-config-options --warn-only
+        continue-on-error: true
+
   # O dashboard já sobe sozinho pela integração git do Cloudflare Pages; o gerador
   # é um Worker e ficava só no `wrangler deploy` manual. Isso criava uma janela em
   # que o dashboard, recém-deployado, chamava uma rota que o gerador ainda não tinha

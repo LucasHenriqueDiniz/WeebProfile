@@ -27,11 +27,22 @@ export const myanimelistPluginMetadata = {
           type: "boolean" as const,
           defaultValue: false,
         },
+        // Esta seção pinta DOIS cabeçalhos, um por mídia, e o componente lê estas
+        // duas chaves. Aqui havia um único `statistics_title` com default
+        // "Statistics": o campo aparecia no diálogo, aceitava texto e não mudava
+        // nada, porque ninguém lia essa chave. Os defaults abaixo são exatamente os
+        // fallbacks de components/Statistics.tsx.
         {
-          key: "statistics_title",
-          label: "Title",
+          key: "statistics_anime_title",
+          label: "Anime title",
           type: "string" as const,
-          defaultValue: "Statistics",
+          defaultValue: "Anime Statistics",
+        },
+        {
+          key: "statistics_manga_title",
+          label: "Manga title",
+          type: "string" as const,
+          defaultValue: "Manga Statistics",
         },
         {
           key: "statistics_media",
