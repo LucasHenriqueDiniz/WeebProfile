@@ -10,6 +10,7 @@ import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
 import {
   CONTENT_SIZE_SCALE,
+  resolveBannerText,
   resolveBannerVariant,
   resolveLanguagesVariant,
   resolveStarGraphVariant,
@@ -57,7 +58,11 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     if (cfg.sections.includes("banner")) {
       const variant = resolveBannerVariant(cfg.banner_variant)
       const showDescription = cfg.banner_show_description ?? true
-      const hasDescription = showDescription && !!repo.description
+      // Texto resolvido, não repo.description cru: uma descrição custom faz a linha
+      // existir mesmo num repo sem descrição, e a altura precisa contar isso.
+      const bannerText = resolveBannerText(cfg, repo)
+      const hasDescription = showDescription && !!bannerText.description
+      const hasEyebrow = bannerText.eyebrow !== null
       let sectionH = 0
 
       if (isTerminal) {
@@ -74,10 +79,10 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       } else if (variant === "centered") {
         const showAvatar = cfg.banner_show_avatar ?? true
         const showOwner = cfg.banner_show_owner ?? true
-        sectionH = 24 + 106 + (showAvatar ? 50 : 0) + (showOwner ? 18 : 0) + (hasDescription ? 44 : 0)
+        sectionH = 24 + 106 + (showAvatar ? 50 : 0) + (showOwner || hasEyebrow ? 18 : 0) + (hasDescription ? 44 : 0)
       } else if (variant === "centered_dark") {
         const showOwner = cfg.banner_show_owner ?? true
-        sectionH = 24 + 76 + (showOwner ? 19 : 0) + (hasDescription ? 49 : 0)
+        sectionH = 24 + 76 + (showOwner || hasEyebrow ? 19 : 0) + (hasDescription ? 49 : 0)
       } else if (variant === "centered_gradient") {
         sectionH = 24 + 100 + (hasDescription ? 46 : 0)
       } else if (variant === "dark") {

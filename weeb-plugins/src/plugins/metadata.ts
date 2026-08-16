@@ -2104,6 +2104,45 @@ export const PLUGINS_METADATA = {
           }
         },
         {
+          key: "banner_title",
+          label: "Custom title",
+          type: "string",
+          defaultValue: "",
+          description: "Replaces the repository name in the banner",
+          tooltip: "Leave empty to use the repository name from GitHub.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_title.label",
+            description: "plugins.github_repo.sections.banner.config.banner_title.description",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_title.tooltip"
+          }
+        },
+        {
+          key: "banner_description",
+          label: "Custom description",
+          type: "string",
+          defaultValue: "",
+          description: "Replaces the repository description in the banner",
+          tooltip: "Leave empty to use the repository description from GitHub.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_description.label",
+            description: "plugins.github_repo.sections.banner.config.banner_description.description",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_description.tooltip"
+          }
+        },
+        {
+          key: "banner_eyebrow",
+          label: "Custom label",
+          type: "string",
+          defaultValue: "",
+          description: "Replaces the small line above the title (e.g. \"weebprofile / open source\")",
+          tooltip: "Only the Split, Display, Centered and Centered Dark styles have this line. Leave empty to use the default label.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.banner.config.banner_eyebrow.label",
+            description: "plugins.github_repo.sections.banner.config.banner_eyebrow.description",
+            tooltip: "plugins.github_repo.sections.banner.config.banner_eyebrow.tooltip"
+          }
+        },
+        {
           key: "banner_show_description",
           label: "Show description",
           type: "boolean",

@@ -70,6 +70,31 @@ export const githubRepoPluginMetadata = {
           ],
         },
         {
+          key: "banner_title",
+          label: "Custom title",
+          type: "string" as const,
+          defaultValue: "",
+          description: "Replaces the repository name in the banner",
+          tooltip: "Leave empty to use the repository name from GitHub.",
+        },
+        {
+          key: "banner_description",
+          label: "Custom description",
+          type: "string" as const,
+          defaultValue: "",
+          description: "Replaces the repository description in the banner",
+          tooltip: "Leave empty to use the repository description from GitHub.",
+        },
+        {
+          key: "banner_eyebrow",
+          label: "Custom label",
+          type: "string" as const,
+          defaultValue: "",
+          description: 'Replaces the small line above the title (e.g. "weebprofile / open source")',
+          tooltip:
+            "Only the Split, Display, Centered and Centered Dark styles have this line. Leave empty to use the default label.",
+        },
+        {
           key: "banner_show_description",
           label: "Show description",
           type: "boolean" as const,

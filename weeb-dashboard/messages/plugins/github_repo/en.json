@@ -11,6 +11,16 @@
   "sections": {
     "banner": {
       "config": {
+        "banner_description": {
+          "description": "Replaces the repository description in the banner",
+          "label": "Custom description",
+          "tooltip": "Leave empty to use the repository description from GitHub."
+        },
+        "banner_eyebrow": {
+          "description": "Replaces the small line above the title (e.g. \"weebprofile / open source\")",
+          "label": "Custom label",
+          "tooltip": "Only the Split, Display, Centered and Centered Dark styles have this line. Leave empty to use the default label."
+        },
         "banner_height": {
           "label": "Extra height",
           "tooltip": "Extra space (px) added at the bottom of the banner, on top of its normal size."
@@ -34,6 +44,11 @@
         "banner_show_owner": {
           "label": "Show owner",
           "tooltip": "Shows the owner login (e.g. \"weebprofile /\") before the repository name."
+        },
+        "banner_title": {
+          "description": "Replaces the repository name in the banner",
+          "label": "Custom title",
+          "tooltip": "Leave empty to use the repository name from GitHub."
         },
         "banner_variant": {
           "description": "Choose the banner layout",

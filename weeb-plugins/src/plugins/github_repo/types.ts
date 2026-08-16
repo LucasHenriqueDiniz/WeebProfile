@@ -64,6 +64,39 @@ export function resolveBannerVariant(variant?: BannerVariant): ResolvedBannerVar
   }
 }
 
+export interface ResolvedBannerText {
+  title: string
+  description: string | null
+  /** null = a variante usa o próprio rótulo (ex: "owner / open source"). */
+  eyebrow: string | null
+}
+
+/**
+ * Textos do banner, com o que veio do GitHub como padrão.
+ *
+ * Campo vazio (ou só espaços) significa "usa o do repositório" -- é o que
+ * mantém o card correto para quem nunca abre essas opções. Só texto de verdade
+ * sobrescreve.
+ *
+ * `description` continua podendo ser null: repo sem descrição e sem texto custom
+ * não deve virar uma linha vazia no card.
+ */
+export function resolveBannerText(
+  config: Pick<GithubRepoConfig, "banner_title" | "banner_description" | "banner_eyebrow">,
+  data: Pick<GithubRepoData, "name" | "description">
+): ResolvedBannerText {
+  const custom = (value?: string): string | null => {
+    const trimmed = value?.trim()
+    return trimmed ? trimmed : null
+  }
+
+  return {
+    title: custom(config.banner_title) ?? data.name,
+    description: custom(config.banner_description) ?? data.description,
+    eyebrow: custom(config.banner_eyebrow),
+  }
+}
+
 export type StarGraphVariant =
   | "area"
   | "bars"
@@ -131,6 +164,10 @@ export interface GithubRepoConfig {
   // banner. Em produção é convertida pra base64 no fetch (Gists não carregam URLs
   // externas dentro de SVG).
   banner_image?: string
+  // Textos do banner. Vazio = usa o que veio do GitHub; ver resolveBannerText.
+  banner_title?: string
+  banner_description?: string
+  banner_eyebrow?: string
   // Stats (star/fork counters)
   stats_hide_title?: boolean
   stats_title?: string

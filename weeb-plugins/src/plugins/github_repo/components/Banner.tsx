@@ -2,7 +2,7 @@ import React from "react"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
-import { resolveBannerVariant } from "../types"
+import { resolveBannerText, resolveBannerVariant } from "../types"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
 import {
@@ -53,8 +53,9 @@ function MetaRow({ data, showLanguage }: { data: GithubRepoData; showLanguage: b
   )
 }
 
-// Marca quadrada com a inicial do repo (ou a imagem custom/avatar, se existir).
-function Mark({ data, size }: { data: GithubRepoData; size: number }): React.ReactElement {
+// Marca quadrada com a inicial do título exibido (ou a imagem custom/avatar, se
+// existir) - a inicial segue o título custom, não o nome do repo.
+function Mark({ data, title, size }: { data: GithubRepoData; title: string; size: number }): React.ReactElement {
   if (data.owner.avatarUrl) {
     return (
       <img
@@ -70,7 +71,7 @@ function Mark({ data, size }: { data: GithubRepoData; size: number }): React.Rea
       className="flex flex-shrink-0 items-center justify-center rounded-[10px] font-bold"
       style={{ width: size, height: size, background: HL_SOFT, color: HL, fontSize: size * 0.42 }}
     >
-      {data.name.slice(0, 1).toUpperCase()}
+      {title.slice(0, 1).toUpperCase()}
     </div>
   )
 }
@@ -81,6 +82,7 @@ function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
   const showLanguage = config.banner_show_languages ?? true
   const showAvatar = config.banner_show_avatar ?? true
   const showOwner = config.banner_show_owner ?? true
+  const { title, description } = resolveBannerText(config, data)
 
   return (
     <Card>
@@ -89,13 +91,13 @@ function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
         style={{ background: `linear-gradient(90deg, ${HL}, color-mix(in srgb, ${HL} 30%, transparent))` }}
       />
       <div className="flex items-start gap-3.5 px-[18px] py-4">
-        {showAvatar && <Mark data={data} size={44} />}
+        {showAvatar && <Mark data={data} title={title} size={44} />}
         <div className="min-w-0 flex-1">
           <div className="truncate text-[22px] font-semibold leading-tight tracking-[-0.02em] text-default-text">
-            {showOwner && <span className="font-normal text-default-muted">{data.owner.login} /</span>} {data.name}
+            {showOwner && <span className="font-normal text-default-muted">{data.owner.login} /</span>} {title}
           </div>
-          {showDescription && data.description && (
-            <p className="mt-1.5 text-[13px] leading-[1.55] text-default-muted line-clamp-2">{data.description}</p>
+          {showDescription && description && (
+            <p className="mt-1.5 text-[13px] leading-[1.55] text-default-muted line-clamp-2">{description}</p>
           )}
           <div className="mt-3">
             <MetaRow data={data} showLanguage={showLanguage} />
@@ -111,17 +113,18 @@ function MinimalBanner({ data, config }: { data: GithubRepoData; config: GithubR
   const showDescription = config.banner_show_description ?? true
   const showAvatar = config.banner_show_avatar ?? true
   const showOwner = config.banner_show_owner ?? true
+  const { title, description } = resolveBannerText(config, data)
 
   return (
     <Card className="flex flex-row items-center gap-3.5 px-[18px] py-3.5">
-      {showAvatar && <Mark data={data} size={40} />}
+      {showAvatar && <Mark data={data} title={title} size={40} />}
       <div className="min-w-0 flex-1">
+        {/* Monta owner/título em vez de usar nameWithOwner: com título custom o
+            nameWithOwner do GitHub mostraria o nome antigo. */}
         <div className="truncate text-[15px] font-semibold leading-tight text-default-text">
-          {showOwner ? data.nameWithOwner : data.name}
+          {showOwner ? `${data.owner.login}/${title}` : title}
         </div>
-        {showDescription && data.description && (
-          <div className="truncate text-xs text-default-muted">{data.description}</div>
-        )}
+        {showDescription && description && <div className="truncate text-xs text-default-muted">{description}</div>}
       </div>
       <div className="flex-shrink-0 text-xs text-default-muted">
         <b className="font-semibold text-default-text">★ {formatCount(data.stargazerCount)}</b>
@@ -134,14 +137,15 @@ function MinimalBanner({ data, config }: { data: GithubRepoData; config: GithubR
 function SplitBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
   const delta = computeStarDelta(data.starHistory)
+  const { title, description, eyebrow } = resolveBannerText(config, data)
 
   return (
     <Card className="flex flex-row">
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 px-[18px] py-4">
-        <Eyebrow>Repository</Eyebrow>
-        <div className="truncate text-lg font-semibold tracking-[-0.02em] text-default-text">{data.name}</div>
-        {showDescription && data.description && (
-          <p className="text-xs leading-normal text-default-muted line-clamp-2">{data.description}</p>
+        <Eyebrow>{eyebrow ?? "Repository"}</Eyebrow>
+        <div className="truncate text-lg font-semibold tracking-[-0.02em] text-default-text">{title}</div>
+        {showDescription && description && (
+          <p className="text-xs leading-normal text-default-muted line-clamp-2">{description}</p>
         )}
       </div>
       <div
@@ -162,6 +166,7 @@ function SplitBanner({ data, config }: { data: GithubRepoData; config: GithubRep
 function DisplayBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showLanguage = config.banner_show_languages ?? true
   const showOwner = config.banner_show_owner ?? true
+  const { title, eyebrow } = resolveBannerText(config, data)
 
   return (
     <Card className="relative flex flex-col justify-center">
@@ -169,12 +174,14 @@ function DisplayBanner({ data, config }: { data: GithubRepoData; config: GithubR
         className="pointer-events-none absolute -right-7 -top-9 select-none text-[150px] font-bold leading-none tracking-[-0.05em]"
         style={{ color: HL, opacity: 0.07 }}
       >
-        {data.name.slice(0, 1).toUpperCase()}
+        {title.slice(0, 1).toUpperCase()}
       </div>
       <div className="px-[18px] py-4">
-        <Eyebrow style={{ color: HL }}>{showOwner ? `${data.owner.login} / repository` : "repository"}</Eyebrow>
+        <Eyebrow style={{ color: HL }}>
+          {eyebrow ?? (showOwner ? `${data.owner.login} / repository` : "repository")}
+        </Eyebrow>
         <div className="mt-1 truncate text-[32px] font-bold leading-[1.05] tracking-[-0.035em] text-default-text">
-          {data.name}
+          {title}
         </div>
         <div className="mt-2.5">
           <MetaRow data={data} showLanguage={showLanguage} />
@@ -189,6 +196,7 @@ function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
   const showDescription = config.banner_show_description ?? true
   const showAvatar = config.banner_show_avatar ?? true
   const showOwner = config.banner_show_owner ?? true
+  const { title, description } = resolveBannerText(config, data)
 
   return (
     <Card
@@ -198,7 +206,7 @@ function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
       <div className="self-stretch" style={{ width: 4, background: HL }} />
       {showAvatar && (
         <div className="flex-shrink-0 pl-[18px]">
-          <Mark data={data} size={36} />
+          <Mark data={data} title={title} size={36} />
         </div>
       )}
       <div className="min-w-0 flex-1 px-3.5 py-4">
@@ -210,11 +218,11 @@ function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
               </span>{" "}
             </>
           )}
-          {data.name}
+          {title}
         </div>
-        {showDescription && data.description && (
+        {showDescription && description && (
           <div className="mt-1 truncate text-xs" style={{ color: "#8b93a3" }}>
-            {data.description}
+            {description}
           </div>
         )}
       </div>
@@ -235,6 +243,10 @@ function CenteredBanner({ data, config }: { data: GithubRepoData; config: Github
   const showAvatar = config.banner_show_avatar ?? true
   const showOwner = config.banner_show_owner ?? true
   const showLanguage = config.banner_show_languages ?? true
+  const { title, description, eyebrow } = resolveBannerText(config, data)
+  // Eyebrow custom aparece mesmo com "show owner" desligado: o texto foi digitado
+  // de propósito, e sumir sem explicação é pior que a linha extra.
+  const showEyebrow = eyebrow !== null || showOwner
 
   return (
     <Card className="relative flex flex-col items-center px-[18px] py-5 text-center">
@@ -245,20 +257,22 @@ function CenteredBanner({ data, config }: { data: GithubRepoData; config: Github
         }}
       />
       <div className="relative flex flex-col items-center">
-        {showAvatar && <Mark data={data} size={48} />}
-        {showOwner && (
-          <div className={`text-xs text-default-muted ${showAvatar ? "mt-2.5" : ""}`}>{data.owner.login} /</div>
+        {showAvatar && <Mark data={data} title={title} size={48} />}
+        {showEyebrow && (
+          <div className={`text-xs text-default-muted ${showAvatar ? "mt-2.5" : ""}`}>
+            {eyebrow ?? `${data.owner.login} /`}
+          </div>
         )}
         <div
           className={`max-w-full truncate text-[26px] font-bold leading-tight tracking-[-0.03em] text-default-text ${
-            !showAvatar && !showOwner ? "" : "mt-0.5"
+            !showAvatar && !showEyebrow ? "" : "mt-0.5"
           }`}
         >
-          {data.name}
+          {title}
         </div>
-        {showDescription && data.description && (
+        {showDescription && description && (
           <p className="mt-1.5 max-w-[320px] text-[13px] leading-[1.55] text-default-muted line-clamp-2">
-            {data.description}
+            {description}
           </p>
         )}
         <div className="mt-3 flex justify-center">
@@ -274,6 +288,8 @@ function CenteredBanner({ data, config }: { data: GithubRepoData; config: Github
 function CenteredDarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepoConfig }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
   const showOwner = config.banner_show_owner ?? true
+  const { title, description, eyebrow } = resolveBannerText(config, data)
+  const showEyebrow = eyebrow !== null || showOwner
 
   return (
     <Card
@@ -299,16 +315,16 @@ function CenteredDarkBanner({ data, config }: { data: GithubRepoData; config: Gi
         <rect width="100%" height="100%" fill="url(#centered-glow)" />
       </svg>
       <div className="relative flex flex-col items-center gap-[9px]">
-        {showOwner && <Eyebrow style={{ color: HL }}>{data.owner.login} / open source</Eyebrow>}
+        {showEyebrow && <Eyebrow style={{ color: HL }}>{eyebrow ?? `${data.owner.login} / open source`}</Eyebrow>}
         <div
           className="max-w-full truncate text-[28px] font-bold leading-none tracking-[-0.03em]"
           style={{ color: "#e6edf3" }}
         >
-          {data.name}
+          {title}
         </div>
-        {showDescription && data.description && (
+        {showDescription && description && (
           <p className="max-w-[300px] text-[12.5px] leading-[1.5] line-clamp-2" style={{ color: "#8b949e" }}>
-            {data.description}
+            {description}
           </p>
         )}
       </div>
@@ -327,6 +343,7 @@ function CenteredGradientBanner({
 }): React.ReactElement {
   const showDescription = config.banner_show_description ?? true
   const showLanguage = config.banner_show_languages ?? true
+  const { title, description } = resolveBannerText(config, data)
 
   const chip: React.CSSProperties = {
     fontSize: 11,
@@ -346,11 +363,11 @@ function CenteredGradientBanner({
           className="max-w-full truncate text-[27px] font-bold leading-none tracking-[-0.03em]"
           style={{ textShadow: "0 1px 2px rgb(0 0 0 / .12)" }}
         >
-          {data.name}
+          {title}
         </div>
-        {showDescription && data.description && (
+        {showDescription && description && (
           <p className="max-w-[310px] text-[12.5px] leading-[1.5] line-clamp-2" style={{ opacity: 0.9 }}>
-            {data.description}
+            {description}
           </p>
         )}
         <div className="mt-1 flex gap-2">
@@ -378,6 +395,8 @@ function DefaultBanner({ data, config }: { data: GithubRepoData; config: GithubR
 export function Banner({ config, data, style = "default", size = "half" }: BannerProps): React.ReactElement {
   if (!config.enabled || !data) return <></>
 
+  const { title, description } = resolveBannerText(config, data)
+
   return (
     <section id="github-repo-banner">
       <ScaledBox size={config.content_size}>
@@ -388,10 +407,10 @@ export function Banner({ config, data, style = "default", size = "half" }: Banne
             <>
               <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "banner", size })} />
               <div className="flex items-baseline gap-2 px-1 py-1">
-                <span className="text-terminal-highlight font-bold">{data.nameWithOwner}</span>
+                <span className="text-terminal-highlight font-bold">{`${data.owner.login}/${title}`}</span>
               </div>
-              {(config.banner_show_description ?? true) && data.description && (
-                <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{data.description}</p>
+              {(config.banner_show_description ?? true) && description && (
+                <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{description}</p>
               )}
             </>
           }
