@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/react"
 import { ptBR } from "@clerk/localizations"
 import { I18nextProvider } from "react-i18next"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { Toaster } from "@/components/ui/toaster"
 import i18n from "@/i18n/setup"
 import { router } from "./router"
 import "@/src/globals.css"
@@ -48,6 +49,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY ?? ""} afterSignOutUrl="/" localization={ptBR}>
         <TooltipProvider>
           <RouterProvider router={router} />
+          {/* Sem isto, todo toast({...}) do wizard vira no-op silencioso: o
+              use-toast guarda o estado num store de módulo, mas quem renderiza
+              é o Toaster. Fica na raiz para cobrir todas as rotas. */}
+          <Toaster />
         </TooltipProvider>
       </ClerkProvider>
     </I18nextProvider>
