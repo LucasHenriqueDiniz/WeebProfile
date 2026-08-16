@@ -271,7 +271,11 @@ export const myanimelistPluginMetadata = {
           key: "character_favorites_list_style",
           label: "List style",
           type: "select" as const,
-          defaultValue: "simple",
+          // "compact", não "simple": é o fallback real em RenderMyAnimeList.tsx e em
+          // calculateHeight. Enquanto isto dizia "simple", o diálogo abria marcando
+          // "Simple (Image grid)" e o card renderizava lista compacta -- o seletor
+          // mentia sobre o que estava em vigor.
+          defaultValue: "compact",
           options: [
             { value: "simple", label: "Simple (Image grid)" },
             { value: "compact", label: "Compact (Compact list)" },
@@ -316,7 +320,8 @@ export const myanimelistPluginMetadata = {
           key: "people_favorites_list_style",
           label: "List style",
           type: "select" as const,
-          defaultValue: "simple",
+          // Mesmo caso de character_favorites: o fallback real é "compact".
+          defaultValue: "compact",
           options: [
             { value: "simple", label: "Simple (Image grid)" },
             { value: "compact", label: "Compact (Compact list)" },

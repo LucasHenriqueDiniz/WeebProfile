@@ -3664,7 +3664,7 @@ export const PLUGINS_METADATA = {
           key: "character_favorites_list_style",
           label: "List style",
           type: "select",
-          defaultValue: "simple",
+          defaultValue: "compact",
           description: "Choose the list display style",
           options: [
             { value: "simple", label: "Simple (Image grid)" },
@@ -3735,7 +3735,7 @@ export const PLUGINS_METADATA = {
           key: "people_favorites_list_style",
           label: "List style",
           type: "select",
-          defaultValue: "simple",
+          defaultValue: "compact",
           description: "Choose the list display style",
           options: [
             { value: "simple", label: "Simple (Image grid)" },
