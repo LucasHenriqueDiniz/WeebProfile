@@ -3,7 +3,7 @@ import { GraphqlResponseError } from "@octokit/graphql"
 import type { GithubRepoConfig, GithubRepoData, StarHistoryPoint } from "../types"
 import { REPOSITORY_CARD_QUERY } from "./queries"
 import { getMockGithubRepoData } from "./mock-data"
-import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { embedImageOrNull as embedImage } from "../../../utils/image-to-base64"
 
 const OWNER_AVATAR_MAX_BYTES = 250_000
 const STARGAZERS_PER_PAGE = 100
@@ -117,11 +117,7 @@ async function fetchStarHistory(
 
 async function embedImageOrNull(url: string): Promise<string | null> {
   if (!url.startsWith("https://")) return null
-  try {
-    return (await urlToDataUriDirect(url, { maxBytes: OWNER_AVATAR_MAX_BYTES })).dataUri
-  } catch {
-    return null
-  }
+  return embedImage(url, { maxBytes: OWNER_AVATAR_MAX_BYTES, context: "github_repo/avatar" })
 }
 
 /**

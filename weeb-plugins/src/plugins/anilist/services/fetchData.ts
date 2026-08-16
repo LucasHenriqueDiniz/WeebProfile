@@ -1,4 +1,4 @@
-import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { embedImageOrNull } from "../../../utils/image-to-base64"
 import type { AniListConfig, AniListData, AniListMedia, AniListWatchingEntry } from "../types"
 import { getMockAniListData } from "./mock-data"
 
@@ -59,13 +59,10 @@ async function embedCover(url: string | null | undefined, previewMode: boolean):
   // Em preview a URL original serve: o browser carrega direto, e converter para
   // data URI aqui só desperdiçaria uma requisição por card.
   if (previewMode) return url
-  try {
-    return (await urlToDataUriDirect(url, { maxBytes: COVER_MAX_BYTES })).dataUri
-  } catch {
-    // null, nunca a URL original: um SVG em Gist não consegue carregar URL externa,
-    // então devolvê-la deixaria uma imagem quebrada em vez de nenhuma.
-    return null
-  }
+  // null, nunca a URL original: um SVG em Gist não consegue carregar URL externa,
+  // então devolvê-la deixaria uma imagem quebrada em vez de nenhuma. O helper
+  // registra o motivo da falha, que antes se perdia num catch vazio.
+  return embedImageOrNull(url, { maxBytes: COVER_MAX_BYTES, context: "anilist/cover" })
 }
 
 export async function fetchAniListData(config: AniListConfig, dev = false, previewMode = false): Promise<AniListData> {

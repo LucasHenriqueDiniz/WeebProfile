@@ -4,17 +4,13 @@
 
 import type { LyftaConfig, LyftaData } from "../types"
 import { getMockLyftaData } from "./mock-data"
-import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { embedImageOrNull as embedImage } from "../../../utils/image-to-base64"
 
 const LYFTA_IMAGE_MAX_BYTES = 250_000
 
 async function embedImageOrNull(image: string): Promise<string | null> {
   if (!image.startsWith("https://")) return null
-  try {
-    return (await urlToDataUriDirect(image, { maxBytes: LYFTA_IMAGE_MAX_BYTES })).dataUri
-  } catch {
-    return null
-  }
+  return embedImage(image, { maxBytes: LYFTA_IMAGE_MAX_BYTES, context: "lyfta" })
 }
 
 const BASE_URL = "https://my.lyfta.app"

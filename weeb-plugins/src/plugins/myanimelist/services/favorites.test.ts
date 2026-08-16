@@ -2,11 +2,15 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { getBasicFavorites } from "./favorites"
 import type { MalProfileResponse } from "./profile"
 
+// embedImageOrNull, nao urlToDataUriDirect: o helper compartilhado ja converte E
+// registra o motivo da falha, entao ele devolve null em vez de lancar.
 vi.mock("../../../utils/image-to-base64", () => ({
-  urlToDataUriDirect: vi.fn(),
+  embedImageOrNull: vi.fn(),
 }))
 
-import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { embedImageOrNull } from "../../../utils/image-to-base64"
+
+const EMBUTIDA = "data:image/jpeg;base64,AAAA"
 
 function makeAnimeItem(id: number) {
   return {
@@ -52,7 +56,7 @@ const noLimits = { animeMax: 0, mangaMax: 0, charactersMax: 0, peopleMax: 0 }
 
 describe("getBasicFavorites section status", () => {
   beforeEach(() => {
-    vi.mocked(urlToDataUriDirect).mockReset()
+    vi.mocked(embedImageOrNull).mockReset()
   })
 
   it("marks a section as 'complete' when it wasn't requested (max = 0)", async () => {
@@ -69,22 +73,14 @@ describe("getBasicFavorites section status", () => {
   })
 
   it("uses small_image_url, not image_url/large_image_url, for anime and manga covers", async () => {
-    vi.mocked(urlToDataUriDirect).mockResolvedValue({
-      dataUri: "data:image/jpeg;base64,AAAA",
-      mime: "image/jpeg",
-      byteLength: 10,
-    })
+    vi.mocked(embedImageOrNull).mockResolvedValue(EMBUTIDA)
     const profile = makeProfile({ anime: [makeAnimeItem(1)] })
     await getBasicFavorites(profile, { ...noLimits, animeMax: 20 }, { previewMode: false })
-    expect(urlToDataUriDirect).toHaveBeenCalledWith("https://cdn.example/1-small.jpg", expect.anything())
+    expect(embedImageOrNull).toHaveBeenCalledWith("https://cdn.example/1-small.jpg", expect.anything())
   })
 
   it("marks a section as 'complete' when all images embed successfully", async () => {
-    vi.mocked(urlToDataUriDirect).mockResolvedValue({
-      dataUri: "data:image/jpeg;base64,AAAA",
-      mime: "image/jpeg",
-      byteLength: 10,
-    })
+    vi.mocked(embedImageOrNull).mockResolvedValue(EMBUTIDA)
     const profile = makeProfile({ anime: [makeAnimeItem(1), makeAnimeItem(2)] })
     const result = await getBasicFavorites(profile, { ...noLimits, animeMax: 20 }, { previewMode: false })
     expect(result.sectionsStatus.anime).toBe("complete")
@@ -93,9 +89,8 @@ describe("getBasicFavorites section status", () => {
   })
 
   it("marks a section as 'partial' when at least one (but not all) image fails to embed, without turning real favorites into an empty list", async () => {
-    vi.mocked(urlToDataUriDirect)
-      .mockResolvedValueOnce({ dataUri: "data:image/jpeg;base64,AAAA", mime: "image/jpeg", byteLength: 10 })
-      .mockRejectedValueOnce(new Error("thumbnail unavailable"))
+    // null, nao reject: o helper engole a excecao, registra o motivo e devolve null.
+    vi.mocked(embedImageOrNull).mockResolvedValueOnce(EMBUTIDA).mockResolvedValueOnce(null)
     const profile = makeProfile({ anime: [makeAnimeItem(1), makeAnimeItem(2)] })
     const result = await getBasicFavorites(profile, { ...noLimits, animeMax: 20 }, { previewMode: false })
     expect(result.sectionsStatus.anime).toBe("partial")
@@ -110,15 +105,11 @@ describe("getBasicFavorites section status", () => {
     const result = await getBasicFavorites(profile, { ...noLimits, charactersMax: 20 }, { previewMode: false })
     expect(result.sectionsStatus.characters).toBe("complete") // no image to fetch isn't a failure
     expect(result.characters[0]?.image).toBeNull()
-    expect(urlToDataUriDirect).not.toHaveBeenCalled()
+    expect(embedImageOrNull).not.toHaveBeenCalled()
   })
 
   it("marks a section as 'unavailable' (not 'empty') when that category's own processing throws, without sinking the other categories", async () => {
-    vi.mocked(urlToDataUriDirect).mockResolvedValue({
-      dataUri: "data:image/jpeg;base64,AAAA",
-      mime: "image/jpeg",
-      byteLength: 10,
-    })
+    vi.mocked(embedImageOrNull).mockResolvedValue(EMBUTIDA)
     const profile = {
       favorites: {
         anime: [makeAnimeItem(1)],
@@ -146,22 +137,14 @@ describe("getBasicFavorites section status", () => {
   })
 
   it("uses the character's real image_url (no small variant exists) rather than inventing one", async () => {
-    vi.mocked(urlToDataUriDirect).mockResolvedValue({
-      dataUri: "data:image/jpeg;base64,AAAA",
-      mime: "image/jpeg",
-      byteLength: 10,
-    })
+    vi.mocked(embedImageOrNull).mockResolvedValue(EMBUTIDA)
     const profile = makeProfile({ characters: [makeCharacterItem(1)] })
     await getBasicFavorites(profile, { ...noLimits, charactersMax: 20 }, { previewMode: false })
-    expect(urlToDataUriDirect).toHaveBeenCalledWith("https://cdn.example/char-1.jpg", expect.anything())
+    expect(embedImageOrNull).toHaveBeenCalledWith("https://cdn.example/char-1.jpg", expect.anything())
   })
 
   it("maps the Jikan Edge imageUrl contract across all four favorite categories", async () => {
-    vi.mocked(urlToDataUriDirect).mockResolvedValue({
-      dataUri: "data:image/jpeg;base64,AAAA",
-      mime: "image/jpeg",
-      byteLength: 10,
-    })
+    vi.mocked(embedImageOrNull).mockResolvedValue(EMBUTIDA)
     const profile = makeProfile({
       anime: [{ mal_id: 1, title: "Anime", imageUrl: "https://edge.example/anime.jpg" }],
       manga: [{ mal_id: 2, title: "Manga", imageUrl: "https://edge.example/manga.jpg" }],
@@ -185,6 +168,6 @@ describe("getBasicFavorites section status", () => {
     expect(result.manga[0]?.image).toBe("data:image/jpeg;base64,AAAA")
     expect(result.characters[0]?.image).toBe("data:image/jpeg;base64,AAAA")
     expect(result.people[0]?.image).toBe("data:image/jpeg;base64,AAAA")
-    expect(urlToDataUriDirect).toHaveBeenCalledTimes(4)
+    expect(embedImageOrNull).toHaveBeenCalledTimes(4)
   })
 })

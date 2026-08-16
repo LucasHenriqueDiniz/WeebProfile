@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
-import { urlToDataUriDirect, InvalidImageError, ImageTooLargeError } from "./image-to-base64"
+import { urlToDataUriDirect, embedImageOrNull, InvalidImageError, ImageTooLargeError } from "./image-to-base64"
 
 // Minimal valid file headers for magic-byte validation, padded to a plausible size.
 const JPEG_BYTES = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0])
@@ -24,6 +24,69 @@ function mockResponse(
     arrayBuffer: async () => bytes.buffer,
   } as unknown as Response
 }
+
+describe("embedImageOrNull", () => {
+  const originalFetch = global.fetch
+
+  beforeEach(() => {
+    vi.spyOn(console, "warn").mockImplementation(() => {})
+  })
+  afterEach(() => {
+    global.fetch = originalFetch
+    vi.restoreAllMocks()
+  })
+
+  it("devolve o data URI quando a conversao funciona", async () => {
+    global.fetch = vi.fn().mockResolvedValue(mockResponse(200, JPEG_BYTES, "image/jpeg"))
+
+    expect(await embedImageOrNull("https://example.com/a.jpg")).toMatch(/^data:image\/jpeg;base64,/)
+    expect(console.warn).not.toHaveBeenCalled()
+  })
+
+  // O ponto do helper: a falha deixa rastro. Antes cada plugin tinha o proprio
+  // `catch { return null }` e uma imagem que falhou ficava indistinguivel de uma
+  // que nunca existiu -- sem nada para investigar depois.
+  it("registra o motivo e a URL quando falha", async () => {
+    global.fetch = vi.fn().mockResolvedValue(mockResponse(404, JPEG_BYTES, "image/jpeg"))
+
+    expect(await embedImageOrNull("https://example.com/x.jpg", { context: "teste" })).toBeNull()
+
+    const mensagem = vi.mocked(console.warn).mock.calls[0]![0] as string
+    expect(mensagem).toContain("404")
+    expect(mensagem).toContain("teste")
+    expect(mensagem).toContain("https://example.com/x.jpg")
+  })
+
+  // Log nao e lugar para token de assinatura, e algumas CDNs assinam a query.
+  it("nao registra a query string", async () => {
+    global.fetch = vi.fn().mockResolvedValue(mockResponse(404, JPEG_BYTES, "image/jpeg"))
+
+    await embedImageOrNull("https://example.com/x.jpg?token=segredo")
+
+    const mensagem = vi.mocked(console.warn).mock.calls[0]![0] as string
+    expect(mensagem).toContain("https://example.com/x.jpg")
+    expect(mensagem).not.toContain("segredo")
+  })
+
+  it("trata URL ausente sem chamar a rede nem logar", async () => {
+    global.fetch = vi.fn()
+
+    expect(await embedImageOrNull(null)).toBeNull()
+    expect(await embedImageOrNull(undefined)).toBeNull()
+    expect(await embedImageOrNull("")).toBeNull()
+    expect(global.fetch).not.toHaveBeenCalled()
+    expect(console.warn).not.toHaveBeenCalled()
+  })
+
+  it("repassa maxBytes para a conversao", async () => {
+    global.fetch = vi
+      .fn()
+      .mockResolvedValue(mockResponse(200, JPEG_BYTES, "image/jpeg", { "content-length": "999999" }))
+
+    expect(await embedImageOrNull("https://example.com/big.jpg", { maxBytes: 100 })).toBeNull()
+    expect(vi.mocked(console.warn).mock.calls[0]![0]).toContain("maxBytes")
+  })
+})
 
 describe("urlToDataUriDirect", () => {
   const originalFetch = global.fetch

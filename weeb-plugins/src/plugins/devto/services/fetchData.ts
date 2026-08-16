@@ -1,4 +1,4 @@
-import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { embedImageOrNull } from "../../../utils/image-to-base64"
 import type { DevToArticle, DevToData, DevToTag } from "../types"
 import { getMockDevToData } from "./mock-data"
 
@@ -39,13 +39,9 @@ async function request(path: string, signal: AbortSignal): Promise<Response> {
 async function embedAvatar(url: string | null | undefined, previewMode: boolean): Promise<string | null> {
   if (!url) return null
   if (previewMode) return url
-  try {
-    return (await urlToDataUriDirect(url, { maxBytes: AVATAR_MAX_BYTES })).dataUri
-  } catch {
-    // null, nunca a URL original: um SVG em Gist não carrega URL externa, então
-    // devolvê-la deixaria uma imagem quebrada em vez de nenhuma.
-    return null
-  }
+  // null, nunca a URL original: um SVG em Gist não carrega URL externa, então
+  // devolvê-la deixaria uma imagem quebrada em vez de nenhuma.
+  return embedImageOrNull(url, { maxBytes: AVATAR_MAX_BYTES, context: "devto/avatar" })
 }
 
 function countTags(articles: DevToArticle[], max: number): DevToTag[] {

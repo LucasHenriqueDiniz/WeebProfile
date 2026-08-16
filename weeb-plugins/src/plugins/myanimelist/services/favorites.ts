@@ -8,7 +8,7 @@ import type {
   MyAnimeListConfig,
 } from "../types"
 import { DEFAULT_FAVORITES_MAX } from "../constants"
-import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { embedImageOrNull } from "../../../utils/image-to-base64"
 import type { EdgeFavorite, MalProfileResponse } from "./profile"
 
 const COVER_MAX_BYTES = 100_000
@@ -33,12 +33,12 @@ export interface FullFavorites {
 }
 
 async function image(imageUrl: string | null): Promise<{ image: string | null; failed: boolean }> {
+  // Sem URL não é falha: o favorito simplesmente não tem imagem. A distinção
+  // alimenta o status `partial` da categoria.
   if (!imageUrl) return { image: null, failed: false }
-  try {
-    return { image: (await urlToDataUriDirect(imageUrl, { maxBytes: COVER_MAX_BYTES })).dataUri, failed: false }
-  } catch {
-    return { image: null, failed: true }
-  }
+
+  const embedded = await embedImageOrNull(imageUrl, { maxBytes: COVER_MAX_BYTES, context: "myanimelist/favorites" })
+  return { image: embedded, failed: embedded === null }
 }
 
 async function category<T>(

@@ -108,3 +108,36 @@ export async function urlToDataUriDirect(url: string, options: DirectImageOption
 
   return { dataUri: `data:${mime};base64,${encodeBase64(bytes)}`, mime, byteLength: bytes.byteLength }
 }
+
+/**
+ * Converte, e registra o motivo quando não dá.
+ *
+ * Todos os plugins tinham a própria cópia de `try { ... } catch { return null }`,
+ * silenciosa. O resultado: uma imagem que falhou fica visualmente idêntica a uma
+ * que nunca existiu, e não há o que investigar depois. Foi o que aconteceu com os
+ * favoritos do MyAnimeList -- dois personagens sem imagem e nenhum registro do
+ * porquê.
+ *
+ * Devolver `null` continua sendo o comportamento certo: um SVG servido em Gist não
+ * carrega URL externa, então cair de volta para a URL original deixaria uma imagem
+ * quebrada em vez de nenhuma. O que muda é que agora sobra rastro.
+ *
+ * A query string sai do log de propósito: URL de CDN é pública, mas algumas
+ * carregam token de assinatura, e log não é lugar para isso.
+ */
+export async function embedImageOrNull(
+  url: string | null | undefined,
+  options: DirectImageOptions & { context?: string } = {}
+): Promise<string | null> {
+  if (!url) return null
+
+  const { context, ...direct } = options
+  try {
+    return (await urlToDataUriDirect(url, direct)).dataUri
+  } catch (error) {
+    const semQuery = url.split("?")[0]
+    const motivo = error instanceof Error ? error.message : String(error)
+    console.warn(`[image] falhou${context ? ` em ${context}` : ""}: ${motivo} — ${semQuery}`)
+    return null
+  }
+}
