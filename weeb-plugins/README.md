@@ -16,7 +16,6 @@ Typically used by:
 
 - `weeb-dashboard` (config UI + preview)
 - `svg-generator` (final image rendering)
-- `weeb-debug-tool` (dev tool for debuging and preview svg generation)
 
 ---
 

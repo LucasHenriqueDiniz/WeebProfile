@@ -2,7 +2,7 @@
  * Lê os metadados de uma página web (Open Graph / <title> / ícones).
  *
  * O parse é feito com regex, e não com HTMLRewriter: este pacote também roda em
- * Node (weeb-debug-tool e os scripts de preview), onde HTMLRewriter não existe.
+ * Node (os scripts de preview), onde HTMLRewriter não existe.
  *
  * Só o <head> interessa, então a leitura para em `</head>` ou no limite de bytes
  * — o que vier primeiro — para não carregar uma página inteira na memória do Worker.

@@ -5,9 +5,8 @@ import type { CloudflareEnv } from "./_shared/auth"
  * GET /api/health - liveness of the dashboard and everything it needs to generate.
  *
  * There was no health check in production. The only thing resembling one was the
- * generator's GET /test, which returns a fixed string without touching D1, and a
- * /health in weeb-debug-tool, which is a local tool. So the first sign of a broken
- * binding was a user's SVG failing to regenerate.
+ * generator's GET /test, which returns a fixed string without touching D1. So the
+ * first sign of a broken binding was a user's SVG failing to regenerate.
  *
  * Returns 503 when any dependency is down, so an uptime monitor can page on it.
  * The body names which one and carries a short reason -- enough to tell "D1 is

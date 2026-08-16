@@ -12,8 +12,7 @@ Este arquivo é a fonte única de instruções para assistentes de IA neste repo
 WeebProfile/
 ├── weeb-plugins/        # Biblioteca core de plugins (React + TypeScript)
 ├── svg-generator/        # Cloudflare Worker que renderiza React → SVG (sem browser)
-├── weeb-dashboard/       # Frontend (Vite SPA + Cloudflare Pages Functions)
-└── weeb-debug-tool/      # Ferramenta de desenvolvimento local para inspecionar plugins
+└── weeb-dashboard/       # Frontend (Vite SPA + Cloudflare Pages Functions)
 ```
 
 Gerenciador de pacotes: **pnpm workspaces**. Nunca usar `npm` ou `yarn`.
@@ -29,7 +28,6 @@ pnpm dev
 # Pacotes individuais
 pnpm dev:dashboard       # Vite dev server (weeb-dashboard)
 pnpm dev:generator       # SVG Generator (wrangler dev, Cloudflare Worker)
-pnpm dev:debug-tool      # Debug tool (frontend :5000, backend :5001)
 
 # weeb-dashboard — Cloudflare Pages local (Functions + D1 + R2)
 cd weeb-dashboard
@@ -219,7 +217,7 @@ HTTP POST /                                        # só via service binding —
 - Deploy: **Cloudflare Pages** (`wrangler pages deploy dist`)
 - Brand/design system: ver [`weeb-dashboard/BRAND.md`](weeb-dashboard/BRAND.md)
 
-O dashboard envia POST para o `svg-generator` via `lib/svg-generator-client.ts`, que inclui retry com backoff exponencial (para cold starts do Worker).
+O dashboard envia POST para o `svg-generator` via `functions/api/_shared/svg-generation.ts` (`generateSvgViaService`), usando o service binding `SVG_GENERATOR`. Inclui retry com backoff exponencial (para cold starts do Worker).
 
 **Bindings/config Cloudflare:** definidos em `weeb-dashboard/wrangler.toml` ([[d1_databases]], [[r2_buckets]], [vars]). Secrets (`CLERK_SECRET_KEY`, `CRON_SECRET`, `INTERNAL_SECRET`) são configurados via `wrangler pages secret put <KEY>` — não ficam no `wrangler.toml`.
 
@@ -290,23 +288,23 @@ Copiar de `.env.example` e preencher. **Nunca commitar valores reais.**
 
 ## Referência rápida de arquivos importantes
 
-| O que mudar                                | Arquivo                                              |
-| ------------------------------------------ | ---------------------------------------------------- |
-| Registrar novo plugin                      | `weeb-plugins/src/plugins/manager.ts`                |
-| Metadados de plugin                        | `weeb-plugins/src/plugins/{name}/plugin.metadata.ts` |
-| Metadata centralizado (auto-gerado)        | `weeb-plugins/src/plugins/metadata.ts`               |
-| Temas visuais                              | `weeb-plugins/src/themes/themes.ts`                  |
-| Lógica de geração SVG                      | `svg-generator/src/generator/svg-generator.ts`       |
-| Renderização React → SVG                   | `svg-generator/src/renderer/react-renderer.tsx`      |
-| Acesso ao D1 (svg-generator)               | `svg-generator/src/db/essential-configs.ts`          |
-| Worker entry point do gerador              | `svg-generator/src/worker.ts`                        |
-| Config Cloudflare (D1 binding) do gerador  | `svg-generator/wrangler.toml`                        |
-| Estado global do wizard                    | `weeb-dashboard/stores/wizard-store.ts`              |
-| Cliente HTTP para o gerador                | `weeb-dashboard/lib/svg-generator-client.ts`         |
-| Auth (Clerk) + tipos de binding Cloudflare | `weeb-dashboard/functions/api/_shared/auth.ts`       |
-| Acesso ao D1 (Pages Functions)             | `weeb-dashboard/functions/api/_shared/db.ts`         |
-| Acesso ao R2 (SVGs)                        | `weeb-dashboard/functions/api/_shared/storage.ts`    |
-| Config Cloudflare (D1/R2/vars/secrets)     | `weeb-dashboard/wrangler.toml`                       |
-| Redação de segredos em log/debug           | `svg-generator/src/utils/sanitize.ts`                |
-| Validação de body (zod)                    | `weeb-dashboard/functions/api/_shared/validation.ts` |
-| Design system do dashboard                 | `weeb-dashboard/BRAND.md`                            |
+| O que mudar                                | Arquivo                                                  |
+| ------------------------------------------ | -------------------------------------------------------- |
+| Registrar novo plugin                      | `weeb-plugins/src/plugins/manager.ts`                    |
+| Metadados de plugin                        | `weeb-plugins/src/plugins/{name}/plugin.metadata.ts`     |
+| Metadata centralizado (auto-gerado)        | `weeb-plugins/src/plugins/metadata.ts`                   |
+| Temas visuais                              | `weeb-plugins/src/themes/themes.ts`                      |
+| Lógica de geração SVG                      | `svg-generator/src/generator/svg-generator.ts`           |
+| Renderização React → SVG                   | `svg-generator/src/renderer/react-renderer.tsx`          |
+| Acesso ao D1 (svg-generator)               | `svg-generator/src/db/essential-configs.ts`              |
+| Worker entry point do gerador              | `svg-generator/src/worker.ts`                            |
+| Config Cloudflare (D1 binding) do gerador  | `svg-generator/wrangler.toml`                            |
+| Estado global do wizard                    | `weeb-dashboard/stores/wizard-store.ts`                  |
+| Cliente HTTP para o gerador                | `weeb-dashboard/functions/api/_shared/svg-generation.ts` |
+| Auth (Clerk) + tipos de binding Cloudflare | `weeb-dashboard/functions/api/_shared/auth.ts`           |
+| Acesso ao D1 (Pages Functions)             | `weeb-dashboard/functions/api/_shared/db.ts`             |
+| Acesso ao R2 (SVGs)                        | `weeb-dashboard/functions/api/_shared/storage.ts`        |
+| Config Cloudflare (D1/R2/vars/secrets)     | `weeb-dashboard/wrangler.toml`                           |
+| Redação de segredos em log/debug           | `svg-generator/src/utils/sanitize.ts`                    |
+| Validação de body (zod)                    | `weeb-dashboard/functions/api/_shared/validation.ts`     |
+| Design system do dashboard                 | `weeb-dashboard/BRAND.md`                                |

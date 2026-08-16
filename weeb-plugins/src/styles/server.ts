@@ -2,7 +2,7 @@
  * Server-only Styles Module
  *
  * Functions used to render the complete CSS for SVG generation
- * (svg-generator, weeb-debug-tool). DO NOT import in browser/client code.
+ * (svg-generator, scripts de preview). DO NOT import in browser/client code.
  */
 
 import { getStyleCSS } from "./registry"

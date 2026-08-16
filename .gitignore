@@ -21,10 +21,6 @@ node_modules
 /weeb-plugins/src/**/*.js
 /weeb-plugins/src/**/*.d.ts
 
-# Weeb Debug Tool (v2)
-/weeb-debug-tool/node_modules
-/weeb-debug-tool/dist
-
 # Misc
 .DS_Store
 *.pem
