@@ -1,5 +1,5 @@
 <div align='center'>
-<img src='.github/assets/project-banner.png' height='400' justify='center' />
+<img src='.github/assets/project-banner.svg' width='830' alt='WeebProfile — code, anime, music and gaming stats on your GitHub profile' />
 </div>
 
 # WeebProfile 🦀
