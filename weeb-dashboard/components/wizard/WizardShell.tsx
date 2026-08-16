@@ -3,7 +3,17 @@
 import { Header } from "@/components/layout/Header"
 import { motion } from "framer-motion"
 import { ReactNode, useEffect, useRef, useState } from "react"
-import { ArrowLeft, Columns2, ListFilter, ListOrdered, Puzzle, Settings2, Square } from "lucide-react"
+import {
+  ArrowLeft,
+  BookMarked,
+  Columns2,
+  ListFilter,
+  ListOrdered,
+  Puzzle,
+  Settings2,
+  Square,
+  UserCircle2,
+} from "lucide-react"
 import { useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "@/i18n/use-translations"
@@ -72,6 +82,7 @@ export function WizardShell({
   }, [selectedPlugin])
 
   const missingCount = footerProps.missingConfigs.length
+  const kindLabel = kind === "repository" ? "Repositório" : "Perfil"
 
   /**
    * O preview precisa de largura do card + 64px de padding: 479px para o de 415,
@@ -196,13 +207,41 @@ export function WizardShell({
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <span className="flex-shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-              {kind === "repository" ? "Repository" : "Profile"}
+            {/* Mesmo ícone e mesma cor dos cards da tela "Criar novo" - quem escolheu
+                "Repositório" lá reconhece o mesmo objeto aqui. O nome por extenso fica
+                na linha de descrição, então o ícone não precisa carregar sozinho o
+                significado. */}
+            <span
+              aria-hidden="true"
+              className={cn(
+                "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br",
+                kind === "repository"
+                  ? "from-violet-500/20 to-violet-500/5 text-violet-400"
+                  : "from-cyan-500/20 to-cyan-500/5 text-cyan-400"
+              )}
+            >
+              {kind === "repository" ? (
+                <BookMarked className="h-[18px] w-[18px]" />
+              ) : (
+                <UserCircle2 className="h-[18px] w-[18px]" />
+              )}
             </span>
           </>
         }
         title={name || "Novo SVG"}
-        description={contentCount > 0 ? `${contentCount} plugin(s) ativo(s)` : undefined}
+        description={
+          <span className="flex items-center gap-1.5">
+            <span className={kind === "repository" ? "text-violet-400/90" : "text-cyan-400/90"}>{kindLabel}</span>
+            {contentCount > 0 && (
+              <>
+                <span className="text-muted-foreground/40">·</span>
+                <span>
+                  {contentCount} {contentCount === 1 ? "plugin ativo" : "plugins ativos"}
+                </span>
+              </>
+            )}
+          </span>
+        }
         actions={
           <div className="flex items-center gap-2">
             {missingCount > 0 && (

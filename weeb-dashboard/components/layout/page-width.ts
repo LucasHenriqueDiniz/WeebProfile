@@ -47,8 +47,25 @@ export const CONTENT_PADDING_X = "px-4 md:px-6 lg:px-8"
  */
 const WORKSPACE_PADDING_X = "px-4 lg:px-5"
 
+function paddingFor(width: ContentWidth): string {
+  return width === "workspace" ? WORKSPACE_PADDING_X : CONTENT_PADDING_X
+}
+
+/** Conteúdo da página: calha à esquerda + limite de largura. */
 export function contentContainer(width: ContentWidth = "app"): string {
-  const paddingX = width === "workspace" ? WORKSPACE_PADDING_X : CONTENT_PADDING_X
   // Sem `mx-auto`: a calha esquerda é o que alinha com a sidebar (ver nota no topo).
-  return `w-full ${MAX_WIDTH[width]} ${paddingX}`
+  return `w-full ${MAX_WIDTH[width]} ${paddingFor(width)}`
+}
+
+/**
+ * Barras que atravessam a tela inteira (header, tab bar): mesma calha à esquerda,
+ * mas SEM limite de largura.
+ *
+ * O `max-width` existe para não deixar a linha de texto comprida demais — isso é
+ * problema de conteúdo, não de barra. Aplicá-lo ao header encalhava os botões de
+ * ação no meio da tela: num viewport de 1920 a borda do header ia até 1920 e os
+ * botões paravam em 1068. Só a calha esquerda precisa bater com o conteúdo.
+ */
+export function barContainer(width: ContentWidth = "app"): string {
+  return `w-full ${paddingFor(width)}`
 }

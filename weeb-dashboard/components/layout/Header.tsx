@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { LanguageSelector } from "./LanguageSelector"
-import { contentContainer, type ContentWidth } from "./page-width"
+import { barContainer, type ContentWidth } from "./page-width"
 
 interface HeaderProps {
   className?: string
@@ -313,8 +313,9 @@ export function Header({ className, variant, title, description, actions, width 
   // do about it".
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-xl">
-      {/* Mesmo container do conteúdo da rota - ver page-width.ts. */}
-      <div className={cn(contentContainer(width), "flex min-h-16 items-center justify-between gap-4 py-3")}>
+      {/* Mesma calha do conteúdo da rota, sem herdar o limite de largura dele: as
+          ações precisam chegar na borda direita. Ver barContainer em page-width.ts. */}
+      <div className={cn(barContainer(width), "flex min-h-16 items-center justify-between gap-4 py-3")}>
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {leading}
           {/* O bloco de texto é que trunca, não o <h1> sozinho: com `leading` ao lado,
