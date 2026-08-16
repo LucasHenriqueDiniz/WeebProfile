@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { LanguageSelector } from "./LanguageSelector"
+import { contentContainer, type ContentWidth } from "./page-width"
 
 interface HeaderProps {
   className?: string
@@ -27,6 +28,16 @@ interface HeaderProps {
   title?: ReactNode
   description?: ReactNode
   actions?: ReactNode
+  /**
+   * Largura do conteúdo da rota. O header alinha com ela; sem isto o título fica
+   * numa coluna e a página em outra. Ver page-width.ts.
+   */
+  width?: ContentWidth
+  /**
+   * Controle que precede o título (ex: voltar). Fica FORA do <h1>: heading com
+   * botão dentro é lido pelo leitor de tela como parte do título da página.
+   */
+  leading?: ReactNode
 }
 
 // Avatar component - simple implementation
@@ -41,7 +52,7 @@ const AvatarFallback = ({ className, children }: { className?: string; children:
   </div>
 )
 
-export function Header({ className, variant, title, description, actions }: HeaderProps) {
+export function Header({ className, variant, title, description, actions, width = "app", leading }: HeaderProps) {
   const t = useTranslations("header")
   const tLanding = useTranslations("landing.nav")
   const pathname = usePathname()
@@ -259,7 +270,9 @@ export function Header({ className, variant, title, description, actions }: Head
             exit={{ opacity: 0, y: -20 }}
             className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl"
           >
-            <div className="container mx-auto px-4 py-4 space-y-2">
+            {/* Mesmo grid do <nav> acima: o menu abre colado nele, então tem que
+                começar na mesma coluna. */}
+            <div className="mx-auto max-w-6xl px-6 py-4 space-y-2">
               {navigation.map((item) => (
                 <Button
                   key={item.name}
@@ -300,10 +313,17 @@ export function Header({ className, variant, title, description, actions }: Head
   // do about it".
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-xl">
-      <div className="flex min-h-16 items-center justify-between gap-4 px-4 md:px-6 py-3">
-        <div className="min-w-0 flex-1">
-          {title && <h1 className="font-heading text-lg md:text-xl font-bold text-foreground truncate">{title}</h1>}
-          {description && <p className="text-xs md:text-sm text-muted-foreground truncate mt-0.5">{description}</p>}
+      {/* Mesmo container do conteúdo da rota - ver page-width.ts. */}
+      <div className={cn(contentContainer(width), "flex min-h-16 items-center justify-between gap-4 py-3")}>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          {leading}
+          {/* O bloco de texto é que trunca, não o <h1> sozinho: com `leading` ao lado,
+              truncar no h1 deixava a descrição alinhada na borda do container enquanto
+              o título começava depois do botão. */}
+          <div className="min-w-0">
+            {title && <h1 className="font-heading text-lg md:text-xl font-bold text-foreground truncate">{title}</h1>}
+            {description && <p className="text-xs md:text-sm text-muted-foreground truncate mt-0.5">{description}</p>}
+          </div>
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">

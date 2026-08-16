@@ -155,7 +155,7 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
@@ -165,7 +165,7 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
 
   if (error || !template) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="mx-auto max-w-6xl px-6 py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-destructive/10 mb-6">
             <Eye className="w-10 h-10 text-destructive" />
@@ -181,7 +181,7 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 md:py-12 relative">
+    <div className="mx-auto max-w-6xl px-6 py-8 md:py-12 relative">
       {/* Back Button - Absolute Position */}
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="absolute top-0 left-0">
         <Button variant="ghost" asChild className="gap-2">

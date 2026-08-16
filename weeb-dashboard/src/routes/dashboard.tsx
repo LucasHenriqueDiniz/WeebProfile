@@ -351,16 +351,17 @@ export default function DashboardPage() {
           : undefined
       }
       actions={headerActions}
+      // O onboarding ocupa a área inteira; a lista usa o container padrão do layout,
+      // o mesmo que o header - antes ela usava `container` (1536) e desalinhava 168px.
+      bleed={isTrulyEmpty}
     >
       <div className="w-full h-full">
-        {/* Onboarding real - ocupa toda a área disponível (sem o container com padding
-            das outras branches), substitui o antigo "ícone pequeno num canvas enorme" */}
         {isTrulyEmpty ? (
           <div className="h-full px-4 py-4 md:px-6 md:py-6 lg:px-8">
             <DashboardEmptyState />
           </div>
         ) : (
-          <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 md:py-6 space-y-5">
+          <div className="space-y-5">
             {/* Filters - apenas quando houver muitos SVGs */}
             {showAdvancedControls && (
               <motion.div

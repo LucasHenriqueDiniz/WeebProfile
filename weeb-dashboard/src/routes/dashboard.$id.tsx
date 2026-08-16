@@ -370,17 +370,17 @@ export default function SvgViewPage() {
   const statusLabel =
     svg?.status === "completed" ? t("completed") : svg?.status === "generating" ? t("generating") : t("error")
 
-  const headerTitle = (
-    <span className="flex items-center gap-2">
-      <button
-        onClick={() => router.push("/dashboard")}
-        className="-ml-1 p-1 text-muted-foreground transition-colors hover:text-foreground"
-        aria-label={t("backToDashboard")}
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </button>
-      {svg?.name || t("title")}
-    </span>
+  const headerTitle = svg?.name || t("title")
+
+  // Fora do <h1>: heading não deve conter controle. Ver Header.leading.
+  const headerLeading = (
+    <button
+      onClick={() => router.push("/dashboard")}
+      className="-ml-1 flex-shrink-0 p-1 text-muted-foreground transition-colors hover:text-foreground"
+      aria-label={t("backToDashboard")}
+    >
+      <ArrowLeft className="h-4 w-4" />
+    </button>
   )
 
   const headerActions = svg ? (
@@ -409,10 +409,11 @@ export default function SvgViewPage() {
   return (
     <DashboardLayout
       title={headerTitle}
+      leading={headerLeading}
       description={svg ? `${t("created")} ${formatRelative(svg.createdAt, locale)}` : undefined}
       actions={headerActions}
     >
-      <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-6 md:py-8">
+      <div className="py-2 md:py-4">
         {/* Cooldown Warning */}
         {svg && cooldownRemaining !== null && cooldownRemaining > 0 && (
           <motion.div

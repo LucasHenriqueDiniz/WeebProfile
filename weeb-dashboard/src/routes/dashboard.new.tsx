@@ -44,8 +44,8 @@ export default function NewArtifactChooserPage() {
   ] as const
 
   return (
-    <DashboardLayout title={t("title")} description={t("subtitle")}>
-      <div className="flex min-h-full items-center justify-center px-6 py-10">
+    <DashboardLayout title={t("title")} description={t("subtitle")} width="narrow">
+      <div className="flex min-h-full items-center justify-center py-6">
         <div className="grid w-full max-w-3xl grid-cols-1 gap-5 sm:grid-cols-2">
           {options.map((option) => {
             const Icon = option.icon

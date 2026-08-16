@@ -184,8 +184,10 @@ export function TemplatesPageClient() {
     }
   }
 
+  // max-w-6xl px-6: mesmo grid do Header público e das seções da landing. Com
+  // `container` (1536) o conteúdo começava 192px antes do título do header.
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="mx-auto max-w-6xl px-6 py-8">
       {/* Header */}
       <div className="text-center mb-12">
         <motion.h1

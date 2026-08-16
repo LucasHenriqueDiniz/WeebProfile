@@ -88,8 +88,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <DashboardLayout title={t("title")} description={t("description")}>
-      <div className="max-w-5xl mx-auto px-6 md:px-8 py-6 md:py-10">
+    <DashboardLayout title={t("title")} description={t("description")} width="narrow">
+      <div className="py-2 md:py-4">
         {/* Flex, nao grid-cols arbitrario: a versao anterior usava
             "lg:grid-cols-[200px_1fr]", que nunca chegou a gerar regra CSS neste ambiente
             (classes com valor em colchetes que nao aparecem em nenhum outro arquivo as

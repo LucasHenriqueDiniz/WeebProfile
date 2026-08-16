@@ -73,6 +73,20 @@ export function WizardShell({
 
   const missingCount = footerProps.missingConfigs.length
 
+  /**
+   * O preview precisa de largura do card + 64px de padding: 479px para o de 415,
+   * 894px para o de 830. Só no primeiro caso é que sobra espaço - e aí ele vai para
+   * a configuração em vez de virar fundo pontilhado. Em largura completa o preview
+   * fica com quase tudo porque realmente precisa.
+   *
+   * Classes escritas por extenso (não interpoladas): o Tailwind varre o texto do
+   * arquivo e não geraria a regra a partir de uma string montada em runtime.
+   */
+  const configColumn =
+    size === "half" ? "lg:w-[400px] xl:w-[500px] 2xl:w-[860px]" : "lg:w-[400px] xl:w-[520px] 2xl:w-[640px]"
+  const styleColumn =
+    size === "half" ? "lg:w-[460px] xl:w-[600px] 2xl:w-[940px]" : "lg:w-[460px] xl:w-[600px] 2xl:w-[720px]"
+
   const previewArea = (
     <div className="flex flex-col h-full">
       <div className="flex-shrink-0 flex items-center justify-between px-4 lg:px-6 py-2.5 border-b border-border">
@@ -169,8 +183,12 @@ export function WizardShell({
 
       <Header
         variant="dashboard"
-        title={
-          <span className="flex items-center gap-2 min-w-0">
+        width="workspace"
+        // Botão e chip saem do <h1>: heading não deve conter controle, e com o chip
+        // dentro dele a descrição nascia alinhada na borda enquanto o título começava
+        // ~88px à direita - era esse o header "quebrado".
+        leading={
+          <>
             <button
               onClick={() => router.push("/dashboard")}
               className="text-slate-400 hover:text-slate-200 transition-colors -ml-1 p-1 flex-shrink-0"
@@ -181,9 +199,9 @@ export function WizardShell({
             <span className="flex-shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
               {kind === "repository" ? "Repository" : "Profile"}
             </span>
-            <span className="truncate">{name || "Novo SVG"}</span>
-          </span>
+          </>
         }
+        title={name || "Novo SVG"}
         description={contentCount > 0 ? `${contentCount} plugin(s) ativo(s)` : undefined}
         actions={
           <div className="flex items-center gap-2">
@@ -201,7 +219,7 @@ export function WizardShell({
 
       {/* Tab switcher - Plugins/Estilo agora e um controle real do shell, nao escondido
           dentro de uma das colunas. */}
-      <div className="flex-shrink-0 flex items-center gap-1 px-4 lg:px-6 py-2 border-b border-border bg-muted/20">
+      <div className="flex-shrink-0 flex items-center gap-1 px-4 lg:px-5 py-2 border-b border-border bg-muted/20">
         <button
           onClick={() => onTabChange("plugins")}
           className={cn(
@@ -277,7 +295,13 @@ export function WizardShell({
             ativa so alterna qual fica visivel via className. Antes, activeTab==="plugins"
             escolhia entre dois ramos JSX estruturalmente diferentes, entao trocar de aba
             desmontava e remontava o LivePreview inteiro (o SVG "reiniciava" visualmente). */}
-        <div className="mx-auto flex w-full max-w-[1700px] overflow-hidden">
+        {/* Sem cap de largura. Havia um limite de 1700 aqui enquanto o header era
+            full-bleed: a 1920px as colunas começavam 86px depois do título e sobravam
+            110px de fundo vazio à direita do preview. Agora o workspace vai de borda a
+            borda, igual ao header e à tab bar.
+            (Evitar escrever a classe antiga por extenso num comentário - o Tailwind
+            varre o texto do arquivo e geraria a regra morta.) */}
+        <div className="flex w-full overflow-hidden">
           {pluginsList && (
             <div
               className={cn(
@@ -291,7 +315,11 @@ export function WizardShell({
           <div
             ref={detailScrollRef}
             className={cn(
-              "lg:w-[400px] xl:w-[460px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
+              // Onde se trabalha de verdade, então é onde o espaço extra vai. Antes o
+              // preview ficava com 952px para exibir um card de 415px enquanto esta
+              // coluna vivia em 460px com scroll.
+              configColumn,
+              "lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
               activeTab === "plugins" ? (mobileStep === "detail" ? "block lg:block" : "hidden lg:block") : "hidden"
             )}
           >
@@ -300,7 +328,10 @@ export function WizardShell({
           {orderConfig && (
             <div
               className={cn(
-                "lg:w-[400px] xl:w-[460px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
+                // Onde se trabalha de verdade, então é onde o espaço extra vai. Antes o
+                // preview ficava com 952px para exibir um card de 415px enquanto esta
+                // coluna vivia em 460px com scroll.
+                "lg:w-[400px] xl:w-[520px] 2xl:w-[640px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
                 activeTab === "order" ? (mobileStep === "detail" ? "block lg:block" : "hidden lg:block") : "hidden"
               )}
             >
@@ -309,7 +340,8 @@ export function WizardShell({
           )}
           <div
             className={cn(
-              "lg:w-[460px] xl:w-[600px] lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
+              styleColumn,
+              "lg:flex-shrink-0 lg:border-r border-border lg:overflow-y-auto w-full",
               activeTab === "style" ? (mobileStep === "detail" ? "block lg:block" : "hidden lg:block") : "hidden"
             )}
           >

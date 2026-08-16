@@ -55,7 +55,9 @@ export function PluginListPanel({ workspace }: PluginListPanelProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Busca e filtros fixos no topo */}
-      <div className="flex-shrink-0 p-3 space-y-2.5 border-b border-border">
+      {/* p-4 lg:p-5 = mesmo inset do header e da tab bar (ver page-width, "workspace").
+          Com p-3 a busca começava 8px antes da aba "Plugins" logo acima dela. */}
+      <div className="flex-shrink-0 p-4 lg:p-5 space-y-2.5 border-b border-border">
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
