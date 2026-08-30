@@ -107,13 +107,26 @@ export function Header({ className, variant, title, description, actions, width 
       >
         {/* Alinhado ao grid da landing (max-w-6xl/px-6), nao ao container full-width —
             o header antigo desalinhava com todo o conteudo abaixo dele. */}
-        <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-6">
+        {/* gap/px menores abaixo de sm: com gap-6 e px-6 o header pedia 402px de
+            largura numa viewport de 360, e o excedente saia pela direita — era o
+            botao do menu que ficava fora da tela, sem gerar scroll para revelar. */}
+        <nav className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:gap-6 sm:px-6">
           {/* Logo */}
-          <Link href="/" className="group flex flex-shrink-0 items-center gap-2" locale={undefined}>
+          {/* min-w-0 em vez de flex-shrink-0: com o logo rigido, nada no header
+              podia ceder e o estouro caia sempre no ultimo filho. Agora o wordmark
+              trunca e o conteudo cabe em qualquer largura. */}
+          <Link href="/" className="group flex min-w-0 items-center gap-2" locale={undefined}>
             <motion.div className="relative" whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-              <img src="/sora/sora-head.png" alt="Sora" className="w-8 h-8 object-contain drop-shadow-lg" />
+              <img
+                src="/sora/sora-head.png"
+                alt="Sora"
+                className="w-8 h-8 flex-shrink-0 object-contain drop-shadow-lg"
+              />
             </motion.div>
-            <span className="font-sora text-lg font-black bg-gradient-to-r from-violet-600 via-pink-600 to-cyan-600 dark:from-purple-400 dark:via-pink-400 dark:to-cyan-400 bg-clip-text text-transparent">
+            {/* O wordmark so cabe inteiro a partir de ~410px ao lado do CTA e do
+                menu. Abaixo disso ele fica escondido em vez de truncado: "We…" nao
+                comunica marca nenhuma, e o icone sozinho comunica. */}
+            <span className="hidden truncate min-[410px]:inline font-sora text-lg font-black bg-gradient-to-r from-violet-600 via-pink-600 to-cyan-600 dark:from-purple-400 dark:via-pink-400 dark:to-cyan-400 bg-clip-text text-transparent">
               WeebProfile
             </span>
           </Link>
@@ -142,7 +155,7 @@ export function Header({ className, variant, title, description, actions, width 
           </div>
 
           {/* Actions */}
-          <div className="ml-auto flex items-center gap-1.5">
+          <div className="ml-auto flex flex-shrink-0 items-center gap-1.5">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" asChild className="hidden h-9 w-9 sm:inline-flex">
@@ -260,8 +273,10 @@ export function Header({ className, variant, title, description, actions, width 
               size="icon"
               className="md:hidden"
               aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
+              // Sem aria-controls: o menu e renderizado condicionalmente, entao com
+              // ele fechado o atributo apontaria para um id que nao existe no DOM.
+              // aria-expanded ja comunica o estado, e e o que os leitores usam aqui.
               aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-menu"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -275,7 +290,6 @@ export function Header({ className, variant, title, description, actions, width 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            id="mobile-menu"
             className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl"
           >
             {/* Mesmo grid do <nav> acima: o menu abre colado nele, então tem que

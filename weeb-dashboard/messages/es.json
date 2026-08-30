@@ -67,7 +67,8 @@
       "repoTitle": "Repositorio",
       "repoDesc": "Una tarjeta independiente para un repositorio de GitHub — banner, stats, curva de estrellas.",
       "cta": "Empezar"
-    }
+    },
+    "subtitle": "Cole o markdown gerado no topo do seu README do GitHub"
   },
   "header": {
     "changeLanguage": "Cambiar idioma",
@@ -372,7 +373,8 @@
     "navigation": "Navegación",
     "settings": "Configuración",
     "svgsUsed": "SVGs usados",
-    "user": "Usuario"
+    "user": "Usuario",
+    "collapse": "Recolher"
   },
   "view": {
     "backToDashboard": "Volver al Dashboard",
@@ -454,7 +456,9 @@
         "plural": "configuraciones faltantes",
         "singular": "configuración faltante",
         "title": "Configuraciones faltantes:"
-      }
+      },
+      "createSvg": "Criar SVG",
+      "saveSvg": "Salvar SVG"
     },
     "resumeDialog": {
       "continue": "Continuar",
