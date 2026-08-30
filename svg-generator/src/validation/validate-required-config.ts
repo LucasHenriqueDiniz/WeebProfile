@@ -6,6 +6,7 @@
  */
 
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { log } from "../utils/log.js"
 import type { EssentialConfigs } from "../db/essential-configs.js"
 
 export interface MissingRequiredConfig {
@@ -54,23 +55,23 @@ export function validateRequiredConfig(
     const pluginNameLower = pluginName.toLowerCase()
     const pluginSecrets = essentialConfigs[pluginNameLower]
 
-    console.log(`🔍 [VALIDATE] Plugin ${pluginName}: checking ${requiredSecrets.length} required secrets`)
-    console.log(
-      `🔍 [VALIDATE] Plugin ${pluginName}: available secrets in DB:`,
-      pluginSecrets ? Object.keys(pluginSecrets) : "none"
-    )
+    log.debug("validate_secrets_start", { plugin: pluginName, required: requiredSecrets.length })
+    log.debug("validate_secrets_available", {
+      plugin: pluginName,
+      keys: pluginSecrets ? Object.keys(pluginSecrets) : [],
+    })
 
     for (const secretMeta of requiredSecrets) {
       const key = secretMeta.key?.toLowerCase() || secretMeta.key
 
       if (!pluginSecrets || !pluginSecrets[key]) {
-        console.log(`❌ [VALIDATE] Plugin ${pluginName}: missing secret "${key}" (looking for: ${secretMeta.key})`)
+        log.debug("validate_secret_missing", { plugin: pluginName, key, expected: secretMeta.key })
         missingSecrets.push({
           key: secretMeta.key,
           label: secretMeta.label || secretMeta.key,
         })
       } else {
-        console.log(`✅ [VALIDATE] Plugin ${pluginName}: secret "${key}" found`)
+        log.debug("validate_secret_found", { plugin: pluginName, key })
       }
     }
 

@@ -48,7 +48,9 @@ export default [
       // no-undef cannot see.
       "no-undef": "off",
       "@typescript-eslint/no-explicit-any": "warn",
-      "no-console": "warn",
+      // console.warn e console.error sao canal de diagnostico legitimo e sobrevivem em
+      // producao de proposito; o alvo da regra e console.log esquecido.
+      "no-console": ["warn", { allow: ["warn", "error"] }],
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "react/prop-types": "off",
       "@typescript-eslint/no-require-imports": "off",

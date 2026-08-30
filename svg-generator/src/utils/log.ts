@@ -48,6 +48,9 @@ function emit(level: Level, event: string, context: LogContext = {}): void {
   const line = JSON.stringify({ level, event, ...redact(context) })
   if (level === "error") console.error(line)
   else if (level === "warn") console.warn(line)
+  // Este e o unico console.log legitimo do pacote: o coletor. Todo o resto passa
+  // por aqui justamente para ganhar a redacao de REDACTED_KEYS.
+  // eslint-disable-next-line no-console
   else console.log(line)
 }
 
