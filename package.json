@@ -4,15 +4,9 @@
   "private": true,
   "packageManager": "pnpm@10.24.0",
   "engines": {
-    "node": ">=20",
-    "pnpm": ">=9.0.0"
+    "node": ">=22.13",
+    "pnpm": ">=10"
   },
-  "workspaces": [
-    "svg-generator",
-    "weeb-plugins",
-    "weeb-dashboard",
-    "weeb-debug-tool"
-  ],
   "scripts": {
     "dev": "concurrently -n \"dashboard,generator\" -c \"cyan,magenta\" \"pnpm dev:dashboard\" \"pnpm dev:generator\"",
     "dev:dashboard": "pnpm --filter weeb-dashboard dev",
@@ -40,12 +34,6 @@
     "dotenv": "^16.4.5",
     "react": "^19",
     "react-dom": "^19"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "^19",
-      "@types/react-dom": "^19"
-    }
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
