@@ -11,9 +11,8 @@
  * as props instead of each panel holding its own (and desyncing) copy.
  */
 
-import { useMemo, useState, useEffect, useCallback, useRef, useDeferredValue } from "react"
+import { useMemo, useState, useEffect, useCallback, useDeferredValue } from "react"
 import { useShallow } from "zustand/react/shallow"
-import { useAuth } from "@/hooks/useAuth"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"

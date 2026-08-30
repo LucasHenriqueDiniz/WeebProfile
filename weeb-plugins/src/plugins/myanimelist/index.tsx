@@ -49,7 +49,7 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
     const isTerminal = (config as { style?: string }).style === "terminal"
 
     // TerminalGrid: TerminalCommand + grid header + n rows
-    const terminalGridH = (n: number): number => (n > 0 ? 84 + n * 20 : 0)
+    const _terminalGridH = (n: number): number => (n > 0 ? 84 + n * 20 : 0)
 
     const favoritesH = (
       n: number,

@@ -1,4 +1,4 @@
-import { api, type Plugin } from "../lib/api"
+import { type Plugin } from "../lib/api"
 
 interface PluginSelectorProps {
   plugins: Plugin[]

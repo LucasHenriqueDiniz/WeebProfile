@@ -13,7 +13,7 @@ interface PluginErrorProps {
   size?: string
 }
 
-export function PluginError({ pluginName, error, style, size }: PluginErrorProps): React.ReactElement {
+export function PluginError({ pluginName, error }: PluginErrorProps): React.ReactElement {
   return (
     <div
       style={{

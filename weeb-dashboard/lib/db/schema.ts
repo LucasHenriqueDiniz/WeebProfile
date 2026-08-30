@@ -5,7 +5,7 @@ const json = <T>(name: string) => text(name, { mode: "json" }).$type<T>()
 
 const uuid = (name: string) => text(name).$defaultFn(() => crypto.randomUUID())
 
-const now = () =>
+const _now = () =>
   text()
     .$defaultFn(() => new Date().toISOString())
     .notNull()

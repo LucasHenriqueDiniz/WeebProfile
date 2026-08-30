@@ -1,4 +1,5 @@
 import type { D1Database } from "@cloudflare/workers-types"
+import { log } from "../utils/log.js"
 import { decryptSecret } from "./secret-crypto"
 import { ESSENTIAL_CONFIG_ALIASES } from "../config/essential-config-aliases"
 
@@ -60,7 +61,7 @@ export async function getUserEssentialConfigs(
     }
 
     if (Object.keys(result).length > 0) {
-      console.log(`✅ [DB] Essential configs loaded for plugins:`, Object.keys(result).join(", "))
+      log.debug("essential_configs_loaded", { plugins: Object.keys(result) })
     }
 
     return result

@@ -45,7 +45,7 @@ const TerminalFavoriteLicense = ({ data, total }: { data: GithubData["favoriteLi
   return <TerminalTree data={TreeItems} title="Favorite License" />
 }
 
-export function FavoriteLicense({ data, config, style, size }: FavoriteLicenseProps): React.ReactElement {
+export function FavoriteLicense({ data, config, style }: FavoriteLicenseProps): React.ReactElement {
   const title = config.favorite_license_title || "Most Used License"
   const hideTitle = config.favorite_license_hide_title || false
 

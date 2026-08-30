@@ -79,7 +79,7 @@ export function MobileNav() {
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex flex-col items-center justify-center gap-1 w-16 h-full">
+              <button type="button" className="flex flex-col items-center justify-center gap-1 w-16 h-full">
                 <div className="w-6 h-6 rounded-full overflow-hidden bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center ring-1 ring-sidebar-border">
                   {user.user_metadata?.avatar_url || user.user_metadata?.picture ? (
                     <img

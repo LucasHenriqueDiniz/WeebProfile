@@ -4,15 +4,9 @@
   "private": true,
   "packageManager": "pnpm@10.24.0",
   "engines": {
-    "node": ">=20",
-    "pnpm": ">=9.0.0"
+    "node": ">=22.13",
+    "pnpm": ">=10"
   },
-  "workspaces": [
-    "svg-generator",
-    "weeb-plugins",
-    "weeb-dashboard",
-    "weeb-debug-tool"
-  ],
   "scripts": {
     "dev": "concurrently -n \"dashboard,generator\" -c \"cyan,magenta\" \"pnpm dev:dashboard\" \"pnpm dev:generator\"",
     "dev:dashboard": "pnpm --filter weeb-dashboard dev",
@@ -25,12 +19,13 @@
     "start": "pnpm --filter weeb-dashboard start",
     "lint": "pnpm --filter weeb-dashboard lint . && pnpm --filter @weeb/weeb-plugins lint && pnpm --filter @weeb/svg-generator lint && pnpm --filter @weeb/debug-tool lint",
     "lint:fix": "pnpm --filter weeb-dashboard lint . --fix && pnpm --filter @weeb/weeb-plugins lint --fix && pnpm --filter @weeb/svg-generator lint --fix && pnpm --filter @weeb/debug-tool lint --fix",
-    "typecheck": "pnpm --filter weeb-dashboard typecheck && pnpm --filter @weeb/weeb-plugins typecheck && pnpm --filter @weeb/svg-generator typecheck && pnpm --filter @weeb/debug-tool typecheck",
+    "typecheck": "pnpm build:deps && pnpm --filter weeb-dashboard typecheck && pnpm --filter @weeb/weeb-plugins typecheck && pnpm --filter @weeb/svg-generator typecheck && pnpm --filter @weeb/debug-tool typecheck",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore --ignore-path .prettierignore",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore --ignore-path .prettierignore",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
     "generate-previews": "tsx scripts/generate-previews.ts",
-    "generate-plugins-doc": "tsx scripts/generate-plugins-doc.ts"
+    "generate-plugins-doc": "tsx scripts/generate-plugins-doc.ts",
+    "test": "pnpm --filter @weeb/weeb-plugins test && pnpm --filter weeb-dashboard test && pnpm --filter @weeb/svg-generator test"
   },
   "dependencies": {
     "@octokit/graphql": "^8.1.1",
@@ -40,12 +35,6 @@
     "dotenv": "^16.4.5",
     "react": "^19",
     "react-dom": "^19"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "^19",
-      "@types/react-dom": "^19"
-    }
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
@@ -61,6 +50,7 @@
     "eslint-config-next": "^15.0.2",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^4.6.0",

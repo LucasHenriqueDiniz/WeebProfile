@@ -90,7 +90,7 @@ const TerminalProfile = ({ data }: { data: GithubData["user"] }) => {
   )
 }
 
-export function GithubProfile({ data, config, style, size }: ProfileProps): React.ReactElement {
+export function GithubProfile({ data, style, size }: ProfileProps): React.ReactElement {
   return (
     <section id="github-profile">
       <RenderBasedOnStyle

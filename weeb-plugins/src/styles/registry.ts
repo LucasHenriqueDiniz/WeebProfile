@@ -7,7 +7,6 @@
 
 import defaultStyle from "./default/index"
 import terminalStyle from "./terminal/index"
-import { getFontCssClient, getFontsForStyle } from "../fonts/index.js"
 
 export interface StyleDefinition {
   name: string

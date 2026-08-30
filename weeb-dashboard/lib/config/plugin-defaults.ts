@@ -2,7 +2,6 @@
  * Helper functions para aplicar defaults de plugins
  */
 
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import type { PluginConfig } from "@/stores/wizard-store"
 
 /**
@@ -35,7 +34,7 @@ export function applyPluginDefaults(
  * Returns undefined since fieldDefaults/defaultConfig were removed
  * This function is kept for backwards compatibility but always returns undefined
  */
-export function getPluginFieldDefault(pluginName: string, fieldName: string): any {
+export function getPluginFieldDefault(_pluginName: string, _fieldName: string): any {
   // fieldDefaults and defaultConfig were removed from metadata
   // This function is kept for backwards compatibility
   return undefined

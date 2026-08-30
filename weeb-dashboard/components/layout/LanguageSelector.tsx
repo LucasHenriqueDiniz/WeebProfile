@@ -17,7 +17,7 @@ interface LanguageSelectorProps {
 
 export function LanguageSelector({ open, onOpenChange }: LanguageSelectorProps) {
   const t = useTranslations()
-  const router = useRouter()
+  const _router = useRouter()
   const pathname = usePathname()
   const locale = useLocale() as Locale
   const [searchQuery, setSearchQuery] = useState("")

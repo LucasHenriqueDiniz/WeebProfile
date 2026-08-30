@@ -152,11 +152,19 @@ export function RepositoryConfigPanel() {
             const previewImage = getSectionPreview("github_repo", section.id, style)
 
             return (
+              // O controle acessivel desta linha e o input sr-only aninhado, que ja recebe
+              // foco e responde a teclado; este onClick apenas estende a area de clique do
+              // mouse para a linha inteira. Duplicar o handler no div criaria um segundo
+              // ponto de tabulacao para a mesma acao.
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
               <div
                 key={section.id}
                 onClick={() => selectSection(section.id)}
                 className={cn(
                   "flex flex-col gap-2.5 p-3 rounded-lg border cursor-pointer transition-all",
+                  // O controle acessivel e o radio sr-only aninhado. Sem isto, quem navega
+                  // por teclado foca um input invisivel e nada muda na tela.
+                  "focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background",
                   isSelected
                     ? "bg-primary/5 text-primary border-primary/30"
                     : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50 hover:border-primary/20"
@@ -185,6 +193,9 @@ export function RepositoryConfigPanel() {
                     <span className="text-sm font-medium truncate">{section.name}</span>
                   </div>
                   {hasConfigs && isSelected && (
+                    // Fronteira de propagacao, nao um controle: impede que cliques nos filhos
+                    // subam ate a linha. Nao ha acao propria para expor ao teclado.
+                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                     <div onClick={(e) => e.stopPropagation()} className="flex-shrink-0">
                       <SectionConfigDialog
                         plugin="github_repo"
@@ -205,8 +216,9 @@ export function RepositoryConfigPanel() {
                   />
                 ) : (
                   previewImage && (
-                    <div
-                      className="rounded-md overflow-hidden border border-border bg-background aspect-video"
+                    <button
+                      type="button"
+                      className="rounded-md overflow-hidden border border-border bg-background aspect-video w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       onClick={(e) => {
                         e.stopPropagation()
                         selectSection(section.id)
@@ -218,7 +230,7 @@ export function RepositoryConfigPanel() {
                         className="w-full h-full object-contain pointer-events-none"
                         draggable={false}
                       />
-                    </div>
+                    </button>
                   )
                 )}
               </div>

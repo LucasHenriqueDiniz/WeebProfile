@@ -4,3 +4,10 @@ packages:
   - "weeb-dashboard"
   - "weeb-debug-tool"
 
+# Vinha de `pnpm.overrides` no package.json, que o pnpm 10 deixou de ler — ele
+# avisa em toda execucao e ignora o campo. Mantido porque o React 19 e o piso do
+# projeto: uma unica arvore com @types/react 18 quebra os tipos em todo lugar.
+overrides:
+  '@types/react': ^19
+  '@types/react-dom': ^19
+

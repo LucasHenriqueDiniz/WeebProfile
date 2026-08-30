@@ -156,7 +156,7 @@ export async function getArtistImageFromSpotify(
     // Spotify ordena por tamanho, maior primeiro -- pegar a última (menor real
     // disponível), não a primeira, para manter o mesmo princípio do resto do pipeline.
     return artist.images[artist.images.length - 1]?.url || null
-  } catch (error) {
+  } catch {
     return null
   }
 }

@@ -69,6 +69,8 @@ export function PluginListPanel({ workspace }: PluginListPanelProps) {
           />
           {query && (
             <button
+              type="button"
+              aria-label={t("clearSearch")}
               onClick={() => setQuery("")}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
@@ -80,6 +82,7 @@ export function PluginListPanel({ workspace }: PluginListPanelProps) {
         <div className="flex flex-wrap gap-1.5">
           {categories.map((cat) => (
             <button
+              type="button"
               key={cat}
               onClick={() => setCategory(cat)}
               className={cn(
@@ -109,6 +112,7 @@ export function PluginListPanel({ workspace }: PluginListPanelProps) {
           header/tooltip; aqui e so um atalho para ir ate os plugins com pendencia. */}
       {missingConfigs.length > 0 && (
         <button
+          type="button"
           onClick={() => {
             const first = missingConfigs[0]
             if (first) setSelectedPlugin(first.plugin)

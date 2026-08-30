@@ -66,6 +66,7 @@ export class PluginErrorBoundary extends Component<PluginErrorBoundaryProps, Plu
                 </p>
               )}
               <button
+                type="button"
                 onClick={this.handleRetry}
                 className="mt-2 text-xs font-medium text-red-700 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200 underline"
               >

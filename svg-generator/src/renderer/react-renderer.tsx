@@ -5,6 +5,7 @@
  */
 
 import React from "react"
+import { log } from "../utils/log.js"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import type { SvgConfig } from "../types/index.js"
 import { PluginError } from "../components/PluginError.js"
@@ -100,10 +101,10 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           // But plugins expect camelCase (apiKey, steamId, etc)
           const pluginNameLower = name.toLowerCase()
           const essentialConfigLowercase = essentialConfigs[pluginNameLower]
-          console.log(
-            `🔍 [RENDER] Plugin ${name}: essentialConfig keys (lowercase):`,
-            essentialConfigLowercase ? Object.keys(essentialConfigLowercase) : "none"
-          )
+          log.debug("render_essential_config_lowercase", {
+            plugin: name,
+            keys: essentialConfigLowercase ? Object.keys(essentialConfigLowercase) : [],
+          })
 
           // Normalize essentialConfig to camelCase (plugins expect camelCase)
           // Map known keys: apikey -> apiKey, steamid -> steamId, username -> username, pat -> pat
@@ -126,13 +127,13 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           // but they also need it in essentialConfig. If not in essentialConfig, get from pluginConfig
           if (name.toLowerCase() === "lastfm" && !essentialConfig.username && pluginConfig.username) {
             essentialConfig.username = pluginConfig.username
-            console.log(`🔍 [RENDER] Plugin ${name}: username from pluginConfig:`, pluginConfig.username)
+            log.debug("render_username_present", { plugin: name, present: Boolean(pluginConfig.username) })
           }
 
-          console.log(
-            `🔍 [RENDER] Plugin ${name}: essentialConfig keys (camelCase):`,
-            essentialConfig ? Object.keys(essentialConfig) : "none"
-          )
+          log.debug("render_essential_config_camel", {
+            plugin: name,
+            keys: essentialConfig ? Object.keys(essentialConfig) : [],
+          })
 
           // Use config.dev explicitly (already normalized from normalizeConfig)
           const useDev = config.dev === true

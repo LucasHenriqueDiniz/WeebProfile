@@ -6,7 +6,7 @@
  */
 
 import { useRouter } from "@/src/compat/next-navigation"
-import { useMemo, useState, useCallback, useEffect, useRef } from "react"
+import { useMemo, useState, useEffect, useRef } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
@@ -37,8 +37,6 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
   const { activeTab, setActiveTab } = useWizardUIState()
 
   const {
-    name,
-    slug,
     plugins,
     pluginsOrder,
     style,

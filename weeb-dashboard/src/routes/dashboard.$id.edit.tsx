@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { useParams } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
-import { Loader2 } from "lucide-react"
 import { Wizard } from "@/components/wizard/Wizard"
 import { RepositoryWizard } from "@/components/wizard/RepositoryWizard"
 import { useWizardStore } from "@/stores/wizard-store"
@@ -30,7 +29,6 @@ export default function EditSvgPage() {
   const [hasLoaded, setHasLoaded] = useState(false)
   const [entityType, setEntityType] = useState<string | null>((cachedSvg as any)?.entityType || null)
   const {
-    reset,
     setBasicInfo,
     setPluginConfig,
     setStyle,

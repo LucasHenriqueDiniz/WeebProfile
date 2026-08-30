@@ -15,13 +15,6 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
 }
 
-const actionTypes = {
-  ADD_TOAST: "ADD_TOAST",
-  UPDATE_TOAST: "UPDATE_TOAST",
-  DISMISS_TOAST: "DISMISS_TOAST",
-  REMOVE_TOAST: "REMOVE_TOAST",
-} as const
-
 let count = 0
 
 function genId() {
@@ -29,7 +22,15 @@ function genId() {
   return count.toString()
 }
 
-type ActionType = typeof actionTypes
+// Era um `const ... as const` lido apenas por `typeof`: o objeto nunca foi
+// acessado em runtime, so existia para derivar este tipo. Declarado direto, some
+// o valor morto do bundle e o aviso de variavel nao usada.
+type ActionType = {
+  ADD_TOAST: "ADD_TOAST"
+  UPDATE_TOAST: "UPDATE_TOAST"
+  DISMISS_TOAST: "DISMISS_TOAST"
+  REMOVE_TOAST: "REMOVE_TOAST"
+}
 
 type Action =
   | {
