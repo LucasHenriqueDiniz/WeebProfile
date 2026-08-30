@@ -4,7 +4,6 @@
  * Shows element information: breadcrumb, attributes, classes, dataset, bbox
  */
 
-import { useMemo } from "react"
 import type { StyleSnapshot } from "../../lib/iframe/iframeProtocol"
 
 interface ElementTabProps {

@@ -5,7 +5,6 @@ import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import {
   DEFAULT_THEME_VARIABLES,
-  DEFAULT_THEME_VARIABLE_DESCRIPTIONS,
   DEFAULT_THEME_VARIABLE_LABELS,
   defaultThemes as themesFromPlugins,
 } from "@weeb/weeb-plugins/themes"

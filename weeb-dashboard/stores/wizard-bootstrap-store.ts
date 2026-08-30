@@ -127,7 +127,7 @@ export const useWizardBootstrapStore = create<WizardBootstrapState>((set, get) =
   },
 
   refreshSecretsPresence: async () => {
-    const state = get()
+    const _state = get()
 
     try {
       // Get ALL plugin names from metadata

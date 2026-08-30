@@ -166,7 +166,7 @@ export default function SvgViewPage() {
         description: t("markdown.toastCopiedDescription"),
       })
       setTimeout(() => setCopied(false), 2000)
-    } catch (error) {
+    } catch {
       toast({
         title: t("markdown.toastError"),
         description: t("markdown.toastErrorDescription"),
@@ -187,7 +187,7 @@ export default function SvgViewPage() {
         description: t("url.toastCopiedDescription"),
       })
       setTimeout(() => setCopied(false), 2000)
-    } catch (error) {
+    } catch {
       toast({
         title: t("url.toastError"),
         description: t("url.toastErrorDescription"),

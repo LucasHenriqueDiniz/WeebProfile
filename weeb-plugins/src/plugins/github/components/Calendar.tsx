@@ -108,7 +108,7 @@ const DefaultCalendar = ({
   }
 
   // Render single year calendar with GitHub-style layout
-  const renderYearCalendar = (weeks: any[], year?: number) => {
+  const renderYearCalendar = (weeks: any[], _year?: number) => {
     const yearMode = config.calendar_year_mode || "current_year"
     let allWeeks = weeks.slice().reverse()
 
@@ -164,7 +164,7 @@ const DefaultCalendar = ({
       maxWidth: `calc(${columnsPerRow} * ${squareSize} + ${columnsPerRow - 1} * ${gapSize})`,
     }
 
-    const renderWeekColumn = (week: any, weekIndex: number, allWeeksForRow: any[]) => {
+    const renderWeekColumn = (week: any, weekIndex: number, _allWeeksForRow: any[]) => {
       // Create array of 7 days, padding with nulls based on weekday
       const days: Array<any | null> = [null, null, null, null, null, null, null]
       week.contributionDays.forEach((day: any) => {

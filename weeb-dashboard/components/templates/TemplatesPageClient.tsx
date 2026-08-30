@@ -64,7 +64,7 @@ export function TemplatesPageClient() {
         let response: { templates: any[] }
         try {
           response = await templateApi.list()
-        } catch (authError) {
+        } catch {
           // If authentication fails, try fetching public templates
           console.log("Authentication failed, fetching public templates...")
           const res = await fetch("/api/templates?public=true")

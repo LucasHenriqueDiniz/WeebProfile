@@ -7,7 +7,6 @@
 
 import { Router, Request, Response } from "express"
 import { renderToString } from "react-dom/server"
-import React from "react"
 import { normalizeConfig } from "../../../svg-generator/src/config/config-loader.js"
 import { renderPlugins } from "../utils/render-plugins.js"
 import { injectDebugIds } from "../utils/inject-debug-ids.js"

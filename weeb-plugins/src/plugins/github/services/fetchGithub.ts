@@ -1062,7 +1062,7 @@ async function processRepositoryContributorsData(
         }
       })
     )
-  } catch (error: any) {
+  } catch {
     // Fallback para GraphQL se REST API falhar
     try {
       const query = REPOSITORY_CONTRIBUTORS_QUERY
@@ -1250,7 +1250,7 @@ async function processRecentActivityData(
         events.push(...response.data)
         // Se retornou menos de 100, não há mais páginas
         if (response.data.length < 100) break
-      } catch (error) {
+      } catch {
         // Se erro 404 ou similar, usuário não tem eventos públicos
         break
       }
@@ -1434,7 +1434,7 @@ async function processRecentActivityData(
             if (!review || !pr) break
 
             const prNumber = pr.number
-            const reviewState = review.state
+            const _reviewState = review.state
             const url = review.html_url || pr.html_url || `${repoUrl}/pull/${prNumber}`
 
             activities.push({
@@ -1477,7 +1477,7 @@ async function processCodeHabitsData(
   const commitsByHour: Record<number, number> = {}
   let totalCommits = 0
   const languages: Record<string, { count: number; color: string }> = {}
-  const fileTypes: Record<string, number> = {}
+  const _fileTypes: Record<string, number> = {}
 
   try {
     const startTime = Date.now()
@@ -1879,7 +1879,7 @@ async function processCodeHabitsData(
     const batchSize = 20
     for (let i = 0; i < commitsToAnalyze.length; i += batchSize) {
       // Check time limit during analysis
-      const elapsedAnalysisTime = Date.now() - commitAnalysisStartTime
+      const _elapsedAnalysisTime = Date.now() - commitAnalysisStartTime
       const totalElapsedTime = Date.now() - startTime
       if (totalElapsedTime > MAX_TIME_MS) {
         console.log(

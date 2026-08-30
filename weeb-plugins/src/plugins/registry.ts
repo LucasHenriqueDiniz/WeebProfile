@@ -58,7 +58,7 @@ export class PluginRegistry {
     }
 
     // Validate that plugin has all sections from metadata
-    const metadataSectionIds = new Set(metadata.sections.map((s) => s.id))
+    const _metadataSectionIds = new Set(metadata.sections.map((s) => s.id))
     // (more complex validation can be done here)
 
     this.plugins.set(plugin.name, plugin)

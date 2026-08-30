@@ -167,7 +167,7 @@ export function LastWorkout({ data, config, style = "default", size = "half" }: 
             )}
             {topExercises.map(({ exercise, volume }) => {
               const completedSets = exercise.sets.filter((set) => set.is_completed && set.weight && set.reps)
-              const setsCount = completedSets.length
+              const _setsCount = completedSets.length
 
               // Encontrar o melhor set (maior peso, depois maior reps)
               let bestSet = { weight: 0, reps: 0 }

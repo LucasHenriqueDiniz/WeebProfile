@@ -9,7 +9,7 @@ import { embedImageOrNull } from "../../../utils/image-to-base64"
 const STEAM_IMAGE_MAX_BYTES = 250_000
 
 const STEAM_API_BASE = "https://api.steampowered.com"
-const STEAM_STORE_API = "https://store.steampowered.com/api"
+const _STEAM_STORE_API = "https://store.steampowered.com/api"
 
 export async function fetchSteamData(
   config: SteamConfig,

@@ -7,7 +7,6 @@ import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWi
 import { ImageComponent } from "../../../utils/image"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
-import { PluginError } from "../../../components/PluginError"
 import type { LastFmData } from "../types"
 
 interface StatisticsProps {

@@ -79,11 +79,7 @@ const TerminalWarning = ({ warnings }: { warnings: NonNullable<GithubData["warni
   )
 }
 
-export function GithubWarning({
-  warnings,
-  style = "default",
-  size = "half",
-}: GithubWarningProps): React.ReactElement | null {
+export function GithubWarning({ warnings, style = "default" }: GithubWarningProps): React.ReactElement | null {
   if (!warnings || warnings.length === 0) {
     return null
   }
