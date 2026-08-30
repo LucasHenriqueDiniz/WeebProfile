@@ -37,9 +37,16 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, type, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+    // Um <button> sem type dentro de um <form> vale como submit. Nenhum form existe
+    // hoje, mas o primeiro que envolver qualquer um destes ganha submits acidentais
+    // — e sao 78 usos deste componente. O default vem daqui em vez de ser repetido
+    // em cada chamada; quem precisa de submit passa type explicitamente.
+    // Com asChild o Slot repassa as props para o filho, que pode ser um <a>, onde
+    // type nao existe — por isso so e injetado quando renderiza um button de fato.
+    const typeProp = asChild ? (type !== undefined ? { type } : {}) : { type: type ?? "button" }
+    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...typeProp} {...props} />
   }
 )
 Button.displayName = "Button"

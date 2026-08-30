@@ -76,6 +76,7 @@ export default function PluginsGalleryPage() {
               const isActive = style === opt.id
               return (
                 <button
+                  type="button"
                   key={opt.id}
                   onClick={() => setStyle(opt.id)}
                   className={cn(

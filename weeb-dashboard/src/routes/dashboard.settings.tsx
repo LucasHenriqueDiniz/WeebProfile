@@ -104,6 +104,7 @@ export default function SettingsPage() {
               const isActive = activeSection === section.id
               return (
                 <button
+                  type="button"
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
                   className={cn(
@@ -197,6 +198,7 @@ export default function SettingsPage() {
                       const isActive = theme === option.id
                       return (
                         <button
+                          type="button"
                           key={option.id}
                           onClick={() => setTheme(option.id)}
                           className={cn(
@@ -229,6 +231,7 @@ export default function SettingsPage() {
                       const isComingSoon = localeComingSoon[loc]
                       return (
                         <button
+                          type="button"
                           key={loc}
                           onClick={() => handleLocaleChange(loc)}
                           disabled={isComingSoon}

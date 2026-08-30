@@ -375,6 +375,7 @@ export default function SvgViewPage() {
   // Fora do <h1>: heading não deve conter controle. Ver Header.leading.
   const headerLeading = (
     <button
+      type="button"
       onClick={() => router.push("/dashboard")}
       className="-ml-1 flex-shrink-0 p-1 text-muted-foreground transition-colors hover:text-foreground"
       aria-label={t("backToDashboard")}

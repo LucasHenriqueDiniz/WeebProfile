@@ -61,6 +61,7 @@ export function Header({ className, variant, title, description, actions, width 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [languageSelectorOpen, setLanguageSelectorOpen] = useState(false)
+  const [avatarFallbackFailed, setAvatarFallbackFailed] = useState(false)
 
   const detectedVariant =
     variant ||
@@ -189,22 +190,25 @@ export function Header({ className, variant, title, description, actions, width 
                           alt={user.user_metadata?.user_name || user.user_metadata?.full_name || "User"}
                         />
                         <AvatarFallback className="bg-gradient-to-br from-violet-500 to-cyan-500">
-                          <img
-                            src="/sora/sora-head.png"
-                            alt="Sora"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement
-                              target.style.display = "none"
-                              if (target.parentElement) {
-                                target.parentElement.innerHTML =
-                                  user.user_metadata?.user_name?.charAt(0)?.toUpperCase() ||
-                                  user.user_metadata?.full_name?.charAt(0)?.toUpperCase() ||
-                                  user.email?.charAt(0)?.toUpperCase() ||
-                                  "?"
-                              }
-                            }}
-                          />
+                          {/* O fallback e estado do React, nao mutacao de DOM. A versao
+                              anterior escrevia innerHTML num no que o React controla —
+                              sobrescrito no proximo render — e injetava ali dado do
+                              usuario. */}
+                          {avatarFallbackFailed ? (
+                            <span className="text-sm font-semibold text-white">
+                              {user.user_metadata?.user_name?.charAt(0)?.toUpperCase() ||
+                                user.user_metadata?.full_name?.charAt(0)?.toUpperCase() ||
+                                user.email?.charAt(0)?.toUpperCase() ||
+                                "?"}
+                            </span>
+                          ) : (
+                            <img
+                              src="/sora/sora-head.png"
+                              alt=""
+                              className="w-full h-full object-cover"
+                              onError={() => setAvatarFallbackFailed(true)}
+                            />
+                          )}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
@@ -255,6 +259,9 @@ export function Header({ className, variant, title, description, actions, width 
               variant="ghost"
               size="icon"
               className="md:hidden"
+              aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -268,6 +275,7 @@ export function Header({ className, variant, title, description, actions, width 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
+            id="mobile-menu"
             className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl"
           >
             {/* Mesmo grid do <nav> acima: o menu abre colado nele, então tem que

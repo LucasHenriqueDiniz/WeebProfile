@@ -136,6 +136,9 @@ export function StyleConfiguration({
         <p className="text-sm font-semibold text-foreground">{t("title")}</p>
         <div className="flex gap-2">
           {["default", "terminal"].map((s) => (
+            // O input e filho direto deste label, e o texto visivel vem de t(...) —
+            // uma chamada de funcao que a regra nao consegue resolver estaticamente.
+            // eslint-disable-next-line jsx-a11y/label-has-associated-control
             <label key={s} className="flex-1 cursor-pointer">
               <input
                 type="radio"
@@ -144,7 +147,7 @@ export function StyleConfiguration({
                 checked={style === s}
                 onChange={() => setStyle(s as "default" | "terminal")}
               />
-              <div className="rounded-md border border-border px-3 py-2 text-center peer-checked:border-primary peer-checked:bg-primary/10 transition-all">
+              <div className="rounded-md border border-border px-3 py-2 text-center peer-checked:border-primary peer-checked:bg-primary/10 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background transition-all">
                 <span className="text-sm font-medium capitalize">{t(`options.${s}`)}</span>
               </div>
             </label>
@@ -160,6 +163,9 @@ export function StyleConfiguration({
             { value: "half", label: t("options.halfWidth"), desc: "415px" },
             { value: "full", label: t("options.fullWidth"), desc: "830px" },
           ].map((s) => (
+            // Mesmo caso do seletor de estilo acima: o input e filho direto do label e
+            // o texto vem de t(...), que a regra nao resolve estaticamente.
+            // eslint-disable-next-line jsx-a11y/label-has-associated-control
             <label key={s.value} className="flex-1 cursor-pointer">
               <input
                 type="radio"
@@ -168,7 +174,7 @@ export function StyleConfiguration({
                 checked={size === s.value}
                 onChange={() => setSize(s.value as "half" | "full")}
               />
-              <div className="rounded-md border border-border px-3 py-2 text-center peer-checked:border-primary peer-checked:bg-primary/10 transition-all">
+              <div className="rounded-md border border-border px-3 py-2 text-center peer-checked:border-primary peer-checked:bg-primary/10 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background transition-all">
                 <span className="text-sm font-medium">{s.label}</span>
                 <p className="text-xs text-muted-foreground mt-0.5">{s.desc}</p>
               </div>
@@ -183,6 +189,7 @@ export function StyleConfiguration({
         <div className="flex flex-wrap gap-1.5">
           {themes.map((t) => (
             <button
+              type="button"
               key={t}
               onClick={() => setTheme(t)}
               className={cn(

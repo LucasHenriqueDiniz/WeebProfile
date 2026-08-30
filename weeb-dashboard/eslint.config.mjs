@@ -3,6 +3,7 @@ import typescript from "@typescript-eslint/eslint-plugin"
 import parser from "@typescript-eslint/parser"
 import react from "eslint-plugin-react"
 import reactHooks from "eslint-plugin-react-hooks"
+import jsxA11y from "eslint-plugin-jsx-a11y"
 import globals from "globals"
 
 export default [
@@ -41,11 +42,16 @@ export default [
       },
     },
     plugins: {
+      "jsx-a11y": jsxA11y,
       "@typescript-eslint": typescript,
       react,
       "react-hooks": reactHooks,
     },
     rules: {
+      // Nada verificava acessibilidade neste projeto. As recomendadas entram como
+      // warning para nao travar quem ja esta no meio de uma mudanca; o que elas
+      // apontarem e corrigido em seguida, e ai vale subir para error.
+      ...jsxA11y.flatConfigs.recommended.rules,
       ...js.configs.recommended.rules,
       ...typescript.configs.recommended.rules,
       ...react.configs.recommended.rules,

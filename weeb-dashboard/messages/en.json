@@ -78,7 +78,9 @@
     "nav": {
       "templates": "Templates",
       "dashboard": "Dashboard"
-    }
+    },
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "homepage": {
     "comparison": {
@@ -537,7 +539,8 @@
       "preview": "preview",
       "selectSection": "Select section",
       "deselectSection": "Deselect section",
-      "enablePluginToPreview": "Enable at least one plugin and select sections to see the preview"
+      "enablePluginToPreview": "Enable at least one plugin and select sections to see the preview",
+      "clearSearch": "Clear search"
     },
     "order": {
       "tab": "Order",

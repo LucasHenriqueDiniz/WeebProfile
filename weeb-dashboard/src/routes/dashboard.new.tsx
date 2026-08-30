@@ -53,6 +53,7 @@ export default function NewArtifactChooserPage() {
             const Icon = option.icon
             return (
               <button
+                type="button"
                 key={option.key}
                 onClick={() => router.push(option.href)}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-left transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-[0_8px_40px_-12px_rgba(139,92,246,0.35)]"
