@@ -1,19 +1,19 @@
-import React from 'react'
-import { FaCodeBranch, FaStar } from 'react-icons/fa'
-import { RiStarLine } from 'react-icons/ri'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCodeBranch, FaStar } from "react-icons/fa"
+import { RiStarLine } from "react-icons/ri"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
-const DefaultStarredRepositories = ({ 
+const DefaultStarredRepositories = ({
   data,
-  maxRepos
-}: { 
-  data: NonNullable<GithubData['starredRepositories']>
+  maxRepos,
+}: {
+  data: NonNullable<GithubData["starredRepositories"]>
   maxRepos: number
 }) => {
   const reposToShow = data.nodes.slice(0, maxRepos)
@@ -48,9 +48,7 @@ const DefaultStarredRepositories = ({
                 )}
               </div>
               {repo.description && (
-                <p className="text-sm text-default-muted line-clamp-2 mb-2 leading-relaxed">
-                  {repo.description}
-                </p>
+                <p className="text-sm text-default-muted line-clamp-2 mb-2 leading-relaxed">{repo.description}</p>
               )}
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-1.5 text-default-muted">
@@ -68,18 +66,18 @@ const DefaultStarredRepositories = ({
       </div>
       {data.totalCount > maxRepos && (
         <div className="mt-3 text-center text-sm text-default-muted">
-          +{data.totalCount - maxRepos} more starred {data.totalCount - maxRepos === 1 ? 'repository' : 'repositories'}
+          +{data.totalCount - maxRepos} more starred {data.totalCount - maxRepos === 1 ? "repository" : "repositories"}
         </div>
       )}
     </div>
   )
 }
 
-const TerminalStarredRepositories = ({ 
+const TerminalStarredRepositories = ({
   data,
-  maxRepos
-}: { 
-  data: NonNullable<GithubData['starredRepositories']>
+  maxRepos,
+}: {
+  data: NonNullable<GithubData["starredRepositories"]>
   maxRepos: number
 }) => {
   const reposToShow = data.nodes.slice(0, maxRepos)
@@ -94,33 +92,26 @@ const TerminalStarredRepositories = ({
     <>
       <TerminalGrid data={gridData} rightText="Repository" leftText="Stats" />
       {data.totalCount > maxRepos && (
-        <div className="text-terminal-muted text-sm text-center mt-2">
-          +{data.totalCount - maxRepos} more
-        </div>
+        <div className="text-terminal-muted text-sm text-center mt-2">+{data.totalCount - maxRepos} more</div>
       )}
     </>
   )
 }
 
 interface StarredRepositoriesProps {
-  data: GithubData['starredRepositories']
+  data: GithubData["starredRepositories"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-export function GithubStarredRepositories({ 
-  data, 
-  config, 
-  style, 
-  size 
-}: StarredRepositoriesProps): React.ReactElement {
+export function GithubStarredRepositories({ data, config, style, size }: StarredRepositoriesProps): React.ReactElement {
   if (!data || data.totalCount === 0) {
     return <></>
   }
 
-  const title = (config.starred_repositories_title ?? '<qnt> Starred Repositories').replace(
-    '<qnt>',
+  const title = (config.starred_repositories_title ?? "<qnt> Starred Repositories").replace(
+    "<qnt>",
     abbreviateNumber(data.totalCount)
   )
   const hideTitle = config.starred_repositories_hide_title ?? false
@@ -140,8 +131,8 @@ export function GithubStarredRepositories({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'starred_repositories',
+                plugin: "github",
+                section: "starred_repositories",
                 size,
               })}
             />
@@ -152,4 +143,3 @@ export function GithubStarredRepositories({
     </section>
   )
 }
-

@@ -4,17 +4,14 @@ import * as path from "path"
 
 /**
  * GET /api/preview/[...path] - Serve preview images from weeb-plugins
- * 
+ *
  * Esta rota serve os arquivos SVG de preview diretamente do weeb-plugins,
  * evitando duplicação de arquivos.
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   try {
     const { path: pathSegments } = await params
-    
+
     if (!pathSegments || pathSegments.length === 0) {
       return NextResponse.json({ error: "Path required" }, { status: 400 })
     }
@@ -22,7 +19,7 @@ export async function GET(
     // Path format: plugin/default/section.svg
     // Join all segments to get the full path
     const previewPath = pathSegments.join("/")
-    
+
     // Resolve to weeb-plugins/src/plugins/{plugin}/previews/{plugin}_{section}.svg
     const pathParts = previewPath.split("/")
     if (pathParts.length !== 3 || pathParts[1] !== "default") {
@@ -30,10 +27,10 @@ export async function GET(
     }
 
     const [pluginName, , sectionName] = pathParts
-    
+
     // Remove .svg extension if present
     const sectionId = sectionName.replace(/\.svg$/, "")
-    
+
     // Path to preview in weeb-plugins
     // From weeb-dashboard root, go up one level to monorepo root, then into weeb-plugins
     const pluginsDir = path.join(process.cwd(), "../weeb-plugins/src/plugins")
@@ -42,7 +39,7 @@ export async function GET(
     // Security: ensure the path is within plugins directory
     const normalizedPreview = path.normalize(previewFile)
     const normalizedPluginsDir = path.normalize(pluginsDir)
-    
+
     if (!normalizedPreview.startsWith(normalizedPluginsDir)) {
       return NextResponse.json({ error: "Invalid path" }, { status: 403 })
     }
@@ -67,4 +64,3 @@ export async function GET(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-

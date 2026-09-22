@@ -14,7 +14,7 @@ interface PluginErrorBoundaryState {
 
 /**
  * Error Boundary for individual plugin rendering
- * 
+ *
  * If a plugin fails to render, this boundary catches the error
  * and displays a fallback UI instead of crashing the entire preview.
  */

@@ -75,27 +75,3 @@ export const env = {
     return getEnv("CRON_SECRET", false) || undefined
   },
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

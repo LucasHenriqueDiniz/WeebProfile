@@ -36,9 +36,10 @@ try {
   }
 
   // Mostrar primeiros erros para debug
-  const errorLines = tscOutput.split("\n").filter((line) =>
-    line.includes("error") || line.includes("Error") || line.includes("Cannot find module")
-  ).slice(0, 10)
+  const errorLines = tscOutput
+    .split("\n")
+    .filter((line) => line.includes("error") || line.includes("Error") || line.includes("Cannot find module"))
+    .slice(0, 10)
 
   if (errorLines.length > 0) {
     console.log(`⚠️  TypeScript terminou com código ${tscExitCode}`)
@@ -72,18 +73,16 @@ const distPath = resolve(cwd, "dist")
 if (existsSync(distPath)) {
   try {
     const distFiles = readdirSync(distPath, { recursive: true })
-    const serverJsFiles = distFiles.filter((f) => 
-      typeof f === "string" && f.endsWith("server.js")
-    )
-    
+    const serverJsFiles = distFiles.filter((f) => typeof f === "string" && f.endsWith("server.js"))
+
     if (serverJsFiles.length > 0) {
       // Pegar o primeiro server.js encontrado
       actualServerPath = `dist/${serverJsFiles[0]}`
       const fullPath = resolve(cwd, actualServerPath)
-      
+
       if (existsSync(fullPath)) {
         console.log(`✅ server.js encontrado em: ${actualServerPath}`)
-        
+
         // Determinar estrutura baseada no caminho encontrado
         if (actualServerPath.includes("svg-generator/src")) {
           distBasePath = "dist/svg-generator/src"
@@ -124,19 +123,17 @@ if (!criticalFilesExist) {
       console.error(`   Total de arquivos em dist/: ${distFiles.length}`)
       const jsFiles = distFiles.filter((f) => typeof f === "string" && f.endsWith(".js"))
       console.error(`   Arquivos .js em dist/: ${jsFiles.length}`)
-      
+
       // Procurar especificamente por server.js
-      const serverJsFiles = distFiles.filter((f) => 
-        typeof f === "string" && f.endsWith("server.js")
-      )
-      
+      const serverJsFiles = distFiles.filter((f) => typeof f === "string" && f.endsWith("server.js"))
+
       if (serverJsFiles.length > 0) {
         console.error(`   ✅ server.js encontrado em:`)
         serverJsFiles.forEach((f) => {
           const fullPath = resolve(distPath, f)
           const exists = existsSync(fullPath)
           const size = exists ? statSync(fullPath).size : 0
-          console.error(`     - dist/${f} (${exists ? `${size} bytes` : 'não existe'})`)
+          console.error(`     - dist/${f} (${exists ? `${size} bytes` : "não existe"})`)
         })
       } else {
         console.error(`   ❌ Nenhum server.js encontrado em dist/`)
@@ -167,16 +164,14 @@ if (!criticalFilesExist) {
 
 if (criticalFilesExist && actualServerPath) {
   console.log(`✅ Arquivo crítico encontrado: ${actualServerPath}`)
-  
+
   // Verificar se o config-loader tem as correções (buscar recursivamente também)
   let configLoaderFound = false
   if (existsSync(distPath)) {
     try {
       const distFiles = readdirSync(distPath, { recursive: true })
-      const configLoaderFiles = distFiles.filter((f) => 
-        typeof f === "string" && f.endsWith("config-loader.js")
-      )
-      
+      const configLoaderFiles = distFiles.filter((f) => typeof f === "string" && f.endsWith("config-loader.js"))
+
       for (const configLoaderFile of configLoaderFiles) {
         const configLoaderPath = resolve(distPath, configLoaderFile)
         if (existsSync(configLoaderPath)) {

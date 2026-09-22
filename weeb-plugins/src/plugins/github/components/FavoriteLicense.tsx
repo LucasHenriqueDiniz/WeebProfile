@@ -1,30 +1,26 @@
-import React from 'react'
-import { FaCode } from 'react-icons/fa'
-import { TbLicense } from 'react-icons/tb'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import TerminalTree from '../../../templates/Terminal/TerminalTree'
-import type { GridItemProps } from '../../../templates/types'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCode } from "react-icons/fa"
+import { TbLicense } from "react-icons/tb"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import TerminalTree from "../../../templates/Terminal/TerminalTree"
+import type { GridItemProps } from "../../../templates/types"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
 interface FavoriteLicenseProps {
-  data: GithubData['favoriteLicense']
+  data: GithubData["favoriteLicense"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DefaultFavoriteLicense = ({ data, total }: { data: GithubData['favoriteLicense']; total: number }) => {
+const DefaultFavoriteLicense = ({ data, total }: { data: GithubData["favoriteLicense"]; total: number }) => {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center justify-center h-full">
-<TbLicense
-  size={45}
-  className="text-default-highlight"
-  style={{ fill: 'none' }} 
-/>
+        <TbLicense size={45} className="text-default-highlight" style={{ fill: "none" }} />
       </div>
       <div className="flex flex-col w-full">
         <span className="text-semibold text-default-text text-lg">{data.name}</span>
@@ -36,8 +32,8 @@ const DefaultFavoriteLicense = ({ data, total }: { data: GithubData['favoriteLic
   )
 }
 
-const TerminalFavoriteLicense = ({ data, total }: { data: GithubData['favoriteLicense']; total: number }) => {
-  const percentage = total > 0 ? ((data.count / total) * 100).toFixed(2) : '0.00'
+const TerminalFavoriteLicense = ({ data, total }: { data: GithubData["favoriteLicense"]; total: number }) => {
+  const percentage = total > 0 ? ((data.count / total) * 100).toFixed(2) : "0.00"
   const TreeItems: GridItemProps[] = [
     {
       title: data.name,
@@ -49,13 +45,8 @@ const TerminalFavoriteLicense = ({ data, total }: { data: GithubData['favoriteLi
   return <TerminalTree data={TreeItems} title="Favorite License" />
 }
 
-export function FavoriteLicense({
-  data,
-  config,
-  style,
-  size,
-}: FavoriteLicenseProps): React.ReactElement {
-  const title = config.favorite_license_title || 'Most Used License'
+export function FavoriteLicense({ data, config, style, size }: FavoriteLicenseProps): React.ReactElement {
+  const title = config.favorite_license_title || "Most Used License"
   const hideTitle = config.favorite_license_hide_title || false
 
   // Usar total dos dados ou estimar se não disponível
@@ -74,9 +65,9 @@ export function FavoriteLicense({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'license',
-                command: 'list',
+                plugin: "github",
+                section: "license",
+                command: "list",
               })}
             />
             <TerminalFavoriteLicense data={data} total={total} />
@@ -87,4 +78,3 @@ export function FavoriteLicense({
     </section>
   )
 }
-

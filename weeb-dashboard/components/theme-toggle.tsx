@@ -1,16 +1,17 @@
 "use client"
 
-import { Moon, Sun } from "lucide-react"
-import { useState, useEffect } from "react"
-import { useThemeStore } from "@/stores/theme-store"
 import { Button } from "@/components/ui/button"
+import { useThemeStore } from "@/stores/theme-store"
+import { Moon, Sun } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export function ThemeToggle() {
   const { resolvedTheme, toggleTheme } = useThemeStore()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    // Use setTimeout to avoid calling setState synchronously within effect
+    setTimeout(() => setMounted(true), 0)
   }, [])
 
   if (!mounted) {
@@ -23,12 +24,7 @@ export function ThemeToggle() {
   }
 
   return (
-    <Button 
-      variant="ghost" 
-      size="icon" 
-      onClick={toggleTheme}
-      className="h-9 w-9"
-    >
+    <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-9 w-9">
       {resolvedTheme === "light" ? (
         <Moon className="h-[1.2rem] w-[1.2rem]" />
       ) : (
@@ -38,4 +34,3 @@ export function ThemeToggle() {
     </Button>
   )
 }
-

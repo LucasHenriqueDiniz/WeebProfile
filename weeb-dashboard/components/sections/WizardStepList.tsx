@@ -53,9 +53,11 @@ export function WizardStepList({ steps, activeStep, onStepChange, stepIcons }: W
               >
                 <Icon className="h-5 w-5 text-primary-foreground" />
               </motion.div>
-              <span className={`mt-1 text-[11px] font-semibold transition-colors ${
-                isActive ? "text-primary" : "text-muted-foreground"
-              }`}>
+              <span
+                className={`mt-1 text-[11px] font-semibold transition-colors ${
+                  isActive ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
                 {step.number}
               </span>
             </div>
@@ -63,19 +65,17 @@ export function WizardStepList({ steps, activeStep, onStepChange, stepIcons }: W
             {/* conteúdo */}
             <motion.div
               className={`flex-1 rounded-2xl border px-4 py-3 shadow-[0_10px_30px_rgba(15,23,42,0.6)] transition-all ${
-                isActive
-                  ? "border-primary/60 bg-card/90"
-                  : "border-border/70 bg-card/80 group-hover:border-primary/40"
+                isActive ? "border-primary/60 bg-card/90" : "border-border/70 bg-card/80 group-hover:border-primary/40"
               }`}
             >
-              <h3 className={`text-sm font-semibold transition-colors ${
-                isActive ? "text-foreground" : "text-foreground/90"
-              }`}>
+              <h3
+                className={`text-sm font-semibold transition-colors ${
+                  isActive ? "text-foreground" : "text-foreground/90"
+                }`}
+              >
                 {step.title}
               </h3>
-              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                {step.description}
-              </p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{step.description}</p>
             </motion.div>
           </motion.li>
         )
@@ -83,4 +83,3 @@ export function WizardStepList({ steps, activeStep, onStepChange, stepIcons }: W
     </ol>
   )
 }
-

@@ -16,19 +16,31 @@ import { getTerminalConfigs } from "@/lib/config/svg-config-helpers"
 import { useTranslations } from "next-intl"
 
 export default function EditSvgPage() {
-  const t = useTranslations('wizard')
+  const t = useTranslations("wizard")
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams()
   const { getSvg, getSvgSync } = useSvgStore()
   const { bootstrap } = useWizardBootstrapStore()
   const svgId = params.id as string
-  
+
   // Tentar pegar do cache imediatamente
   const cachedSvg = getSvgSync(svgId)
   const [loading, setLoading] = useState(!cachedSvg)
   const [hasLoaded, setHasLoaded] = useState(false)
-  const { reset, setBasicInfo, setPluginConfig, setStyle, setSize, setTheme, setHideTerminalEmojis, setHideTerminalHeader, setHideTerminalCommand, setCustomCss, reorderPlugins } = useWizardStore()
+  const {
+    reset,
+    setBasicInfo,
+    setPluginConfig,
+    setStyle,
+    setSize,
+    setTheme,
+    setHideTerminalEmojis,
+    setHideTerminalHeader,
+    setHideTerminalCommand,
+    setCustomCss,
+    reorderPlugins,
+  } = useWizardStore()
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -61,7 +73,7 @@ export default function EditSvgPage() {
   const loadSvg = async () => {
     // Verificar cache novamente (pode ter mudado)
     let svg: Svg | null = getSvgSync(svgId)
-    
+
     try {
       // Se não tem cache, buscar
       if (!svg) {
@@ -69,14 +81,16 @@ export default function EditSvgPage() {
         svg = await getSvg(svgId)
       } else {
         // Se tem cache, fazer refresh em background (sem mostrar loading)
-        getSvg(svgId).then((updatedSvg) => {
-          if (updatedSvg) {
-            // Recarregar dados se o SVG foi atualizado
-            loadSvgData(updatedSvg)
-          }
-        }).catch(() => {
-          // Ignorar erros no background refresh
-        })
+        getSvg(svgId)
+          .then((updatedSvg) => {
+            if (updatedSvg) {
+              // Recarregar dados se o SVG foi atualizado
+              loadSvgData(updatedSvg)
+            }
+          })
+          .catch(() => {
+            // Ignorar erros no background refresh
+          })
       }
 
       if (!svg) {
@@ -91,7 +105,7 @@ export default function EditSvgPage() {
       const errorMessage =
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
-          : t('error.loadingImage')
+          : t("error.loadingImage")
       alert(errorMessage)
       router.push("/dashboard")
     } finally {
@@ -105,14 +119,14 @@ export default function EditSvgPage() {
     setStyle(svg.style as "default" | "terminal")
     setSize(svg.size as "half" | "full")
     setTheme(svg.theme || "default")
-    
+
     // Read terminal configs from ui_config (not plugins_config)
     const uiConfig = (svg as any).uiConfig || {}
     const terminalConfigs = getTerminalConfigs(uiConfig)
     setHideTerminalEmojis(terminalConfigs.hideTerminalEmojis)
     setHideTerminalHeader(terminalConfigs.hideTerminalHeader)
     setHideTerminalCommand(terminalConfigs.hideTerminalCommand)
-    
+
     setCustomCss(svg.customCss || "")
 
     // Carregar plugins config
@@ -120,13 +134,13 @@ export default function EditSvgPage() {
     // Username now comes directly from svgs.plugins_config (no more plugin_config dependency)
     if (svg.pluginsConfig && typeof svg.pluginsConfig === "object") {
       const pluginsConfig = svg.pluginsConfig as Record<string, any>
-      
+
       // Process plugins - username is now inside pluginsConfig[pluginName]
       Object.keys(pluginsConfig).forEach((pluginName) => {
         const pluginConfig = pluginsConfig[pluginName]
         if (pluginConfig && typeof pluginConfig === "object") {
           const activeSections = Array.isArray(pluginConfig.sections) ? pluginConfig.sections : []
-          
+
           // Filter sectionConfigs to only include configs for active sections
           const allSectionConfigs = pluginConfig.sectionConfigs || {}
           const activeSectionConfigs: Record<string, any> = {}
@@ -135,7 +149,7 @@ export default function EditSvgPage() {
               activeSectionConfigs[sectionName] = allSectionConfigs[sectionName]
             }
           })
-          
+
           setPluginConfig(pluginName, {
             enabled: pluginConfig.enabled === true,
             sections: activeSections,
@@ -143,12 +157,15 @@ export default function EditSvgPage() {
             // Username and other requiredFields are now directly in pluginsConfig
             ...(pluginConfig.username && { username: pluginConfig.username }),
             // Include any other requiredFields that might be in the config
-            ...Object.keys(pluginConfig).reduce((acc, key) => {
-              if (key !== "enabled" && key !== "sections" && key !== "sectionConfigs" && pluginConfig[key]) {
-                acc[key] = pluginConfig[key]
-              }
-              return acc
-            }, {} as Record<string, any>),
+            ...Object.keys(pluginConfig).reduce(
+              (acc, key) => {
+                if (key !== "enabled" && key !== "sections" && key !== "sectionConfigs" && pluginConfig[key]) {
+                  acc[key] = pluginConfig[key]
+                }
+                return acc
+              },
+              {} as Record<string, any>
+            ),
           })
         }
       })

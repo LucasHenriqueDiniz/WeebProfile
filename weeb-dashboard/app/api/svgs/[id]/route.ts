@@ -77,7 +77,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         size: body.size || existingSvg.size,
         theme: body.theme !== undefined ? body.theme : existingSvg.theme,
         customCss: body.customCss !== undefined ? body.customCss : existingSvg.customCss,
-        pluginsOrder: body.pluginsOrder !== undefined ? (body.pluginsOrder || null) : existingSvg.pluginsOrder, // null means use alphabetical order
+        pluginsOrder: body.pluginsOrder !== undefined ? body.pluginsOrder || null : existingSvg.pluginsOrder, // null means use alphabetical order
         pluginsConfig: body.pluginsConfig !== undefined ? body.pluginsConfig : existingSvg.pluginsConfig,
         uiConfig: body.uiConfig !== undefined ? body.uiConfig : existingSvg.uiConfig,
       })

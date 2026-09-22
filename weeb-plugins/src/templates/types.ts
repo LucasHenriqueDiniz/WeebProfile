@@ -2,7 +2,7 @@
  * Tipos compartilhados para templates
  */
 
-import type React from 'react'
+import type React from "react"
 
 export interface GridItemProps {
   image?: string
@@ -22,4 +22,3 @@ export interface TerminalLineProps {
   right: string
   left: string
 }
-

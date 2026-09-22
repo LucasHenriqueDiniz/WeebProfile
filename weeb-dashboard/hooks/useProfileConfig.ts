@@ -1,9 +1,9 @@
 /**
  * Hook para gerenciar profile e essential configs
- * 
+ *
  * REFACTORED: Now uses wizard-bootstrap-store instead of fetching.
  * Data is bootstrapped once on mount, this hook just reads from store.
- * 
+ *
  * Maintains backward compatibility with existing components.
  */
 
@@ -22,11 +22,11 @@ interface ProfileConfigData {
 
 export function useProfileConfig(enabledPlugins: string[]): ProfileConfigData {
   const { profile, secretsPresence, missingSecrets, loading, error } = useWizardBootstrapStore()
-  
+
   // Transform secretsPresence to essentialConfigs format (backward compatibility)
   const essentialConfigs = useMemo(() => {
     const result: Record<string, Record<string, boolean>> = {}
-    
+
     // Filter to only enabled plugins
     for (const pluginName of enabledPlugins) {
       const pluginPresence = secretsPresence[pluginName]
@@ -37,10 +37,10 @@ export function useProfileConfig(enabledPlugins: string[]): ProfileConfigData {
         }
       }
     }
-    
+
     return result
   }, [secretsPresence, enabledPlugins])
-  
+
   // Filter missingSecrets to only enabled plugins
   const filteredMissingConfigs = useMemo(() => {
     return missingSecrets.filter(({ pluginName }) => enabledPlugins.includes(pluginName))
@@ -54,4 +54,3 @@ export function useProfileConfig(enabledPlugins: string[]): ProfileConfigData {
     error,
   }
 }
-

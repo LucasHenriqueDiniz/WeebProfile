@@ -1,22 +1,22 @@
-import React from 'react'
-import { FaList } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import type { GridItemProps } from '../../../templates/types'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaList } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import type { GridItemProps } from "../../../templates/types"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
 interface StarListsProps {
-  data: GithubData['starLists']
+  data: GithubData["starLists"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DefaultStarLists = ({ data, max }: { data: GithubData['starLists']; max: number }) => {
+const DefaultStarLists = ({ data, max }: { data: GithubData["starLists"]; max: number }) => {
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No star lists</div>
   }
@@ -28,9 +28,7 @@ const DefaultStarLists = ({ data, max }: { data: GithubData['starLists']; max: n
       {lists.map((list, index) => (
         <div key={index} className="p-3 rounded-lg border border-default-border">
           <h4 className="font-semibold text-base text-default-text mb-2">{list.name}</h4>
-          {list.description && (
-            <p className="text-sm text-default-muted mb-3 line-clamp-2">{list.description}</p>
-          )}
+          {list.description && <p className="text-sm text-default-muted mb-3 line-clamp-2">{list.description}</p>}
           <div className="flex flex-col gap-2">
             {list.repositories.slice(0, 5).map((repo, repoIndex) => (
               <a
@@ -46,7 +44,8 @@ const DefaultStarLists = ({ data, max }: { data: GithubData['starLists']; max: n
             ))}
             {list.repositories.length > 5 && (
               <div className="text-xs text-default-muted mt-1">
-                +{list.repositories.length - 5} more {list.repositories.length - 5 === 1 ? 'repository' : 'repositories'}
+                +{list.repositories.length - 5} more{" "}
+                {list.repositories.length - 5 === 1 ? "repository" : "repositories"}
               </div>
             )}
           </div>
@@ -57,7 +56,7 @@ const DefaultStarLists = ({ data, max }: { data: GithubData['starLists']; max: n
 }
 
 export function GithubStarLists({ data, config, style, size }: StarListsProps): React.ReactElement {
-  const title = config.star_lists_title ?? 'Star Lists'
+  const title = config.star_lists_title ?? "Star Lists"
   const hideTitle = config.star_lists_hide_title ?? false
   const max = config.star_lists_max ?? 5
 
@@ -87,8 +86,8 @@ export function GithubStarLists({ data, config, style, size }: StarListsProps): 
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'star_lists',
+                plugin: "github",
+                section: "star_lists",
                 size,
               })}
             />
@@ -99,4 +98,3 @@ export function GithubStarLists({ data, config, style, size }: StarListsProps): 
     </section>
   )
 }
-

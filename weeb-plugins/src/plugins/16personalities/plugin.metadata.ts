@@ -1,6 +1,6 @@
 /**
  * 16personalities Plugin Metadata
- * 
+ *
  * This file defines all sections, configurations and options for the plugin.
  * It's used to automatically generate the centralized metadata.ts.
  */
@@ -28,7 +28,8 @@ export const personality16PluginMetadata = {
           description: "Paste your 16Personalities test result URL to automatically detect your type",
           required: true,
           helpUrl: "https://www.16personalities.com/br/resultados/enfj-t/m/...",
-          tooltip: "Paste the full URL from your 16Personalities test results page. The plugin will automatically extract your personality type from the URL.",
+          tooltip:
+            "Paste the full URL from your 16Personalities test results page. The plugin will automatically extract your personality type from the URL.",
         },
         {
           key: "personality_hide_title",

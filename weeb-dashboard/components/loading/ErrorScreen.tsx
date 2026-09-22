@@ -9,30 +9,31 @@ interface ErrorScreenProps {
   showHomeButton?: boolean
 }
 
-export default function ErrorScreen({ 
+export default function ErrorScreen({
   title = "ERRO",
   message = "Algo deu errado",
-  showHomeButton = true 
+  showHomeButton = true,
 }: ErrorScreenProps) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#050814] relative overflow-hidden">
       {/* Pixel grid background */}
-      <div 
+      <div
         className="absolute inset-0 opacity-20"
         style={{
           backgroundImage: `
             linear-gradient(rgba(56,189,248,0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(56,189,248,0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '32px 32px',
+          backgroundSize: "32px 32px",
         }}
       />
-      
+
       {/* Scanlines effect */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.03) 2px, rgba(0,255,255,0.03) 4px)',
+          background:
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.03) 2px, rgba(0,255,255,0.03) 4px)",
         }}
       />
 
@@ -43,7 +44,7 @@ export default function ErrorScreen({
         transition={{ duration: 0.5 }}
         className="relative z-10 mb-8"
         style={{
-          filter: 'drop-shadow(0 0 20px rgba(239,68,68,0.5)) drop-shadow(0 0 40px rgba(239,68,68,0.3))',
+          filter: "drop-shadow(0 0 20px rgba(239,68,68,0.5)) drop-shadow(0 0 40px rgba(239,68,68,0.3))",
         }}
       >
         <Image
@@ -82,11 +83,9 @@ export default function ErrorScreen({
             {title}
           </motion.div>
         </div>
-        
-        <p className="text-muted-foreground mb-6 max-w-md">
-          {message}
-        </p>
-        
+
+        <p className="text-muted-foreground mb-6 max-w-md">{message}</p>
+
         {/* Pixel border decoration */}
         <div className="flex items-center justify-center gap-2 mb-6">
           <div className="w-8 h-0.5 bg-red-400" />
@@ -131,35 +130,3 @@ export default function ErrorScreen({
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

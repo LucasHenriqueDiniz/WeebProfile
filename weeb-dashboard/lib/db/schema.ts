@@ -22,10 +22,10 @@ export const profiles = pgTable(
 
 /**
  * Essential configurations table (API keys, tokens, etc)
- * 
+ *
  * Sensitive data stored separately with restrictive RLS.
  * Frontend cannot read, only write (via API route using service_role).
- * 
+ *
  * NOTE: Table was renamed from essential_configs to plugin_secrets in the database.
  * This schema definition uses plugin_secrets to match the actual table name.
  */
@@ -43,14 +43,17 @@ export const essentialConfigs = pgTable(
   (table) => ({
     userIdIdx: index("idx_essential_configs_user_id").on(table.userId),
     pluginKeyIdx: index("idx_essential_configs_plugin_key").on(table.plugin, table.key),
-    userIdPluginKeyUnique: unique("idx_essential_configs_user_plugin_key_unique")
-      .on(table.userId, table.plugin, table.key), // One value per (userId, plugin, key)
+    userIdPluginKeyUnique: unique("idx_essential_configs_user_plugin_key_unique").on(
+      table.userId,
+      table.plugin,
+      table.key
+    ), // One value per (userId, plugin, key)
   })
 )
 
 /**
  * Plugin configurations table (LEGACY - REMOVED)
- * 
+ *
  * Plugin configs (username, etc) are now stored directly in svgs.plugins_config.
  * This table has been migrated and dropped.
  */
@@ -100,7 +103,7 @@ export const svgs = pgTable(
 
 /**
  * Templates table
- * 
+ *
  * Templates are saved SVG configurations that can be reused.
  * Created from existing SVGs in the dashboard.
  */
@@ -143,7 +146,7 @@ export type NewTemplate = typeof templates.$inferInsert
 
 /**
  * Template likes table
- * 
+ *
  * Users can like/unlike templates
  */
 export const templateLikes = pgTable(
@@ -151,18 +154,17 @@ export const templateLikes = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     userId: text("user_id").notNull(),
-    templateId: uuid("template_id").notNull().references(() => templates.id, { onDelete: "cascade" }),
+    templateId: uuid("template_id")
+      .notNull()
+      .references(() => templates.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     userIdIdx: index("idx_template_likes_user_id").on(table.userId),
     templateIdIdx: index("idx_template_likes_template_id").on(table.templateId),
-    userTemplateUnique: unique("idx_template_likes_user_template_unique")
-      .on(table.userId, table.templateId), // One like per user per template
+    userTemplateUnique: unique("idx_template_likes_user_template_unique").on(table.userId, table.templateId), // One like per user per template
   })
 )
 
 export type TemplateLike = typeof templateLikes.$inferSelect
 export type NewTemplateLike = typeof templateLikes.$inferInsert
-
-

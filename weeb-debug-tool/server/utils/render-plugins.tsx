@@ -1,13 +1,13 @@
 /**
  * Render Plugins using direct imports from weeb-plugins/src
- * 
+ *
  * This imports plugins directly from the source, enabling hot reload via nodemon.
  */
 
-import React from 'react'
-import { renderToString } from 'react-dom/server'
-import { PluginManager } from '@weeb-plugins/plugins/manager'
-import type { Plugin } from '@weeb-plugins/plugins/shared/types/plugin'
+import React from "react"
+import { renderToString } from "react-dom/server"
+import { PluginManager } from "../../../weeb-plugins/src/plugins/manager"
+import type { Plugin } from "../../../weeb-plugins/src/plugins/shared/types/plugin"
 
 // Initialize PluginManager to register all plugins
 const pluginManager = PluginManager.getInstance()
@@ -28,7 +28,10 @@ export async function renderPluginToHtml(
 
   const data = await plugin.fetchData(config, dev, undefined)
 
-  const element = plugin.render(config, data) as React.ReactElement
+  const element = plugin.render(config, data)
+  if (!React.isValidElement(element)) {
+    throw new Error(`Plugin ${pluginName} returned invalid React element`)
+  }
 
   const html = renderToString(element)
 
@@ -41,7 +44,8 @@ export async function renderPluginToHtml(
 export async function renderPlugins(config: {
   plugins: Record<string, any>
   style?: string
-  size?: 'half' | 'full'
+  theme?: string
+  size?: "half" | "full"
   hideTerminalEmojis?: boolean
   dev?: boolean
 }): Promise<{
@@ -51,7 +55,7 @@ export async function renderPlugins(config: {
 }> {
   const pluginName = Object.keys(config.plugins)[0]
   if (!pluginName) {
-    throw new Error('No plugin specified in config')
+    throw new Error("No plugin specified in config")
   }
 
   const plugin = pluginManager.get(pluginName) as Plugin | undefined
@@ -62,11 +66,13 @@ export async function renderPlugins(config: {
 
   // Prepare plugin config
   const pluginConfig = {
-    style: config.style || 'default',
-    size: config.size || 'half',
+    size: config.size || "half",
     hideTerminalEmojis: config.hideTerminalEmojis || false,
     ...config.plugins[pluginName],
     enabled: true,
+    // Adicionar style e theme globalmente para o plugin
+    style: config.style || "default",
+    theme: config.theme || "default",
   }
 
   // Fetch data
@@ -86,42 +92,38 @@ export async function renderPlugins(config: {
   let rendered: React.ReactElement
 
   if (pluginError) {
-    const { PluginError } = await import('../../../svg-generator/src/components/PluginError.js')
+    const { PluginError } = await import("../../../svg-generator/src/components/PluginError.js")
     rendered = (
       <PluginError
         pluginName={pluginName}
         error={pluginError}
-        style={config.style || 'default'}
-        size={config.size || 'half'}
+        style={config.style || "default"}
+        size={config.size || "half"}
       />
     )
   } else {
     try {
-      rendered = plugin.render(pluginConfig, pluginData)
-      if (!React.isValidElement(rendered)) {
+      const pluginResult = plugin.render(pluginConfig, pluginData)
+      if (!React.isValidElement(pluginResult)) {
         throw new Error(`Plugin returned invalid React element`)
       }
+      rendered = pluginResult
     } catch (error) {
-      const { PluginError } = await import('../../../svg-generator/src/components/PluginError.js')
+      const { PluginError } = await import("../../../svg-generator/src/components/PluginError.js")
       rendered = (
         <PluginError
           pluginName={pluginName}
           error={error instanceof Error ? error : new Error(String(error))}
-          style={config.style || 'default'}
-          size={config.size || 'half'}
+          style={config.style || "default"}
+          size={config.size || "half"}
         />
       )
     }
   }
 
   return {
-    element: (
-      <div>
-        {rendered}
-      </div>
-    ),
+    element: <div>{rendered}</div>,
     pluginsData: pluginData ? { [pluginName]: pluginData } : {},
     pluginsErrors: pluginError ? { [pluginName]: pluginError } : {},
   }
 }
-

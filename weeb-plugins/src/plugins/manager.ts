@@ -4,13 +4,14 @@ import { githubPlugin } from "./github/index"
 import { lastFmPlugin } from "./lastfm/index"
 import { lyftaPlugin } from "./lyfta/index"
 import { myAnimeListPlugin } from "./myanimelist/index"
+import { githubProjectPlugin } from "./github-project/index"
 import type { EssentialPluginConfig } from "./shared/types/base"
 import type { Plugin } from "./shared/types/plugin"
 import { steamPlugin } from "./steam/index"
-import { duolingoPlugin } from './duolingo/index'
-import { codewarsPlugin } from './codewars/index'
-import { codeforcesPlugin } from './codeforces/index'
-import { stackoverflowPlugin } from './stackoverflow/index'
+import { duolingoPlugin } from "./duolingo/index"
+import { codewarsPlugin } from "./codewars/index"
+import { codeforcesPlugin } from "./codeforces/index"
+import { stackoverflowPlugin } from "./stackoverflow/index"
 
 export class PluginManager {
   private static instance: PluginManager
@@ -25,6 +26,7 @@ export class PluginManager {
     this.register(personality16Plugin)
     this.register(lyftaPlugin)
     this.register(steamPlugin)
+    this.register(githubProjectPlugin)
     this.register(duolingoPlugin)
     this.register(codewarsPlugin)
     this.register(codeforcesPlugin)

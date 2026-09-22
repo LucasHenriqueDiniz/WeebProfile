@@ -3,11 +3,11 @@
  * Automaticamente envolve o terminalComponent com TerminalBody apenas se wrapTerminalBody for true
  */
 
-import React from 'react'
-import { TerminalBody } from './Terminal/TerminalBody'
+import React from "react"
+import { TerminalBody } from "./Terminal/TerminalBody"
 
 interface RenderBasedOnStyleProps {
-  style: 'default' | 'terminal'
+  style: "default" | "terminal"
   terminalComponent: React.ReactNode
   defaultComponent: React.ReactNode
   wrapTerminalBody?: boolean // Controla se deve envolver com TerminalBody (padrão: false)
@@ -20,10 +20,10 @@ export function RenderBasedOnStyle({
   wrapTerminalBody = false,
 }: RenderBasedOnStyleProps): React.ReactElement {
   switch (style) {
-    case 'default':
+    case "default":
       // Wrap in fragment to ensure proper rendering
       return <>{defaultComponent}</>
-    case 'terminal':
+    case "terminal":
       // Envolve com TerminalBody apenas se wrapTerminalBody for true
       // Isso evita múltiplos TerminalBody aninhados
       if (wrapTerminalBody) {
@@ -34,4 +34,3 @@ export function RenderBasedOnStyle({
       return <div>Unknown style: {style}</div>
   }
 }
-

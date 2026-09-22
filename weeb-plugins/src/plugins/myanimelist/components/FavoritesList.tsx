@@ -77,11 +77,11 @@ const GENRE_STYLES: Record<string, { icon: React.ReactElement; color: string }> 
   Suspense: { icon: <FaGhost size={10} />, color: "#7c2d12" },
   "Shoujo Ai": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
   "Shounen Ai": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
-  "Yaoi": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
-  "Yuri": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
-  "Harem": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
-  "Isekai": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
-  "Magic": { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
+  Yaoi: { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
+  Yuri: { icon: <FaHeartTag size={10} />, color: "#a855f7" },
+  Harem: { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
+  Isekai: { icon: <FaHeartTag size={10} />, color: "#a855f7" },
+  Magic: { icon: <FaHeartTag size={10} />, color: "#3b82f6" },
   "Martial Arts": { icon: <FaHeartTag size={10} />, color: "#a855f7" },
 }
 
@@ -263,10 +263,10 @@ function DefaultDetailedFavorite({
   const genres = isHalf ? allGenres.slice(0, 4) : allGenres
   const status = favorite.status
   const popularity = favorite.popularity
-  
+
   const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
   const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
-  
+
   // Only show episodes/chapters if they exist and are greater than 0
   const showEpisodes = animeEpisodes != null && animeEpisodes > 0
   const showChapters = mangaChapters != null && mangaChapters > 0
@@ -309,11 +309,10 @@ function DefaultDetailedFavorite({
             </span>
           )}
           {status && (
-            <span className={`font-semibold flex items-center gap-1 text-[12px] text-mal-${getFavoriteStatusClass(status)} half:hidden`}>
-              <GoDotFill
-                size={14}
-                className={`text-mal-${getFavoriteStatusClass(status)}`}
-              />
+            <span
+              className={`font-semibold flex items-center gap-1 text-[12px] text-mal-${getFavoriteStatusClass(status)} half:hidden`}
+            >
+              <GoDotFill size={14} className={`text-mal-${getFavoriteStatusClass(status)}`} />
               {status}
             </span>
           )}
@@ -350,10 +349,10 @@ function TerminalDetailedFavorite({
   const genres = favorite.genres?.map((genre) => genre.name) || []
   const status = favorite.status
   const popularity = favorite.popularity
-  
+
   const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
   const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
-  
+
   // Only show episodes/chapters if they exist and are greater than 0
   const showEpisodes = animeEpisodes != null && animeEpisodes > 0
   const showChapters = mangaChapters != null && mangaChapters > 0
@@ -364,21 +363,13 @@ function TerminalDetailedFavorite({
       <div className="flex gap-4 items-baseline">
         {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
         {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
-        {showEpisodes && (
-          <span className="text-default-muted font-bold truncate">
-            🎞️ {animeEpisodes} EP&apos;s
-          </span>
+        {showEpisodes && <span className="text-default-muted font-bold truncate">🎞️ {animeEpisodes} EP&apos;s</span>}
+        {showChapters && <span className="text-default-muted font-bold truncate">📚 {mangaChapters} ch&apos;s</span>}
+        {release_year != null && release_year > 0 && (
+          <span className="text-default-muted font-bold truncate">📅 {release_year}</span>
         )}
-        {showChapters && (
-          <span className="text-default-muted font-bold truncate">
-            📚 {mangaChapters} ch&apos;s
-          </span>
-        )}
-        {release_year != null && release_year > 0 && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
-          <span
-            className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}
-          >
+          <span className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}>
             ● {status}
           </span>
         )}
@@ -420,10 +411,10 @@ function DefaultMinimalFavorite({
   const genres = isHalf ? allGenres.slice(0, 4) : allGenres
   const status = favorite.status
   const popularity = favorite.popularity
-  
+
   const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
   const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
-  
+
   // Only show episodes/chapters if they exist and are greater than 0
   const showEpisodes = animeEpisodes != null && animeEpisodes > 0
   const showChapters = mangaChapters != null && mangaChapters > 0
@@ -466,11 +457,10 @@ function DefaultMinimalFavorite({
             </span>
           )}
           {status && (
-            <span className={`font-semibold flex items-center gap-1 text-[12px] text-mal-${getFavoriteStatusClass(status)} half:hidden`}>
-              <GoDotFill
-                size={10}
-                className={`text-mal-${getFavoriteStatusClass(status)}`}
-              />
+            <span
+              className={`font-semibold flex items-center gap-1 text-[12px] text-mal-${getFavoriteStatusClass(status)} half:hidden`}
+            >
+              <GoDotFill size={10} className={`text-mal-${getFavoriteStatusClass(status)}`} />
               {status}
             </span>
           )}
@@ -501,10 +491,10 @@ function TerminalMinimalFavorite({
   const genres = favorite.genres?.map((genre) => genre.name) || []
   const status = favorite.status
   const popularity = favorite.popularity
-  
+
   const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
   const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
-  
+
   // Only show episodes/chapters if they exist and are greater than 0
   const showEpisodes = animeEpisodes != null && animeEpisodes > 0
   const showChapters = mangaChapters != null && mangaChapters > 0
@@ -515,21 +505,13 @@ function TerminalMinimalFavorite({
       <div className="flex gap-4 items-baseline">
         {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
         {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
-        {showEpisodes && (
-          <span className="text-default-muted font-bold truncate">
-            🎞️ {animeEpisodes} EP&apos;s
-          </span>
+        {showEpisodes && <span className="text-default-muted font-bold truncate">🎞️ {animeEpisodes} EP&apos;s</span>}
+        {showChapters && <span className="text-default-muted font-bold truncate">📚 {mangaChapters} ch&apos;s</span>}
+        {release_year != null && release_year > 0 && (
+          <span className="text-default-muted font-bold truncate">📅 {release_year}</span>
         )}
-        {showChapters && (
-          <span className="text-default-muted font-bold truncate">
-            📚 {mangaChapters} ch&apos;s
-          </span>
-        )}
-        {release_year != null && release_year > 0 && <span className="text-default-muted font-bold truncate">📅 {release_year}</span>}
         {status && !isHalf && (
-          <span
-            className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}
-          >
+          <span className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}>
             ● {status}
           </span>
         )}
@@ -755,8 +737,8 @@ export function FavoritesList({
           </>
         )
 
-        case "detailed":
-          // Only anime and manga support detailed
+      case "detailed":
+        // Only anime and manga support detailed
         if (type !== "anime" && type !== "manga") {
           return (
             <>

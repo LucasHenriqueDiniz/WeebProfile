@@ -11,7 +11,7 @@ export function createClient() {
     })
     throw new Error(
       "Supabase public URL and anon key are required to create browser client. " +
-      "Check your .env.local, restart the dev server and ensure NEXT_PUBLIC_SUPABASE_* are available."
+        "Check your .env.local, restart the dev server and ensure NEXT_PUBLIC_SUPABASE_* are available."
     )
   }
 

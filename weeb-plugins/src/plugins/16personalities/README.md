@@ -25,6 +25,7 @@ pnpm create-plugin meu-plugin
 ```
 
 Isso criará automaticamente:
+
 - Nova pasta `src/plugins/meu-plugin/`
 - Todos os arquivos com placeholders substituídos
 - Plugin registrado no PluginManager
@@ -49,12 +50,14 @@ Isso criará automaticamente:
 ## Configurações Essenciais vs Não-Essenciais
 
 ### Essenciais (EssentialConfig)
+
 - API keys, tokens, credenciais
 - Armazenadas em `essentialConfigs` no banco de dados
 - Acessadas via parâmetro `essentialConfig` em `fetchData`
 - Definidas em `essentialConfigKeys` no plugin
 
 ### Não-Essenciais (NonEssentialConfig)
+
 - Preferências do usuário (max_items, titles, etc)
 - Armazenadas em `pluginsConfig` no banco de dados
 - Acessadas via `config.nonEssential`
@@ -90,12 +93,10 @@ export async function fetchSpotifyData(
     return getMockSpotifyData()
   }
 
-  const apiKey = requireApiKey(essentialConfig?.apiKey, 'apiKey')
-  
-  const response = await fetchJson<SpotifyData>(
-    `https://api.spotify.com/v1/me/tracks?api_key=${apiKey}`
-  )
-  
+  const apiKey = requireApiKey(essentialConfig?.apiKey, "apiKey")
+
+  const response = await fetchJson<SpotifyData>(`https://api.spotify.com/v1/me/tracks?api_key=${apiKey}`)
+
   return response
 }
 ```
@@ -144,4 +145,3 @@ Use as constants em `shared/constants/`:
 - [ ] Testar em modo dev (mock)
 - [ ] Testar com dados reais
 - [ ] Documentar configurações disponíveis
-

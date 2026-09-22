@@ -17,7 +17,7 @@
     "dev": "concurrently -n \"dashboard,generator\" -c \"cyan,magenta\" \"pnpm dev:dashboard\" \"pnpm dev:generator\"",
     "dev:dashboard": "pnpm --filter weeb-dashboard dev",
     "dev:generator": "pnpm --filter svg-generator dev:server",
-    "dev:debug-tool": "pnpm --filter weeb-debug-tool dev",
+    "dev:debug-tool": "pnpm --filter @weeb/debug-tool dev",
     "build": "pnpm build:dashboard",
     "build:dashboard": "pnpm --filter weeb-dashboard build",
     "build:railway": "pnpm --filter @weeb/weeb-plugins build && pnpm --filter @weeb/svg-generator build",
@@ -31,7 +31,8 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck",
-    "generate-previews": "tsx scripts/generate-previews.ts"
+    "generate-previews": "tsx scripts/generate-previews.ts",
+    "kill-servers": "tsx scripts/kill-servers.ts"
   },
   "dependencies": {
     "@octokit/graphql": "^8.1.1",

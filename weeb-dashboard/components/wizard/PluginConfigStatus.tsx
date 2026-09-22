@@ -13,7 +13,7 @@ interface PluginConfigStatusProps {
 
 /**
  * Unified status component for plugin configuration
- * 
+ *
  * Shows status only for enabled plugins with sections (espelha backend validation).
  * Status appears in ONE place to avoid duplication.
  */
@@ -23,15 +23,15 @@ export function PluginConfigStatus({
   missingConfigs,
   secretsPresence,
 }: PluginConfigStatusProps) {
-  const pluginMissing = missingConfigs.filter(m => m.plugin === pluginName)
-  
+  const pluginMissing = missingConfigs.filter((m) => m.plugin === pluginName)
+
   // Only show status for enabled plugins with sections (espelha backend)
   if (!pluginConfig.enabled || !pluginConfig.sections?.length) {
     return null
   }
-  
+
   const hasMissing = pluginMissing.length > 0
-  
+
   if (hasMissing) {
     return (
       <Badge variant="destructive" className="text-[10px] font-medium">
@@ -40,21 +40,21 @@ export function PluginConfigStatus({
       </Badge>
     )
   }
-  
+
   // Verificar se todos os secrets existem
-  const allSecretsPresent = secretsPresence
-    ? Object.values(secretsPresence).every(p => p.exists)
-    : false
-  
+  const allSecretsPresent = secretsPresence ? Object.values(secretsPresence).every((p) => p.exists) : false
+
   if (allSecretsPresent) {
     return (
-      <Badge variant="default" className="text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400">
+      <Badge
+        variant="default"
+        className="text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400"
+      >
         <CheckCircle2 className="w-3 h-3 mr-1" />
         Configurado
       </Badge>
     )
   }
-  
+
   return null
 }
-

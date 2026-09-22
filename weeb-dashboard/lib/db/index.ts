@@ -11,17 +11,17 @@ let _db: ReturnType<typeof drizzle> | null = null
 function getClient() {
   if (!_client) {
     const connectionString = env.databaseUrl
-    
+
     // Se a connection string estiver vazia (pode acontecer durante build),
     // lançar erro apenas em runtime, não durante build
     if (!connectionString) {
       throw new Error(
         "DATABASE_URL não está configurada. " +
-        "Configure esta variável no Vercel em Settings → Environment Variables. " +
-        "Veja VERCEL_ENV_SETUP.md para mais detalhes."
+          "Configure esta variável no Vercel em Settings → Environment Variables. " +
+          "Veja VERCEL_ENV_SETUP.md para mais detalhes."
       )
     }
-    
+
     _client = postgres(connectionString, {
       max: 1,
       idle_timeout: 20,
@@ -63,5 +63,3 @@ export const db = new Proxy({} as ReturnType<typeof drizzle>, {
 })
 
 export { schema }
-
-

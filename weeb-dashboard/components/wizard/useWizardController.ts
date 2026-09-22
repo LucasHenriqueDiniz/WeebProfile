@@ -1,6 +1,6 @@
 /**
  * Wizard Controller Hook
- * 
+ *
  * Extracts all business logic from Wizard component.
  * Returns computed values, handlers, and props for child components.
  */
@@ -11,7 +11,12 @@ import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
-import { selectEnabledPluginNames, selectPluginsWithSections, selectTotalSections, selectMissingConfigs } from "@/stores/wizard-selectors"
+import {
+  selectEnabledPluginNames,
+  selectPluginsWithSections,
+  selectTotalSections,
+  selectMissingConfigs,
+} from "@/stores/wizard-selectors"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ApiException, svgApi } from "@/lib/api"
 import { debugWizard } from "@/lib/debug"
@@ -68,7 +73,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
   // Computed values using canonical selectors
   const enabledPlugins = useMemo(() => {
     const enabled = selectEnabledPluginNames({ plugins, pluginsOrder })
-    debugWizard('Enabled plugins:', enabled)
+    debugWizard("Enabled plugins:", enabled)
     return enabled
   }, [plugins, pluginsOrder])
 
@@ -85,10 +90,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
 
   // Missing configs validation - use canonical selector that espelha backend criteria
   const missingConfigs = useMemo(() => {
-    return selectMissingConfigs(
-      { plugins, pluginsOrder },
-      { missingSecrets: bootstrapMissingSecrets }
-    )
+    return selectMissingConfigs({ plugins, pluginsOrder }, { missingSecrets: bootstrapMissingSecrets })
   }, [plugins, pluginsOrder, bootstrapMissingSecrets])
 
   const hasMissingEssential = missingConfigs.length > 0
@@ -116,7 +118,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         // Only include if enabled AND has sections
         if (plugin?.enabled && plugin.sections && plugin.sections.length > 0) {
           const metadata = (PLUGINS_METADATA as Record<string, any>)[pluginName]
-          
+
           // Build plugin config with all non-sensitive fields
           const pluginConfig: Record<string, any> = {
             enabled: true,
@@ -132,7 +134,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
           if (metadata?.requiredFields) {
             metadata.requiredFields.forEach((field: string) => {
               const value = (plugin as any)[field]
-              if (value && typeof value === 'string' && value.trim()) {
+              if (value && typeof value === "string" && value.trim()) {
                 pluginConfig[field] = value.trim()
               }
             })
@@ -306,8 +308,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         error instanceof ApiException
           ? error.data.message || error.data.error || error.message
           : error instanceof Error
-          ? error.message
-          : `Erro ao ${isEditMode ? "atualizar" : "criar"} imagem`
+            ? error.message
+            : `Erro ao ${isEditMode ? "atualizar" : "criar"} imagem`
 
       toast({
         title: "Erro",
@@ -362,4 +364,3 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     footerProps,
   }
 }
-

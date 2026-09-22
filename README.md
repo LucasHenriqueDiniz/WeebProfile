@@ -24,9 +24,7 @@ A simple and customizable way to display code, anime, and music stats on your Gi
 
 ## 🖼️ Supported sections
 
-
 <h4>Right now we support 31 sections with 2 styles each</h4>
-
 
 <details close>
   <summary><b>github</b></summary>
@@ -105,7 +103,7 @@ A simple and customizable way to display code, anime, and music stats on your Gi
     </tr>
   </table>
 </details>
-  
+
 
 <details close>
   <summary><b>lastfm</b></summary>
@@ -216,7 +214,7 @@ A simple and customizable way to display code, anime, and music stats on your Gi
     </tr>
   </table>
 </details>
-  
+
 
 <details close>
   <summary><b>myanimelist</b></summary>
@@ -343,7 +341,7 @@ A simple and customizable way to display code, anime, and music stats on your Gi
     </tr>
   </table>
 </details>
-  
+
 
 <!-- SETUP:README @TODO UPDATE THIS -->
 
@@ -557,6 +555,7 @@ If you are interested in contributing, the following resources may interest you:
 - [📜 License](/LICENSE)
 
 Use [`💬 discussions`](https://github.com/LucasHenriqueDiniz/WeebProfile/discussions) for feedback, new features suggestions, bugs reports or to request help for installation.
+
 <!-- LICENSE:README -->
 
 ## 📜 License

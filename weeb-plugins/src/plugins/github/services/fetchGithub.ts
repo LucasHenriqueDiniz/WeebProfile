@@ -1,17 +1,16 @@
-import { graphql } from "@octokit/graphql"
+import { GraphqlResponseError, graphql } from "@octokit/graphql"
 import { Octokit } from "@octokit/rest"
-import { GraphqlResponseError } from "@octokit/graphql"
-import type { GithubConfig, GithubData, ContributionWeek } from "../types"
-import {
-  SECTION_QUERIES,
-  FOLLOWERS_QUERY,
-  REPOSITORY_STARGAZERS_QUERY,
-  REPOSITORY_CONTRIBUTORS_QUERY,
-  FEATURED_REPOSITORIES_QUERY,
-  RECENT_ACTIVITY_QUERY,
-} from "./queries"
-import { getMockGithubData } from "./mock-data"
 import { urlToBase64 } from "../../../utils/image-to-base64"
+import type { ContributionWeek, GithubConfig, GithubData } from "../types"
+import { getMockGithubData } from "./mock-data"
+import {
+  FEATURED_REPOSITORIES_QUERY,
+  FOLLOWERS_QUERY,
+  RECENT_ACTIVITY_QUERY,
+  REPOSITORY_CONTRIBUTORS_QUERY,
+  REPOSITORY_STARGAZERS_QUERY,
+  SECTION_QUERIES,
+} from "./queries"
 
 // Mapeamento de seções para permissões necessárias
 const SECTION_PERMISSIONS: Record<string, string[]> = {
@@ -350,7 +349,7 @@ export async function fetchGithubData(
 
         // Process data based on section
         switch (section) {
-          case "profile":
+          case "profile": {
             if (!result.user.name || !result.user.login || !result.user.avatarUrl || !result.user.createdAt) {
               throw new Error("Missing required user data")
             }
@@ -364,8 +363,13 @@ export async function fetchGithubData(
             data.user = {
               name: result.user.name,
               login: result.user.login,
-              avatarUrl: avatarUrlBase64 || result.user.avatarUrl,
+              bio: result.user.bio,
+              avatarUrl: avatarUrlBase64,
               createdAt: result.user.createdAt,
+              location: result.user.location,
+              company: result.user.company,
+              websiteUrl: result.user.websiteUrl,
+              twitterUsername: result.user.twitterUsername,
               followers: result.user.followers?.totalCount || 0,
               following: result.user.following?.totalCount || 0,
               repositories: { totalCount: result.user.repositories?.nodes?.length || 0 },
@@ -376,14 +380,17 @@ export async function fetchGithubData(
               repositoriesContributedTo: result.user.repositoriesContributedTo?.totalCount || 0,
             }
             break
+          }
 
-          case "favorite_languages":
+          case "favorite_languages": {
             data.languages = processLanguagesData(result)
             break
+          }
 
-          case "activity":
+          case "activity": {
             data.activity = processActivityData(result)
             break
+          }
 
           case "calendar":
             await processCalendarData(graphqlClient, username, config, data)
@@ -423,7 +430,7 @@ export async function fetchGithubData(
             }
             break
 
-          case "sponsorships":
+          case "sponsorships": {
             const sponsorships = result.user.sponsorshipsAsSponsor
             const sponsorshipsNodes = await Promise.all(
               (sponsorships?.nodes || []).map(async (sponsorship: any) => {
@@ -452,8 +459,9 @@ export async function fetchGithubData(
               nodes: sponsorshipsNodes,
             }
             break
+          }
 
-          case "sponsors":
+          case "sponsors": {
             const sponsors = result.user.sponsors
             const sponsorsNodes = await Promise.all(
               (sponsors?.nodes || []).map(async (sponsor: any) => {
@@ -475,6 +483,7 @@ export async function fetchGithubData(
               nodes: sponsorsNodes,
             }
             break
+          }
         }
       } catch (sectionError: any) {
         // Log erro mas continua processando outras seções
@@ -1048,7 +1057,7 @@ async function processRepositoryContributorsData(
         }
       })
     )
-  } catch (error: any) {
+  } catch {
     // Fallback para GraphQL se REST API falhar
     try {
       const query = REPOSITORY_CONTRIBUTORS_QUERY
@@ -1236,7 +1245,7 @@ async function processRecentActivityData(
         events.push(...response.data)
         // Se retornou menos de 100, não há mais páginas
         if (response.data.length < 100) break
-      } catch (error) {
+      } catch {
         // Se erro 404 ou similar, usuário não tem eventos públicos
         break
       }
@@ -1420,7 +1429,7 @@ async function processRecentActivityData(
             if (!review || !pr) break
 
             const prNumber = pr.number
-            const reviewState = review.state
+            const _reviewState = review.state
             const url = review.html_url || pr.html_url || `${repoUrl}/pull/${prNumber}`
 
             activities.push({
@@ -1463,7 +1472,7 @@ async function processCodeHabitsData(
   const commitsByHour: Record<number, number> = {}
   let totalCommits = 0
   const languages: Record<string, { count: number; color: string }> = {}
-  const fileTypes: Record<string, number> = {}
+  const _fileTypes: Record<string, number> = {}
 
   try {
     const startTime = Date.now()
@@ -1865,7 +1874,6 @@ async function processCodeHabitsData(
     const batchSize = 20
     for (let i = 0; i < commitsToAnalyze.length; i += batchSize) {
       // Check time limit during analysis
-      const elapsedAnalysisTime = Date.now() - commitAnalysisStartTime
       const totalElapsedTime = Date.now() - startTime
       if (totalElapsedTime > MAX_TIME_MS) {
         console.log(

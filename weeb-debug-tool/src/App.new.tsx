@@ -1,16 +1,16 @@
 /**
  * Main App Component (Refactored)
- * 
+ *
  * New layout with TopBar, PreviewSplit, and InspectorPanel
  */
 
-import { useEffect, useCallback, useRef, useState } from 'react'
-import { api, type Plugin } from './lib/api'
-import TopBar from './components/TopBar/TopBar'
-import PreviewSplit from './components/workspace/PreviewSplit'
-import InspectorPanel from './components/inspector/InspectorPanel'
-import { useDebugStore } from './store/debugStore'
-import type { StyleSnapshot } from './lib/iframe/iframeProtocol'
+import { useEffect, useCallback, useRef, useState } from "react"
+import { api, type Plugin } from "./lib/api"
+import TopBar from "./components/TopBar/TopBar"
+import PreviewSplit from "./components/workspace/PreviewSplit"
+import InspectorPanel from "./components/inspector/InspectorPanel"
+import { useDebugStore } from "./store/debugStore"
+import type { StyleSnapshot } from "./lib/iframe/iframeProtocol"
 
 function App() {
   const {
@@ -37,7 +37,7 @@ function App() {
   const [serverConnected, setServerConnected] = useState(false)
   const [serverStartTime, setServerStartTime] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
-  
+
   const [reactSnapshot, setReactSnapshot] = useState<StyleSnapshot | null>(null)
   const [svgSnapshot, setSvgSnapshot] = useState<StyleSnapshot | null>(null)
 
@@ -74,9 +74,9 @@ function App() {
 
       incrementRenderVersion() // Invalidate cache
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to generate previews'
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate previews"
       setError(errorMessage)
-      console.error('Error generating previews:', error)
+      console.error("Error generating previews:", error)
     } finally {
       setLoading(false)
     }
@@ -92,14 +92,14 @@ function App() {
   useEffect(() => {
     const checkServer = async () => {
       try {
-        const response = await fetch('/health')
+        const response = await fetch("/health")
         if (response.ok) {
           const data = await response.json()
           setServerConnected(true)
 
           if (data.serverStartTime) {
             if (serverStartTime !== null && serverStartTime !== data.serverStartTime) {
-              console.log('🔄 Server restarted, regenerating previews...')
+              console.log("🔄 Server restarted, regenerating previews...")
               generatePreviewsRef.current()
             }
             setServerStartTime(data.serverStartTime)
@@ -107,7 +107,7 @@ function App() {
         }
       } catch (error) {
         setServerConnected(false)
-        console.debug('Server not ready yet:', error)
+        console.debug("Server not ready yet:", error)
       }
     }
 
@@ -125,7 +125,7 @@ function App() {
         const { plugins } = await api.getPlugins()
         setPlugins(plugins)
       } catch (error) {
-        console.error('Error loading plugins:', error)
+        console.error("Error loading plugins:", error)
       }
     }
 
@@ -140,39 +140,48 @@ function App() {
   }, [plugin, section, style, size, dev, serverConnected])
 
   // Handle element selection from React preview
-  const handleReactElementSelect = useCallback((snapshot: StyleSnapshot | null) => {
-    setReactSnapshot(snapshot)
-    if (snapshot?.debugId) {
-      setSelectedDebugId(snapshot.debugId)
-      // Try to get SVG snapshot from cache or request it
-      const cached = getSnapshot(snapshot.debugId)
-      if (cached) {
-        setSvgSnapshot(cached.svg)
+  const handleReactElementSelect = useCallback(
+    (snapshot: StyleSnapshot | null) => {
+      setReactSnapshot(snapshot)
+      if (snapshot?.debugId) {
+        setSelectedDebugId(snapshot.debugId)
+        // Try to get SVG snapshot from cache or request it
+        const cached = getSnapshot(snapshot.debugId)
+        if (cached) {
+          setSvgSnapshot(cached.svg)
+        }
+      } else {
+        setSelectedDebugId(null)
       }
-    } else {
-      setSelectedDebugId(null)
-    }
-  }, [setSelectedDebugId, getSnapshot])
+    },
+    [setSelectedDebugId, getSnapshot]
+  )
 
   // Handle element selection from SVG preview
-  const handleSvgElementSelect = useCallback((snapshot: StyleSnapshot | null) => {
-    setSvgSnapshot(snapshot)
-    if (snapshot?.debugId) {
-      setSelectedDebugId(snapshot.debugId)
-      // Try to get React snapshot from cache or request it
-      const cached = getSnapshot(snapshot.debugId)
-      if (cached) {
-        setReactSnapshot(cached.react)
+  const handleSvgElementSelect = useCallback(
+    (snapshot: StyleSnapshot | null) => {
+      setSvgSnapshot(snapshot)
+      if (snapshot?.debugId) {
+        setSelectedDebugId(snapshot.debugId)
+        // Try to get React snapshot from cache or request it
+        const cached = getSnapshot(snapshot.debugId)
+        if (cached) {
+          setReactSnapshot(cached.react)
+        }
+      } else {
+        setSelectedDebugId(null)
       }
-    } else {
-      setSelectedDebugId(null)
-    }
-  }, [setSelectedDebugId, getSnapshot])
+    },
+    [setSelectedDebugId, getSnapshot]
+  )
 
   // Handle hover
-  const handleElementHover = useCallback((debugId: string | null) => {
-    setHoveredDebugId(debugId)
-  }, [setHoveredDebugId])
+  const handleElementHover = useCallback(
+    (debugId: string | null) => {
+      setHoveredDebugId(debugId)
+    },
+    [setHoveredDebugId]
+  )
 
   // Copy functions
   const handleCopySvg = useCallback(() => {
@@ -191,13 +200,13 @@ function App() {
     return (
       <div
         style={{
-          width: '100vw',
-          height: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: '#0d1117',
-          color: '#8b949e',
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#0d1117",
+          color: "#8b949e",
         }}
       >
         Waiting for server to start...
@@ -209,28 +218,28 @@ function App() {
     return (
       <div
         style={{
-          width: '100vw',
-          height: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: '#0d1117',
-          color: '#f85149',
-          gap: '16px',
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#0d1117",
+          color: "#f85149",
+          gap: "16px",
         }}
       >
-        <div style={{ fontSize: '18px', fontWeight: '600' }}>Error</div>
-        <div style={{ color: '#8b949e' }}>{error}</div>
+        <div style={{ fontSize: "18px", fontWeight: "600" }}>Error</div>
+        <div style={{ color: "#8b949e" }}>{error}</div>
         <button
           onClick={generatePreviews}
           style={{
-            background: '#21262d',
-            border: '1px solid #30363d',
-            borderRadius: '4px',
-            padding: '8px 16px',
-            color: '#c9d1d9',
-            cursor: 'pointer',
+            background: "#21262d",
+            border: "1px solid #30363d",
+            borderRadius: "4px",
+            padding: "8px 16px",
+            color: "#c9d1d9",
+            cursor: "pointer",
           }}
         >
           Retry
@@ -242,32 +251,27 @@ function App() {
   return (
     <div
       style={{
-        width: '100vw',
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        background: '#0d1117',
-        color: '#c9d1d9',
-        overflow: 'hidden',
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        background: "#0d1117",
+        color: "#c9d1d9",
+        overflow: "hidden",
       }}
     >
       {/* Top Bar */}
-      <TopBar
-        plugins={plugins}
-        onRegenerate={generatePreviews}
-        onCopySvg={handleCopySvg}
-        onCopyHtml={handleCopyHtml}
-      />
+      <TopBar plugins={plugins} onRegenerate={generatePreviews} onCopySvg={handleCopySvg} onCopyHtml={handleCopyHtml} />
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ flex: 1, display: "flex", overflow: "hidden", position: "relative" }}>
         {/* Workspace (with margin for inspector) */}
         <div
           style={{
             flex: 1,
-            marginRight: reactSnapshot || svgSnapshot ? '400px' : 0,
-            transition: 'margin-right 0.2s',
-            overflow: 'hidden',
+            marginRight: reactSnapshot || svgSnapshot ? "400px" : 0,
+            transition: "margin-right 0.2s",
+            overflow: "hidden",
           }}
         >
           {lastOutputs ? (
@@ -285,12 +289,12 @@ function App() {
           ) : loading ? (
             <div
               style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#8b949e',
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#8b949e",
               }}
             >
               Loading...
@@ -298,12 +302,12 @@ function App() {
           ) : (
             <div
               style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#8b949e',
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#8b949e",
               }}
             >
               Select a plugin and section to start
@@ -316,7 +320,7 @@ function App() {
           <InspectorPanel
             reactSnapshot={reactSnapshot}
             svgSnapshot={svgSnapshot}
-            css={lastOutputs?.css || ''}
+            css={lastOutputs?.css || ""}
             onClose={() => {
               setReactSnapshot(null)
               setSvgSnapshot(null)
@@ -330,4 +334,3 @@ function App() {
 }
 
 export default App
-

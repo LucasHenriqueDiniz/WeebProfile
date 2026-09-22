@@ -1,9 +1,9 @@
 /**
  * Metadata do Plugin Steam
- * 
+ *
  * This file defines all sections, configurations and options for the Steam plugin.
  * É usado para gerar automaticamente o metadata.ts centralizado.
- * 
+ *
  * DO NOT edit metadata.ts manually - it is generated automatically from this file.
  */
 
@@ -149,4 +149,3 @@ export const steamPluginMetadata = {
     sections: ["statistics", "recent_games", "top_games"],
   },
 }
-

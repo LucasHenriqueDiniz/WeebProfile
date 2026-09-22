@@ -1,34 +1,34 @@
-import React from 'react'
-import { FaClock } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { LyftaData, LyftaNonEssentialConfig } from '../types'
-import { formatWeightInt } from '../utils/weight'
+import React from "react"
+import { FaClock } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { LyftaData, LyftaNonEssentialConfig } from "../types"
+import { formatWeightInt } from "../utils/weight"
 
 interface RecentWorkoutsProps {
   data: LyftaData
   config: LyftaNonEssentialConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
 export function RecentWorkouts({
   data,
   config,
-  style = 'default',
-  size = 'half',
+  style = "default",
+  size = "half",
 }: RecentWorkoutsProps): React.ReactElement {
   if (!data || !data.workoutSummaries || data.workoutSummaries.length === 0) {
     return <></>
   }
 
   const hideTitle = config.recent_workouts_hide_title || false
-  const title = config.recent_workouts_title || 'Recent Fitness Workouts'
+  const title = config.recent_workouts_title || "Recent Fitness Workouts"
   const maxWorkouts = config.workouts_max || 4
-  const weightUnit = config.weight_unit || 'kg'
+  const weightUnit = config.weight_unit || "kg"
   const workouts = data.workoutSummaries.slice(0, maxWorkouts)
 
   const formatDate = (dateString: string): string => {
@@ -53,7 +53,7 @@ export function RecentWorkouts({
 
   const getDurationMinutes = (duration: string | null): number | null => {
     if (!duration) return null
-    const parts = duration.split(':')
+    const parts = duration.split(":")
     if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
       const hours = parseInt(parts[0], 10) || 0
       const minutes = parseInt(parts[1], 10) || 0
@@ -75,12 +75,12 @@ export function RecentWorkouts({
               <div className="space-y-3">
                 {workouts.map((workout, index) => {
                   const dateStr = formatDate(workout.workout_perform_date)
-                  
+
                   // Calculate volume from workout exercises (more accurate)
                   // Find the full workout data to calculate volume
-                  const fullWorkout = data.workouts.find(w => w.id === workout.id)
+                  const fullWorkout = data.workouts.find((w) => w.id === workout.id)
                   let volumeKg = 0
-                  
+
                   if (fullWorkout) {
                     volumeKg = fullWorkout.exercises.reduce((acc, exercise) => {
                       const exerciseVolume = exercise.sets.reduce((setAcc, set) => {
@@ -99,13 +99,13 @@ export function RecentWorkouts({
                     // Fallback to total_volume if workout not found
                     volumeKg = (workout.total_volume || 0) / 1000
                   }
-                  
+
                   const volumeDisplay = formatNumber(volumeKg)
                   const durationMinutes = getDurationMinutes(workout.workout_duration)
                   const isFirst = index === 0
 
                   const circleBase =
-                    'w-7 h-7 half:w-6 half:h-6 rounded-full flex items-center justify-center text-[11px] font-semibold'
+                    "w-7 h-7 half:w-6 half:h-6 rounded-full flex items-center justify-center text-[11px] font-semibold"
                   const circleClassName = isFirst
                     ? `${circleBase} bg-default-15 text-default-highlight`
                     : `${circleBase} bg-default-muted/20 text-default-highlight`
@@ -115,9 +115,7 @@ export function RecentWorkouts({
                       {/* Timeline indicator */}
                       <div className="flex flex-col items-center pt-0.5">
                         <div className={circleClassName}>{index + 1}</div>
-                        {index < workouts.length - 1 && (
-                          <div className="w-px h-4 bg-default-muted/20" />
-                        )}
+                        {index < workouts.length - 1 && <div className="w-px h-4 bg-default-muted/20" />}
                       </div>
 
                       {/* Workout info */}
@@ -129,13 +127,11 @@ export function RecentWorkouts({
                             </div>
                             <div className="text-xs half:text-[10px] text-default-muted">
                               {dateStr}
-                              {durationMinutes
-                                ? ` • ${durationMinutes}min`
-                                : ''}
+                              {durationMinutes ? ` • ${durationMinutes}min` : ""}
                             </div>
                           </div>
                           <div className="text-sm half:text-xs font-bold text-default-highlight tabular-nums flex-shrink-0">
-                            {volumeKg} 
+                            {volumeKg}
                             {weightUnit}
                           </div>
                         </div>
@@ -151,15 +147,13 @@ export function RecentWorkouts({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'lyfta',
-                section: 'recent_workouts',
+                plugin: "lyfta",
+                section: "recent_workouts",
                 size,
               })}
             />
             {workouts.map((workout) => {
-              const workoutDate = new Date(
-                workout.workout_perform_date
-              ).toLocaleDateString()
+              const workoutDate = new Date(workout.workout_perform_date).toLocaleDateString()
               const volume = formatWeightInt(workout.total_volume, weightUnit)
               return (
                 <TerminalLineWithDots

@@ -1729,6 +1729,604 @@ export const PLUGINS_METADATA = {
     },
   },
 
+  ["github-project"]: {
+    name: "github-project",
+    displayName: "GitHub Project",
+    description: "Display comprehensive GitHub repository information with multiple visualizations",
+    category: "coding",
+    icon: "Github",
+    requiredFields: ["repository"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "banner",
+        name: "Repository Banner",
+        description: "Beautiful banner with repository information",
+        i18nKey: {
+          name: "plugins.github-project.sections.banner.name",
+          description: "plugins.github-project.sections.banner.description"
+        },
+        configOptions: [
+        {
+          key: "banner_style",
+          label: "Banner Style (Default only)",
+          type: "select",
+          defaultValue: "hero",
+          description: "Layout style for the banner",
+          options: [
+            { value: "hero", label: "Hero (Large & Prominent)" },
+            { value: "compact", label: "Compact (Smaller)" },
+            { value: "minimal", label: "Minimal (Text Only)" },
+            { value: "centered", label: "Centered (Avatar Focus)" }
+          ],
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_style.label",
+            description: "plugins.github-project.sections.banner.config.banner_style.description",
+            options: {
+              "hero": "plugins.github-project.sections.banner.config.banner_style.options.hero",
+              "compact": "plugins.github-project.sections.banner.config.banner_style.options.compact",
+              "minimal": "plugins.github-project.sections.banner.config.banner_style.options.minimal",
+              "centered": "plugins.github-project.sections.banner.config.banner_style.options.centered"
+            }
+          }
+        },
+        {
+          key: "banner_custom_avatar",
+          label: "Custom Avatar URL",
+          type: "string",
+          description: "Custom avatar image URL (optional, overrides default GitHub icon)",
+          placeholder: "https://avatars.githubusercontent.com/u/230892531?s=200&v=4",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_custom_avatar.label",
+            description: "plugins.github-project.sections.banner.config.banner_custom_avatar.description",
+            placeholder: "plugins.github-project.sections.banner.config.banner_custom_avatar.placeholder"
+          }
+        },
+        {
+          key: "banner_hide_stars",
+          label: "Hide Stars",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide star count",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_hide_stars.label",
+            description: "plugins.github-project.sections.banner.config.banner_hide_stars.description"
+          }
+        },
+        {
+          key: "banner_hide_forks",
+          label: "Hide Forks",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide fork count",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_hide_forks.label",
+            description: "plugins.github-project.sections.banner.config.banner_hide_forks.description"
+          }
+        },
+        {
+          key: "banner_hide_description",
+          label: "Hide Description",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide repository description",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_hide_description.label",
+            description: "plugins.github-project.sections.banner.config.banner_hide_description.description"
+          }
+        },
+        {
+          key: "banner_hide_watchers",
+          label: "Hide Watchers",
+          type: "boolean",
+          defaultValue: true,
+          description: "Hide watcher count",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_hide_watchers.label",
+            description: "plugins.github-project.sections.banner.config.banner_hide_watchers.description"
+          }
+        },
+        {
+          key: "banner_background",
+          label: "Background Style (Default only)",
+          type: "select",
+          defaultValue: "default",
+          description: "Background visual effect",
+          options: [
+            { value: "default", label: "Default (Skin based)" },
+            { value: "gradient", label: "Gradient Overlay" },
+            { value: "grid", label: "Grid Pattern" },
+            { value: "spotlight", label: "Spotlight Effect" },
+            { value: "none", label: "No Background" }
+          ],
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_background.label",
+            description: "plugins.github-project.sections.banner.config.banner_background.description",
+            options: {
+              "default": "plugins.github-project.sections.banner.config.banner_background.options.default",
+              "gradient": "plugins.github-project.sections.banner.config.banner_background.options.gradient",
+              "grid": "plugins.github-project.sections.banner.config.banner_background.options.grid",
+              "spotlight": "plugins.github-project.sections.banner.config.banner_background.options.spotlight",
+              "none": "plugins.github-project.sections.banner.config.banner_background.options.none"
+            }
+          }
+        },
+        {
+          key: "banner_header_text",
+          label: "Header Text",
+          type: "string",
+          description: "Custom text to display at the top of the banner",
+          placeholder: "Optional custom header text",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_header_text.label",
+            description: "plugins.github-project.sections.banner.config.banner_header_text.description",
+            placeholder: "plugins.github-project.sections.banner.config.banner_header_text.placeholder"
+          }
+        },
+        {
+          key: "banner_footer_text",
+          label: "Footer Text",
+          type: "string",
+          description: "Custom text to display at the bottom of the banner",
+          placeholder: "Optional custom footer text",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_footer_text.label",
+            description: "plugins.github-project.sections.banner.config.banner_footer_text.description",
+            placeholder: "plugins.github-project.sections.banner.config.banner_footer_text.placeholder"
+          }
+        },
+        {
+          key: "banner_show_contributors",
+          label: "Show Contributors",
+          type: "boolean",
+          defaultValue: false,
+          description: "Display top contributors with avatars in the banner",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_show_contributors.label",
+            description: "plugins.github-project.sections.banner.config.banner_show_contributors.description"
+          }
+        },
+        {
+          key: "banner_contributors_limit",
+          label: "Contributors Limit",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          description: "Maximum number of contributors to display",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_contributors_limit.label",
+            description: "plugins.github-project.sections.banner.config.banner_contributors_limit.description"
+          }
+        },
+        {
+          key: "banner_terminal_font",
+          label: "Terminal ASCII Font (terminal only)",
+          type: "select",
+          defaultValue: "standard",
+          description: "ASCII art font for terminal mode banner",
+          options: [
+            { value: "alligator", label: "Alligator (Decorative)" },
+            { value: "banner3-d", label: "Banner 3D (3D Effect)" },
+            { value: "banner3", label: "Banner 3 (Bold)" },
+            { value: "basic", label: "Basic (Simple)" },
+            { value: "bell", label: "Bell (Rounded)" },
+            { value: "broadway", label: "Broadway (Elegant)" },
+            { value: "amc", label: "AMC (Retro)" },
+            { value: "4max", label: "4Max (Large)" },
+            { value: "block", label: "Block (Solid)" },
+            { value: "bubble", label: "Bubble (Rounded)" },
+            { value: "digital", label: "Digital (LED Style)" },
+            { value: "lean", label: "Lean (Slim)" },
+            { value: "rectangles", label: "Rectangles (Geometric)" },
+            { value: "slant", label: "Slant (Italic)" },
+            { value: "soft", label: "Soft (Smooth)" },
+            { value: "wicked", label: "Wicked (Fancy)" },
+            { value: "standard", label: "Standard (Default)" },
+            { value: "small", label: "Small (Compact)" }
+          ],
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_terminal_font.label",
+            description: "plugins.github-project.sections.banner.config.banner_terminal_font.description",
+            options: {
+              "alligator": "plugins.github-project.sections.banner.config.banner_terminal_font.options.alligator",
+              "banner3-d": "plugins.github-project.sections.banner.config.banner_terminal_font.options.banner3-d",
+              "banner3": "plugins.github-project.sections.banner.config.banner_terminal_font.options.banner3",
+              "basic": "plugins.github-project.sections.banner.config.banner_terminal_font.options.basic",
+              "bell": "plugins.github-project.sections.banner.config.banner_terminal_font.options.bell",
+              "broadway": "plugins.github-project.sections.banner.config.banner_terminal_font.options.broadway",
+              "amc": "plugins.github-project.sections.banner.config.banner_terminal_font.options.amc",
+              "4max": "plugins.github-project.sections.banner.config.banner_terminal_font.options.4max",
+              "block": "plugins.github-project.sections.banner.config.banner_terminal_font.options.block",
+              "bubble": "plugins.github-project.sections.banner.config.banner_terminal_font.options.bubble",
+              "digital": "plugins.github-project.sections.banner.config.banner_terminal_font.options.digital",
+              "lean": "plugins.github-project.sections.banner.config.banner_terminal_font.options.lean",
+              "rectangles": "plugins.github-project.sections.banner.config.banner_terminal_font.options.rectangles",
+              "slant": "plugins.github-project.sections.banner.config.banner_terminal_font.options.slant",
+              "soft": "plugins.github-project.sections.banner.config.banner_terminal_font.options.soft",
+              "wicked": "plugins.github-project.sections.banner.config.banner_terminal_font.options.wicked",
+              "standard": "plugins.github-project.sections.banner.config.banner_terminal_font.options.standard",
+              "small": "plugins.github-project.sections.banner.config.banner_terminal_font.options.small"
+            }
+          }
+        },
+        {
+          key: "banner_custom_width",
+          label: "Custom Font Width (terminal only)",
+          type: "number",
+          defaultValue: 0,
+          min: 0,
+          max: 200,
+          description: "Custom width for ASCII art font (0 = auto)",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_custom_width.label",
+            description: "plugins.github-project.sections.banner.config.banner_custom_width.description"
+          }
+        },
+        {
+          key: "banner_custom_name",
+          label: "Custom Repository Name (terminal only)",
+          type: "string",
+          description: "Override the repository name used in ASCII art generation",
+          placeholder: "Custom name for ASCII art",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_custom_name.label",
+            description: "plugins.github-project.sections.banner.config.banner_custom_name.description",
+            placeholder: "plugins.github-project.sections.banner.config.banner_custom_name.placeholder"
+          }
+        },
+        {
+          key: "banner_hide_ascii_box",
+          label: "Hide ASCII Art Box (terminal only)",
+          type: "boolean",
+          defaultValue: false,
+          description: "Remove the decorative box around ASCII art",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_hide_ascii_box.label",
+            description: "plugins.github-project.sections.banner.config.banner_hide_ascii_box.description"
+          }
+        },
+        {
+          key: "banner_hide_git_commands",
+          label: "Hide Git Commands (terminal only)",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide the git clone and cd commands",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_hide_git_commands.label",
+            description: "plugins.github-project.sections.banner.config.banner_hide_git_commands.description"
+          }
+        },
+        {
+          key: "banner_hide_background",
+          label: "Hide Terminal Background (terminal only)",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide the dark terminal background styling for the banner",
+          i18nKey: {
+            label: "plugins.github-project.sections.banner.config.banner_hide_background.label",
+            description: "plugins.github-project.sections.banner.config.banner_hide_background.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "stats",
+        name: "Repository Stats",
+        description: "Key statistics and metrics",
+        i18nKey: {
+          name: "plugins.github-project.sections.stats.name",
+          description: "plugins.github-project.sections.stats.description"
+        },
+        configOptions: [
+        {
+          key: "stats_show_stars",
+          label: "Show Stars",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display repository stars count",
+          i18nKey: {
+            label: "plugins.github-project.sections.stats.config.stats_show_stars.label",
+            description: "plugins.github-project.sections.stats.config.stats_show_stars.description"
+          }
+        },
+        {
+          key: "stats_show_forks",
+          label: "Show Forks",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display repository forks count",
+          i18nKey: {
+            label: "plugins.github-project.sections.stats.config.stats_show_forks.label",
+            description: "plugins.github-project.sections.stats.config.stats_show_forks.description"
+          }
+        },
+        {
+          key: "stats_show_watchers",
+          label: "Show Watchers",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display repository watchers count",
+          i18nKey: {
+            label: "plugins.github-project.sections.stats.config.stats_show_watchers.label",
+            description: "plugins.github-project.sections.stats.config.stats_show_watchers.description"
+          }
+        },
+        {
+          key: "stats_show_issues",
+          label: "Show Issues",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display open issues count",
+          i18nKey: {
+            label: "plugins.github-project.sections.stats.config.stats_show_issues.label",
+            description: "plugins.github-project.sections.stats.config.stats_show_issues.description"
+          }
+        },
+        {
+          key: "stats_show_pull_requests",
+          label: "Show Pull Requests",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display open pull requests count",
+          i18nKey: {
+            label: "plugins.github-project.sections.stats.config.stats_show_pull_requests.label",
+            description: "plugins.github-project.sections.stats.config.stats_show_pull_requests.description"
+          }
+        },
+        {
+          key: "stats_show_releases",
+          label: "Show Releases",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display releases count",
+          i18nKey: {
+            label: "plugins.github-project.sections.stats.config.stats_show_releases.label",
+            description: "plugins.github-project.sections.stats.config.stats_show_releases.description"
+          }
+        },
+        {
+          key: "stats_show_contributors",
+          label: "Show Contributors",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display contributors count",
+          i18nKey: {
+            label: "plugins.github-project.sections.stats.config.stats_show_contributors.label",
+            description: "plugins.github-project.sections.stats.config.stats_show_contributors.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "languages",
+        name: "Programming Languages",
+        description: "Language distribution and usage",
+        i18nKey: {
+          name: "plugins.github-project.sections.languages.name",
+          description: "plugins.github-project.sections.languages.description"
+        },
+        configOptions: [
+        {
+          key: "languages_show",
+          label: "Show Languages",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display programming languages section",
+          i18nKey: {
+            label: "plugins.github-project.sections.languages.config.languages_show.label",
+            description: "plugins.github-project.sections.languages.config.languages_show.description"
+          }
+        },
+        {
+          key: "languages_top",
+          label: "Top Languages",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          description: "Maximum number of languages to display",
+          i18nKey: {
+            label: "plugins.github-project.sections.languages.config.languages_top.label",
+            description: "plugins.github-project.sections.languages.config.languages_top.description"
+          }
+        },
+        {
+          key: "languages_style",
+          label: "Display Style",
+          type: "select",
+          defaultValue: "bars",
+          description: "Visual style for language display",
+          options: [
+            { value: "bars", label: "Bars" },
+            { value: "circles", label: "Circles" }
+          ],
+          i18nKey: {
+            label: "plugins.github-project.sections.languages.config.languages_style.label",
+            description: "plugins.github-project.sections.languages.config.languages_style.description",
+            options: {
+              "bars": "plugins.github-project.sections.languages.config.languages_style.options.bars",
+              "circles": "plugins.github-project.sections.languages.config.languages_style.options.circles"
+            }
+          }
+        }
+        ]
+      },
+      {
+        id: "contributors",
+        name: "Top Contributors",
+        description: "Most active repository contributors",
+        i18nKey: {
+          name: "plugins.github-project.sections.contributors.name",
+          description: "plugins.github-project.sections.contributors.description"
+        },
+        configOptions: [
+        {
+          key: "contributors_limit",
+          label: "Contributors Limit",
+          type: "number",
+          defaultValue: 8,
+          min: 1,
+          max: 100,
+          description: "Maximum number of contributors to display",
+          i18nKey: {
+            label: "plugins.github-project.sections.contributors.config.contributors_limit.label",
+            description: "plugins.github-project.sections.contributors.config.contributors_limit.description"
+          }
+        },
+        {
+          key: "contributors_display_mode",
+          label: "Display Mode",
+          type: "select",
+          defaultValue: "compact",
+          description: "How to display contributors",
+          options: [
+            { value: "compact", label: "Compact" },
+            { value: "list", label: "List" }
+          ],
+          i18nKey: {
+            label: "plugins.github-project.sections.contributors.config.contributors_display_mode.label",
+            description: "plugins.github-project.sections.contributors.config.contributors_display_mode.description",
+            options: {
+              "compact": "plugins.github-project.sections.contributors.config.contributors_display_mode.options.compact",
+              "list": "plugins.github-project.sections.contributors.config.contributors_display_mode.options.list"
+            }
+          }
+        },
+        {
+          key: "contributors_avatar_size",
+          label: "Avatar Size",
+          type: "select",
+          defaultValue: "md",
+          description: "Size of contributor avatars",
+          options: [
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium" },
+            { value: "lg", label: "Large" }
+          ],
+          i18nKey: {
+            label: "plugins.github-project.sections.contributors.config.contributors_avatar_size.label",
+            description: "plugins.github-project.sections.contributors.config.contributors_avatar_size.description",
+            options: {
+              "sm": "plugins.github-project.sections.contributors.config.contributors_avatar_size.options.sm",
+              "md": "plugins.github-project.sections.contributors.config.contributors_avatar_size.options.md",
+              "lg": "plugins.github-project.sections.contributors.config.contributors_avatar_size.options.lg"
+            }
+          }
+        }
+        ]
+      },
+      {
+        id: "starHistory",
+        name: "Star History",
+        description: "Historical star growth chart with auto-intervals",
+        i18nKey: {
+          name: "plugins.github-project.sections.starHistory.name",
+          description: "plugins.github-project.sections.starHistory.description"
+        },
+        configOptions: [
+        {
+          key: "starHistory_chart_type",
+          label: "Chart Type",
+          type: "select",
+          defaultValue: "line",
+          description: "Visual style of the star history chart",
+          options: [
+            { value: "line", label: "Smooth Line" },
+            { value: "area", label: "Area Fill" },
+            { value: "bar", label: "Bars" },
+            { value: "step", label: "Step Line" }
+          ],
+          i18nKey: {
+            label: "plugins.github-project.sections.starHistory.config.starHistory_chart_type.label",
+            description: "plugins.github-project.sections.starHistory.config.starHistory_chart_type.description",
+            options: {
+              "line": "plugins.github-project.sections.starHistory.config.starHistory_chart_type.options.line",
+              "area": "plugins.github-project.sections.starHistory.config.starHistory_chart_type.options.area",
+              "bar": "plugins.github-project.sections.starHistory.config.starHistory_chart_type.options.bar",
+              "step": "plugins.github-project.sections.starHistory.config.starHistory_chart_type.options.step"
+            }
+          }
+        },
+        {
+          key: "starHistory_show_grid",
+          label: "Show Grid",
+          type: "boolean",
+          defaultValue: true,
+          description: "Display grid lines on the chart",
+          i18nKey: {
+            label: "plugins.github-project.sections.starHistory.config.starHistory_show_grid.label",
+            description: "plugins.github-project.sections.starHistory.config.starHistory_show_grid.description"
+          }
+        },
+        {
+          key: "starHistory_show_dots",
+          label: "Show Data Points",
+          type: "boolean",
+          defaultValue: false,
+          description: "Display data points on the line chart",
+          i18nKey: {
+            label: "plugins.github-project.sections.starHistory.config.starHistory_show_dots.label",
+            description: "plugins.github-project.sections.starHistory.config.starHistory_show_dots.description"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.github-project.displayName",
+      description: "plugins.github-project.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "repository": "facebook/react",
+      "sections": [
+        "banner",
+        "stats",
+        "languages",
+        "contributors"
+      ],
+      "sections_config": {
+        "banner": {
+          "enabled": true,
+          "style": "modern",
+          "show_stars": true,
+          "show_forks": true,
+          "show_description": true,
+          "header_text": "",
+          "footer_text": ""
+        },
+        "stats": {
+          "enabled": true,
+          "show_stars": true,
+          "show_forks": true,
+          "show_watchers": true,
+          "show_issues": true,
+          "show_pull_requests": true,
+          "show_releases": true,
+          "show_contributors": true
+        },
+        "languages": {
+          "enabled": true,
+          "show": true,
+          "top": 5
+        },
+        "contributors": {
+          "enabled": true,
+          "limit": 8
+        },
+        "starHistory": {
+          "enabled": false,
+          "bucket": "auto",
+          "maxBackfillPages": 100
+        }
+      }
+    },
+  },
+
   lastfm: {
     name: "lastfm",
     displayName: "LastFM",

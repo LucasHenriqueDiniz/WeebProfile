@@ -8,20 +8,20 @@ function getBaseUrl(request: Request): string {
   // Use NEXT_PUBLIC_SITE_URL if available (for production), otherwise use request URL
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   const requestUrl = new URL(request.url)
-  
+
   // In production, prefer NEXT_PUBLIC_SITE_URL, but only if it's set
   // Otherwise, use the request origin (which should be correct in production)
-  if (siteUrl && siteUrl.trim() !== '') {
+  if (siteUrl && siteUrl.trim() !== "") {
     // Debug log
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Auth Callback] Using NEXT_PUBLIC_SITE_URL:', siteUrl)
+    if (process.env.NODE_ENV === "development") {
+      console.log("[Auth Callback] Using NEXT_PUBLIC_SITE_URL:", siteUrl)
     }
     return siteUrl
   }
-  
+
   // Fallback to request URL origin
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[Auth Callback] Using request origin:', requestUrl.origin)
+  if (process.env.NODE_ENV === "development") {
+    console.log("[Auth Callback] Using request origin:", requestUrl.origin)
   }
   return requestUrl.origin
 }
@@ -37,10 +37,7 @@ export async function GET(request: Request) {
   if (error) {
     console.error("OAuth error:", error, errorDescription)
     return NextResponse.redirect(
-      new URL(
-        `/login?error=${error}&error_description=${encodeURIComponent(errorDescription || "")}`,
-        baseUrl
-      )
+      new URL(`/login?error=${error}&error_description=${encodeURIComponent(errorDescription || "")}`, baseUrl)
     )
   }
 
@@ -64,11 +61,7 @@ export async function GET(request: Request) {
           username = user.email.split("@")[0]
         }
 
-        const [existingProfile] = await db
-          .select()
-          .from(profiles)
-          .where(eq(profiles.userId, user.id))
-          .limit(1)
+        const [existingProfile] = await db.select().from(profiles).where(eq(profiles.userId, user.id)).limit(1)
 
         if (!existingProfile) {
           // Criar novo perfil
@@ -83,15 +76,12 @@ export async function GET(request: Request) {
           const updates: any = {
             updatedAt: new Date(),
           }
-          
+
           if (username && existingProfile.username !== username) {
             updates.username = username
           }
-          
-          await db
-            .update(profiles)
-            .set(updates)
-            .where(eq(profiles.userId, user.id))
+
+          await db.update(profiles).set(updates).where(eq(profiles.userId, user.id))
           console.log("Profile updated for user:", user.id)
         }
       } catch (profileError) {
@@ -112,5 +102,3 @@ export async function GET(request: Request) {
 
   return NextResponse.redirect(new URL("/login?error=no_code", baseUrl))
 }
-
-

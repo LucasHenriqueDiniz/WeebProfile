@@ -2,11 +2,11 @@
  * Fetches data from Lyfta API
  */
 
-import type { LyftaConfig, LyftaData } from '../types'
-import { getMockLyftaData } from './mock-data'
-import { urlToBase64, IMAGE_OPTIMIZATION } from '../../../utils/image-to-base64'
+import type { LyftaConfig, LyftaData } from "../types"
+import { getMockLyftaData } from "./mock-data"
+import { urlToBase64, IMAGE_OPTIMIZATION } from "../../../utils/image-to-base64"
 
-const BASE_URL = 'https://my.lyfta.app'
+const BASE_URL = "https://my.lyfta.app"
 
 export async function fetchLyftaData(
   config: LyftaConfig,
@@ -16,21 +16,21 @@ export async function fetchLyftaData(
 ): Promise<LyftaData> {
   // Em modo dev ou preview, retornar dados mock
   if (dev || previewMode) {
-    console.log('[Lyfta] Using mock data (dev mode or preview mode)')
+    console.log("[Lyfta] Using mock data (dev mode or preview mode)")
     const mockData = await getMockLyftaData()
-    
+
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
       return mockData
     }
-    
+
     // Converter URLs de imagens para base64 para funcionar nos previews (Playwright bloqueia requisições externas)
     return await convertImageUrlsToBase64(mockData, previewMode)
   }
 
   // Validar que tem apiKey configurado quando não estiver em modo dev/preview
   if (!apiKey) {
-    throw new Error('Lyfta API Key is required. Please configure it in your profile settings.')
+    throw new Error("Lyfta API Key is required. Please configure it in your profile settings.")
   }
 
   try {
@@ -63,14 +63,14 @@ export async function fetchLyftaData(
       workouts.map(async (workout: any) => {
         const processedExercises = await Promise.all(
           workout.exercises.map(async (exercise: any) => {
-            let exerciseImage = exercise.exercise_image || ''
+            let exerciseImage = exercise.exercise_image || ""
 
             // If exercise_image is a URL, convert to base64
-            if (exerciseImage && !exerciseImage.startsWith('data:') && exerciseImage.startsWith('http')) {
+            if (exerciseImage && !exerciseImage.startsWith("data:") && exerciseImage.startsWith("http")) {
               try {
                 exerciseImage = await urlToBase64(exerciseImage, 15000, IMAGE_OPTIMIZATION)
               } catch (error) {
-                console.error('Failed to convert exercise image to base64:', error)
+                console.error("Failed to convert exercise image to base64:", error)
               }
             }
 
@@ -96,7 +96,7 @@ export async function fetchLyftaData(
       id: workout.id,
       title: workout.title,
       description: workout.description || null,
-      workout_duration: workout.workout_duration || '00:00:00',
+      workout_duration: workout.workout_duration || "00:00:00",
       total_volume: workout.total_volume || workout.totalLiftedWeight || 0,
       workout_perform_date: workout.workout_perform_date,
     }))
@@ -104,13 +104,13 @@ export async function fetchLyftaData(
     // Process exercise data images
     const processedExercises = await Promise.all(
       exercises.map(async (exercise: any) => {
-        let imageName = exercise.image_name || ''
+        let imageName = exercise.image_name || ""
 
-        if (imageName && !imageName.startsWith('data:') && imageName.startsWith('http')) {
+        if (imageName && !imageName.startsWith("data:") && imageName.startsWith("http")) {
           try {
             imageName = await urlToBase64(imageName, 15000, IMAGE_OPTIMIZATION)
           } catch (error) {
-            console.error('Failed to convert exercise data image to base64:', error)
+            console.error("Failed to convert exercise data image to base64:", error)
           }
         }
 
@@ -128,15 +128,15 @@ export async function fetchLyftaData(
       statistics,
     }
   } catch (error) {
-    console.error('Error fetching Lyfta data:', error)
+    console.error("Error fetching Lyfta data:", error)
     // Fallback to mock data on error
     const mockData = await getMockLyftaData()
-    
+
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
       return mockData
     }
-    
+
     return await convertImageUrlsToBase64(mockData, previewMode)
   }
 }
@@ -169,14 +169,13 @@ function calculateStatistics(workouts: any[]): any {
     })
   })
 
-  const favoriteExercise = Array.from(exerciseCounts.entries())
-    .sort((a, b) => b[1] - a[1])[0]?.[0] || null
+  const favoriteExercise = Array.from(exerciseCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] || null
 
   // Calculate top muscle groups
   const muscleGroupCounts = new Map<string, number>()
   workouts.forEach((workout) => {
     workout.exercises.forEach((exercise: any) => {
-      const muscleGroup = exercise.exercise_type?.split('_')[0]?.toUpperCase() || 'GENERAL'
+      const muscleGroup = exercise.exercise_type?.split("_")[0]?.toUpperCase() || "GENERAL"
       if (muscleGroup) {
         const count = muscleGroupCounts.get(muscleGroup) || 0
         muscleGroupCounts.set(muscleGroup, count + 1)
@@ -191,9 +190,9 @@ function calculateStatistics(workouts: any[]): any {
 
   // Calculate weekly activity
   const weeklyActivity = Array.from({ length: 7 }, (_, i) => {
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     return {
-      day: dayNames[i] || 'Sun',
+      day: dayNames[i] || "Sun",
       count: 0,
     }
   })
@@ -202,7 +201,7 @@ function calculateStatistics(workouts: any[]): any {
   const workoutStreak = Array.from({ length: 30 }, (_, i) => {
     const date = new Date()
     date.setDate(date.getDate() - (29 - i))
-    const dateStr = date.toISOString().split('T')[0] || ''
+    const dateStr = date.toISOString().split("T")[0] || ""
     return {
       date: dateStr,
       count: 0,
@@ -216,7 +215,7 @@ function calculateStatistics(workouts: any[]): any {
 
   workoutStreak.forEach((day) => {
     const hasWorkout = workouts.some((workout) => {
-      const workoutDate = new Date(workout.workout_perform_date).toISOString().split('T')[0]
+      const workoutDate = new Date(workout.workout_perform_date).toISOString().split("T")[0]
       return workoutDate === day.date
     })
 
@@ -238,7 +237,7 @@ function calculateStatistics(workouts: any[]): any {
 
   const allWeights = allExercises
     .flatMap((e: any) => e.sets.map((s: any) => (s.weight !== null ? Number(s.weight) : null)))
-    .filter((w): w is number => typeof w === 'number' && !Number.isNaN(w))
+    .filter((w): w is number => typeof w === "number" && !Number.isNaN(w))
 
   const allReps = allExercises
     .flatMap((e: any) => e.sets.map((s: any) => s.reps))
@@ -258,7 +257,7 @@ function calculateStatistics(workouts: any[]): any {
     totalDuration,
     totalLiftedWeight,
     favoriteExercise,
-    topMuscleGroups: topMuscleGroups.length > 0 ? topMuscleGroups : [{ name: 'General', count: 0 }],
+    topMuscleGroups: topMuscleGroups.length > 0 ? topMuscleGroups : [{ name: "General", count: 0 }],
     weeklyActivity,
     currentStreak,
     longestStreak,
@@ -276,13 +275,13 @@ async function convertImageUrlsToBase64(data: any, previewMode = false): Promise
     return Promise.all(data.map((item) => convertImageUrlsToBase64(item, previewMode)))
   }
 
-  if (data && typeof data === 'object') {
+  if (data && typeof data === "object") {
     const result: any = {}
     for (const [key, value] of Object.entries(data)) {
       if (
-        (key === 'image' || key === 'exercise_image' || key === 'image_name') &&
-        typeof value === 'string' &&
-        (value.startsWith('http://') || value.startsWith('https://'))
+        (key === "image" || key === "exercise_image" || key === "image_name") &&
+        typeof value === "string" &&
+        (value.startsWith("http://") || value.startsWith("https://"))
       ) {
         // Em modo preview, manter URLs originais
         if (previewMode) {
@@ -300,4 +299,3 @@ async function convertImageUrlsToBase64(data: any, previewMode = false): Promise
 
   return data
 }
-

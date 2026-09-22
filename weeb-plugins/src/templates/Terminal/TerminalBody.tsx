@@ -2,14 +2,13 @@
  * TerminalBody - Container para conteúdo terminal
  */
 
-import React from 'react'
+import React from "react"
 
 interface TerminalBodyProps {
   children: React.ReactNode
   className?: string
 }
 
-export function TerminalBody({ children, className = '' }: TerminalBodyProps): React.ReactElement {
+export function TerminalBody({ children, className = "" }: TerminalBodyProps): React.ReactElement {
   return <div className={`font-mono terminal-container terminal-body px-2 ${className}`}>{children}</div>
 }
-

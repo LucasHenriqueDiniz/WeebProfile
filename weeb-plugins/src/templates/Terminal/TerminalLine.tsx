@@ -2,8 +2,8 @@
  * TerminalLine - Linha de texto para estilo terminal
  */
 
-import React from 'react'
-import type { TerminalLineProps } from '../types'
+import React from "react"
+import type { TerminalLineProps } from "../types"
 
 interface ClassNames {
   right?: string
@@ -25,16 +25,16 @@ export interface TerminalLineComponentProps extends TerminalLineProps {
 export function TerminalLine({ right, className, left, style }: TerminalLineComponentProps): React.ReactElement {
   return (
     <div
-      className={`grid grid-cols-[auto_min-content] overflow-hidden px-1 ${className?.container || ''}`}
+      className={`grid grid-cols-[auto_min-content] overflow-hidden px-1 ${className?.container || ""}`}
       style={{ ...(style?.container ? style.container : {}) }}
     >
       <span
-        className={`text-bold text-overflow truncate sm-text ${className?.right || ''}`}
+        className={`text-bold text-overflow truncate sm-text ${className?.right || ""}`}
         style={{ ...(style?.right ? style.right : {}) }}
       >
         {right}
       </span>
-      <span className={`text-terminal-muted truncate sm-text ${className?.left || ''}`} style={style?.left}>
+      <span className={`text-terminal-muted truncate sm-text ${className?.left || ""}`} style={style?.left}>
         {left}
       </span>
     </div>

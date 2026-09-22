@@ -2,29 +2,35 @@
  * AnswersQuestions - Componente para exibir respostas e perguntas do Stack Overflow
  */
 
-import React from 'react'
-import { FaQuestionCircle, FaReply } from 'react-icons/fa'
-import { IoStatsChartOutline } from 'react-icons/io5'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { StackOverflowConfig } from '../types'
+import React from "react"
+import { FaQuestionCircle, FaReply } from "react-icons/fa"
+import { IoStatsChartOutline } from "react-icons/io5"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { StackOverflowConfig } from "../types"
 
 interface AnswersQuestionsProps {
   answers: number
   questions: number
   config: StackOverflowConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function AnswersQuestions({ answers, questions, config, style = 'default', size = 'half' }: AnswersQuestionsProps): React.ReactElement {
+export function AnswersQuestions({
+  answers,
+  questions,
+  config,
+  style = "default",
+  size = "half",
+}: AnswersQuestionsProps): React.ReactElement {
   const hideTitle = config.nonEssential?.answers_questions_hide_title || false
   const hideQuestions = config.nonEssential?.answers_questions_hide_questions || false
-  const title = config.nonEssential?.answers_questions_title || 'Stack Overflow Activity'
+  const title = config.nonEssential?.answers_questions_title || "Stack Overflow Activity"
 
   return (
     <section id="stackoverflow-answers-questions">
@@ -57,26 +63,16 @@ export function AnswersQuestions({ answers, questions, config, style = 'default'
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'stackoverflow',
-                section: 'answers_questions',
+                plugin: "stackoverflow",
+                section: "answers_questions",
                 size,
               })}
             />
-            <TerminalLineWithDots
-              title="Answers"
-              value={abbreviateNumber(answers)}
-            />
-            {!hideQuestions && (
-              <TerminalLineWithDots
-                title="Questions"
-                value={abbreviateNumber(questions)}
-              />
-            )}
+            <TerminalLineWithDots title="Answers" value={abbreviateNumber(answers)} />
+            {!hideQuestions && <TerminalLineWithDots title="Questions" value={abbreviateNumber(questions)} />}
           </>
         }
       />
     </section>
   )
 }
-
-

@@ -1,21 +1,21 @@
-import React from 'react'
-import { FaBookOpen, FaCalendar, FaStar, FaVideo } from 'react-icons/fa'
-import { IoStatsChartOutline } from 'react-icons/io5'
-import { Stat } from '../../../templates/Default/DefaultStatRow'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { emojiStatus } from '../../../utils/emoji'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { MyAnimeListConfig, MyAnimeListData } from '../types'
+import React from "react"
+import { FaBookOpen, FaCalendar, FaStar, FaVideo } from "react-icons/fa"
+import { IoStatsChartOutline } from "react-icons/io5"
+import { Stat } from "../../../templates/Default/DefaultStatRow"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { emojiStatus } from "../../../utils/emoji"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { MyAnimeListConfig, MyAnimeListData } from "../types"
 
 interface SimpleStatisticsProps {
-  data: MyAnimeListData['statistics']
+  data: MyAnimeListData["statistics"]
   config: MyAnimeListConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
   hideTerminalEmojis?: boolean
 }
 
@@ -30,7 +30,7 @@ export function SimpleStatistics({
     return <></>
   }
 
-  const title = config.statistics_simple_title || 'Anime & Manga Statistics'
+  const title = config.statistics_simple_title || "Anime & Manga Statistics"
   const hideTitle = config.statistics_simple_hide_title || false
 
   const TotalDays = data.anime.days_watched + data.manga.days_read
@@ -48,38 +48,38 @@ export function SimpleStatistics({
             {!hideTitle && <DefaultTitle title={title} icon={<IoStatsChartOutline />} />}
             <div className="flex flex-row mt-2 items-center h-full">
               <ul className="flex half:flex-col gap-1 w-full">
-              <Stat
-                key="days-wasted"
-                title="Days Wasted"
-                value={TotalDays.toFixed(1)}
-                strong
-                icon={<FaCalendar className="text-default-highlight" />}
-              />
-              <Stat
-                key="mean-score"
-                title="Mean Score"
-                value={TotalMeanScore.toFixed(2)}
-                strong
-                icon={<FaStar className="text-default-highlight" />}
+                <Stat
+                  key="days-wasted"
+                  title="Days Wasted"
+                  value={TotalDays.toFixed(1)}
+                  strong
+                  icon={<FaCalendar className="text-default-highlight" />}
+                />
+                <Stat
+                  key="mean-score"
+                  title="Mean Score"
+                  value={TotalMeanScore.toFixed(2)}
+                  strong
+                  icon={<FaStar className="text-default-highlight" />}
                 />
               </ul>
               <ul className="flex half:flex-col gap-1 w-full">
-              <Stat
-                key="chapters-read"
-                title="CH's Read"
-                value={abbreviateNumber(ChaptersRead)}
-                strong
-                icon={<FaBookOpen className="text-default-highlight" />}
-                smallInHalf
-              />
-              <Stat
-                key="episodes-watched"
-                title="EP's Watched"
-                value={abbreviateNumber(EpisodesWatched)}
-                strong
-                icon={<FaVideo className="text-default-highlight" />}
-                smallInHalf
-              />
+                <Stat
+                  key="chapters-read"
+                  title="CH's Read"
+                  value={abbreviateNumber(ChaptersRead)}
+                  strong
+                  icon={<FaBookOpen className="text-default-highlight" />}
+                  smallInHalf
+                />
+                <Stat
+                  key="episodes-watched"
+                  title="EP's Watched"
+                  value={abbreviateNumber(EpisodesWatched)}
+                  strong
+                  icon={<FaVideo className="text-default-highlight" />}
+                  smallInHalf
+                />
               </ul>
             </div>
           </>
@@ -88,25 +88,25 @@ export function SimpleStatistics({
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'mal',
-                section: 'simple-statistics',
-                type: 'all',
+                plugin: "mal",
+                section: "simple-statistics",
+                type: "all",
               })}
             />
             <TerminalLineWithDots
-              title={`${emojiStatus('days_wasted', hideTerminalEmojis)} Days Wasted`}
+              title={`${emojiStatus("days_wasted", hideTerminalEmojis)} Days Wasted`}
               value={TotalDays.toFixed(1)}
             />
             <TerminalLineWithDots
-              title={`${emojiStatus('mean_score', hideTerminalEmojis)} Mean Score`}
+              title={`${emojiStatus("mean_score", hideTerminalEmojis)} Mean Score`}
               value={TotalMeanScore.toFixed(2)}
             />
             <TerminalLineWithDots
-              title={`${emojiStatus('chapters_read', hideTerminalEmojis)} Chapters Read`}
+              title={`${emojiStatus("chapters_read", hideTerminalEmojis)} Chapters Read`}
               value={abbreviateNumber(ChaptersRead)}
             />
             <TerminalLineWithDots
-              title={`${emojiStatus('episodes_watched', hideTerminalEmojis)} Episodes Watched`}
+              title={`${emojiStatus("episodes_watched", hideTerminalEmojis)} Episodes Watched`}
               value={abbreviateNumber(EpisodesWatched)}
             />
           </>
@@ -116,6 +116,3 @@ export function SimpleStatistics({
     </section>
   )
 }
-
-
-

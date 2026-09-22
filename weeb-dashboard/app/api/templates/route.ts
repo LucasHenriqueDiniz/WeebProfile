@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
       // Get like counts for public templates
       const publicTemplateIds = publicTemplates.map((t) => t.id)
-      let likesData: Record<string, { count: number; userLiked: boolean }> = {}
+      const likesData: Record<string, { count: number; userLiked: boolean }> = {}
 
       if (publicTemplateIds.length > 0) {
         try {
@@ -84,7 +84,7 @@ export async function GET(request: Request) {
     // Get like counts and user liked status separately
     const allTemplateIds = [...userTemplates, ...publicTemplates].map((t) => t.id)
 
-    let likesData: Record<string, { count: number; userLiked: boolean }> = {}
+    const likesData: Record<string, { count: number; userLiked: boolean }> = {}
 
     if (allTemplateIds.length > 0) {
       try {

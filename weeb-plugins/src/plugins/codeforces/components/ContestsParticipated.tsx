@@ -2,27 +2,32 @@
  * ContestsParticipated - Componente para exibir número de contests do Codeforces
  */
 
-import React from 'react'
-import { FaTrophy } from 'react-icons/fa'
-import { IoStatsChartOutline } from 'react-icons/io5'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { CodeforcesConfig } from '../types'
+import React from "react"
+import { FaTrophy } from "react-icons/fa"
+import { IoStatsChartOutline } from "react-icons/io5"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { CodeforcesConfig } from "../types"
 
 interface ContestsParticipatedProps {
   count: number
   config: CodeforcesConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function ContestsParticipated({ count, config, style = 'default', size = 'half' }: ContestsParticipatedProps): React.ReactElement {
+export function ContestsParticipated({
+  count,
+  config,
+  style = "default",
+  size = "half",
+}: ContestsParticipatedProps): React.ReactElement {
   const hideTitle = config.nonEssential?.contests_participated_hide_title || false
-  const title = config.nonEssential?.contests_participated_title || 'Contests Participated'
+  const title = config.nonEssential?.contests_participated_title || "Contests Participated"
 
   return (
     <section id="codeforces-contests-participated">
@@ -44,19 +49,15 @@ export function ContestsParticipated({ count, config, style = 'default', size = 
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'codeforces',
-                section: 'contests_participated',
+                plugin: "codeforces",
+                section: "contests_participated",
                 size,
               })}
             />
-            <TerminalLineWithDots
-              title="Contests Participated"
-              value={abbreviateNumber(count)}
-            />
+            <TerminalLineWithDots title="Contests Participated" value={abbreviateNumber(count)} />
           </>
         }
       />
     </section>
   )
 }
-

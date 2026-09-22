@@ -2,28 +2,28 @@
  * 16personalities plugin specific types
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from "../shared/types/base"
 
 /**
  * 16Personalities personality types
  */
 export type PersonalityType =
-  | 'ENFJ' // Protagonist
-  | 'ENFP' // Campaigner
-  | 'ENTJ' // Commander
-  | 'ENTP' // Debater
-  | 'ESFJ' // Consul
-  | 'ESFP' // Entertainer
-  | 'ESTJ' // Executive
-  | 'ESTP' // Entrepreneur
-  | 'INFJ' // Advocate
-  | 'INFP' // Mediator
-  | 'INTJ' // Architect
-  | 'INTP' // Thinker
-  | 'ISFJ' // Protector
-  | 'ISFP' // Adventurer
-  | 'ISTJ' // Logistician
-  | 'ISTP' // Virtuoso
+  | "ENFJ" // Protagonist
+  | "ENFP" // Campaigner
+  | "ENTJ" // Commander
+  | "ENTP" // Debater
+  | "ESFJ" // Consul
+  | "ESFP" // Entertainer
+  | "ESTJ" // Executive
+  | "ESTP" // Entrepreneur
+  | "INFJ" // Advocate
+  | "INFP" // Mediator
+  | "INTJ" // Architect
+  | "INTP" // Thinker
+  | "ISFJ" // Protector
+  | "ISFP" // Adventurer
+  | "ISTJ" // Logistician
+  | "ISTP" // Virtuoso
 
 /**
  * Non-essential plugin configuration
@@ -59,9 +59,9 @@ export interface Personality16Data {
   description: string
   url: string
   traits: {
-    E: 'Extroverted' | 'Introverted'
-    N: 'Intuitive' | 'Observant'
-    F: 'Feeling' | 'Thinking'
-    J: 'Judging' | 'Prospecting'
+    E: "Extroverted" | "Introverted"
+    N: "Intuitive" | "Observant"
+    F: "Feeling" | "Thinking"
+    J: "Judging" | "Prospecting"
   }
 }

@@ -1,15 +1,15 @@
 /**
  * Test script for height measurement
- * 
+ *
  * Tests the Playwright height measurement with a simple HTML mock.
- * 
+ *
  * Usage: pnpm --filter @weeb/svg-generator test:measure
  */
 
-import { measureHeight } from '../src/layout/measure-height.js'
-import { closeBrowser } from '../src/layout/browser.js'
-import fs from 'node:fs/promises'
-import path from 'node:path'
+import { measureHeight } from "../src/layout/measure-height.js"
+import { closeBrowser } from "../src/layout/browser.js"
+import fs from "node:fs/promises"
+import path from "node:path"
 
 const TEST_WIDTH = 415 // Same as SVG half size
 
@@ -86,14 +86,14 @@ function createTestHTML(): string {
 }
 
 async function main() {
-  console.log('🧪 Testing Playwright height measurement...\n')
+  console.log("🧪 Testing Playwright height measurement...\n")
   console.log(`📐 Test width: ${TEST_WIDTH}px\n`)
 
   const testHTML = createTestHTML()
-  
+
   try {
     // Measure height
-    console.log('[Test] Measuring height...')
+    console.log("[Test] Measuring height...")
     const height = await measureHeight({
       html: testHTML,
       width: TEST_WIDTH,
@@ -104,42 +104,42 @@ async function main() {
 
     // Validate result
     if (height === 0 || isNaN(height)) {
-      console.error('❌ ERROR: Invalid height returned (0 or NaN)')
+      console.error("❌ ERROR: Invalid height returned (0 or NaN)")
       process.exit(1)
     }
 
     if (height < 10) {
-      console.warn('⚠️ WARNING: Height seems too small (< 10px)')
+      console.warn("⚠️ WARNING: Height seems too small (< 10px)")
     }
 
     // Optional: Save screenshot for debugging
-    if (process.env.SAVE_SCREENSHOT === '1') {
+    if (process.env.SAVE_SCREENSHOT === "1") {
       try {
-        const { getBrowser } = await import('../src/layout/browser.js')
+        const { getBrowser } = await import("../src/layout/browser.js")
         const browser = await getBrowser()
         const context = await browser.newContext()
         const page = await context.newPage()
-        
+
         await page.setViewportSize({ width: TEST_WIDTH, height: height + 100 })
-        await page.setContent(testHTML, { waitUntil: 'domcontentloaded' })
-        
-        const tmpDir = path.resolve(process.cwd(), 'tmp')
+        await page.setContent(testHTML, { waitUntil: "domcontentloaded" })
+
+        const tmpDir = path.resolve(process.cwd(), "tmp")
         await fs.mkdir(tmpDir, { recursive: true })
-        const screenshotPath = path.join(tmpDir, 'measure.png')
-        
+        const screenshotPath = path.join(tmpDir, "measure.png")
+
         await page.screenshot({ path: screenshotPath, fullPage: true })
         await page.close()
         await context.close()
-        
+
         console.log(`📸 Screenshot saved: ${screenshotPath}`)
       } catch (screenshotError) {
-        console.warn('⚠️ Could not save screenshot:', screenshotError)
+        console.warn("⚠️ Could not save screenshot:", screenshotError)
       }
     }
 
-    console.log('\n✅ Test passed!')
+    console.log("\n✅ Test passed!")
   } catch (error) {
-    console.error('\n❌ Test failed:', error)
+    console.error("\n❌ Test failed:", error)
     process.exit(1)
   } finally {
     // Cleanup
@@ -148,23 +148,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error('❌ Fatal error:', error)
+  console.error("❌ Fatal error:", error)
   process.exit(1)
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

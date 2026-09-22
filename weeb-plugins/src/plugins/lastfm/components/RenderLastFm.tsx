@@ -1,25 +1,25 @@
-import React from 'react'
-import type { LastFmConfig, LastFmData } from '../types'
-import { RecentTracks } from './RecentTracks'
-import { Statistics } from './Statistics'
-import { TopArtists } from './TopArtists'
-import { TopAlbums } from './TopAlbums'
-import { TopTracks } from './TopTracks'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { PluginError } from '../../../components/PluginError'
+import React from "react"
+import type { LastFmConfig, LastFmData } from "../types"
+import { RecentTracks } from "./RecentTracks"
+import { Statistics } from "./Statistics"
+import { TopArtists } from "./TopArtists"
+import { TopAlbums } from "./TopAlbums"
+import { TopTracks } from "./TopTracks"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { PluginError } from "../../../components/PluginError"
 
 interface RenderLastFmProps {
   config: LastFmConfig
   data: LastFmData
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
 export function RenderLastFm({
   config,
   data,
-  style = 'default',
-  size = 'half',
+  style = "default",
+  size = "half",
 }: RenderLastFmProps): React.ReactElement {
   if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
@@ -27,13 +27,9 @@ export function RenderLastFm({
 
   // Verificar se há erro nos dados
   if ((data as any)._error) {
-    return <PluginError
-      pluginName="LastFM"
-      error={(data as any)._error}
-      errorType="config"
-      style={style}
-      compact={true}
-    />
+    return (
+      <PluginError pluginName="LastFM" error={(data as any)._error} errorType="config" style={style} compact={true} />
+    )
   }
 
   const sections = config.sections
@@ -44,26 +40,29 @@ export function RenderLastFm({
   const sectionConfig = {
     ...(config.nonEssential || {}),
     // Incluir propriedades do nível raiz que são configurações de seção
-    ...Object.keys(config).reduce((acc, key) => {
-      // Incluir propriedades que começam com o nome de uma seção (ex: recent_tracks_*, top_tracks_*)
-      if (
-        key.startsWith('recent_tracks_') ||
-        key.startsWith('top_artists_') ||
-        key.startsWith('top_albums_') ||
-        key.startsWith('top_tracks_') ||
-        key.startsWith('statistics_') ||
-        key === 'hide_intervals'
-      ) {
-        acc[key] = (config as any)[key]
-      }
-      return acc
-    }, {} as Record<string, any>),
+    ...Object.keys(config).reduce(
+      (acc, key) => {
+        // Incluir propriedades que começam com o nome de uma seção (ex: recent_tracks_*, top_tracks_*)
+        if (
+          key.startsWith("recent_tracks_") ||
+          key.startsWith("top_artists_") ||
+          key.startsWith("top_albums_") ||
+          key.startsWith("top_tracks_") ||
+          key.startsWith("statistics_") ||
+          key === "hide_intervals"
+        ) {
+          acc[key] = (config as any)[key]
+        }
+        return acc
+      },
+      {} as Record<string, any>
+    ),
   }
 
   // Renderizar cada seção solicitada
   const renderedSections = sections.map((section) => {
     switch (section) {
-      case 'recent_tracks':
+      case "recent_tracks":
         return (
           <RecentTracks
             key="recent_tracks"
@@ -74,93 +73,91 @@ export function RenderLastFm({
             size={size}
           />
         )
-      case 'statistics':
+      case "statistics":
+        return <Statistics key="statistics" data={data} config={sectionConfig} style={style} size={size} />
+      case "top_artists":
+      case "top_artists_default":
+      case "top_artists_list":
+      case "top_artists_grid": {
+        // Suportar compatibilidade com seções antigas
+        let displayStyle = sectionConfig.top_artists_style || "default"
+        if (section === "top_artists_list") {
+          displayStyle = "list"
+        } else if (section === "top_artists_grid") {
+          displayStyle = "grid"
+        } else if (section === "top_artists_default") {
+          displayStyle = "default"
+        }
+
         return (
-          <Statistics key="statistics" data={data} config={sectionConfig} style={style} size={size} />
-        )
-      case 'top_artists':
-      case 'top_artists_default':
-      case 'top_artists_list':
-      case 'top_artists_grid': {
-        // Suportar compatibilidade com seções antigas
-        let displayStyle = sectionConfig.top_artists_style || 'default'
-        if (section === 'top_artists_list') {
-          displayStyle = 'list'
-        } else if (section === 'top_artists_grid') {
-          displayStyle = 'grid'
-        } else if (section === 'top_artists_default') {
-          displayStyle = 'default'
-        }
-        
-            return (
           <TopArtists
-                key="top_artists"
-                data={data.topArtists}
-                interval={data.topArtistsInterval}
+            key="top_artists"
+            data={data.topArtists}
+            interval={data.topArtistsInterval}
             config={{
               ...sectionConfig,
-              top_artists_style: displayStyle as 'grid' | 'list' | 'default',
+              top_artists_style: displayStyle as "grid" | "list" | "default",
             }}
-                style={style}
-                size={size}
-              />
-            )
+            style={style}
+            size={size}
+          />
+        )
       }
-      case 'top_albums':
-      case 'top_albums_default':
-      case 'top_albums_list':
-      case 'top_albums_grid': {
+      case "top_albums":
+      case "top_albums_default":
+      case "top_albums_list":
+      case "top_albums_grid": {
         // Suportar compatibilidade com seções antigas
-        let displayStyle = sectionConfig.top_albums_style || 'default'
-        if (section === 'top_albums_list') {
-          displayStyle = 'list'
-        } else if (section === 'top_albums_grid') {
-          displayStyle = 'grid'
-        } else if (section === 'top_albums_default') {
-          displayStyle = 'default'
+        let displayStyle = sectionConfig.top_albums_style || "default"
+        if (section === "top_albums_list") {
+          displayStyle = "list"
+        } else if (section === "top_albums_grid") {
+          displayStyle = "grid"
+        } else if (section === "top_albums_default") {
+          displayStyle = "default"
         }
-        
-            return (
+
+        return (
           <TopAlbums
-                key="top_albums"
-                data={data.topAlbums}
-                interval={data.topAlbumsInterval}
+            key="top_albums"
+            data={data.topAlbums}
+            interval={data.topAlbumsInterval}
             config={{
               ...sectionConfig,
-              top_albums_style: displayStyle as 'grid' | 'list' | 'default',
+              top_albums_style: displayStyle as "grid" | "list" | "default",
             }}
-                style={style}
-                size={size}
-              />
-            )
+            style={style}
+            size={size}
+          />
+        )
       }
-      case 'top_tracks':
-      case 'top_tracks_default':
-      case 'top_tracks_list':
-      case 'top_tracks_grid': {
+      case "top_tracks":
+      case "top_tracks_default":
+      case "top_tracks_list":
+      case "top_tracks_grid": {
         // Suportar compatibilidade com seções antigas
-        let displayStyle = sectionConfig.top_tracks_style || 'default'
-        if (section === 'top_tracks_list') {
-          displayStyle = 'list'
-        } else if (section === 'top_tracks_grid') {
-          displayStyle = 'grid'
-        } else if (section === 'top_tracks_default') {
-          displayStyle = 'default'
+        let displayStyle = sectionConfig.top_tracks_style || "default"
+        if (section === "top_tracks_list") {
+          displayStyle = "list"
+        } else if (section === "top_tracks_grid") {
+          displayStyle = "grid"
+        } else if (section === "top_tracks_default") {
+          displayStyle = "default"
         }
-        
-            return (
+
+        return (
           <TopTracks
-                key="top_tracks"
-                data={data.topTracks}
-                interval={data.topTracksInterval}
+            key="top_tracks"
+            data={data.topTracks}
+            interval={data.topTracksInterval}
             config={{
               ...sectionConfig,
-              top_tracks_style: displayStyle as 'grid' | 'list' | 'default',
+              top_tracks_style: displayStyle as "grid" | "list" | "default",
             }}
-                style={style}
-                size={size}
-              />
-            )
+            style={style}
+            size={size}
+          />
+        )
       }
       default:
         return (
@@ -180,4 +177,3 @@ export function RenderLastFm({
     />
   )
 }
-

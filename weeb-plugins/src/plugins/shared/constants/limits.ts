@@ -29,4 +29,3 @@ export const STEPS = {
   STEP_5: 5,
   STEP_10: 10,
 } as const
-

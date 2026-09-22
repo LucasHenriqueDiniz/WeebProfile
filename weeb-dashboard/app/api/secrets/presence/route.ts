@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin"
 
 /**
  * GET /api/secrets/presence - Buscar presença de secrets (sem valores)
- * 
+ *
  * Retorna apenas se os secrets existem e quando foram atualizados,
  * nunca retorna os valores reais por segurança.
  */
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     // Obter plugins habilitados da query string
     const { searchParams } = new URL(request.url)
     const enabledPluginsParam = searchParams.get("enabledPlugins")
-    
+
     // Support "all" to fetch presence for all plugins
     let enabledPlugins: string[] = []
     if (enabledPluginsParam === "all") {
@@ -49,7 +49,10 @@ export async function GET(request: Request) {
       .from("plugin_secrets")
       .select("plugin, key, updated_at")
       .eq("user_id", user.id)
-      .in("plugin", enabledPlugins.map(p => p.toLowerCase()))
+      .in(
+        "plugin",
+        enabledPlugins.map((p) => p.toLowerCase())
+      )
 
     if (secretsError) {
       console.error("Error fetching secrets:", secretsError)
@@ -58,7 +61,7 @@ export async function GET(request: Request) {
 
     // Construir mapa de presença: { plugin: { key: { exists: true, updatedAt: "..." } } }
     const presence: Record<string, Record<string, { exists: boolean; updatedAt?: string }>> = {}
-    
+
     // Inicializar estrutura para todos os plugins e keys
     for (const pluginName of enabledPlugins) {
       const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
@@ -90,7 +93,7 @@ export async function GET(request: Request) {
 
     // Calcular missing secrets
     const missingSecrets: Array<{ pluginName: string; missingKeys: Array<{ key: string; label: string }> }> = []
-    
+
     for (const pluginName of enabledPlugins) {
       const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA]
       if (!metadata) continue
@@ -128,4 +131,3 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-

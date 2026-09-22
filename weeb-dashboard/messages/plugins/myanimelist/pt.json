@@ -17,6 +17,9 @@
     },
     "anime_favorites": {
       "config": {
+        "anime_favorites_hide_overlay": {
+          "label": "Hide overlay (Simple style only)"
+        },
         "anime_favorites_hide_title": {
           "label": "Ocultar título"
         },
@@ -47,6 +50,9 @@
     },
     "character_favorites": {
       "config": {
+        "character_favorites_hide_overlay": {
+          "label": "Hide overlay (Simple style only)"
+        },
         "character_favorites_hide_title": {
           "label": "Ocultar título"
         },
@@ -116,6 +122,9 @@
         "favorites_hide_overlay": {
           "label": "Ocultar sobreposição (apenas estilo Simples)"
         },
+        "manga_favorites_hide_overlay": {
+          "label": "Hide overlay (Simple style only)"
+        },
         "manga_favorites_hide_title": {
           "label": "Ocultar título"
         },
@@ -145,6 +154,9 @@
       "config": {
         "favorites_hide_overlay": {
           "label": "Ocultar sobreposição (apenas estilo Simples)"
+        },
+        "people_favorites_hide_overlay": {
+          "label": "Hide overlay (Simple style only)"
         },
         "people_favorites_hide_title": {
           "label": "Ocultar título"

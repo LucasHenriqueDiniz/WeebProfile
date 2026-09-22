@@ -18,7 +18,13 @@ export class PluginRegistry {
   private constructor() {
     // Inicializar metadata
     for (const [name, meta] of Object.entries(PLUGINS_METADATA)) {
-      this.metadata.set(name, meta)
+      this.metadata.set(name, {
+        ...meta,
+        requiredFields: [...meta.requiredFields],
+        essentialConfigKeys: [...meta.essentialConfigKeys],
+        essentialConfigKeysMetadata: [...meta.essentialConfigKeysMetadata],
+        sections: [...meta.sections],
+      } as unknown as PluginMetadata)
     }
   }
 
@@ -58,7 +64,6 @@ export class PluginRegistry {
     }
 
     // Validate that plugin has all sections from metadata
-    const metadataSectionIds = new Set(metadata.sections.map((s) => s.id))
     // (more complex validation can be done here)
 
     this.plugins.set(plugin.name, plugin)

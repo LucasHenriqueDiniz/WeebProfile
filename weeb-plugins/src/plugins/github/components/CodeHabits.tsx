@@ -1,46 +1,46 @@
-import React from 'react'
-import { FaCode } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalHorizontalMultipleItemsBar } from '../../../templates/Terminal/TerminalHorizontalMultipleItems'
-import { TerminalLine } from '../../../templates/Terminal/TerminalLine'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { randomColorWithString } from '../../../utils/string'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCode } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalHorizontalMultipleItemsBar } from "../../../templates/Terminal/TerminalHorizontalMultipleItems"
+import { TerminalLine } from "../../../templates/Terminal/TerminalLine"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { randomColorWithString } from "../../../utils/string"
+import type { GithubConfig, GithubData } from "../types"
 
 interface CodeHabitsProps {
-  data: GithubData['codeHabits']
+  data: GithubData["codeHabits"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
-const DefaultCodeHabits = ({ 
-  data, 
-  hideLanguages, 
-  hideStats, 
-  hideWeekdays, 
-  hideHours, 
-  hideFooter 
-}: { 
-  data: GithubData['codeHabits']
+const DefaultCodeHabits = ({
+  data,
+  hideLanguages,
+  hideStats,
+  hideWeekdays,
+  hideHours,
+  hideFooter,
+}: {
+  data: GithubData["codeHabits"]
   hideLanguages?: boolean
   hideStats?: boolean
   hideWeekdays?: boolean
   hideHours?: boolean
   hideFooter?: boolean
 }) => {
-  const maxCommitsByHour = data.commitsByHour && Object.values(data.commitsByHour).length > 0
-    ? Math.max(...Object.values(data.commitsByHour))
-    : 0
-  const maxCommitsByDay = data.commitsByDay && Object.values(data.commitsByDay).length > 0
-    ? Math.max(...Object.values(data.commitsByDay))
-    : 0
+  const maxCommitsByHour =
+    data.commitsByHour && Object.values(data.commitsByHour).length > 0
+      ? Math.max(...Object.values(data.commitsByHour))
+      : 0
+  const maxCommitsByDay =
+    data.commitsByDay && Object.values(data.commitsByDay).length > 0 ? Math.max(...Object.values(data.commitsByDay)) : 0
 
   return (
     <div className="flex flex-col gap-2">
@@ -51,7 +51,7 @@ const DefaultCodeHabits = ({
           <div className="flex justify-between items-end h-32 gap-[1px]">
             {Array.from({ length: 24 }).map((_, hour) => {
               const commits = data.commitsByHour[hour] || 0
-              const height = maxCommitsByHour ? `${Math.max((commits / maxCommitsByHour) * 100, 5)}%` : '5%'
+              const height = maxCommitsByHour ? `${Math.max((commits / maxCommitsByHour) * 100, 5)}%` : "5%"
               return (
                 <div key={hour} className="flex flex-col items-center w-8 h-full">
                   <div className="w-2 rounded-t-md flex items-end h-full justify-end flex-col">
@@ -73,9 +73,11 @@ const DefaultCodeHabits = ({
       )}
 
       {/* 2x2 Grid layout */}
-      <div className={`grid gap-x-2 gap-y-2 ${
-        !hideLanguages && data.languages && Object.keys(data.languages).length > 0 ? 'grid-cols-2' : 'grid-cols-1'
-      }`}>
+      <div
+        className={`grid gap-x-2 gap-y-2 ${
+          !hideLanguages && data.languages && Object.keys(data.languages).length > 0 ? "grid-cols-2" : "grid-cols-1"
+        }`}
+      >
         {/* Row 1: Titles */}
         {!hideWeekdays && <h3 className="text-sm font-semibold text-default-muted">Commit activity per day of week</h3>}
         {!hideLanguages && data.languages && Object.keys(data.languages).length > 0 && (
@@ -87,7 +89,7 @@ const DefaultCodeHabits = ({
           <div className="flex flex-col gap-1">
             {DAYS.map((day) => {
               const commits = data.commitsByDay[day] || 0
-              const width = maxCommitsByDay ? `${Math.max((commits / maxCommitsByDay) * 100, 5)}%` : '1%'
+              const width = maxCommitsByDay ? `${Math.max((commits / maxCommitsByDay) * 100, 5)}%` : "1%"
               return (
                 <div key={day} className="flex flex-col">
                   <div className="flex justify-between text-xs text-default-muted mb-1 w-full text-center">
@@ -182,23 +184,23 @@ const TerminalCodeHabits = ({
   hideHours,
   hideFooter,
 }: {
-  data: GithubData['codeHabits']
+  data: GithubData["codeHabits"]
   hideLanguages?: boolean
   hideStats?: boolean
   hideWeekdays?: boolean
   hideHours?: boolean
   hideFooter?: boolean
 }) => {
-  const maxCommitsByHour = data.commitsByHour && Object.values(data.commitsByHour).length > 0
-    ? Math.max(...Object.values(data.commitsByHour))
-    : 0
-  const maxCommitsByDay = data.commitsByDay && Object.values(data.commitsByDay).length > 0
-    ? Math.max(...Object.values(data.commitsByDay))
-    : 0
+  const maxCommitsByHour =
+    data.commitsByHour && Object.values(data.commitsByHour).length > 0
+      ? Math.max(...Object.values(data.commitsByHour))
+      : 0
+  const maxCommitsByDay =
+    data.commitsByDay && Object.values(data.commitsByDay).length > 0 ? Math.max(...Object.values(data.commitsByDay)) : 0
 
   const getBarChart = (value: number, max: number, width: number = 38): string => {
     const filled = Math.round(((value || 0) / (max || 1)) * width)
-    return '█'.repeat(filled) + '░'.repeat(width - filled)
+    return "█".repeat(filled) + "░".repeat(width - filled)
   }
 
   return (
@@ -253,7 +255,7 @@ const TerminalCodeHabits = ({
             .map(([lang, { count, color }]) => (
               <span className="flex flex-col" key={lang}>
                 <TerminalLine
-                  className={{ right: 'mt-[0.25rem] capitalize' }}
+                  className={{ right: "mt-[0.25rem] capitalize" }}
                   style={{ right: { color: color ?? randomColorWithString(lang) } }}
                   right={`██ ${lang}`}
                   left={abbreviateNumber(count)}
@@ -271,7 +273,10 @@ const TerminalCodeHabits = ({
             title="Avg. Changes per Commit"
             value={abbreviateNumber(data.commitStats.averageChangesPerCommit || 0)}
           />
-          <TerminalLineWithDots title="Total Files Changed" value={abbreviateNumber(data.commitStats.totalFilesChanged || 0)} />
+          <TerminalLineWithDots
+            title="Total Files Changed"
+            value={abbreviateNumber(data.commitStats.totalFilesChanged || 0)}
+          />
           <TerminalLineWithDots title="Largest Commit" value={abbreviateNumber(data.commitStats.largestCommit || 0)} />
         </>
       )}
@@ -290,7 +295,7 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
     return <></>
   }
 
-  const title = config.code_habits_title ?? 'Code Habits'
+  const title = config.code_habits_title ?? "Code Habits"
   const hideTitle = config.code_habits_hide_title ?? false
   const hideLanguages = config.code_habits_hide_languages ?? false
   const hideStats = config.code_habits_hide_stats ?? false
@@ -305,8 +310,8 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
         defaultComponent={
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaCode />} />}
-            <DefaultCodeHabits 
-              data={data} 
+            <DefaultCodeHabits
+              data={data}
               hideLanguages={hideLanguages}
               hideStats={hideStats}
               hideWeekdays={hideWeekdays}
@@ -319,13 +324,13 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'code-habits',
+                plugin: "github",
+                section: "code-habits",
                 size,
               })}
             />
-            <TerminalCodeHabits 
-              data={data} 
+            <TerminalCodeHabits
+              data={data}
               hideLanguages={hideLanguages}
               hideStats={hideStats}
               hideWeekdays={hideWeekdays}
@@ -338,4 +343,3 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
     </section>
   )
 }
-

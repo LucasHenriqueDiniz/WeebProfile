@@ -2,7 +2,7 @@
  * Dados mock para o plugin Stack Overflow
  */
 
-import type { StackOverflowData } from '../types'
+import type { StackOverflowData } from "../types"
 
 export function getMockStackOverflowData(): StackOverflowData {
   return {
@@ -16,12 +16,11 @@ export function getMockStackOverflowData(): StackOverflowData {
     answers: 234,
     questions: 156,
     topTags: [
-      { name: 'bison', score: 79 },
-      { name: 'flex-lexer', score: 83 },
-      { name: 'c', score: 41 },
-      { name: 'c++', score: 36 },
-      { name: 'lex', score: 64 },
+      { name: "bison", score: 79 },
+      { name: "flex-lexer", score: 83 },
+      { name: "c", score: 41 },
+      { name: "c++", score: 36 },
+      { name: "lex", score: 64 },
     ],
   }
 }
-

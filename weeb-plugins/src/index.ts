@@ -7,6 +7,9 @@
 // Plugins
 export * from "./plugins/index"
 
+// Plugin Manager
+export { PluginManager } from "./plugins/manager"
+
 // Templates
 export * from "./templates/index"
 

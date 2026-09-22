@@ -1,8 +1,7 @@
-
 import { Header } from "@/components/layout/Header"
 import { TemplatesPageClient } from "@/components/templates/TemplatesPageClient"
 import type { Locale } from "@/i18n/config"
-import { setRequestLocale } from 'next-intl/server'
+import { setRequestLocale } from "next-intl/server"
 
 interface TemplatesPageProps {
   params: Promise<{ locale: Locale }>

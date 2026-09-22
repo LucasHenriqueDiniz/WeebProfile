@@ -25,17 +25,23 @@ interface ProfileStore {
   profileLastFetch: number | null
 
   // Essential configs (cache por combinação de plugins)
-  essentialConfigsCache: Record<string, {
-    configs: EssentialConfigs
-    missingConfigs: MissingConfig[]
-    timestamp: number
-  }>
-  
+  essentialConfigsCache: Record<
+    string,
+    {
+      configs: EssentialConfigs
+      missingConfigs: MissingConfig[]
+      timestamp: number
+    }
+  >
+
   cacheMaxAge: number // 5 minutos
 
   // Actions
   fetchProfile: (force?: boolean) => Promise<void>
-  getEssentialConfigs: (enabledPlugins: string[], force?: boolean) => Promise<{
+  getEssentialConfigs: (
+    enabledPlugins: string[],
+    force?: boolean
+  ) => Promise<{
     essentialConfigs: EssentialConfigs
     missingConfigs: MissingConfig[]
   }>
@@ -56,11 +62,12 @@ export const useProfileStore = create<ProfileStore>()(
 
       fetchProfile: async (force = false) => {
         const state = get()
-        
+
         // Se não for forçado e já temos dados recentes, não buscar
         if (!force && state.profile && state.profileLastFetch) {
           const timeSinceLastFetch = Date.now() - state.profileLastFetch
-          if (timeSinceLastFetch < 60000) { // 1 minuto
+          if (timeSinceLastFetch < 60000) {
+            // 1 minuto
             return
           }
         }
@@ -96,7 +103,7 @@ export const useProfileStore = create<ProfileStore>()(
         if (!force && state.essentialConfigsCache[cacheKey]) {
           const cached = state.essentialConfigsCache[cacheKey]
           const age = Date.now() - cached.timestamp
-          
+
           // Se o cache ainda é válido, retornar
           if (age < state.cacheMaxAge) {
             return {
@@ -109,7 +116,7 @@ export const useProfileStore = create<ProfileStore>()(
         // Buscar do servidor
         try {
           const data = await profileApi.getEssentialConfigs(enabledPlugins)
-          
+
           const essentialConfigs = data.essentialConfigs || {}
           const missingConfigs = data.missingConfigs || []
 
@@ -138,7 +145,7 @@ export const useProfileStore = create<ProfileStore>()(
           }
           return {
             essentialConfigs: {},
-            missingConfigs: enabledPlugins.map(name => ({ pluginName: name, missingKeys: [] })),
+            missingConfigs: enabledPlugins.map((name) => ({ pluginName: name, missingKeys: [] })),
           }
         }
       },
@@ -161,12 +168,15 @@ export const useProfileStore = create<ProfileStore>()(
       onRehydrateStorage: () => (state) => {
         if (state) {
           const now = Date.now()
-          const validCache: Record<string, {
-            configs: EssentialConfigs
-            missingConfigs: MissingConfig[]
-            timestamp: number
-          }> = {}
-          
+          const validCache: Record<
+            string,
+            {
+              configs: EssentialConfigs
+              missingConfigs: MissingConfig[]
+              timestamp: number
+            }
+          > = {}
+
           // Manter apenas cache válido
           Object.entries(state.essentialConfigsCache).forEach(([key, cached]) => {
             const age = now - cached.timestamp
@@ -181,5 +191,3 @@ export const useProfileStore = create<ProfileStore>()(
     }
   )
 )
-
-

@@ -1,4 +1,3 @@
-
 `src/plugins/metadata.ts` (or your equivalent metadata registry) is the single source of truth for:
 
 - display name, description, category
@@ -28,6 +27,7 @@ Typical metadata fields (names vary by repo, but the intent is the same):
 ## Keep these in sync
 
 ### Essential keys
+
 If a plugin requires:
 
 ```ts
@@ -79,4 +79,3 @@ If you must change metadata:
 - [ ] section IDs are stable
 - [ ] each option has a correct `defaultValue`
 - [ ] plugin is exported/registered so consumers can discover it
-

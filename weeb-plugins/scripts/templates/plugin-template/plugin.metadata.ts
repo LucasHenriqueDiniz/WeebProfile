@@ -1,11 +1,11 @@
 /**
  * PLUGIN_NAME Plugin Metadata
- * 
+ *
  * This file defines all sections, configurations and options for the plugin.
  * It's used to automatically generate the centralized metadata.ts.
- * 
+ *
  * DO NOT edit metadata.ts manually - it's automatically generated from this file.
- * 
+ *
  * To add new sections:
  * 1. Add the section here in sections[]
  * 2. Run: pnpm generate-metadata

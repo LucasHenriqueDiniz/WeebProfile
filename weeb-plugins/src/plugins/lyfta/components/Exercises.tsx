@@ -1,30 +1,30 @@
-import React from 'react'
-import { GiWeightLiftingUp } from 'react-icons/gi'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalStatisticRow } from '../../../templates/Terminal/TerminalStatisticRow'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { LyftaData, LyftaNonEssentialConfig } from '../types'
-import { formatWeight } from '../utils/weight'
-import { calculate1RM, format1RM } from '../utils/1rm'
+import React from "react"
+import { GiWeightLiftingUp } from "react-icons/gi"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalStatisticRow } from "../../../templates/Terminal/TerminalStatisticRow"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { LyftaData, LyftaNonEssentialConfig } from "../types"
+import { formatWeight } from "../utils/weight"
+import { calculate1RM, format1RM } from "../utils/1rm"
 
 interface ExercisesProps {
   data: LyftaData
   config: LyftaNonEssentialConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function Exercises({ data, config, style = 'default', size = 'half' }: ExercisesProps): React.ReactElement {
+export function Exercises({ data, config, style = "default", size = "half" }: ExercisesProps): React.ReactElement {
   if (!data || !data.exercises || data.exercises.length === 0) {
     return <></>
   }
 
   const hideTitle = config.exercises_hide_title || false
-  const title = config.exercises_title || 'Most Performed Exercises'
+  const title = config.exercises_title || "Most Performed Exercises"
   const maxExercises = config.exercises_max || 5
-  const weightUnit = config.weight_unit || 'kg'
+  const weightUnit = config.weight_unit || "kg"
   const show1RM = config.exercises_show_1rm !== false
   const hideImages = config.exercises_hide_images === true
 
@@ -82,7 +82,7 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
 
   // Build image map from both exercises list and workouts (workouts have exercise_image)
   const exerciseImageMap = new Map<string, string>()
-  
+
   // First, add from exercises list
   data.exercises.forEach((ex) => {
     if (ex.name && ex.image_name) {
@@ -91,7 +91,7 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
       exerciseImageMap.set(normalizedName.toLowerCase(), ex.image_name)
     }
   })
-  
+
   // Then, add from workouts (they have exercise_image directly)
   data.workouts.forEach((workout) => {
     workout.exercises.forEach((exercise) => {
@@ -108,10 +108,8 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
     .map(([name, stats]) => {
       const normalizedName = name.trim()
       // Try exact match first, then case-insensitive
-      const image = exerciseImageMap.get(normalizedName) || 
-                    exerciseImageMap.get(normalizedName.toLowerCase()) ||
-                    null
-      
+      const image = exerciseImageMap.get(normalizedName) || exerciseImageMap.get(normalizedName.toLowerCase()) || null
+
       return {
         name: normalizedName,
         count: stats.count,
@@ -139,10 +137,8 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
             <div className="rounded-lg shadow-sm p-4">
               <div className="space-y-2">
                 {topExercises.map((exercise) => {
-                  const oneRMDisplay = show1RM && exercise.best1RM > 0 
-                    ? format1RM(exercise.best1RM, weightUnit)
-                    : null
-                  
+                  const oneRMDisplay = show1RM && exercise.best1RM > 0 ? format1RM(exercise.best1RM, weightUnit) : null
+
                   return (
                     <div key={exercise.name} className="flex justify-between items-center">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -159,7 +155,7 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
                             {exercise.name}
                           </div>
                           <div className="text-xs half:text-[10px] text-default-muted">
-                            {exercise.count} {exercise.count === 1 ? 'session' : 'sessions'}
+                            {exercise.count} {exercise.count === 1 ? "session" : "sessions"}
                           </div>
                         </div>
                       </div>
@@ -182,8 +178,8 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'lyfta',
-                section: 'exercises',
+                plugin: "lyfta",
+                section: "exercises",
                 size,
               })}
             />
@@ -200,9 +196,10 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
                   if (show1RM && exercise.best1RM > 0) {
                     parts.push(`1RM: ${format1RM(exercise.best1RM, weightUnit)}`)
                   }
-                  const value = parts.length > 0
-                    ? `${exercise.count}x • ${parts.join(' • ')}`
-                    : `${exercise.count} ${exercise.count === 1 ? 'time' : 'times'}`
+                  const value =
+                    parts.length > 0
+                      ? `${exercise.count}x • ${parts.join(" • ")}`
+                      : `${exercise.count} ${exercise.count === 1 ? "time" : "times"}`
                   return {
                     icon: null,
                     title: exercise.name,
@@ -217,4 +214,3 @@ export function Exercises({ data, config, style = 'default', size = 'half' }: Ex
     </section>
   )
 }
-

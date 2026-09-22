@@ -9,7 +9,7 @@ import { getTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
 /**
  * POST /api/svgs/[id]/generate - Gerar SVG
- * 
+ *
  * Esta rota gera o SVG usando o core e salva no Supabase Storage.
  * Pode ser chamada manualmente ou por cron job.
  */
@@ -55,9 +55,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       const now = new Date()
       const minutesSinceUpdate = (now.getTime() - updatedAt.getTime()) / (1000 * 60)
       const STUCK_TIMEOUT_MINUTES = 30
-      
+
       if (minutesSinceUpdate > STUCK_TIMEOUT_MINUTES) {
-        console.warn(`⚠️  SVG ${id} está preso em "generating" há ${Math.ceil(minutesSinceUpdate)} minutos. Resetando para "pending".`)
+        console.warn(
+          `⚠️  SVG ${id} está preso em "generating" há ${Math.ceil(minutesSinceUpdate)} minutos. Resetando para "pending".`
+        )
         // Resetar para "pending" para permitir nova tentativa
         const [updatedSvg] = await db
           .update(svgs)
@@ -67,7 +69,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           })
           .where(eq(svgs.id, id))
           .returning()
-        
+
         if (updatedSvg) {
           currentSvg = updatedSvg
         }
@@ -80,7 +82,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       const lastGenerated = new Date(currentSvg.lastGeneratedAt)
       const now = new Date()
       const minutesSinceLastGeneration = (now.getTime() - lastGenerated.getTime()) / (1000 * 60)
-      
+
       if (minutesSinceLastGeneration < COOLDOWN_MINUTES) {
         const remainingMinutes = Math.ceil(COOLDOWN_MINUTES - minutesSinceLastGeneration)
         return NextResponse.json(
@@ -118,7 +120,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
       // Converter configuração do Supabase para formato do svg-generator
       const { plugins, pluginsOrder } = await convertSvgToPluginsConfig(currentSvg)
-      
+
       console.log(`🔍 [GENERATE] Converted plugins:`, JSON.stringify(plugins, null, 2))
       console.log(`🔍 [GENERATE] Plugins order:`, pluginsOrder)
 
@@ -128,8 +130,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       const uiConfig = (currentSvg as any).uiConfig || {}
       const terminalConfigs = getTerminalConfigs(uiConfig)
       const requestConfig = {
-        style: currentSvg.style || 'default',
-        size: currentSvg.size || 'half',
+        style: currentSvg.style || "default",
+        size: currentSvg.size || "half",
         plugins,
         pluginsOrder, // Already converted by convertSvgToPluginsConfig (alphabetical if null/empty)
         customCss: currentSvg.customCss || undefined,
@@ -190,15 +192,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         .where(eq(svgs.id, id))
 
       console.error("Error generating SVG:", error)
-      
+
       // Check if it's a Vercel timeout error (cold start do Railway)
       const errorMessage = error instanceof Error ? error.message : String(error)
-      const isVercelTimeout = 
+      const isVercelTimeout =
         errorMessage.includes("Vercel Runtime Timeout") ||
         errorMessage.includes("Task timed out after") ||
         errorMessage.includes("Function execution exceeded") ||
         (error?.code === "ETIMEDOUT" && errorMessage.includes("timeout"))
-      
+
       if (isVercelTimeout) {
         return NextResponse.json(
           {
@@ -210,7 +212,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           { status: 503 }
         )
       }
-      
+
       // Check if it's a structured error from svg-generator
       if (error?.code === "MISSING_REQUIRED_SECRETS" || error?.error === "MISSING_REQUIRED_CONFIG") {
         return NextResponse.json(
@@ -223,20 +225,22 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           { status: 400 }
         )
       }
-      
+
       // DB unreachable error - not a user error, it's a system/infrastructure issue
       if (error?.code === "DATABASE_UNREACHABLE" || error?.code === "SUPABASE_DB_DNS_FAILED") {
         return NextResponse.json(
           {
             error: "Database unreachable",
             code: error.code,
-            message: error.message || "Generator não conseguiu acessar o banco de dados. Verifique DATABASE_URL e conectividade.",
+            message:
+              error.message ||
+              "Generator não conseguiu acessar o banco de dados. Verifique DATABASE_URL e conectividade.",
             details: error.details,
           },
           { status: 503 }
         )
       }
-      
+
       return NextResponse.json(
         {
           error: "Failed to generate SVG",
@@ -250,4 +254,3 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-

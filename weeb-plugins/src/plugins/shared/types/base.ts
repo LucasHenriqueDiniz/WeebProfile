@@ -1,6 +1,6 @@
 /**
  * Tipos base compartilhados para plugins
- * 
+ *
  * Define a estrutura fundamental de configurações de plugins,
  * separando dados sensíveis (essenciais) de preferências do usuário (não-essenciais)
  */
@@ -37,5 +37,11 @@ export interface BasePluginConfig {
   essential?: EssentialPluginConfig
   nonEssential?: NonEssentialPluginConfig
   previewMode?: boolean
+  // Global config properties passed by SVG generator
+  style?: "default" | "terminal"
+  size?: "half" | "full"
+  terminalTheme?: string
+  defaultTheme?: string
+  hideTerminalEmojis?: boolean
+  primaryColor?: string
 }
-

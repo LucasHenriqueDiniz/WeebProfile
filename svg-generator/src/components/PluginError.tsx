@@ -1,6 +1,6 @@
 /**
  * Componente para exibir erros de plugins
- * 
+ *
  * Renderiza uma mensagem de erro visual quando um plugin falha ao buscar dados ou renderizar
  */
 
@@ -25,21 +25,8 @@ export function PluginError({ pluginName, error, style, size }: PluginErrorProps
         color: "#991b1b",
       }}
     >
-      <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
-        ⚠️ Erro no plugin: {pluginName}
-      </div>
-      <div style={{ fontSize: "0.875rem", fontFamily: "monospace" }}>
-        {error.message || String(error)}
-      </div>
+      <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>⚠️ Erro no plugin: {pluginName}</div>
+      <div style={{ fontSize: "0.875rem", fontFamily: "monospace" }}>{error.message || String(error)}</div>
     </div>
   )
 }
-
-
-
-
-
-
-
-
-

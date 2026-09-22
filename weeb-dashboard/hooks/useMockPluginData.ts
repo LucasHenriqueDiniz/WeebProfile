@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
-import { PluginManager } from "@weeb/weeb-plugins/plugins/manager"
+import { PluginManager } from "@weeb/weeb-plugins"
+import { useEffect, useMemo, useState } from "react"
 
 interface PluginConfig {
   enabled: boolean
@@ -21,7 +21,7 @@ interface MockPluginData {
 /**
  * Hook para buscar dados mockados dos plugins
  * Cacheia dados para evitar múltiplas chamadas
- * 
+ *
  * Usa os plugins diretamente com fetchData(..., dev=true) para obter dados mock
  * Funciona dinamicamente com qualquer plugin
  */
@@ -33,58 +33,64 @@ export function useMockPluginData({ plugins }: UseMockPluginDataProps): {
   const [loading, setLoading] = useState(true)
 
   // Criar chave única baseada nas configurações dos plugins habilitados
-  const pluginsKey = useMemo(
-    () => {
-      const enabledPlugins: Record<string, any> = {}
-      for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
-        if (pluginConfig?.enabled) {
-          enabledPlugins[pluginName] = pluginConfig
-        }
-      }
-      return JSON.stringify(enabledPlugins)
-    },
-    [plugins]
-  )
-
-  useEffect(() => {
-    setLoading(true)
-    const loadPromises: Promise<void>[] = []
-
-    // Carregar dados mockados para todos os plugins habilitados (dinâmico)
+  const pluginsKey = useMemo(() => {
+    const enabledPlugins: Record<string, any> = {}
     for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
       if (pluginConfig?.enabled) {
-        loadPromises.push(
-          Promise.resolve(PluginManager.getInstance().get(pluginName))
-            .then((plugin) => {
-              if (!plugin) {
-                console.warn(`Plugin "${pluginName}" not found`)
-                return
-              }
-              return plugin.fetchData(pluginConfig as any, true, undefined, true) // dev=true para dados mock + previewMode=true
-            })
-            .then((pluginData) => {
-              if (pluginData) {
-                setData((prev) => ({ ...prev, [pluginName]: pluginData }))
-                console.debug(`[useMockPluginData] Loaded ${pluginName} (${Object.keys(pluginData).length})`)
-              } else {
-                console.warn(`[useMockPluginData] No data returned for ${pluginName}`)
-              }
-            })
-            .catch((error) => {
-              console.error(`[useMockPluginData] ❌ Error loading ${pluginName} mock data:`, error)
-              // Adicionar ao data mesmo em erro para debug
-              setData((prev) => ({ ...prev, [pluginName]: { _error: String(error) } }))
-            })
-        )
+        enabledPlugins[pluginName] = pluginConfig
       }
     }
+    return JSON.stringify(enabledPlugins)
+  }, [plugins])
 
-    // Aguardar todos os dados carregarem
-    Promise.all(loadPromises).finally(() => {
-      setLoading(false)
-    })
-  }, [pluginsKey])
+  useEffect(() => {
+    let isActive = true
+
+    const loadData = async () => {
+      if (!isActive) return
+
+      setLoading(true)
+      const loadPromises: Promise<void>[] = []
+
+      // Carregar dados mockados para todos os plugins habilitados (dinâmico)
+      for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
+        if (pluginConfig?.enabled) {
+          loadPromises.push(
+            Promise.resolve(PluginManager.getInstance().get(pluginName))
+              .then((plugin) => {
+                if (!plugin) {
+                  console.warn(`Plugin "${pluginName}" not found`)
+                  return
+                }
+                return plugin.fetchData(pluginConfig as any, true, undefined, true) // dev=true para dados mock + previewMode=true
+              })
+              .then((pluginData) => {
+                if (pluginData) {
+                  console.log(`[useMockPluginData] Loaded ${pluginName} mock data`)
+                  setData((prev) => ({ ...prev, [pluginName]: pluginData }))
+                }
+              })
+              .catch((error) => {
+                console.error(`[useMockPluginData] Error loading ${pluginName} mock data:`, error)
+                // Adicionar ao data mesmo em erro para debug
+                setData((prev) => ({ ...prev, [pluginName]: { _error: String(error) } }))
+              })
+          )
+        }
+      }
+
+      // Aguardar todos os dados carregarem
+      Promise.all(loadPromises).finally(() => {
+        if (isActive) setLoading(false)
+      })
+    }
+
+    loadData()
+
+    return () => {
+      isActive = false
+    }
+  }, [plugins])
 
   return { data, loading }
 }
-

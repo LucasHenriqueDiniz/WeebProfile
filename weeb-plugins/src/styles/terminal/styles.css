@@ -2,7 +2,8 @@
 
 /* Container */
 #svg-main .terminal-container {
-  --font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-family:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-family: var(--font-family);
   font-variant-ligatures: none; /* Desliga ligatures para previsibilidade */
   width: 100%;
@@ -224,4 +225,3 @@
 #svg-main .genre-tag {
   display: inline-block;
 }
-

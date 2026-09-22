@@ -1,19 +1,19 @@
 /**
  * Preview Split
- * 
+ *
  * Split view for React and SVG previews side by side
  */
 
-import { useState, useRef, useEffect } from 'react'
-import ReactIframePreview from './ReactIframePreview'
-import SvgIframePreview from './SvgIframePreview'
-import type { StyleSnapshot } from '../../lib/iframe/iframeProtocol'
+import { useState, useRef, useEffect } from "react"
+import ReactIframePreview from "./ReactIframePreview"
+import SvgIframePreview from "./SvgIframePreview"
+import type { StyleSnapshot } from "../../lib/iframe/iframeProtocol"
 
 interface PreviewSplitProps {
   reactHtml: string
   reactCss: string
   svg: string
-  background?: 'light' | 'dark'
+  background?: "light" | "dark"
   onReactElementSelect?: (snapshot: StyleSnapshot | null) => void
   onSvgElementSelect?: (snapshot: StyleSnapshot | null) => void
   selectedDebugId?: string | null
@@ -26,7 +26,7 @@ export default function PreviewSplit({
   reactHtml,
   reactCss,
   svg,
-  background = 'dark',
+  background = "dark",
   onReactElementSelect,
   onSvgElementSelect,
   selectedDebugId,
@@ -52,55 +52,55 @@ export default function PreviewSplit({
 
     const handleMouseUp = () => {
       isDraggingRef.current = false
-      document.body.style.cursor = ''
-      document.body.style.userSelect = ''
+      document.body.style.cursor = ""
+      document.body.style.userSelect = ""
     }
 
     if (isDraggingRef.current) {
-      document.addEventListener('mousemove', handleMouseMove)
-      document.addEventListener('mouseup', handleMouseUp)
+      document.addEventListener("mousemove", handleMouseMove)
+      document.addEventListener("mouseup", handleMouseUp)
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove)
-        document.removeEventListener('mouseup', handleMouseUp)
+        document.removeEventListener("mousemove", handleMouseMove)
+        document.removeEventListener("mouseup", handleMouseUp)
       }
     }
   }, [isDraggingRef.current])
 
   const handleMouseDown = () => {
     isDraggingRef.current = true
-    document.body.style.cursor = 'col-resize'
-    document.body.style.userSelect = 'none'
+    document.body.style.cursor = "col-resize"
+    document.body.style.userSelect = "none"
   }
 
   return (
     <div
       ref={containerRef}
       style={{
-        display: 'flex',
-        width: '100%',
-        height: '100%',
-        position: 'relative',
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        position: "relative",
       }}
     >
       {/* React Preview */}
       <div
         style={{
           width: `${splitPosition}%`,
-          height: '100%',
-          borderRight: '1px solid #30363d',
-          padding: '8px',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
+          height: "100%",
+          borderRight: "1px solid #30363d",
+          padding: "8px",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <div
           style={{
-            fontSize: '12px',
-            color: '#8b949e',
-            marginBottom: '4px',
-            fontWeight: '600',
-            textTransform: 'uppercase',
+            fontSize: "12px",
+            color: "#8b949e",
+            marginBottom: "4px",
+            fontWeight: "600",
+            textTransform: "uppercase",
           }}
         >
           React Renderer
@@ -123,19 +123,19 @@ export default function PreviewSplit({
       <div
         onMouseDown={handleMouseDown}
         style={{
-          width: '4px',
-          height: '100%',
-          background: '#30363d',
-          cursor: 'col-resize',
+          width: "4px",
+          height: "100%",
+          background: "#30363d",
+          cursor: "col-resize",
           flexShrink: 0,
-          position: 'relative',
+          position: "relative",
           zIndex: 10,
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#58a6ff'
+          e.currentTarget.style.background = "#58a6ff"
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = '#30363d'
+          e.currentTarget.style.background = "#30363d"
         }}
       />
 
@@ -143,20 +143,20 @@ export default function PreviewSplit({
       <div
         style={{
           width: `${100 - splitPosition}%`,
-          height: '100%',
-          padding: '8px',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
+          height: "100%",
+          padding: "8px",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <div
           style={{
-            fontSize: '12px',
-            color: '#8b949e',
-            marginBottom: '4px',
-            fontWeight: '600',
-            textTransform: 'uppercase',
+            fontSize: "12px",
+            color: "#8b949e",
+            marginBottom: "4px",
+            fontWeight: "600",
+            textTransform: "uppercase",
           }}
         >
           SVG Output
@@ -175,4 +175,3 @@ export default function PreviewSplit({
     </div>
   )
 }
-

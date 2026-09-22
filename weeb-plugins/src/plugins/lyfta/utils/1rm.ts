@@ -10,11 +10,10 @@ export function calculate1RM(weight: number, reps: number): number {
   return weight / (1.0278 - 0.0278 * reps)
 }
 
-export function format1RM(weightKg: number, unit: 'kg' | 'lbs' = 'kg'): string {
-  if (unit === 'lbs') {
+export function format1RM(weightKg: number, unit: "kg" | "lbs" = "kg"): string {
+  if (unit === "lbs") {
     const pounds = weightKg * 2.20462
     return `${Math.round(pounds)}lbs`
   }
   return `${Math.round(weightKg)}kg`
 }
-

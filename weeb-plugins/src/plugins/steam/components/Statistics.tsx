@@ -1,17 +1,17 @@
-import React from 'react'
-import { FaSteam, FaGamepad } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { SteamData, SteamNonEssentialConfig } from '../types'
+import React from "react"
+import { FaSteam, FaGamepad } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { SteamData, SteamNonEssentialConfig } from "../types"
 
 interface StatisticsProps {
   data: SteamData
   config: SteamNonEssentialConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
 function formatPlaytime(minutes: number): string {
@@ -47,21 +47,20 @@ function getSteamCoverImageUrl(game: { appid: number; header_image?: string }): 
   return `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/library_hero.jpg`
 }
 
-export function Statistics({ data, config, style = 'default', size = 'half' }: StatisticsProps): React.ReactElement {
+export function Statistics({ data, config, style = "default", size = "half" }: StatisticsProps): React.ReactElement {
   if (!data || !data.statistics) {
     return <></>
   }
 
   const hideTitle = config.statistics_hide_title || false
-  const title = config.statistics_title || 'Gaming Statistics'
+  const title = config.statistics_title || "Gaming Statistics"
   const showFeatured = config.statistics_show_featured !== false // Default: true
   const stats = data.statistics
   const activeGames = data.games.filter((g) => (g.playtime_2weeks || 0) > 0)
-  
+
   // Get featured game (most played in last 2 weeks)
-  const featuredGame = activeGames.length > 0
-    ? activeGames.sort((a, b) => (b.playtime_2weeks || 0) - (a.playtime_2weeks || 0))[0]
-    : null
+  const featuredGame =
+    activeGames.length > 0 ? activeGames.sort((a, b) => (b.playtime_2weeks || 0) - (a.playtime_2weeks || 0))[0] : null
 
   return (
     <section id="steam-statistics">
@@ -97,27 +96,19 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
             {/* Statistics Cards */}
             <div className="grid grid-cols-2 gap-3 half:gap-2.5">
               <div className="px-4 py-3 half:px-3 half:py-2.5 rounded-xl border border-default-border/50 bg-default-card/40 flex flex-col gap-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">
-                  Horas totais
-                </p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Horas totais</p>
                 <p className="text-xl half:text-lg font-black text-default-highlight tabular-nums">
                   {formatPlaytime(stats.totalPlaytime)}
                 </p>
-                <p className="text-xs half:text-[10px] text-default-muted">
-                  Jogos na biblioteca: {stats.totalGames}
-                </p>
+                <p className="text-xs half:text-[10px] text-default-muted">Jogos na biblioteca: {stats.totalGames}</p>
               </div>
 
               <div className="px-4 py-3 half:px-3 half:py-2.5 rounded-xl border border-default-border/50 bg-default-card/40 flex flex-col gap-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">
-                  Últimas 2 semanas
-                </p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Últimas 2 semanas</p>
                 <p className="text-xl half:text-lg font-black text-default-highlight tabular-nums">
                   {formatPlaytime(stats.recentPlaytime)}
                 </p>
-                <p className="text-xs half:text-[10px] text-default-muted">
-                  Jogos ativos: {activeGames.length}
-                </p>
+                <p className="text-xs half:text-[10px] text-default-muted">Jogos ativos: {activeGames.length}</p>
               </div>
             </div>
 
@@ -127,27 +118,23 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
                 {(() => {
                   const coverUrl = getSteamCoverImageUrl(featuredGame)
                   const imageUrl = getSteamImageUrl(featuredGame)
-                  
+
                   return coverUrl ? (
                     <>
                       <div
                         className="absolute inset-0"
                         style={{
                           backgroundImage: `url(${coverUrl})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          filter: 'blur(2px)',
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          filter: "blur(2px)",
                         }}
                       />
                       <div className="absolute inset-0 bg-black/70" />
                       <div className="relative flex items-center gap-4 px-4 py-4 half:px-3 half:py-3 h-full">
                         {imageUrl ? (
                           <div className="relative w-20 h-20 half:w-16 half:h-16 flex-shrink-0 overflow-hidden rounded-lg border-2 border-white/30 bg-black/20 shadow-lg">
-                            <img
-                              src={imageUrl}
-                              alt={`${featuredGame.name}`}
-                              className="w-full h-full object-cover"
-                            />
+                            <img src={imageUrl} alt={`${featuredGame.name}`} className="w-full h-full object-cover" />
                           </div>
                         ) : (
                           <div className="relative w-16 h-16 half:w-14 half:h-14 flex-shrink-0 overflow-hidden rounded-lg border-2 border-white/30 bg-black/20 flex items-center justify-center">
@@ -162,12 +149,8 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
                             {featuredGame.name}
                           </p>
                           <div className="flex flex-col gap-0.5 text-xs half:text-[10px] text-white/90 font-semibold drop-shadow">
-                            <p>
-                              Últimas 2 semanas: {formatHours(featuredGame.playtime_2weeks || 0)}
-                            </p>
-                            <p>
-                              Tempo total jogado: {formatPlaytime(featuredGame.playtime_forever)}
-                            </p>
+                            <p>Últimas 2 semanas: {formatHours(featuredGame.playtime_2weeks || 0)}</p>
+                            <p>Tempo total jogado: {formatPlaytime(featuredGame.playtime_forever)}</p>
                           </div>
                         </div>
                       </div>
@@ -194,12 +177,8 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
                             {featuredGame.name}
                           </p>
                           <div className="flex flex-col gap-0.5 text-xs half:text-[10px] text-default-muted">
-                            <p>
-                              Últimas 2 semanas: {formatHours(featuredGame.playtime_2weeks || 0)}
-                            </p>
-                            <p>
-                              Tempo total jogado: {formatPlaytime(featuredGame.playtime_forever)}
-                            </p>
+                            <p>Últimas 2 semanas: {formatHours(featuredGame.playtime_2weeks || 0)}</p>
+                            <p>Tempo total jogado: {formatPlaytime(featuredGame.playtime_forever)}</p>
                           </div>
                         </div>
                       </div>
@@ -214,24 +193,19 @@ export function Statistics({ data, config, style = 'default', size = 'half' }: S
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'steam',
-                section: 'statistics',
+                plugin: "steam",
+                section: "statistics",
                 size,
               })}
             />
-            {data.playerSummary && (
-              <TerminalLineWithDots title="Profile" value={data.playerSummary.personaname} />
-            )}
+            {data.playerSummary && <TerminalLineWithDots title="Profile" value={data.playerSummary.personaname} />}
             <TerminalLineWithDots title="Total Games" value={String(stats.totalGames)} />
             <TerminalLineWithDots title="Total Playtime" value={formatPlaytime(stats.totalPlaytime)} />
             <TerminalLineWithDots title="Recent Playtime" value={formatPlaytime(stats.recentPlaytime)} />
-            {stats.favoriteGame && (
-              <TerminalLineWithDots title="Favorite Game" value={stats.favoriteGame} />
-            )}
+            {stats.favoriteGame && <TerminalLineWithDots title="Favorite Game" value={stats.favoriteGame} />}
           </>
         }
       />
     </section>
   )
 }
-

@@ -2,7 +2,7 @@
  * Serviço para buscar perfil completo do MyAnimeList
  */
 
-import { jikanGet } from './api-client'
+import { jikanGet } from "./api-client"
 
 export interface JikanUserFullResponse {
   data: {
@@ -131,9 +131,9 @@ export interface MalProfileResponse {
   birthday: string | null
   location: string | null
   joined: string
-  statistics: JikanUserFullResponse['data']['statistics']
-  favorites: JikanUserFullResponse['data']['favorites']
-  updates: JikanUserFullResponse['data']['updates']
+  statistics: JikanUserFullResponse["data"]["statistics"]
+  favorites: JikanUserFullResponse["data"]["favorites"]
+  updates: JikanUserFullResponse["data"]["updates"]
 }
 
 /**
@@ -157,6 +157,3 @@ export async function fetchFullProfile(username: string): Promise<MalProfileResp
     updates: response.data.updates,
   }
 }
-
-
-

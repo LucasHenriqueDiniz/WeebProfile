@@ -46,7 +46,7 @@ export function RenderGithub({
   const renderedSections = sections.map((section) => {
     switch (section) {
       case "profile":
-        return <GithubProfile key="profile" data={data.user} config={config} style={style} size={size} />
+        return <GithubProfile key="profile" data={data.user} _config={config} style={style} size={size} />
       case "repositories":
         return (
           <GithubRepositories

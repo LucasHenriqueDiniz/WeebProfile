@@ -2,7 +2,7 @@
  * Tipos do Plugin Steam
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from "../shared/types/base"
 
 export interface SteamGame {
   appid: number
@@ -47,11 +47,11 @@ export interface SteamNonEssentialConfig extends NonEssentialPluginConfig {
   recent_games_hide_title?: boolean
   recent_games_title?: string
   recent_games_max?: number
-  recent_games_style?: 'list' | 'compact'
+  recent_games_style?: "list" | "compact"
   top_games_hide_title?: boolean
   top_games_title?: string
   top_games_max?: number
-  top_games_style?: 'list' | 'compact'
+  top_games_style?: "list" | "compact"
 }
 
 /**
@@ -67,4 +67,3 @@ export interface SteamData {
   games: SteamGame[]
   statistics: SteamStatistics
 }
-

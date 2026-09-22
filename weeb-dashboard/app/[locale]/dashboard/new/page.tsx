@@ -9,11 +9,18 @@ import { Wizard } from "@/components/wizard/Wizard"
 import { useWizardStore } from "@/stores/wizard-store"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { useTranslations } from "next-intl"
 
 export default function NewSvgPage() {
-  const t = useTranslations('wizard')
+  const t = useTranslations("wizard")
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -24,12 +31,12 @@ export default function NewSvgPage() {
   const [isLoadingTemplate, setIsLoadingTemplate] = useState(false)
 
   // Get template ID from URL
-  const templateId = searchParams.get('template')
+  const templateId = searchParams.get("template")
 
   // Check if there are saved configurations
   const hasSavedData = useMemo(() => {
     if (!plugins || !pluginsOrder) return false
-    const enabledPlugins = Object.values(plugins).filter(p => p.enabled)
+    const enabledPlugins = Object.values(plugins).filter((p) => p.enabled)
     return enabledPlugins.length > 0 || pluginsOrder.length > 0
   }, [plugins, pluginsOrder])
 
@@ -37,23 +44,23 @@ export default function NewSvgPage() {
   useEffect(() => {
     if (templateId && user && !authLoading && initialized && !isLoadingTemplate) {
       setIsLoadingTemplate(true)
-      
+
       fetch(`/api/templates/${templateId}`)
-        .then(response => {
+        .then((response) => {
           if (!response.ok) {
-            throw new Error('Template not found')
+            throw new Error("Template not found")
           }
           return response.json()
         })
-        .then(data => {
+        .then((data) => {
           const template = data.template
           if (template) {
             loadFromTemplate(template)
             hasResetRef.current = true
           }
         })
-        .catch(error => {
-          console.error('Error loading template:', error)
+        .catch((error) => {
+          console.error("Error loading template:", error)
           // Fall back to normal reset if template loading fails
           if (!hasResetRef.current) {
             reset()
@@ -115,18 +122,14 @@ export default function NewSvgPage() {
       <Dialog open={showResumeDialog} onOpenChange={() => {}}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('resumeDialog.title')}</DialogTitle>
-            <DialogDescription>
-              {t('resumeDialog.description')}
-            </DialogDescription>
+            <DialogTitle>{t("resumeDialog.title")}</DialogTitle>
+            <DialogDescription>{t("resumeDialog.description")}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={handleStartFresh}>
-              {t('resumeDialog.startFresh')}
+              {t("resumeDialog.startFresh")}
             </Button>
-            <Button onClick={handleContinue}>
-              {t('resumeDialog.continue')}
-            </Button>
+            <Button onClick={handleContinue}>{t("resumeDialog.continue")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

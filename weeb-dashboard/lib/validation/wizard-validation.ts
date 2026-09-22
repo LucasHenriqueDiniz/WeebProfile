@@ -1,6 +1,6 @@
 /**
  * Wizard Validation
- * 
+ *
  * Validates the entire wizard state using Zod schemas.
  * Aggregates validation errors from all enabled plugins.
  */

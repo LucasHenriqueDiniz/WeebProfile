@@ -46,74 +46,71 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-        const body = await request.json()
-        const {
-          name,
-          pluginsConfig = {},
-          uiConfig = {},
-          style = "default",
-          size = "half",
-          theme = "default",
-          customCss,
-          pluginsOrder,
-          // Legacy support: if hideTerminal* are passed, merge into uiConfig
-          hideTerminalEmojis,
-          hideTerminalHeader,
-          hideTerminalCommand,
-        } = body
+    const body = await request.json()
+    const {
+      name,
+      pluginsConfig = {},
+      uiConfig = {},
+      style = "default",
+      size = "half",
+      theme = "default",
+      customCss,
+      pluginsOrder,
+      // Legacy support: if hideTerminal* are passed, merge into uiConfig
+      hideTerminalEmojis,
+      hideTerminalHeader,
+      hideTerminalCommand,
+    } = body
 
-        if (!name) {
-          return NextResponse.json({ error: "Name is required" }, { status: 400 })
-        }
+    if (!name) {
+      return NextResponse.json({ error: "Name is required" }, { status: 400 })
+    }
 
-        const [svgCount] = await db
-          .select({ count: count() })
-          .from(svgs)
-          .where(eq(svgs.userId, user.id))
+    const [svgCount] = await db.select({ count: count() }).from(svgs).where(eq(svgs.userId, user.id))
 
-        if (svgCount.count >= MAX_SVGS_FREE_TIER) {
-          return NextResponse.json(
-            { error: `Maximum of ${MAX_SVGS_FREE_TIER} SVGs per user (free tier limit)` },
-            { status: 403 }
-          )
-        }
+    if (svgCount.count >= MAX_SVGS_FREE_TIER) {
+      return NextResponse.json(
+        { error: `Maximum of ${MAX_SVGS_FREE_TIER} SVGs per user (free tier limit)` },
+        { status: 403 }
+      )
+    }
 
-        // Gerar slug único baseado no nome + timestamp (ainda necessário para compatibilidade)
-        const slugBase = name
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "")
-        const slug = `${slugBase}-${Date.now().toString(36)}`
+    // Gerar slug único baseado no nome + timestamp (ainda necessário para compatibilidade)
+    const slugBase = name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+    const slug = `${slugBase}-${Date.now().toString(36)}`
 
-        // Build uiConfig: merge provided uiConfig with legacy hideTerminal* flags if present
-        let finalUiConfig = { ...uiConfig }
-        if (hideTerminalEmojis !== undefined || hideTerminalHeader !== undefined || hideTerminalCommand !== undefined) {
-          finalUiConfig = setTerminalConfigs(finalUiConfig, {
-            hideTerminalEmojis,
-            hideTerminalHeader,
-            hideTerminalCommand,
-          })
-        }
+    // Build uiConfig: merge provided uiConfig with legacy hideTerminal* flags if present
+    let finalUiConfig = { ...uiConfig }
+    if (hideTerminalEmojis !== undefined || hideTerminalHeader !== undefined || hideTerminalCommand !== undefined) {
+      finalUiConfig = setTerminalConfigs(finalUiConfig, {
+        hideTerminalEmojis,
+        hideTerminalHeader,
+        hideTerminalCommand,
+      })
+    }
 
-        const [newSvg] = await db
-          .insert(svgs)
-          .values({
-            userId: user.id,
-            slug, // Slug ainda é necessário para compatibilidade, mas não será usado na URL
-            name,
-            pluginsConfig: pluginsConfig, // Only plugins, no flags
-            uiConfig: finalUiConfig, // Global flags
-            style,
-            size,
-            theme,
-            customCss: customCss || null,
-            pluginsOrder: pluginsOrder || null, // null means use alphabetical order
-            status: "pending",
-            forceRegenerate: true,
-          })
-          .returning()
+    const [newSvg] = await db
+      .insert(svgs)
+      .values({
+        userId: user.id,
+        slug, // Slug ainda é necessário para compatibilidade, mas não será usado na URL
+        name,
+        pluginsConfig: pluginsConfig, // Only plugins, no flags
+        uiConfig: finalUiConfig, // Global flags
+        style,
+        size,
+        theme,
+        customCss: customCss || null,
+        pluginsOrder: pluginsOrder || null, // null means use alphabetical order
+        status: "pending",
+        forceRegenerate: true,
+      })
+      .returning()
 
     return NextResponse.json({ svg: newSvg, created: true }, { status: 201 })
   } catch (error) {
@@ -121,4 +118,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-

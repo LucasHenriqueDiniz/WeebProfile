@@ -2,28 +2,34 @@
  * RatingRank - Componente para exibir rating e rank do Codeforces
  */
 
-import React from 'react'
-import { FaTrophy } from 'react-icons/fa'
-import { IoStatsChartOutline } from 'react-icons/io5'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLineWithDots } from '../../../templates/Terminal/TerminalLineWithDots'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { CodeforcesConfig } from '../types'
+import React from "react"
+import { FaTrophy } from "react-icons/fa"
+import { IoStatsChartOutline } from "react-icons/io5"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { CodeforcesConfig } from "../types"
 
 interface RatingRankProps {
   rating: number
   rank: string
   config: CodeforcesConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function RatingRank({ rating, rank, config, style = 'default', size = 'half' }: RatingRankProps): React.ReactElement {
+export function RatingRank({
+  rating,
+  rank,
+  config,
+  style = "default",
+  size = "half",
+}: RatingRankProps): React.ReactElement {
   const hideTitle = config.nonEssential?.rating_rank_hide_title || false
-  const title = config.nonEssential?.rating_rank_title || 'Codeforces Rating & Rank'
+  const title = config.nonEssential?.rating_rank_title || "Codeforces Rating & Rank"
 
   return (
     <section id="codeforces-rating-rank">
@@ -48,23 +54,16 @@ export function RatingRank({ rating, rank, config, style = 'default', size = 'ha
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'codeforces',
-                section: 'rating_rank',
+                plugin: "codeforces",
+                section: "rating_rank",
                 size,
               })}
             />
-            <TerminalLineWithDots
-              title="Rank"
-              value={rank}
-            />
-            <TerminalLineWithDots
-              title="Rating"
-              value={abbreviateNumber(rating)}
-            />
+            <TerminalLineWithDots title="Rank" value={rank} />
+            <TerminalLineWithDots title="Rating" value={abbreviateNumber(rating)} />
           </>
         }
       />
     </section>
   )
 }
-

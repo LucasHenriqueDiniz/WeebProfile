@@ -12,7 +12,7 @@ export class PluginError extends Error {
     public cause?: Error
   ) {
     super(message)
-    this.name = 'PluginError'
+    this.name = "PluginError"
   }
 }
 
@@ -27,7 +27,7 @@ export class ApiError extends PluginError {
     cause?: Error
   ) {
     super(message, undefined, cause)
-    this.name = 'ApiError'
+    this.name = "ApiError"
   }
 }
 
@@ -41,7 +41,7 @@ export class ConfigError extends PluginError {
     pluginName?: string
   ) {
     super(message, pluginName)
-    this.name = 'ConfigError'
+    this.name = "ConfigError"
   }
 }
 
@@ -55,7 +55,6 @@ export class ValidationError extends PluginError {
     pluginName?: string
   ) {
     super(message, pluginName)
-    this.name = 'ValidationError'
+    this.name = "ValidationError"
   }
 }
-

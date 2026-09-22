@@ -1,6 +1,6 @@
 /**
  * Plugin Schema Generation from Metadata
- * 
+ *
  * Generates Zod schemas dynamically from plugin metadata.
  * This ensures validation stays in sync with plugin definitions.
  */

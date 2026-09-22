@@ -22,6 +22,7 @@ const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   stackoverflow: SiStackoverflow,
   duolingo: FaBookOpen,
   spotify: FaSpotify,
+  githubProject: FaGithub,
 }
 
 /**

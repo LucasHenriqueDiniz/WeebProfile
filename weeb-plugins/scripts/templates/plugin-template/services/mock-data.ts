@@ -1,10 +1,10 @@
 /**
  * Mock data for development
- * 
+ *
  * Use this file to create example data during development
  */
 
-import type { PLUGIN_NAMEData } from '../types'
+import type { PLUGIN_NAMEData } from "../types"
 
 /**
  * Generates mock data for the plugin

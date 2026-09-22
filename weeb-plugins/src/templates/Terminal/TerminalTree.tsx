@@ -2,8 +2,8 @@
  * TerminalTree - Árvore para estilo terminal
  */
 
-import React from 'react'
-import type { GridItemProps } from '../types'
+import React from "react"
+import type { GridItemProps } from "../types"
 
 interface TerminalTreeProps {
   data: GridItemProps[]
@@ -51,4 +51,3 @@ const TerminalTree = ({ data, title }: TerminalTreeProps): React.ReactElement =>
 }
 
 export default TerminalTree
-

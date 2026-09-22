@@ -21,6 +21,7 @@ weeb-dashboard/messages/plugins/
 ```
 
 **Exemplo:**
+
 ```
 weeb-dashboard/messages/plugins/
 ├── github/
@@ -63,10 +64,10 @@ export const myPluginMetadata = {
           label: "Maximum items",
           description: "Maximum number of items to display",
           // ...
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ],
 }
 ```
 
@@ -81,6 +82,7 @@ Ao executar `pnpm generate-metadata`, o script:
 5. **Gera arquivos JSON** separados por plugin e locale
 
 **Campos traduzíveis:**
+
 - `displayName` → `plugins.{id}.displayName`
 - `description` → `plugins.{id}.description`
 - `sections[].name` → `plugins.{id}.sections.{sectionId}.name`
@@ -95,10 +97,12 @@ Ao executar `pnpm generate-metadata`, o script:
 ### 3. Comportamento de Merge
 
 #### Inglês (en.json)
+
 - ✅ **Sempre atualizado**: O arquivo EN é sempre sobrescrito com os valores do metadata
 - ✅ **Fonte de verdade**: Serve como referência para traduções
 
 #### Outros Locales (pt.json, es.json)
+
 - ✅ **Preserva traduções existentes**: Se uma key já existe, mantém a tradução
 - ✅ **Adiciona novas keys**: Keys novas são adicionadas com o valor em inglês como placeholder
 - ✅ **Não remove keys**: Se uma key não existe mais no metadata, ela permanece no arquivo (para permitir deprecação gradual)
@@ -106,6 +110,7 @@ Ao executar `pnpm generate-metadata`, o script:
 **Exemplo de Merge:**
 
 **Antes (pt.json):**
+
 ```json
 {
   "displayName": "GitHub",
@@ -123,14 +128,16 @@ Ao executar `pnpm generate-metadata`, o script:
 ```
 
 **Metadata atualizado adiciona novo campo:**
+
 ```typescript
 configOptions: [
   { key: "max_items", label: "Maximum items" },
-  { key: "show_avatar", label: "Show avatar" } // ← NOVO
+  { key: "show_avatar", label: "Show avatar" }, // ← NOVO
 ]
 ```
 
 **Depois do merge (pt.json):**
+
 ```json
 {
   "displayName": "GitHub",
@@ -159,6 +166,7 @@ O arquivo `weeb-dashboard/i18n/request.ts` carrega automaticamente:
 3. **Merge** tudo em um objeto `messages.plugins.{pluginId}`
 
 **Código:**
+
 ```typescript
 // Carrega mensagens base
 const baseMessages = await import(`../messages/${locale}.json`)
@@ -185,18 +193,19 @@ import { usePluginI18n } from '@/lib/plugins/i18n-helper'
 
 function PluginCard({ metadata }) {
   const { tWithFallback } = usePluginI18n()
-  
+
   // Usa i18nKey do metadata ou fallback para o valor original
   const displayName = tWithFallback(
     metadata.i18nKey?.displayName || `plugins.${metadata.id}.displayName`,
     metadata.displayName // fallback
   )
-  
+
   return <h3>{displayName}</h3>
 }
 ```
 
 **Fallback Seguro:**
+
 - ✅ Tenta traduzir usando a key
 - ✅ Se a tradução não existe, usa o valor original em inglês
 - ✅ Nunca quebra a UI mesmo sem tradução
@@ -211,6 +220,7 @@ pnpm generate-metadata
 ```
 
 Este comando:
+
 - ✅ Processa todos os plugins
 - ✅ Gera/atualiza `metadata.ts` com `i18nKey`
 - ✅ Gera/atualiza arquivos `messages/plugins/{pluginId}/{locale}.json`
@@ -224,6 +234,7 @@ pnpm check-translations
 ```
 
 Este comando verifica:
+
 - ✅ Se todos os plugins têm arquivos de tradução para os idiomas suportados (PT, ES)
 - ✅ Se as traduções foram realmente traduzidas (não apenas cópia do inglês)
 - ⚠️ Avisa quando uma tradução está igual ao inglês (não traduzida)
@@ -231,6 +242,7 @@ Este comando verifica:
 - ✅ Mostra resumo detalhado por plugin
 
 **Exemplo de saída:**
+
 ```
 📊 Summary:
 ============================================================
@@ -283,11 +295,13 @@ plugins.{pluginId}.sections.{sectionId}.config.{configKey}.options.{optionValue}
 ### Processo Recomendado
 
 1. **Execute o script** para gerar/atualizar arquivos:
+
    ```bash
    pnpm generate-metadata
    ```
 
 2. **Verifique arquivos EN** para ver estrutura completa:
+
    ```bash
    cat weeb-dashboard/messages/plugins/github/en.json
    ```
@@ -303,6 +317,7 @@ plugins.{pluginId}.sections.{sectionId}.config.{configKey}.options.{optionValue}
 ### Testando
 
 Após traduzir, teste no dashboard:
+
 - Mude o idioma usando o seletor de idioma
 - Verifique se os textos aparecem traduzidos
 - Se não traduzido, verifica se a key existe no arquivo JSON correto
@@ -327,10 +342,10 @@ export const githubPluginMetadata = {
           description: "Maximum number of items to display",
           type: "number",
           defaultValue: 10,
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ],
 }
 ```
 
@@ -342,7 +357,7 @@ export const githubMetadata: PluginMetadata = {
   description: "Show your GitHub statistics",
   i18nKey: {
     displayName: "plugins.github.displayName",
-    description: "plugins.github.description"
+    description: "plugins.github.description",
   },
   sections: [
     {
@@ -351,7 +366,7 @@ export const githubMetadata: PluginMetadata = {
       description: "User profile with avatar",
       i18nKey: {
         name: "plugins.github.sections.profile.name",
-        description: "plugins.github.sections.profile.description"
+        description: "plugins.github.sections.profile.description",
       },
       configOptions: [
         {
@@ -360,13 +375,13 @@ export const githubMetadata: PluginMetadata = {
           description: "Maximum number of items to display",
           i18nKey: {
             label: "plugins.github.sections.profile.config.max_items.label",
-            description: "plugins.github.sections.profile.config.max_items.description"
+            description: "plugins.github.sections.profile.config.max_items.description",
           },
           // ...
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ],
 }
 ```
 
@@ -454,6 +469,7 @@ export const githubMetadata: PluginMetadata = {
 Para adicionar um novo idioma (ex: japonês):
 
 1. **Adicione o locale** em `weeb-plugins/scripts/generate-metadata.ts`:
+
    ```typescript
    for (const locale of ['en', 'pt', 'es', 'ja']) {
      writePluginI18nFile(locale, pluginName, pluginJson, ...)
@@ -465,4 +481,3 @@ Para adicionar um novo idioma (ex: japonês):
 3. **Execute o script** para gerar arquivos `ja.json` para cada plugin
 
 4. **Traduza os arquivos** `messages/plugins/{pluginId}/ja.json`
-

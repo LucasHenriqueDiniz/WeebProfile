@@ -6,9 +6,13 @@ export { personality16Plugin } from "./16personalities/index"
 export { githubPlugin } from "./github/index"
 export { lastFmPlugin } from "./lastfm/index"
 export { lyftaPlugin } from "./lyfta/index"
-export { PluginManager } from "./manager"
 export { myAnimeListPlugin } from "./myanimelist/index"
+export { githubProjectPlugin } from "./github-project/index"
 export { steamPlugin } from "./steam/index"
+export { duolingoPlugin } from "./duolingo/index"
+export { codewarsPlugin } from "./codewars/index"
+export { codeforcesPlugin } from "./codeforces/index"
+export { stackoverflowPlugin } from "./stackoverflow/index"
 
 // Export centralized metadata
 export {
@@ -34,10 +38,6 @@ export type { ConfigOptionHelpFields } from "./config-option-types"
 
 // Export plugin tags system
 export { getAllTags, getPluginsByTag, getPluginTags, hasPluginTag, PLUGIN_TAGS, type PluginTag } from "./tags"
-export { duolingoPlugin } from "./duolingo/index"
-export { codewarsPlugin } from "./codewars/index"
-export { codeforcesPlugin } from "./codeforces/index"
-export { stackoverflowPlugin } from "./stackoverflow/index"
 
 // Export Plugin Registry (class)
 export {

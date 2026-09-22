@@ -1,19 +1,19 @@
 /**
  * Serviço de fetch de dados do Stack Overflow
- * 
+ *
  * API: https://api.stackexchange.com/2.3
  * Documentação: https://api.stackexchange.com/docs
- * 
+ *
  * Rate Limit: 300 requests/day without key, more with key (optional)
  */
 
-import type { StackOverflowConfig, StackOverflowData, StackOverflowTag } from '../types'
-import { getMockStackOverflowData } from './mock-data'
-import { fetchJson, buildQueryString } from '../../shared/utils/api'
-import { ApiError } from '../../shared/utils/errors'
+import type { StackOverflowConfig, StackOverflowData, StackOverflowTag } from "../types"
+import { getMockStackOverflowData } from "./mock-data"
+import { fetchJson, buildQueryString } from "../../shared/utils/api"
+import { ApiError } from "../../shared/utils/errors"
 
-const STACKEXCHANGE_API_BASE = 'https://api.stackexchange.com/2.3'
-const SITE = 'stackoverflow'
+const STACKEXCHANGE_API_BASE = "https://api.stackexchange.com/2.3"
+const SITE = "stackoverflow"
 
 /**
  * Resposta genérica da API do Stack Exchange
@@ -73,23 +73,20 @@ interface StackOverflowTagResponse {
 /**
  * Busca dados do Stack Overflow
  */
-export async function fetchStackOverflowData(
-  config: StackOverflowConfig,
-  dev = false
-): Promise<StackOverflowData> {
+export async function fetchStackOverflowData(config: StackOverflowConfig, dev = false): Promise<StackOverflowData> {
   if (dev) {
     return getMockStackOverflowData()
   }
 
-  if (!config.userId || typeof config.userId !== 'string' || config.userId.trim() === '') {
-    throw new Error('Stack Overflow user ID is required (numeric ID, not username)')
+  if (!config.userId || typeof config.userId !== "string" || config.userId.trim() === "") {
+    throw new Error("Stack Overflow user ID is required (numeric ID, not username)")
   }
 
   const userId = config.userId.trim()
 
   // Validar que é um número
   if (!/^\d+$/.test(userId)) {
-    throw new Error('Stack Overflow user ID must be a numeric ID')
+    throw new Error("Stack Overflow user ID must be a numeric ID")
   }
 
   try {
@@ -102,24 +99,24 @@ export async function fetchStackOverflowData(
     const userResponse = await fetchJson<StackExchangeApiResponse<StackOverflowUser>>(userUrl)
 
     if (!userResponse.items || userResponse.items.length === 0) {
-      throw new ApiError('User not found', 404, 'StackOverflow')
+      throw new ApiError("User not found", 404, "StackOverflow")
     }
 
     const user = userResponse.items?.[0]
     if (!user) {
-      throw new ApiError('User not found in response', 404, 'StackOverflow')
+      throw new ApiError("User not found in response", 404, "StackOverflow")
     }
 
     // Buscar tags do usuário (top tags)
     const tagsParams = buildQueryString({
       ids: userId,
       site: SITE,
-      order: 'desc',
-      sort: 'popular',
+      order: "desc",
+      sort: "popular",
       page: 1,
       pagesize: 10,
     })
-    const tagsUrl = `${STACKEXCHANGE_API_BASE}/users/${userId}/tags${tagsParams.replace(/^\?/, '&')}`
+    const tagsUrl = `${STACKEXCHANGE_API_BASE}/users/${userId}/tags${tagsParams.replace(/^\?/, "&")}`
     const tagsResponse = await fetchJson<StackExchangeApiResponse<StackOverflowTagResponse>>(tagsUrl)
 
     const topTags: StackOverflowTag[] = (tagsResponse.items || []).map((tag) => ({
@@ -140,15 +137,14 @@ export async function fetchStackOverflowData(
       topTags,
     }
   } catch (error) {
-    console.error('[StackOverflow] Error fetching data:', error)
-    
+    console.error("[StackOverflow] Error fetching data:", error)
+
     if (error instanceof ApiError && error.statusCode === 404) {
       throw new Error(`Stack Overflow user with ID "${userId}" not found`)
     }
 
     // Retornar dados mock em caso de erro
-    console.warn('[StackOverflow] API error, using mock data as fallback')
+    console.warn("[StackOverflow] API error, using mock data as fallback")
     return getMockStackOverflowData()
   }
 }
-

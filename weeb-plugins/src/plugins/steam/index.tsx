@@ -1,43 +1,40 @@
 /**
  * Steam Plugin V2
- * 
+ *
  * Plugin para exibir estatísticas de jogos do Steam
  */
 
-import React from 'react'
-import type { Plugin } from '../shared/types/plugin'
-import type { PluginConfig, PluginData } from '../../types/index'
-import type { EssentialPluginConfig } from '../shared/types/base'
-import type { SteamConfig, SteamData } from './types'
-import { RenderSteam } from './components/RenderSteam'
-import { fetchSteamData } from './services/fetchData'
+import React from "react"
+import type { Plugin } from "../shared/types/plugin"
+import type { PluginConfig, PluginData } from "../../types/index"
+import type { EssentialPluginConfig } from "../shared/types/base"
+import type { SteamConfig, SteamData } from "./types"
+import { RenderSteam } from "./components/RenderSteam"
+import { fetchSteamData } from "./services/fetchData"
 
 export const steamPlugin: Plugin<PluginConfig & SteamConfig, PluginData & SteamData> = {
-  name: 'steam',
-  essentialConfigKeys: ['apiKey', 'steamId'],
+  name: "steam",
+  essentialConfigKeys: ["apiKey", "steamId"],
   config: {
     enabled: false,
     sections: [],
   } as PluginConfig & SteamConfig,
-  fetchData: async (config: PluginConfig & SteamConfig, dev = false, essentialConfig?: EssentialPluginConfig, previewMode = false) => {
+  fetchData: async (
+    config: PluginConfig & SteamConfig,
+    dev = false,
+    essentialConfig?: EssentialPluginConfig,
+    previewMode = false
+  ) => {
     const apiKey = essentialConfig?.apiKey
     const steamId = essentialConfig?.steamId
-    return await fetchSteamData(config as SteamConfig, dev, apiKey, steamId, previewMode) as PluginData & SteamData
+    return (await fetchSteamData(config as SteamConfig, dev, apiKey, steamId, previewMode)) as PluginData & SteamData
   },
   render: (config: PluginConfig & SteamConfig, data: PluginData & SteamData) => {
     // Extrair style e size do config (vem do SvgConfig)
-    const style = ((config as any).style || 'default') as 'default' | 'terminal'
-    const size = ((config as any).size || 'half') as 'half' | 'full'
-    return (
-      <RenderSteam
-        config={config as SteamConfig}
-        data={data as SteamData}
-        style={style}
-        size={size}
-      />
-    )
+    const style = ((config as any).style || "default") as "default" | "terminal"
+    const size = ((config as any).size || "half") as "half" | "full"
+    return <RenderSteam config={config as SteamConfig} data={data as SteamData} style={style} size={size} />
   },
 }
 
 export default steamPlugin
-

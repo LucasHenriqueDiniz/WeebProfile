@@ -23,11 +23,13 @@ Quando o Dev Mode está **desativado** (`dev = false`):
 ## Exemplo
 
 ### Com Dev Mode (ON):
+
 - GitHub: Mostra estatísticas mock (ex: 100 stars, 50 repos)
 - MyAnimeList: Mostra dados de exemplo de um usuário fictício
 - LastFM: Mostra músicas e artistas de exemplo
 
 ### Sem Dev Mode (OFF):
+
 - GitHub: Busca dados reais da sua conta GitHub (precisa de PAT)
 - MyAnimeList: Busca dados reais do seu perfil (precisa de username)
 - LastFM: Busca dados reais da sua conta (precisa de API key)
@@ -36,4 +38,3 @@ Quando o Dev Mode está **desativado** (`dev = false`):
 
 - **Desenvolvimento**: Use Dev Mode para testar layouts, estilos e funcionalidades
 - **Produção**: Desative Dev Mode para gerar SVGs com dados reais dos usuários
-

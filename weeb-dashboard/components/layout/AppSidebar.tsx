@@ -1,9 +1,15 @@
 "use client"
 
-import { useRouter, usePathname } from "@/i18n/navigation"
-import { useEffect, useState } from "react"
-import { Home, Plus, Settings, LogOut, Image as ImageIcon, Check, Circle, FileImage, User } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Sidebar,
   SidebarContent,
@@ -17,31 +23,33 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/hooks/useAuth"
-import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { LanguageSelector } from "./LanguageSelector"
-import { Languages } from "lucide-react"
+import { usePathname, useRouter } from "@/i18n/navigation"
 import { svgApi } from "@/lib/api"
-import { useWizardStore } from "@/stores/wizard-store"
 import { cn } from "@/lib/utils"
+import { useWizardStore } from "@/stores/wizard-store"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Check,
+  Circle,
+  FileImage,
+  Home,
+  Image as ImageIcon,
+  Languages,
+  LogOut,
+  Plus,
+  Settings,
+  User,
+} from "lucide-react"
+import { useTranslations } from "next-intl"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import { LanguageSelector } from "./LanguageSelector"
 
 // Avatar component - simple implementation
 const Avatar = ({ className, children }: { className?: string; children: React.ReactNode }) => (
-  <div className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full", className)}>
-    {children}
-  </div>
+  <div className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full", className)}>{children}</div>
 )
-const AvatarImage = ({ src, alt, className }: { src?: string; alt?: string; className?: string }) => (
+const AvatarImage = ({ src, alt, className }: { src?: string; alt?: string; className?: string }) =>
   src ? <img src={src} alt={alt} className={cn("aspect-square h-full w-full", className)} /> : null
-)
 const AvatarFallback = ({ className, children }: { className?: string; children: React.ReactNode }) => (
   <div className={cn("flex h-full w-full items-center justify-center rounded-full bg-muted", className)}>
     {children}
@@ -56,8 +64,8 @@ const wizardSteps = [
 ]
 
 export function AppSidebar() {
-  const tSidebar = useTranslations('wizard.sidebar')
-  const tHeader = useTranslations('header')
+  const tSidebar = useTranslations("wizard.sidebar")
+  const tHeader = useTranslations("header")
   const router = useRouter()
   const pathname = usePathname()
   const { user, signOut } = useAuth()
@@ -108,7 +116,7 @@ export function AppSidebar() {
       <SidebarContent>
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>{tSidebar('navigation')}</SidebarGroupLabel>
+          <SidebarGroupLabel>{tSidebar("navigation")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -117,22 +125,18 @@ export function AppSidebar() {
                   isActive={pathname === "/dashboard" && !isWizardPage && !isEditPage}
                   onClick={() => router.push("/dashboard")}
                 >
-                  <a href="/dashboard">
+                  <Link href="/dashboard">
                     <Home />
-                    <span>{tSidebar('dashboard')}</span>
-                  </a>
+                    <span>{tSidebar("dashboard")}</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isWizardPage}
-                  onClick={() => router.push("/dashboard/new")}
-                >
-                  <a href="/dashboard/new">
+                <SidebarMenuButton asChild isActive={isWizardPage} onClick={() => router.push("/dashboard/new")}>
+                  <Link href="/dashboard/new">
                     <Plus />
-                    <span>{tSidebar('createNewImage')}</span>
-                  </a>
+                    <span>{tSidebar("createNewImage")}</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -142,7 +146,7 @@ export function AppSidebar() {
         {/* Wizard Steps - Only show when creating new image */}
         {isWizardPage && (
           <SidebarGroup>
-            <SidebarGroupLabel>{tSidebar('wizardSteps')}</SidebarGroupLabel>
+            <SidebarGroupLabel>{tSidebar("wizardSteps")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {wizardSteps.map((step) => {
@@ -183,12 +187,19 @@ export function AppSidebar() {
                           )}
                         </div>
                         <div className="flex-1 text-left">
-                          <div className="text-xs text-muted-foreground">{tSidebar('step')} {step.number}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {tSidebar("step")} {step.number}
+                          </div>
                           <div className={cn("font-medium text-sm", isCurrent && "text-primary")}>
-                            {step.title === "Básico" ? tSidebar('basic') : 
-                             step.title === "Estilo" ? tSidebar('style') :
-                             step.title === "Plugins" ? tSidebar('plugins') :
-                             step.title === "Preview" ? tSidebar('preview') : step.title}
+                            {step.title === "Básico"
+                              ? tSidebar("basic")
+                              : step.title === "Estilo"
+                                ? tSidebar("style")
+                                : step.title === "Plugins"
+                                  ? tSidebar("plugins")
+                                  : step.title === "Preview"
+                                    ? tSidebar("preview")
+                                    : step.title}
                           </div>
                         </div>
                       </SidebarMenuButton>
@@ -204,15 +215,13 @@ export function AppSidebar() {
         {!isWizardPage && !isEditPage && (
           <SidebarGroup>
             <SidebarGroupLabel>
-              {tSidebar('createdImages')} {svgs.length > 0 && `(${svgs.length})`}
+              {tSidebar("createdImages")} {svgs.length > 0 && `(${svgs.length})`}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               {loadingSvgs ? (
-                <div className="px-3 py-2 text-sm text-muted-foreground">{tSidebar('loading')}</div>
+                <div className="px-3 py-2 text-sm text-muted-foreground">{tSidebar("loading")}</div>
               ) : svgs.length === 0 ? (
-                <div className="px-3 py-2 text-sm text-muted-foreground">
-                  {tSidebar('noImagesCreated')}
-                </div>
+                <div className="px-3 py-2 text-sm text-muted-foreground">{tSidebar("noImagesCreated")}</div>
               ) : (
                 <SidebarMenu>
                   {svgs.map((svg) => {
@@ -243,10 +252,7 @@ export function AppSidebar() {
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 h-auto p-2 hover:bg-accent"
-              >
+              <Button variant="ghost" className="w-full justify-start gap-3 h-auto p-2 hover:bg-accent">
                 <Avatar className="h-8 w-8">
                   <AvatarImage
                     src={user.user_metadata?.avatar_url}
@@ -261,27 +267,25 @@ export function AppSidebar() {
                     {user.user_metadata?.user_name || user.email?.split("@")[0] || "Usuário"}
                   </div>
                   {user.user_metadata?.user_name && user.email && (
-                    <div className="text-xs text-muted-foreground truncate">
-                      {user.email}
-                    </div>
+                    <div className="text-xs text-muted-foreground truncate">{user.email}</div>
                   )}
                 </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>{tHeader('myAccount')}</DropdownMenuLabel>
+              <DropdownMenuLabel>{tHeader("myAccount")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push("/dashboard")}>
                 <Home className="w-4 h-4 mr-2" />
-                {tHeader('dashboard')}
+                {tHeader("dashboard")}
               </DropdownMenuItem>
               <DropdownMenuItem disabled>
                 <Settings className="w-4 h-4 mr-2" />
-                {tHeader('settings')}
+                {tHeader("settings")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setLanguageSelectorOpen(true)}>
                 <Languages className="w-4 h-4 mr-2" />
-                {tHeader('changeLanguage')}
+                {tHeader("changeLanguage")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <div className="px-2 py-1.5">
@@ -290,7 +294,7 @@ export function AppSidebar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                 <LogOut className="w-4 h-4 mr-2" />
-                {tHeader('signOut')}
+                {tHeader("signOut")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -302,60 +306,3 @@ export function AppSidebar() {
     </Sidebar>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

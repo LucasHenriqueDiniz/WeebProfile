@@ -1,20 +1,14 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { useTranslations, useLocale } from "next-intl"
-import { usePathname, useRouter } from "@/i18n/navigation"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { allLocales, localeNames, localeComingSoon, type Locale } from "@/i18n/config"
-import { Search, Check, Clock } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { allLocales, localeComingSoon, localeNames, type Locale } from "@/i18n/config"
+import { usePathname, useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
+import { Check, Clock, Search } from "lucide-react"
+import { useLocale, useTranslations } from "next-intl"
+import { useMemo, useState } from "react"
 
 interface LanguageSelectorProps {
   open: boolean
@@ -50,17 +44,19 @@ export function LanguageSelector({ open, onOpenChange }: LanguageSelectorProps) 
     // Get current pathname without locale (from next-intl's usePathname)
     // e.g., if you're on /pt/dashboard, pathname will be "/dashboard"
     const targetPath = pathname || "/"
-    
+
     // Build new path with new locale
     // pathname already doesn't include locale, so we just prepend the new locale
-    const newPath = targetPath === "/" 
-      ? `/${newLocale}` 
-      : `/${newLocale}${targetPath}`
-    
+    const newPath = targetPath === "/" ? `/${newLocale}` : `/${newLocale}${targetPath}`
+
     // Use window.location for a clean navigation that ensures locale is set correctly
     // This prevents any issues with locale duplication that might occur with router.push
-    window.location.href = newPath
     onOpenChange(false)
+
+    // Navigate in next tick to avoid React hook violation
+    setTimeout(() => {
+      window.location.href = newPath
+    }, 0)
   }
 
   return (
@@ -85,9 +81,7 @@ export function LanguageSelector({ open, onOpenChange }: LanguageSelectorProps) 
         {/* Language List */}
         <div className="max-h-[400px] overflow-y-auto space-y-1">
           {filteredLocales.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              {t("languageSelector.noResults")}
-            </div>
+            <div className="text-center py-8 text-muted-foreground">{t("languageSelector.noResults")}</div>
           ) : (
             filteredLocales.map((locale) => {
               const isCurrent = locale === currentLocale
@@ -107,9 +101,7 @@ export function LanguageSelector({ open, onOpenChange }: LanguageSelectorProps) 
                   disabled={isComingSoon}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium min-w-[60px] text-muted-foreground uppercase">
-                      {locale}
-                    </span>
+                    <span className="text-sm font-medium min-w-[60px] text-muted-foreground uppercase">{locale}</span>
                     <span className="text-sm">{name}</span>
                     {isComingSoon && (
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -118,9 +110,7 @@ export function LanguageSelector({ open, onOpenChange }: LanguageSelectorProps) 
                       </span>
                     )}
                   </div>
-                  {isCurrent && !isComingSoon && (
-                    <Check className="w-4 h-4 text-primary" />
-                  )}
+                  {isCurrent && !isComingSoon && <Check className="w-4 h-4 text-primary" />}
                 </Button>
               )
             })
@@ -130,4 +120,3 @@ export function LanguageSelector({ open, onOpenChange }: LanguageSelectorProps) 
     </Dialog>
   )
 }
-

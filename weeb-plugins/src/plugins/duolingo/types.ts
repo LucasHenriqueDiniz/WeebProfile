@@ -2,7 +2,7 @@
  * Tipos do Plugin Duolingo
  */
 
-import type { BasePluginConfig, NonEssentialPluginConfig } from '../shared/types/base'
+import type { BasePluginConfig, NonEssentialPluginConfig } from "../shared/types/base"
 
 export interface DuolingoLanguage {
   language: string
@@ -40,5 +40,3 @@ export interface DuolingoData {
   totalXP: number
   languages: DuolingoLanguage[]
 }
-
-

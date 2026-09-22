@@ -26,13 +26,9 @@ export async function GET() {
     try {
       // Log para debug
       console.log("Attempting to query profiles table for user:", user.id)
-      
-      const result = await db
-        .select()
-        .from(profiles)
-        .where(eq(profiles.userId, user.id))
-        .limit(1)
-      
+
+      const result = await db.select().from(profiles).where(eq(profiles.userId, user.id)).limit(1)
+
       console.log("Query result:", result)
       profile = result[0]
     } catch (dbError) {
@@ -49,10 +45,7 @@ export async function GET() {
       // Criar perfil se não existir
       // Tentar obter username de múltiplas fontes
       const username =
-        user.user_metadata?.user_name ||
-        user.user_metadata?.preferred_username ||
-        user.user_metadata?.login ||
-        null
+        user.user_metadata?.user_name || user.user_metadata?.preferred_username || user.user_metadata?.login || null
 
       try {
         const [newProfile] = await db
@@ -79,10 +72,7 @@ export async function GET() {
     const errorMessage = error instanceof Error ? error.message : "Internal server error"
     const errorDetails = error instanceof Error ? error.stack : String(error)
     console.error("Error details:", errorDetails)
-    return NextResponse.json(
-      { error: "Internal server error", message: errorMessage },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Internal server error", message: errorMessage }, { status: 500 })
   }
 }
 
@@ -115,12 +105,8 @@ export async function PUT(request: Request) {
     // Tentar buscar perfil existente
     let existingProfile
     try {
-      const [foundProfile] = await db
-        .select()
-        .from(profiles)
-        .where(eq(profiles.userId, user.id))
-        .limit(1)
-      
+      const [foundProfile] = await db.select().from(profiles).where(eq(profiles.userId, user.id)).limit(1)
+
       existingProfile = foundProfile
     } catch (dbError) {
       console.error("Database query error (PUT):", dbError)
@@ -146,11 +132,7 @@ export async function PUT(request: Request) {
         }
 
         // Buscar perfil atualizado
-        const [updatedProfile] = await db
-          .select()
-          .from(profiles)
-          .where(eq(profiles.userId, user.id))
-          .limit(1)
+        const [updatedProfile] = await db.select().from(profiles).where(eq(profiles.userId, user.id)).limit(1)
 
         return NextResponse.json({ profile: updatedProfile })
       } catch (updateError) {
@@ -192,11 +174,6 @@ export async function PUT(request: Request) {
     const errorMessage = error instanceof Error ? error.message : "Internal server error"
     const errorDetails = error instanceof Error ? error.stack : String(error)
     console.error("Error details:", errorDetails)
-    return NextResponse.json(
-      { error: "Internal server error", message: errorMessage },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Internal server error", message: errorMessage }, { status: 500 })
   }
 }
-
-

@@ -1,14 +1,3 @@
-/**
- * Tipos do Plugin MyAnimeList
- */
-
-export interface MyAnimeListConfig {
-  enabled: boolean
-  sections: string[]
-  username: string
-  favorites_max?: number
-}
-
 export interface AnimeStatistics {
   days_watched: number
   mean_score: number
@@ -155,7 +144,7 @@ export interface MyAnimeListConfig {
   username: string
   favorites_max?: number
   statistics_hide_title?: boolean
-  statistics_media?: 'anime' | 'manga' | 'both'
+  statistics_media?: "anime" | "manga" | "both"
   statistics_anime_title?: string
   statistics_manga_title?: string
   last_activity_title?: string
@@ -171,19 +160,18 @@ export interface MyAnimeListConfig {
   favorites_hide_overlay?: boolean
   anime_favorites_title?: string
   anime_favorites_hide_title?: boolean
-  anime_favorites_list_style?: 'simple' | 'compact' | 'detailed' | 'minimal'
+  anime_favorites_list_style?: "simple" | "compact" | "detailed" | "minimal"
   anime_favorites_max?: number
   manga_favorites_title?: string
   manga_favorites_hide_title?: boolean
-  manga_favorites_list_style?: 'simple' | 'compact' | 'detailed' | 'minimal'
+  manga_favorites_list_style?: "simple" | "compact" | "detailed" | "minimal"
   manga_favorites_max?: number
   people_favorites_title?: string
   people_favorites_hide_title?: boolean
-  people_favorites_list_style?: 'simple' | 'compact'
+  people_favorites_list_style?: "simple" | "compact"
   people_favorites_max?: number
   character_favorites_title?: string
   character_favorites_hide_title?: boolean
-  character_favorites_list_style?: 'simple' | 'compact'
+  character_favorites_list_style?: "simple" | "compact"
   character_favorites_max?: number
 }
-

@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
-import type { InspectedElement } from './ElementInspector'
+import { useEffect, useRef, useState } from "react"
+import type { InspectedElement } from "./ElementInspector"
 
 interface ReactPreviewProps {
   html: string
   css: string
-  background?: 'light' | 'dark'
+  background?: "light" | "dark"
   onElementClick?: (element: InspectedElement | null) => void
   inspectedSelector?: string | null
   inspectMode?: boolean
@@ -12,7 +12,16 @@ interface ReactPreviewProps {
   onElementHover?: (selector: string | null) => void
 }
 
-export default function ReactPreview({ html, css, background = 'dark', onElementClick, inspectedSelector, inspectMode = false, hoveredSelector, onElementHover }: ReactPreviewProps) {
+export default function ReactPreview({
+  html,
+  css,
+  background = "dark",
+  onElementClick,
+  inspectedSelector,
+  inspectMode = false,
+  hoveredSelector,
+  onElementHover,
+}: ReactPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const highlightRef = useRef<HTMLDivElement | null>(null)
   const hoverHighlightRef = useRef<HTMLDivElement | null>(null)
@@ -20,10 +29,10 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
   useEffect(() => {
     if (containerRef.current) {
       // Inject CSS
-      const styleId = 'debug-react-css'
+      const styleId = "debug-react-css"
       let styleEl = document.getElementById(styleId) as HTMLStyleElement
       if (!styleEl) {
-        styleEl = document.createElement('style')
+        styleEl = document.createElement("style")
         styleEl.id = styleId
         document.head.appendChild(styleEl)
       }
@@ -62,23 +71,27 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
               top: rect.top - containerRect.top,
               left: rect.left - containerRect.left,
             },
-            html: target.outerHTML?.slice(0, 200) || '',
-            selector: target.id ? `#${target.id}` : target.className ? `.${Array.from(target.classList).join('.')}` : target.tagName.toLowerCase(),
+            html: target.outerHTML?.slice(0, 200) || "",
+            selector: target.id
+              ? `#${target.id}`
+              : target.className
+                ? `.${Array.from(target.classList).join(".")}`
+                : target.tagName.toLowerCase(),
           }
 
           // Extract computed styles safely
           try {
             for (let i = 0; i < computed.length; i++) {
               const prop = computed[i]
-              inspectedElement.computedStyles[prop] = computed.getPropertyValue(prop) || ''
+              inspectedElement.computedStyles[prop] = computed.getPropertyValue(prop) || ""
             }
           } catch (err) {
-            console.warn('Error extracting computed styles:', err)
+            console.warn("Error extracting computed styles:", err)
           }
 
           onElementClick?.(inspectedElement)
         } catch (err) {
-          console.error('Error in click handler:', err)
+          console.error("Error in click handler:", err)
           onElementClick?.(null)
         }
       }
@@ -92,21 +105,25 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
             onElementHover?.(null)
             return
           }
-          const selector = target.id ? `#${target.id}` : target.className ? `.${Array.from(target.classList).join('.')}` : target.tagName.toLowerCase()
+          const selector = target.id
+            ? `#${target.id}`
+            : target.className
+              ? `.${Array.from(target.classList).join(".")}`
+              : target.tagName.toLowerCase()
           onElementHover?.(selector)
         } catch (err) {
-          console.warn('Error in hover handler:', err)
+          console.warn("Error in hover handler:", err)
         }
       }
 
-      containerRef.current.addEventListener('click', handleClick, true)
+      containerRef.current.addEventListener("click", handleClick, true)
       if (onElementHover) {
-        containerRef.current.addEventListener('mousemove', handleMouseMove)
+        containerRef.current.addEventListener("mousemove", handleMouseMove)
       }
       return () => {
-        containerRef.current?.removeEventListener('click', handleClick, true)
+        containerRef.current?.removeEventListener("click", handleClick, true)
         if (onElementHover) {
-          containerRef.current?.removeEventListener('mousemove', handleMouseMove)
+          containerRef.current?.removeEventListener("mousemove", handleMouseMove)
         }
       }
     }
@@ -132,26 +149,26 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
           highlightRef.current.remove()
         }
 
-        const highlight = document.createElement('div')
-        highlight.style.position = 'absolute'
-        highlight.style.border = '2px solid #58a6ff'
-        highlight.style.pointerEvents = 'none'
+        const highlight = document.createElement("div")
+        highlight.style.position = "absolute"
+        highlight.style.border = "2px solid #58a6ff"
+        highlight.style.pointerEvents = "none"
         highlight.style.left = `${rect.left - containerRect.left}px`
         highlight.style.top = `${rect.top - containerRect.top}px`
         highlight.style.width = `${rect.width}px`
         highlight.style.height = `${rect.height}px`
-        highlight.style.zIndex = '999'
-        highlight.style.borderRadius = '2px'
-        highlight.style.transition = 'all 0.1s ease'
+        highlight.style.zIndex = "999"
+        highlight.style.borderRadius = "2px"
+        highlight.style.transition = "all 0.1s ease"
 
-        if (!containerRef.current.style.position || containerRef.current.style.position === 'static') {
-          containerRef.current.style.position = 'relative'
+        if (!containerRef.current.style.position || containerRef.current.style.position === "static") {
+          containerRef.current.style.position = "relative"
         }
         containerRef.current.appendChild(highlight)
         highlightRef.current = highlight
       }
     } catch (err) {
-      console.warn('Error highlighting element:', err)
+      console.warn("Error highlighting element:", err)
     }
 
     return () => {
@@ -182,27 +199,27 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
           hoverHighlightRef.current.remove()
         }
 
-        const highlight = document.createElement('div')
-        highlight.style.position = 'absolute'
-        highlight.style.border = '1px solid #79c0ff'
-        highlight.style.pointerEvents = 'none'
+        const highlight = document.createElement("div")
+        highlight.style.position = "absolute"
+        highlight.style.border = "1px solid #79c0ff"
+        highlight.style.pointerEvents = "none"
         highlight.style.left = `${rect.left - containerRect.left}px`
         highlight.style.top = `${rect.top - containerRect.top}px`
         highlight.style.width = `${rect.width}px`
         highlight.style.height = `${rect.height}px`
-        highlight.style.zIndex = '998'
-        highlight.style.borderRadius = '2px'
-        highlight.style.opacity = '0.6'
-        highlight.style.transition = 'all 0.05s ease'
+        highlight.style.zIndex = "998"
+        highlight.style.borderRadius = "2px"
+        highlight.style.opacity = "0.6"
+        highlight.style.transition = "all 0.05s ease"
 
-        if (!containerRef.current.style.position || containerRef.current.style.position === 'static') {
-          containerRef.current.style.position = 'relative'
+        if (!containerRef.current.style.position || containerRef.current.style.position === "static") {
+          containerRef.current.style.position = "relative"
         }
         containerRef.current.appendChild(highlight)
         hoverHighlightRef.current = highlight
       }
     } catch (err) {
-      console.warn('Error highlighting hovered element:', err)
+      console.warn("Error highlighting hovered element:", err)
     }
 
     return () => {
@@ -218,7 +235,7 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
   useEffect(() => {
     if (containerRef.current) {
       const updateDimensions = () => {
-        const element = containerRef.current?.querySelector('#svg-main')
+        const element = containerRef.current?.querySelector("#svg-main")
         if (element) {
           const rect = element.getBoundingClientRect()
           setDimensions({ width: rect.width, height: rect.height })
@@ -230,25 +247,30 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
     }
   }, [html])
 
-  const backgroundColor = background === 'dark' ? '#0d1117' : '#ffffff'
-  const borderColor = background === 'dark' ? '#30363d' : '#d0d7de'
+  const backgroundColor = background === "dark" ? "#0d1117" : "#ffffff"
+  const borderColor = background === "dark" ? "#30363d" : "#d0d7de"
 
   return (
     <div
       style={{
-        background: '#161b22',
-        border: '1px solid #30363d',
-        borderRadius: '8px',
-        padding: '20px',
-        overflow: 'auto',
+        background: "#161b22",
+        border: "1px solid #30363d",
+        borderRadius: "8px",
+        padding: "20px",
+        overflow: "auto",
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <h2 style={{ margin: 0, color: '#58a6ff' }}>⚛️ React Element Renderizado</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+        <h2 style={{ margin: 0, color: "#58a6ff" }}>⚛️ React Element Renderizado</h2>
         {dimensions && (
-          <div style={{ display: 'flex', gap: '12px', fontSize: '12px', color: '#8b949e' }}>
-            <span>Width: <span style={{ color: '#58a6ff', fontFamily: 'monospace' }}>{dimensions.width.toFixed(0)}px</span></span>
-            <span>Height: <span style={{ color: '#58a6ff', fontFamily: 'monospace' }}>{dimensions.height.toFixed(0)}px</span></span>
+          <div style={{ display: "flex", gap: "12px", fontSize: "12px", color: "#8b949e" }}>
+            <span>
+              Width: <span style={{ color: "#58a6ff", fontFamily: "monospace" }}>{dimensions.width.toFixed(0)}px</span>
+            </span>
+            <span>
+              Height:{" "}
+              <span style={{ color: "#58a6ff", fontFamily: "monospace" }}>{dimensions.height.toFixed(0)}px</span>
+            </span>
           </div>
         )}
       </div>
@@ -257,18 +279,28 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
         style={{
           background: backgroundColor,
           border: `1px solid ${borderColor}`,
-          padding: '20px',
-          borderRadius: '4px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          minHeight: '200px',
-          overflow: 'auto',
-          cursor: inspectMode ? 'crosshair' : 'default',
+          padding: "20px",
+          borderRadius: "4px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          minHeight: "200px",
+          overflow: "auto",
+          cursor: inspectMode ? "crosshair" : "default",
         }}
       />
       {inspectMode && (
-        <div style={{ marginTop: '12px', fontSize: '12px', color: '#58a6ff', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div
+          style={{
+            marginTop: "12px",
+            fontSize: "12px",
+            color: "#58a6ff",
+            fontStyle: "italic",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
           <span>🔍</span>
           <span>Inspect mode active - Click on any element to inspect</span>
         </div>
@@ -276,6 +308,3 @@ export default function ReactPreview({ html, css, background = 'dark', onElement
     </div>
   )
 }
-
-
-

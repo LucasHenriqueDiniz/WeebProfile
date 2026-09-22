@@ -1,0 +1,283 @@
+{
+  "description": "Display comprehensive GitHub repository information with multiple visualizations",
+  "displayName": "GitHub Project",
+  "sections": {
+    "banner": {
+      "config": {
+        "banner_background": {
+          "description": "Background visual effect",
+          "label": "Background Style",
+          "options": {
+            "default": "Default (Skin based)",
+            "gradient": "Gradient Overlay",
+            "grid": "Grid Pattern",
+            "none": "No Background",
+            "spotlight": "Spotlight Effect"
+          }
+        },
+        "banner_contributors_limit": {
+          "description": "Maximum number of contributors to display",
+          "label": "Contributors Limit"
+        },
+        "banner_custom_avatar": {
+          "description": "Custom avatar image URL (optional, overrides default GitHub icon)",
+          "label": "Custom Avatar URL",
+          "placeholder": "https://example.com/avatar.png"
+        },
+        "banner_custom_name": {
+          "description": "Override the repository name used in ASCII art generation",
+          "label": "Custom Repository Name (terminal only)",
+          "placeholder": "Custom name for ASCII art"
+        },
+        "banner_custom_width": {
+          "description": "Custom width for ASCII art font (0 = auto)",
+          "label": "Custom Font Width (terminal only)"
+        },
+        "banner_enabled": {
+          "label": "Enable Banner"
+        },
+        "banner_footer_text": {
+          "description": "Custom text to display at the bottom of the banner",
+          "label": "Footer Text",
+          "placeholder": "Optional custom footer text"
+        },
+        "banner_header_text": {
+          "description": "Custom text to display at the top of the banner",
+          "label": "Header Text",
+          "placeholder": "Optional custom header text"
+        },
+        "banner_hide_ascii_box": {
+          "description": "Remove the decorative box around ASCII art",
+          "label": "Hide ASCII Art Box (terminal only)"
+        },
+        "banner_hide_background": {
+          "description": "Hide the dark terminal background styling for the banner",
+          "label": "Hide Terminal Background (terminal only)"
+        },
+        "banner_hide_description": {
+          "description": "Hide repository description",
+          "label": "Hide Description"
+        },
+        "banner_hide_forks": {
+          "description": "Hide fork count",
+          "label": "Hide Forks"
+        },
+        "banner_hide_git_commands": {
+          "description": "Hide the git clone and cd commands",
+          "label": "Hide Git Commands (terminal only)"
+        },
+        "banner_hide_stars": {
+          "description": "Hide star count",
+          "label": "Hide Stars"
+        },
+        "banner_hide_terminal_header": {
+          "description": "Hide the 'weeb@profile:~' terminal prompt",
+          "label": "Hide Terminal Header (terminal only)"
+        },
+        "banner_hide_watchers": {
+          "description": "Hide watcher count",
+          "label": "Hide Watchers"
+        },
+        "banner_show_contributors": {
+          "description": "Display top contributors with avatars in the banner",
+          "label": "Show Contributors"
+        },
+        "banner_show_description": {
+          "description": "Display repository description",
+          "label": "Show Description"
+        },
+        "banner_show_forks": {
+          "description": "Display repository forks count",
+          "label": "Show Forks"
+        },
+        "banner_show_header_footer_in_terminal": {
+          "description": "Display header and footer text in terminal mode",
+          "label": "Show Header/Footer in Terminal (terminal only)"
+        },
+        "banner_show_stars": {
+          "description": "Display repository stars count",
+          "label": "Show Stars"
+        },
+        "banner_show_watchers": {
+          "description": "Display watcher count",
+          "label": "Show Watchers"
+        },
+        "banner_style": {
+          "description": "Visual style of the banner",
+          "label": "Banner Style",
+          "options": {
+            "centered": "Centered (Avatar Focus)",
+            "compact": "Compact (Smaller)",
+            "detailed": "Detailed",
+            "hero": "Hero (Large & Prominent)",
+            "minimal": "Minimal",
+            "modern": "Modern"
+          }
+        },
+        "banner_terminal_background": {
+          "description": "Add dark terminal background to the banner",
+          "label": "Terminal Background (terminal only)"
+        },
+        "banner_terminal_font": {
+          "description": "ASCII art font for terminal mode banner",
+          "label": "Terminal ASCII Font (terminal only)",
+          "options": {
+            "4max": "4Max (Large)",
+            "alligator": "Alligator (Decorative)",
+            "amc": "AMC (Retro)",
+            "banner3": "Banner 3 (Bold)",
+            "banner3-d": "Banner 3D (3D Effect)",
+            "basic": "Basic (Simple)",
+            "bell": "Bell (Rounded)",
+            "block": "Block (Solid)",
+            "broadway": "Broadway (Elegant)",
+            "bubble": "Bubble (Rounded)",
+            "digital": "Digital (LED Style)",
+            "lean": "Lean (Slim)",
+            "rectangles": "Rectangles (Geometric)",
+            "slant": "Slant (Italic)",
+            "small": "Small (Compact)",
+            "soft": "Soft (Smooth)",
+            "standard": "Standard (Default)",
+            "wicked": "Wicked (Fancy)"
+          }
+        }
+      },
+      "description": "Beautiful banner with repository information",
+      "name": "Repository Banner"
+    },
+    "contributors": {
+      "config": {
+        "contributors_avatar_size": {
+          "description": "Size of contributor avatars",
+          "label": "Avatar Size",
+          "options": {
+            "lg": "Large",
+            "md": "Medium",
+            "sm": "Small"
+          }
+        },
+        "contributors_display_mode": {
+          "description": "How to display contributors",
+          "label": "Display Mode",
+          "options": {
+            "compact": "Compact",
+            "list": "List"
+          }
+        },
+        "contributors_enabled": {
+          "label": "Enable Contributors"
+        },
+        "contributors_limit": {
+          "description": "Maximum number of contributors to display",
+          "label": "Contributors Limit"
+        }
+      },
+      "description": "Most active repository contributors",
+      "name": "Top Contributors"
+    },
+    "languages": {
+      "config": {
+        "languages_enabled": {
+          "label": "Enable Languages"
+        },
+        "languages_show": {
+          "description": "Display programming languages section",
+          "label": "Show Languages"
+        },
+        "languages_style": {
+          "description": "Visual style for language display",
+          "label": "Display Style",
+          "options": {
+            "bars": "Bars",
+            "circles": "Circles"
+          }
+        },
+        "languages_top": {
+          "description": "Maximum number of languages to display",
+          "label": "Top Languages"
+        }
+      },
+      "description": "Language distribution and usage",
+      "name": "Programming Languages"
+    },
+    "starHistory": {
+      "config": {
+        "starHistory_bucket": {
+          "description": "Time granularity for star history",
+          "label": "Time Bucket",
+          "options": {
+            "auto": "Auto",
+            "day": "Daily",
+            "month": "Monthly",
+            "week": "Weekly"
+          }
+        },
+        "starHistory_chart_type": {
+          "description": "Visual style of the star history chart",
+          "label": "Chart Type",
+          "options": {
+            "area": "Area Fill",
+            "bar": "Bars",
+            "line": "Smooth Line",
+            "step": "Step Line"
+          }
+        },
+        "starHistory_enabled": {
+          "label": "Enable Star History"
+        },
+        "starHistory_maxBackfillPages": {
+          "description": "Maximum pages to fetch during initial backfill",
+          "label": "Max Backfill Pages"
+        },
+        "starHistory_show_dots": {
+          "description": "Display data points on the line chart",
+          "label": "Show Data Points"
+        },
+        "starHistory_show_grid": {
+          "description": "Display grid lines on the chart",
+          "label": "Show Grid"
+        }
+      },
+      "description": "Historical star growth chart",
+      "name": "Star History"
+    },
+    "stats": {
+      "config": {
+        "stats_enabled": {
+          "label": "Enable Stats"
+        },
+        "stats_show_contributors": {
+          "description": "Display contributors count",
+          "label": "Show Contributors"
+        },
+        "stats_show_forks": {
+          "description": "Display repository forks count",
+          "label": "Show Forks"
+        },
+        "stats_show_issues": {
+          "description": "Display open issues count",
+          "label": "Show Issues"
+        },
+        "stats_show_pull_requests": {
+          "description": "Display open pull requests count",
+          "label": "Show Pull Requests"
+        },
+        "stats_show_releases": {
+          "description": "Display releases count",
+          "label": "Show Releases"
+        },
+        "stats_show_stars": {
+          "description": "Display repository stars count",
+          "label": "Show Stars"
+        },
+        "stats_show_watchers": {
+          "description": "Display repository watchers count",
+          "label": "Show Watchers"
+        }
+      },
+      "description": "Key statistics and metrics",
+      "name": "Repository Stats"
+    }
+  }
+}

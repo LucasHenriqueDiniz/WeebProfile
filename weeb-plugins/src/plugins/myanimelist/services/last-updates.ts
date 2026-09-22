@@ -2,10 +2,10 @@
  * Serviço para processar últimas atualizações do MyAnimeList
  */
 
-import type { LastUpdatesAnime, LastUpdatesManga, MalLastUpdates } from '../types'
-import { urlToBase64 } from '../../../utils/image-to-base64'
-import type { MalProfileResponse } from './profile'
-import type { MyAnimeListConfig } from '../types'
+import type { LastUpdatesAnime, LastUpdatesManga, MalLastUpdates } from "../types"
+import { urlToBase64 } from "../../../utils/image-to-base64"
+import type { MalProfileResponse } from "./profile"
+import type { MyAnimeListConfig } from "../types"
 
 /**
  * Transforma as atualizações do perfil em formato interno
@@ -23,16 +23,16 @@ export async function transformLastUpdates(
         item.entry.images?.jpg?.large_image_url ||
         item.entry.images?.jpg?.small_image_url ||
         item.entry.images?.webp?.image_url ||
-        ''
+        ""
 
       return {
         title: item.entry.title,
-        image: image ? await urlToBase64(image) : '',
+        image: image ? await urlToBase64(image) : "",
         score: item.score || 0,
-        status: item.status || '',
+        status: item.status || "",
         episodes_seen: item.episodes_seen ?? null,
         episodes_total: item.episodes_total ?? null,
-        date: item.date || '',
+        date: item.date || "",
       }
     })
   )
@@ -44,22 +44,19 @@ export async function transformLastUpdates(
         item.entry.images?.jpg?.large_image_url ||
         item.entry.images?.jpg?.small_image_url ||
         item.entry.images?.webp?.image_url ||
-        ''
+        ""
 
       return {
         title: item.entry.title,
-        image: image ? await urlToBase64(image) : '',
+        image: image ? await urlToBase64(image) : "",
         score: item.score || 0,
-        status: item.status || '',
+        status: item.status || "",
         chapters_read: item.chapters_read ?? null,
         chapters_total: item.chapters_total ?? null,
-        date: item.date || '',
+        date: item.date || "",
       }
     })
   )
 
   return { anime, manga }
 }
-
-
-

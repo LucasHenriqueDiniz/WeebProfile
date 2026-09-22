@@ -1,0 +1,1358 @@
+/* GitHub Project Plugin Styles - Apenas classes essenciais */
+
+/* Classes utilitárias essenciais para o plugin */
+#svg-main .rounded-xl {
+  border-radius: 0.75rem;
+}
+#svg-main .p-6 {
+  padding: 1.5rem;
+}
+#svg-main .w-24 {
+  width: 6rem;
+}
+#svg-main .h-24 {
+  height: 6rem;
+}
+#svg-main .w-8 {
+  width: 2rem;
+}
+#svg-main .h-8 {
+  height: 2rem;
+}
+#svg-main .w-4 {
+  width: 1rem;
+}
+#svg-main .h-4 {
+  height: 1rem;
+}
+#svg-main .flex {
+  display: flex;
+}
+#svg-main .flex-col {
+  flex-direction: column;
+}
+#svg-main .items-center {
+  align-items: center;
+}
+#svg-main .justify-center {
+  justify-content: center;
+}
+#svg-main .gap-2 {
+  gap: 0.5rem;
+}
+#svg-main .gap-6 {
+  gap: 1.5rem;
+}
+#svg-main .mb-2 {
+  margin-bottom: 0.5rem;
+}
+#svg-main .mb-3 {
+  margin-bottom: 0.75rem;
+}
+#svg-main .mb-4 {
+  margin-bottom: 1rem;
+}
+#svg-main .text-center {
+  text-align: center;
+}
+#svg-main .relative {
+  position: relative;
+}
+#svg-main .absolute {
+  position: absolute;
+}
+#svg-main .inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+#svg-main .overflow-hidden {
+  overflow: hidden;
+}
+#svg-main .object-cover {
+  object-fit: cover;
+}
+#svg-main .rounded-full {
+  border-radius: 50%;
+}
+#svg-main .text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+#svg-main .text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+#svg-main .text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+#svg-main .text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+#svg-main .font-bold {
+  font-weight: 700;
+}
+#svg-main .font-semibold {
+  font-weight: 600;
+}
+#svg-main .font-mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+#svg-main .leading-relaxed {
+  line-height: 1.625;
+}
+#svg-main .space-y-4 > * + * {
+  margin-top: 1rem;
+}
+#svg-main .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+#svg-main .border {
+  border-width: 1px;
+}
+#svg-main .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+#svg-main .shadow-xl {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+#svg-main .ring-4 {
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+}
+#svg-main .-bottom-2 {
+  bottom: -0.5rem;
+}
+#svg-main .-right-2 {
+  right: -0.5rem;
+}
+#svg-main .from-blue-500 {
+  --tw-gradient-from: #3b82f6;
+}
+#svg-main .via-purple-500 {
+  --tw-gradient-via: #a855f7;
+}
+#svg-main .to-pink-500 {
+  --tw-gradient-to: #ec4899;
+}
+#svg-main .from-green-400 {
+  --tw-gradient-from: #4ade80;
+}
+#svg-main .to-green-600 {
+  --tw-gradient-to: #16a34a;
+}
+#svg-main .from-blue-400 {
+  --tw-gradient-from: #60a5fa;
+}
+#svg-main .to-blue-600 {
+  --tw-gradient-to: #2563eb;
+}
+#svg-main .from-yellow-400 {
+  --tw-gradient-from: #facc15;
+}
+#svg-main .to-yellow-600 {
+  --tw-gradient-to: #ca8a04;
+}
+#svg-main .from-gray-400 {
+  --tw-gradient-from: #9ca3af;
+}
+#svg-main .to-gray-600 {
+  --tw-gradient-to: #4b5563;
+}
+#svg-main .bg-gradient-to-br {
+  background-image: linear-gradient(
+    to bottom right,
+    var(--tw-gradient-from),
+    var(--tw-gradient-via),
+    var(--tw-gradient-to)
+  );
+}
+#svg-main .text-white {
+  color: #ffffff;
+}
+#svg-main .text-default-text {
+  color: var(--default-color-text);
+}
+#svg-main .text-default-muted {
+  color: var(--default-color-muted);
+}
+#svg-main .text-blue-400 {
+  color: #60a5fa;
+}
+#svg-main .border-blue-500\/20 {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+#svg-main .px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+#svg-main .py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+#svg-main .font-medium {
+  font-weight: 500;
+}
+#svg-main .flex-wrap {
+  flex-wrap: wrap;
+}
+#svg-main .line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Universal Card Component */
+#svg-main .github-card {
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--default-color-muted);
+  transition: all 0.2s ease;
+}
+
+#svg-main .github-card.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+#svg-main .github-card.solid {
+  background: var(--default-color-surface);
+  border-color: var(--default-color-muted);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+#svg-main .github-card.outline {
+  background: transparent;
+  border-color: var(--default-color-muted);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+}
+
+/* Width variants */
+#svg-main .github-card.half {
+  width: 415px;
+  max-width: 415px;
+}
+
+#svg-main .github-card.full {
+  width: 830px;
+  max-width: 830px;
+}
+
+/* Banner Styles - Enhanced */
+#svg-main .github-banner-modern {
+  position: relative;
+  overflow: hidden;
+}
+
+#svg-main .github-banner-modern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--default-color-highlight) 0%, transparent 50%);
+  opacity: 0.1;
+}
+
+#svg-main .banner-header {
+  position: relative;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+#svg-main .banner-avatar-container {
+  position: relative;
+}
+
+#svg-main .banner-avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--default-color-highlight) 0%, var(--default-color-highlight) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+#svg-main .banner-avatar-star {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--default-color-highlight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--default-color-surface);
+}
+
+#svg-main .banner-repo-info {
+  flex: 1;
+  min-width: 0;
+}
+
+#svg-main .banner-repo-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+#svg-main .banner-repo-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#svg-main .banner-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--default-color-highlight);
+}
+
+#svg-main .banner-badge.primary {
+  background: var(--default-color-highlight);
+  color: white;
+}
+
+#svg-main .banner-badge.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--default-color-muted);
+}
+
+#svg-main .banner-description {
+  color: var(--default-color-muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+#svg-main .banner-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+#svg-main .banner-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--default-color-default);
+}
+
+#svg-main .banner-stat-icon.star {
+  color: #eab308;
+}
+
+#svg-main .banner-stat-icon.fork {
+  color: var(--default-color-muted);
+}
+
+/* Minimal Banner */
+#svg-main .github-banner-minimal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#svg-main .minimal-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .minimal-repo-info {
+  flex: 1;
+  margin-left: 1rem;
+}
+
+#svg-main .minimal-repo-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--default-color-default);
+  margin-bottom: 0.125rem;
+}
+
+#svg-main .minimal-repo-meta {
+  font-size: 0.875rem;
+  color: var(--default-color-muted);
+}
+
+#svg-main .minimal-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#svg-main .minimal-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+#svg-main .minimal-stat-icon.star {
+  color: var(--default-color-highlight);
+}
+
+#svg-main .minimal-stat-icon.fork {
+  color: var(--default-color-muted);
+}
+
+/* Detailed Banner */
+#svg-main .github-banner-detailed {
+  position: relative;
+  overflow: hidden;
+}
+
+#svg-main .detailed-pattern {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: var(--default-color-highlight);
+  opacity: 0.05;
+}
+
+#svg-main .detailed-pattern-2 {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#svg-main .detailed-content {
+  position: relative;
+}
+
+#svg-main .detailed-header {
+  display: flex;
+  align-items: start;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+#svg-main .detailed-avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--default-color-highlight) 0%, rgba(255, 255, 255, 0.1) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+#svg-main .detailed-repo-info {
+  flex: 1;
+  min-width: 0;
+}
+
+#svg-main .detailed-repo-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+#svg-main .detailed-repo-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  margin: 0;
+}
+
+#svg-main .detailed-repo-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--default-color-highlight);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#svg-main .detailed-description {
+  color: var(--default-color-muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+#svg-main .detailed-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+#svg-main .detailed-topic {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--default-color-highlight);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+#svg-main .detailed-topic:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+#svg-main .detailed-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+#svg-main .detailed-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#svg-main .detailed-stat-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#svg-main .detailed-stat-content {
+  flex: 1;
+}
+
+#svg-main .detailed-stat-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  margin-bottom: 0.25rem;
+}
+
+#svg-main .detailed-stat-label {
+  font-size: 0.75rem;
+  color: var(--default-color-muted);
+}
+
+/* Stats Section - Enhanced Dashboard Style */
+#svg-main .github-stats {
+  position: relative;
+}
+
+#svg-main .stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+#svg-main .stats-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#svg-main .stats-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--default-color-highlight);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#svg-main .stats-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+#svg-main .stats-grid.half {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+#svg-main .stats-grid.full {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+#svg-main .stat-card {
+  position: relative;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+#svg-main .stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  opacity: 0.2;
+}
+
+#svg-main .stat-card.star::before {
+  background: #fef3c7;
+}
+
+#svg-main .stat-card.fork::before {
+  background: #dbeafe;
+}
+
+#svg-main .stat-card.watcher::before {
+  background: #fce7f3;
+}
+
+#svg-main .stat-card.issue::before {
+  background: #fee2e2;
+}
+
+#svg-main .stat-card.pr::before {
+  background: #dcfce7;
+}
+
+#svg-main .stat-card.contributor::before {
+  background: #e0e7ff;
+}
+
+#svg-main .stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+#svg-main .stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+#svg-main .stat-icon-container {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#svg-main .stat-icon.star {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+#svg-main .stat-icon.fork {
+  color: #6b7280;
+  background: rgba(107, 114, 128, 0.1);
+}
+
+#svg-main .stat-icon.watcher {
+  color: #a855f7;
+  background: rgba(168, 85, 247, 0.1);
+}
+
+#svg-main .stat-icon.issue {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.1);
+}
+
+#svg-main .stat-icon.pr {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+#svg-main .stat-icon.contributor {
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+}
+
+#svg-main .stat-change {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+#svg-main .stat-change.positive {
+  color: #10b981;
+}
+
+#svg-main .stat-change.negative {
+  color: #ef4444;
+}
+
+#svg-main .stat-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  margin-bottom: 0.25rem;
+}
+
+#svg-main .stat-label {
+  font-size: 0.875rem;
+  color: var(--default-color-muted);
+  font-weight: 500;
+}
+
+/* Languages Section - Bars Style */
+#svg-main .github-languages-bars {
+  position: relative;
+}
+
+#svg-main .languages-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+#svg-main .languages-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#svg-main .languages-count {
+  font-size: 0.875rem;
+  color: var(--default-color-muted);
+}
+
+#svg-main .languages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#svg-main .language-item {
+  position: relative;
+}
+
+#svg-main .language-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+#svg-main .language-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#svg-main .language-color {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+#svg-main .language-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--default-color-default);
+}
+
+#svg-main .language-percentage {
+  font-size: 0.875rem;
+  color: var(--default-color-muted);
+  font-family: "JetBrains Mono", monospace;
+}
+
+#svg-main .language-bar-container {
+  height: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+#svg-main .language-bar-fill {
+  height: 100%;
+  border-radius: 0.25rem;
+  transition: width 1s ease-out;
+  position: relative;
+}
+
+#svg-main .language-bar-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Languages Section - Circles/Donut Style */
+#svg-main .github-languages-circles {
+  position: relative;
+}
+
+#svg-main .languages-chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+#svg-main .languages-donut {
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+}
+
+#svg-main .languages-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--default-color-surface);
+  border-radius: 50%;
+  margin: 1rem;
+  border: 0.25rem solid rgba(255, 255, 255, 0.5);
+}
+
+#svg-main .languages-donut-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+}
+
+#svg-main .languages-donut-label {
+  font-size: 0.75rem;
+  color: var(--default-color-muted);
+}
+
+#svg-main .languages-legend {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+#svg-main .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+#svg-main .legend-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#svg-main .legend-color {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: border-color 0.2s ease;
+}
+
+#svg-main .legend-item:hover .legend-color {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+#svg-main .legend-content {
+  flex: 1;
+  min-width: 0;
+}
+
+#svg-main .legend-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--default-color-default);
+  margin-bottom: 0.125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#svg-main .legend-percentage {
+  font-size: 0.875rem;
+  color: var(--default-color-muted);
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* Contributors Section */
+#svg-main .github-contributors {
+  position: relative;
+}
+
+#svg-main .contributors-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+#svg-main .contributors-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#svg-main .contributors-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--default-color-muted);
+}
+
+/* Compact Contributors */
+#svg-main .contributors-compact {
+  position: relative;
+}
+
+#svg-main .contributors-grid-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+#svg-main .contributor-compact-item {
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+#svg-main .contributor-compact-item:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+#svg-main .contributor-compact-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--default-color-surface);
+  ring: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+#svg-main .contributor-compact-item:hover .contributor-compact-avatar {
+  ring-color: var(--default-color-highlight);
+}
+
+#svg-main .contributor-rank {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--default-color-highlight);
+  border: 2px solid var(--default-color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: white;
+}
+
+#svg-main .contributor-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--default-color-surface);
+  border: 1px solid var(--default-color-muted);
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--default-color-default);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 20;
+}
+
+#svg-main .contributor-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 0.5rem solid transparent;
+  border-right: 0.5rem solid transparent;
+  border-top: 0.5rem solid var(--default-color-surface);
+}
+
+#svg-main .contributor-compact-item:hover .contributor-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* List Contributors */
+#svg-main .contributors-list {
+  position: relative;
+}
+
+#svg-main .contributors-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#svg-main .contributor-list-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+#svg-main .contributor-list-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+#svg-main .contributor-rank-badge {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--default-color-highlight);
+}
+
+#svg-main .contributor-list-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--default-color-muted);
+}
+
+#svg-main .contributor-list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+#svg-main .contributor-list-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--default-color-default);
+  margin-bottom: 0.125rem;
+}
+
+#svg-main .contributor-list-type {
+  font-size: 0.75rem;
+  color: var(--default-color-muted);
+}
+
+#svg-main .contributor-list-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--default-color-muted);
+}
+
+/* Star History Section */
+#svg-main .github-star-history {
+  position: relative;
+}
+
+#svg-main .star-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+#svg-main .star-history-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#svg-main .star-history-current {
+  text-align: right;
+}
+
+#svg-main .star-history-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  margin-bottom: 0.125rem;
+}
+
+#svg-main .star-history-growth {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+#svg-main .star-history-growth.positive {
+  color: #10b981;
+}
+
+#svg-main .star-history-growth.negative {
+  color: #ef4444;
+}
+
+#svg-main .star-history-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#svg-main .star-history-summary-item {
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#svg-main .star-history-summary-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--default-color-default);
+  margin-bottom: 0.25rem;
+}
+
+#svg-main .star-history-summary-label {
+  font-size: 0.75rem;
+  color: var(--default-color-muted);
+}
+
+#svg-main .star-history-chart-container {
+  position: relative;
+  height: 12rem;
+  margin-bottom: 1rem;
+}
+
+#svg-main .star-history-chart {
+  width: 100%;
+  height: 100%;
+}
+
+#svg-main .star-history-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#svg-main .star-history-grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#svg-main .star-history-x-labels {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+}
+
+#svg-main .star-history-x-label {
+  font-size: 0.75rem;
+  color: var(--default-color-muted);
+}
+
+/* Control Buttons */
+#svg-main .github-control-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid var(--default-color-muted);
+  background: var(--default-color-surface);
+  color: var(--default-color-default);
+}
+
+#svg-main .github-control-button:hover {
+  border-color: var(--default-color-highlight);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#svg-main .github-control-button.active {
+  background: var(--default-color-highlight);
+  color: white;
+  border-color: var(--default-color-highlight);
+  box-shadow: 0 0 20px rgba(255, 158, 11, 0.3);
+  transform: scale(1.05);
+}
+
+/* Container Layout */
+#svg-main .github-project-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+#svg-main .github-project-section {
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #svg-main .github-card {
+    padding: 1rem;
+  }
+
+  #svg-main .banner-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  #svg-main .banner-stats {
+    justify-content: center;
+  }
+
+  #svg-main .detailed-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  #svg-main .detailed-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #svg-main .stats-grid.half,
+  #svg-main .stats-grid.full {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #svg-main .languages-chart-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  #svg-main .languages-legend {
+    grid-template-columns: 1fr;
+  }
+
+  #svg-main .star-history-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #svg-main .github-project-container {
+    gap: 0.75rem;
+  }
+}
+
+/* Half mode adjustments */
+#svg-main.half .detailed-topics {
+  justify-content: center;
+}
+
+#svg-main.half .banner-stats {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#svg-main.half .languages-list .language-item:nth-child(n + 6) {
+  display: none;
+}
+
+#svg-main.half .contributors-grid-compact .contributor-compact-item:nth-child(n + 9) {
+  display: none;
+}
+
+#svg-main.half .contributors-list-items .contributor-list-item:nth-child(n + 5) {
+  display: none;
+}

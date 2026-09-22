@@ -1,32 +1,33 @@
 /**
  * MyAnimeList Plugin V2
- * 
+ *
  * Plugin para exibir estatísticas do MyAnimeList
- * 
+ *
  * TODO: Completar migração do source original
  */
 
-import React from 'react'
-import type { Plugin } from '../shared/types/plugin'
-import type { PluginConfig, PluginData } from '../../types/index'
-import type { MyAnimeListConfig, MyAnimeListData } from './types'
-import { RenderMyAnimeList } from './components/RenderMyAnimeList'
-import { fetchMyAnimeListData } from './services/fetchMyAnimeList'
+import React from "react"
+import type { Plugin } from "../shared/types/plugin"
+import type { PluginConfig, PluginData } from "../../types/index"
+import type { MyAnimeListConfig, MyAnimeListData } from "./types"
+import { RenderMyAnimeList } from "./components/RenderMyAnimeList"
+import { fetchMyAnimeListData } from "./services/fetchMyAnimeList"
 
 export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginData & MyAnimeListData> = {
-  name: 'myanimelist',
+  name: "myanimelist",
   essentialConfigKeys: [],
   config: {
     enabled: false,
     sections: [],
-    username: '',
+    username: "",
   } as PluginConfig & MyAnimeListConfig,
   fetchData: async (config: PluginConfig & MyAnimeListConfig, dev = false, essentialConfig?, previewMode = false) => {
-    return await fetchMyAnimeListData(config as MyAnimeListConfig, dev, essentialConfig, previewMode) as PluginData & MyAnimeListData
+    return (await fetchMyAnimeListData(config as MyAnimeListConfig, dev, essentialConfig, previewMode)) as PluginData &
+      MyAnimeListData
   },
   render: (config: PluginConfig & MyAnimeListConfig, data: PluginData & MyAnimeListData) => {
-    const style = ((config as any).style || 'default') as 'default' | 'terminal'
-    const size = ((config as any).size || 'half') as 'half' | 'full'
+    const style = ((config as any).style || "default") as "default" | "terminal"
+    const size = ((config as any).size || "half") as "half" | "full"
     const hideTerminalEmojis = (config as any).hideTerminalEmojis || false
     return (
       <RenderMyAnimeList
@@ -141,4 +142,3 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
 }
 
 export default myAnimeListPlugin
-

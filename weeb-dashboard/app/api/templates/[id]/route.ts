@@ -9,10 +9,7 @@ import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
  * GET /api/templates/[id]
  * Get a specific template
  */
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient()
     const {
@@ -52,10 +49,7 @@ export async function GET(
  * PUT /api/templates/[id]
  * Update a template
  */
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient()
     const {
@@ -135,10 +129,7 @@ export async function PUT(
  * DELETE /api/templates/[id]
  * Delete a template
  */
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient()
     const {
@@ -170,4 +161,3 @@ export async function DELETE(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-

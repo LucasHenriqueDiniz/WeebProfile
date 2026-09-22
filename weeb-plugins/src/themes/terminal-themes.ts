@@ -30,10 +30,3 @@ export const terminalThemes = {
     raw: "#f92672",
   },
 }
-
-
-
-
-
-
-

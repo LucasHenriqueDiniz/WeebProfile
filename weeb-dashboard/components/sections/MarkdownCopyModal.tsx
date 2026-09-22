@@ -2,13 +2,7 @@
 
 import * as React from "react"
 import { Copy, Check } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 
 interface MarkdownCopyModalProps {
@@ -37,9 +31,7 @@ export function MarkdownCopyModal({ open, onOpenChange, markdown = defaultMarkdo
       <DialogContent className="sm:max-w-[540px]">
         <DialogHeader>
           <DialogTitle>Copiar Markdown</DialogTitle>
-          <DialogDescription>
-            Cole este código no seu README.md para exibir seu perfil
-          </DialogDescription>
+          <DialogDescription>Cole este código no seu README.md para exibir seu perfil</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="relative">
@@ -47,11 +39,7 @@ export function MarkdownCopyModal({ open, onOpenChange, markdown = defaultMarkdo
               <code>{markdown}</code>
             </pre>
           </div>
-          <Button
-            onClick={handleCopy}
-            className="w-full"
-            variant={copied ? "secondary" : "default"}
-          >
+          <Button onClick={handleCopy} className="w-full" variant={copied ? "secondary" : "default"}>
             {copied ? (
               <>
                 <Check className="mr-2 h-4 w-4" />
@@ -69,4 +57,3 @@ export function MarkdownCopyModal({ open, onOpenChange, markdown = defaultMarkdo
     </Dialog>
   )
 }
-

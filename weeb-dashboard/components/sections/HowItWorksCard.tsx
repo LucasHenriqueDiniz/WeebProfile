@@ -3,17 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { 
-  Shield, 
-  Plug, 
-  Palette, 
-  Code, 
-  Link as LinkIcon,
-  Grid3x3,
-  Wand2,
-  Copy,
-  LucideIcon 
-} from "lucide-react"
+import { Shield, Plug, Palette, Code, Link as LinkIcon, Grid3x3, Wand2, Copy, LucideIcon } from "lucide-react"
 import { motion } from "framer-motion"
 
 interface HowItWorksItem {
@@ -26,7 +16,7 @@ interface HowItWorksItem {
   cta: {
     text: string
     href?: string
-    action?: 'modal' | 'scroll' | 'navigate'
+    action?: "modal" | "scroll" | "navigate"
   }
   screenshot?: string
 }
@@ -59,7 +49,7 @@ export function HowItWorksCard({ item, onCtaClick }: HowItWorksCardProps) {
         {/* topo: step badge + badge utilitário */}
         <div className="flex items-start justify-between gap-3">
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-primary">
-            {String(item.step).padStart(2, '0')}
+            {String(item.step).padStart(2, "0")}
           </span>
           <Badge variant="secondary" className="text-[10px] font-medium">
             {item.badge}
@@ -76,12 +66,8 @@ export function HowItWorksCard({ item, onCtaClick }: HowItWorksCardProps) {
 
         {/* título + descrição */}
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold leading-tight">
-            {item.title}
-          </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {item.description}
-          </p>
+          <h3 className="text-lg font-semibold leading-tight">{item.title}</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
         </div>
 
         {/* bullets */}
@@ -96,12 +82,7 @@ export function HowItWorksCard({ item, onCtaClick }: HowItWorksCardProps) {
 
         {/* CTA */}
         <div className="mt-auto pt-2">
-          <Button
-            onClick={onCtaClick}
-            variant="outline"
-            size="sm"
-            className="w-full group/btn"
-          >
+          <Button onClick={onCtaClick} variant="outline" size="sm" className="w-full group/btn">
             {item.cta.text}
           </Button>
         </div>
@@ -109,4 +90,3 @@ export function HowItWorksCard({ item, onCtaClick }: HowItWorksCardProps) {
     </Card>
   )
 }
-

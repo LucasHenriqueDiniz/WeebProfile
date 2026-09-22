@@ -1,12 +1,11 @@
-
 # Creating Plugins
 
 This repository provides a plugin library consumed by external apps (e.g. dashboard / SVG generator).
 A **plugin** is responsible for:
 
-1) validating config/essential keys,
-2) fetching data (or returning mock data in dev),
-3) rendering via templates/styles.
+1. validating config/essential keys,
+2. fetching data (or returning mock data in dev),
+3. rendering via templates/styles.
 
 ## Prerequisites
 

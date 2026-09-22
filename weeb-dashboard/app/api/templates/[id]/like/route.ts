@@ -8,10 +8,7 @@ import { eq, and } from "drizzle-orm"
  * POST /api/templates/[id]/like
  * Like a template
  */
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient()
     const {
@@ -57,10 +54,7 @@ export async function POST(
  * DELETE /api/templates/[id]/like
  * Unlike a template
  */
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient()
     const {
@@ -86,4 +80,3 @@ export async function DELETE(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-

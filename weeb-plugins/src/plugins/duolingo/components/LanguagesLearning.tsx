@@ -2,36 +2,41 @@
  * LanguagesLearning - Componente para exibir idiomas estudados no Duolingo
  */
 
-import React from 'react'
-import { FaLanguage } from 'react-icons/fa'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { DefaultList } from '../../../templates/Default/DefaultList'
-import { TerminalList } from '../../../templates/Terminal/TerminalList'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalLine } from '../../../templates/Terminal/TerminalLine'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import { getLanguageIcon, capitalizeLanguage } from '../../../utils/language-icons'
-import { getLanguageCode, CountryFlag } from '../../../utils/language-flags'
-import { DuolingoColors } from '../constants'
-import type { ListItemProps, TerminalLineProps } from '../../../templates/types'
-import type { DuolingoConfig, DuolingoLanguage } from '../types'
+import React from "react"
+import { FaLanguage } from "react-icons/fa"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { DefaultList } from "../../../templates/Default/DefaultList"
+import { TerminalList } from "../../../templates/Terminal/TerminalList"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalLine } from "../../../templates/Terminal/TerminalLine"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { getLanguageIcon, capitalizeLanguage } from "../../../utils/language-icons"
+import { getLanguageCode, CountryFlag } from "../../../utils/language-flags"
+import { DuolingoColors } from "../constants"
+import type { ListItemProps, TerminalLineProps } from "../../../templates/types"
+import type { DuolingoConfig, DuolingoLanguage } from "../types"
 
 interface LanguagesLearningProps {
   data: DuolingoLanguage[]
   config: DuolingoConfig
-  style?: 'default' | 'terminal'
-  size?: 'half' | 'full'
+  style?: "default" | "terminal"
+  size?: "half" | "full"
 }
 
-export function LanguagesLearning({ data, config, style = 'default', size = 'half' }: LanguagesLearningProps): React.ReactElement {
+export function LanguagesLearning({
+  data,
+  config,
+  style = "default",
+  size = "half",
+}: LanguagesLearningProps): React.ReactElement {
   if (!data || data.length === 0) {
     return <></>
   }
 
   const hideTitle = config.nonEssential?.languages_learning_hide_title ?? false
-  const title = config.nonEssential?.languages_learning_title || 'Languages Learning'
+  const title = config.nonEssential?.languages_learning_title || "Languages Learning"
   const maxItems = config.nonEssential?.languages_learning_max || 5
 
   const limitedData = data.slice(0, maxItems)
@@ -39,7 +44,7 @@ export function LanguagesLearning({ data, config, style = 'default', size = 'hal
   const listItems: ListItemProps[] = limitedData.map((lang) => {
     const capitalizedName = capitalizeLanguage(lang.language)
     const countryCode = getLanguageCode(lang.language)
-    
+
     return {
       right: (
         <span className="inline-flex items-center gap-1.5">
@@ -47,16 +52,8 @@ export function LanguagesLearning({ data, config, style = 'default', size = 'hal
           {capitalizedName}
         </span>
       ) as any,
-      center: lang.level ? (
-        <span className="duolingo-level-badge">
-          Level {lang.level}
-        </span>
-      ) as any : undefined,
-      left: (
-        <span className="duolingo-xp-text">
-          {abbreviateNumber(lang.xp)} XP
-        </span>
-      ) as any,
+      center: lang.level ? ((<span className="duolingo-level-badge">Level {lang.level}</span>) as any) : undefined,
+      left: (<span className="duolingo-xp-text">{abbreviateNumber(lang.xp)} XP</span>) as any,
     }
   })
 
@@ -64,7 +61,7 @@ export function LanguagesLearning({ data, config, style = 'default', size = 'hal
     const capitalizedName = capitalizeLanguage(lang.language)
     return {
       right: capitalizedName,
-      left: `${abbreviateNumber(lang.xp)} XP${lang.level ? ` (Level ${lang.level})` : ''}`,
+      left: `${abbreviateNumber(lang.xp)} XP${lang.level ? ` (Level ${lang.level})` : ""}`,
     }
   })
 
@@ -85,9 +82,7 @@ export function LanguagesLearning({ data, config, style = 'default', size = 'hal
                       </div>
                       <div className="flex justify-between items-baseline gap-2">
                         {item.center && (
-                          <div className="text-sm text-default-muted truncate flex items-center">
-                            {item.center}
-                          </div>
+                          <div className="text-sm text-default-muted truncate flex items-center">{item.center}</div>
                         )}
                         {item.left && (
                           <div className="text-sm text-default-muted truncate w-fit ml-auto flex items-center">
@@ -106,8 +101,8 @@ export function LanguagesLearning({ data, config, style = 'default', size = 'hal
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'duolingo',
-                section: 'languages_learning',
+                plugin: "duolingo",
+                section: "languages_learning",
                 size,
               })}
             />
@@ -118,4 +113,3 @@ export function LanguagesLearning({ data, config, style = 'default', size = 'hal
     </section>
   )
 }
-

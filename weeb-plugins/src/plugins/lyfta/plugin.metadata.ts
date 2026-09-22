@@ -1,9 +1,9 @@
 /**
  * Metadata do Plugin Lyfta
- * 
+ *
  * This file defines all sections, configurations and options for the Lyfta plugin.
  * É usado para gerar automaticamente o metadata.ts centralizado.
- * 
+ *
  * DO NOT edit metadata.ts manually - it is generated automatically from this file.
  */
 
@@ -122,7 +122,8 @@ export const lyftaPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 exercises",
-          tooltip: "Maximum number of exercises to display. Exercises are ordered by total volume (highest volume first).",
+          tooltip:
+            "Maximum number of exercises to display. Exercises are ordered by total volume (highest volume first).",
         },
         {
           key: "exercises_show_1rm",
@@ -242,4 +243,3 @@ export const lyftaPluginMetadata = {
     sections: ["overview", "last_workout", "exercises", "recent_workouts"],
   },
 }
-

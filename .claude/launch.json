@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dashboard",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev:dashboard"],
+      "port": 3000
+    },
+    {
+      "name": "dashboard-pages",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "weeb-dashboard", "dev:pages"],
+      "port": 8788
+    },
+    {
+      "name": "generator",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev:generator"],
+      "port": 3001
+    },
+    {
+      "name": "debug-tool",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@weeb/debug-tool", "dev"],
+      "port": 5001
+    }
+  ]
+}

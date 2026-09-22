@@ -26,8 +26,13 @@ export function abbreviateNumber(value: string | number): string {
  * @returns String formatada (ex: "500 MB", "1.5 GB", "2 TB")
  */
 export function formatDiskUsage(kilobytes: number): string {
+  // Handle invalid values
+  if (typeof kilobytes !== "number" || isNaN(kilobytes) || kilobytes < 0) {
+    return "0 KB"
+  }
+
   if (kilobytes < 1024) {
-    return `${kilobytes} KB`
+    return `${Math.round(kilobytes)} KB`
   }
 
   const megabytes = kilobytes / 1024

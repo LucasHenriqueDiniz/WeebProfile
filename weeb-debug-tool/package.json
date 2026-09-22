@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n \"vite,server\" -c \"cyan,magenta\" --kill-others-on-fail \"vite\" \"nodemon --exec tsx server/index.ts\"",
+    "predev": "kill-port 5000 5003",
+    "dev": "pnpm run predev && cross-env BACKEND_PORT=5003 NODE_OPTIONS=--max-old-space-size=8192 concurrently -n \"vite,server\" -c \"cyan,magenta\" \"vite\" \"nodemon --exitcrash --watch server --ext ts,tsx,js,jsx,json --ignore server\\**\\generated\\** --ignore server\\**\\.cache\\** --exec tsx server/index.ts\"",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "server": "tsx server/index.ts",
-    "server:watch": "tsx --watch server/index.ts"
+    "server": "cross-env BACKEND_PORT=5003 NODE_OPTIONS=--max-old-space-size=8192 tsx server/index.ts"
   },
   "dependencies": {
     "@weeb/svg-generator": "workspace:*",
@@ -32,6 +32,8 @@
     "@types/ws": "^8.5.13",
     "@vitejs/plugin-react": "^4.3.3",
     "concurrently": "^9.1.0",
+    "cross-env": "^10.1.0",
+    "kill-port": "^2.0.1",
     "nodemon": "^3.1.0",
     "tsx": "^4.19.2",
     "typescript": "^5.4.0",

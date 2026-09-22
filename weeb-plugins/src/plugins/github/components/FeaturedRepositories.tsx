@@ -1,23 +1,29 @@
-import React from 'react'
-import { FaCodeBranch, FaExclamationCircle, FaStar } from 'react-icons/fa'
-import { RiGitPullRequestLine } from 'react-icons/ri'
-import { DefaultTitle } from '../../../templates/Default/DefaultTitle'
-import { RenderBasedOnStyle } from '../../../templates/RenderBasedOnStyle'
-import { TerminalCommand } from '../../../templates/Terminal/TerminalCommand'
-import { TerminalGrid } from '../../../templates/Terminal/TerminalGrid'
-import type { GridItemProps } from '../../../templates/types'
-import { abbreviateNumber } from '../../../utils/number'
-import { getPseudoCommands } from '../../../utils/pseudo-commands'
-import type { GithubConfig, GithubData } from '../types'
+import React from "react"
+import { FaCodeBranch, FaExclamationCircle, FaStar } from "react-icons/fa"
+import { RiGitPullRequestLine } from "react-icons/ri"
+import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import type { GridItemProps } from "../../../templates/types"
+import { abbreviateNumber } from "../../../utils/number"
+import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import type { GithubConfig, GithubData } from "../types"
 
 interface FeaturedRepositoriesProps {
-  data: GithubData['featuredRepositories']
+  data: GithubData["featuredRepositories"]
   config: GithubConfig
-  style: 'default' | 'terminal'
-  size: 'half' | 'full'
+  style: "default" | "terminal"
+  size: "half" | "full"
 }
 
-const DefaultFeaturedRepositories = ({ data, size }: { data: GithubData['featuredRepositories']; size: 'half' | 'full' }) => {
+const DefaultFeaturedRepositories = ({
+  data,
+  size,
+}: {
+  data: GithubData["featuredRepositories"]
+  size: "half" | "full"
+}) => {
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No featured repositories</div>
   }
@@ -34,9 +40,7 @@ const DefaultFeaturedRepositories = ({ data, size }: { data: GithubData['feature
         >
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="font-semibold text-base text-default-text truncate">
-                {repo.nameWithOwner}
-              </span>
+              <span className="font-semibold text-base text-default-text truncate">{repo.nameWithOwner}</span>
               {repo.primaryLanguage && (
                 <span
                   className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0"
@@ -49,16 +53,14 @@ const DefaultFeaturedRepositories = ({ data, size }: { data: GithubData['feature
                   {repo.primaryLanguage.name}
                 </span>
               )}
-              {repo.license && size !== 'half' && (
+              {repo.license && size !== "half" && (
                 <span className="text-xs px-2 py-0.5 rounded-full bg-default-muted/10 text-default-muted border border-default-border/50 flex-shrink-0">
                   {repo.license.spdxId || repo.license.name}
                 </span>
               )}
             </div>
             {repo.description && (
-              <p className="text-sm text-default-muted mb-2 line-clamp-2 leading-relaxed">
-                {repo.description}
-              </p>
+              <p className="text-sm text-default-muted mb-2 line-clamp-2 leading-relaxed">{repo.description}</p>
             )}
             <div className="flex items-center gap-4 flex-wrap text-sm text-default-muted">
               <div className="flex items-center gap-1.5">
@@ -83,7 +85,7 @@ const DefaultFeaturedRepositories = ({ data, size }: { data: GithubData['feature
               )}
               {repo.createdAt && (
                 <div className="text-xs text-default-muted/70">
-                  Created {new Date(repo.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                  Created {new Date(repo.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short" })}
                 </div>
               )}
             </div>
@@ -94,8 +96,13 @@ const DefaultFeaturedRepositories = ({ data, size }: { data: GithubData['feature
   )
 }
 
-export function GithubFeaturedRepositories({ data, config, style, size }: FeaturedRepositoriesProps): React.ReactElement {
-  const title = config.featured_repositories_title ?? 'Featured Repositories'
+export function GithubFeaturedRepositories({
+  data,
+  config,
+  style,
+  size,
+}: FeaturedRepositoriesProps): React.ReactElement {
+  const title = config.featured_repositories_title ?? "Featured Repositories"
   const hideTitle = config.featured_repositories_hide_title ?? false
 
   if (!data || data.length === 0) {
@@ -123,8 +130,8 @@ export function GithubFeaturedRepositories({ data, config, style, size }: Featur
           <>
             <TerminalCommand
               command={getPseudoCommands({
-                plugin: 'github',
-                section: 'featured_repositories',
+                plugin: "github",
+                section: "featured_repositories",
                 size,
               })}
             />
@@ -135,4 +142,3 @@ export function GithubFeaturedRepositories({ data, config, style, size }: Featur
     </section>
   )
 }
-

@@ -2,7 +2,7 @@
  * DefaultTitle - Título para estilo default
  */
 
-import React from 'react'
+import React from "react"
 
 interface DefaultTitleProps {
   icon?: React.ReactElement
@@ -11,14 +11,18 @@ interface DefaultTitleProps {
 }
 
 export function DefaultTitle({ icon, title, subtitle }: DefaultTitleProps): React.ReactElement {
-  const iconElement = icon && React.isValidElement(icon) ? (
-    <div className="text-default-highlight fill-default-highlight" style={{ fill: 'var(--default-color-highlight)', color: 'var(--default-color-highlight)' }}>
-      {React.cloneElement(icon as React.ReactElement<any>, { 
-        className: `${(icon as any).props?.className || ''} text-default-highlight fill-default-highlight`.trim(),
-        style: { fill: 'var(--default-color-highlight)', color: 'var(--default-color-highlight)' }
-      })}
-    </div>
-  ) : null
+  const iconElement =
+    icon && React.isValidElement(icon) ? (
+      <div
+        className="text-default-highlight fill-default-highlight"
+        style={{ fill: "var(--default-color-highlight)", color: "var(--default-color-highlight)" }}
+      >
+        {React.cloneElement(icon as React.ReactElement<any>, {
+          className: `${(icon as any).props?.className || ""} text-default-highlight fill-default-highlight`.trim(),
+          style: { fill: "var(--default-color-highlight)", color: "var(--default-color-highlight)" },
+        })}
+      </div>
+    ) : null
 
   return (
     <div className="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5">
@@ -30,4 +34,3 @@ export function DefaultTitle({ icon, title, subtitle }: DefaultTitleProps): Reac
     </div>
   )
 }
-

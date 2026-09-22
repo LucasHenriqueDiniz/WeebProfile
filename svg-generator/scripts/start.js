@@ -34,10 +34,8 @@ if (!serverPath) {
   if (existsSync(distPath)) {
     try {
       const distFiles = readdirSync(distPath, { recursive: true })
-      const serverJsFiles = distFiles.filter((f) => 
-        typeof f === "string" && f.endsWith("server.js")
-      )
-      
+      const serverJsFiles = distFiles.filter((f) => typeof f === "string" && f.endsWith("server.js"))
+
       if (serverJsFiles.length > 0) {
         serverPath = `dist/${serverJsFiles[0]}`
         console.log(`✅ Encontrado server.js em: ${serverPath} (busca recursiva)`)
@@ -70,4 +68,3 @@ server.on("error", (error) => {
 server.on("exit", (code) => {
   process.exit(code || 0)
 })
-

@@ -1,17 +1,9 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
-import {
-  Layout,
-  Plug,
-  Eye,
-  Palette,
-  Link as LinkIcon,
-  Shield,
-  type LucideIcon,
-} from "lucide-react"
-import { useTranslations } from 'next-intl'
+import { motion } from "framer-motion"
+import { Eye, Layout, Link as LinkIcon, Palette, Plug, Shield, type LucideIcon } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface Feature {
   id: string
@@ -21,7 +13,7 @@ interface Feature {
   highlight?: string
 }
 
-interface FeaturesSectionProps {}
+type FeaturesSectionProps = Record<string, never>
 
 const iconMap: Record<string, LucideIcon> = {
   Layout,
@@ -33,20 +25,22 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 export function ComparisonSection({}: FeaturesSectionProps) {
-  const t = useTranslations('homepage.comparison')
+  const t = useTranslations("homepage.comparison")
 
-  const features: Feature[] = t.raw('features').map((feature: any) => ({
-    id: feature.id,
-    title: feature.title,
-    description: feature.description,
-    icon: feature.icon,
-    highlight: feature.highlight
-  }))
+  const features: Feature[] = t
+    .raw("features")
+    .map((feature: { id: string; title: string; description: string; icon: string; highlight?: string }) => ({
+      id: feature.id,
+      title: feature.title,
+      description: feature.description,
+      icon: feature.icon,
+      highlight: feature.highlight,
+    }))
   return (
     <section className="relative py-16 md:py-24 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
-      
+
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -56,12 +50,10 @@ export function ComparisonSection({}: FeaturesSectionProps) {
         >
           <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
             <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-              {t('title')}
+              {t("title")}
             </span>
           </h2>
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            {t('subtitle')}
-          </p>
+          <p className="text-xl text-muted-foreground leading-relaxed">{t("subtitle")}</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -96,10 +88,11 @@ export function ComparisonSection({}: FeaturesSectionProps) {
                   <div
                     className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"
                     style={{
-                      background: "linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(236, 72, 153, 0.05) 50%, rgba(6, 182, 212, 0.05) 100%)",
+                      background:
+                        "linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(236, 72, 153, 0.05) 50%, rgba(6, 182, 212, 0.05) 100%)",
                     }}
                   />
-                  
+
                   <CardContent className="p-6 relative z-10">
                     <div className="space-y-4">
                       {/* Icon */}
@@ -125,9 +118,7 @@ export function ComparisonSection({}: FeaturesSectionProps) {
                             </span>
                           )}
                         </div>
-                        <p className="text-muted-foreground text-sm leading-relaxed">
-                          {feature.description}
-                        </p>
+                        <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -140,19 +131,3 @@ export function ComparisonSection({}: FeaturesSectionProps) {
     </section>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

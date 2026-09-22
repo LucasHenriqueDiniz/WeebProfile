@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/layout/Header"
 import { ComparisonSection } from "@/components/sections/ComparisonSection"
 import { CTASection } from "@/components/sections/CTASection"
@@ -11,14 +10,11 @@ import { mapApiToTemplates } from "@/lib/template-mapper"
 import type { Template } from "@/types/template"
 
 function getBaseUrl() {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.VERCEL_URL?.startsWith("http")
-      ? process.env.VERCEL_URL
-      : process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}` 
-        : "http://localhost:3000"
-  )
+  return process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL?.startsWith("http")
+    ? process.env.VERCEL_URL
+    : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000"
 }
 
 async function fetchPublicTemplates(limit = 5): Promise<Template[]> {
@@ -60,4 +56,3 @@ export default async function HomePage() {
     </div>
   )
 }
-

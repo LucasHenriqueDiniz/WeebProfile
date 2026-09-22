@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin"
 
 /**
  * GET /api/svg/[id] - Servir SVG gerado
- * 
+ *
  * Esta rota serve o SVG gerado do Supabase Storage.
  * Pode ser usada diretamente em markdown do GitHub.
  */
@@ -23,10 +23,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     // Se não foi gerado ainda, retornar 404 ou redirecionar para gerar
     if (svg.status !== "completed" || !svg.storageUrl) {
-      return NextResponse.json(
-        { error: "SVG not generated yet", status: svg.status },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: "SVG not generated yet", status: svg.status }, { status: 404 })
     }
 
     // Buscar SVG do storage

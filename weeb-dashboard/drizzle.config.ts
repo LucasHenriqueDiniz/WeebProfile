@@ -20,4 +20,3 @@ export default defineConfig({
   strict: true,
   schemaFilter: ["./lib/db/schema.ts", "./lib/db/index.ts"],
 })
-

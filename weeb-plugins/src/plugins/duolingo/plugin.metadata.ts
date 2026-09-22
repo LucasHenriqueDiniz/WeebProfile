@@ -5,7 +5,7 @@
  * It's used to automatically generate the centralized metadata.ts.
  *
  * DO NOT edit metadata.ts manually - it's automatically generated from this file.
- * 
+ *
  * WARNING: This plugin uses an unofficial Duolingo API that may break if Duolingo changes their structure.
  */
 
@@ -82,7 +82,8 @@ export const duolingoPluginMetadata = {
           max: 20,
           step: 1,
           description: "Maximum 20 languages",
-          tooltip: "Maximum number of languages that will be displayed. Languages are ordered by total XP (highest XP first).",
+          tooltip:
+            "Maximum number of languages that will be displayed. Languages are ordered by total XP (highest XP first).",
         },
         {
           key: "languages_learning_hide_languages",
@@ -90,7 +91,8 @@ export const duolingoPluginMetadata = {
           type: "array" as const,
           defaultValue: [],
           description: "List of language names to hide (e.g., Japanese, French)",
-          tooltip: "List of language names you want to hide from display. Type the exact language name (e.g., 'Japanese', 'French', 'Spanish') and press Enter to add.",
+          tooltip:
+            "List of language names you want to hide from display. Type the exact language name (e.g., 'Japanese', 'French', 'Spanish') and press Enter to add.",
         },
       ],
     },

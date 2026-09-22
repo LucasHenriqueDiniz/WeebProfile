@@ -60,14 +60,14 @@ export async function fetchMyAnimeListData(
   try {
     // Em modo dev ou preview, retornar dados mock sem validar username
     if (dev || previewMode) {
-      console.debug(`[MyAnimeList] Using mock data (${dev ? 'dev' : 'preview'} mode)`)
+      console.debug(`[MyAnimeList] Using mock data (${dev ? "dev" : "preview"} mode)`)
       const mockData = getMockMyAnimeListData()
-      
+
       // Em modo preview, manter URLs originais (não converter para base64)
       if (previewMode) {
         return mockData
       }
-      
+
       // Converter URLs de imagens para base64 apenas quando não estiver em modo preview
       return await convertImageUrlsToBase64(mockData, previewMode)
     }

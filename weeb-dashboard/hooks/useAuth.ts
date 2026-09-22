@@ -43,7 +43,7 @@ export function useAuth() {
       // Se houve erro de refresh token, limpar sessão automaticamente
       if (event === "TOKEN_REFRESHED" && !session) {
         console.log("[Auth] Refresh token failed, clearing session")
-        await supabase.auth.signOut({ scope: 'local' })
+        await supabase.auth.signOut({ scope: "local" })
         setUser(null)
       }
     })
@@ -53,36 +53,35 @@ export function useAuth() {
     return () => {
       mounted = false
       if (subscription) {
-        (subscription as any).unsubscribe()
+        ;(subscription as any).unsubscribe()
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase]) // Executar apenas uma vez quando supabase é criado
 
   const getRedirectUrl = () => {
     // Use NEXT_PUBLIC_SITE_URL if available (for production), otherwise use window.location.origin
     // In Next.js, NEXT_PUBLIC_* vars are available at build time and embedded in the client bundle
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-    const origin = typeof window !== 'undefined' ? window.location.origin : ''
+    const origin = typeof window !== "undefined" ? window.location.origin : ""
     const finalUrl = siteUrl || origin
-    
+
     // Debug log (only in development)
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Auth] Redirect URL:', { siteUrl, origin, finalUrl })
+    if (process.env.NODE_ENV === "development") {
+      console.log("[Auth] Redirect URL:", { siteUrl, origin, finalUrl })
     }
-    
+
     return finalUrl
   }
 
   const signInWithGitHub = async () => {
     const redirectUrl = getRedirectUrl()
     const callbackUrl = `${redirectUrl}/auth/callback`
-    
+
     // Debug log
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Auth] GitHub login redirectTo:', callbackUrl)
+    if (process.env.NODE_ENV === "development") {
+      console.log("[Auth] GitHub login redirectTo:", callbackUrl)
     }
-    
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
@@ -90,34 +89,34 @@ export function useAuth() {
         scopes: "read:user public_repo read:org user:follow",
       },
     })
-    
-    if (error && process.env.NODE_ENV === 'development') {
-      console.error('[Auth] GitHub login error:', error)
+
+    if (error && process.env.NODE_ENV === "development") {
+      console.error("[Auth] GitHub login error:", error)
     }
-    
+
     return { error }
   }
 
   const signInWithGoogle = async () => {
     const redirectUrl = getRedirectUrl()
     const callbackUrl = `${redirectUrl}/auth/callback`
-    
+
     // Debug log
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Auth] Google login redirectTo:', callbackUrl)
+    if (process.env.NODE_ENV === "development") {
+      console.log("[Auth] Google login redirectTo:", callbackUrl)
     }
-    
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: callbackUrl,
       },
     })
-    
-    if (error && process.env.NODE_ENV === 'development') {
-      console.error('[Auth] Google login error:', error)
+
+    if (error && process.env.NODE_ENV === "development") {
+      console.error("[Auth] Google login error:", error)
     }
-    
+
     return { error }
   }
 
@@ -144,12 +143,12 @@ export function useAuth() {
   const signOut = async () => {
     try {
       // Limpar localStorage e sessionStorage primeiro para evitar problemas de refresh token
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         localStorage.clear()
         sessionStorage.clear()
       }
-      
-      const { error } = await supabase.auth.signOut({ scope: 'global' })
+
+      const { error } = await supabase.auth.signOut({ scope: "global" })
       return { error }
     } catch (error) {
       console.error("Error during sign out:", error)
@@ -168,5 +167,3 @@ export function useAuth() {
     signOut,
   }
 }
-
-

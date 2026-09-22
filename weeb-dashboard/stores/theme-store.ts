@@ -17,7 +17,7 @@ const getSystemTheme = (): "light" | "dark" => {
 
 const applyTheme = (theme: "light" | "dark") => {
   if (typeof window === "undefined") return
-  
+
   const root = window.document.documentElement
   root.classList.remove("light", "dark")
   root.classList.add(theme)
@@ -28,13 +28,13 @@ export const useThemeStore = create<ThemeState>()(
     (set, get) => {
       // Inicializar tema resolvido
       const initialTheme = typeof window !== "undefined" ? getSystemTheme() : "light"
-      
+
       return {
         theme: "system" as Theme,
         resolvedTheme: initialTheme,
         setTheme: (theme: Theme) => {
           let resolvedTheme: "light" | "dark"
-          
+
           if (theme === "system") {
             resolvedTheme = getSystemTheme()
             // Listener para mudanças no sistema
@@ -50,7 +50,7 @@ export const useThemeStore = create<ThemeState>()(
           } else {
             resolvedTheme = theme
           }
-          
+
           set({ theme, resolvedTheme })
           if (typeof window !== "undefined") {
             applyTheme(resolvedTheme)
@@ -86,4 +86,3 @@ export const useThemeStore = create<ThemeState>()(
     }
   )
 )
-

@@ -1,10 +1,10 @@
 // Force dynamic rendering to avoid static generation issues with next-intl
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 import { Header } from "@/components/layout/Header"
 import { TemplateDetailClient } from "@/components/templates/TemplateDetailClient"
 import type { Locale } from "@/i18n/config"
-import { setRequestLocale } from 'next-intl/server'
+import { setRequestLocale } from "next-intl/server"
 
 interface TemplateDetailPageProps {
   params: Promise<{ locale: Locale; id: string }>

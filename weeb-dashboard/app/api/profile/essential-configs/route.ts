@@ -1,9 +1,9 @@
 /**
  * GET /api/profile/essential-configs - Obter essential configs do usuário
- * 
+ *
  * Retorna os essential configs do usuário autenticado.
  * Valores de senha são mascarados para segurança.
- * 
+ *
  * Query params:
  * - enabledPlugins: lista de plugins habilitados (opcional, para verificar faltantes)
  */
@@ -18,9 +18,9 @@ import type { EssentialConfigs } from "@/lib/db/types"
  * Mascara valores sensíveis (senhas/tokens)
  */
 function maskSensitiveValue(value: string, type: string): string {
-  if (type === 'password' && value.length > 0) {
+  if (type === "password" && value.length > 0) {
     // Mostrar apenas últimos 4 caracteres
-    return '*'.repeat(Math.max(0, value.length - 4)) + value.slice(-4)
+    return "*".repeat(Math.max(0, value.length - 4)) + value.slice(-4)
   }
   return value
 }
@@ -55,11 +55,11 @@ export async function GET(request: Request) {
     // Frontend nunca lê os valores reais, apenas sabe se está configurado
     const configStatus: Record<string, Record<string, boolean>> = {}
     for (const [plugin, pluginConfigs] of Object.entries(essentialConfigs)) {
-      if (pluginConfigs && typeof pluginConfigs === 'object') {
+      if (pluginConfigs && typeof pluginConfigs === "object") {
         configStatus[plugin] = {}
         for (const [key, value] of Object.entries(pluginConfigs)) {
           // Apenas indicar se está configurado (true/false), sem mostrar o valor
-          configStatus[plugin]![key] = !!(value && typeof value === 'string' && value.trim().length > 0)
+          configStatus[plugin]![key] = !!(value && typeof value === "string" && value.trim().length > 0)
         }
       }
     }
@@ -87,4 +87,3 @@ export async function GET(request: Request) {
     )
   }
 }
-
