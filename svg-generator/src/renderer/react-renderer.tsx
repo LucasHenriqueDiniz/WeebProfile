@@ -80,8 +80,9 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
     }
   }
 
-  // Inicializar plugins ativos
-  pluginManager.initializeActivePlugins(pluginsConfig)
+  // Local to this request. The manager is shared by every request on the isolate, so
+  // nothing about this request may live on it (see enabledPlugins in weeb-plugins).
+  const activePlugins = pluginManager.enabledPlugins(pluginsConfig)
 
   // Fetch data from all active plugins
   // Pass essentialConfigs if available
@@ -91,7 +92,6 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   const pluginsData: Record<string, any> = {}
   const pluginsErrors: Record<string, Error> = {}
 
-  const activePlugins = pluginManager.getActivePlugins()
   await Promise.all(
     activePlugins.map(async ([name, plugin]) => {
       const pluginConfig = pluginsConfig[name]
@@ -154,7 +154,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   // If not specified (or empty — `[] || x` is always `[]` since [] is truthy), use order of available plugins
   const pluginsOrder =
     config.pluginsOrder && config.pluginsOrder.length > 0 ? config.pluginsOrder : Object.keys(pluginsConfig)
-  const activePluginsMap = new Map(pluginManager.getActivePlugins())
+  const activePluginsMap = new Map(activePlugins)
   const renderedPlugins: React.ReactElement[] = []
 
   // Render in specified order

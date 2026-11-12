@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import type { D1Database } from "@cloudflare/workers-types"
+import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import worker, { type Env } from "./worker"
 
 /**
@@ -403,5 +404,41 @@ describe("scheduled() — cron", () => {
     expect(lines("log")).toContainEqual(
       expect.objectContaining({ event: "cron.complete", totalProcessed: 3, totalFailed: 2 })
     )
+  })
+})
+
+describe("POST / — requests concorrentes no mesmo isolate", () => {
+  // O PluginManager é um singleton por isolate, e o Worker atende vários requests ao
+  // mesmo tempo. O renderer guardava os plugins ativos nele e relia depois do await
+  // do fetchData: se outro request chegasse nesse meio-tempo, o primeiro renderizava
+  // com a lista do segundo. O plugin sumia do card sem erro (hasErrors=false), e a
+  // altura, calculada com a config do próprio request, deixava o espaço em branco.
+  it("gera em cada request o mesmo SVG que ele geraria sozinho", async () => {
+    const devto = validRequest()
+    const codewars = validRequest({
+      plugins: { codewars: { enabled: true, sections: ["rank_honor"], username: "someone" } },
+    })
+    const devtoAlone = (await post(devto)).body.svg
+    const codewarsAlone = (await post(codewars)).body.svg
+    // Two failed generations would also compare equal (undefined === undefined).
+    expect(devtoAlone).toMatch(/^<svg/)
+    expect(codewarsAlone).toMatch(/^<svg/)
+
+    // Segura o fetchData do devto até o request do codewars terminar inteiro.
+    const plugin = PluginManager.getInstance().get("devto")!
+    const fetchData = plugin.fetchData
+    let release!: () => void
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    vi.spyOn(plugin, "fetchData").mockImplementation(async (...args) => {
+      await gate
+      return fetchData(...args)
+    })
+
+    const first = post(devto)
+    const second = await post(codewars)
+    release()
+
+    expect((await first).body.svg).toBe(devtoAlone)
+    expect(second.body.svg).toBe(codewarsAlone)
   })
 })
