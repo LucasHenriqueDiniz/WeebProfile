@@ -314,6 +314,7 @@ async function runScheduledGeneration(env: Env): Promise<void> {
   }
 
   let totalProcessed = 0
+  let totalFailed = 0
 
   for (let run = 1; run <= 20; run++) {
     let batch = 0
@@ -325,10 +326,25 @@ async function runScheduledGeneration(env: Env): Promise<void> {
           "Content-Type": "application/json",
         },
       })
-      const result = (await response.json().catch(() => ({}))) as { processed?: number }
+      const result = (await response.json().catch(() => ({}))) as CronBatchResult
+
+      // A 401 or a 500 carries no "processed" either. It used to be read as 0 and
+      // logged at info, so a cron failing every night looked like one with nothing to do.
+      if (!response.ok) {
+        log.error("cron.batch_rejected", { run, status: response.status, reason: result.error })
+        break
+      }
+
       batch = result.processed || 0
+      const failed = result.results?.failed ?? 0
       totalProcessed += batch
-      log.info("cron.batch", { run, processed: batch, total: totalProcessed })
+      totalFailed += failed
+
+      // svgs.last_error keeps only the latest failure per SVG; these lines are the history.
+      for (const reason of result.results?.errors ?? []) {
+        log.warn("cron.svg_failed", { run, reason })
+      }
+      log.info("cron.batch", { run, processed: batch, failed, total: totalProcessed })
     } catch (error) {
       log.error("cron.batch_failed", { run, reason: error instanceof Error ? error.message : String(error) })
       break
@@ -337,7 +353,14 @@ async function runScheduledGeneration(env: Env): Promise<void> {
     if (batch < 50) break
   }
 
-  log.info("cron.complete", { totalProcessed })
+  log.info("cron.complete", { totalProcessed, totalFailed })
+}
+
+/** What weeb-dashboard/functions/api/cron/generate-svgs.ts answers. */
+interface CronBatchResult {
+  processed?: number
+  error?: string
+  results?: { success: number; failed: number; errors: string[] }
 }
 
 export default {

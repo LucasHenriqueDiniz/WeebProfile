@@ -25,10 +25,31 @@ export type LogContext = Record<string, unknown>
  */
 const REDACTED_KEYS = /^(userid|user_id|apikey|api_key|token|secret|password|authorization|auth)$/i
 
+/**
+ * Secrets that ride inside a string rather than under a key REDACTED_KEYS catches: a
+ * provider URL with the key in its query string (Steam's ?key=), or an Authorization
+ * header quoted in an error message. Workers Logs keeps every line for days (see
+ * [observability] in wrangler.toml), so the text is scrubbed before it is written.
+ */
+const SECRETS_IN_TEXT: Array<[RegExp, string]> = [
+  [/([?&](?:key|api_key|apikey|token|access_token)=)[^&\s"']+/gi, "$1[redacted]"],
+  [/\bBearer\s+[^\s"']+/gi, "Bearer [redacted]"],
+]
+
+export function scrubText(text: string): string {
+  return SECRETS_IN_TEXT.reduce((result, [pattern, replacement]) => result.replace(pattern, replacement), text)
+}
+
+function scrubValue(value: unknown): unknown {
+  if (typeof value === "string") return scrubText(value)
+  if (Array.isArray(value)) return value.map(scrubValue)
+  return value
+}
+
 function redact(context: LogContext): LogContext {
   const safe: LogContext = {}
   for (const [key, value] of Object.entries(context)) {
-    safe[key] = REDACTED_KEYS.test(key) ? "[redacted]" : value
+    safe[key] = REDACTED_KEYS.test(key) ? "[redacted]" : scrubValue(value)
   }
   return safe
 }

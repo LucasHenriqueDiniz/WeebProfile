@@ -36,37 +36,35 @@ export async function getUserEssentialConfigs(
     throw new Error("SECRETS_ENCRYPTION_KEY is not configured; cannot read plugin secrets")
   }
 
-  try {
-    const { results } = await db
-      .prepare("SELECT plugin, key, value FROM plugin_secrets WHERE user_id = ?")
-      .bind(userId)
-      .all<PluginSecretRow>()
+  // No catch here: a failure propagates to handleGenerate, which logs it as
+  // secrets.unavailable with the hashed user. This used to log the raw Clerk user id
+  // first, which Workers Logs would now keep.
+  const { results } = await db
+    .prepare("SELECT plugin, key, value FROM plugin_secrets WHERE user_id = ?")
+    .bind(userId)
+    .all<PluginSecretRow>()
 
-    const result: EssentialConfigs = {}
-    for (const row of results) {
-      const pluginName = (row.plugin || "").toLowerCase()
-      const key = (row.key || "").toLowerCase()
-      if (!pluginName || !key) continue
-      if (!result[pluginName]) result[pluginName] = {}
-      result[pluginName]![key] = await decryptSecret(row.value, encryptionKey)
-    }
-
-    // Alias resolution: if a plugin (e.g. "github_repo") has no secret of its own,
-    // fall back to another plugin's already-configured secret (e.g. "github"'s PAT)
-    // so the user never has to re-enter the same token twice.
-    for (const [alias, target] of Object.entries(ESSENTIAL_CONFIG_ALIASES)) {
-      if (!result[alias] && result[target]) {
-        result[alias] = result[target]
-      }
-    }
-
-    if (Object.keys(result).length > 0) {
-      log.debug("essential_configs_loaded", { plugins: Object.keys(result) })
-    }
-
-    return result
-  } catch (error) {
-    console.error(`Error fetching essential configs for user ${userId}:`, error)
-    throw error
+  const result: EssentialConfigs = {}
+  for (const row of results) {
+    const pluginName = (row.plugin || "").toLowerCase()
+    const key = (row.key || "").toLowerCase()
+    if (!pluginName || !key) continue
+    if (!result[pluginName]) result[pluginName] = {}
+    result[pluginName]![key] = await decryptSecret(row.value, encryptionKey)
   }
+
+  // Alias resolution: if a plugin (e.g. "github_repo") has no secret of its own,
+  // fall back to another plugin's already-configured secret (e.g. "github"'s PAT)
+  // so the user never has to re-enter the same token twice.
+  for (const [alias, target] of Object.entries(ESSENTIAL_CONFIG_ALIASES)) {
+    if (!result[alias] && result[target]) {
+      result[alias] = result[target]
+    }
+  }
+
+  if (Object.keys(result).length > 0) {
+    log.debug("essential_configs_loaded", { plugins: Object.keys(result) })
+  }
+
+  return result
 }

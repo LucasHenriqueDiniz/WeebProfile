@@ -43,11 +43,14 @@ const validRequest = (extra: Record<string, unknown> = {}) => ({
   ...extra,
 })
 
+/** Os spies do console, para os testes lerem as linhas que o log estruturado escreveu. */
+const consoleSpies = {} as Record<"log" | "warn" | "error", ReturnType<typeof vi.spyOn>>
+
 beforeEach(() => {
   // Silencia o log estruturado e os console.log herdados da validação/render.
-  vi.spyOn(console, "log").mockImplementation(() => {})
-  vi.spyOn(console, "warn").mockImplementation(() => {})
-  vi.spyOn(console, "error").mockImplementation(() => {})
+  consoleSpies.log = vi.spyOn(console, "log").mockImplementation(() => {})
+  consoleSpies.warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+  consoleSpies.error = vi.spyOn(console, "error").mockImplementation(() => {})
   // dev: true still embeds the mock's images, and those are real CDN URLs (Steam,
   // dev.to, GitHub): 12 of these tests made 57 requests, and one timed out in CI on
   // a slow Steam CDN. No test here asserts on image bytes; a failed embed is null.
@@ -365,5 +368,40 @@ describe("scheduled() — cron", () => {
     await run(cronEnv())
 
     expect(spy).toHaveBeenCalledTimes(1)
+  })
+
+  /** As linhas JSON que o log estruturado escreveu no console[level]. */
+  const lines = (level: "log" | "warn" | "error") =>
+    consoleSpies[level].mock.calls.map(([line]) => JSON.parse(String(line)) as Record<string, unknown>)
+
+  // Antes, um 401 ou 500 virava "processed: 0" num log de info, e o cron parecia
+  // ocioso enquanto falhava toda noite.
+  it.each([401, 500])("registra erro com o status quando o dashboard responde %i, e para", async (status) => {
+    const spy = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async () => Response.json({ error: "Internal server error" }, { status }) as never)
+
+    await run(cronEnv())
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(lines("error")).toContainEqual(
+      expect.objectContaining({ event: "cron.batch_rejected", status, reason: "Internal server error" })
+    )
+    expect(lines("log").find((l) => l.event === "cron.batch")).toBeUndefined()
+  })
+
+  it("registra cada SVG que falhou no lote, que o svgs.last_error não guarda como histórico", async () => {
+    const errors = ["svg-1: Steam API request failed: HTTP 403", "svg-2: Codewars API request failed: HTTP 429"]
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      async () => Response.json({ processed: 3, results: { success: 1, failed: 2, errors } }) as never
+    )
+
+    await run(cronEnv())
+
+    const failed = lines("warn").filter((l) => l.event === "cron.svg_failed")
+    expect(failed.map((l) => l.reason)).toEqual(errors)
+    expect(lines("log")).toContainEqual(
+      expect.objectContaining({ event: "cron.complete", totalProcessed: 3, totalFailed: 2 })
+    )
   })
 })

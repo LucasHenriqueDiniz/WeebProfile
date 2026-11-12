@@ -140,7 +140,10 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           const data = await plugin.fetchData(pluginConfig, useDev, essentialConfig)
           pluginsData[name] = data
         } catch (error) {
-          console.error(`Error fetching data for plugin ${name}:`, error)
+          log.error("plugin.fetch_failed", {
+            plugin: name,
+            reason: error instanceof Error ? error.message : String(error),
+          })
           pluginsErrors[name] = error instanceof Error ? error : new Error(String(error))
         }
       }
@@ -189,7 +192,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
       if (React.isValidElement(rendered)) {
         renderedPlugins.push(<div key={pluginName}>{rendered}</div>)
       } else {
-        console.error(`Plugin ${pluginName} returned invalid React element:`, rendered)
+        log.error("plugin.invalid_element", { plugin: pluginName })
         renderedPlugins.push(
           <PluginError
             key={`${pluginName}-invalid-element`}
@@ -201,7 +204,10 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
         )
       }
     } catch (error) {
-      console.error(`Error rendering plugin ${pluginName}:`, error)
+      log.error("plugin.render_failed", {
+        plugin: pluginName,
+        reason: error instanceof Error ? error.message : String(error),
+      })
       // Renderizar erro visual ao invés de apenas logar
       renderedPlugins.push(
         <PluginError
