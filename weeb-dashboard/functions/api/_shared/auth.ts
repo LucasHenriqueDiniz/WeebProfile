@@ -1,4 +1,5 @@
 import { createClerkClient } from "@clerk/backend"
+import { attachError } from "./error-log"
 
 export interface CloudflareEnv {
   DB: D1Database
@@ -60,5 +61,7 @@ export function notFound(resource = "Resource") {
 
 export function serverError(error?: unknown) {
   console.error("Server error:", error)
-  return Response.json({ error: "Internal server error" }, { status: 500 })
+  // The middleware reads the error back off the response and records it in
+  // error_log; see _shared/error-log.ts.
+  return attachError(Response.json({ error: "Internal server error" }, { status: 500 }), error)
 }

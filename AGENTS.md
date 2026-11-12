@@ -278,6 +278,20 @@ Copiar de `.env.example` e preencher. **Nunca commitar valores reais.**
 
 ---
 
+## Logs de erro
+
+Os dois serviços guardam erro em lugares diferentes, porque a Cloudflare não persiste log de Pages Functions (só existe o tail ao vivo).
+
+| Serviço                                 | Onde fica                                                                             | Retenção                              | Como ler                                                                                                                                                                         |
+| --------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `svg-generator` (Worker, inclui o cron) | Workers Logs (`[observability]` em `svg-generator/wrangler.toml`)                     | 3 dias no Free, 7 no Paid             | Workers Logs do Worker `weeb-svg-generator` no dashboard da Cloudflare. Filtrar por `event` (`plugin.fetch_failed`, `cron.batch_rejected`, `cron.svg_failed`, `generate.failed`) |
+| `weeb-dashboard` (Pages Functions)      | Tabela `error_log` no D1, uma linha por resposta 5xx (`functions/api/_middleware.ts`) | 30 dias, podada pelo endpoint de cron | `pnpm --filter weeb-dashboard logs:errors`                                                                                                                                       |
+
+- Todo log do gerador passa por `svg-generator/src/utils/log.ts`, que tira `userId`/`apiKey`/`token` por chave e `?key=`/`Bearer` de dentro do texto. Não usar `console.*` direto lá.
+- No dashboard, `return serverError(e)` já basta para o erro ir para o `error_log`; a mensagem é gravada com a cadeia de `cause` e sem os `params` do Drizzle.
+- `/api/health` não é gravado: o monitor consulta ele em loop.
+- A tabela vem da migration `0003_error_log.sql`. Sem ela aplicada em produção (`wrangler d1 migrations apply weebprofile-db --remote`), o dashboard segue funcionando, só não grava.
+
 ## Pontos de atenção
 
 - **svg-generator não usa mais Playwright/Chromium** — a altura do SVG é calculada estaticamente somando `calculateHeight()` de cada seção. Qualquer mudança de layout que afete altura precisa atualizar essa função no plugin correspondente.

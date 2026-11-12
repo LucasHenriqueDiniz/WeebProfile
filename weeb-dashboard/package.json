@@ -15,7 +15,8 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "logs:errors": "wrangler d1 execute weebprofile-db --remote --command \"SELECT created_at, status, method, path, message FROM error_log ORDER BY id DESC LIMIT 30\""
   },
   "dependencies": {
     "@clerk/backend": "^3.4.14",

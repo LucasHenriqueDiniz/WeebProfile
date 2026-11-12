@@ -1,6 +1,7 @@
 ﻿import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { serverError } from "../_shared/auth"
+import { pruneErrorLog } from "../_shared/error-log"
 import { getDb } from "../_shared/db"
 import { saveSvgToR2 } from "../_shared/storage"
 import { assertGenerationSucceeded } from "../_shared/svg-generation-validation"
@@ -24,6 +25,9 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
   try {
     const now = new Date()
     const db = getDb(env)
+
+    // Here because this is the one endpoint that runs every day. Never throws.
+    await pruneErrorLog(env, now)
 
     // Reset SVGs stuck in "generating" for more than 30 minutes
     const STUCK_TIMEOUT_MINUTES = 30
