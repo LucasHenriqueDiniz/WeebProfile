@@ -10,7 +10,7 @@
 import type { CodeforcesConfig, CodeforcesData, CodeforcesSubmission } from "../types"
 import { getMockCodeforcesData } from "./mock-data"
 import { fetchJson } from "../../shared/utils/api"
-import { ApiError } from "../../shared/utils/errors"
+import { ApiError, upstreamFailure } from "../../shared/utils/errors"
 
 const CODEFORCES_API_BASE = "https://codeforces.com/api"
 
@@ -223,8 +223,6 @@ export async function fetchCodeforcesData(config: CodeforcesConfig, dev = false)
       throw new Error(`Codeforces user "${handle}" not found`)
     }
 
-    // Retornar dados mock em caso de erro
-    console.warn("[Codeforces] API error, using mock data as fallback")
-    return getMockCodeforcesData()
+    throw upstreamFailure("Codeforces", error)
   }
 }

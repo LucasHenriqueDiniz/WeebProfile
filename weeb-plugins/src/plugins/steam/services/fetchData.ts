@@ -42,89 +42,81 @@ export async function fetchSteamData(
     throw new Error("Steam is unavailable: the server has no Steam Web API key configured.")
   }
 
-  try {
-    // Fetch player summary
-    const playerSummaryResponse = await fetch(
-      `${STEAM_API_BASE}/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`
-    )
+  // No try/catch on purpose. This used to fall back to the mock profile on any
+  // error, which reached the generator as a success: a 403 or a 429 from Steam was
+  // published over the user's last good card as "Weeb Profile" and its fake games.
+  // A throw becomes a pluginErrors entry, and the dashboard then keeps the previous
+  // SVG and records the reason in last_error.
 
-    if (!playerSummaryResponse.ok) {
-      throw new Error(`Failed to fetch player summary: ${playerSummaryResponse.statusText}`)
-    }
+  // Fetch player summary
+  const playerSummaryResponse = await fetch(
+    `${STEAM_API_BASE}/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`
+  )
 
-    const playerSummaryData = await playerSummaryResponse.json()
-    const playerSummary: SteamPlayerSummary | null = playerSummaryData.response?.players?.[0] || null
-
-    // Fetch owned games
-    const gamesResponse = await fetch(
-      `${STEAM_API_BASE}/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${steamId}&include_appinfo=true&include_played_free_games=true`
-    )
-
-    if (!gamesResponse.ok) {
-      throw new Error(`Failed to fetch games: ${gamesResponse.statusText}`)
-    }
-
-    const gamesData = await gamesResponse.json()
-    const games: SteamGame[] = gamesData.response?.games || []
-
-    // Fetch recently played games (last 2 weeks)
-    const recentGamesResponse = await fetch(
-      `${STEAM_API_BASE}/IPlayerService/GetRecentlyPlayedGames/v0001/?key=${apiKey}&steamid=${steamId}`
-    )
-
-    let recentGames: SteamGame[] = []
-    if (recentGamesResponse.ok) {
-      const recentGamesData = await recentGamesResponse.json()
-      recentGames = recentGamesData.response?.games || []
-    }
-
-    // Merge recent games playtime into games list
-    const gamesComRecentes = games.map((game) => {
-      const recent = recentGames.find((rg) => rg.appid === game.appid)
-      return {
-        ...game,
-        playtime_2weeks: recent?.playtime_2weeks || 0,
-      }
-    })
-
-    // Depois do merge: a janela de capas depende do playtime_2weeks que acabou de
-    // ser preenchido.
-    const gamesWithRecent = withHeaderImages(gamesComRecentes, config)
-
-    // Calculate statistics
-    const statistics = calculateStatistics(gamesWithRecent)
-
-    const apiData: SteamData = {
-      playerSummary,
-      games: gamesWithRecent,
-      statistics,
-    }
-
-    // Em modo preview, manter URLs originais (não converter para base64)
-    if (previewMode) {
-      console.debug("[Steam] Preview mode: keeping image URLs as-is")
-      return apiData
-    }
-
-    // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
-    console.log("[Steam] Converting image URLs to base64...")
-    const dataWithBase64Images = await convertImageUrlsToBase64(apiData, previewMode)
-    console.log("[Steam] Image conversion completed")
-
-    return dataWithBase64Images
-  } catch (error) {
-    console.error("Error fetching Steam data:", error)
-    // Fallback to mock data on error, with image conversion
-    console.log("[Steam] Using mock data as fallback")
-    const mockData = await getMockSteamData()
-
-    // Em modo preview, manter URLs originais (não converter para base64)
-    if (previewMode) {
-      return mockData
-    }
-
-    return (await convertImageUrlsToBase64(mockData, previewMode)) as SteamData
+  if (!playerSummaryResponse.ok) {
+    throw new Error(`Steam API failed to fetch player summary: HTTP ${playerSummaryResponse.status}`)
   }
+
+  const playerSummaryData = await playerSummaryResponse.json()
+  const playerSummary: SteamPlayerSummary | null = playerSummaryData.response?.players?.[0] || null
+
+  // Fetch owned games
+  const gamesResponse = await fetch(
+    `${STEAM_API_BASE}/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${steamId}&include_appinfo=true&include_played_free_games=true`
+  )
+
+  if (!gamesResponse.ok) {
+    throw new Error(`Steam API failed to fetch owned games: HTTP ${gamesResponse.status}`)
+  }
+
+  const gamesData = await gamesResponse.json()
+  const games: SteamGame[] = gamesData.response?.games || []
+
+  // Fetch recently played games (last 2 weeks)
+  const recentGamesResponse = await fetch(
+    `${STEAM_API_BASE}/IPlayerService/GetRecentlyPlayedGames/v0001/?key=${apiKey}&steamid=${steamId}`
+  )
+
+  let recentGames: SteamGame[] = []
+  if (recentGamesResponse.ok) {
+    const recentGamesData = await recentGamesResponse.json()
+    recentGames = recentGamesData.response?.games || []
+  }
+
+  // Merge recent games playtime into games list
+  const gamesComRecentes = games.map((game) => {
+    const recent = recentGames.find((rg) => rg.appid === game.appid)
+    return {
+      ...game,
+      playtime_2weeks: recent?.playtime_2weeks || 0,
+    }
+  })
+
+  // Depois do merge: a janela de capas depende do playtime_2weeks que acabou de
+  // ser preenchido.
+  const gamesWithRecent = withHeaderImages(gamesComRecentes, config)
+
+  // Calculate statistics
+  const statistics = calculateStatistics(gamesWithRecent)
+
+  const apiData: SteamData = {
+    playerSummary,
+    games: gamesWithRecent,
+    statistics,
+  }
+
+  // Em modo preview, manter URLs originais (não converter para base64)
+  if (previewMode) {
+    console.debug("[Steam] Preview mode: keeping image URLs as-is")
+    return apiData
+  }
+
+  // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
+  console.log("[Steam] Converting image URLs to base64...")
+  const dataWithBase64Images = await convertImageUrlsToBase64(apiData, previewMode)
+  console.log("[Steam] Image conversion completed")
+
+  return dataWithBase64Images
 }
 
 /**

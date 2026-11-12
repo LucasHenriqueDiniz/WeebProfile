@@ -10,7 +10,7 @@
 import type { DuolingoConfig, DuolingoData, DuolingoLanguage } from "../types"
 import { getMockDuolingoData } from "./mock-data"
 import { fetchJson } from "../../shared/utils/api"
-import { ApiError } from "../../shared/utils/errors"
+import { ApiError, upstreamFailure } from "../../shared/utils/errors"
 
 const DUOLINGO_API_BASE = "https://www.duolingo.com/2017-06-30/users"
 
@@ -99,9 +99,6 @@ export async function fetchDuolingoData(config: DuolingoConfig, dev = false): Pr
       throw new Error(`Duolingo user "${username}" not found`)
     }
 
-    // Para outros erros, retornar dados mock como fallback
-    // (Isso permite que o SVG seja gerado mesmo se a API estiver indisponível)
-    console.warn("[Duolingo] API error, using mock data as fallback")
-    return getMockDuolingoData()
+    throw upstreamFailure("Duolingo", error)
   }
 }

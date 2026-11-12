@@ -40,111 +40,103 @@ export async function fetchLyftaData(
     throw new Error("Lyfta API Key is required. Please configure it in your profile settings.")
   }
 
-  try {
-    // Fetch workouts
-    const workoutsResponse = await fetch(`${BASE_URL}/api/v1/workouts?limit=100&page=1`, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    })
+  // No try/catch on purpose. This used to fall back to the mock workouts on any
+  // error, which reached the generator as a success and was published over the
+  // user's last good card. A throw becomes a pluginErrors entry, and the dashboard
+  // then keeps the previous SVG and records the reason in last_error.
 
-    if (!workoutsResponse.ok) {
-      throw new Error(`Failed to fetch workouts: ${workoutsResponse.statusText}`)
-    }
+  // Fetch workouts
+  const workoutsResponse = await fetch(`${BASE_URL}/api/v1/workouts?limit=100&page=1`, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  })
 
-    const workoutsData = await workoutsResponse.json()
-    const workouts = workoutsData.status && workoutsData.workouts ? workoutsData.workouts : []
+  if (!workoutsResponse.ok) {
+    throw new Error(`Lyfta API failed to fetch workouts: HTTP ${workoutsResponse.status}`)
+  }
 
-    // Fetch exercise data
-    const exercisesResponse = await fetch(`${BASE_URL}/api/v1/exercises`, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    })
+  const workoutsData = await workoutsResponse.json()
+  const workouts = workoutsData.status && workoutsData.workouts ? workoutsData.workouts : []
 
-    const exercisesData = exercisesResponse.ok ? await exercisesResponse.json() : { exercises: [] }
-    const exercises = exercisesData.exercises || []
+  // Fetch exercise data
+  const exercisesResponse = await fetch(`${BASE_URL}/api/v1/exercises`, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  })
 
-    // Process workouts and convert images to base64
-    const processedWorkouts = await Promise.all(
-      workouts.map(async (workout: any) => {
-        const processedExercises = await Promise.all(
-          workout.exercises.map(async (exercise: any) => {
-            let exerciseImage: string | null = exercise.exercise_image || null
+  const exercisesData = exercisesResponse.ok ? await exercisesResponse.json() : { exercises: [] }
+  const exercises = exercisesData.exercises || []
 
-            // If exercise_image is a URL, convert to base64
-            if (exerciseImage && !exerciseImage.startsWith("data:") && exerciseImage.startsWith("http")) {
-              try {
-                exerciseImage = await embedImageOrNull(exerciseImage)
-              } catch (error) {
-                console.error("Failed to convert exercise image to base64:", error)
-              }
+  // Process workouts and convert images to base64
+  const processedWorkouts = await Promise.all(
+    workouts.map(async (workout: any) => {
+      const processedExercises = await Promise.all(
+        workout.exercises.map(async (exercise: any) => {
+          let exerciseImage: string | null = exercise.exercise_image || null
+
+          // If exercise_image is a URL, convert to base64
+          if (exerciseImage && !exerciseImage.startsWith("data:") && exerciseImage.startsWith("http")) {
+            try {
+              exerciseImage = await embedImageOrNull(exerciseImage)
+            } catch (error) {
+              console.error("Failed to convert exercise image to base64:", error)
             }
-
-            return {
-              ...exercise,
-              exercise_image: exerciseImage,
-            }
-          })
-        )
-
-        return {
-          ...workout,
-          exercises: processedExercises,
-        }
-      })
-    )
-
-    // Calculate statistics
-    const statistics = calculateStatistics(processedWorkouts)
-
-    // Create workout summaries
-    const workoutSummaries = processedWorkouts.map((workout) => ({
-      id: workout.id,
-      title: workout.title,
-      description: workout.description || null,
-      workout_duration: workout.workout_duration || "00:00:00",
-      total_volume: workout.total_volume || workout.totalLiftedWeight || 0,
-      workout_perform_date: workout.workout_perform_date,
-    }))
-
-    // Process exercise data images
-    const processedExercises = await Promise.all(
-      exercises.map(async (exercise: any) => {
-        let imageName: string | null = exercise.image_name || null
-
-        if (imageName && !imageName.startsWith("data:") && imageName.startsWith("http")) {
-          try {
-            imageName = await embedImageOrNull(imageName)
-          } catch (error) {
-            console.error("Failed to convert exercise data image to base64:", error)
           }
+
+          return {
+            ...exercise,
+            exercise_image: exerciseImage,
+          }
+        })
+      )
+
+      return {
+        ...workout,
+        exercises: processedExercises,
+      }
+    })
+  )
+
+  // Calculate statistics
+  const statistics = calculateStatistics(processedWorkouts)
+
+  // Create workout summaries
+  const workoutSummaries = processedWorkouts.map((workout) => ({
+    id: workout.id,
+    title: workout.title,
+    description: workout.description || null,
+    workout_duration: workout.workout_duration || "00:00:00",
+    total_volume: workout.total_volume || workout.totalLiftedWeight || 0,
+    workout_perform_date: workout.workout_perform_date,
+  }))
+
+  // Process exercise data images
+  const processedExercises = await Promise.all(
+    exercises.map(async (exercise: any) => {
+      let imageName: string | null = exercise.image_name || null
+
+      if (imageName && !imageName.startsWith("data:") && imageName.startsWith("http")) {
+        try {
+          imageName = await embedImageOrNull(imageName)
+        } catch (error) {
+          console.error("Failed to convert exercise data image to base64:", error)
         }
+      }
 
-        return {
-          ...exercise,
-          image_name: imageName,
-        }
-      })
-    )
+      return {
+        ...exercise,
+        image_name: imageName,
+      }
+    })
+  )
 
-    return {
-      workouts: processedWorkouts,
-      workoutSummaries,
-      exercises: processedExercises,
-      statistics,
-    }
-  } catch (error) {
-    console.error("Error fetching Lyfta data:", error)
-    // Fallback to mock data on error
-    const mockData = await getMockLyftaData()
-
-    // Em modo preview, manter URLs originais (não converter para base64)
-    if (previewMode) {
-      return mockData
-    }
-
-    return await convertImageUrlsToBase64(mockData, previewMode)
+  return {
+    workouts: processedWorkouts,
+    workoutSummaries,
+    exercises: processedExercises,
+    statistics,
   }
 }
 
