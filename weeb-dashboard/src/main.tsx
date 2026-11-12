@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/react"
 import { ptBR } from "@clerk/localizations"
 import { I18nextProvider } from "react-i18next"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { Toaster } from "@/components/ui/toaster"
 import i18n from "@/i18n/setup"
 import { router } from "./router"
 import "@/src/globals.css"
@@ -48,6 +49,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY ?? ""} afterSignOutUrl="/" localization={ptBR}>
         <TooltipProvider>
           <RouterProvider router={router} />
+          {/* toast() only writes to a module-level store; this is what renders it. Without
+              it, every toast in the app -- "Configuração salva", an invalid secret, a failed
+              SVG generation -- was a silent no-op. At the root so every route gets it. */}
+          <Toaster />
         </TooltipProvider>
       </ClerkProvider>
     </I18nextProvider>
