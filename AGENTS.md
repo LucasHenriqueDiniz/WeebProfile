@@ -219,7 +219,7 @@ HTTP POST /                                        # só via service binding —
 - Deploy: **Cloudflare Pages** (`wrangler pages deploy dist`)
 - Brand/design system: ver [`weeb-dashboard/BRAND.md`](weeb-dashboard/BRAND.md)
 
-O dashboard envia POST para o `svg-generator` via `lib/svg-generator-client.ts`, que inclui retry com backoff exponencial (para cold starts do Worker).
+As Pages Functions chamam o `svg-generator` pelo service binding `SVG_GENERATOR` via `functions/api/_shared/svg-generation.ts` (`generateSvgViaService`), que inclui retry com backoff exponencial e traduz os erros do gerador. O código de erro de D1 (`D1_UNREACHABLE`) fica numa constante lá; o teste de `svgs/[id]/generate` cobre o contrato.
 
 **Bindings/config Cloudflare:** definidos em `weeb-dashboard/wrangler.toml` ([[d1_databases]], [[r2_buckets]], [vars]). Secrets (`CLERK_SECRET_KEY`, `CRON_SECRET`, `INTERNAL_SECRET`) são configurados via `wrangler pages secret put <KEY>` — não ficam no `wrangler.toml`.
 
@@ -304,23 +304,23 @@ Os dois serviços guardam erro em lugares diferentes, porque a Cloudflare não p
 
 ## Referência rápida de arquivos importantes
 
-| O que mudar                                | Arquivo                                              |
-| ------------------------------------------ | ---------------------------------------------------- |
-| Registrar novo plugin                      | `weeb-plugins/src/plugins/manager.ts`                |
-| Metadados de plugin                        | `weeb-plugins/src/plugins/{name}/plugin.metadata.ts` |
-| Metadata centralizado (auto-gerado)        | `weeb-plugins/src/plugins/metadata.ts`               |
-| Temas visuais                              | `weeb-plugins/src/themes/themes.ts`                  |
-| Lógica de geração SVG                      | `svg-generator/src/generator/svg-generator.ts`       |
-| Renderização React → SVG                   | `svg-generator/src/renderer/react-renderer.tsx`      |
-| Acesso ao D1 (svg-generator)               | `svg-generator/src/db/essential-configs.ts`          |
-| Worker entry point do gerador              | `svg-generator/src/worker.ts`                        |
-| Config Cloudflare (D1 binding) do gerador  | `svg-generator/wrangler.toml`                        |
-| Estado global do wizard                    | `weeb-dashboard/stores/wizard-store.ts`              |
-| Cliente HTTP para o gerador                | `weeb-dashboard/lib/svg-generator-client.ts`         |
-| Auth (Clerk) + tipos de binding Cloudflare | `weeb-dashboard/functions/api/_shared/auth.ts`       |
-| Acesso ao D1 (Pages Functions)             | `weeb-dashboard/functions/api/_shared/db.ts`         |
-| Acesso ao R2 (SVGs)                        | `weeb-dashboard/functions/api/_shared/storage.ts`    |
-| Config Cloudflare (D1/R2/vars/secrets)     | `weeb-dashboard/wrangler.toml`                       |
-| Redação de segredos em log/debug           | `svg-generator/src/utils/sanitize.ts`                |
-| Validação de body (zod)                    | `weeb-dashboard/functions/api/_shared/validation.ts` |
-| Design system do dashboard                 | `weeb-dashboard/BRAND.md`                            |
+| O que mudar                                | Arquivo                                                  |
+| ------------------------------------------ | -------------------------------------------------------- |
+| Registrar novo plugin                      | `weeb-plugins/src/plugins/manager.ts`                    |
+| Metadados de plugin                        | `weeb-plugins/src/plugins/{name}/plugin.metadata.ts`     |
+| Metadata centralizado (auto-gerado)        | `weeb-plugins/src/plugins/metadata.ts`                   |
+| Temas visuais                              | `weeb-plugins/src/themes/themes.ts`                      |
+| Lógica de geração SVG                      | `svg-generator/src/generator/svg-generator.ts`           |
+| Renderização React → SVG                   | `svg-generator/src/renderer/react-renderer.tsx`          |
+| Acesso ao D1 (svg-generator)               | `svg-generator/src/db/essential-configs.ts`              |
+| Worker entry point do gerador              | `svg-generator/src/worker.ts`                            |
+| Config Cloudflare (D1 binding) do gerador  | `svg-generator/wrangler.toml`                            |
+| Estado global do wizard                    | `weeb-dashboard/stores/wizard-store.ts`                  |
+| Cliente do gerador (service binding)       | `weeb-dashboard/functions/api/_shared/svg-generation.ts` |
+| Auth (Clerk) + tipos de binding Cloudflare | `weeb-dashboard/functions/api/_shared/auth.ts`           |
+| Acesso ao D1 (Pages Functions)             | `weeb-dashboard/functions/api/_shared/db.ts`             |
+| Acesso ao R2 (SVGs)                        | `weeb-dashboard/functions/api/_shared/storage.ts`        |
+| Config Cloudflare (D1/R2/vars/secrets)     | `weeb-dashboard/wrangler.toml`                           |
+| Redação de segredos em log/debug           | `svg-generator/src/utils/sanitize.ts`                    |
+| Validação de body (zod)                    | `weeb-dashboard/functions/api/_shared/validation.ts`     |
+| Design system do dashboard                 | `weeb-dashboard/BRAND.md`                                |

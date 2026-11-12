@@ -6,7 +6,12 @@ import { saveSvgToR2 } from "../../_shared/storage"
 import { assertGenerationSucceeded } from "../../_shared/svg-generation-validation"
 import { svgs } from "../../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
-import { generateSvgViaService, convertSvgToPluginsConfig, getTerminalConfigs } from "../../_shared/svg-generation"
+import {
+  generateSvgViaService,
+  convertSvgToPluginsConfig,
+  getTerminalConfigs,
+  DB_UNREACHABLE_CODE,
+} from "../../_shared/svg-generation"
 
 /**
  * POST /api/svgs/[id]/generate - Trigger SVG generation
@@ -163,7 +168,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         )
       }
 
-      if (error?.code === "DATABASE_UNREACHABLE" || error?.code === "D1_API_UNREACHABLE") {
+      if (error?.code === DB_UNREACHABLE_CODE) {
         return Response.json(
           {
             error: "Database unreachable",

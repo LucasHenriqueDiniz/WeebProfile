@@ -1,5 +1,11 @@
-import { describe, it, expect } from "vitest"
-import { convertSvgToPluginsConfig, getTerminalConfigs } from "./svg-generation"
+import { describe, it, expect, vi } from "vitest"
+import type { CloudflareEnv } from "./auth"
+import {
+  convertSvgToPluginsConfig,
+  getTerminalConfigs,
+  generateSvgViaService,
+  DB_UNREACHABLE_CODE,
+} from "./svg-generation"
 
 describe("convertSvgToPluginsConfig", () => {
   it("keeps only plugins that are enabled and have sections", () => {
@@ -70,5 +76,40 @@ describe("getTerminalConfigs", () => {
   it("trims the header text and ignores a non-string", () => {
     expect(getTerminalConfigs({ terminalHeaderText: "  hello  " }).terminalHeaderText).toBe("hello")
     expect(getTerminalConfigs({ terminalHeaderText: 42 }).terminalHeaderText).toBe("")
+  })
+})
+
+describe("generateSvgViaService", () => {
+  // The body svg-generator/src/worker.ts answers with when it cannot read the user's
+  // secrets from D1. Copied as it is sent: this side used to check for codes the
+  // generator had stopped sending, and nothing noticed.
+  const d1Unreachable = {
+    error: "DATABASE_UNREACHABLE",
+    code: "D1_UNREACHABLE",
+    message: "Generator couldn't access D1.",
+    details: "D1_ERROR: no such table: plugin_secrets: SQLITE_ERROR",
+  }
+
+  const envWithGenerator = (respond: () => Response) => {
+    const fetch = vi.fn(async () => respond())
+    return { env: { SVG_GENERATOR: { fetch } } as unknown as CloudflareEnv, fetch }
+  }
+
+  it("keeps the generator's D1_UNREACHABLE code and the D1 error, and does not retry", async () => {
+    const { env, fetch } = envWithGenerator(() => Response.json(d1Unreachable, { status: 503 }))
+
+    const error = await generateSvgViaService({ style: "default", size: "half" }, env).catch((e: unknown) => e)
+
+    expect(error).toMatchObject({
+      code: DB_UNREACHABLE_CODE,
+      message: "Generator couldn't access D1.",
+      details: d1Unreachable.details,
+      retryable: false,
+    })
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it("matches the code the generator sends", () => {
+    expect(DB_UNREACHABLE_CODE).toBe(d1Unreachable.code)
   })
 })
