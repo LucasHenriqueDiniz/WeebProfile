@@ -16,10 +16,11 @@ vi.mock("../_shared/db", () => ({
 
 vi.mock("../_shared/storage", () => ({ getSvgFromR2: async () => storedSvg }))
 
-const { onRequestGet } = await import("./[id]")
-
 describe("GET /api/svg/:id", () => {
   it("serves the stored SVG in a sandbox, so a script in it cannot run on the dashboard origin", async () => {
+    // Imported here, not at the top level: the Pages build compiles every file under
+    // functions/, tests included, for ES2020, where top-level await is a build error.
+    const { onRequestGet } = await import("./[id]")
     const response = await onRequestGet({ env: {}, params: { id: "svg-1" } } as never)
     const csp = response.headers.get("Content-Security-Policy") ?? ""
 
