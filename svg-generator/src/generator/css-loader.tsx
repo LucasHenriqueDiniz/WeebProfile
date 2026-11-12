@@ -8,6 +8,7 @@ import React from "react"
 import { log } from "../utils/log.js"
 import type { SvgConfig } from "../types/index.js"
 import { getCompleteCSS } from "@weeb/weeb-plugins/styles/server"
+import { escapeStyleText } from "./style-text.js"
 
 /**
  * Loads all CSS files and returns as JSX
@@ -56,11 +57,14 @@ ${themeVariablesCss}
     }
   `
 
+  // The two blocks that carry request-supplied text (customCss; primaryColor and
+  // customThemeColors in the theme block) go through escapeStyleText -- see why
+  // there. completeCSS is ours, built from the package's own stylesheets.
   return (
     <>
-      <style>{themeVariablesCssBlock}</style>
+      <style>{escapeStyleText(themeVariablesCssBlock)}</style>
       <style>{completeCSS}</style>
-      {config.customCss && <style>{config.customCss}</style>}
+      {config.customCss && <style>{escapeStyleText(config.customCss)}</style>}
     </>
   )
 }

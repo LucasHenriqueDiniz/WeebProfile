@@ -244,6 +244,15 @@ describe("POST / — saneamento de entrada", () => {
     expect(body.svg).not.toContain("<script>")
   })
 
+  it("não deixa o customCss abrir elemento no SVG, que o navegador lê como XML", async () => {
+    const customCss = `a::before{content:"<3 & more"} <script>alert(document.domain)</script>`
+    const { body } = await post(validRequest({ customCss }))
+
+    expect(body.svg).not.toMatch(/<script/i)
+    // Escapado, não removido: o parser XML devolve ao navegador o mesmo CSS escrito.
+    expect(body.svg).toContain(`a::before{content:"&lt;3 &amp; more"} &lt;script>`)
+  })
+
   it("aceita fontFamily longa sem quebrar a geração", async () => {
     const { response } = await post(validRequest({ fontFamily: "x".repeat(200) }))
 
