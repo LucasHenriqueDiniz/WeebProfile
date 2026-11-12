@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import type { CloudflareEnv } from "../../_shared/auth"
+import { ApiException, missingRequiredConfig, type ApiError } from "../../../../lib/api/errors"
 
 /**
  * The route end of the generator's D1_UNREACHABLE contract. Runs the real
@@ -83,5 +84,37 @@ describe("POST /api/svgs/:id/generate when the generator cannot reach D1", () =>
     await regenerate(() => Response.json(generatorD1Unreachable, { status: 503 }))
 
     expect(updates.at(-1)).toEqual({ status: "failed", lastError: "Generator couldn't access D1." })
+  })
+})
+
+describe("POST /api/svgs/:id/generate when a plugin is missing a secret", () => {
+  // What the generator answers (validateRequiredConfig in svg-generator).
+  const generatorMissing = {
+    error: "MISSING_REQUIRED_CONFIG",
+    code: "MISSING_REQUIRED_SECRETS",
+    message: "Missing required secrets or fields for enabled plugins",
+    missing: [{ pluginName: "steam", missingSecrets: [{ key: "steamId", label: "Steam ID" }], missingFields: [] }],
+  }
+
+  // As apiRequest (lib/api/client.ts) turns a non-2xx JSON response into what the
+  // browser code catches.
+  const caughtInBrowser = async (response: Response) =>
+    new ApiException(response.status, (await response.json()) as ApiError)
+
+  // Generator -> this route -> the ApiException the wizard catches. The wizard read
+  // `error.code` off the exception, where it never is, so this toast never showed and
+  // the user was sent to the detail page with "houve um problema na geração" instead
+  // of the key to add.
+  it("reaches the wizard as the list of what is missing", async () => {
+    const response = await regenerate(() => Response.json(generatorMissing, { status: 400 }))
+    expect(response.status).toBe(400)
+
+    expect(missingRequiredConfig(await caughtInBrowser(response))).toEqual(generatorMissing.missing)
+  })
+
+  it("is null for any other failure, so the wizard does not report a missing key", async () => {
+    const response = await regenerate(() => Response.json({ error: "boom" }, { status: 500 }))
+
+    expect(missingRequiredConfig(await caughtInBrowser(response))).toBeNull()
   })
 })
