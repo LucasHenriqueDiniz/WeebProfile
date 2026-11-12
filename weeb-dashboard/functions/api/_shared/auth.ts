@@ -1,4 +1,6 @@
 import { createClerkClient } from "@clerk/backend"
+import { TokenVerificationErrorReason } from "@clerk/backend/errors"
+import { decodeJwt } from "@clerk/backend/jwt"
 import { attachError } from "./error-log"
 
 export interface CloudflareEnv {
@@ -35,15 +37,84 @@ export function getClerkClient(secretKey: string) {
   return cachedClerk
 }
 
+/**
+ * Reasons Clerk gives for a signed-out request that are our failure, not the
+ * caller's: it could not load the keys to check the token with, or it rejected our
+ * secret key. Clerk returns these as an ordinary signed-out state, so reading only
+ * the user id turned a Clerk outage or a wrong CLERK_SECRET_KEY into a 401 for every
+ * signed-in user, with nothing in error_log.
+ *
+ * "unexpected-error" is Clerk's AuthErrorReason.UnexpectedError, which it does not
+ * export. A network failure while fetching the JWKS comes back as that.
+ */
+const SERVER_SIDE_REASONS = new Set<string>([
+  TokenVerificationErrorReason.InvalidSecretKey,
+  TokenVerificationErrorReason.LocalJWKMissing,
+  TokenVerificationErrorReason.RemoteJWKFailedToLoad,
+  TokenVerificationErrorReason.RemoteJWKInvalid,
+  TokenVerificationErrorReason.RemoteJWKMissing,
+  TokenVerificationErrorReason.JWKFailedToResolve,
+  "unexpected-error",
+])
+
+export class AuthUnavailableError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "AuthUnavailableError"
+  }
+}
+
+/**
+ * The Clerk user id behind the request, or null when the caller is not signed in.
+ *
+ * Throws when it cannot tell (Clerk unreachable, keys missing or wrong), so the
+ * route's catch answers 500 and error_log records it. Returning null there tells a
+ * signed-in user they are logged out and leaves no trace of why.
+ */
 export async function getAuthUserId(request: Request, env: CloudflareEnv): Promise<string | null> {
+  // A token that does not even decode is the caller's problem, but Clerk reports it
+  // as "unexpected-error", the same reason as a network failure. Settle it here,
+  // before that reason becomes ambiguous.
+  const headerToken = tokenInAuthorizationHeader(request)
+  if (headerToken !== undefined && !decodes(headerToken)) return null
+
+  let state: Awaited<ReturnType<ReturnType<typeof getClerkClient>["authenticateRequest"]>>
   try {
-    const clerk = getClerkClient(env.CLERK_SECRET_KEY)
-    const requestState = await clerk.authenticateRequest(request, {
+    state = await getClerkClient(env.CLERK_SECRET_KEY).authenticateRequest(request, {
       publishableKey: env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     })
-    return requestState.toAuth()?.userId ?? null
+  } catch (error) {
+    // Clerk decodes the session cookie outside its own error handling, so a cookie
+    // that is not a JWT throws a SyntaxError from here. Anything else, like a missing
+    // secret or publishable key, is a broken deploy and must not read as a 401.
+    if (error instanceof SyntaxError) return null
+    throw error
+  }
+
+  if (state.reason && SERVER_SIDE_REASONS.has(state.reason)) {
+    const detail = state.message ? ` (${state.message})` : ""
+    throw new AuthUnavailableError(`Clerk could not verify the session: ${state.reason}${detail}`)
+  }
+  return state.toAuth()?.userId ?? null
+}
+
+/** The token Clerk picks out of the Authorization header (its parseAuthorizationHeader). */
+function tokenInAuthorizationHeader(request: Request): string | undefined {
+  const header = request.headers.get("Authorization")
+  if (!header) return undefined
+  const [scheme, token] = header.split(" ", 2)
+  if (!token) return scheme
+  return scheme === "Bearer" ? token : undefined
+}
+
+// The public decodeJwt throws on anything that is not a JWT: wrong number of parts, bad
+// base64, or JSON that does not parse.
+function decodes(token: string): boolean {
+  try {
+    decodeJwt(token)
+    return true
   } catch {
-    return null
+    return false
   }
 }
 
