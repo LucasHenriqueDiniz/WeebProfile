@@ -48,6 +48,10 @@ beforeEach(() => {
   vi.spyOn(console, "log").mockImplementation(() => {})
   vi.spyOn(console, "warn").mockImplementation(() => {})
   vi.spyOn(console, "error").mockImplementation(() => {})
+  // dev: true still embeds the mock's images, and those are real CDN URLs (Steam,
+  // dev.to, GitHub): 12 of these tests made 57 requests, and one timed out in CI on
+  // a slow Steam CDN. No test here asserts on image bytes; a failed embed is null.
+  vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("no network in worker tests"))
 })
 
 afterEach(() => vi.restoreAllMocks())
