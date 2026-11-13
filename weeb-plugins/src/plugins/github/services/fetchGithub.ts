@@ -94,9 +94,15 @@ function isPermissionError(error: any): boolean {
     errorMessage.includes("FORBIDDEN") ||
     errorMessage.includes("permission") ||
     errorMessage.includes("insufficient_scope") ||
-    errorMessage.includes("Resource not accessible") ||
-    errorMessage.includes("Bad credentials")
+    errorMessage.includes("Resource not accessible")
   )
+}
+
+// A rejected token: every section fails the same way, so it is not a per-section
+// permission problem (it used to be treated as one).
+function isAuthError(error: any): boolean {
+  const message = error?.message || error?.toString() || ""
+  return error?.status === 401 || error?.response?.status === 401 || /Bad credentials/i.test(message)
 }
 
 // Função helper para obter mensagem de erro de permissão
@@ -491,59 +497,26 @@ export async function fetchGithubData(
           }
         }
       } catch (sectionError: any) {
-        // Log erro mas continua processando outras seções
-        console.warn(`Error processing section "${section}":`, sectionError.message)
-
-        // Se for erro de permissão/escopo, definir dados vazios e mostrar aviso
+        // A revoked token and a token without the scope a section needs used to be
+        // handled alike: the section's data was set to empty and only console.warn
+        // said why. The card then shipped as blank space -- with a revoked PAT, every
+        // section of it -- with hasErrors=false, so the dashboard published it over
+        // the last good one. Thrown, they reach pluginErrors: the dashboard keeps the
+        // previous card and shows this message as the reason.
+        if (isAuthError(sectionError)) {
+          throw new Error(
+            "GitHub rejected the token (401 Bad credentials): it is invalid, expired or revoked. " +
+              "Create a new classic token and update it in your profile settings."
+          )
+        }
         if (isPermissionError(sectionError)) {
-          const permissionMessage = getPermissionErrorMessage(section)
-          console.warn(`⚠️ ${permissionMessage}`)
-          console.warn(`Section "${section}" será pulada devido a permissões insuficientes.`)
-          // Definir dados vazios para evitar quebra
-          switch (section) {
-            case "starred_repositories":
-              data.starredRepositories = { totalCount: 0, nodes: [] }
-              break
-            case "gists":
-              data.gists = { totalCount: 0, nodes: [] }
-              break
-            case "top_repositories":
-              data.topRepositories = []
-              data.stargazers = { totalCount: 0, repositories: [] }
-              break
-            case "introduction":
-              data.introduction = undefined
-              break
-            case "recent_activity":
-              data.recentActivity = []
-              break
-            case "sponsorships":
-              data.sponsorships = { totalCount: 0, nodes: [] }
-              break
-            case "sponsors":
-              data.sponsors = { totalCount: 0, nodes: [] }
-              break
-            case "star_lists":
-              data.starLists = []
-              break
-            case "notable_contributions":
-              data.notableContributions = []
-              break
-            case "featured_repositories":
-              data.featuredRepositories = []
-              break
-            case "people":
-              data.people = { type: config.people_type || "profile", totalCount: 0, nodes: [] }
-              break
-            case "repository_contributors":
-              data.repositoryContributors = []
-              break
-          }
-        } else {
-          // Para outros erros, re-throw apenas se for seção crítica
-          if (section === "profile") {
-            throw sectionError
-          }
+          throw new Error(getPermissionErrorMessage(section))
+        }
+
+        // Anything else keeps the old behaviour: only the profile section is fatal.
+        console.warn(`Error processing section "${section}":`, sectionError.message)
+        if (section === "profile") {
+          throw sectionError
         }
       }
     }
