@@ -8,8 +8,12 @@ import { ApiException, missingRequiredConfig, type ApiError } from "../../../../
  * between the client and this route shows up here, not only in production.
  */
 
-const { db, updates } = vi.hoisted(() => {
+const { db, updates, slot } = vi.hoisted(() => {
   const updates: Record<string, unknown>[] = []
+  // What claimGenerationSlot's upsert returns: a row when the slot was taken, none
+  // when the user's last start is inside the floor. Its SQL is checked against a real
+  // D1 separately; here it only drives the route.
+  const slot = { claimed: true }
   const svgRow = {
     id: "svg_1",
     userId: "user_1",
@@ -30,6 +34,7 @@ const { db, updates } = vi.hoisted(() => {
     }) as unknown as Query
   const db = {
     select: () => query([svgRow]),
+    insert: () => query(slot.claimed ? [{ userId: "user_1" }] : []),
     update: () => ({
       set: (values: Record<string, unknown>) => {
         updates.push(values)
@@ -37,7 +42,7 @@ const { db, updates } = vi.hoisted(() => {
       },
     }),
   }
-  return { db, updates }
+  return { db, updates, slot }
 })
 
 vi.mock("../../_shared/db", () => ({ getDb: () => db }))
@@ -48,6 +53,7 @@ vi.mock("../../_shared/auth", async (importOriginal) => ({
 
 beforeEach(() => {
   updates.length = 0
+  slot.claimed = true
 })
 
 // What svg-generator/src/worker.ts answers when it cannot read the user's secrets.
@@ -58,11 +64,11 @@ const generatorD1Unreachable = {
   details: "D1_ERROR: no such table: plugin_secrets: SQLITE_ERROR",
 }
 
-async function regenerate(generator: () => Response) {
+async function regenerate(generator: () => Response, body: Record<string, unknown> = {}) {
   const { onRequestPost } = await import("./generate")
   const env = { SVG_GENERATOR: { fetch: async () => generator() } } as unknown as CloudflareEnv
   return (await onRequestPost({
-    request: new Request("https://dash/api/svgs/svg_1/generate", { method: "POST", body: "{}" }),
+    request: new Request("https://dash/api/svgs/svg_1/generate", { method: "POST", body: JSON.stringify(body) }),
     env,
     params: { id: "svg_1" },
   } as unknown as Parameters<typeof onRequestPost>[0])) as unknown as Response
@@ -116,5 +122,32 @@ describe("POST /api/svgs/:id/generate when a plugin is missing a secret", () => 
     const response = await regenerate(() => Response.json({ error: "boom" }, { status: 500 }))
 
     expect(missingRequiredConfig(await caughtInBrowser(response))).toBeNull()
+  })
+})
+
+describe("POST /api/svgs/:id/generate inside the user's generation floor", () => {
+  // The dashboard's regenerate buttons always send force: true, which skips the
+  // 20-minute cooldown. The floor is the limit force cannot skip.
+  it("answers 429 with when to retry, even forced, and never reaches the generator", async () => {
+    slot.claimed = false
+    const generator = vi.fn(() => Response.json({ success: true, svg: "<svg/>", pluginErrors: {}, hasErrors: false }))
+
+    const response = await regenerate(generator, { force: true })
+
+    expect(response.status).toBe(429)
+    expect(response.headers.get("Retry-After")).toMatch(/^\d+$/)
+    expect(await response.json()).toMatchObject({ code: "GENERATION_RATE_LIMITED" })
+    expect(generator).not.toHaveBeenCalled()
+    // Not marked as generating either: the SVG keeps its status and last good image.
+    expect(updates).toEqual([])
+  })
+
+  it("generates when the slot is free", async () => {
+    const generator = vi.fn(() => Response.json({ success: true, svg: "<svg/>", pluginErrors: {}, hasErrors: false }))
+    const env = { SVG_GENERATOR: { fetch: async () => generator() } }
+
+    await regenerate(() => env.SVG_GENERATOR.fetch() as unknown as Response, { force: true }).catch(() => undefined)
+
+    expect(generator).toHaveBeenCalledTimes(1)
   })
 })

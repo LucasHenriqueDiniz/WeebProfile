@@ -226,3 +226,16 @@ export type NewTemplateLike = typeof templateLikes.$inferInsert
 
 export type ErrorLogEntry = typeof errorLog.$inferSelect
 export type NewErrorLogEntry = typeof errorLog.$inferInsert
+
+/**
+ * When each user last started a manual generation (POST /api/svgs/:id/generate).
+ * One row per user, claimed with a conditional upsert -- see generation-rate-limit.ts.
+ * Kept out of `svgs` so that a database without this migration breaks only that
+ * route: every query on `svgs` selects all of its columns.
+ */
+export const generationStarts = sqliteTable("generation_starts", {
+  userId: text("user_id").primaryKey(),
+  startedAt: text("started_at").notNull(),
+})
+
+export type GenerationStart = typeof generationStarts.$inferSelect

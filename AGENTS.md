@@ -294,6 +294,8 @@ Os dois serviços guardam erro em lugares diferentes, porque a Cloudflare não p
 
 ## Pontos de atenção
 
+- **Migrations do D1 não rodam no deploy.** Aplicar à mão, de `weeb-dashboard/`: `pnpm exec wrangler d1 migrations apply weebprofile-db --remote`, antes do merge que depende delas. A `0004_generation_starts.sql` é exigida pela regeração manual (`POST /api/svgs/:id/generate`): sem ela essa rota responde 500 (registrado no `error_log`); o resto do dashboard não usa a tabela.
+- **Regeração manual tem piso por usuário** (`GENERATION_FLOOR_SECONDS`, 20s, em `functions/api/_shared/generation-rate-limit.ts`) que o `force` não pula; o `force` só pula o cooldown de 20 minutos. Responde 429 `GENERATION_RATE_LIMITED` com `Retry-After`.
 - **svg-generator não usa mais Playwright/Chromium** — a altura do SVG é calculada estaticamente somando `calculateHeight()` de cada seção. Qualquer mudança de layout que afete altura precisa atualizar essa função no plugin correspondente.
 - **Opções de seção chegam na raiz da config do plugin** (é como o dashboard grava e como o renderer achata `sectionConfigs`), nunca em `nonEssential`. O `PluginManager` copia a raiz para `config.nonEssential` antes de chamar `fetchData`, `render` e `calculateHeight` (`plugins/shared/plugin-options.ts`), então ler de um ou de outro dá o mesmo valor. Chamar um plugin sem passar pelo manager perde isso. Ao testar opções, passe-as na raiz, como produção faz — `plugin-options.test.ts` compara as duas formas.
 - **Dev local do dashboard com D1:** usar `pnpm dev:pages` (= `wrangler pages dev dist`, **sem** `--d1`). Passar `--d1 DB=weebprofile-db` cria um banco SQLite local **diferente** do resolvido via `wrangler.toml`, e não terá as migrations aplicadas.

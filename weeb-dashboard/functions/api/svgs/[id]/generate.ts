@@ -2,6 +2,7 @@
 import type { CloudflareEnv } from "../../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../../_shared/auth"
 import { getDb } from "../../_shared/db"
+import { claimGenerationSlot } from "../../_shared/generation-rate-limit"
 import { saveSvgToR2 } from "../../_shared/storage"
 import { assertGenerationSucceeded } from "../../_shared/svg-generation-validation"
 import { svgs } from "../../../../lib/db/schema"
@@ -74,6 +75,20 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
           { status: 429 }
         )
       }
+    }
+
+    // After the cooldown, so a request the cooldown refuses does not use up the slot.
+    const slot = await claimGenerationSlot(db, userId, new Date())
+    if (!slot.claimed) {
+      return Response.json(
+        {
+          error: "Too many generations",
+          code: "GENERATION_RATE_LIMITED",
+          message: `Please wait ${slot.retryAfterSeconds} second(s) before generating again.`,
+          retryAfterSeconds: slot.retryAfterSeconds,
+        },
+        { status: 429, headers: { "Retry-After": String(slot.retryAfterSeconds) } }
+      )
     }
 
     await db.update(svgs).set({ status: "generating", forceRegenerate: force }).where(eq(svgs.id, id))
