@@ -2,7 +2,6 @@ import React from "react"
 import { CurrentStreak } from "./CurrentStreak"
 import { TotalXP } from "./TotalXP"
 import { LanguagesLearning } from "./LanguagesLearning"
-import { PluginError } from "../../../components/PluginError"
 import type { DuolingoConfig, DuolingoData } from "../types"
 
 interface RenderDuolingoProps {
@@ -20,17 +19,6 @@ export function RenderDuolingo({
 }: RenderDuolingoProps): React.ReactElement {
   if (!config.enabled || !config.sections || config.sections.length === 0) {
     return React.createElement(React.Fragment, null)
-  }
-
-  // Verificar se há erro nos dados
-  if ((data as any)._error) {
-    return React.createElement(PluginError, {
-      pluginName: "Duolingo",
-      error: (data as any)._error,
-      errorType: "config",
-      style: style,
-      compact: true,
-    })
   }
 
   const sections = config.sections

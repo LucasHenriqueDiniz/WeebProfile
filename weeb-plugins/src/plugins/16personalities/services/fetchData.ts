@@ -73,21 +73,22 @@ export async function fetchPersonality16Data(config: Personality16Config, dev = 
     return getMockPersonality16Data()
   }
 
-  // Extract type from URL (required)
-  let personalityType: PersonalityType = "ENFJ" // default fallback
-
-  if (config.personality_url && config.personality_url.trim()) {
-    const extractedType = extractTypeFromUrl(config.personality_url)
-    if (extractedType) {
-      personalityType = extractedType
-    } else {
-      console.warn(`Could not extract personality type from URL: ${config.personality_url}. Using default ENFJ.`)
-    }
-  } else {
-    // No URL provided, use default
-    console.warn("No personality URL provided. Using default ENFJ.")
+  // A URL the type cannot be read from used to fall back to ENFJ here, while the
+  // renderer ran a stricter regex of its own and drew an error box over a card the
+  // generator reported as a success: the dashboard published it, with ~190px of blank
+  // space under the box, and URLs this function reads fine were among the ones the
+  // renderer refused. Throwing hands it to the generator's failure path instead
+  // (hasErrors, last_error with this message, the previous card kept).
+  const url = config.personality_url?.trim()
+  if (!url) {
+    throw new Error("16Personalities URL is required. Set it in the plugin settings.")
+  }
+  const personalityType = extractTypeFromUrl(url)
+  if (!personalityType) {
+    throw new Error(
+      "Could not read a personality type from the 16Personalities URL. Use a link with the type in it, like https://www.16personalities.com/intj-personality."
+    )
   }
 
-  // Return data for the chosen type
   return getPersonalityData(personalityType)
 }

@@ -534,7 +534,7 @@ describe("POST / — um plugin cujo componente quebra", () => {
 })
 
 describe("POST / — plugin que devolve o erro como dado", () => {
-  // AniList e Dev.to devolvem `_error` em vez de lançar, e desenham a própria caixa de
+  // AniList e Dev.to devolvem `_error` em vez de lançar, e desenhavam a própria caixa de
   // erro. O card saía com hasErrors=false e era publicado por cima do último bom.
   it("conta como falha do plugin, para o dashboard não publicar", async () => {
     vi.spyOn(PluginManager.getInstance().get("devto")!, "fetchData").mockResolvedValue({
@@ -546,6 +546,41 @@ describe("POST / — plugin que devolve o erro como dado", () => {
     expect(response.status).toBe(200)
     expect(body.hasErrors).toBe(true)
     expect(body.pluginErrors.devto).toBe('Dev.to user "someone" not found.')
+  })
+})
+
+describe("POST / — URL do 16personalities", () => {
+  // Sem dev: o 16personalities não usa rede, então o caminho é o de produção.
+  const personality = (personality_url: string) =>
+    post({
+      style: "default",
+      size: "half",
+      plugins: { "16personalities": { enabled: true, sections: ["personality"], personality_url } },
+    })
+
+  // O renderer tinha uma regex própria, mais estreita que a do fetchData, e trocava
+  // estes cards por uma caixa "Configuration Required".
+  it("desenha o tipo para os formatos que o fetchData lê", async () => {
+    for (const [url, type] of [
+      ["https://www.16personalities.com/intj-personality", "INTJ"],
+      ["https://www.16personalities.com/br/personalidade-isfp", "ISFP"],
+      ["https://www.16personalities.com/br/resultados/entp", "ENTP"],
+    ] as const) {
+      const { body } = await personality(url)
+      expect(body.hasErrors, url).toBe(false)
+      expect(body.svg, url).toContain(type)
+      expect(body.svg, url).not.toContain("Configuration Required")
+    }
+  })
+
+  // Era um sucesso de 227px com uma caixinha no topo e o resto em branco, publicado
+  // por cima do último card bom.
+  it("conta URL sem tipo como falha, com a caixa de erro do gerador", async () => {
+    const { body } = await personality("https://example.com/not-a-result")
+
+    expect(body.hasErrors).toBe(true)
+    expect(body.pluginErrors["16personalities"]).toMatch(/could not read a personality type/i)
+    expect(body.height).toBe(PLUGIN_ERROR_HEIGHT + 24)
   })
 })
 

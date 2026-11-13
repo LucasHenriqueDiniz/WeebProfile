@@ -1,5 +1,4 @@
 import React from "react"
-import { PluginError } from "../../../components/PluginError"
 import { Profile } from "./Profile"
 import { RecentArticles } from "./RecentArticles"
 import { TopTags } from "./TopTags"
@@ -15,10 +14,6 @@ interface RenderDevToProps {
 export function RenderDevTo({ config, data, style = "default", size = "half" }: RenderDevToProps): React.ReactElement {
   if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
-  }
-
-  if (data?._error) {
-    return <PluginError pluginName="Dev.to" error={data._error} errorType="config" style={style} compact={true} />
   }
 
   // As opções chegam tanto em nonEssential quanto na raiz do config, dependendo de

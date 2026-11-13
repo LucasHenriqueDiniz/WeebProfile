@@ -1,5 +1,4 @@
 import React from "react"
-import { PluginError } from "../../../components/PluginError"
 import { CurrentlyWatching } from "./CurrentlyWatching"
 import { FavoritesAnime } from "./FavoritesAnime"
 import { Statistics } from "./Statistics"
@@ -20,10 +19,6 @@ export function RenderAniList({
 }: RenderAniListProps): React.ReactElement {
   if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
-  }
-
-  if (data?._error) {
-    return <PluginError pluginName="AniList" error={data._error} errorType="config" style={style} compact={true} />
   }
 
   // As opções de seção chegam tanto em nonEssential quanto na raiz do config,

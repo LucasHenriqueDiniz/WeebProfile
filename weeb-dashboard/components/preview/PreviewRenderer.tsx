@@ -165,6 +165,20 @@ export function PreviewRenderer({
         continue
       }
 
+      // A failure reported as data (`_error`, set by useMockPluginData when fetchData
+      // throws, or returned by AniList/Dev.to) is shown here, as the generator does in
+      // react-renderer.tsx. The plugins no longer draw an error box of their own.
+      if (typeof pluginData._error === "string" && pluginData._error) {
+        components.push(
+          <PluginErrorBoundary
+            key={`${pluginName}-reported-error`}
+            pluginName={pluginName}
+            reportedError={pluginData._error}
+          />
+        )
+        continue
+      }
+
       try {
         // Adicionar previewMode ao pluginConfig para que componentes saibam que estão em preview
         const configWithPreviewMode = { ...pluginConfig, previewMode: previewMode || false }

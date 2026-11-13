@@ -4,7 +4,6 @@ import { RankHonor } from "./RankHonor"
 import { CompletedKata } from "./CompletedKata"
 import { LanguagesProficiency } from "./LanguagesProficiency"
 import { LeaderboardPosition } from "./LeaderboardPosition"
-import { PluginError } from "../../../components/PluginError"
 
 interface RenderCodewarsProps {
   config: CodewarsConfig
@@ -21,13 +20,6 @@ export function RenderCodewars({
 }: RenderCodewarsProps): React.ReactElement {
   if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
-  }
-
-  // Verificar se há erro nos dados
-  if ((data as any)._error) {
-    return (
-      <PluginError pluginName="Codewars" error={(data as any)._error} errorType="config" style={style} compact={true} />
-    )
   }
 
   const sections = config.sections
