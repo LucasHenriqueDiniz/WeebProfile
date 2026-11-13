@@ -16,7 +16,6 @@
     "build": "pnpm build:dashboard",
     "build:dashboard": "pnpm --filter weeb-dashboard build",
     "build:deps": "pnpm --filter @weeb/weeb-plugins build",
-    "start": "pnpm --filter weeb-dashboard start",
     "lint": "pnpm --filter weeb-dashboard lint . && pnpm --filter @weeb/weeb-plugins lint && pnpm --filter @weeb/svg-generator lint && pnpm --filter @weeb/debug-tool lint",
     "lint:fix": "pnpm --filter weeb-dashboard lint . --fix && pnpm --filter @weeb/weeb-plugins lint --fix && pnpm --filter @weeb/svg-generator lint --fix && pnpm --filter @weeb/debug-tool lint --fix",
     "typecheck": "pnpm build:deps && pnpm --filter weeb-dashboard typecheck && pnpm --filter @weeb/weeb-plugins typecheck && pnpm --filter @weeb/svg-generator typecheck && pnpm --filter @weeb/debug-tool typecheck",

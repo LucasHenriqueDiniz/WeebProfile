@@ -13,7 +13,7 @@ const DEBUG_WIZARD =
 /**
  * Debug logger for wizard-related logs
  *
- * Enable in dev: Set NEXT_PUBLIC_DEBUG_WIZARD=1 or localStorage.setItem('debug:wizard', '1')
+ * Enable in dev: Set VITE_DEBUG_WIZARD=1 or localStorage.setItem('debug:wizard', '1')
  *
  * @example
  * debugWizard('Plugin enabled:', pluginName)

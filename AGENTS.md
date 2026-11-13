@@ -256,13 +256,15 @@ Não usa `.env` — é um Cloudflare Worker, configurado via `svg-generator/wran
 ### weeb-dashboard (.env.local)
 
 ```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...          # lida pela SPA (Vite)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...   # lida pelas Pages Functions; mesma chave
 CLERK_SECRET_KEY=sk_test_...
 R2_PUBLIC_URL=https://pub-xxxx.r2.dev
 SVG_GENERATOR_URL=http://localhost:3001
 CRON_SECRET=...
-NEXT_PUBLIC_SITE_URL=https://weebprofile.pages.dev
 ```
+
+O `NEXT_PUBLIC_` do nome é resto do Next.js, mas a variável está viva: as Functions leem ela, e o valor de produção está no `[vars]` do `wrangler.toml`.
 
 D1 e R2 não são variáveis de ambiente — são bindings configurados em `wrangler.toml`.
 
