@@ -15,6 +15,6 @@ export interface PluginData {
 /**
  * Mapa de dados de plugins
  *
- * Usamos any para evitar dependência circular com PluginRegistry
+ * Usamos any para evitar dependência circular com os tipos de plugin
  */
 export type PluginDataMap = Record<string, any>

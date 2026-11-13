@@ -85,15 +85,6 @@ export const duolingoPluginMetadata = {
           tooltip:
             "Maximum number of languages that will be displayed. Languages are ordered by total XP (highest XP first).",
         },
-        {
-          key: "languages_learning_hide_languages",
-          label: "Hide languages",
-          type: "array" as const,
-          defaultValue: [],
-          description: "List of language names to hide (e.g., Japanese, French)",
-          tooltip:
-            "List of language names you want to hide from display. Type the exact language name (e.g., 'Japanese', 'French', 'Spanish') and press Enter to add.",
-        },
       ],
     },
   ],

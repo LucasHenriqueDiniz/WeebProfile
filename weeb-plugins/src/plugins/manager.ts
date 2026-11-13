@@ -6,9 +6,9 @@ import { githubRepoPlugin } from "./github_repo/index"
 import { lastFmPlugin } from "./lastfm/index"
 import { lyftaPlugin } from "./lyfta/index"
 import { myAnimeListPlugin } from "./myanimelist/index"
-import type { EssentialPluginConfig } from "./shared/types/base"
 import type { Plugin } from "./shared/types/plugin"
 import { withNormalizedOptions } from "./shared/plugin-options"
+import { PLUGINS_METADATA } from "./metadata"
 import { steamPlugin } from "./steam/index"
 import { duolingoPlugin } from "./duolingo/index"
 import { codewarsPlugin } from "./codewars/index"
@@ -59,6 +59,16 @@ export class PluginManager {
   public register<T extends PluginConfig = PluginConfig, D extends PluginData = PluginData>(
     plugin: Plugin<T, D>
   ): void {
+    // AGENTS.md has long said a plugin without an entry in PLUGINS_METADATA fails at
+    // start-up. The check lived in a PluginRegistry nobody called, so it never ran;
+    // it runs here now, where every plugin is registered.
+    if (!(plugin.name in PLUGINS_METADATA)) {
+      throw new Error(
+        `Plugin "${plugin.name}" has no entry in PLUGINS_METADATA. ` +
+          "Run `pnpm --filter @weeb/weeb-plugins run generate-metadata`."
+      )
+    }
+
     // Every caller -- the generator, the dashboard's preview, the debug tool -- reaches
     // a plugin through here, so this is where its options get one shape (see
     // shared/plugin-options.ts). The cast is for the plugins' differing config types.
@@ -86,23 +96,6 @@ export class PluginManager {
   }
 
   /**
-   * Busca dados de um plugin específico
-   */
-  public async fetchPluginData(
-    name: string,
-    config: Plugin["config"],
-    dev = false,
-    essentialConfig?: EssentialPluginConfig,
-    previewMode = false
-  ): Promise<PluginData> {
-    const plugin = this.get(name)
-    if (!plugin) {
-      throw new Error(`Plugin ${name} not found`)
-    }
-    return await plugin.fetchData(config, dev, essentialConfig, previewMode)
-  }
-
-  /**
    * Computes total SVG height by summing calculateHeight() across all enabled plugins.
    * Replaces Playwright-based height measurement for Cloudflare Worker compatibility.
    * Adds a 24px safety buffer to absorb minor font-rendering and layout edge cases.
@@ -125,36 +118,5 @@ export class PluginManager {
       if (Number.isFinite(sectionHeight) && sectionHeight > 0) total += sectionHeight
     }
     return total > 0 ? total + 24 : 0
-  }
-
-  /**
-   * Busca dados de todos os plugins ativos
-   */
-  public async fetchAllPluginsData(
-    pluginsConfig: Record<string, Plugin["config"]>,
-    dev = false,
-    essentialConfigs?: Record<string, EssentialPluginConfig>,
-    previewMode = false
-  ): Promise<Record<string, PluginData>> {
-    const results: Record<string, PluginData> = {}
-
-    await Promise.all(
-      this.enabledPlugins(pluginsConfig).map(async ([name, plugin]) => {
-        const config = pluginsConfig[name]
-        if (config) {
-          try {
-            // Obter essentialConfig específico do plugin (se disponível)
-            const essentialConfig = essentialConfigs?.[name]
-            const data = await plugin.fetchData(config, dev, essentialConfig, previewMode)
-            results[name] = data
-          } catch (error) {
-            console.error(`Error fetching data for plugin ${name}:`, error)
-            // Não adicionar ao results em caso de erro
-          }
-        }
-      })
-    )
-
-    return results
   }
 }

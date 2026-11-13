@@ -28,9 +28,10 @@ const APENAS_AVISO = process.argv.includes("--warn-only")
 /**
  * Lê o código que CONSOME config, não o que a declara.
  *
- * plugin.metadata.ts e types.ts ficam de fora de propósito: são justamente onde as
- * chaves são declaradas, e incluí-los faria cada chave encontrar a si mesma -- uma
- * auditoria que passa sempre, sem olhar quem consome.
+ * plugin.metadata.ts fica de fora: é onde as opções são declaradas, e incluí-lo faria
+ * cada chave encontrar a si mesma. types.ts entra, porque às vezes consome config
+ * (github_repo lê os banner_* lá); a declaração dele (`chave?: tipo`) não conta, porque
+ * só vale acesso -- ver `lida`.
  */
 function codigoConsumidor(plugin: string): string {
   const partes: string[] = []
@@ -45,7 +46,7 @@ function codigoConsumidor(plugin: string): string {
       }
       if (!/\.tsx?$/.test(nome)) continue
       if (/\.test\.tsx?$/.test(nome)) continue
-      if (nome === "plugin.metadata.ts" || nome === "types.ts") continue
+      if (nome === "plugin.metadata.ts") continue
       partes.push(fs.readFileSync(p, "utf8"))
     }
   }
@@ -56,12 +57,22 @@ function codigoConsumidor(plugin: string): string {
 
 const orfas: string[] = []
 
+/**
+ * A opção é lida se o código acessa a chave: `.chave`, a chave inteira entre aspas
+ * (`["chave"]`, `readOption(config, "chave")`) ou `{ chave }` num destructuring. Substring pura achava `top_artists_period` dentro de um comentário ou
+ * de outra chave, e deixava passar opção que ninguém lê.
+ */
+function lida(codigo: string, chave: string): boolean {
+  const k = chave.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  return new RegExp(`\\.${k}\\b|["'\`]${k}["'\`]|[{,]\\s*${k}\\s*[,}=:]`).test(codigo)
+}
+
 for (const [plugin, meta] of Object.entries(PLUGINS_METADATA as Record<string, any>)) {
   const codigo = codigoConsumidor(plugin)
 
   for (const secao of meta.sections || []) {
     for (const opcao of secao.configOptions || []) {
-      if (!codigo.includes(opcao.key)) {
+      if (!lida(codigo, opcao.key)) {
         orfas.push(
           `${plugin}  ${secao.id}.${opcao.key}  (${opcao.type}, default=${JSON.stringify(opcao.defaultValue)})`
         )

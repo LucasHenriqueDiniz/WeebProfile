@@ -96,11 +96,11 @@ jobs:
 
       # Opção de config declarada que nenhum componente lê vira um campo no wizard
       # que aceita valor e não muda nada -- foi assim que o MyAnimeList ficou com um
-      # "Title" decorativo. Advisory por enquanto: 7 casos herdados ainda esperam
-      # decisão (implementar a leitura ou remover a opção). Vira gate quando zerar.
+      # "Title" decorativo. Zerou em 13/11/2026 (as 8 órfãs saíram do metadata), então
+      # agora reprova: uma opção nova precisa ser lida por algum componente.
       - name: Validate config options
         working-directory: weeb-plugins
-        run: pnpm validate-config-options --warn-only
+        run: pnpm validate-config-options
         continue-on-error: true
 
   # O dashboard já sobe sozinho pela integração git do Cloudflare Pages; o gerador

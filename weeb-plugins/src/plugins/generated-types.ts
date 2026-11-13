@@ -79,7 +79,7 @@ export type PluginConfig<T extends PluginName> = {
  * Type guard to check if it's a valid plugin name
  */
 export function isValidPluginName(name: string): name is PluginName {
-  return name in ["16personalities","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"]
+  return (["16personalities","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"] as readonly string[]).includes(name)
 }
 
 /**
