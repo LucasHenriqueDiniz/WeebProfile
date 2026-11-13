@@ -1,7 +1,7 @@
 import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, unauthorized, serverError } from "../_shared/auth"
-import { getDb } from "../_shared/db"
+import { getDb, queryInChunks } from "../_shared/db"
 import { parseBody, templateCreateSchema } from "../_shared/validation"
 import { templates, templateLikes, svgs } from "../../../lib/db/schema"
 import { eq, and, inArray, ne } from "drizzle-orm"
@@ -13,10 +13,9 @@ async function withPreviewUrls<T extends { svgId: string | null }>(
   const svgIds = rows.map((r) => r.svgId).filter((id): id is string => Boolean(id))
   if (svgIds.length === 0) return rows.map((r) => ({ ...r, previewUrl: null }))
 
-  const svgRows = await db
-    .select({ id: svgs.id, storageUrl: svgs.storageUrl })
-    .from(svgs)
-    .where(inArray(svgs.id, svgIds))
+  const svgRows = await queryInChunks(svgIds, (chunk) =>
+    db.select({ id: svgs.id, storageUrl: svgs.storageUrl }).from(svgs).where(inArray(svgs.id, chunk))
+  )
   const urlById = new Map(svgRows.map((s) => [s.id, s.storageUrl]))
 
   return rows.map((r) => ({ ...r, previewUrl: (r.svgId && urlById.get(r.svgId)) || null }))
@@ -66,10 +65,12 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
 
       if (publicTemplateIds.length > 0) {
         try {
-          const likes = await db
-            .select({ templateId: templateLikes.templateId, userId: templateLikes.userId })
-            .from(templateLikes)
-            .where(inArray(templateLikes.templateId, publicTemplateIds))
+          const likes = await queryInChunks(publicTemplateIds, (chunk) =>
+            db
+              .select({ templateId: templateLikes.templateId, userId: templateLikes.userId })
+              .from(templateLikes)
+              .where(inArray(templateLikes.templateId, chunk))
+          )
 
           publicTemplateIds.forEach((templateId) => {
             const tl = likes.filter((l) => l.templateId === templateId)
@@ -109,10 +110,12 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
 
     if (allTemplateIds.length > 0) {
       try {
-        const likes = await db
-          .select({ templateId: templateLikes.templateId, userId: templateLikes.userId })
-          .from(templateLikes)
-          .where(inArray(templateLikes.templateId, allTemplateIds))
+        const likes = await queryInChunks(allTemplateIds, (chunk) =>
+          db
+            .select({ templateId: templateLikes.templateId, userId: templateLikes.userId })
+            .from(templateLikes)
+            .where(inArray(templateLikes.templateId, chunk))
+        )
 
         allTemplateIds.forEach((templateId) => {
           const tl = likes.filter((l) => l.templateId === templateId)

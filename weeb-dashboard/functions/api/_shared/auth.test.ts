@@ -185,6 +185,41 @@ describe("getAuthUserId: we cannot tell, so it throws and the route answers 500"
   })
 
   it("throws when the publishable key is not set", async () => {
-    await expect(getAuthUserId(request(), { ...env, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "" })).rejects.toThrow()
+    const key = await signingKey("kid-no-publishable")
+
+    await expect(
+      getAuthUserId(bearer(await sessionToken(key)), { ...env, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "" })
+    ).rejects.toThrow()
+  })
+
+  // A session cookie or a handshake is a credential too: Clerk must look at it, so
+  // broken configuration still surfaces for a signed-in browser.
+  it.each([
+    ["a session cookie", (token: string) => request({ Cookie: `__client_uat=1700000000; __session=${token}` })],
+    ["a suffixed session cookie", (token: string) => request({ Cookie: `__session_AbCd1234=${token}` })],
+    ["a handshake", () => new Request("https://weebprofile.test/api/svgs?__clerk_handshake=abc")],
+  ])("still throws for %s when CLERK_SECRET_KEY is not set", async (_, make) => {
+    const key = await signingKey("kid-cookie-no-secret")
+
+    await expect(getAuthUserId(make(await sessionToken(key)), { ...env, CLERK_SECRET_KEY: "" })).rejects.toThrow(
+      /Missing Clerk Secret Key/
+    )
+  })
+})
+
+describe("getAuthUserId: a request with no session never reaches Clerk", () => {
+  // Public routes read the user only to mark "liked". Without a credential there is
+  // nothing to verify, so Clerk's configuration must not matter: the Pages preview
+  // environment has no CLERK_SECRET_KEY, and the template gallery answered 500 there.
+  const unconfigured = { ...env, CLERK_SECRET_KEY: "", NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "" } as CloudflareEnv
+
+  it.each([
+    ["no cookies at all", {}],
+    // What a development instance (pk_test) sets for every visitor, signed in or not.
+    ["only the dev-browser and client_uat cookies", { Cookie: "__clerk_db_jwt=dvb_x; __client_uat=0" }],
+    ["unrelated cookies", { Cookie: "theme=dark; _ga=GA1.2.3" }],
+  ])("returns null with %s, even with Clerk unconfigured", async (_, headers) => {
+    expect(await getAuthUserId(request(headers as Record<string, string>), unconfigured)).toBeNull()
+    expect(fetched).toEqual([])
   })
 })
