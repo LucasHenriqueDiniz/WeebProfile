@@ -8,7 +8,6 @@ import { AiOutlineTrophy } from "react-icons/ai"
 import type { TopTrack } from "../types"
 import { TopItems } from "./TopItems"
 import { abbreviateNumber } from "../../../utils/number"
-import type { GridItemProps, ListItemProps } from "../../../templates/types"
 
 interface TopTracksProps {
   data: TopTrack[]

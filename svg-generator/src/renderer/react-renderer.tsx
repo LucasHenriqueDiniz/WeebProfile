@@ -5,6 +5,8 @@
  */
 
 import React from "react"
+import { renderToString } from "react-dom/server"
+import { log } from "../utils/log.js"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import type { SvgConfig } from "../types/index.js"
 import { PluginError } from "../components/PluginError.js"
@@ -79,8 +81,9 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
     }
   }
 
-  // Inicializar plugins ativos
-  pluginManager.initializeActivePlugins(pluginsConfig)
+  // Local to this request. The manager is shared by every request on the isolate, so
+  // nothing about this request may live on it (see enabledPlugins in weeb-plugins).
+  const activePlugins = pluginManager.enabledPlugins(pluginsConfig)
 
   // Fetch data from all active plugins
   // Pass essentialConfigs if available
@@ -90,7 +93,6 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   const pluginsData: Record<string, any> = {}
   const pluginsErrors: Record<string, Error> = {}
 
-  const activePlugins = pluginManager.getActivePlugins()
   await Promise.all(
     activePlugins.map(async ([name, plugin]) => {
       const pluginConfig = pluginsConfig[name]
@@ -100,10 +102,10 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           // But plugins expect camelCase (apiKey, steamId, etc)
           const pluginNameLower = name.toLowerCase()
           const essentialConfigLowercase = essentialConfigs[pluginNameLower]
-          console.log(
-            `🔍 [RENDER] Plugin ${name}: essentialConfig keys (lowercase):`,
-            essentialConfigLowercase ? Object.keys(essentialConfigLowercase) : "none"
-          )
+          log.debug("render_essential_config_lowercase", {
+            plugin: name,
+            keys: essentialConfigLowercase ? Object.keys(essentialConfigLowercase) : [],
+          })
 
           // Normalize essentialConfig to camelCase (plugins expect camelCase)
           // Map known keys: apikey -> apiKey, steamid -> steamId, username -> username, pat -> pat
@@ -126,20 +128,23 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           // but they also need it in essentialConfig. If not in essentialConfig, get from pluginConfig
           if (name.toLowerCase() === "lastfm" && !essentialConfig.username && pluginConfig.username) {
             essentialConfig.username = pluginConfig.username
-            console.log(`🔍 [RENDER] Plugin ${name}: username from pluginConfig:`, pluginConfig.username)
+            log.debug("render_username_present", { plugin: name, present: Boolean(pluginConfig.username) })
           }
 
-          console.log(
-            `🔍 [RENDER] Plugin ${name}: essentialConfig keys (camelCase):`,
-            essentialConfig ? Object.keys(essentialConfig) : "none"
-          )
+          log.debug("render_essential_config_camel", {
+            plugin: name,
+            keys: essentialConfig ? Object.keys(essentialConfig) : [],
+          })
 
           // Use config.dev explicitly (already normalized from normalizeConfig)
           const useDev = config.dev === true
           const data = await plugin.fetchData(pluginConfig, useDev, essentialConfig)
           pluginsData[name] = data
         } catch (error) {
-          console.error(`Error fetching data for plugin ${name}:`, error)
+          log.error("plugin.fetch_failed", {
+            plugin: name,
+            reason: error instanceof Error ? error.message : String(error),
+          })
           pluginsErrors[name] = error instanceof Error ? error : new Error(String(error))
         }
       }
@@ -150,7 +155,7 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   // If not specified (or empty — `[] || x` is always `[]` since [] is truthy), use order of available plugins
   const pluginsOrder =
     config.pluginsOrder && config.pluginsOrder.length > 0 ? config.pluginsOrder : Object.keys(pluginsConfig)
-  const activePluginsMap = new Map(pluginManager.getActivePlugins())
+  const activePluginsMap = new Map(activePlugins)
   const renderedPlugins: React.ReactElement[] = []
 
   // Render in specified order
@@ -184,29 +189,33 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
 
     try {
       const rendered = plugin.render(pluginConfig, pluginData)
-      // Ensure rendered is a valid React element
-      if (React.isValidElement(rendered)) {
-        renderedPlugins.push(<div key={pluginName}>{rendered}</div>)
-      } else {
-        console.error(`Plugin ${pluginName} returned invalid React element:`, rendered)
-        renderedPlugins.push(
-          <PluginError
-            key={`${pluginName}-invalid-element`}
-            pluginName={pluginName}
-            error={new Error(`Plugin returned invalid React element`)}
-            style={config.style}
-            size={config.size}
-          />
-        )
+      if (!React.isValidElement(rendered)) {
+        throw new Error("Plugin returned invalid React element")
       }
-    } catch (error) {
-      console.error(`Error rendering plugin ${pluginName}:`, error)
-      // Renderizar erro visual ao invés de apenas logar
+      // plugin.render() only builds the element: the components run when it is turned
+      // into markup. That used to happen once, for the whole card, outside this try, so
+      // one component's exception (a revoked GitHub PAT leaves `user` undefined and
+      // Profile reads `user.createdAt`) failed every plugin with a 500. Rendering each
+      // plugin on its own keeps the failure to its section.
+      //
+      // Each call is its own React root, so useId() would number from scratch in every
+      // plugin and two plugins could emit the same gradient id into one SVG. The prefix
+      // keeps them apart.
+      const html = renderToString(rendered, { identifierPrefix: `${pluginName}-` })
+      renderedPlugins.push(<div key={pluginName} dangerouslySetInnerHTML={{ __html: html }} />)
+    } catch (thrown) {
+      const error = thrown instanceof Error ? thrown : new Error(String(thrown))
+      log.error("plugin.render_failed", { plugin: pluginName, reason: error.message })
+      // Counted like a failed fetch. hasErrors is what tells the dashboard not to
+      // publish this card over the last good one, and with the data gone the height
+      // skips the section instead of calling calculateHeight on the data that just broke.
+      pluginsErrors[pluginName] = error
+      delete pluginsData[pluginName]
       renderedPlugins.push(
         <PluginError
           key={`${pluginName}-render-error`}
           pluginName={pluginName}
-          error={error instanceof Error ? error : new Error(String(error))}
+          error={error}
           style={config.style}
           size={config.size}
         />

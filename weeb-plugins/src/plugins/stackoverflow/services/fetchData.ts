@@ -10,7 +10,7 @@
 import type { StackOverflowConfig, StackOverflowData, StackOverflowTag } from "../types"
 import { getMockStackOverflowData } from "./mock-data"
 import { fetchJson, buildQueryString } from "../../shared/utils/api"
-import { ApiError } from "../../shared/utils/errors"
+import { ApiError, upstreamFailure } from "../../shared/utils/errors"
 
 const STACKEXCHANGE_API_BASE = "https://api.stackexchange.com/2.3"
 const SITE = "stackoverflow"
@@ -143,8 +143,6 @@ export async function fetchStackOverflowData(config: StackOverflowConfig, dev = 
       throw new Error(`Stack Overflow user with ID "${userId}" not found`)
     }
 
-    // Retornar dados mock em caso de erro
-    console.warn("[StackOverflow] API error, using mock data as fallback")
-    return getMockStackOverflowData()
+    throw upstreamFailure("StackOverflow", error)
   }
 }

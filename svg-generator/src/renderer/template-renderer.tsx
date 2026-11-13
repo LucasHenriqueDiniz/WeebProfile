@@ -6,7 +6,6 @@
 
 import React from "react"
 import { PluginStyles } from "@weeb/weeb-plugins/templates"
-import type { SvgConfig } from "../types/index.js"
 
 interface SvgContainerProps {
   width: number

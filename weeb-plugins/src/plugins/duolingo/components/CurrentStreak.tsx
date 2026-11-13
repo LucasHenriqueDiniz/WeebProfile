@@ -11,7 +11,7 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
-import { DuolingoColors, getStreakGradient } from "../constants"
+import { getStreakGradient } from "../constants"
 import { duolingoAssets } from "../assets/index"
 import type { DuolingoConfig } from "../types"
 
@@ -59,7 +59,7 @@ export function CurrentStreak({
   const title = config.nonEssential?.current_streak_title || "Learning Streak"
   const intensity = getStreakIntensity(streak)
   const message = getStreakMessage(streak)
-  const gradient = getStreakGradient(intensity)
+  const _gradient = getStreakGradient(intensity)
 
   // Choose mascot based on streak intensity - using more assets for variety
   const getMascotAsset = () => {

@@ -1,6 +1,7 @@
 import React from "react"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import type { LyftaConfig, LyftaData } from "../types"
+import { lyftaOptions } from "../selection"
 import { Exercises } from "./Exercises"
 import { LastWorkout } from "./LastWorkout"
 import { Overview } from "./Overview"
@@ -27,15 +28,15 @@ export function RenderLyfta({ config, data, style = "default", size = "half" }: 
   const renderedSections = sections.map((section) => {
     switch (section) {
       case "statistics":
-        return <Statistics key={section} data={data} config={config.nonEssential || {}} style={style} size={size} />
+        return <Statistics key={section} data={data} config={lyftaOptions(config)} style={style} size={size} />
       case "recent_workouts":
-        return <RecentWorkouts key={section} data={data} config={config.nonEssential || {}} style={style} size={size} />
+        return <RecentWorkouts key={section} data={data} config={lyftaOptions(config)} style={style} size={size} />
       case "exercises":
-        return <Exercises key={section} data={data} config={config.nonEssential || {}} style={style} size={size} />
+        return <Exercises key={section} data={data} config={lyftaOptions(config)} style={style} size={size} />
       case "overview":
-        return <Overview key={section} data={data} config={config.nonEssential || {}} style={style} size={size} />
+        return <Overview key={section} data={data} config={lyftaOptions(config)} style={style} size={size} />
       case "last_workout":
-        return <LastWorkout key={section} data={data} config={config.nonEssential || {}} style={style} size={size} />
+        return <LastWorkout key={section} data={data} config={lyftaOptions(config)} style={style} size={size} />
       default:
         return (
           <div key={section} className="text-muted">

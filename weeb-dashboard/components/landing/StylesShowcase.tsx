@@ -40,6 +40,7 @@ export function StylesShowcase() {
                 const isActive = active === opt.id
                 return (
                   <button
+                    type="button"
                     key={opt.id}
                     onClick={() => setActive(opt.id)}
                     className={cn(

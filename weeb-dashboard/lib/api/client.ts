@@ -4,12 +4,9 @@
  * Funções auxiliares para fazer requisições HTTP de forma limpa e consistente
  */
 
-export interface ApiError {
-  error: string
-  message?: string
-  code?: string
-  retryable?: boolean
-}
+import { ApiException, type ApiError } from "./errors"
+
+export * from "./errors"
 
 type ClerkBrowserClient = {
   session?: {
@@ -23,17 +20,6 @@ async function getClerkAuthorizationHeader(): Promise<Record<string, string>> {
   const clerk = (window as Window & { Clerk?: ClerkBrowserClient }).Clerk
   const token = await clerk?.session?.getToken()
   return token ? { Authorization: `Bearer ${token}` } : {}
-}
-
-export class ApiException extends Error {
-  constructor(
-    public status: number,
-    public data: ApiError,
-    message?: string
-  ) {
-    super(message || data.message || data.error || "API Error")
-    this.name = "ApiException"
-  }
 }
 
 /**

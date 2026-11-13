@@ -32,6 +32,25 @@ export class ApiError extends PluginError {
 }
 
 /**
+ * The error a fetchData throws when the provider fails for any reason other than
+ * "user not found". It must propagate: the generator turns it into a pluginErrors
+ * entry, and the dashboard then keeps the previous SVG and records this message in
+ * last_error -- which is why it names the provider and the HTTP status.
+ *
+ * Several plugins used to return their mock data here instead, which reached the
+ * dashboard as a success and was published over the user's last good card.
+ */
+export function upstreamFailure(provider: string, error: unknown): Error {
+  // ApiError's own message is fetchJson's generic "API request failed: <statusText>",
+  // and statusText is often empty -- the status code is the useful part.
+  const reason =
+    error instanceof ApiError && error.statusCode
+      ? `HTTP ${error.statusCode}`
+      : (error instanceof Error ? error.message : String(error)).replace(/[:\s]+$/, "")
+  return new PluginError(`${provider} API request failed: ${reason}`, provider.toLowerCase())
+}
+
+/**
  * Erro de configuração (faltando API key, token inválido, etc)
  */
 export class ConfigError extends PluginError {

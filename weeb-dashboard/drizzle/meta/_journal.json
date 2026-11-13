@@ -22,6 +22,20 @@
       "when": 1785595445627,
       "tag": "0002_even_shinobi_shaw",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1794501089518,
+      "tag": "0003_error_log",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1794535407956,
+      "tag": "0004_generation_starts",
+      "breakpoints": true
     }
   ]
 }

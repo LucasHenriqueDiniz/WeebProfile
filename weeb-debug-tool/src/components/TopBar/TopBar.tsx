@@ -4,7 +4,6 @@
  * Main control bar with plugin/section selectors, toggles, and actions
  */
 
-import { useState } from "react"
 import type { Plugin } from "../../lib/api"
 import { useDebugStore } from "../../store/debugStore"
 

@@ -154,6 +154,7 @@ export function DashboardSidebar() {
       {/* Collapse toggle */}
       <div className={cn("flex-shrink-0 pb-1", expanded ? "px-3" : "px-2.5")}>
         <button
+          type="button"
           onClick={toggleExpanded}
           className={cn(
             "flex items-center rounded-xl text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors",
@@ -171,6 +172,7 @@ export function DashboardSidebar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
+                type="button"
                 className={cn(
                   "flex items-center rounded-xl hover:bg-sidebar-accent transition-colors",
                   expanded ? "gap-3 px-2 py-2 w-full" : "justify-center h-11 w-11 mx-auto"

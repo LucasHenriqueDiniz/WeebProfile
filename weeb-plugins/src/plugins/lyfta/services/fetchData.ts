@@ -2,7 +2,8 @@
  * Fetches data from Lyfta API
  */
 
-import type { LyftaConfig, LyftaData } from "../types"
+import type { LyftaConfig, LyftaData, LyftaExerciseData, LyftaWorkout } from "../types"
+import { displayedImageUrls } from "../selection"
 import { getMockLyftaData } from "./mock-data"
 import { embedImageOrNull as embedImage } from "../../../utils/image-to-base64"
 
@@ -31,8 +32,7 @@ export async function fetchLyftaData(
       return mockData
     }
 
-    // Converter URLs de imagens para base64 para funcionar nos previews (Playwright bloqueia requisições externas)
-    return await convertImageUrlsToBase64(mockData, previewMode)
+    return await embedDisplayedImages(mockData, config)
   }
 
   // Validar que tem apiKey configurado quando não estiver em modo dev/preview
@@ -40,111 +40,79 @@ export async function fetchLyftaData(
     throw new Error("Lyfta API Key is required. Please configure it in your profile settings.")
   }
 
-  try {
-    // Fetch workouts
-    const workoutsResponse = await fetch(`${BASE_URL}/api/v1/workouts?limit=100&page=1`, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    })
+  // No try/catch on purpose. This used to fall back to the mock workouts on any
+  // error, which reached the generator as a success and was published over the
+  // user's last good card. A throw becomes a pluginErrors entry, and the dashboard
+  // then keeps the previous SVG and records the reason in last_error.
 
-    if (!workoutsResponse.ok) {
-      throw new Error(`Failed to fetch workouts: ${workoutsResponse.statusText}`)
-    }
+  // Fetch workouts
+  const workoutsResponse = await fetch(`${BASE_URL}/api/v1/workouts?limit=100&page=1`, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  })
 
-    const workoutsData = await workoutsResponse.json()
-    const workouts = workoutsData.status && workoutsData.workouts ? workoutsData.workouts : []
+  if (!workoutsResponse.ok) {
+    throw new Error(`Lyfta API failed to fetch workouts: HTTP ${workoutsResponse.status}`)
+  }
 
-    // Fetch exercise data
+  const workoutsData = await workoutsResponse.json()
+  const workouts = workoutsData.status && workoutsData.workouts ? workoutsData.workouts : []
+
+  // The catalog only feeds the `exercises` section, which draws nothing without it.
+  const sections = new Set(config.sections || [])
+  let exercises: LyftaExerciseData[] = []
+  if (sections.has("exercises")) {
     const exercisesResponse = await fetch(`${BASE_URL}/api/v1/exercises`, {
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },
     })
-
     const exercisesData = exercisesResponse.ok ? await exercisesResponse.json() : { exercises: [] }
-    const exercises = exercisesData.exercises || []
+    exercises = exercisesData.exercises || []
+  }
 
-    // Process workouts and convert images to base64
-    const processedWorkouts = await Promise.all(
-      workouts.map(async (workout: any) => {
-        const processedExercises = await Promise.all(
-          workout.exercises.map(async (exercise: any) => {
-            let exerciseImage: string | null = exercise.exercise_image || null
+  const workoutSummaries = workouts.map((workout: any) => ({
+    id: workout.id,
+    title: workout.title,
+    description: workout.description || null,
+    workout_duration: workout.workout_duration || "00:00:00",
+    total_volume: workout.total_volume || workout.totalLiftedWeight || 0,
+    workout_perform_date: workout.workout_perform_date,
+  }))
 
-            // If exercise_image is a URL, convert to base64
-            if (exerciseImage && !exerciseImage.startsWith("data:") && exerciseImage.startsWith("http")) {
-              try {
-                exerciseImage = await embedImageOrNull(exerciseImage)
-              } catch (error) {
-                console.error("Failed to convert exercise image to base64:", error)
-              }
-            }
+  return await embedDisplayedImages(
+    { workouts, workoutSummaries, exercises, statistics: calculateStatistics(workouts) },
+    config
+  )
+}
 
-            return {
-              ...exercise,
-              exercise_image: exerciseImage,
-            }
-          })
-        )
+/**
+ * Embeds the images the enabled sections draw, once per URL, and drops every other
+ * image URL: one that is not drawn is no use in the SVG, and a remote one would not
+ * load inside a Gist anyway. See selection.ts for why this is not "embed them all".
+ */
+async function embedDisplayedImages(data: LyftaData, config: LyftaConfig): Promise<LyftaData> {
+  const embedded = new Map(
+    await Promise.all(displayedImageUrls(data, config).map(async (url) => [url, await embedImageOrNull(url)] as const))
+  )
+  const image = (url: string | null | undefined): string | null => {
+    if (!url) return null
+    if (url.startsWith("data:")) return url
+    return embedded.get(url) ?? null
+  }
+  const withImages = (workout: LyftaWorkout): LyftaWorkout => ({
+    ...workout,
+    exercises: workout.exercises.map((exercise) => ({ ...exercise, exercise_image: image(exercise.exercise_image) })),
+  })
 
-        return {
-          ...workout,
-          exercises: processedExercises,
-        }
-      })
-    )
-
-    // Calculate statistics
-    const statistics = calculateStatistics(processedWorkouts)
-
-    // Create workout summaries
-    const workoutSummaries = processedWorkouts.map((workout) => ({
-      id: workout.id,
-      title: workout.title,
-      description: workout.description || null,
-      workout_duration: workout.workout_duration || "00:00:00",
-      total_volume: workout.total_volume || workout.totalLiftedWeight || 0,
-      workout_perform_date: workout.workout_perform_date,
-    }))
-
-    // Process exercise data images
-    const processedExercises = await Promise.all(
-      exercises.map(async (exercise: any) => {
-        let imageName: string | null = exercise.image_name || null
-
-        if (imageName && !imageName.startsWith("data:") && imageName.startsWith("http")) {
-          try {
-            imageName = await embedImageOrNull(imageName)
-          } catch (error) {
-            console.error("Failed to convert exercise data image to base64:", error)
-          }
-        }
-
-        return {
-          ...exercise,
-          image_name: imageName,
-        }
-      })
-    )
-
-    return {
-      workouts: processedWorkouts,
-      workoutSummaries,
-      exercises: processedExercises,
-      statistics,
-    }
-  } catch (error) {
-    console.error("Error fetching Lyfta data:", error)
-    // Fallback to mock data on error
-    const mockData = await getMockLyftaData()
-
-    // Em modo preview, manter URLs originais (não converter para base64)
-    if (previewMode) {
-      return mockData
-    }
-
-    return await convertImageUrlsToBase64(mockData, previewMode)
+  return {
+    ...data,
+    workouts: data.workouts.map(withImages),
+    exercises: data.exercises.map((exercise) => ({ ...exercise, image_name: image(exercise.image_name) })),
+    statistics: data.statistics.lastWorkout
+      ? { ...data.statistics, lastWorkout: withImages(data.statistics.lastWorkout) }
+      : data.statistics,
   }
 }
 
@@ -272,37 +240,4 @@ function calculateStatistics(workouts: any[]): any {
     workoutStreak,
     exerciseStats,
   }
-}
-
-/**
- * Converte URLs de imagens para base64 recursivamente
- */
-async function convertImageUrlsToBase64(data: any, previewMode = false): Promise<any> {
-  if (Array.isArray(data)) {
-    return Promise.all(data.map((item) => convertImageUrlsToBase64(item, previewMode)))
-  }
-
-  if (data && typeof data === "object") {
-    const result: any = {}
-    for (const [key, value] of Object.entries(data)) {
-      if (
-        (key === "image" || key === "exercise_image" || key === "image_name") &&
-        typeof value === "string" &&
-        (value.startsWith("http://") || value.startsWith("https://"))
-      ) {
-        // Em modo preview, manter URLs originais
-        if (previewMode) {
-          result[key] = value
-        } else {
-          // Converter URL para base64 com otimização (imagens pequenas)
-          result[key] = await embedImageOrNull(value)
-        }
-      } else {
-        result[key] = await convertImageUrlsToBase64(value, previewMode)
-      }
-    }
-    return result
-  }
-
-  return data
 }

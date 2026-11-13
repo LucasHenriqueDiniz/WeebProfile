@@ -4,7 +4,7 @@
  * New layout with TopBar, PreviewSplit, and InspectorPanel
  */
 
-import { useEffect, useCallback, useRef, useState, useMemo } from "react"
+import { useEffect, useCallback, useRef, useState } from "react"
 import { api, type Plugin } from "./lib/api"
 import TopBar from "./components/TopBar/TopBar"
 import PreviewSplit from "./components/workspace/PreviewSplit"
@@ -26,9 +26,7 @@ function App() {
     selectedDebugId,
     hoveredDebugId,
     lastOutputs,
-    setConfig,
     setLastOutputs,
-    setSnapshot,
     getSnapshot,
     setSelectedDebugId,
     setHoveredDebugId,
@@ -164,7 +162,7 @@ function App() {
   )
 
   // Handle element selection from SVG preview
-  const handleSvgElementSelect = useCallback(
+  const _handleSvgElementSelect = useCallback(
     (snapshot: StyleSnapshot | null) => {
       setSvgSnapshot(snapshot)
       if (snapshot?.debugId) {

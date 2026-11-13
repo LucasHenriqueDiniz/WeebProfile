@@ -6,7 +6,7 @@
  */
 
 import { useRouter } from "@/src/compat/next-navigation"
-import { useMemo, useState, useCallback, useEffect, useRef } from "react"
+import { useMemo, useState, useEffect, useRef } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
@@ -18,7 +18,7 @@ import {
   selectMissingConfigs,
 } from "@/stores/wizard-selectors"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
-import { ApiException, svgApi } from "@/lib/api"
+import { ApiException, missingRequiredConfig, svgApi } from "@/lib/api"
 import { debugWizard } from "@/lib/debug"
 import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
 
@@ -37,8 +37,6 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
   const { activeTab, setActiveTab } = useWizardUIState()
 
   const {
-    name,
-    slug,
     plugins,
     pluginsOrder,
     style,
@@ -272,19 +270,18 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
           })
           router.push(`/dashboard/${svgId}`)
         }
-      } catch (generateError: any) {
+      } catch (generateError) {
         // Reset wizard store even with error (only in creation mode)
         if (!isEditMode) {
           reset()
         }
 
-        // Check if it's a missing config error
-        if (generateError?.code === "MISSING_REQUIRED_SECRETS" || generateError?.code === "MISSING_REQUIRED_CONFIG") {
-          const missing = generateError?.missing || []
+        const missing = missingRequiredConfig(generateError)
+        if (missing) {
           const missingList = missing
-            .map((m: any) => {
-              const secrets = m.missingSecrets?.map((s: any) => s.label || s.key).join(", ") || ""
-              const fields = m.missingFields?.map((f: any) => f.label || f.field).join(", ") || ""
+            .map((m) => {
+              const secrets = m.missingSecrets?.map((s) => s.label || s.key).join(", ") || ""
+              const fields = m.missingFields?.map((f) => f.label || f.field).join(", ") || ""
               const parts = [secrets, fields].filter(Boolean)
               return `${m.pluginName}: ${parts.join(", ")}`
             })

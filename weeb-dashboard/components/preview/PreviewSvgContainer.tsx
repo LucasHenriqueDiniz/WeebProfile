@@ -60,7 +60,6 @@ export function PreviewSvgContainer({
   style,
   children,
   theme,
-  hideTerminalEmojis,
   hideTerminalHeader,
   fontFamily,
   terminalHeaderText,

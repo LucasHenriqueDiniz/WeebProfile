@@ -7,7 +7,8 @@ import { TerminalStatisticRow } from "../../../templates/Terminal/TerminalStatis
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
 import { formatWeight } from "../utils/weight"
-import { calculate1RM, format1RM } from "../utils/1rm"
+import { format1RM } from "../utils/1rm"
+import { topExercises as selectTopExercises } from "../selection"
 
 interface ExercisesProps {
   data: LyftaData
@@ -23,104 +24,11 @@ export function Exercises({ data, config, style = "default", size = "half" }: Ex
 
   const hideTitle = config.exercises_hide_title || false
   const title = config.exercises_title || "Most Performed Exercises"
-  const maxExercises = config.exercises_max || 5
   const weightUnit = config.weight_unit || "kg"
   const show1RM = config.exercises_show_1rm !== false
   const hideImages = config.exercises_hide_images === true
 
-  // Calculate exercise stats from workouts
-  const exerciseStats = new Map<
-    string,
-    {
-      count: number
-      weights: number[]
-      bestWeight: number
-      best1RM: number
-      averageWeight: number
-    }
-  >()
-
-  data.workouts.forEach((workout) => {
-    workout.exercises.forEach((exercise) => {
-      const exerciseName = exercise.excercise_name?.trim()
-      if (!exerciseName) return
-
-      const stats = exerciseStats.get(exerciseName) || {
-        count: 0,
-        weights: [],
-        bestWeight: 0,
-        best1RM: 0,
-        averageWeight: 0,
-      }
-
-      stats.count++
-
-      // Process sets to get weights and calculate 1RM
-      // Note: set.weight is in kg, we need to convert to grams for formatWeight
-      // Process all sets (not just completed) to get better stats
-      exercise.sets.forEach((set) => {
-        if (set.weight && set.reps) {
-          const weightKg = parseFloat(set.weight)
-          const reps = parseInt(set.reps, 10)
-          if (!isNaN(weightKg) && !isNaN(reps) && weightKg > 0 && reps > 0) {
-            const weightGrams = weightKg * 1000 // Convert kg to grams
-            stats.weights.push(weightGrams)
-            if (weightGrams > stats.bestWeight) {
-              stats.bestWeight = weightGrams
-            }
-            const oneRM = calculate1RM(weightKg, reps) // 1RM calculation uses kg
-            if (oneRM > stats.best1RM) {
-              stats.best1RM = oneRM // Store in kg
-            }
-          }
-        }
-      })
-
-      exerciseStats.set(exerciseName, stats)
-    })
-  })
-
-  // Build image map from both exercises list and workouts (workouts have exercise_image)
-  const exerciseImageMap = new Map<string, string>()
-
-  // First, add from exercises list
-  data.exercises.forEach((ex) => {
-    if (ex.name && ex.image_name) {
-      const normalizedName = ex.name.trim()
-      exerciseImageMap.set(normalizedName, ex.image_name)
-      exerciseImageMap.set(normalizedName.toLowerCase(), ex.image_name)
-    }
-  })
-
-  // Then, add from workouts (they have exercise_image directly)
-  data.workouts.forEach((workout) => {
-    workout.exercises.forEach((exercise) => {
-      const exerciseName = exercise.excercise_name?.trim()
-      if (exerciseName && exercise.exercise_image) {
-        exerciseImageMap.set(exerciseName, exercise.exercise_image)
-        exerciseImageMap.set(exerciseName.toLowerCase(), exercise.exercise_image)
-      }
-    })
-  })
-
-  // Calculate averages and get top exercises
-  const topExercises = Array.from(exerciseStats.entries())
-    .map(([name, stats]) => {
-      const normalizedName = name.trim()
-      // Try exact match first, then case-insensitive
-      const image = exerciseImageMap.get(normalizedName) || exerciseImageMap.get(normalizedName.toLowerCase()) || null
-
-      return {
-        name: normalizedName,
-        count: stats.count,
-        averageWeight: stats.weights.length > 0 ? stats.weights.reduce((a, b) => a + b, 0) / stats.weights.length : 0, // in grams
-        bestWeight: stats.bestWeight, // in grams
-        best1RM: stats.best1RM, // in kg
-        image,
-      }
-    })
-    .sort((a, b) => b.count - a.count)
-    .slice(0, maxExercises)
+  const topExercises = selectTopExercises(data, config)
 
   if (topExercises.length === 0) {
     return <></>

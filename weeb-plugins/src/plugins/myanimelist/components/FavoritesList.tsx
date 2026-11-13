@@ -179,7 +179,6 @@ function SimpleFavoriteImage({
 function RenderSimpleFavorites({
   data,
   hideOverlay,
-  size,
 }: {
   data: FavoriteData
   hideOverlay: boolean

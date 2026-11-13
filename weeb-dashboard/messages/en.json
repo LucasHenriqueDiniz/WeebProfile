@@ -67,7 +67,8 @@
       "repoTitle": "Repository",
       "repoDesc": "A standalone card for a single GitHub repository — banner, stats, star curve.",
       "cta": "Start"
-    }
+    },
+    "subtitle": "Cole o markdown gerado no topo do seu README do GitHub"
   },
   "header": {
     "changeLanguage": "Change language",
@@ -78,7 +79,9 @@
     "nav": {
       "templates": "Templates",
       "dashboard": "Dashboard"
-    }
+    },
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "homepage": {
     "comparison": {
@@ -370,7 +373,8 @@
     "navigation": "Navigation",
     "settings": "Settings",
     "svgsUsed": "SVGs used",
-    "user": "User"
+    "user": "User",
+    "collapse": "Recolher"
   },
   "view": {
     "backToDashboard": "Back to Dashboard",
@@ -452,7 +456,9 @@
         "plural": "missing configurations",
         "singular": "missing configuration",
         "title": "Missing configurations:"
-      }
+      },
+      "createSvg": "Criar SVG",
+      "saveSvg": "Salvar SVG"
     },
     "resumeDialog": {
       "continue": "Continue",
@@ -537,7 +543,8 @@
       "preview": "preview",
       "selectSection": "Select section",
       "deselectSection": "Deselect section",
-      "enablePluginToPreview": "Enable at least one plugin and select sections to see the preview"
+      "enablePluginToPreview": "Enable at least one plugin and select sections to see the preview",
+      "clearSearch": "Clear search"
     },
     "order": {
       "tab": "Order",

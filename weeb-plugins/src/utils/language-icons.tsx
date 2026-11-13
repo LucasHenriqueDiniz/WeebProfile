@@ -2,7 +2,6 @@
  * Helper para obter ícones de linguagens de programação
  */
 
-import React from "react"
 import { FaCode, FaJava, FaTerminal } from "react-icons/fa"
 import {
   SiJavascript,

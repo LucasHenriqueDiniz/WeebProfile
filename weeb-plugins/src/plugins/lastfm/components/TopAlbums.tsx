@@ -8,7 +8,6 @@ import { MdAlbum } from "react-icons/md"
 import type { LastFmAlbum } from "../types"
 import { TopItems } from "./TopItems"
 import { abbreviateNumber } from "../../../utils/number"
-import type { GridItemProps, ListItemProps } from "../../../templates/types"
 
 interface TopAlbumsProps {
   data: LastFmAlbum[]

@@ -14,6 +14,7 @@
  */
 
 import { renderToString } from "react-dom/server"
+import { log } from "../utils/log.js"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import type { SvgConfig, SvgGenerationResult } from "../types/index.js"
 import { loadCss } from "./css-loader.js"
@@ -35,7 +36,7 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
   // 2. Calculate height by summing each enabled plugin's calculateHeight()
   const height = PluginManager.getInstance().calculateTotalHeight(pluginsConfig, pluginsData, config.size)
 
-  console.log(`[SVG Generator] ✅ Height calculated: ${height}px`)
+  log.debug("height_calculated", { height })
 
   // 3. Load CSS
   const cssDefs = await loadCss(config)

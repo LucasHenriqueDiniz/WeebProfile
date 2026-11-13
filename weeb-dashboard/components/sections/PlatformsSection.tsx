@@ -8,7 +8,7 @@ import { useRef, useMemo } from "react"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins"
 import { useTranslations } from "@/i18n/use-translations"
-import { Link, Link as LocaleLink } from "@/i18n/navigation"
+import { Link } from "@/i18n/navigation"
 
 type PluginMetadata = any
 import type { ComponentType } from "react"
@@ -31,7 +31,7 @@ interface PlatformCardProps {
   color: string
 }
 
-function PlatformCard({ name, icon: Icon, description, color }: PlatformCardProps) {
+function PlatformCard({ name, icon: Icon, color }: PlatformCardProps) {
   if (!Icon) {
     return null
   }

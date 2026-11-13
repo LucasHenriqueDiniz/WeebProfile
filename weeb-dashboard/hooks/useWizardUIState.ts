@@ -16,7 +16,7 @@ interface WizardUIState {
   selectedPlugin: string | null
 }
 
-const defaultState: WizardUIState = {
+const _defaultState: WizardUIState = {
   expandedPlugins: new Set(),
   activeTab: "plugins",
   category: "all",

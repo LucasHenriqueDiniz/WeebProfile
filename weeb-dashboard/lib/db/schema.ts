@@ -5,7 +5,7 @@ const json = <T>(name: string) => text(name, { mode: "json" }).$type<T>()
 
 const uuid = (name: string) => text(name).$defaultFn(() => crypto.randomUUID())
 
-const now = () =>
+const _now = () =>
   text()
     .$defaultFn(() => new Date().toISOString())
     .notNull()
@@ -184,6 +184,31 @@ export const templateLikes = sqliteTable(
   })
 )
 
+/**
+ * Server errors from the Pages Functions, written by functions/api/_middleware.ts.
+ * Pages keeps no Functions logs once a request ends -- there is only a live tail --
+ * so this table is the only record a 500 leaves. Pruned to ERROR_LOG_RETENTION_DAYS
+ * by the cron endpoint.
+ */
+export const errorLog = sqliteTable(
+  "error_log",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    createdAt: text("created_at")
+      .$defaultFn(() => new Date().toISOString())
+      .notNull(),
+    method: text("method").notNull(),
+    // Pathname only: a query string can carry a token.
+    path: text("path").notNull(),
+    status: integer("status").notNull(),
+    message: text("message").notNull(),
+    stack: text("stack"),
+  },
+  (table) => ({
+    createdAtIdx: index("idx_error_log_created_at").on(table.createdAt),
+  })
+)
+
 export type Profile = typeof profiles.$inferSelect
 export type NewProfile = typeof profiles.$inferInsert
 
@@ -198,3 +223,19 @@ export type NewTemplate = typeof templates.$inferInsert
 
 export type TemplateLike = typeof templateLikes.$inferSelect
 export type NewTemplateLike = typeof templateLikes.$inferInsert
+
+export type ErrorLogEntry = typeof errorLog.$inferSelect
+export type NewErrorLogEntry = typeof errorLog.$inferInsert
+
+/**
+ * When each user last started a manual generation (POST /api/svgs/:id/generate).
+ * One row per user, claimed with a conditional upsert -- see generation-rate-limit.ts.
+ * Kept out of `svgs` so that a database without this migration breaks only that
+ * route: every query on `svgs` selects all of its columns.
+ */
+export const generationStarts = sqliteTable("generation_starts", {
+  userId: text("user_id").primaryKey(),
+  startedAt: text("started_at").notNull(),
+})
+
+export type GenerationStart = typeof generationStarts.$inferSelect

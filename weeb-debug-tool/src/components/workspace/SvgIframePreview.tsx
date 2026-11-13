@@ -96,7 +96,7 @@ export default function SvgIframePreview({
   }, [onElementSelect, onElementHover])
 
   // Request snapshot via RPC
-  const requestSnapshot = async (debugId: string, mode: "important" | "all" = "important"): Promise<StyleSnapshot> => {
+  const _requestSnapshot = async (debugId: string, mode: "important" | "all" = "important"): Promise<StyleSnapshot> => {
     if (!iframeRef.current) throw new Error("Iframe not ready")
 
     const requestId = makeRequestId()

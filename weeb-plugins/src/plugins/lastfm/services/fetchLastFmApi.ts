@@ -5,9 +5,8 @@
  */
 
 import type { LastFmData, LastFmTrack, LastFmArtist, LastFmAlbum, TopTrack } from "../types"
-import type { EssentialPluginConfig } from "../../shared/types/base"
-import { fetchJson, requireApiKey, buildQueryString } from "../../shared/utils/api"
-import { ApiError, ConfigError } from "../../shared/utils/errors"
+import { fetchJson, buildQueryString } from "../../shared/utils/api"
+import { ApiError } from "../../shared/utils/errors"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { getArtistImageFallback } from "./artistImageFallback"
 
@@ -49,7 +48,7 @@ function getPeriodLabel(period: "overall" | "7day" | "1month" | "3month" | "6mon
 /**
  * Tipos de resposta da API do LastFM
  */
-interface LastFmApiResponse<T> {
+interface LastFmApiResponse<_T> {
   recenttracks?: {
     track?: Array<{
       name: string

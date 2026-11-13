@@ -105,9 +105,9 @@ export function HeroSection() {
   const [activeTemplate, setActiveTemplate] = useState<Template>(DEFAULT_TEMPLATES[0])
   const [isBuilding, setIsBuilding] = useState(false)
   const [templatesModalOpen, setTemplatesModalOpen] = useState(false)
-  const [configDialogOpen, setConfigDialogOpen] = useState<string | null>(null)
+  const [_configDialogOpen, _setConfigDialogOpen] = useState<string | null>(null)
   const [templates] = useState<Template[]>(DEFAULT_TEMPLATES)
-  const [autoPlayIndex, setAutoPlayIndex] = useState(0)
+  const [_autoPlayIndex, setAutoPlayIndex] = useState(0)
   const [isUserInteracting, setIsUserInteracting] = useState(false)
 
   // Estados derivados do template ativo
@@ -119,7 +119,7 @@ export function HeroSection() {
   const initializePluginConfigs = useCallback(() => {
     const configs: Record<string, { sections: string[]; sectionConfigs?: Record<string, any> }> = {}
     Object.keys(PLUGINS_METADATA).forEach((pluginId) => {
-      const metadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
+      const _metadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
       // defaultConfig was removed - all plugins start with empty sections
       const defaultSections: string[] = []
       configs[pluginId] = {
@@ -210,14 +210,14 @@ export function HeroSection() {
     }
   }, [])
 
-  const updatePluginSections = useCallback((pluginId: string, sections: string[]) => {
+  const _updatePluginSections = useCallback((pluginId: string, sections: string[]) => {
     setPluginConfigs((prev) => ({
       ...prev,
       [pluginId]: { ...prev[pluginId], sections },
     }))
   }, [])
 
-  const updateSectionConfig = useCallback((pluginId: string, sectionId: string, config: Record<string, any>) => {
+  const _updateSectionConfig = useCallback((pluginId: string, sectionId: string, config: Record<string, any>) => {
     setPluginConfigs((prev) => ({
       ...prev,
       [pluginId]: {
@@ -241,7 +241,7 @@ export function HeroSection() {
 
     selectedSources.forEach((pluginId) => {
       const pluginConfig = pluginConfigs[pluginId] || {}
-      const pluginMetadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
+      const _pluginMetadata = PLUGINS_METADATA[pluginId as keyof typeof PLUGINS_METADATA]
       // defaultConfig was removed - all plugins start with empty sections
       const defaultSections: string[] = []
       const sections =

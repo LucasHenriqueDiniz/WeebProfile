@@ -1,5 +1,4 @@
 import React from "react"
-import { RenderBasedOnStyle } from "../templates/RenderBasedOnStyle"
 
 export type ErrorType = "config" | "api" | "auth" | "network" | "server" | "rate_limit" | "data" | "unknown"
 
@@ -18,12 +17,11 @@ export function PluginError({
   error,
   errorType = "unknown",
   style = "default",
-  size = "half",
   showIcon = true,
   compact = false,
 }: PluginErrorProps): React.ReactElement {
   const errorMessage = typeof error === "string" ? error : error.message
-  const errorName = typeof error === "string" ? "Error" : error.name
+  const _errorName = typeof error === "string" ? "Error" : error.name
 
   // Detectar tipo de erro baseado na mensagem se não foi especificado
   const detectedErrorType = errorType !== "unknown" ? errorType : detectErrorType(errorMessage)

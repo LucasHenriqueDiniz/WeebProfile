@@ -282,7 +282,7 @@ export default function DashboardPage() {
   }
 
   // Calcular cooldown restante para um SVG
-  const getCooldownRemaining = (svg: Svg) => {
+  const _getCooldownRemaining = (svg: Svg) => {
     if (!svg.lastGeneratedAt) return null
     const lastGenerated = new Date(svg.lastGeneratedAt)
     const now = new Date()

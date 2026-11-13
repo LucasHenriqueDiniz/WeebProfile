@@ -252,6 +252,7 @@ export const PluginCard = React.memo(
           </div>
 
           <button
+            type="button"
             onClick={handleTogglePlugin}
             className={cn(
               "flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
@@ -544,11 +545,19 @@ export const PluginCard = React.memo(
               const previewImage = getSectionPreview(plugin.name, section.id, style as "default" | "terminal")
 
               return (
+                // O controle acessivel desta linha e o input sr-only aninhado, que ja recebe
+                // foco e responde a teclado; este onClick apenas estende a area de clique do
+                // mouse para a linha inteira. Duplicar o handler no div criaria um segundo
+                // ponto de tabulacao para a mesma acao.
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                 <div
                   key={section.id}
                   onClick={() => handleSectionToggle(section.id)}
                   className={cn(
                     "flex flex-col gap-2.5 p-3 rounded-lg border cursor-pointer transition-all group",
+                    // O controle acessivel e o checkbox sr-only aninhado. Sem isto, quem
+                    // navega por teclado foca um input invisivel e nada muda na tela.
+                    "focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background",
                     isSelected
                       ? "bg-primary/5 text-primary border-primary/30"
                       : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50 hover:border-primary/20"
@@ -558,7 +567,7 @@ export const PluginCard = React.memo(
                     <div className="flex items-center gap-2 min-w-0">
                       <input
                         type="checkbox"
-                        className="sr-only peer"
+                        className="sr-only"
                         checked={isSelected}
                         onChange={() => handleSectionToggle(section.id)}
                         onClick={(e) => e.stopPropagation()}
@@ -568,6 +577,9 @@ export const PluginCard = React.memo(
                       <span className="text-sm font-medium truncate">{getSectionName(section)}</span>
                     </div>
                     {hasConfigs && isSelected && (
+                      // Fronteira de propagacao, nao um controle: impede que cliques nos filhos
+                      // subam ate a linha. Nao ha acao propria para expor ao teclado.
+                      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                       <div onClick={(e) => e.stopPropagation()} className="flex-shrink-0">
                         <SectionConfigDialog
                           plugin={plugin.name}
@@ -582,8 +594,9 @@ export const PluginCard = React.memo(
                     <p className="text-xs text-muted-foreground line-clamp-2">{getSectionDescription(section)}</p>
                   )}
                   {previewImage && (
-                    <div
-                      className="rounded-md overflow-hidden border border-border bg-background aspect-video"
+                    <button
+                      type="button"
+                      className="rounded-md overflow-hidden border border-border bg-background aspect-video w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleSectionToggle(section.id)
@@ -599,7 +612,7 @@ export const PluginCard = React.memo(
                           e.currentTarget.src = placeholderSvg
                         }}
                       />
-                    </div>
+                    </button>
                   )}
                 </div>
               )

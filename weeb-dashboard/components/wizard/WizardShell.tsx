@@ -103,6 +103,7 @@ export function WizardShell({
       <div className="flex-shrink-0 flex items-center justify-between px-4 lg:px-6 py-2.5 border-b border-border">
         <div className="flex items-center gap-1 rounded-lg bg-muted/50 p-0.5">
           <button
+            type="button"
             onClick={() => setSize("half")}
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors",
@@ -113,6 +114,7 @@ export function WizardShell({
             Meia largura
           </button>
           <button
+            type="button"
             onClick={() => setSize("full")}
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors",
@@ -201,6 +203,7 @@ export function WizardShell({
         leading={
           <>
             <button
+              type="button"
               onClick={() => router.push("/dashboard")}
               className="text-slate-400 hover:text-slate-200 transition-colors -ml-1 p-1 flex-shrink-0"
               aria-label="Voltar"
@@ -260,6 +263,7 @@ export function WizardShell({
           dentro de uma das colunas. */}
       <div className="flex-shrink-0 flex items-center gap-1 px-4 lg:px-5 py-2 border-b border-border bg-muted/20">
         <button
+          type="button"
           onClick={() => onTabChange("plugins")}
           className={cn(
             "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
@@ -271,6 +275,7 @@ export function WizardShell({
         </button>
         {orderConfig && (
           <button
+            type="button"
             onClick={() => onTabChange("order")}
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
@@ -282,6 +287,7 @@ export function WizardShell({
           </button>
         )}
         <button
+          type="button"
           onClick={() => onTabChange("style")}
           className={cn(
             "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
@@ -313,6 +319,7 @@ export function WizardShell({
               ] as const)
         ).map(([step, label, Icon]) => (
           <button
+            type="button"
             key={step}
             onClick={() => setMobileStep(step)}
             className={cn(

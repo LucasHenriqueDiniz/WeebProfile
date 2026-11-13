@@ -9,6 +9,15 @@ import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
  * had lost the DATABASE_UNREACHABLE branch. Keep it in one place.
  */
 
+/**
+ * The code the generator answers a 503 with when it cannot read the user's secrets
+ * from D1 (handleGenerate in svg-generator/src/worker.ts). This side used to check
+ * for DATABASE_UNREACHABLE and D1_API_UNREACHABLE, codes the generator no longer
+ * sends, so its 503 fell into the generic 5xx branch: the code became HTTP_503, the
+ * D1 error in `details` was dropped, and a manual regenerate answered 500.
+ */
+export const DB_UNREACHABLE_CODE = "D1_UNREACHABLE"
+
 const RETRY_CONFIG = {
   maxRetries: 3,
   initialDelayMs: 1000,
@@ -76,7 +85,7 @@ export async function generateSvgViaService(config: Record<string, any>, env: Cl
 
       if (!response.ok) {
         const error = (await response.json().catch(() => ({ error: "Unknown error" }))) as any
-        if (response.status === 503 && (error.code === "DATABASE_UNREACHABLE" || error.code === "D1_API_UNREACHABLE")) {
+        if (response.status === 503 && error.code === DB_UNREACHABLE_CODE) {
           const dbError = new Error(error.message || "Generator could not reach database")
           ;(dbError as any).code = error.code
           ;(dbError as any).details = error.details

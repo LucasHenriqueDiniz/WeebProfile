@@ -5,7 +5,6 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
-import { FaGamepad } from "react-icons/fa"
 import type { SteamData, SteamNonEssentialConfig } from "../types"
 
 interface TopGamesProps {

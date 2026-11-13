@@ -37,7 +37,7 @@ export function usePluginI18n() {
 
       // Return the translated value
       return translated
-    } catch (error) {
+    } catch {
       // If next-intl throws (key doesn't exist), use fallback
       return fallback
     }

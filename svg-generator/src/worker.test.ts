@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import type { D1Database } from "@cloudflare/workers-types"
+import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import worker, { type Env } from "./worker"
 
 /**
@@ -43,11 +44,18 @@ const validRequest = (extra: Record<string, unknown> = {}) => ({
   ...extra,
 })
 
+/** Os spies do console, para os testes lerem as linhas que o log estruturado escreveu. */
+const consoleSpies = {} as Record<"log" | "warn" | "error", ReturnType<typeof vi.spyOn>>
+
 beforeEach(() => {
   // Silencia o log estruturado e os console.log herdados da validação/render.
-  vi.spyOn(console, "log").mockImplementation(() => {})
-  vi.spyOn(console, "warn").mockImplementation(() => {})
-  vi.spyOn(console, "error").mockImplementation(() => {})
+  consoleSpies.log = vi.spyOn(console, "log").mockImplementation(() => {})
+  consoleSpies.warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+  consoleSpies.error = vi.spyOn(console, "error").mockImplementation(() => {})
+  // dev: true still embeds the mock's images, and those are real CDN URLs (Steam,
+  // dev.to, GitHub): 12 of these tests made 57 requests, and one timed out in CI on
+  // a slow Steam CDN. No test here asserts on image bytes; a failed embed is null.
+  vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("no network in worker tests"))
 })
 
 afterEach(() => vi.restoreAllMocks())
@@ -244,6 +252,15 @@ describe("POST / — saneamento de entrada", () => {
     expect(body.svg).not.toContain("<script>")
   })
 
+  it("não deixa o customCss abrir elemento no SVG, que o navegador lê como XML", async () => {
+    const customCss = `a::before{content:"<3 & more"} <script>alert(document.domain)</script>`
+    const { body } = await post(validRequest({ customCss }))
+
+    expect(body.svg).not.toMatch(/<script/i)
+    // Escapado, não removido: o parser XML devolve ao navegador o mesmo CSS escrito.
+    expect(body.svg).toContain(`a::before{content:"&lt;3 &amp; more"} &lt;script>`)
+  })
+
   it("aceita fontFamily longa sem quebrar a geração", async () => {
     const { response } = await post(validRequest({ fontFamily: "x".repeat(200) }))
 
@@ -352,5 +369,111 @@ describe("scheduled() — cron", () => {
     await run(cronEnv())
 
     expect(spy).toHaveBeenCalledTimes(1)
+  })
+
+  /** As linhas JSON que o log estruturado escreveu no console[level]. */
+  const lines = (level: "log" | "warn" | "error") =>
+    consoleSpies[level].mock.calls.map(([line]) => JSON.parse(String(line)) as Record<string, unknown>)
+
+  // Antes, um 401 ou 500 virava "processed: 0" num log de info, e o cron parecia
+  // ocioso enquanto falhava toda noite.
+  it.each([401, 500])("registra erro com o status quando o dashboard responde %i, e para", async (status) => {
+    const spy = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async () => Response.json({ error: "Internal server error" }, { status }) as never)
+
+    await run(cronEnv())
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(lines("error")).toContainEqual(
+      expect.objectContaining({ event: "cron.batch_rejected", status, reason: "Internal server error" })
+    )
+    expect(lines("log").find((l) => l.event === "cron.batch")).toBeUndefined()
+  })
+
+  it("registra cada SVG que falhou no lote, que o svgs.last_error não guarda como histórico", async () => {
+    const errors = ["svg-1: Steam API request failed: HTTP 403", "svg-2: Codewars API request failed: HTTP 429"]
+    vi.spyOn(globalThis, "fetch").mockImplementation(
+      async () => Response.json({ processed: 3, results: { success: 1, failed: 2, errors } }) as never
+    )
+
+    await run(cronEnv())
+
+    const failed = lines("warn").filter((l) => l.event === "cron.svg_failed")
+    expect(failed.map((l) => l.reason)).toEqual(errors)
+    expect(lines("log")).toContainEqual(
+      expect.objectContaining({ event: "cron.complete", totalProcessed: 3, totalFailed: 2 })
+    )
+  })
+})
+
+describe("POST / — requests concorrentes no mesmo isolate", () => {
+  // O PluginManager é um singleton por isolate, e o Worker atende vários requests ao
+  // mesmo tempo. O renderer guardava os plugins ativos nele e relia depois do await
+  // do fetchData: se outro request chegasse nesse meio-tempo, o primeiro renderizava
+  // com a lista do segundo. O plugin sumia do card sem erro (hasErrors=false), e a
+  // altura, calculada com a config do próprio request, deixava o espaço em branco.
+  it("gera em cada request o mesmo SVG que ele geraria sozinho", async () => {
+    const devto = validRequest()
+    const codewars = validRequest({
+      plugins: { codewars: { enabled: true, sections: ["rank_honor"], username: "someone" } },
+    })
+    const devtoAlone = (await post(devto)).body.svg
+    const codewarsAlone = (await post(codewars)).body.svg
+    // Two failed generations would also compare equal (undefined === undefined).
+    expect(devtoAlone).toMatch(/^<svg/)
+    expect(codewarsAlone).toMatch(/^<svg/)
+
+    // Segura o fetchData do devto até o request do codewars terminar inteiro.
+    const plugin = PluginManager.getInstance().get("devto")!
+    const fetchData = plugin.fetchData
+    let release!: () => void
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    vi.spyOn(plugin, "fetchData").mockImplementation(async (...args) => {
+      await gate
+      return fetchData(...args)
+    })
+
+    const first = post(devto)
+    const second = await post(codewars)
+    release()
+
+    expect((await first).body.svg).toBe(devtoAlone)
+    expect(second.body.svg).toBe(codewarsAlone)
+  })
+})
+
+describe("POST / — um plugin cujo componente quebra", () => {
+  // plugin.render() só monta o elemento; os componentes rodam no renderToString, fora
+  // do try do renderer. Um PAT revogado deixa o GitHub sem `user`, o Profile lê
+  // `data.createdAt`, e o card inteiro virava 500 -- os outros plugins junto.
+  const githubWithoutUser = () =>
+    vi.spyOn(PluginManager.getInstance().get("github")!, "fetchData").mockResolvedValue({} as never)
+
+  const request = validRequest({
+    plugins: {
+      github: { enabled: true, sections: ["profile"], username: "octocat" },
+      devto: { enabled: true, sections: ["profile"], username: "someone" },
+    },
+    essentialConfigs: { github: { pat: "ghp_test" } },
+  })
+
+  it("mantém os outros plugins e responde 200", async () => {
+    githubWithoutUser()
+    const { response, body } = await post(request)
+
+    expect(response.status).toBe(200)
+    expect(body.svg).toContain("weebprofile") // the devto section, from its mock
+  })
+
+  // Same rule as a failed fetch: the dashboard must not publish this card over the
+  // last good one, and it only knows not to through hasErrors.
+  it("informa a falha em pluginErrors, para o dashboard não publicar", async () => {
+    githubWithoutUser()
+    const { body } = await post(request)
+
+    expect(body.hasErrors).toBe(true)
+    expect(body.pluginErrors.github).toMatch(/createdAt/)
+    expect(body.pluginErrors.devto).toBeUndefined()
   })
 })

@@ -56,6 +56,7 @@ export default function LoginPage() {
             navegador (bloqueador de anúncios, proteção de rastreamento).
           </p>
           <button
+            type="button"
             onClick={() => window.location.reload()}
             className="mt-3 text-sm font-semibold text-cyan-400 transition-colors hover:text-cyan-300"
           >

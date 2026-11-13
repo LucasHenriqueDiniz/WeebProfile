@@ -46,7 +46,9 @@ const errors: ValidationError[] = []
 const warnings: ValidationError[] = []
 
 // 1. Validate that all registered plugins have metadata
-const registeredPlugins = pluginManager.getActivePlugins().map(([name]) => name)
+// getAll(), not the per-request active list this used to read: nothing had set that
+// list here, so it was always empty and this check validated nothing.
+const registeredPlugins = pluginManager.getAll().map((plugin) => plugin.name)
 const metadataPlugins = Object.keys(PLUGINS_METADATA)
 
 for (const pluginName of registeredPlugins) {

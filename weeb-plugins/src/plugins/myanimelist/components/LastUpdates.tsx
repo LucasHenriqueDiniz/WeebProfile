@@ -125,13 +125,7 @@ function TerminalUpdate({
   )
 }
 
-export function LastUpdates({
-  data,
-  config,
-  style,
-  size,
-  hideTerminalEmojis = false,
-}: LastUpdatesProps): React.ReactElement {
+export function LastUpdates({ data, config, style, hideTerminalEmojis = false }: LastUpdatesProps): React.ReactElement {
   if (!data) {
     return <></>
   }

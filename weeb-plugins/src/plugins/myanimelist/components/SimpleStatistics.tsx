@@ -23,7 +23,6 @@ export function SimpleStatistics({
   data,
   config,
   style,
-  size,
   hideTerminalEmojis = false,
 }: SimpleStatisticsProps): React.ReactElement {
   if (!data || !data.anime || !data.manga) {

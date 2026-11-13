@@ -51,6 +51,22 @@ describe("log", () => {
     expect(serialised).not.toContain("def")
   })
 
+  // A key under an innocent field name: a fetch error that quotes the Steam URL, or
+  // an upstream message that echoes the Authorization header back.
+  it.each([
+    ["reason", "fetch failed: https://api.steampowered.com/x/?key=SECRETKEY123&steamids=7", "SECRETKEY123"],
+    ["reason", "https://ws.audioscrobbler.com/2.0/?method=x&api_key=SECRETKEY123", "SECRETKEY123"],
+    ["reason", 'upstream said: "Authorization: Bearer ghp_SECRETKEY123"', "ghp_SECRETKEY123"],
+    ["errors", ["svg-1: GET /?token=SECRETKEY123 failed"], "SECRETKEY123"],
+  ])("scrubs a secret written inside %s text", (field, value, secret) => {
+    const spy = capture("error")
+    log.error("event", { [field]: value })
+
+    const serialised = JSON.stringify(lastLine(spy))
+    expect(serialised).not.toContain(secret)
+    expect(serialised).toContain("[redacted]")
+  })
+
   it("leaves non-sensitive fields alone", () => {
     const spy = capture("log")
     log.info("event", { plugins: ["github"], count: 3, user: "a1b2c3" })

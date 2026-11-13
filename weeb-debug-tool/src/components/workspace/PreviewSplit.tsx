@@ -28,7 +28,6 @@ export default function PreviewSplit({
   svg,
   background = "dark",
   onReactElementSelect,
-  onSvgElementSelect,
   selectedDebugId,
   hoveredDebugId,
   onElementHover,

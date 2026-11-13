@@ -5,6 +5,7 @@
  */
 
 import type { SvgConfig } from "../types/index.js"
+import { log } from "../utils/log.js"
 
 /**
  * Validates basic configuration
@@ -58,12 +59,15 @@ export function normalizeConfig(config: Partial<SvgConfig>): SvgConfig {
 
   // Debug: log essentialConfigs keys if present
   if (normalized.essentialConfigs && Object.keys(normalized.essentialConfigs).length > 0) {
-    console.log(
-      `✅ [NORMALIZE] EssentialConfigs preserved:`,
-      Object.keys(normalized.essentialConfigs)
-        .map((plugin) => `${plugin}: [${Object.keys(normalized.essentialConfigs![plugin] || {}).join(", ")}]`)
-        .join(", ")
-    )
+    log.debug("config_normalized", {
+      plugins: Object.keys(normalized.essentialConfigs),
+      keysPerPlugin: Object.fromEntries(
+        Object.keys(normalized.essentialConfigs).map((plugin) => [
+          plugin,
+          Object.keys(normalized.essentialConfigs![plugin] || {}),
+        ])
+      ),
+    })
   }
 
   return normalized

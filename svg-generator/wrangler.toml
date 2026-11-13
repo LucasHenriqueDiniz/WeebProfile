@@ -16,6 +16,16 @@ compatibility_flags = ["nodejs_compat"]
 workers_dev = false
 
 # ============================================================
+# Workers Logs. Without this block the Worker's console only reaches a live
+# tail (`wrangler tail`), so a generation or cron failure left nothing to read
+# the next morning. With it, every line src/utils/log.ts writes is kept --
+# 3 days on Workers Free, 7 on Paid -- and can be filtered by its JSON fields
+# (event, plugin, status) in the Cloudflare dashboard's Workers Logs.
+# ============================================================
+[observability]
+enabled = true
+
+# ============================================================
 # D1 Database binding (read-only access to plugin_secrets)
 # Same database as weeb-dashboard/wrangler.toml
 # ============================================================

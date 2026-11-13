@@ -8,7 +8,7 @@
 import type { CodewarsConfig, CodewarsData, CodewarsKata, CodewarsLanguage } from "../types"
 import { getMockCodewarsData } from "./mock-data"
 import { fetchJson } from "../../shared/utils/api"
-import { ApiError } from "../../shared/utils/errors"
+import { ApiError, upstreamFailure } from "../../shared/utils/errors"
 
 const CODEWARS_API_BASE = "https://www.codewars.com/api/v1"
 
@@ -145,8 +145,6 @@ export async function fetchCodewarsData(config: CodewarsConfig, dev = false): Pr
       throw new Error(`Codewars user "${username}" not found`)
     }
 
-    // Retornar dados mock em caso de erro
-    console.warn("[Codewars] API error, using mock data as fallback")
-    return getMockCodewarsData()
+    throw upstreamFailure("Codewars", error)
   }
 }

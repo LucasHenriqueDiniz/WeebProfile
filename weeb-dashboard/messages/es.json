@@ -67,7 +67,8 @@
       "repoTitle": "Repositorio",
       "repoDesc": "Una tarjeta independiente para un repositorio de GitHub — banner, stats, curva de estrellas.",
       "cta": "Empezar"
-    }
+    },
+    "subtitle": "Cole o markdown gerado no topo do seu README do GitHub"
   },
   "header": {
     "changeLanguage": "Cambiar idioma",
@@ -78,7 +79,9 @@
     "nav": {
       "templates": "Templates",
       "dashboard": "Dashboard"
-    }
+    },
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú"
   },
   "homepage": {
     "comparison": {
@@ -370,7 +373,8 @@
     "navigation": "Navegación",
     "settings": "Configuración",
     "svgsUsed": "SVGs usados",
-    "user": "Usuario"
+    "user": "Usuario",
+    "collapse": "Recolher"
   },
   "view": {
     "backToDashboard": "Volver al Dashboard",
@@ -452,7 +456,9 @@
         "plural": "configuraciones faltantes",
         "singular": "configuración faltante",
         "title": "Configuraciones faltantes:"
-      }
+      },
+      "createSvg": "Criar SVG",
+      "saveSvg": "Salvar SVG"
     },
     "resumeDialog": {
       "continue": "Continuar",
@@ -537,7 +543,8 @@
       "preview": "vista previa",
       "selectSection": "Seleccionar sección",
       "deselectSection": "Deseleccionar sección",
-      "enablePluginToPreview": "Habilita al menos un plugin y selecciona secciones para ver la vista previa"
+      "enablePluginToPreview": "Habilita al menos un plugin y selecciona secciones para ver la vista previa",
+      "clearSearch": "Limpiar búsqueda"
     },
     "order": {
       "tab": "Orden",

@@ -164,6 +164,9 @@ export function SvgLibraryRow({
       </span>
 
       {/* Actions — stop propagation so row click (view) doesn't swallow them */}
+      {/* Nao e um elemento interativo: existe so para impedir que cliques nos
+          botoes filhos subam ate a linha. Nao ha acao propria a expor ao teclado. */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div className="flex flex-shrink-0 items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
         <Button variant="ghost" size="sm" className="hidden h-8 px-2.5 text-xs sm:inline-flex" onClick={onCopyUrl}>
           <Copy className="mr-1.5 h-3.5 w-3.5" />

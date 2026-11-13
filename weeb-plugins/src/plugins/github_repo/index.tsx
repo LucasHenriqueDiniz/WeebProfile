@@ -45,7 +45,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       <RenderGithubRepo config={config as GithubRepoConfig} data={data as GithubRepoData} style={style} size={size} />
     )
   },
-  calculateHeight: (config, data, size = "half") => {
+  calculateHeight: (config, data, _size = "half") => {
     const cfg = config as GithubRepoConfig
     const repo = data as GithubRepoData
     const isTerminal = (config as { style?: string }).style === "terminal"

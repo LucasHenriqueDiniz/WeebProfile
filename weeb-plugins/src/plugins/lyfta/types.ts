@@ -16,7 +16,7 @@ export interface LyftaExercise {
   exercise_id: number
   excercise_name: string
   exercise_type: string
-  exercise_image: string
+  exercise_image: string | null
   exercise_rest_time: number
   sets: LyftaSet[]
 }
@@ -43,7 +43,7 @@ export interface LyftaWorkoutSummary {
 export interface LyftaExerciseData {
   id: string
   name: string
-  image_name: string
+  image_name: string | null
   equipment_id: string
   body_part_id: string
   Target_muscles_id: string

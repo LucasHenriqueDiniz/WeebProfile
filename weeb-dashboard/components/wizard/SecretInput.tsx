@@ -33,7 +33,6 @@ interface SecretInputProps {
  * - realValue: o que será salvo (nunca pode ser placeholder)
  */
 export function SecretInput({
-  plugin,
   label,
   realValue,
   exists,

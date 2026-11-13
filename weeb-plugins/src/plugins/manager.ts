@@ -8,6 +8,7 @@ import { lyftaPlugin } from "./lyfta/index"
 import { myAnimeListPlugin } from "./myanimelist/index"
 import type { EssentialPluginConfig } from "./shared/types/base"
 import type { Plugin } from "./shared/types/plugin"
+import { withNormalizedOptions } from "./shared/plugin-options"
 import { steamPlugin } from "./steam/index"
 import { duolingoPlugin } from "./duolingo/index"
 import { codewarsPlugin } from "./codewars/index"
@@ -16,10 +17,19 @@ import { codeforcesPlugin } from "./codeforces/index"
 import { stackoverflowPlugin } from "./stackoverflow/index"
 import { websitesPlugin } from "./websites/index"
 
+/**
+ * The registry of plugins. One instance per isolate, shared by every request the
+ * Worker is serving at the same time, so it holds nothing that belongs to a request.
+ *
+ * It used to: initializeActivePlugins() stored the request's enabled plugins here and
+ * getActivePlugins() read them back. The renderer read them again after awaiting the
+ * plugins' fetchData, by which time another request could have replaced the list, and
+ * a plugin vanished from the card with no error. enabledPlugins() takes the request's
+ * config instead.
+ */
 export class PluginManager {
   private static instance: PluginManager
   private plugins: Map<string, Plugin> = new Map()
-  private activePlugins: Set<string> = new Set()
 
   private constructor() {
     // Registrar plugins disponíveis
@@ -49,9 +59,10 @@ export class PluginManager {
   public register<T extends PluginConfig = PluginConfig, D extends PluginData = PluginData>(
     plugin: Plugin<T, D>
   ): void {
-    // Type assertion necessário devido à estrutura genérica dos plugins
-    // Convertemos via unknown para permitir diferentes tipos de config
-    this.plugins.set(plugin.name, plugin as unknown as Plugin)
+    // Every caller -- the generator, the dashboard's preview, the debug tool -- reaches
+    // a plugin through here, so this is where its options get one shape (see
+    // shared/plugin-options.ts). The cast is for the plugins' differing config types.
+    this.plugins.set(plugin.name, withNormalizedOptions(plugin as unknown as Plugin))
   }
 
   public get(name: string): Plugin | undefined {
@@ -63,28 +74,15 @@ export class PluginManager {
   }
 
   /**
-   * Inicializa plugins ativos baseado na configuração
+   * The registered plugins this config enables, in the config's order.
    */
-  public initializeActivePlugins(pluginsConfig: Record<string, { enabled?: boolean }>): void {
-    this.activePlugins.clear()
-
+  public enabledPlugins(pluginsConfig: Record<string, { enabled?: boolean }>): Array<[string, Plugin]> {
+    const enabled: Array<[string, Plugin]> = []
     for (const [name, config] of Object.entries(pluginsConfig)) {
-      if (config.enabled && this.plugins.has(name)) {
-        this.activePlugins.add(name)
-      }
+      const plugin = this.plugins.get(name)
+      if (config?.enabled && plugin) enabled.push([name, plugin])
     }
-  }
-
-  /**
-   * Retorna lista de plugins ativos
-   */
-  public getActivePlugins(): Array<[string, Plugin]> {
-    return Array.from(this.activePlugins)
-      .map((name) => {
-        const plugin = this.plugins.get(name)
-        return plugin ? [name, plugin] : null
-      })
-      .filter((item): item is [string, Plugin] => item !== null)
+    return enabled
   }
 
   /**
@@ -138,11 +136,10 @@ export class PluginManager {
     essentialConfigs?: Record<string, EssentialPluginConfig>,
     previewMode = false
   ): Promise<Record<string, PluginData>> {
-    const activePlugins = this.getActivePlugins()
     const results: Record<string, PluginData> = {}
 
     await Promise.all(
-      activePlugins.map(async ([name, plugin]) => {
+      this.enabledPlugins(pluginsConfig).map(async ([name, plugin]) => {
         const config = pluginsConfig[name]
         if (config) {
           try {

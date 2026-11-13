@@ -1,11 +1,13 @@
 ﻿import type { PagesFunction } from "@cloudflare/workers-types"
 import type { CloudflareEnv } from "../_shared/auth"
 import { serverError } from "../_shared/auth"
+import { pruneErrorLog } from "../_shared/error-log"
 import { getDb } from "../_shared/db"
+import { nightsFrom, retryDelayNights } from "../_shared/regeneration-schedule"
 import { saveSvgToR2 } from "../_shared/storage"
 import { assertGenerationSucceeded } from "../_shared/svg-generation-validation"
 import { svgs } from "../../../lib/db/schema"
-import { eq, or, lte, isNull, and, sql, lt } from "drizzle-orm"
+import { eq, ne, or, lte, isNull, and, lt, asc } from "drizzle-orm"
 import { generateSvgViaService, convertSvgToPluginsConfig, getTerminalConfigs } from "../_shared/svg-generation"
 
 /**
@@ -24,6 +26,9 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
   try {
     const now = new Date()
     const db = getDb(env)
+
+    // Here because this is the one endpoint that runs every day. Never throws.
+    await pruneErrorLog(env, now)
 
     // Reset SVGs stuck in "generating" for more than 30 minutes
     const STUCK_TIMEOUT_MINUTES = 30
@@ -52,26 +57,21 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
 
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 
+    // Due: forced, new, or past its next_regeneration_at. A failed SVG is due only when
+    // its backoff has passed (see regeneration-schedule.ts); it used to be due always.
+    // Healthy SVGs first, then the most overdue, so a pile of broken cards cannot keep
+    // the working ones waiting.
     const svgsToGenerate = await db
       .select()
       .from(svgs)
       .where(
         and(
           eq(svgs.isPaused, false),
+          ne(svgs.status, "generating"),
           or(
-            eq(svgs.status, "pending"),
-            eq(svgs.status, "failed"),
             eq(svgs.forceRegenerate, true),
-            and(
-              or(
-                eq(svgs.status, "completed"),
-                eq(svgs.status, "failed"),
-                eq(svgs.status, "error"),
-                eq(svgs.status, "pending")
-              ),
-              sql`${svgs.nextRegenerationAt} IS NOT NULL`,
-              lte(svgs.nextRegenerationAt, now.toISOString())
-            ),
+            eq(svgs.status, "pending"),
+            lte(svgs.nextRegenerationAt, now.toISOString()),
             and(
               isNull(svgs.nextRegenerationAt),
               or(isNull(svgs.lastGeneratedAt), lte(svgs.lastGeneratedAt, twentyFourHoursAgo.toISOString()))
@@ -79,6 +79,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
           )
         )
       )
+      .orderBy(asc(svgs.failCount), asc(svgs.nextRegenerationAt))
       .limit(50)
 
     if (svgsToGenerate.length === 0) {
@@ -126,8 +127,6 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
 
         const { path: storagePath, url: storageUrl } = await saveSvgToR2(env, svg.id, svgContent)
 
-        const nextRegenerationAt = new Date(now.getTime() + 24 * 60 * 60 * 1000)
-
         await db
           .update(svgs)
           .set({
@@ -135,7 +134,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
             storagePath: storagePath || null,
             storageUrl: storageUrl || null,
             lastGeneratedAt: now.toISOString(),
-            nextRegenerationAt: nextRegenerationAt.toISOString(),
+            nextRegenerationAt: nightsFrom(now, 1),
             forceRegenerate: false,
             failCount: 0,
             lastError: null,
@@ -160,14 +159,18 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         if (errorCode) fullErrorMessage = `[${errorCode}] ${errorMessage}`
         if (errorDetails) fullErrorMessage += ` | Details: ${JSON.stringify(errorDetails)}`
 
-        const [currentSvg] = await db.select().from(svgs).where(eq(svgs.id, svg.id)).limit(1)
-
+        // Out of tonight's due set, and later each time it fails again. forceRegenerate
+        // is cleared too: it asked for one attempt, and a failed manual regenerate used
+        // to leave it on, which made the SVG due in every batch.
+        const failCount = (svg.failCount || 0) + 1
         await db
           .update(svgs)
           .set({
             status: "failed",
             lastError: fullErrorMessage,
-            failCount: (currentSvg?.failCount || 0) + 1,
+            failCount,
+            nextRegenerationAt: nightsFrom(now, retryDelayNights(failCount)),
+            forceRegenerate: false,
           })
           .where(eq(svgs.id, svg.id))
 

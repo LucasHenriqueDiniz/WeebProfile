@@ -305,12 +305,13 @@ export function AuthDecoration({ title, subtitle, children }: AuthDecorationProp
               {/* Footer */}
               <p className="text-[11px] text-center text-muted-foreground mt-7 leading-relaxed">
                 Ao continuar, você concorda com nossos{" "}
-                <a
-                  href="#"
-                  className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 decoration-cyan-400/40 transition-colors"
-                >
+                {/* TODO: nao existe pagina de termos. Enquanto nao existir, isto e
+                    texto, nao link: href="#" anuncia um destino a quem usa leitor de
+                    tela e teclado, e nao leva a lugar nenhum. Quando a pagina existir,
+                    voltar a ser <a href="/termos">. */}
+                <span className="text-cyan-400 underline underline-offset-2 decoration-cyan-400/40">
                   termos de serviço
-                </a>
+                </span>
                 .
               </p>
             </div>

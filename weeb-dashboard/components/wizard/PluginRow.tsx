@@ -55,6 +55,7 @@ export function PluginRow({ plugin, state, isSelected, missingConfigs, onSelect 
 
   return (
     <button
+      type="button"
       onClick={() => onSelect(plugin.name)}
       className={cn(
         "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-colors relative",
