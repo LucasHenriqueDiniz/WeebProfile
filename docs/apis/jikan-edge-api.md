@@ -103,6 +103,17 @@ gender, location, birthday, joinedAt, lastOnlineAt
 GET /v1/users/:username/statistics
 ```
 
+Campos por bucket:
+
+```text
+anime: watching, completed, onHold, dropped, planToWatch, totalEntries,
+       rewatched, episodesWatched, daysWatched, meanScore
+manga: reading, completed, onHold, dropped, planToRead, totalEntries,
+       reread, chaptersRead, volumesRead, daysRead, meanScore
+```
+
+Os contadores de status (`watching`…`totalEntries`) são sempre números; os demais são `number | null`. `mapStatistics()` em `weeb-plugins/src/plugins/myanimelist/services/profile.ts` consome exatamente esses nomes — um campo ausente na resposta vira `null` e o plugin renderiza `—` no lugar do valor.
+
 As estatísticas são lidas da página pública de perfil do MAL; elas não são recalculadas automaticamente a partir das listas. Isso evita apresentar dados derivados como se fossem a fonte oficial, mas diferenças pontuais devem ser reportadas.
 
 # 5. Listas e paginação
