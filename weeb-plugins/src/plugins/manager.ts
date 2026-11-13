@@ -8,6 +8,7 @@ import { lyftaPlugin } from "./lyfta/index"
 import { myAnimeListPlugin } from "./myanimelist/index"
 import type { EssentialPluginConfig } from "./shared/types/base"
 import type { Plugin } from "./shared/types/plugin"
+import { withNormalizedOptions } from "./shared/plugin-options"
 import { steamPlugin } from "./steam/index"
 import { duolingoPlugin } from "./duolingo/index"
 import { codewarsPlugin } from "./codewars/index"
@@ -58,9 +59,10 @@ export class PluginManager {
   public register<T extends PluginConfig = PluginConfig, D extends PluginData = PluginData>(
     plugin: Plugin<T, D>
   ): void {
-    // Type assertion necessário devido à estrutura genérica dos plugins
-    // Convertemos via unknown para permitir diferentes tipos de config
-    this.plugins.set(plugin.name, plugin as unknown as Plugin)
+    // Every caller -- the generator, the dashboard's preview, the debug tool -- reaches
+    // a plugin through here, so this is where its options get one shape (see
+    // shared/plugin-options.ts). The cast is for the plugins' differing config types.
+    this.plugins.set(plugin.name, withNormalizedOptions(plugin as unknown as Plugin))
   }
 
   public get(name: string): Plugin | undefined {
