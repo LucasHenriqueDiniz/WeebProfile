@@ -241,8 +241,8 @@ export default function SvgViewPage() {
       let errorTitle = t("toast.error")
 
       if (error instanceof ApiException) {
-        // Verificar se é um timeout do Vercel (serviço "acordando")
-        if (error.data.code === "VERCEL_TIMEOUT" || error.data.retryable) {
+        // The generator timed out (generate.ts answers 503 with retryable: true)
+        if (error.data.retryable) {
           errorTitle = t("toast.serviceStarting")
           errorMessage = error.data.message || t("toast.serviceStartingDescription")
         } else {
@@ -280,8 +280,8 @@ export default function SvgViewPage() {
       let errorTitle = t("toast.error")
 
       if (error instanceof ApiException) {
-        // Verificar se é um timeout do Vercel (serviço "acordando")
-        if (error.data.code === "VERCEL_TIMEOUT" || error.data.retryable) {
+        // The generator timed out (generate.ts answers 503 with retryable: true)
+        if (error.data.retryable) {
           errorTitle = t("toast.serviceStarting")
           errorMessage = error.data.message || t("toast.serviceStartingDescription")
         } else {
