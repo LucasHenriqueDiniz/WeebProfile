@@ -11,6 +11,7 @@ import type { EssentialPluginConfig } from "../shared/types/base"
 import type { LyftaConfig, LyftaData } from "./types"
 import { RenderLyfta } from "./components/RenderLyfta"
 import { fetchLyftaData } from "./services/fetchData"
+import { lyftaOptions } from "./selection"
 
 export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaData> = {
   name: "lyfta",
@@ -35,7 +36,7 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
     return <RenderLyfta config={config as LyftaConfig} data={data as LyftaData} style={style} size={size} />
   },
   calculateHeight: (config, data, size = "half") => {
-    const ne = (config as LyftaConfig).nonEssential || {}
+    const ne = lyftaOptions(config as LyftaConfig)
     const ld = data as LyftaData
     const isTerminal = (config as { style?: string }).style === "terminal"
 

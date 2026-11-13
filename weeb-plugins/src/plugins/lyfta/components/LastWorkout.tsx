@@ -7,6 +7,7 @@ import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWi
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
 import { formatWeight } from "../utils/weight"
+import { exerciseVolumes, lastWorkoutTopExercises, latestWorkout } from "../selection"
 
 // Format date as "DD/MM" (like example)
 const formatDate = (dateString: string): string => {
@@ -32,32 +33,15 @@ export function LastWorkout({ data, config, style = "default", size = "half" }: 
   const title = config.last_workout_title || "Latest Workout Session"
   const weightUnit = config.weight_unit || "kg"
   const showBodyWeight = config.last_workout_show_body_weight !== false
-  const maxExercises = config.last_workout_max_exercises || 5
 
-  // Ordena sem mutar o array original
-  const lastWorkout = [...data.workouts].sort(
-    (a, b) => new Date(b.workout_perform_date).getTime() - new Date(a.workout_perform_date).getTime()
-  )[0]
+  const lastWorkout = latestWorkout(data.workouts)
 
   if (!lastWorkout) {
     return <></>
   }
 
-  const exercisesWithVolume = lastWorkout.exercises.map((exercise) => {
-    const exerciseVolume = exercise.sets.reduce((acc, set) => {
-      if (set.weight && set.reps && set.is_completed) {
-        const weight = parseFloat(set.weight)
-        const reps = parseInt(set.reps, 10)
-        if (!isNaN(weight) && !isNaN(reps)) {
-          return acc + weight * reps // volume em kg (soma peso x reps)
-        }
-      }
-      return acc
-    }, 0)
-    return { exercise, volume: exerciseVolume }
-  })
-
-  const topExercises = exercisesWithVolume.sort((a, b) => b.volume - a.volume).slice(0, maxExercises)
+  const exercisesWithVolume = exerciseVolumes(lastWorkout)
+  const topExercises = lastWorkoutTopExercises(lastWorkout, config)
 
   const visibleExercises = topExercises.filter(({ volume }) => volume > 0)
 
