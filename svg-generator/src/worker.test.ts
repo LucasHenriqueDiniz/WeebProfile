@@ -35,6 +35,20 @@ async function post(body: unknown, e: Env = env()) {
   return { response, text, body: JSON.parse(text) as any }
 }
 
+/** Chaves AES-256 de teste e a cifra no formato que o dashboard grava: "v1." + iv + "." + ct. */
+const TEST_KEY = btoa(String.fromCharCode(...new Uint8Array(32).map((_, i) => i)))
+const OTHER_KEY = btoa(String.fromCharCode(...new Uint8Array(32).map((_, i) => 255 - i)))
+async function encryptForTest(plaintext: string, keyB64 = TEST_KEY): Promise<string> {
+  const raw = Uint8Array.from(atob(keyB64), (c) => c.charCodeAt(0))
+  const key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["encrypt"])
+  const iv = crypto.getRandomValues(new Uint8Array(12))
+  const ct = new Uint8Array(
+    await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(plaintext))
+  )
+  const b64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes))
+  return `v1.${b64(iv)}.${b64(ct)}`
+}
+
 /** Config mínima que gera de verdade, sem rede: dev usa os dados mock do plugin. */
 const validRequest = (extra: Record<string, unknown> = {}) => ({
   style: "default",
@@ -212,7 +226,47 @@ describe("POST / — segredos", () => {
     )
 
     expect(response.status).toBe(503)
-    expect(body.code).toBe("D1_UNREACHABLE")
+    // Era D1_UNREACHABLE: apontava para o banco quando o que falta é a chave.
+    expect(body.code).toBe("SECRETS_UNREADABLE")
+  })
+
+  // Uma linha que não decifra, de um plugin que nem está no card, derrubava a geração
+  // inteira com 503 -- todos os cards do usuário paravam.
+  it("gera normalmente quando só um segredo, de outro plugin, não decifra", async () => {
+    const { response, body } = await post(
+      validRequest({ userId: "user_1" }),
+      env({
+        DB: db([
+          { plugin: "steam", key: "apikey", value: "v1.corrompido.xx" },
+          { plugin: "lastfm", key: "apikey", value: await encryptForTest("ok") },
+        ]),
+        SECRETS_ENCRYPTION_KEY: TEST_KEY,
+      })
+    )
+
+    expect(response.status).toBe(200)
+    expect(body.success).toBe(true)
+    const warned = consoleSpies.warn.mock.calls
+      .map(([line]) => String(line))
+      .filter((line) => line.startsWith("{"))
+      .map((line) => JSON.parse(line))
+    expect(warned).toContainEqual(
+      expect.objectContaining({ event: "secrets.undecryptable", plugin: "steam", name: "apikey" })
+    )
+    expect(JSON.stringify(warned)).not.toContain("corrompido")
+  })
+
+  it("responde SECRETS_UNREADABLE quando nenhum segredo decifra (chave errada)", async () => {
+    const { response, body } = await post(
+      validRequest({ userId: "user_1" }),
+      env({
+        DB: db([{ plugin: "steam", key: "apikey", value: await encryptForTest("ok") }]),
+        SECRETS_ENCRYPTION_KEY: OTHER_KEY,
+      })
+    )
+
+    expect(response.status).toBe(503)
+    expect(body.code).toBe("SECRETS_UNREADABLE")
   })
 
   it("não devolve detalhe do erro do D1 contendo o userId", async () => {

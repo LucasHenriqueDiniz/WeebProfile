@@ -18,6 +18,18 @@ interface PluginSecretRow {
 }
 
 /**
+ * The user's secrets exist but cannot be read: the encryption key is missing, or it
+ * does not decrypt any of them. A configuration fault of the generator, told apart
+ * from D1 being unreachable so the 503 names the right thing.
+ */
+export class SecretsUnreadableError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "SecretsUnreadableError"
+  }
+}
+
+/**
  * Fetches a user's plugin secrets (API keys, tokens, etc.) from the
  * `plugin_secrets` table in Cloudflare D1, via the Worker's D1 binding.
  */
@@ -33,7 +45,7 @@ export async function getUserEssentialConfigs(
   // as a plugin failing on a nonsense credential rather than as the config error
   // it actually is.
   if (!encryptionKey) {
-    throw new Error("SECRETS_ENCRYPTION_KEY is not configured; cannot read plugin secrets")
+    throw new SecretsUnreadableError("SECRETS_ENCRYPTION_KEY is not configured; cannot read plugin secrets")
   }
 
   // No catch here: a failure propagates to handleGenerate, which logs it as
@@ -45,12 +57,36 @@ export async function getUserEssentialConfigs(
     .all<PluginSecretRow>()
 
   const result: EssentialConfigs = {}
+  const unreadable: Array<{ plugin: string; name: string; reason: string }> = []
+  let stored = 0
   for (const row of results) {
     const pluginName = (row.plugin || "").toLowerCase()
     const key = (row.key || "").toLowerCase()
     if (!pluginName || !key) continue
-    if (!result[pluginName]) result[pluginName] = {}
-    result[pluginName]![key] = await decryptSecret(row.value, encryptionKey)
+    stored++
+    try {
+      const value = await decryptSecret(row.value, encryptionKey)
+      if (!result[pluginName]) result[pluginName] = {}
+      result[pluginName]![key] = value
+    } catch (error) {
+      // One row that does not decrypt used to fail this whole read, so every card of
+      // the user stopped -- whichever plugin the row belonged to, a disabled one
+      // included -- under a 503 that blamed D1. It now counts as not configured: a
+      // plugin that needs it reports the secret as missing, which the user can fix by
+      // entering it again, and the other plugins are not affected.
+      unreadable.push({ plugin: pluginName, name: key, reason: error instanceof Error ? error.message : String(error) })
+    }
+  }
+
+  for (const row of unreadable) {
+    log.warn("secrets.undecryptable", row)
+  }
+  // Not one of them decrypts: that is the key, not a row (the dashboard and the
+  // generator holding different SECRETS_ENCRYPTION_KEY values, say).
+  if (stored > 0 && unreadable.length === stored) {
+    throw new SecretsUnreadableError(
+      `None of the user's ${stored} stored secret(s) decrypts with SECRETS_ENCRYPTION_KEY (first: ${unreadable[0]!.reason})`
+    )
   }
 
   // Alias resolution: if a plugin (e.g. "github_repo") has no secret of its own,

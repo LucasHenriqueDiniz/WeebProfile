@@ -102,7 +102,7 @@ export async function fetchLastFmData(
     }
 
     // Chamar API real do LastFM
-    console.log(`[LastFM] Fetching real data from LastFM API for user: ${essentialConfig.username}`)
+    console.log("[LastFM] Fetching real data from the Last.fm API")
     const { fetchLastFmDataFromApi } = await import("./fetchLastFmApi.js")
 
     const apiData = await fetchLastFmDataFromApi(essentialConfig.apiKey, essentialConfig.username, {
