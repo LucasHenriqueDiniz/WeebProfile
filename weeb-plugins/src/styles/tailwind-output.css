@@ -1087,10 +1087,6 @@
   background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
 }
 
-.bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
-}
-
 .bg-yellow-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1))

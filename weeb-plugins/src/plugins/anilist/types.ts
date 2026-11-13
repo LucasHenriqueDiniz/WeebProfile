@@ -56,6 +56,6 @@ export interface AniListData {
   statistics: AniListStatistics
   favoritesAnime: AniListMedia[]
   currentlyWatching: AniListWatchingEntry[]
-  /** Preenchido quando a busca falha; RenderAniList troca o card por PluginError. */
+  /** Preenchido quando a busca falha. O gerador trata como falha do plugin (react-renderer.tsx), e o preview do dashboard também (PreviewRenderer). */
   _error?: string
 }

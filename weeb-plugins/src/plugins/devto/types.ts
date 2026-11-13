@@ -64,6 +64,6 @@ export interface DevToData {
    */
   recentArticles: DevToArticle[]
   topTags: DevToTag[]
-  /** Preenchido quando a busca falha; RenderDevTo troca o card por PluginError. */
+  /** Preenchido quando a busca falha. O gerador trata como falha do plugin (react-renderer.tsx), e o preview do dashboard também (PreviewRenderer). */
   _error?: string
 }

@@ -4,7 +4,13 @@ import React, { Component, ReactNode } from "react"
 
 interface PluginErrorBoundaryProps {
   pluginName: string
-  children: ReactNode
+  children?: ReactNode
+  /**
+   * A failure the plugin reported as data (`_error`) rather than by throwing. Shown
+   * with the same fallback as a render error, the way the generator turns `_error`
+   * into its own error box.
+   */
+  reportedError?: string
 }
 
 interface PluginErrorBoundaryState {
@@ -37,7 +43,9 @@ export class PluginErrorBoundary extends Component<PluginErrorBoundaryProps, Plu
   }
 
   render() {
-    if (this.state.hasError) {
+    const { reportedError } = this.props
+    const message = this.state.error?.message ?? reportedError
+    if (this.state.hasError || reportedError) {
       return (
         <div className="p-4 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950/20">
           <div className="flex items-start gap-3">
@@ -60,18 +68,19 @@ export class PluginErrorBoundary extends Component<PluginErrorBoundaryProps, Plu
               <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
                 Plugin {this.props.pluginName} falhou ao renderizar
               </h3>
-              {this.state.error && (
-                <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                  {this.state.error.message || "Erro desconhecido"}
-                </p>
+              {(this.state.error || reportedError) && (
+                <p className="mt-1 text-xs text-red-600 dark:text-red-400">{message || "Erro desconhecido"}</p>
               )}
-              <button
-                type="button"
-                onClick={this.handleRetry}
-                className="mt-2 text-xs font-medium text-red-700 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200 underline"
-              >
-                Tentar novamente
-              </button>
+              {/* Retrying re-renders the children; a reported error comes from the data and would only show again. */}
+              {this.state.hasError && (
+                <button
+                  type="button"
+                  onClick={this.handleRetry}
+                  className="mt-2 text-xs font-medium text-red-700 dark:text-red-300 hover:text-red-800 dark:hover:text-red-200 underline"
+                >
+                  Tentar novamente
+                </button>
+              )}
             </div>
           </div>
         </div>
