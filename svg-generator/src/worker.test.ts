@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import type { D1Database } from "@cloudflare/workers-types"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import worker, { type Env } from "./worker"
+import { PLUGIN_ERROR_HEIGHT } from "./components/PluginError"
 
 /**
  * O `POST /` é o serviço inteiro: tudo o que o dashboard consome passa por aqui.
@@ -545,5 +546,33 @@ describe("POST / — plugin que devolve o erro como dado", () => {
     expect(response.status).toBe(200)
     expect(body.hasErrors).toBe(true)
     expect(body.pluginErrors.devto).toBe('Dev.to user "someone" not found.')
+  })
+})
+
+describe("POST / — altura de um plugin que falhou", () => {
+  // calculateTotalHeight pula plugin sem dados, então a caixa de erro era desenhada em
+  // 0px: invisível no SVG.
+  it("reserva a altura da caixa de erro", async () => {
+    vi.spyOn(PluginManager.getInstance().get("devto")!, "fetchData").mockRejectedValue(new Error("upstream down"))
+    const alone = (await post(validRequest())).body
+
+    expect(alone.hasErrors).toBe(true)
+    expect(alone.height).toBe(PLUGIN_ERROR_HEIGHT + 24)
+  })
+
+  it("soma a caixa à altura dos plugins que deram certo", async () => {
+    const codewars = { codewars: { enabled: true, sections: ["rank_honor"], username: "someone" } }
+    const healthy = (await post(validRequest({ plugins: codewars }))).body
+
+    vi.spyOn(PluginManager.getInstance().get("devto")!, "fetchData").mockRejectedValue(new Error("upstream down"))
+    const mixed = (
+      await post(
+        validRequest({
+          plugins: { ...codewars, devto: { enabled: true, sections: ["profile"], username: "someone" } },
+        })
+      )
+    ).body
+
+    expect(mixed.height).toBe(healthy.height + PLUGIN_ERROR_HEIGHT)
   })
 })
