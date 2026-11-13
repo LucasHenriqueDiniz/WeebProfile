@@ -531,3 +531,19 @@ describe("POST / — um plugin cujo componente quebra", () => {
     expect(body.pluginErrors.devto).toBeUndefined()
   })
 })
+
+describe("POST / — plugin que devolve o erro como dado", () => {
+  // AniList e Dev.to devolvem `_error` em vez de lançar, e desenham a própria caixa de
+  // erro. O card saía com hasErrors=false e era publicado por cima do último bom.
+  it("conta como falha do plugin, para o dashboard não publicar", async () => {
+    vi.spyOn(PluginManager.getInstance().get("devto")!, "fetchData").mockResolvedValue({
+      _error: 'Dev.to user "someone" not found.',
+    } as never)
+
+    const { response, body } = await post(validRequest())
+
+    expect(response.status).toBe(200)
+    expect(body.hasErrors).toBe(true)
+    expect(body.pluginErrors.devto).toBe('Dev.to user "someone" not found.')
+  })
+})

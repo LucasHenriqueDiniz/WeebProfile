@@ -139,6 +139,12 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
           // Use config.dev explicitly (already normalized from normalizeConfig)
           const useDev = config.dev === true
           const data = await plugin.fetchData(pluginConfig, useDev, essentialConfig)
+          // Some plugins (AniList, Dev.to) report a failure as data -- `_error`, for a
+          // missing user, a rate limit, a timeout -- and draw their own error box from
+          // it. That reached here as a success: hasErrors stayed false and the dashboard
+          // published the error box over the user's last good card.
+          const reported = (data as { _error?: unknown } | null | undefined)?._error
+          if (typeof reported === "string" && reported) throw new Error(reported)
           pluginsData[name] = data
         } catch (error) {
           log.error("plugin.fetch_failed", {
