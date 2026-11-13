@@ -3,6 +3,7 @@
  */
 
 import { ApiError, ConfigError } from "./errors"
+import { USER_AGENT } from "../../../utils/user-agent"
 
 /**
  * Opções para requisições de API
@@ -53,6 +54,7 @@ async function requestWithRetry<T>(
         method,
         headers: {
           "Content-Type": "application/json",
+          "User-Agent": USER_AGENT,
           ...headers,
         },
         body: body ? JSON.stringify(body) : undefined,

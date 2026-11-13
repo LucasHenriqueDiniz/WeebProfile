@@ -91,11 +91,10 @@ export async function fetchStackOverflowData(config: StackOverflowConfig, dev = 
 
   try {
     // Buscar informações do usuário
-    const userParams = buildQueryString({
-      ids: userId,
-      site: SITE,
-    })
-    const userUrl = `${STACKEXCHANGE_API_BASE}/users${userParams}`
+    // The ids go in the path. `/users?ids=` is the "all users" listing, which ignores
+    // `ids` and returns the site's top users by reputation: every card got Jon Skeet.
+    const userParams = buildQueryString({ site: SITE })
+    const userUrl = `${STACKEXCHANGE_API_BASE}/users/${userId}${userParams}`
     const userResponse = await fetchJson<StackExchangeApiResponse<StackOverflowUser>>(userUrl)
 
     if (!userResponse.items || userResponse.items.length === 0) {
@@ -108,15 +107,16 @@ export async function fetchStackOverflowData(config: StackOverflowConfig, dev = 
     }
 
     // Buscar tags do usuário (top tags)
+    // Built as `/tags&ids=...`, with no `?`, this was a 400 ("no method found with this
+    // name") for every user, so the plugin failed every time.
     const tagsParams = buildQueryString({
-      ids: userId,
       site: SITE,
       order: "desc",
       sort: "popular",
       page: 1,
       pagesize: 10,
     })
-    const tagsUrl = `${STACKEXCHANGE_API_BASE}/users/${userId}/tags${tagsParams.replace(/^\?/, "&")}`
+    const tagsUrl = `${STACKEXCHANGE_API_BASE}/users/${userId}/tags${tagsParams}`
     const tagsResponse = await fetchJson<StackExchangeApiResponse<StackOverflowTagResponse>>(tagsUrl)
 
     const topTags: StackOverflowTag[] = (tagsResponse.items || []).map((tag) => ({
