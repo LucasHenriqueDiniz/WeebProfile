@@ -102,39 +102,9 @@ jobs:
         working-directory: weeb-plugins
         run: pnpm validate-config-options
 
-  # O dashboard já sobe sozinho pela integração git do Cloudflare Pages; o gerador
-  # é um Worker e ficava só no `wrangler deploy` manual. Isso criava uma janela em
-  # que o dashboard, recém-deployado, chamava uma rota que o gerador ainda não tinha
-  # -- aconteceu em 15/08/2026 com o /steam/resolve-vanity.
-  deploy-generator:
-    name: Deploy svg-generator
-    runs-on: ubuntu-latest
-    # Só main, e só depois dos testes passarem: o gerador não tem preview
-    # environment, então o que sobe aqui é produção direto.
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [quality, plugins]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      # O worker importa @weeb/weeb-plugins pelo dist/, igual ao typecheck.
-      - name: Build weeb-plugins
-        run: pnpm build:deps
-
-      - uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: svg-generator
-        # Os secrets do worker (STEAM_API_KEY, CRON_SECRET, SECRETS_ENCRYPTION_KEY)
-        # não são tocados por um deploy: continuam os que já estão lá.
+  # Sem job de deploy: o dashboard sobe pela integração git do Cloudflare Pages e o
+  # gerador pelo Workers Builds, a mesma integração para Workers (configuração no
+  # AGENTS.md, seção "Deploy do gerador"). O job que existia aqui rodava o
+  # wrangler-action e dependia de um CLOUDFLARE_API_TOKEN nos secrets do repo, que
+  # não estava cadastrado: falhou nos 19 pushes na main entre 15/08 e 13/11/2026,
+  # sem nenhum sucesso, e o gerador ficou esse tempo todo sem receber código.
