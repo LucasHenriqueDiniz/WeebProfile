@@ -17,7 +17,14 @@ export default defineConfig({
   format: ["esm"],
   dts: true,
   bundle: true, // Explicitly enable bundling
-  splitting: false, // Each entrypoint is self-contained, no internal relative imports
+  // Code shared between entry points goes into one chunk instead of being copied
+  // into each of them. Without it, plugins/* and styles/* each carried a full copy
+  // of every plugin (and a PluginManager singleton of their own), so the dashboard
+  // preview, which imports both, shipped the plugin code twice. The generator is
+  // not affected either way: its tsconfig paths resolve this package to src/.
+  // Chunk imports are relative with a .js extension, which verify-no-relative-imports
+  // accepts.
+  splitting: true,
   sourcemap: true,
   clean: true,
   target: "es2022",
