@@ -3,6 +3,11 @@
 Escrito em 15/08/2026, depois de o login em produção falhar de forma reproduzível.
 Ver a task "Clerk em instância de DEV em produção" no Todoist.
 
+Revisado em 13/11/2026: o checklist não trocava a chave que o **frontend** usa
+(`VITE_CLERK_PUBLISHABLE_KEY`), o remapeamento esquecia `templates` e `template_likes`,
+e a autenticação do dashboard mudou (PRs #11 e #12), o que muda o sintoma de uma
+virada malfeita — ver o passo 7.
+
 ## Por que
 
 `weebprofile-dashboard.pages.dev` roda hoje uma instância **de desenvolvimento** do
@@ -59,12 +64,26 @@ Este é o item que morde de verdade, e não é óbvio.
 como texto. Uma instância nova emite IDs novos. Então, no primeiro login na instância de
 produção, você volta como usuário inédito — e os dados atuais ficam órfãos:
 
-| tabela           | linhas hoje | o que acontece                                        |
-| ---------------- | ----------- | ----------------------------------------------------- |
-| `profiles`       | 2           | órfãos, ninguém mais loga como esses IDs              |
-| `svgs`           | 3           | órfãos — e as URLs públicas deles já estão em READMEs |
-| `plugin_secrets` | 0           | nada a perder                                         |
-| `templates`      | —           | conferir antes, mesma questão de `user_id`            |
+| tabela              | linhas em 15/08 | o que acontece                                                  |
+| ------------------- | --------------- | --------------------------------------------------------------- |
+| `profiles`          | 2               | órfãos, ninguém mais loga como esses IDs                        |
+| `svgs`              | 3               | órfãos — e as URLs públicas deles já estão em READMEs           |
+| `plugin_secrets`    | 0               | nada a perder                                                   |
+| `templates`         | —               | o dono deixa de ver e editar os próprios templates              |
+| `template_likes`    | —               | os likes antigos deixam de aparecer como "curtido"              |
+| `generation_starts` | —               | irrelevante: só guarda a última regeração manual (piso de 20 s) |
+
+Os números são de agosto. Para ver os de hoje, por dono (só leitura):
+
+```bash
+cd weeb-dashboard && pnpm exec wrangler d1 execute weebprofile-db --remote --command "
+SELECT user_id,
+  (SELECT COUNT(*) FROM svgs s WHERE s.user_id = p.user_id) AS svgs,
+  (SELECT COUNT(*) FROM plugin_secrets k WHERE k.user_id = p.user_id) AS secrets,
+  (SELECT COUNT(*) FROM templates t WHERE t.user_id = p.user_id) AS templates,
+  (SELECT COUNT(*) FROM template_likes l WHERE l.user_id = p.user_id) AS likes
+FROM profiles p"
+```
 
 Os SVGs continuam sendo **servidos** (o `GET /api/svg/[id]` lê do R2 e não exige sessão),
 então nada quebra para quem já colou o markdown. Mas você perde a capacidade de editá-los
@@ -77,13 +96,34 @@ pelo dashboard, e o cron continua regenerando SVGs de um dono que não existe ma
 SELECT user_id, created_at FROM profiles ORDER BY created_at DESC LIMIT 5;
 
 -- 2. Apontar os dados antigos para ele. Substituir os dois valores.
+--    Rodar logo depois do primeiro login, ANTES de configurar qualquer coisa na conta
+--    nova: plugin_secrets é UNIQUE por (user_id, plugin, key) e template_likes por
+--    (user_id, template_id), então um segredo ou like já criado com o ID novo faz o
+--    UPDATE falhar por conflito.
 UPDATE svgs            SET user_id = '<ID_NOVO>' WHERE user_id = '<ID_ANTIGO>';
 UPDATE plugin_secrets  SET user_id = '<ID_NOVO>' WHERE user_id = '<ID_ANTIGO>';
+UPDATE templates       SET user_id = '<ID_NOVO>' WHERE user_id = '<ID_ANTIGO>';
+UPDATE template_likes  SET user_id = '<ID_NOVO>' WHERE user_id = '<ID_ANTIGO>';
+DELETE FROM generation_starts WHERE user_id = '<ID_ANTIGO>';
 
 -- 3. O profile antigo vira duplicata: apagar o antigo, não o novo.
 --    (profiles.user_id é UNIQUE, então não dá para só dar UPDATE.)
 DELETE FROM profiles WHERE user_id = '<ID_ANTIGO>';
 ```
+
+Salvar os passos 2 e 3 num arquivo e rodar de uma vez, conferindo antes e depois com a
+consulta de contagem acima:
+
+```bash
+cd weeb-dashboard && pnpm exec wrangler d1 execute weebprofile-db --remote --file remap.sql
+```
+
+Testado num D1 local em 13/11/2026: moveu SVGs, segredos, templates e likes para o ID
+novo e apagou o perfil antigo. Com um like já feito pela conta nova no mesmo template, o
+arquivo falhou com `UNIQUE constraint failed: template_likes.user_id,
+template_likes.template_id` e **nada** mudou (localmente o `--file` foi tudo ou nada; não
+achei isso garantido para o `--remote` na doc, por isso a contagem antes e depois). Se
+acontecer: apagar a linha duplicada da conta nova e rodar de novo.
 
 Com 2 perfis e 3 SVGs isso é trivial. Fica caro se esperarmos crescer.
 
@@ -110,17 +150,33 @@ ambiente de fato.
    nome da **sua** aplicação, não "Clerk Development & Staging Instances" — esse é o
    sinal de que deu certo.
 
-5. **Secret de produção.** A chave secreta é `sk_live_...`:
+5. **Chaves de produção no Pages.** São duas, e as duas ficam fora do repo, no ambiente
+   de produção do projeto `weebprofile-dashboard`:
 
    ```bash
-   cd weeb-dashboard && npx wrangler pages secret put CLERK_SECRET_KEY
+   cd weeb-dashboard
+   pnpm exec wrangler pages secret put CLERK_SECRET_KEY            # sk_live_...
+   pnpm exec wrangler pages secret put VITE_CLERK_PUBLISHABLE_KEY  # pk_live_...
    ```
 
-6. **Trocar as chaves públicas no `wrangler.toml`.** Ver o checklist de código abaixo.
+   A `VITE_CLERK_PUBLISHABLE_KEY` é a que o **frontend** usa: o Vite a embute no build
+   (`src/main.tsx`). Hoje ela está lá como secret, com a `pk_test_`. Se só a do
+   `wrangler.toml` mudar, o navegador continua pegando token da instância de dev.
+
+6. **Trocar a chave pública no `wrangler.toml`.** Ver o checklist de código abaixo.
    Deploy. Esta é a virada.
 
 7. **Verificar.** Entrar em produção, num navegador com bloqueio de cookies de terceiros
-   ligado (Brave serve — foi onde falhou). `window.Clerk.session` precisa existir.
+   ligado (Brave serve — foi onde falhou). `window.Clerk.session` precisa existir, e uma
+   chamada logada (abrir o dashboard) precisa responder 200.
+
+   Se o login funciona mas **toda** chamada da API volta 401, frontend e backend estão
+   em instâncias diferentes: o token foi emitido por uma e validado com as chaves da
+   outra (`jwk-kid-mismatch`). Conferir que `VITE_CLERK_PUBLISHABLE_KEY`,
+   `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` e `CLERK_SECRET_KEY` são todas da instância de
+   produção. Se em vez disso aparecer 500, o motivo está no `error_log`
+   (`pnpm --filter weeb-dashboard logs:errors`): a autenticação não engole mais erro de
+   configuração do Clerk.
 
 8. **Remapear os dados** com o SQL do bloqueio 3.
 
@@ -135,15 +191,23 @@ para preview. Hoje os dois têm a mesma `pk_test_` literal.
 
 - [ ] `weeb-dashboard/wrangler.toml:40` — `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` → `pk_live_...`
 - [ ] `weeb-dashboard/wrangler.toml:45` — `[env.preview]` **continua** com `pk_test_`
-- [ ] `wrangler pages secret put CLERK_SECRET_KEY` com `sk_live_` (produção)
+- [ ] Pages, produção: `CLERK_SECRET_KEY` → `sk_live_` (passo 5)
+- [ ] Pages, produção: `VITE_CLERK_PUBLISHABLE_KEY` → `pk_live_` (passo 5) — fora do repo, fácil de esquecer
 
 Se o domínio mudar junto, estes apontam para `pages.dev` e ficam obsoletos:
 
-- [ ] `svg-generator/wrangler.toml:51` — `DASHBOARD_URL`
+- [ ] `svg-generator/wrangler.toml:61` — `DASHBOARD_URL`
 - [ ] `weeb-dashboard/.env.example:34` e `AGENTS.md:242` — `NEXT_PUBLIC_SITE_URL`
 - [ ] `README.md:19` e `docs/plugins.md:8`
 - [ ] `scripts/generate-plugins-doc.ts:87` — regenera `docs/plugins.md`, mudar aqui também
 - [ ] `weeb-plugins/src/plugins/websites/services/site-meta.ts:15` — User-Agent
+
+### Preview
+
+O ambiente de preview do Pages (cada PR) não tem `CLERK_SECRET_KEY` nem
+`VITE_CLERK_PUBLISHABLE_KEY`, então login nunca funcionou lá — as páginas públicas
+funcionam desde o PR #12. Ele também usa o **mesmo D1 de produção**: um PR com bug de
+escrita mexe em dados reais. Nenhum dos dois muda com esta migração; ficam anotados.
 
 Não precisa mexer: `functions/api/_shared/return-to.ts` compara **origin** em vez de
 prefixo, então acompanha o domínio novo sozinho. O `steam-openid.ts` monta as URLs a
@@ -153,8 +217,9 @@ partir do request. Ambos já têm teste.
 
 ## Rollback
 
-Reverter o `wrangler.toml` para `pk_test_`, refazer o `wrangler pages secret put
-CLERK_SECRET_KEY` com a chave de dev, e deployar. A instância de dev continua existindo —
+Reverter o `wrangler.toml` para `pk_test_`, refazer os dois `wrangler pages secret put`
+do passo 5 (`CLERK_SECRET_KEY` e `VITE_CLERK_PUBLISHABLE_KEY`) com as chaves de dev, e
+deployar. A instância de dev continua existindo —
 criar a de produção não a destrói.
 
 Se o remapeamento de `user_id` já tiver rodado, ele precisa ser desfeito na mão (trocar
