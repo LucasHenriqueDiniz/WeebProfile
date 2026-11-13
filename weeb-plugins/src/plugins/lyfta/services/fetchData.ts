@@ -7,6 +7,9 @@ import { displayedImageUrls } from "../selection"
 import { getMockLyftaData } from "./mock-data"
 import { embedImageOrNull as embedImage } from "../../../utils/image-to-base64"
 
+// Each upstream call is bounded: they had none, so a hung API held the whole generation.
+const LYFTA_TIMEOUT_MS = 10_000
+
 const LYFTA_IMAGE_MAX_BYTES = 250_000
 
 async function embedImageOrNull(image: string): Promise<string | null> {
@@ -24,7 +27,6 @@ export async function fetchLyftaData(
 ): Promise<LyftaData> {
   // Em modo dev ou preview, retornar dados mock
   if (dev || previewMode) {
-    console.log("[Lyfta] Using mock data (dev mode or preview mode)")
     const mockData = await getMockLyftaData()
 
     // Em modo preview, manter URLs originais (não converter para base64)
@@ -47,6 +49,7 @@ export async function fetchLyftaData(
 
   // Fetch workouts
   const workoutsResponse = await fetch(`${BASE_URL}/api/v1/workouts?limit=100&page=1`, {
+    signal: AbortSignal.timeout(LYFTA_TIMEOUT_MS),
     headers: {
       Authorization: `Bearer ${apiKey}`,
     },
@@ -64,6 +67,7 @@ export async function fetchLyftaData(
   let exercises: LyftaExerciseData[] = []
   if (sections.has("exercises")) {
     const exercisesResponse = await fetch(`${BASE_URL}/api/v1/exercises`, {
+      signal: AbortSignal.timeout(LYFTA_TIMEOUT_MS),
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },

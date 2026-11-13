@@ -1,6 +1,7 @@
 import { embedImageOrNull } from "../../../utils/image-to-base64"
 import type { DevToArticle, DevToData, DevToTag } from "../types"
 import { getMockDevToData } from "./mock-data"
+import { USER_AGENT } from "../../../utils/user-agent"
 
 const BASE_URL = "https://dev.to/api"
 const AVATAR_MAX_BYTES = 100_000
@@ -31,7 +32,7 @@ interface DevToApiArticle {
 
 async function request(path: string, signal: AbortSignal): Promise<Response> {
   return fetch(`${BASE_URL}${path}`, {
-    headers: { Accept: "application/vnd.forem.api-v1+json" },
+    headers: { Accept: "application/vnd.forem.api-v1+json", "User-Agent": USER_AGENT },
     signal,
   })
 }

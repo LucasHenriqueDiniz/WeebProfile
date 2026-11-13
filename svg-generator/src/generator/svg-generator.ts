@@ -19,6 +19,7 @@ import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import type { SvgConfig, SvgGenerationResult } from "../types/index.js"
 import { loadCss } from "./css-loader.js"
 import { renderPlugins } from "../renderer/react-renderer.js"
+import { PLUGIN_ERROR_HEIGHT } from "../components/PluginError.js"
 import { createSvgContainer } from "../renderer/template-renderer.js"
 
 /**
@@ -33,8 +34,13 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
   // 1. Render plugins (do this once only)
   const { element: pluginsContent, pluginsConfig, pluginsData, pluginsErrors } = await renderPlugins(config)
 
-  // 2. Calculate height by summing each enabled plugin's calculateHeight()
-  const height = PluginManager.getInstance().calculateTotalHeight(pluginsConfig, pluginsData, config.size)
+  // 2. Calculate height by summing each enabled plugin's calculateHeight(), plus the
+  // error box of each plugin that failed: calculateTotalHeight skips a plugin with no
+  // data, which drew its PluginError in 0px.
+  const pluginsHeight = PluginManager.getInstance().calculateTotalHeight(pluginsConfig, pluginsData, config.size)
+  const errorsHeight = Object.keys(pluginsErrors).length * PLUGIN_ERROR_HEIGHT
+  // calculateTotalHeight adds its 24px safety pad only when something rendered.
+  const height = pluginsHeight + errorsHeight + (pluginsHeight === 0 && errorsHeight > 0 ? 24 : 0)
 
   log.debug("height_calculated", { height })
 

@@ -1037,6 +1037,10 @@ export const PLUGINS_METADATA = {
               .join(",\n")
 
             sectionStr += `,\n        configOptions: [\n${configOptionsStr}\n        ]`
+          } else {
+            // Always present, even empty: the dashboard reads section.configOptions on
+            // every section, and one without the key breaks the union type it reads.
+            sectionStr += `,\n        configOptions: []`
           }
 
           sectionStr += "\n      }"

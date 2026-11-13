@@ -972,19 +972,6 @@ export const PLUGINS_METADATA = {
             description: "plugins.duolingo.sections.languages_learning.config.languages_learning_max.description",
             tooltip: "plugins.duolingo.sections.languages_learning.config.languages_learning_max.tooltip"
           }
-        },
-        {
-          key: "languages_learning_hide_languages",
-          label: "Hide languages",
-          type: "array",
-          defaultValue: [],
-          description: "List of language names to hide (e.g., Japanese, French)",
-          tooltip: "List of language names you want to hide from display. Type the exact language name (e.g., 'Japanese', 'French', 'Spanish') and press Enter to add.",
-          i18nKey: {
-            label: "plugins.duolingo.sections.languages_learning.config.languages_learning_hide_languages.label",
-            description: "plugins.duolingo.sections.languages_learning.config.languages_learning_hide_languages.description",
-            tooltip: "plugins.duolingo.sections.languages_learning.config.languages_learning_hide_languages.tooltip"
-          }
         }
         ]
       }
@@ -1037,36 +1024,7 @@ export const PLUGINS_METADATA = {
           name: "plugins.github.sections.profile.name",
           description: "plugins.github.sections.profile.description"
         },
-        configOptions: [
-        {
-          key: "profile_hide_title",
-          label: "Hide title",
-          type: "boolean",
-          defaultValue: false,
-          i18nKey: {
-            label: "plugins.github.sections.profile.config.profile_hide_title.label"
-          }
-        },
-        {
-          key: "profile_title",
-          label: "Title",
-          type: "string",
-          defaultValue: "Profile",
-          i18nKey: {
-            label: "plugins.github.sections.profile.config.profile_title.label",
-            defaultValue: "plugins.github.sections.profile.config.profile_title.defaultValue"
-          }
-        },
-        {
-          key: "profile_hide_avatar",
-          label: "Hide avatar",
-          type: "boolean",
-          defaultValue: false,
-          i18nKey: {
-            label: "plugins.github.sections.profile.config.profile_hide_avatar.label"
-          }
-        }
-        ]
+        configOptions: []
       },
       {
         id: "activity",
@@ -1133,22 +1091,6 @@ export const PLUGINS_METADATA = {
           defaultValue: false,
           i18nKey: {
             label: "plugins.github.sections.repositories.config.repositories_use_private.label"
-          }
-        },
-        {
-          key: "repositories_max",
-          label: "Maximum repositories",
-          type: "number",
-          defaultValue: 5,
-          min: 1,
-          max: 20,
-          step: 1,
-          description: "Maximum 20 repositories",
-          tooltip: "Maximum number of repositories to display. Repositories are ordered by stars (most starred first).",
-          i18nKey: {
-            label: "plugins.github.sections.repositories.config.repositories_max.label",
-            description: "plugins.github.sections.repositories.config.repositories_max.description",
-            tooltip: "plugins.github.sections.repositories.config.repositories_max.tooltip"
           }
         }
         ]
@@ -2985,20 +2927,6 @@ export const PLUGINS_METADATA = {
           }
         },
         {
-          key: "statistics_period_days",
-          label: "Period (days)",
-          type: "number",
-          defaultValue: 30,
-          min: 7,
-          max: 365,
-          step: 1,
-          description: "Number of days for period stats",
-          i18nKey: {
-            label: "plugins.lyfta.sections.statistics.config.statistics_period_days.label",
-            description: "plugins.lyfta.sections.statistics.config.statistics_period_days.description"
-          }
-        },
-        {
           key: "weight_unit",
           label: "Weight unit",
           type: "select",
@@ -3118,17 +3046,6 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.lyfta.sections.exercises.config.exercises_show_1rm.label",
             description: "plugins.lyfta.sections.exercises.config.exercises_show_1rm.description"
-          }
-        },
-        {
-          key: "exercises_compact",
-          label: "Compact mode",
-          type: "boolean",
-          defaultValue: false,
-          description: "Hide avg/1RM, show only sessions count",
-          i18nKey: {
-            label: "plugins.lyfta.sections.exercises.config.exercises_compact.label",
-            description: "plugins.lyfta.sections.exercises.config.exercises_compact.description"
           }
         },
         {
@@ -3264,17 +3181,6 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.lyfta.sections.last_workout.config.last_workout_max_exercises.label",
             description: "plugins.lyfta.sections.last_workout.config.last_workout_max_exercises.description"
-          }
-        },
-        {
-          key: "last_workout_compact",
-          label: "Compact mode",
-          type: "boolean",
-          defaultValue: false,
-          description: "Hide set details, show only volume",
-          i18nKey: {
-            label: "plugins.lyfta.sections.last_workout.config.last_workout_compact.label",
-            description: "plugins.lyfta.sections.last_workout.config.last_workout_compact.description"
           }
         }
         ]

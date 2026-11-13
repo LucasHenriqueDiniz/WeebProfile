@@ -145,7 +145,7 @@ function resolveSafe(value: string | null, base: string): string | null {
  * Busca a página e devolve seus metadados. Nunca lança: um site fora do ar,
  * bloqueando bots ou servindo algo que não é HTML devolve metadados vazios.
  */
-export async function fetchSiteMeta(rawUrl: string): Promise<SiteMeta> {
+export async function fetchSiteMeta(rawUrl: string, timeoutMs = HTML_TIMEOUT_MS): Promise<SiteMeta> {
   let url: URL
   try {
     url = assertSafePublicUrl(rawUrl)
@@ -154,7 +154,9 @@ export async function fetchSiteMeta(rawUrl: string): Promise<SiteMeta> {
   }
 
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), HTML_TIMEOUT_MS)
+  // Cleared only after the head has been read: clearing it when the headers arrived
+  // let a site that trickled its <head> hold the generation indefinitely.
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 
   let response: Response
   try {
@@ -169,11 +171,18 @@ export async function fetchSiteMeta(rawUrl: string): Promise<SiteMeta> {
       cf: { cacheTtl: 3600, cacheEverything: true },
     } as RequestInit)
   } catch {
+    clearTimeout(timeoutId)
     return EMPTY_META(url.toString())
+  }
+
+  try {
+    return await readSiteMeta(response, url)
   } finally {
     clearTimeout(timeoutId)
   }
+}
 
+async function readSiteMeta(response: Response, url: URL): Promise<SiteMeta> {
   if (!response.ok) return EMPTY_META(url.toString())
 
   const contentType = (response.headers.get("content-type") || "").toLowerCase()

@@ -12,7 +12,7 @@
 import type { D1Database, Fetcher, ScheduledController, ExecutionContext } from "@cloudflare/workers-types"
 import { generateSvg, validateConfig, normalizeConfig } from "./index.js"
 import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
-import { getUserEssentialConfigs } from "./db/essential-configs.js"
+import { getUserEssentialConfigs, SecretsUnreadableError } from "./db/essential-configs.js"
 import { validateRequiredConfig } from "./validation/validate-required-config.js"
 import { log, hashUserId } from "./utils/log.js"
 import { withAppCredentials } from "./db/app-credentials.js"
@@ -109,15 +109,27 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
       essentialConfigs = await getUserEssentialConfigs(env.DB, requestData.userId, env.SECRETS_ENCRYPTION_KEY)
       log.info("secrets.loaded", { user, plugins: Object.keys(essentialConfigs) })
     } catch (error) {
-      log.error("secrets.unavailable", { user, reason: error instanceof Error ? error.message : String(error) })
-      // DB unreachable ≠ missing secrets - return explicit error to avoid
-      // "phantom missing secret" when it actually couldn't be verified.
+      const reason = error instanceof Error ? error.message : String(error)
+      log.error("secrets.unavailable", { user, reason })
+      // Neither case may read as "no secrets": the plugins would then report them as
+      // missing when they could not be checked at all.
+      if (error instanceof SecretsUnreadableError) {
+        return json(
+          {
+            error: "Generator couldn't decrypt the user's secrets",
+            code: "SECRETS_UNREADABLE",
+            message: "Generator couldn't decrypt the user's secrets.",
+            details: reason,
+          },
+          503
+        )
+      }
       return json(
         {
           error: "DATABASE_UNREACHABLE",
           code: "D1_UNREACHABLE",
           message: "Generator couldn't access D1.",
-          details: error instanceof Error ? error.message : String(error),
+          details: reason,
         },
         503
       )

@@ -110,7 +110,7 @@ export type PluginConfig<T extends PluginName> = {
  * Type guard to check if it's a valid plugin name
  */
 export function isValidPluginName(name: string): name is PluginName {
-  return name in ${JSON.stringify(pluginNames)}
+  return (${JSON.stringify(pluginNames)} as readonly string[]).includes(name)
 }
 
 /**

@@ -69,44 +69,95 @@ export async function urlToDataUriDirect(url: string, options: DirectImageOption
   const { maxBytes, allowedMimeTypes = ACCEPTED_MIME_TYPES, timeout = 15_000, validateFinalUrl } = options
   if (!url.startsWith("https://")) throw new InvalidImageError("Only https:// image URLs are allowed")
 
+  // The timer covers the body too. It used to be cleared as soon as the headers
+  // arrived, so a server that sent them and then trickled the bytes held the
+  // generation for as long as it kept the connection open.
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), timeout)
-  let response: Response
   try {
-    response = await fetch(url, { signal: controller.signal, headers: { "User-Agent": "WeebProfile/1.0" } })
-  } catch (error) {
-    throw new InvalidImageError(
-      error instanceof Error && error.name === "AbortError" ? "Image request timed out" : "Image request failed"
-    )
+    let response: Response
+    try {
+      response = await fetch(url, { signal: controller.signal, headers: { "User-Agent": "WeebProfile/1.0" } })
+    } catch (error) {
+      throw new InvalidImageError(isAbort(error) ? "Image request timed out" : "Image request failed")
+    }
+    if (!response.ok) throw new InvalidImageError(`HTTP ${response.status}`)
+
+    if (validateFinalUrl && response.url && response.url !== url) {
+      try {
+        validateFinalUrl(response.url)
+      } catch (error) {
+        throw new InvalidImageError(error instanceof Error ? error.message : "Redirected to a disallowed URL")
+      }
+    }
+
+    const headerMime = (response.headers.get("content-type") || "").split(";", 1)[0]!.trim().toLowerCase()
+    // MAL CDN legitimately returns the non-standard but common image/jpg alias.
+    const mime = headerMime === "image/jpg" ? "image/jpeg" : headerMime
+    if (!allowedMimeTypes.includes(mime)) throw new InvalidImageError(`Unsupported MIME type: ${mime || "(missing)"}`)
+    const contentLength = Number(response.headers.get("content-length"))
+    if (maxBytes !== undefined && Number.isFinite(contentLength) && contentLength > maxBytes) {
+      throw new ImageTooLargeError(`Image exceeds maxBytes (${contentLength} > ${maxBytes})`)
+    }
+
+    let bytes: Uint8Array
+    try {
+      bytes = await readBody(response, maxBytes)
+    } catch (error) {
+      if (error instanceof ImageTooLargeError) throw error
+      throw new InvalidImageError(isAbort(error) ? "Image request timed out" : "Image body could not be read")
+    }
+    if (!matchesMagicBytes(bytes, mime as AcceptedMimeType))
+      throw new InvalidImageError(`Content-Type ${mime} does not match image bytes`)
+
+    return { dataUri: `data:${mime};base64,${encodeBase64(bytes)}`, mime, byteLength: bytes.byteLength }
   } finally {
     clearTimeout(timeoutId)
   }
-  if (!response.ok) throw new InvalidImageError(`HTTP ${response.status}`)
+}
 
-  if (validateFinalUrl && response.url && response.url !== url) {
-    try {
-      validateFinalUrl(response.url)
-    } catch (error) {
-      throw new InvalidImageError(error instanceof Error ? error.message : "Redirected to a disallowed URL")
+function isAbort(error: unknown): boolean {
+  return error instanceof Error && error.name === "AbortError"
+}
+
+/**
+ * The body, stopping as soon as it passes maxBytes. Without a content-length the old
+ * check ran only after arrayBuffer() had already held the whole body in memory.
+ */
+async function readBody(response: Response, maxBytes: number | undefined): Promise<Uint8Array> {
+  const body = response.body as ReadableStream<Uint8Array> | null
+  if (!body || typeof body.getReader !== "function") {
+    const bytes = new Uint8Array(await response.arrayBuffer())
+    if (maxBytes !== undefined && bytes.byteLength > maxBytes)
+      throw new ImageTooLargeError(`Image exceeds maxBytes (${bytes.byteLength} > ${maxBytes})`)
+    return bytes
+  }
+
+  const reader = body.getReader()
+  const chunks: Uint8Array[] = []
+  let received = 0
+  try {
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      if (!value) continue
+      received += value.byteLength
+      if (maxBytes !== undefined && received > maxBytes) {
+        throw new ImageTooLargeError(`Image exceeds maxBytes (more than ${maxBytes} bytes)`)
+      }
+      chunks.push(value)
     }
+  } finally {
+    await reader.cancel().catch(() => undefined)
   }
 
-  const headerMime = (response.headers.get("content-type") || "").split(";", 1)[0]!.trim().toLowerCase()
-  // MAL CDN legitimately returns the non-standard but common image/jpg alias.
-  const mime = headerMime === "image/jpg" ? "image/jpeg" : headerMime
-  if (!allowedMimeTypes.includes(mime)) throw new InvalidImageError(`Unsupported MIME type: ${mime || "(missing)"}`)
-  const contentLength = Number(response.headers.get("content-length"))
-  if (maxBytes !== undefined && Number.isFinite(contentLength) && contentLength > maxBytes) {
-    throw new ImageTooLargeError(`Image exceeds maxBytes (${contentLength} > ${maxBytes})`)
+  const bytes = new Uint8Array(received)
+  let offset = 0
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset)
+    offset += chunk.byteLength
   }
-
-  const bytes = new Uint8Array(await response.arrayBuffer())
-  if (maxBytes !== undefined && bytes.byteLength > maxBytes)
-    throw new ImageTooLargeError(`Image exceeds maxBytes (${bytes.byteLength} > ${maxBytes})`)
-  if (!matchesMagicBytes(bytes, mime as AcceptedMimeType))
-    throw new InvalidImageError(`Content-Type ${mime} does not match image bytes`)
-
-  return { dataUri: `data:${mime};base64,${encodeBase64(bytes)}`, mime, byteLength: bytes.byteLength }
+  return bytes
 }
 
 /**
