@@ -17,18 +17,38 @@ export interface ApiRequestOptions {
 }
 
 /**
- * Faz uma requisição HTTP com retry automático
+ * Per-attempt timeout and retries. They were 30 s and 3 retries: one call could take
+ * 126 s, and Codeforces makes three in a row, while the dashboard gives up on the
+ * whole generation at 60 s. Now the worst case is about 17 s per call.
  */
-export async function fetchWithRetry(url: string, options: ApiRequestOptions = {}): Promise<Response> {
-  const { method = "GET", headers = {}, body, timeout = 30000, retries = 3, retryDelay = 1000 } = options
+const DEFAULT_TIMEOUT_MS = 8_000
+const DEFAULT_RETRIES = 1
+
+/**
+ * Runs `read` on the response of a request, retrying 5xx and network failures.
+ * The attempt's timer stays on until `read` has finished: clearing it when the
+ * headers arrived left the body read without any limit.
+ */
+async function requestWithRetry<T>(
+  url: string,
+  options: ApiRequestOptions,
+  read: (response: Response) => Promise<T>
+): Promise<T> {
+  const {
+    method = "GET",
+    headers = {},
+    body,
+    timeout = DEFAULT_TIMEOUT_MS,
+    retries = DEFAULT_RETRIES,
+    retryDelay = 1000,
+  } = options
 
   let lastError: Error | null = null
 
   for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeout)
     try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), timeout)
-
       const response = await fetch(url, {
         method,
         headers: {
@@ -39,28 +59,26 @@ export async function fetchWithRetry(url: string, options: ApiRequestOptions = {
         signal: controller.signal,
       })
 
-      clearTimeout(timeoutId)
-
       if (!response.ok) {
-        // Se for erro 4xx, não tenta novamente
+        // 4xx: não tenta novamente
         if (response.status >= 400 && response.status < 500) {
           throw new ApiError(`API request failed: ${response.statusText}`, response.status, url)
         }
-        // Se for erro 5xx, tenta novamente
+        // 5xx: tenta novamente
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
 
-      return response
+      return await read(response)
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
 
-      // Se for o último attempt ou erro não retryable, lança o erro
       if (attempt === retries || (error instanceof ApiError && error.statusCode && error.statusCode < 500)) {
         throw lastError
       }
 
-      // Aguarda antes de tentar novamente
       await new Promise((resolve) => setTimeout(resolve, retryDelay * (attempt + 1)))
+    } finally {
+      clearTimeout(timeoutId)
     }
   }
 
@@ -68,11 +86,15 @@ export async function fetchWithRetry(url: string, options: ApiRequestOptions = {
 }
 
 /**
- * Faz uma requisição JSON e retorna os dados parseados
+ * Faz uma requisição HTTP com retry automático. Only the headers are under the
+ * timeout here, since the caller reads the body; prefer fetchJson.
  */
+export async function fetchWithRetry(url: string, options: ApiRequestOptions = {}): Promise<Response> {
+  return requestWithRetry(url, options, async (response) => response)
+}
+
 export async function fetchJson<T>(url: string, options: ApiRequestOptions = {}): Promise<T> {
-  const response = await fetchWithRetry(url, options)
-  return response.json() as Promise<T>
+  return requestWithRetry(url, options, (response) => response.json() as Promise<T>)
 }
 
 /**

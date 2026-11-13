@@ -6,6 +6,9 @@ import type { SteamConfig, SteamData, SteamGame, SteamPlayerSummary, SteamStatis
 import { getMockSteamData } from "./mock-data"
 import { embedImageOrNull } from "../../../utils/image-to-base64"
 
+// Each upstream call is bounded: they had none, so a hung API held the whole generation.
+const STEAM_TIMEOUT_MS = 10_000
+
 const STEAM_IMAGE_MAX_BYTES = 250_000
 
 const STEAM_API_BASE = "https://api.steampowered.com"
@@ -50,7 +53,8 @@ export async function fetchSteamData(
 
   // Fetch player summary
   const playerSummaryResponse = await fetch(
-    `${STEAM_API_BASE}/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`
+    `${STEAM_API_BASE}/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`,
+    { signal: AbortSignal.timeout(STEAM_TIMEOUT_MS) }
   )
 
   if (!playerSummaryResponse.ok) {
@@ -62,7 +66,8 @@ export async function fetchSteamData(
 
   // Fetch owned games
   const gamesResponse = await fetch(
-    `${STEAM_API_BASE}/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${steamId}&include_appinfo=true&include_played_free_games=true`
+    `${STEAM_API_BASE}/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${steamId}&include_appinfo=true&include_played_free_games=true`,
+    { signal: AbortSignal.timeout(STEAM_TIMEOUT_MS) }
   )
 
   if (!gamesResponse.ok) {
@@ -74,7 +79,8 @@ export async function fetchSteamData(
 
   // Fetch recently played games (last 2 weeks)
   const recentGamesResponse = await fetch(
-    `${STEAM_API_BASE}/IPlayerService/GetRecentlyPlayedGames/v0001/?key=${apiKey}&steamid=${steamId}`
+    `${STEAM_API_BASE}/IPlayerService/GetRecentlyPlayedGames/v0001/?key=${apiKey}&steamid=${steamId}`,
+    { signal: AbortSignal.timeout(STEAM_TIMEOUT_MS) }
   )
 
   let recentGames: SteamGame[] = []

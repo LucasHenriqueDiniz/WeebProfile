@@ -5,6 +5,9 @@ import { REPOSITORY_CARD_QUERY } from "./queries"
 import { getMockGithubRepoData } from "./mock-data"
 import { embedImageOrNull as embedImage } from "../../../utils/image-to-base64"
 
+const GITHUB_BUDGET_MS = 45_000
+const STARGAZERS_TIMEOUT_MS = 10_000
+
 const OWNER_AVATAR_MAX_BYTES = 250_000
 const STARGAZERS_PER_PAGE = 100
 const STAR_HISTORY_SAMPLE_POINTS = 10
@@ -18,6 +21,7 @@ function stargazersUrl(owner: string, repo: string, page: number): string {
 async function fetchStargazersPage(owner: string, repo: string, pat: string, page: number): Promise<string[]> {
   try {
     const res = await fetch(stargazersUrl(owner, repo, page), {
+      signal: AbortSignal.timeout(STARGAZERS_TIMEOUT_MS),
       headers: {
         Accept: "application/vnd.github.star+json",
         Authorization: `token ${pat}`,
@@ -206,8 +210,10 @@ export async function fetchGithubRepoData(
     throw new Error("Repository owner and name are required (e.g. owner/repo).")
   }
 
+  // Octokit had no timeout; one budget for this card's GitHub calls.
   const graphqlClient = graphql.defaults({
     headers: { authorization: `token ${pat}` },
+    request: { signal: AbortSignal.timeout(GITHUB_BUDGET_MS) },
   })
 
   try {

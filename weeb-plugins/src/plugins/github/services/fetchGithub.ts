@@ -13,6 +13,9 @@ import {
 import { getMockGithubData } from "./mock-data"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 
+// Under the dashboard's 60 s; code_habits stops itself at 30 s within it.
+const GITHUB_BUDGET_MS = 45_000
+
 const GITHUB_AVATAR_MAX_BYTES = 250_000
 
 async function embedImageOrNull(url: string): Promise<string | null> {
@@ -100,9 +103,9 @@ function isPermissionError(error: any): boolean {
 
 // A rejected token: every section fails the same way, so it is not a per-section
 // permission problem (it used to be treated as one).
-function isAuthError(error: any): boolean {
-  const message = error?.message || error?.toString() || ""
-  return error?.status === 401 || error?.response?.status === 401 || /Bad credentials/i.test(message)
+function isAuthError(error: unknown): boolean {
+  const e = error as { status?: number; response?: { status?: number }; message?: string } | null | undefined
+  return e?.status === 401 || e?.response?.status === 401 || /Bad credentials/i.test(e?.message ?? String(error))
 }
 
 // Função helper para obter mensagem de erro de permissão
@@ -246,15 +249,22 @@ export async function fetchGithubData(
   const data: Partial<GithubData> = {}
   const warnings: GithubData["warnings"] = []
 
+  // One budget for every GitHub call of this generation. Octokit had no timeout (the
+  // installed @octokit/request only takes a signal), so one hung call held the card
+  // past the 60 s after which the dashboard gives up on it.
+  const budget = AbortSignal.timeout(GITHUB_BUDGET_MS)
+
   // Configure GraphQL and REST clients with Classic Token
   const graphqlClient = graphql.defaults({
     headers: {
       authorization: `token ${githubToken}`,
     },
+    request: { signal: budget },
   })
 
   const rest = new Octokit({
     auth: githubToken,
+    request: { signal: budget },
   })
 
   try {
