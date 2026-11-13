@@ -101,7 +101,6 @@ jobs:
       - name: Validate config options
         working-directory: weeb-plugins
         run: pnpm validate-config-options
-        continue-on-error: true
 
   # O dashboard já sobe sozinho pela integração git do Cloudflare Pages; o gerador
   # é um Worker e ficava só no `wrangler deploy` manual. Isso criava uma janela em
