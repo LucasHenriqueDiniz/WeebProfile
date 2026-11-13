@@ -72,6 +72,12 @@ export class AuthUnavailableError extends Error {
  * signed-in user they are logged out and leaves no trace of why.
  */
 export async function getAuthUserId(request: Request, env: CloudflareEnv): Promise<string | null> {
+  // Nothing for Clerk to verify, so it could only answer "signed out". Asking anyway
+  // made public routes (the template gallery reads the user only for "liked") depend on
+  // Clerk's configuration: with no CLERK_SECRET_KEY, as in the Pages preview
+  // environment, every anonymous request answered 500.
+  if (!carriesClerkSession(request)) return null
+
   // A token that does not even decode is the caller's problem, but Clerk reports it
   // as "unexpected-error", the same reason as a network failure. Settle it here,
   // before that reason becomes ambiguous.
@@ -96,6 +102,23 @@ export async function getAuthUserId(request: Request, env: CloudflareEnv): Promi
     throw new AuthUnavailableError(`Clerk could not verify the session: ${state.reason}${detail}`)
   }
   return state.toAuth()?.userId ?? null
+}
+
+/**
+ * Whether the request carries anything Clerk can resolve to a user: an Authorization
+ * header, its session cookie (`__session`, or `__session_<suffix>` when cookies are
+ * suffixed), or a handshake (`__clerk_handshake` / `__clerk_handshake_nonce`, as a
+ * cookie or a query parameter). The dev-browser cookie `__clerk_db_jwt` is not one: a
+ * development instance sets it for every visitor, signed in or not.
+ */
+function carriesClerkSession(request: Request): boolean {
+  if (request.headers.has("Authorization")) return true
+
+  const { searchParams } = new URL(request.url)
+  if (searchParams.has("__clerk_handshake") || searchParams.has("__clerk_handshake_nonce")) return true
+
+  const cookieNames = (request.headers.get("Cookie") ?? "").split(";").map((cookie) => cookie.split("=")[0]!.trim())
+  return cookieNames.some((name) => /^__session(_|$)/.test(name) || /^__clerk_handshake(_nonce)?$/.test(name))
 }
 
 /** The token Clerk picks out of the Authorization header (its parseAuthorizationHeader). */
