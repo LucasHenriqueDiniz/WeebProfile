@@ -187,6 +187,8 @@ HTTP POST /                                        # só via service binding —
 
 **Dev local:** `pnpm dev:generator` (= `wrangler dev`).
 
+**Testes:** o bundle do Worker lê `@weeb/weeb-plugins` do `src` (paths do `tsconfig.json`), e o `svg-generator/vitest.config.ts` faz os testes lerem do mesmo lugar. Sem ele, o vitest caía no `dist` pelos `exports` do pacote, e um teste podia passar com o `src` quebrado até o próximo `pnpm build:deps`. Para exercitar o caminho de produção, gere sem `dev` e simule só o `fetch` (ver o bloco "Dev.to sem dev" em `worker.test.ts`).
+
 ### Deploy do gerador
 
 Pelo **Workers Builds**, a integração git da Cloudflare para Workers (o dashboard usa a do Pages). A Cloudflare clona o repo e gera o próprio token de deploy na conta: nada de `CLOUDFLARE_API_TOKEN` no GitHub. O job de deploy que existia no CI dependia desse secret, que não estava cadastrado, e falhou nos 19 pushes na main entre 15/08 e 13/11/2026.

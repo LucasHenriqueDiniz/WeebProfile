@@ -584,6 +584,89 @@ describe("POST / — URL do 16personalities", () => {
   })
 })
 
+describe("POST / — Dev.to sem dev, com a rede simulada só na borda", () => {
+  // Os outros testes de geração usam dev: true, que troca o fetchData pelo mock. Aqui o
+  // caminho é o de produção (requisição à API, parse, embed do avatar, render, altura),
+  // e só o fetch responde de mentira.
+  const AVATAR = "https://media2.dev.to/dynamic/image/someone.png"
+  const PNG = Uint8Array.from(
+    atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="),
+    (c) => c.charCodeAt(0)
+  )
+  const profile = () =>
+    Response.json({ username: "someone", name: "Some One", summary: "Writes about Workers", profile_image: AVATAR })
+  const articles = () =>
+    Response.json([
+      {
+        id: 1,
+        title: "Rendering SVG at the edge",
+        url: "https://dev.to/someone/rendering-svg-at-the-edge",
+        public_reactions_count: 42,
+        comments_count: 3,
+        reading_time_minutes: 5,
+        published_at: "2026-10-01T12:00:00Z",
+        readable_publish_date: "Oct 1",
+        tag_list: ["cloudflare", "react"],
+      },
+    ])
+  const avatar = () => new Response(PNG, { headers: { "content-type": "image/png" } })
+
+  /** Responde cada URL que o plugin pede; qualquer outra é um erro do teste. */
+  function network(routes: { profile?: () => Response; articles?: () => Response; avatar?: () => Response } = {}) {
+    return vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const url = input instanceof Request ? input.url : String(input)
+      if (url.startsWith("https://dev.to/api/users/by_username?")) return (routes.profile ?? profile)()
+      if (url.startsWith("https://dev.to/api/articles?")) return (routes.articles ?? articles)()
+      if (url === AVATAR) return (routes.avatar ?? avatar)()
+      throw new Error(`request the test did not expect: ${url}`)
+    })
+  }
+
+  const request = {
+    style: "default",
+    size: "half",
+    plugins: { devto: { enabled: true, sections: ["profile", "recent_articles", "top_tags"], username: "some one" } },
+  }
+
+  it("monta o card com os dados da API e o avatar embutido", async () => {
+    const spy = network()
+
+    const { response, body } = await post(request)
+
+    expect(response.status).toBe(200)
+    expect(body.hasErrors).toBe(false)
+    expect(body.svg).toContain("Some One")
+    expect(body.svg).toContain("Rendering SVG at the edge")
+    expect(body.svg).toContain("cloudflare")
+    expect(body.svg).toContain(`data:image/png;base64,${btoa(String.fromCharCode(...PNG))}`)
+    const urls = spy.mock.calls.map(([input]) => String(input))
+    expect(urls).toContain("https://dev.to/api/users/by_username?url=some%20one")
+    expect(urls.some((u) => u.startsWith("https://dev.to/api/articles?username=some%20one&"))).toBe(true)
+  })
+
+  // Um SVG em Gist não carrega URL externa; o avatar inválido some, o resto fica.
+  it("deixa de fora um avatar que não é imagem, sem derrubar o card", async () => {
+    network({ avatar: () => new Response("<html>login</html>", { headers: { "content-type": "text/html" } }) })
+
+    const { body } = await post(request)
+
+    expect(body.hasErrors).toBe(false)
+    expect(body.svg).toContain("Some One")
+    expect(body.svg).not.toContain("data:image/png")
+    expect(body.svg).not.toContain(AVATAR)
+  })
+
+  it("conta usuário inexistente na API como falha do plugin", async () => {
+    network({ profile: () => new Response("not found", { status: 404 }) })
+
+    const { body } = await post(request)
+
+    expect(body.hasErrors).toBe(true)
+    expect(body.pluginErrors.devto).toBe('Dev.to user "some one" not found.')
+    expect(body.height).toBe(PLUGIN_ERROR_HEIGHT + 24)
+  })
+})
+
 describe("POST / — altura de um plugin que falhou", () => {
   // calculateTotalHeight pula plugin sem dados, então a caixa de erro era desenhada em
   // 0px: invisível no SVG.
