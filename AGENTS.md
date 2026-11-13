@@ -41,7 +41,7 @@ pnpm deploy              # wrangler pages deploy dist
 
 # Build
 pnpm build               # weeb-dashboard (Vite build → Cloudflare Pages)
-pnpm deploy:generator    # wrangler deploy (svg-generator → Cloudflare Worker)
+pnpm deploy:generator    # deploy manual do gerador (o normal é o Workers Builds, ver "Deploy do gerador")
 
 # Qualidade de código (rodar antes de commitar)
 pnpm typecheck
@@ -186,6 +186,28 @@ HTTP POST /                                        # só via service binding —
 **Autenticação:** o gerador não tem rota pública (`workers_dev = false`). O dashboard chega nele pelo service binding `SVG_GENERATOR`. Cron Triggers e service bindings não dependem de rota.
 
 **Dev local:** `pnpm dev:generator` (= `wrangler dev`).
+
+### Deploy do gerador
+
+Pelo **Workers Builds**, a integração git da Cloudflare para Workers (o dashboard usa a do Pages). A Cloudflare clona o repo e gera o próprio token de deploy na conta: nada de `CLOUDFLARE_API_TOKEN` no GitHub. O job de deploy que existia no CI dependia desse secret, que não estava cadastrado, e falhou nos 19 pushes na main entre 15/08 e 13/11/2026.
+
+Configuração em Workers & Pages → `weeb-svg-generator` → Settings → Builds:
+
+| Campo                       | Valor                                                                                                                        |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Branch de produção          | `main`                                                                                                                       |
+| Diretório raiz              | `svg-generator`                                                                                                              |
+| Comando de build            | `pnpm install --frozen-lockfile && pnpm -w build:deps && pnpm --filter @weeb/weeb-plugins --filter @weeb/svg-generator test` |
+| Comando de deploy           | `npx wrangler deploy`                                                                                                        |
+| Variáveis de build          | `SKIP_DEPENDENCY_INSTALL=1`, `PNPM_VERSION=10.24.0`, `NODE_VERSION=24.19.0`                                                  |
+| Build watch paths (incluir) | `svg-generator/*`, `weeb-plugins/*`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `package.json`                                 |
+| Preview builds              | desligados: o gerador não tem ambiente de preview                                                                            |
+
+- **Testes no comando de build:** o Workers Builds não espera o CI do GitHub. Teste vermelho para o build antes do `wrangler deploy`.
+- **Install explícito:** com o diretório raiz em `svg-generator/`, o lockfile e o `packageManager` ficam um nível acima. `SKIP_DEPENDENCY_INSTALL` desliga a detecção automática e o comando instala o workspace inteiro com a versão de pnpm e Node do repo (`package.json` e `.nvmrc`).
+- **Secrets do Worker** (`STEAM_API_KEY`, `CRON_SECRET`, `SECRETS_ENCRYPTION_KEY`) não são tocados pelo deploy.
+- **Log dos builds:** no painel do Worker e como check run no commit do GitHub.
+- **Voltar uma versão:** `pnpm exec wrangler rollback <version-id>` em `svg-generator/` (`wrangler deployments list` mostra as versões).
 
 ---
 
