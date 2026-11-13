@@ -5,6 +5,7 @@
  */
 
 import React from "react"
+import { renderToString } from "react-dom/server"
 import { log } from "../utils/log.js"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
 import type { SvgConfig } from "../types/index.js"
@@ -188,32 +189,33 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
 
     try {
       const rendered = plugin.render(pluginConfig, pluginData)
-      // Ensure rendered is a valid React element
-      if (React.isValidElement(rendered)) {
-        renderedPlugins.push(<div key={pluginName}>{rendered}</div>)
-      } else {
-        log.error("plugin.invalid_element", { plugin: pluginName })
-        renderedPlugins.push(
-          <PluginError
-            key={`${pluginName}-invalid-element`}
-            pluginName={pluginName}
-            error={new Error(`Plugin returned invalid React element`)}
-            style={config.style}
-            size={config.size}
-          />
-        )
+      if (!React.isValidElement(rendered)) {
+        throw new Error("Plugin returned invalid React element")
       }
-    } catch (error) {
-      log.error("plugin.render_failed", {
-        plugin: pluginName,
-        reason: error instanceof Error ? error.message : String(error),
-      })
-      // Renderizar erro visual ao invés de apenas logar
+      // plugin.render() only builds the element: the components run when it is turned
+      // into markup. That used to happen once, for the whole card, outside this try, so
+      // one component's exception (a revoked GitHub PAT leaves `user` undefined and
+      // Profile reads `user.createdAt`) failed every plugin with a 500. Rendering each
+      // plugin on its own keeps the failure to its section.
+      //
+      // Each call is its own React root, so useId() would number from scratch in every
+      // plugin and two plugins could emit the same gradient id into one SVG. The prefix
+      // keeps them apart.
+      const html = renderToString(rendered, { identifierPrefix: `${pluginName}-` })
+      renderedPlugins.push(<div key={pluginName} dangerouslySetInnerHTML={{ __html: html }} />)
+    } catch (thrown) {
+      const error = thrown instanceof Error ? thrown : new Error(String(thrown))
+      log.error("plugin.render_failed", { plugin: pluginName, reason: error.message })
+      // Counted like a failed fetch. hasErrors is what tells the dashboard not to
+      // publish this card over the last good one, and with the data gone the height
+      // skips the section instead of calling calculateHeight on the data that just broke.
+      pluginsErrors[pluginName] = error
+      delete pluginsData[pluginName]
       renderedPlugins.push(
         <PluginError
           key={`${pluginName}-render-error`}
           pluginName={pluginName}
-          error={error instanceof Error ? error : new Error(String(error))}
+          error={error}
           style={config.style}
           size={config.size}
         />

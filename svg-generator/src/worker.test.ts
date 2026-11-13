@@ -442,3 +442,38 @@ describe("POST / — requests concorrentes no mesmo isolate", () => {
     expect(second.body.svg).toBe(codewarsAlone)
   })
 })
+
+describe("POST / — um plugin cujo componente quebra", () => {
+  // plugin.render() só monta o elemento; os componentes rodam no renderToString, fora
+  // do try do renderer. Um PAT revogado deixa o GitHub sem `user`, o Profile lê
+  // `data.createdAt`, e o card inteiro virava 500 -- os outros plugins junto.
+  const githubWithoutUser = () =>
+    vi.spyOn(PluginManager.getInstance().get("github")!, "fetchData").mockResolvedValue({} as never)
+
+  const request = validRequest({
+    plugins: {
+      github: { enabled: true, sections: ["profile"], username: "octocat" },
+      devto: { enabled: true, sections: ["profile"], username: "someone" },
+    },
+    essentialConfigs: { github: { pat: "ghp_test" } },
+  })
+
+  it("mantém os outros plugins e responde 200", async () => {
+    githubWithoutUser()
+    const { response, body } = await post(request)
+
+    expect(response.status).toBe(200)
+    expect(body.svg).toContain("weebprofile") // the devto section, from its mock
+  })
+
+  // Same rule as a failed fetch: the dashboard must not publish this card over the
+  // last good one, and it only knows not to through hasErrors.
+  it("informa a falha em pluginErrors, para o dashboard não publicar", async () => {
+    githubWithoutUser()
+    const { body } = await post(request)
+
+    expect(body.hasErrors).toBe(true)
+    expect(body.pluginErrors.github).toMatch(/createdAt/)
+    expect(body.pluginErrors.devto).toBeUndefined()
+  })
+})
