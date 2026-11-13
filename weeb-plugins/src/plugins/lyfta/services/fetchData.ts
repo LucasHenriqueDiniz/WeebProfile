@@ -27,7 +27,6 @@ export async function fetchLyftaData(
 ): Promise<LyftaData> {
   // Em modo dev ou preview, retornar dados mock
   if (dev || previewMode) {
-    console.log("[Lyfta] Using mock data (dev mode or preview mode)")
     const mockData = await getMockLyftaData()
 
     // Em modo preview, manter URLs originais (não converter para base64)

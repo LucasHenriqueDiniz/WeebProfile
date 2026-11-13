@@ -67,8 +67,6 @@ export async function fetchLastFmData(
   try {
     // Em modo dev ou preview, retornar dados mock
     if (dev || previewMode) {
-      console.debug(`[LastFM] Using mock data (${dev ? "dev" : "preview"} mode)`)
-
       const mockData = getMockLastFmData({
         recent_tracks_max: config.nonEssential?.recent_tracks_max || 10,
         top_artists_max: config.nonEssential?.top_artists_max || 10,
@@ -76,18 +74,13 @@ export async function fetchLastFmData(
         top_tracks_max: config.nonEssential?.top_tracks_max || 10,
       })
 
-      console.debug(`[LastFM] Mock data generated: ${Object.keys(mockData).length} properties`)
-
       // Em modo preview, manter URLs originais (não converter para base64)
       if (previewMode) {
-        console.debug(`[LastFM] Preview mode: keeping image URLs as-is`)
         return mockData
       }
 
       // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
-      console.log(`[LastFM] Converting image URLs to base64...`)
       const dataWithBase64Images = await convertImageUrlsToBase64(mockData, previewMode, "mockData")
-      console.log(`[LastFM] Image conversion completed`)
 
       return dataWithBase64Images
     }
@@ -102,7 +95,6 @@ export async function fetchLastFmData(
     }
 
     // Chamar API real do LastFM
-    console.log("[LastFM] Fetching real data from the Last.fm API")
     const { fetchLastFmDataFromApi } = await import("./fetchLastFmApi.js")
 
     const apiData = await fetchLastFmDataFromApi(essentialConfig.apiKey, essentialConfig.username, {
@@ -118,14 +110,11 @@ export async function fetchLastFmData(
 
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
-      console.log(`[LastFM] Preview mode: keeping image URLs as-is (no base64 conversion)`)
       return apiData
     }
 
     // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
-    console.log(`[LastFM] Converting image URLs to base64...`)
     const dataWithBase64Images = await convertImageUrlsToBase64(apiData, previewMode, "apiData")
-    console.log(`[LastFM] Image conversion completed`)
 
     return dataWithBase64Images
   } catch (error) {

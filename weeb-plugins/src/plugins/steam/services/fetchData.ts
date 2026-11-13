@@ -23,7 +23,6 @@ export async function fetchSteamData(
 ): Promise<SteamData> {
   // Em modo dev ou preview, retornar dados mock
   if (dev || previewMode) {
-    console.log("[Steam] Using mock data (dev mode or preview mode)")
     const mockData = await getMockSteamData()
 
     // Em modo preview, manter URLs originais (não converter para base64)
@@ -113,14 +112,11 @@ export async function fetchSteamData(
 
   // Em modo preview, manter URLs originais (não converter para base64)
   if (previewMode) {
-    console.debug("[Steam] Preview mode: keeping image URLs as-is")
     return apiData
   }
 
   // Converter URLs de imagens para base64 para que o Playwright possa carregá-las
-  console.log("[Steam] Converting image URLs to base64...")
   const dataWithBase64Images = await convertImageUrlsToBase64(apiData, previewMode)
-  console.log("[Steam] Image conversion completed")
 
   return dataWithBase64Images
 }
