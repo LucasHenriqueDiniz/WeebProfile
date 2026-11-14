@@ -19,6 +19,7 @@ import { ApiException, svgApi } from "@/lib/api"
 import type { Svg } from "@/lib/db/schema"
 import { useSvgStore } from "@/stores/svg-store"
 import { generateMarkdown } from "@/lib/utils/markdown"
+import { publicSvgUrl } from "@/lib/utils/svg-url"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import { ArrowUpDown, Filter, Loader2, Plus } from "lucide-react"
@@ -222,8 +223,7 @@ export default function DashboardPage() {
   }
 
   const handleCopyUrl = async (svg: Svg) => {
-    // Usar storageUrl se disponível, caso contrário usar a API route
-    const url = svg.storageUrl || `${window.location.origin}/api/svg/${svg.id}`
+    const url = publicSvgUrl(svg.id)
     const markdown = generateMarkdown({
       name: svg.name,
       url,
