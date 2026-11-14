@@ -1,10 +1,10 @@
 {
-  "description": "Show a card with stats for a single GitHub repository",
+  "description": "Muestra una tarjeta con estadísticas de un único repositorio de GitHub",
   "displayName": "Repository",
   "essentialConfig": {
     "pat": {
-      "description": "Reuses the same token configured for the GitHub plugin, if you already have one.",
-      "label": "GitHub Classic Token",
+      "description": "Reutiliza el mismo token configurado en el plugin de GitHub, si ya tienes uno.",
+      "label": "Token Clásico de GitHub",
       "placeholder": "ghp_..."
     }
   },
@@ -12,330 +12,330 @@
     "banner": {
       "config": {
         "banner_description": {
-          "description": "Replaces the repository description in the banner",
-          "label": "Custom description",
-          "tooltip": "Leave empty to use the repository description from GitHub."
+          "description": "Reemplaza la descripción del repositorio en el banner",
+          "label": "Descripción personalizada",
+          "tooltip": "Déjalo vacío para usar la descripción del repositorio en GitHub."
         },
         "banner_eyebrow": {
-          "description": "Replaces the small line above the title (e.g. \"weebprofile / open source\")",
-          "label": "Custom label",
-          "tooltip": "Only the Split, Display, Centered and Centered Dark styles have this line. Leave empty to use the default label."
+          "description": "Reemplaza la línea pequeña sobre el título (p. ej.: \"weebprofile / open source\")",
+          "label": "Etiqueta personalizada",
+          "tooltip": "Solo los estilos Split, Display, Centered y Centered Dark tienen esta línea. Déjalo vacío para usar la etiqueta predeterminada."
         },
         "banner_height": {
-          "label": "Extra height",
-          "tooltip": "Extra space (px) added at the bottom of the banner, on top of its normal size."
+          "label": "Altura extra",
+          "tooltip": "Espacio extra (px) añadido en la parte inferior del banner, además de su tamaño normal."
         },
         "banner_image": {
-          "description": "Optional image URL (project logo etc.) shown instead of the owner avatar",
-          "label": "Custom image (URL)",
-          "tooltip": "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar."
+          "description": "URL de imagen opcional (logo del proyecto, etc.) que se muestra en lugar de la marca del repositorio",
+          "label": "Imagen personalizada (URL)",
+          "tooltip": "Se convierte a base64 al generar para que funcione dentro de Gists. Déjalo vacío para usar el avatar del propietario."
         },
         "banner_show_avatar": {
-          "label": "Show avatar",
-          "tooltip": "Shows the owner avatar / repository mark (Hero, Minimal and Dark styles)."
+          "label": "Mostrar avatar",
+          "tooltip": "Muestra el avatar del propietario / la marca del repositorio (estilos Hero, Minimal y Dark)."
         },
         "banner_show_description": {
-          "label": "Show description"
+          "label": "Mostrar descripción"
         },
         "banner_show_languages": {
-          "label": "Show technologies",
-          "tooltip": "Only used by the Clean style - shows the repository's top languages inline."
+          "label": "Mostrar lenguaje principal",
+          "tooltip": "Muestra el punto del lenguaje principal en la fila de metadatos (estilos Hero y Display)."
         },
         "banner_show_owner": {
-          "label": "Show owner",
-          "tooltip": "Shows the owner login (e.g. \"LucasHenriqueDiniz /\") before the repository name."
+          "label": "Mostrar propietario",
+          "tooltip": "Muestra el login del propietario (p. ej.: \"weebprofile /\") antes del nombre del repositorio."
         },
         "banner_title": {
-          "description": "Replaces the repository name in the banner",
-          "label": "Custom title",
-          "tooltip": "Leave empty to use the repository name from GitHub."
+          "description": "Reemplaza el nombre del repositorio en el banner",
+          "label": "Título personalizado",
+          "tooltip": "Déjalo vacío para usar el nombre del repositorio en GitHub."
         },
         "banner_variant": {
-          "description": "Choose how big and prominent the banner is",
-          "label": "Style",
+          "description": "Elige el diseño del banner",
+          "label": "Estilo",
           "options": {
-            "aurora": "Aurora (dark gradient with glass panel)",
-            "blueprint": "Blueprint (technical frame, monospace uppercase)",
-            "bold": "Bold (large headline, minimal detail)",
-            "centered": "Centered (avatar, name and meta centered)",
-            "centered_dark": "Centered Dark (technical grid + highlight glow)",
-            "centered_gradient": "Centered Gradient (full highlight gradient, white chips)",
-            "clean": "Clean (name, description and techs in one bordered row)",
-            "compact": "Compact (single row)",
-            "dark": "Dark (fixed dark card with highlight bar)",
-            "display": "Display (giant typography with ghost letter)",
-            "editorial": "Editorial (color rail + serif headline)",
-            "hero": "Hero (extra tall, meant to sit at the top of the project)",
-            "large": "Large (avatar + gradient background)",
-            "minimal": "Minimal (text only, no background)",
-            "mono": "Mono (dark monospace, GitHub terminal style)",
-            "ribbon": "Ribbon (circular mark + bottom info strip)",
-            "social": "Social (wide layout for link previews)",
-            "split": "Split (two columns, tech bars on the side)"
+            "aurora": "Aurora (degradado oscuro con panel de vidrio)",
+            "blueprint": "Blueprint (marco técnico, monoespaciada en mayúsculas)",
+            "bold": "Bold (titular grande, pocos detalles)",
+            "centered": "Centered (brillo radial suave, todo centrado)",
+            "centered_dark": "Centered Dark (cuadrícula técnica + brillo de acento)",
+            "centered_gradient": "Centered Gradient (degradado de acento completo, chips blancos)",
+            "clean": "Clean (nombre, descripción y tecnologías en una fila con borde)",
+            "compact": "Compact (una sola fila)",
+            "dark": "Dark (tarjeta oscura fija con barra de acento)",
+            "display": "Display (tipografía gigante con letra fantasma)",
+            "editorial": "Editorial (franja de color + titular con serifa)",
+            "hero": "Hero (barra de acento, nombre grande, descripción y fila de metadatos)",
+            "large": "Large (avatar + fondo en degradado)",
+            "minimal": "Minimal (fila única con marca, nombre y estrellas)",
+            "mono": "Mono (monoespaciada oscura, estilo terminal de GitHub)",
+            "ribbon": "Ribbon (marca circular + franja de información abajo)",
+            "social": "Social (diseño ancho para vistas previas de enlaces)",
+            "split": "Split (contenido a la izquierda, panel de estrellas con crecimiento a la derecha)"
           }
         },
         "content_size": {
-          "label": "Size",
+          "label": "Tamaño",
           "options": {
-            "lg": "Large",
-            "md": "Medium (default)",
-            "sm": "Small",
-            "xl": "Extra large"
+            "lg": "Grande",
+            "md": "Mediano (predeterminado)",
+            "sm": "Pequeño",
+            "xl": "Extra grande"
           },
-          "tooltip": "Scales font size, icons, chart and spacing together."
+          "tooltip": "Escala juntos el tamaño de fuente, los íconos, el gráfico y el espaciado."
         }
       },
-      "description": "Header banner with owner avatar, repository name and description, tinted by the primary language",
+      "description": "Tarjeta de encabezado del repositorio: nombre, descripción y metadatos clave, con el color de acento del tema",
       "name": "Banner"
     },
     "insights": {
       "config": {
         "insights_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "insights_show_languages": {
-          "label": "Show language breakdown"
+          "label": "Mostrar distribución de lenguajes"
         },
         "insights_show_star_graph": {
-          "label": "Show star growth graph"
+          "label": "Mostrar gráfico de crecimiento de estrellas"
         },
         "insights_show_topics": {
-          "label": "Show topics"
+          "label": "Mostrar temas"
         },
         "insights_title": {
           "defaultValue": "Insights",
-          "label": "Title"
+          "label": "Título"
         },
         "max_languages": {
-          "label": "Maximum languages",
-          "tooltip": "Languages beyond this limit are omitted from the breakdown bar."
+          "label": "Máximo de lenguajes",
+          "tooltip": "Los lenguajes que superen este límite se omiten de la barra de distribución."
         },
         "max_topics": {
-          "description": "Maximum 6 topics",
-          "label": "Maximum topics",
-          "tooltip": "Topics beyond this limit are summarized as '+N more'."
+          "description": "Máximo de 6 temas",
+          "label": "Máximo de temas",
+          "tooltip": "Los temas que superen este límite se resumen como '+N más'."
         }
       },
-      "description": "Star and fork counters, a real star-growth graph, language breakdown and topics",
+      "description": "Contadores de estrellas y forks, un gráfico real de crecimiento de estrellas, distribución de lenguajes y temas",
       "name": "Insights"
     },
     "languages": {
       "config": {
         "content_size": {
-          "label": "Size",
+          "label": "Tamaño",
           "options": {
-            "lg": "Large",
-            "md": "Medium (default)",
-            "sm": "Small",
-            "xl": "Extra large"
+            "lg": "Grande",
+            "md": "Mediano (predeterminado)",
+            "sm": "Pequeño",
+            "xl": "Extra grande"
           },
-          "tooltip": "Scales font size, icons, chart and spacing together."
+          "tooltip": "Escala juntos el tamaño de fuente, los íconos, el gráfico y el espaciado."
         },
         "languages_height": {
-          "label": "Extra height",
-          "tooltip": "Extra space (px) added at the bottom of this section."
+          "label": "Altura extra",
+          "tooltip": "Espacio extra (px) añadido en la parte inferior de esta sección."
         },
         "languages_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "languages_title": {
-          "defaultValue": "Technologies",
-          "label": "Title"
+          "defaultValue": "Tecnologías",
+          "label": "Título"
         },
         "languages_variant": {
-          "label": "Style",
+          "label": "Estilo",
           "options": {
-            "badges": "Badges (solid shields.io-style tags)",
-            "bars": "Bars (thin bar + inline legend)",
-            "blocks": "Blocks (proportional mosaic)",
-            "donut": "Donut (ring chart + legend column)",
-            "spectrum": "Spectrum (thicker bar + two-column legend)"
+            "badges": "Badges (etiquetas sólidas al estilo shields.io)",
+            "bars": "Barras (una fila por lenguaje)",
+            "blocks": "Bloques (mosaico proporcional)",
+            "donut": "Donut (gráfico de anillo + columna de leyenda)",
+            "spectrum": "Espectro (barra segmentada + leyenda)"
           }
         },
         "max_languages": {
-          "label": "Maximum languages",
-          "tooltip": "Languages beyond this limit are omitted from the breakdown bar."
+          "label": "Máximo de lenguajes",
+          "tooltip": "Los lenguajes que superen este límite se omiten de la distribución."
         }
       },
-      "description": "Language/technology breakdown bar, by bytes of code",
-      "name": "Technologies"
+      "description": "Distribución de lenguajes/tecnologías, por bytes de código",
+      "name": "Tecnologías"
     },
     "overview": {
       "config": {
         "content_size": {
-          "label": "Size",
+          "label": "Tamaño",
           "options": {
-            "lg": "Large",
-            "md": "Medium (default)",
-            "sm": "Small",
-            "xl": "Extra large"
+            "lg": "Grande",
+            "md": "Mediano (predeterminado)",
+            "sm": "Pequeño",
+            "xl": "Extra grande"
           },
-          "tooltip": "Scales font size, icons, chart and spacing together."
+          "tooltip": "Escala juntos el tamaño de fuente, los íconos, el gráfico y el espaciado."
         },
         "overview_height": {
-          "label": "Extra height",
-          "tooltip": "Extra space (px) added at the bottom of this section."
+          "label": "Altura extra",
+          "tooltip": "Espacio extra (px) añadido en la parte inferior de esta sección."
         },
         "overview_max_languages": {
-          "label": "Maximum languages",
-          "tooltip": "Languages beyond this limit are omitted from the mini technologies bar."
+          "label": "Máximo de lenguajes",
+          "tooltip": "Los lenguajes que superen este límite se omiten de la mini barra de tecnologías."
         }
       },
-      "description": "Compact combined card: identity, key metrics, mini star growth and mini technologies panel",
-      "name": "Overview"
+      "description": "Tarjeta única combinada: identidad, fila de metadatos, conteo de estrellas y gráfico de crecimiento",
+      "name": "Resumen"
     },
     "repository_card": {
       "config": {
         "max_topics": {
-          "description": "Maximum 6 topics",
-          "label": "Maximum topics",
-          "tooltip": "Topics beyond this limit are summarized as '+N more'."
+          "description": "Máximo de 6 temas",
+          "label": "Máximo de temas",
+          "tooltip": "Los temas que superen este límite se resumen como '+N más'."
         },
         "repository_card_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "repository_card_title": {
-          "defaultValue": "Repository",
-          "label": "Title"
+          "defaultValue": "Repositorio",
+          "label": "Título"
         },
         "show_description": {
-          "label": "Show description"
+          "label": "Mostrar descripción"
         },
         "show_language": {
-          "label": "Show primary language"
+          "label": "Mostrar lenguaje principal"
         },
         "show_license": {
-          "label": "Show license"
+          "label": "Mostrar licencia"
         },
         "show_stats": {
-          "label": "Show stars and forks"
+          "label": "Mostrar estrellas y forks"
         },
         "show_topics": {
-          "label": "Show topics"
+          "label": "Mostrar temas"
         }
       },
-      "description": "Compact card with name, description, language, stars, forks, license and topics",
-      "name": "Repository Card"
+      "description": "Tarjeta compacta con nombre, descripción, lenguaje, estrellas, forks, licencia y temas",
+      "name": "Tarjeta del Repositorio"
     },
     "star_graph": {
       "config": {
         "content_size": {
-          "label": "Size",
+          "label": "Tamaño",
           "options": {
-            "lg": "Large",
-            "md": "Medium (default)",
-            "sm": "Small",
-            "xl": "Extra large"
+            "lg": "Grande",
+            "md": "Mediano (predeterminado)",
+            "sm": "Pequeño",
+            "xl": "Extra grande"
           },
-          "tooltip": "Scales font size, icons, chart and spacing together."
+          "tooltip": "Escala juntos el tamaño de fuente, los íconos, el gráfico y el espaciado."
         },
         "star_graph_chart_height": {
-          "label": "Chart height",
-          "tooltip": "Height (px) of the chart itself, not just the section padding."
+          "label": "Altura del gráfico",
+          "tooltip": "Altura (px) del gráfico en sí, no solo del relleno de la sección."
         },
         "star_graph_height": {
-          "label": "Extra height",
-          "tooltip": "Extra space (px) added at the bottom of this section, on top of the chart height above."
+          "label": "Altura extra",
+          "tooltip": "Espacio extra (px) añadido en la parte inferior de esta sección, además de la altura del gráfico anterior."
         },
         "star_graph_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "star_graph_title": {
-          "defaultValue": "Star growth",
-          "label": "Title"
+          "defaultValue": "Crecimiento de estrellas",
+          "label": "Título"
         },
         "star_graph_variant": {
-          "label": "Style",
+          "label": "Estilo",
           "options": {
-            "area": "Area (filled line, current default)",
-            "bars": "Bars (growth between sampled points)",
-            "dots": "Dots (sampled points over dashed grid)",
-            "gradient": "Gradient (two-tone stroke, dashed baseline)",
-            "line": "Line (clean line with light grid)",
-            "milestones": "Milestones (marks a few key points)",
-            "sparkline": "Sparkline (compact row, count + trend)",
-            "steps": "Steps (staircase line)"
+            "area": "Área (curva rellena con punto en vivo)",
+            "bars": "Barras (crecimiento por período, con desvanecimiento)",
+            "dots": "Puntos (muestras sobre cuadrícula punteada)",
+            "gradient": "Degradado (trazo bicolor, línea base punteada)",
+            "line": "Línea (línea limpia con cuadrícula suave)",
+            "milestones": "Hitos (regla de progreso con marcas reales)",
+            "sparkline": "Sparkline (fila compacta, conteo + tendencia)",
+            "steps": "Escalones (línea en escalera)"
           }
         }
       },
-      "description": "A real graph of the repository's star growth over time",
-      "name": "Star Growth Graph"
+      "description": "Un gráfico real del crecimiento de estrellas del repositorio a lo largo del tiempo",
+      "name": "Gráfico de Crecimiento de Estrellas"
     },
     "stats": {
       "config": {
         "content_size": {
-          "label": "Size",
+          "label": "Tamaño",
           "options": {
-            "lg": "Large",
-            "md": "Medium (default)",
-            "sm": "Small",
-            "xl": "Extra large"
+            "lg": "Grande",
+            "md": "Mediano (predeterminado)",
+            "sm": "Pequeño",
+            "xl": "Extra grande"
           },
-          "tooltip": "Scales font size, icons, chart and spacing together."
+          "tooltip": "Escala juntos el tamaño de fuente, los íconos, el gráfico y el espaciado."
         },
         "stats_height": {
-          "label": "Extra height",
-          "tooltip": "Extra space (px) added at the bottom of this section."
+          "label": "Altura extra",
+          "tooltip": "Espacio extra (px) añadido en la parte inferior de esta sección."
         },
         "stats_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "stats_title": {
-          "defaultValue": "Stats",
-          "label": "Title"
+          "defaultValue": "Estadísticas",
+          "label": "Título"
         },
         "stats_variant": {
-          "label": "Style",
+          "label": "Estilo",
           "options": {
-            "featured": "Featured (highlighted stars block)",
-            "grid": "Grid (Stars, Forks, Issues, Watchers in blocks)",
-            "inline": "Inline (Stars and Forks side by side)",
-            "sparkstats": "Sparkstats (grid with star sparkline)"
+            "featured": "Destacado (bloque de estrellas resaltado)",
+            "grid": "Cuadrícula (cuatro celdas con divisores finos)",
+            "inline": "Inline (franja única con crecimiento)",
+            "sparkstats": "Sparkstats (cuadrícula con sparkline de estrellas)"
           }
         }
       },
-      "description": "Star and fork counters",
-      "name": "Stats"
+      "description": "Estrellas, forks, issues y watchers",
+      "name": "Estadísticas"
     },
     "topics": {
       "config": {
         "content_size": {
-          "label": "Size",
+          "label": "Tamaño",
           "options": {
-            "lg": "Large",
-            "md": "Medium (default)",
-            "sm": "Small",
-            "xl": "Extra large"
+            "lg": "Grande",
+            "md": "Mediano (predeterminado)",
+            "sm": "Pequeño",
+            "xl": "Extra grande"
           },
-          "tooltip": "Scales font size, icons, chart and spacing together."
+          "tooltip": "Escala juntos el tamaño de fuente, los íconos, el gráfico y el espaciado."
         },
         "max_topics": {
-          "description": "Maximum 6 topics",
-          "label": "Maximum topics",
-          "tooltip": "Topics beyond this limit are summarized as '+N more'."
+          "description": "Máximo de 6 temas",
+          "label": "Máximo de temas",
+          "tooltip": "Los temas que superen este límite se resumen como '+N'."
         },
         "topics_height": {
-          "label": "Extra height",
-          "tooltip": "Extra space (px) added at the bottom of this section."
+          "label": "Altura extra",
+          "tooltip": "Espacio extra (px) añadido en la parte inferior de esta sección."
         },
         "topics_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "topics_title": {
-          "defaultValue": "Topics",
-          "label": "Title"
+          "defaultValue": "Temas",
+          "label": "Título"
         },
         "topics_variant": {
-          "label": "Style",
+          "label": "Estilo",
           "options": {
-            "chips": "Chips (flat list, all equal weight)",
-            "cloud": "Cloud (first topics featured/highlighted)",
-            "hash": "Hash (#hashtags as colored text)"
+            "chips": "Chips (píldoras con acento suave)",
+            "cloud": "Nube (pesos variados, centrado)",
+            "hash": "Hash (#hashtags como texto de color)"
           }
         }
       },
-      "description": "Repository topic tags",
-      "name": "Topics"
+      "description": "Etiquetas de temas del repositorio",
+      "name": "Temas"
     }
   }
 }

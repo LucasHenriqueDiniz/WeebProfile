@@ -6,6 +6,8 @@ import { useRepositoryWizardStore } from "@/stores/repository-wizard-store"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { getSectionPreview } from "@/lib/config/section-previews"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "@/i18n/use-translations"
+import { usePluginI18n } from "@/lib/plugins/i18n-helper"
 import { useState } from "react"
 import { SectionConfigDialog } from "./SectionConfigDialog"
 
@@ -22,7 +24,11 @@ interface ConfigOption {
   type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
   defaultValue?: unknown
   options?: { value: string; label: string }[]
+  i18nKey?: { label?: string; options?: Record<string, string> }
 }
+
+// metadata.ts keys carry a "plugins." prefix that usePluginI18n already scopes to.
+const pluginKey = (key: string) => key.replace(/^plugins\./, "")
 
 // Resumo compacto do que está configurado nesta seção - mostrado no lugar do preview
 // estático quando o item está selecionado, já que o preview genérico não reflete a
@@ -34,23 +40,29 @@ function ConfigSummary({
   configOptions: ConfigOption[]
   sectionConfig: Record<string, any>
 }) {
+  const t = useTranslations("wizard.repository")
+  const { tWithFallback } = usePluginI18n()
   const chips = configOptions
     .map((option) => {
       const value = sectionConfig[option.key] ?? option.defaultValue
       if (value === undefined || value === null || value === "") return null
 
       let display: string
-      if (option.type === "boolean") display = value ? "On" : "Off"
-      else if (option.type === "select")
-        display = shortLabel(option.options?.find((o) => o.value === value)?.label ?? String(value))
-      else display = String(value)
+      if (option.type === "boolean") display = value ? t("on") : t("off")
+      else if (option.type === "select") {
+        const choice = option.options?.find((o) => o.value === value)
+        const choiceKey = choice && option.i18nKey?.options?.[choice.value]
+        const choiceLabel = choice && choiceKey ? tWithFallback(pluginKey(choiceKey), choice.label) : choice?.label
+        display = shortLabel(choiceLabel ?? String(value))
+      } else display = String(value)
 
-      return { key: option.key, label: option.label, display }
+      const label = option.i18nKey?.label ? tWithFallback(pluginKey(option.i18nKey.label), option.label) : option.label
+      return { key: option.key, label, display }
     })
     .filter((c): c is { key: string; label: string; display: string } => c !== null)
 
   if (chips.length === 0) {
-    return <p className="text-xs text-muted-foreground">Using default settings.</p>
+    return <p className="text-xs text-muted-foreground">{t("defaults")}</p>
   }
 
   return (
@@ -103,6 +115,8 @@ export function RepositoryConfigPanel() {
     useRepositoryWizardStore()
   const [rawInput, setRawInput] = useState(owner && repo ? `${owner}/${repo}` : "")
   const [error, setError] = useState<string | null>(null)
+  const t = useTranslations("wizard.repository")
+  const { tWithFallback } = usePluginI18n()
 
   const metadata = PLUGINS_METADATA.github_repo
   const activeSectionId = sections[0]
@@ -120,7 +134,7 @@ export function RepositoryConfigPanel() {
       setError(null)
     } else {
       setOwnerRepo("", "")
-      setError("Use the format owner/repo or a full github.com URL")
+      setError(t("invalid"))
     }
   }
 
@@ -128,28 +142,33 @@ export function RepositoryConfigPanel() {
     <div className="p-4 space-y-6">
       <div className="space-y-2">
         <Label htmlFor="repo-input" className="text-sm font-semibold text-foreground">
-          Repository
+          {t("label")}
         </Label>
         <Input
           id="repo-input"
           value={rawInput}
           onChange={(e) => handleInputChange(e.target.value)}
-          placeholder="owner/repo or https://github.com/owner/repo"
+          placeholder={t("placeholder")}
           className="font-mono text-sm"
         />
         {error && <p className="text-xs text-destructive">{error}</p>}
       </div>
 
       <div className="space-y-2.5">
-        <Label className="text-sm font-semibold text-foreground">Template</Label>
-        <p className="text-xs text-muted-foreground">
-          Choose one visual for the repository - not a stack of sections like the Profile card.
-        </p>
+        <Label className="text-sm font-semibold text-foreground">{t("template")}</Label>
+        <p className="text-xs text-muted-foreground">{t("templateHint")}</p>
         <div className="grid grid-cols-1 gap-3">
           {metadata.sections.map((section) => {
             const isSelected = activeSectionId === section.id
             const hasConfigs = section.configOptions && section.configOptions.length > 0
             const previewImage = getSectionPreview("github_repo", section.id, style)
+            const name = section.i18nKey?.name
+              ? tWithFallback(pluginKey(section.i18nKey.name), section.name)
+              : section.name
+            const description =
+              section.description && section.i18nKey?.description
+                ? tWithFallback(pluginKey(section.i18nKey.description), section.description)
+                : section.description
 
             return (
               // O controle acessivel desta linha e o input sr-only aninhado, que ja recebe
@@ -188,9 +207,9 @@ export function RepositoryConfigPanel() {
                       checked={isSelected}
                       onChange={() => selectSection(section.id)}
                       onClick={(e) => e.stopPropagation()}
-                      aria-label={`Select ${section.name}`}
+                      aria-label={t("select", { name })}
                     />
-                    <span className="text-sm font-medium truncate">{section.name}</span>
+                    <span className="text-sm font-medium truncate">{name}</span>
                   </div>
                   {hasConfigs && isSelected && (
                     // Fronteira de propagacao, nao um controle: impede que cliques nos filhos
@@ -206,9 +225,7 @@ export function RepositoryConfigPanel() {
                     </div>
                   )}
                 </div>
-                {section.description && (
-                  <p className="text-xs text-muted-foreground line-clamp-2">{section.description}</p>
-                )}
+                {description && <p className="text-xs text-muted-foreground line-clamp-2">{description}</p>}
                 {isSelected && hasConfigs ? (
                   <ConfigSummary
                     configOptions={section.configOptions}
@@ -226,7 +243,7 @@ export function RepositoryConfigPanel() {
                     >
                       <img
                         src={previewImage}
-                        alt={`${section.name} preview`}
+                        alt={t("previewAlt", { name })}
                         className="w-full h-full object-contain pointer-events-none"
                         draggable={false}
                       />

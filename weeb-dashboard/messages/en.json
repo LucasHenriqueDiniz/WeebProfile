@@ -539,12 +539,31 @@
       "deselectAllSections": "Deselect all sections",
       "noSections": "No sections",
       "missing": "missing",
+      "selectOption": "Select an option",
+      "configMissing_one": "{{count}} setting missing",
+      "configMissing_other": "{{count}} settings missing",
+      "configured": "Configured",
+      "usernameLabel": "{{plugin}} username",
+      "usernamePlaceholder": "your-username",
+      "fieldPlaceholder": "Enter {{field}}",
       "hasConfigurations": "⚙️ Has configurations available",
       "preview": "preview",
       "selectSection": "Select section",
       "deselectSection": "Deselect section",
       "enablePluginToPreview": "Enable at least one plugin and select sections to see the preview",
       "clearSearch": "Clear search"
+    },
+    "repository": {
+      "label": "Repository",
+      "placeholder": "owner/repo or https://github.com/owner/repo",
+      "invalid": "Use the format owner/repo or a full github.com URL",
+      "template": "Template",
+      "templateHint": "Choose one visual for the repository - not a stack of sections like the Profile card.",
+      "defaults": "Using default settings.",
+      "on": "On",
+      "off": "Off",
+      "select": "Select {{name}}",
+      "previewAlt": "{{name}} preview"
     },
     "order": {
       "tab": "Order",
@@ -722,7 +741,10 @@
         "duolingo": "Streak, XP and the languages you're learning.",
         "lyfta": "Workouts, volume and recent exercises.",
         "16personalities": "Your personality type as a badge.",
-        "github_repo": "Banner, counters, star curve, languages and topics."
+        "github_repo": "Banner, counters, star curve, languages and topics.",
+        "websites": "Your own websites, with a thumbnail of each page.",
+        "anilist": "Anime and manga stats, favorites and what you're watching.",
+        "devto": "Your profile, recent articles and the tags you use most."
       }
     },
     "templates": {

@@ -97,7 +97,9 @@ export function PluginsShowcase() {
                   </div>
                 </div>
                 <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
-                  {t(`descriptions.${plugin.name}`)}
+                  {/* The metadata text, if a plugin joins PLUGIN_ORDER before its key does:
+                      Websites showed the raw key path instead. */}
+                  {t(`descriptions.${plugin.name}`, { defaultValue: plugin.description })}
                 </p>
               </div>
             )

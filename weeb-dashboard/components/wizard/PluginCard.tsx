@@ -434,22 +434,30 @@ export const PluginCard = React.memo(
                     key: field,
                     label:
                       field === "username"
-                        ? `${metadata.displayName} Username`
+                        ? t("usernameLabel", { plugin: displayName })
                         : field.replace(/([A-Z])/g, " $1").trim(),
+                    placeholder: field === "username" ? t("usernamePlaceholder") : t("fieldPlaceholder", { field }),
                     type: "text" as const,
                   }
 
+                  // The same field declared as a section option carries its own text,
+                  // translated under that option's i18nKey.
+                  const translated = (keys: any, name: string, fallback: string | undefined) =>
+                    fallback && keys?.[name] ? tWithFallback(keys[name].replace(/^plugins\./, ""), fallback) : fallback
+
                   for (const section of metadata.sections || []) {
-                    const configOption = section.configOptions?.find((opt: any) => opt.key === field)
+                    const configOption: any = section.configOptions?.find((opt: any) => opt.key === field)
                     if (configOption) {
+                      const keys = configOption.i18nKey
                       fieldMetadata = {
                         ...fieldMetadata,
-                        label: configOption.label || fieldMetadata.label,
-                        placeholder: (configOption as any).placeholder,
-                        description: (configOption as any).description,
-                        tooltip: (configOption as any).tooltip,
-                        helpUrl: (configOption as any).helpUrl,
-                        required: (configOption as any).required,
+                        label: translated(keys, "label", configOption.label) || fieldMetadata.label,
+                        placeholder:
+                          translated(keys, "placeholder", configOption.placeholder) || fieldMetadata.placeholder,
+                        description: translated(keys, "description", configOption.description),
+                        tooltip: translated(keys, "tooltip", configOption.tooltip),
+                        helpUrl: configOption.helpUrl,
+                        required: configOption.required,
                       }
                       break
                     }
@@ -492,7 +500,7 @@ export const PluginCard = React.memo(
                             : "text"
                         }
                         className={cn("h-9 text-sm", isMissing && "border-destructive focus-visible:ring-destructive")}
-                        placeholder={fieldMetadata.placeholder || `Enter ${field}...`}
+                        placeholder={fieldMetadata.placeholder}
                         value={value}
                         onChange={(e) => handleRequiredFieldChange(field, e.target.value)}
                         onBlur={() => handleFieldBlur(field)}

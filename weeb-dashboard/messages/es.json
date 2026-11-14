@@ -539,12 +539,31 @@
       "deselectAllSections": "Deseleccionar todas las secciones",
       "noSections": "Sin secciones",
       "missing": "faltante",
+      "selectOption": "Selecciona una opción",
+      "configMissing_one": "Falta {{count}} configuración",
+      "configMissing_other": "Faltan {{count}} configuraciones",
+      "configured": "Configurado",
+      "usernameLabel": "Usuario en {{plugin}}",
+      "usernamePlaceholder": "tu-usuario",
+      "fieldPlaceholder": "Completa {{field}}",
       "hasConfigurations": "⚙️ Tiene configuraciones disponibles",
       "preview": "vista previa",
       "selectSection": "Seleccionar sección",
       "deselectSection": "Deseleccionar sección",
       "enablePluginToPreview": "Habilita al menos un plugin y selecciona secciones para ver la vista previa",
       "clearSearch": "Limpiar búsqueda"
+    },
+    "repository": {
+      "label": "Repositorio",
+      "placeholder": "dueño/repositorio o https://github.com/dueño/repositorio",
+      "invalid": "Usa el formato dueño/repositorio o la URL completa de github.com",
+      "template": "Visual",
+      "templateHint": "Elige un visual para el repositorio: aquí es uno solo, no una pila de secciones como en la tarjeta de perfil.",
+      "defaults": "Usando la configuración predeterminada.",
+      "on": "Sí",
+      "off": "No",
+      "select": "Seleccionar {{name}}",
+      "previewAlt": "Vista previa de {{name}}"
     },
     "order": {
       "tab": "Orden",
@@ -722,7 +741,10 @@
         "duolingo": "Racha, XP e idiomas que estás aprendiendo.",
         "lyfta": "Entrenamientos, cargas y ejercicios recientes.",
         "16personalities": "Tu tipo de personalidad como badge.",
-        "github_repo": "Banner, contadores, curva de estrellas, lenguajes y topics."
+        "github_repo": "Banner, contadores, curva de estrellas, lenguajes y topics.",
+        "websites": "Tus sitios web, con una miniatura de cada página.",
+        "anilist": "Estadísticas de anime y manga, favoritos y lo que estás viendo.",
+        "devto": "Tu perfil, artículos recientes y las etiquetas que más usas."
       }
     },
     "templates": {

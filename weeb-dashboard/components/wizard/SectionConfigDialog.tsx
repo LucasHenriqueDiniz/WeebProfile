@@ -16,6 +16,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { ObjectArrayInput, type ObjectArrayItem, type ObjectArrayItemField } from "./ObjectArrayInput"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
+import { useTranslations } from "@/i18n/use-translations"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 // Define SectionConfigOption locally since it's not exported from metadata path
@@ -56,6 +57,7 @@ interface SectionConfigDialogProps {
 export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigChange }: SectionConfigDialogProps) {
   const [open, setOpen] = useState(false)
   const { tWithFallback } = usePluginI18n()
+  const tPlugins = useTranslations("wizard.plugins")
   const options = getSectionConfigOptions(plugin, section.id)
   const prevOpenRef = useRef(false)
 
@@ -66,32 +68,16 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
   // Create stable key from sectionConfig to avoid unnecessary re-renders
   const sectionConfigKey = useMemo(() => JSON.stringify(sectionConfig), [sectionConfig])
 
-  // Calculate initial config function
-  // For string editables, use defaultValue from i18n only if no existing value
+  // An unset option starts at the plugin's own default, the text the card already
+  // shows. Not the translated one (i18nKey.defaultValue): the field then disagreed
+  // with the card ("Estatísticas de Anime" over "Anime Statistics"), and the first
+  // change to any option here saved it, switching the card title's language without
+  // the user touching the title.
   const getInitialConfig = () => {
     const config: Record<string, any> = {}
     options.forEach((option) => {
-      // If there's an existing value, use it (don't re-seed)
-      if (sectionConfig[option.key] !== undefined && sectionConfig[option.key] !== null) {
-        config[option.key] = sectionConfig[option.key]
-      } else {
-        // For string types with defaultValueKey, use translated default only on initial creation
-        if (option.type === "string" && option.defaultValue && typeof option.defaultValue === "string") {
-          const optionMetadata = sectionMetadata?.configOptions?.find((opt: any) => opt.key === option.key)
-          if (optionMetadata?.i18nKey?.defaultValue) {
-            // Use translated defaultValue if available
-            const translatedDefault = tWithFallback(
-              optionMetadata.i18nKey.defaultValue.replace(/^plugins\./, ""),
-              option.defaultValue
-            )
-            config[option.key] = translatedDefault
-          } else {
-            config[option.key] = option.defaultValue
-          }
-        } else {
-          config[option.key] = option.defaultValue
-        }
-      }
+      const current = sectionConfig[option.key]
+      config[option.key] = current !== undefined && current !== null ? current : option.defaultValue
     })
     return config
   }
@@ -256,7 +242,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                     onValueChange={(newValue) => updateConfig({ [option.key]: newValue })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma opção" />
+                      <SelectValue placeholder={tPlugins("selectOption")} />
                     </SelectTrigger>
                     <SelectContent>
                       {option.options.map((opt: { value: string; label: string }) => {

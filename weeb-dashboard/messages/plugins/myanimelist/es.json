@@ -172,15 +172,15 @@
     "statistics": {
       "config": {
         "statistics_anime_title": {
-          "defaultValue": "Anime Statistics",
-          "label": "Anime title"
+          "defaultValue": "Estadísticas de Anime",
+          "label": "Título de anime"
         },
         "statistics_hide_title": {
           "label": "Ocultar título"
         },
         "statistics_manga_title": {
-          "defaultValue": "Manga Statistics",
-          "label": "Manga title"
+          "defaultValue": "Estadísticas de Manga",
+          "label": "Título de manga"
         },
         "statistics_media": {
           "label": "Tipo de medio",

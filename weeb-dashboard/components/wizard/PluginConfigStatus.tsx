@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import { AlertCircle, CheckCircle2 } from "lucide-react"
+import { useTranslations } from "@/i18n/use-translations"
 import type { PluginConfig } from "@/stores/wizard-store"
 
 interface PluginConfigStatusProps {
@@ -23,6 +24,7 @@ export function PluginConfigStatus({
   missingConfigs,
   secretsPresence,
 }: PluginConfigStatusProps) {
+  const t = useTranslations("wizard.plugins")
   const pluginMissing = missingConfigs.filter((m) => m.plugin === pluginName)
 
   // Only show status for enabled plugins with sections (espelha backend)
@@ -36,7 +38,7 @@ export function PluginConfigStatus({
     return (
       <Badge variant="destructive" className="text-[10px] font-medium">
         <AlertCircle className="w-3 h-3 mr-1" />
-        Faltam {pluginMissing.length} configuração{pluginMissing.length > 1 ? "ões" : ""}
+        {t("configMissing", { count: pluginMissing.length })}
       </Badge>
     )
   }
@@ -51,7 +53,7 @@ export function PluginConfigStatus({
         className="text-[10px] font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400"
       >
         <CheckCircle2 className="w-3 h-3 mr-1" />
-        Configurado
+        {t("configured")}
       </Badge>
     )
   }

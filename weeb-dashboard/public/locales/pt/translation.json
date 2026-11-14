@@ -539,12 +539,31 @@
       "deselectAllSections": "Desmarcar todas as seções",
       "noSections": "Sem seções",
       "missing": "faltando",
+      "selectOption": "Selecione uma opção",
+      "configMissing_one": "Falta {{count}} configuração",
+      "configMissing_other": "Faltam {{count}} configurações",
+      "configured": "Configurado",
+      "usernameLabel": "Usuário no {{plugin}}",
+      "usernamePlaceholder": "seu-usuario",
+      "fieldPlaceholder": "Preencha {{field}}",
       "hasConfigurations": "⚙️ Tem configurações disponíveis",
       "preview": "preview",
       "selectSection": "Selecionar seção",
       "deselectSection": "Desmarcar seção",
       "enablePluginToPreview": "Habilite pelo menos um plugin e selecione seções para ver o preview",
       "clearSearch": "Limpar busca"
+    },
+    "repository": {
+      "label": "Repositório",
+      "placeholder": "dono/repositorio ou https://github.com/dono/repositorio",
+      "invalid": "Use o formato dono/repositorio ou a URL completa do github.com",
+      "template": "Visual",
+      "templateHint": "Escolha um visual para o repositório: aqui é um só, não uma pilha de seções como no card de perfil.",
+      "defaults": "Usando as configurações padrão.",
+      "on": "Sim",
+      "off": "Não",
+      "select": "Selecionar {{name}}",
+      "previewAlt": "Prévia de {{name}}"
     },
     "order": {
       "tab": "Ordem",
@@ -722,7 +741,10 @@
         "duolingo": "Ofensiva, XP e idiomas que você está aprendendo.",
         "lyfta": "Treinos, cargas e exercícios recentes.",
         "16personalities": "Seu tipo de personalidade como badge.",
-        "github_repo": "Banner, contadores, curva de estrelas, linguagens e tópicos."
+        "github_repo": "Banner, contadores, curva de estrelas, linguagens e tópicos.",
+        "websites": "Seus sites, com uma miniatura de cada página.",
+        "anilist": "Estatísticas de anime e mangá, favoritos e o que você está assistindo.",
+        "devto": "Seu perfil, artigos recentes e as tags que você mais usa."
       }
     },
     "templates": {
