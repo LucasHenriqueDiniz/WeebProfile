@@ -347,7 +347,13 @@ export default function DashboardPage() {
       title={t("title")}
       description={
         !isTrulyEmpty
-          ? `${total} ${t("total")}${readyCount > 0 ? ` · ${readyCount} ${t("ready")}` : ""}${generatingCount > 0 ? ` · ${generatingCount} ${t("generating")}` : ""}`
+          ? [
+              `${total} ${t("total")}`,
+              readyCount > 0 && t("readyCount", { count: readyCount }),
+              generatingCount > 0 && t("generatingCount", { count: generatingCount }),
+            ]
+              .filter(Boolean)
+              .join(" · ")
           : undefined
       }
       actions={headerActions}

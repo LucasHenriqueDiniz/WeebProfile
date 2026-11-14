@@ -68,7 +68,11 @@
       "repoTitle": "Repository",
       "repoDesc": "A standalone card for a single GitHub repository — banner, stats, star curve.",
       "cta": "Start"
-    }
+    },
+    "readyCount_one": "{{count}} ready",
+    "readyCount_other": "{{count}} ready",
+    "generatingCount_one": "{{count}} generating",
+    "generatingCount_other": "{{count}} generating"
   },
   "header": {
     "changeLanguage": "Change language",
@@ -563,7 +567,9 @@
       "selectSection": "Select section",
       "deselectSection": "Deselect section",
       "enablePluginToPreview": "Enable at least one plugin and select sections to see the preview",
-      "clearSearch": "Clear search"
+      "clearSearch": "Clear search",
+      "selectTitle": "Select a plugin",
+      "selectHint": "Pick a plugin from the list to set up its fields and sections."
     },
     "repository": {
       "label": "Repository",
