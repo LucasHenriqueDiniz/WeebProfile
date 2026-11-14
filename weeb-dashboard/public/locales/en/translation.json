@@ -544,7 +544,7 @@
         "entertainment": "Entertainment"
       },
       "requiredFields": {
-        "title": "Required fields (non-sensitive)",
+        "title": "To fetch your data",
         "required": "is required",
         "fillAllDescription": "Please fill in all required fields"
       },

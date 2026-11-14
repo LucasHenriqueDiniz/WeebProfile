@@ -544,7 +544,7 @@
         "entertainment": "Entretenimiento"
       },
       "requiredFields": {
-        "title": "Campos obligatorios (no sensibles)",
+        "title": "Para obtener tus datos",
         "required": "es obligatorio",
         "fillAllDescription": "Por favor, completa todos los campos obligatorios"
       },
