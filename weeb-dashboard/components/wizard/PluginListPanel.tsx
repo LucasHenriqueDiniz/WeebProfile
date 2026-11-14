@@ -1,7 +1,7 @@
 "use client"
 
 import { Input } from "@/components/ui/input"
-import { Search, X, AlertCircle } from "lucide-react"
+import { Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getAllTags, type PluginTag } from "@/lib/config/plugin-tags"
 import type { PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
@@ -107,26 +107,6 @@ export function PluginListPanel({ workspace }: PluginListPanelProps) {
           <span className="text-muted-foreground">{t("onlyEnabled")}</span>
         </label>
       </div>
-
-      {/* Resumo compacto de validacao - o texto completo e a acao de salvar ficam no
-          header/tooltip; aqui e so um atalho para ir ate os plugins com pendencia. */}
-      {missingConfigs.length > 0 && (
-        <button
-          type="button"
-          onClick={() => {
-            const first = missingConfigs[0]
-            if (first) setSelectedPlugin(first.plugin)
-          }}
-          className="flex-shrink-0 flex items-center gap-2 px-3 py-2 border-b border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/20 text-left hover:bg-amber-100 dark:hover:bg-amber-950/40 transition-colors"
-        >
-          <AlertCircle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-500 flex-shrink-0" />
-          <span className="text-xs text-amber-800 dark:text-amber-300">
-            {missingConfigs.length === 1
-              ? "1 configuração pendente"
-              : `${missingConfigs.length} configurações pendentes`}
-          </span>
-        </button>
-      )}
 
       {/* Lista com scroll proprio */}
       <div className="flex-1 overflow-y-auto p-2">

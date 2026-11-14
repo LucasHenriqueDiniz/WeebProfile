@@ -51,6 +51,12 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
       <WizardShell
         activeTab={ctrl.activeTab}
         onTabChange={ctrl.setActiveTab}
+        onShowPending={() => {
+          const first = workspace.missingConfigs[0]
+          if (!first) return
+          ctrl.setActiveTab("plugins")
+          workspace.setSelectedPlugin(first.plugin)
+        }}
         pluginsList={<PluginListPanel workspace={workspace} />}
         pluginDetail={<PluginDetailPanel workspace={workspace} />}
         orderConfig={<CardOrderPanel />}

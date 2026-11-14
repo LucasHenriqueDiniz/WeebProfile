@@ -413,11 +413,6 @@ export const PluginCard = React.memo(
                     )}
                     {t("requiredFields.title")}
                   </p>
-                  {hasMissing && (
-                    <Badge variant="destructive" className="text-[10px]">
-                      {missingRequiredFields.length} {t("missing")}
-                    </Badge>
-                  )}
                 </div>
                 {metadata.requiredFields.map((field) => {
                   const localValue = localInputValues[`required.${field}`]
