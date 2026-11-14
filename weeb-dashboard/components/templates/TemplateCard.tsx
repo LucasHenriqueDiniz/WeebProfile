@@ -1,6 +1,7 @@
 "use client"
 
 import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
+import { FitWidth } from "@/components/preview/FitWidth"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -181,6 +182,8 @@ export const TemplateCard = memo(function TemplateCard({
     [pluginsConfig.plugins, pluginsConfig.pluginsOrder, template.style, template.size, template.theme]
   )
 
+  const previewWidth = template.size === "full" ? 830 : 415
+
   const navigate = () => router.push(cardHref)
 
   return (
@@ -225,8 +228,12 @@ export const TemplateCard = memo(function TemplateCard({
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center p-4">
-                  <PreviewRenderer {...previewProps} />
+                // The whole card's width, scaled down, from the top. Centered at full
+                // size in this box, the 415/830px card showed a slice of its middle.
+                <div className="w-full h-full p-4">
+                  <FitWidth width={previewWidth}>
+                    <PreviewRenderer {...previewProps} />
+                  </FitWidth>
                 </div>
               )}
 
@@ -253,10 +260,12 @@ export const TemplateCard = memo(function TemplateCard({
                               }
                             : { duration: 0.2, ease: "easeOut" }
                         }
-                        className="will-change-transform"
+                        className="w-full will-change-transform"
                       >
-                        <div ref={contentRef} className="flex justify-center">
-                          <PreviewRenderer {...previewProps} />
+                        <div ref={contentRef}>
+                          <FitWidth width={previewWidth}>
+                            <PreviewRenderer {...previewProps} />
+                          </FitWidth>
                         </div>
                       </motion.div>
                     </div>

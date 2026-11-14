@@ -207,10 +207,15 @@ ${cssVariables}
     // scrollHeight, not the observer's contentRect: children routinely overflow
     // the root's own box -- as a plain div that just spilled visibly into the
     // page, but an iframe clips it.
+    //
+    // The root alone, not the document: the document's scrollHeight is never less
+    // than the frame's own viewport, so once the frame grew it could not shrink. A
+    // card that got shorter (half to full width, a section turned off) kept its
+    // old height, with the difference drawn as an empty box under it.
     const sync = () => {
       const frame = iframeRef.current
       if (!frame) return
-      const measured = Math.max(mountNode.scrollHeight, doc.body.scrollHeight, doc.documentElement.scrollHeight, height)
+      const measured = Math.max(mountNode.scrollHeight, height)
       if (Math.abs(parseFloat(frame.style.height || "0") - measured) > 1) {
         frame.style.height = `${measured}px`
       }

@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils"
 import { useTranslations } from "@/i18n/use-translations"
 import { WizardFooter, type WizardFooterProps } from "./WizardFooter"
 import Image from "@/src/compat/next-image"
+import { FitWidth } from "@/components/preview/FitWidth"
 
 export type WizardTab = "plugins" | "order" | "style"
 
@@ -141,16 +142,21 @@ export function WizardShell({
             do conteudo e o torna inacessivel via scroll, fazendo parecer que o header cobre o SVG. */}
         <div className="p-4 lg:p-8 w-full min-h-full flex items-center justify-center">
           {contentCount > 0 ? (
-            <div className="w-full max-w-full overflow-x-auto flex justify-center">
+            // Scaled down to the column instead of cut off by it: at 1034px the column
+            // is ~310px wide for a 415px card, and the 830px card fits nowhere under
+            // ~1800px. +2 is the frame's 1px border on each side. The shadow sits on
+            // the scaled box, since FitWidth clips whatever is inside it.
+            <FitWidth
+              width={contentWidth + 2}
+              className="rounded-lg shadow-[0_0_40px_hsl(var(--foreground)/0.1)] dark:shadow-[0_0_40px_rgba(0,0,0,0.3)]"
+            >
               {/* O frame nao declara a propria largura nem padding horizontal - ele so
                   encolhe (w-fit) ao redor do que o LivePreview ja renderiza em 415/830px
                   reais. Antes o frame tinha width:415px + p-4 (16px), então o conteudo
                   interno (tambem fixado em 415px) estourava 17px para fora de cada lado
                   do padding, e a borda visivel nao correspondia aos limites reais do SVG. */}
-              <div className="w-fit mx-auto rounded-lg border border-border bg-card shadow-[0_0_40px_hsl(var(--foreground)/0.1)] dark:shadow-[0_0_40px_rgba(0,0,0,0.3)] overflow-hidden">
-                {preview}
-              </div>
-            </div>
+              <div className="w-fit rounded-lg border border-border bg-card overflow-hidden">{preview}</div>
+            </FitWidth>
           ) : (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
