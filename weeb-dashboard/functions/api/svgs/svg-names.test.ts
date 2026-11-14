@@ -22,6 +22,10 @@ describe("uniqueSvgName", () => {
     expect(uniqueSvgName("MyAnimeList Stats", ["MyAnimeList Stats"])).toBe("MyAnimeList Stats 2")
     expect(uniqueSvgName("MyAnimeList Stats", ["MyAnimeList Stats", "MyAnimeList Stats 2"])).toBe("MyAnimeList Stats 3")
   })
+
+  it("treats names that differ only in case as the same", () => {
+    expect(uniqueSvgName("MyAnimeList Stats", ["Myanimelist Stats"])).toBe("MyAnimeList Stats 2")
+  })
 })
 
 describe("SVG names on a real D1", () => {
@@ -94,5 +98,18 @@ describe("SVG names on a real D1", () => {
   it("only compares against the same user's SVGs", async () => {
     auth.userId = "user_b"
     expect((await create("MyAnimeList Stats", ["statistics"])).name).toBe("MyAnimeList Stats")
+  })
+
+  it("separates a pair saved under the old casing once the wizard edits it", async () => {
+    // Production has two cards named "Myanimelist Stats", from before the display name.
+    auth.userId = "user_c"
+    const first = await create("placeholder one", ["statistics", "last_activity"])
+    const second = await create("placeholder two", ["statistics"])
+    await env.DB.prepare("UPDATE svgs SET name = 'Myanimelist Stats' WHERE user_id = 'user_c'").run()
+
+    expect((await update(second.id, "MyAnimeList Stats", ["statistics"])).name).toBe("MyAnimeList Stats 2")
+    expect((await update(first.id, "MyAnimeList Stats", ["statistics", "last_activity"])).name).toBe(
+      "MyAnimeList Stats"
+    )
   })
 })
