@@ -322,7 +322,7 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Chikoi The Maid",
       totalPlays: "167",
-      image: "https://i.scdn.co/image/ab67616d0000b273dcb6f50b9001e9cde95dc136",
+      image: "https://i.scdn.co/image/ab67616d00001e02dcb6f50b9001e9cde95dc136",
     },
     {
       artist: "Campfire Stalker",
@@ -337,7 +337,7 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Steve Jablonsky",
       totalPlays: "60",
-      image: "https://i.scdn.co/image/c65979ab9c8924cd836b77331cf8afa4463f51eb",
+      image: "https://cdn-images.dzcdn.net/images/artist/421836adcf4da0b6308c7dc9194c564e/250x250-000000-80-0-0.jpg",
     },
     {
       artist: "Exhibit",
@@ -367,17 +367,17 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Akira Yamaoka",
       totalPlays: "35",
-      image: "https://i.scdn.co/image/ab67616d0000b27330f7a8628bd1b67c0ee5c817",
+      image: "https://i.scdn.co/image/ab67616d00001e0230f7a8628bd1b67c0ee5c817",
     },
     {
       artist: "Dysmn",
       totalPlays: "29",
-      image: "https://i.scdn.co/image/ab6761610000e5eb8be6399d47aa047c581f36d6",
+      image: "https://i.scdn.co/image/ab676161000051748be6399d47aa047c581f36d6",
     },
     {
       artist: "Five Finger Death Punch",
       totalPlays: "29",
-      image: "https://i.scdn.co/image/ab6761610000e5eb1e7f796a17c2dc3c28bdeeb9",
+      image: "https://i.scdn.co/image/ab676161000051741e7f796a17c2dc3c28bdeeb9",
     },
     {
       artist: "too unbothered.",
@@ -392,7 +392,7 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Jonathan Geer",
       totalPlays: "22",
-      image: "https://i.scdn.co/image/ab67616d0000b2732b5a03a119167450c4a5c9c8",
+      image: "https://i.scdn.co/image/ab67616d00001e022b5a03a119167450c4a5c9c8",
     },
     {
       artist: "George Strezov",
@@ -412,7 +412,7 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Eleftherios",
       totalPlays: "18",
-      image: "https://i.scdn.co/image/ab6761610000e5eb22819b5104b82782f64b948e",
+      image: "https://i.scdn.co/image/ab6761610000517422819b5104b82782f64b948e",
     },
     {
       artist: "Capcom Sound Team",
@@ -427,12 +427,12 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Hallowed",
       totalPlays: "16",
-      image: "https://i.scdn.co/image/ab6761610000e5eb7dcd7c2d30d8003f4f9a709c",
+      image: "https://i.scdn.co/image/ab676161000051747dcd7c2d30d8003f4f9a709c",
     },
     {
       artist: "Kichi",
       totalPlays: "16",
-      image: "https://i.scdn.co/image/ab6761610000e5eb114dcd4810052c54a77f7f51",
+      image: "https://i.scdn.co/image/ab67616100005174114dcd4810052c54a77f7f51",
     },
     {
       artist: "Federico Dubbini",
@@ -442,7 +442,7 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Gustavo Santaolalla",
       totalPlays: "15",
-      image: "https://i.scdn.co/image/ab6761610000e5eb074781eba0a9c008945cde18",
+      image: "https://i.scdn.co/image/ab67616100005174074781eba0a9c008945cde18",
     },
     {
       artist: "Michael Giacchino",
@@ -497,7 +497,7 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Eiby",
       totalPlays: "13",
-      image: "https://i.scdn.co/image/ab6761610000e5eb7f9982583996e70a37eb9beb",
+      image: "https://i.scdn.co/image/ab676161000051747f9982583996e70a37eb9beb",
     },
     {
       artist: "AZALI",
@@ -507,22 +507,22 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Jay Tholen",
       totalPlays: "12",
-      image: "https://i.scdn.co/image/ab6761610000e5eb460627e98539b2d207a1daed",
+      image: "https://i.scdn.co/image/ab67616100005174460627e98539b2d207a1daed",
     },
     {
       artist: "Jesper Kyd",
       totalPlays: "12",
-      image: "https://i.scdn.co/image/ab6761610000e5ebcde68a261f933f4f5d8be288",
+      image: "https://i.scdn.co/image/ab67616100005174cde68a261f933f4f5d8be288",
     },
     {
       artist: "Ludwig van Beethoven",
       totalPlays: "12",
-      image: "https://i.scdn.co/image/ab6761610000e5eba636b0b244253f602a629796",
+      image: "https://i.scdn.co/image/ab67616100005174a636b0b244253f602a629796",
     },
     {
       artist: "ogryzek",
       totalPlays: "12",
-      image: "https://i.scdn.co/image/ab6761610000e5ebf5083570c3167efac89e6713",
+      image: "https://i.scdn.co/image/ab67616100005174f5083570c3167efac89e6713",
     },
     {
       artist: "Nowt",
@@ -537,7 +537,7 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "Jagex Audio Team",
       totalPlays: "10",
-      image: "https://i.scdn.co/image/ab67616d0000b2735be11fd85e00e21b0d13b97b",
+      image: "https://i.scdn.co/image/ab67616d00001e025be11fd85e00e21b0d13b97b",
     },
     {
       artist: "Lena Raine",
@@ -552,7 +552,7 @@ function generateMockTopArtists(count = 10): LastFmArtist[] {
     {
       artist: "SCYTHERMANE",
       totalPlays: "10",
-      image: "https://i.scdn.co/image/ab6761610000e5eb78c7eac7f83aef818f78356c",
+      image: "https://i.scdn.co/image/ab6761610000517478c7eac7f83aef818f78356c",
     },
     {
       artist: "Hikari",
@@ -880,37 +880,37 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "WRATH",
       artist: "Phonkha",
       plays: "240",
-      image: "https://i.scdn.co/image/ab67616d0000b273843242f8abfe17a40ea81483",
+      image: "https://i.scdn.co/image/ab67616d00001e02843242f8abfe17a40ea81483",
     },
     {
       track: "Override",
       artist: "KSLV Noh",
       plays: "220",
-      image: "https://i.scdn.co/image/ab67616d0000b273fd0d8f94779bdd003596f2ed",
+      image: "https://i.scdn.co/image/ab67616d00001e02fd0d8f94779bdd003596f2ed",
     },
     {
       track: "LVL DEATH",
       artist: "psychomane",
       plays: "214",
-      image: "https://i.scdn.co/image/ab67616d0000b27381b29d239828b1dd6973ec4d",
+      image: "https://i.scdn.co/image/ab67616d00001e0281b29d239828b1dd6973ec4d",
     },
     {
       track: "No Below",
       artist: "Speedy Ortiz",
       plays: "196",
-      image: "https://i.scdn.co/image/ab67616d0000b27339b683ce822becda4ecccfd8",
+      image: "https://i.scdn.co/image/ab67616d00001e0239b683ce822becda4ecccfd8",
     },
     {
       track: "Piano Fire",
       artist: "Sparklehorse",
       plays: "195",
-      image: "https://i.scdn.co/image/ab67616d0000b273249e18bd7db232c8384924ce",
+      image: "https://i.scdn.co/image/ab67616d00001e02249e18bd7db232c8384924ce",
     },
     {
       track: "Disaster",
       artist: "KSLV Noh",
       plays: "172",
-      image: "https://i.scdn.co/image/ab67616d0000b2731115e7ebc1eae4e6b9027de6",
+      image: "https://i.scdn.co/image/ab67616d00001e021115e7ebc1eae4e6b9027de6",
     },
     {
       track: "Mountains",
@@ -922,13 +922,13 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "When the Party's Over",
       artist: "Felix Martin",
       plays: "166",
-      image: "https://i.scdn.co/image/ab67616d0000b273f90448ad68fe4a30e14a16a7",
+      image: "https://i.scdn.co/image/ab67616d00001e02f90448ad68fe4a30e14a16a7",
     },
     {
       track: "Going up the Country",
       artist: "Canned Heat",
       plays: "164",
-      image: "https://i.scdn.co/image/ab67616d0000b27308a9f2ae15587fa3da702ba0",
+      image: "https://i.scdn.co/image/ab67616d00001e0208a9f2ae15587fa3da702ba0",
     },
     {
       track: "Look, I'm Dancing",
@@ -946,13 +946,13 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "Glock To Your Head",
       artist: "DeadJxhn",
       plays: "157",
-      image: "https://i.scdn.co/image/ab67616d0000b273bbad1d2f974718059eb8d63b",
+      image: "https://i.scdn.co/image/ab67616d00001e02bbad1d2f974718059eb8d63b",
     },
     {
       track: "Slushies",
       artist: "karavelo",
       plays: "157",
-      image: "https://i.scdn.co/image/ab67616d0000b2739abc30394b05bad8b9ca3114",
+      image: "https://i.scdn.co/image/ab67616d00001e029abc30394b05bad8b9ca3114",
     },
     {
       track: "Sahara",
@@ -964,7 +964,7 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "DESTRUCTION",
       artist: "MC ORSEN",
       plays: "148",
-      image: "https://i.scdn.co/image/ab67616d0000b27327f442f0adb5d57caffe7253",
+      image: "https://i.scdn.co/image/ab67616d00001e0227f442f0adb5d57caffe7253",
     },
     {
       track: "Live Another Day",
@@ -982,37 +982,37 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "No Care",
       artist: "Daughter",
       plays: "144",
-      image: "https://i.scdn.co/image/ab67616d0000b2732b39f574d17e45fad82194f0",
+      image: "https://i.scdn.co/image/ab67616d00001e022b39f574d17e45fad82194f0",
     },
     {
       track: "Youth",
       artist: "Daughter",
       plays: "141",
-      image: "https://i.scdn.co/image/ab67616d0000b273f9e7f5cc42ac959998ca90ee",
+      image: "https://i.scdn.co/image/ab67616d00001e02f9e7f5cc42ac959998ca90ee",
     },
     {
       track: "Amore In Controluce 3",
       artist: "Gianni Marchetti",
       plays: "139",
-      image: "https://i.scdn.co/image/ab67616d0000b27311dd95756ecb3953ac1ae3b0",
+      image: "https://i.scdn.co/image/ab67616d00001e0211dd95756ecb3953ac1ae3b0",
     },
     {
       track: "Dies irae",
       artist: "Giuseppe Verdi",
       plays: "138",
-      image: "https://i.scdn.co/image/ab67616d0000b2735abdabd1eeb2bdd287ad8ce9",
+      image: "https://i.scdn.co/image/ab67616d00001e025abdabd1eeb2bdd287ad8ce9",
     },
     {
       track: "Crosses",
       artist: "José González",
       plays: "138",
-      image: "https://i.scdn.co/image/ab67616d0000b27376557bf2d3926bf5a607cd92",
+      image: "https://i.scdn.co/image/ab67616d00001e0276557bf2d3926bf5a607cd92",
     },
     {
       track: "Through The Cellar Door",
       artist: "Lanterns on the Lake",
       plays: "138",
-      image: "https://i.scdn.co/image/ab67616d0000b273377e9a1eb4adac0f5e17fdea",
+      image: "https://i.scdn.co/image/ab67616d00001e02377e9a1eb4adac0f5e17fdea",
     },
     {
       track: "The Last of Us",
@@ -1024,7 +1024,7 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "Mt. Washington",
       artist: "Local Natives",
       plays: "136",
-      image: "https://i.scdn.co/image/ab67616d0000b27373f379b7c980cfb5be81553a",
+      image: "https://i.scdn.co/image/ab67616d00001e0273f379b7c980cfb5be81553a",
     },
     {
       track: 'Eclisse Slow - From "L\'eclisse" Original Soundtrack',
@@ -1042,13 +1042,13 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "Stereo Love",
       artist: "my!lane",
       plays: "132",
-      image: "https://i.scdn.co/image/ab67616d0000b273a97cc86221a5d3302be26680",
+      image: "https://i.scdn.co/image/ab67616d00001e02a97cc86221a5d3302be26680",
     },
     {
       track: "Ignorant",
       artist: "PHXNKPLAYA",
       plays: "132",
-      image: "https://i.scdn.co/image/ab67616d0000b27310ec3c928abe7e9c480cd2d8",
+      image: "https://i.scdn.co/image/ab67616d00001e0210ec3c928abe7e9c480cd2d8",
     },
     {
       track: "I Can't Live Here Anymore",
@@ -1066,7 +1066,7 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "he waits patiently",
       artist: "ichika Nito",
       plays: "128",
-      image: "https://i.scdn.co/image/ab67616d0000b273868947899e3125b87a5ef73c",
+      image: "https://i.scdn.co/image/ab67616d00001e02868947899e3125b87a5ef73c",
     },
     {
       track: "All I Wanted",
@@ -1078,19 +1078,19 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "Oats We Sow",
       artist: "Gregory and the Hawk",
       plays: "125",
-      image: "https://i.scdn.co/image/ab67616d0000b27328e2b529cb08bfe5a00035c3",
+      image: "https://i.scdn.co/image/ab67616d00001e0228e2b529cb08bfe5a00035c3",
     },
     {
       track: "The Four Seasons, Violin Concerto No. 2 in G Minor, RV 315 \"L'estate\": III. Tempo impetuoso d'estate",
       artist: "Antonio Vivaldi",
       plays: "124",
-      image: "https://i.scdn.co/image/ab67616d0000b2735ec9bde7fb0ad9f6aa646866",
+      image: "https://i.scdn.co/image/ab67616d00001e025ec9bde7fb0ad9f6aa646866",
     },
     {
       track: "Main Title",
       artist: "Inon Zur",
       plays: "123",
-      image: "https://i.scdn.co/image/ab67616d0000b27325f0615aeb6e2096bae05190",
+      image: "https://i.scdn.co/image/ab67616d00001e0225f0615aeb6e2096bae05190",
     },
     {
       track: "Withdrawn",
@@ -1114,31 +1114,31 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "Cursed Midnight - Radio Edit",
       artist: "GLWKMOD",
       plays: "116",
-      image: "https://i.scdn.co/image/ab67616d0000b2736f8dbed1a5c6ddf7cbfc4af5",
+      image: "https://i.scdn.co/image/ab67616d00001e026f8dbed1a5c6ddf7cbfc4af5",
     },
     {
       track: "Numbers",
       artist: "Daughter",
       plays: "114",
-      image: "https://i.scdn.co/image/ab67616d0000b2732b39f574d17e45fad82194f0",
+      image: "https://i.scdn.co/image/ab67616d00001e022b39f574d17e45fad82194f0",
     },
     {
       track: "Swirl",
       artist: "Noflik",
       plays: "113",
-      image: "https://i.scdn.co/image/ab67616d0000b27319483f6082db88c5d254e0f3",
+      image: "https://i.scdn.co/image/ab67616d00001e0219483f6082db88c5d254e0f3",
     },
     {
       track: "Blackwell Academy",
       artist: "Dolkins",
       plays: "112",
-      image: "https://i.scdn.co/image/ab67616d0000b2734c5d863b3fbdc9b4f5693b7b",
+      image: "https://i.scdn.co/image/ab67616d00001e024c5d863b3fbdc9b4f5693b7b",
     },
     {
       track: "Fallout 4 Main Theme",
       artist: "Inon Zur",
       plays: "112",
-      image: "https://i.scdn.co/image/ab67616d0000b273ee81b3d1a2d4185c24845c09",
+      image: "https://i.scdn.co/image/ab67616d00001e02ee81b3d1a2d4185c24845c09",
     },
     {
       track: "The Right Way Around",
@@ -1156,7 +1156,7 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "No One is Ever Going to Want Me",
       artist: "Giles Corey",
       plays: "108",
-      image: "https://i.scdn.co/image/ab67616d0000b273e461745c8728c3fdb048422f",
+      image: "https://i.scdn.co/image/ab67616d00001e02e461745c8728c3fdb048422f",
     },
     {
       track: "Ultraviolet",
@@ -1168,7 +1168,7 @@ function generateMockTopTracks(count = 10): TopTrack[] {
       track: "El Gringo",
       artist: "Alessandro Alessandroni",
       plays: "107",
-      image: "https://i.scdn.co/image/ab67616d0000b2731a3fc23749b24aa6a401caa3",
+      image: "https://i.scdn.co/image/ab67616d00001e021a3fc23749b24aa6a401caa3",
     },
     {
       track: "Pretty Little Head",
