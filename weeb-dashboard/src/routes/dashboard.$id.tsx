@@ -534,7 +534,10 @@ export default function SvgViewPage() {
               }
             >
               <p className="mb-3 text-xs text-muted-foreground">{t("markdown.description")}</p>
-              <pre className="overflow-x-auto rounded-lg border border-border/50 bg-muted/50 p-3 font-mono text-xs">
+              {/* Wrapped, not scrolled: the column is ~250px wide and the markdown about
+                  1100px, so a horizontal scroll showed a fifth of what gets pasted. The
+                  URL has no spaces, hence overflow-wrap:anywhere rather than break-words. */}
+              <pre className="whitespace-pre-wrap [overflow-wrap:anywhere] rounded-lg border border-border/50 bg-muted/50 p-3 font-mono text-xs">
                 <code className="text-foreground">{markdownCode}</code>
               </pre>
             </PanelCard>
