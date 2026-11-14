@@ -7,6 +7,7 @@ import { NumberInput } from "@/components/ui/number-input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react"
+import { useTranslations } from "@/i18n/use-translations"
 
 export interface ObjectArrayItemField {
   key: string
@@ -49,6 +50,7 @@ export function ObjectArrayInput({
   addLabel = "Adicionar item",
   emptyHint = "Nenhum item adicionado ainda.",
 }: ObjectArrayInputProps) {
+  const tPlugins = useTranslations("wizard.plugins")
   const items = Array.isArray(value) ? value : []
   const atLimit = maxItems !== undefined && items.length >= maxItems
 
@@ -165,7 +167,7 @@ export function ObjectArrayInput({
                       onValueChange={(newValue) => updateItem(index, { [field.key]: newValue })}
                     >
                       <SelectTrigger id={fieldId}>
-                        <SelectValue placeholder="Selecione uma opção" />
+                        <SelectValue placeholder={tPlugins("selectOption")} />
                       </SelectTrigger>
                       <SelectContent>
                         {field.options.map((opt) => (

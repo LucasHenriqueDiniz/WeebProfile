@@ -1,50 +1,50 @@
 {
-  "description": "Showcase your own websites, with thumbnails pulled from each page",
+  "description": "Muestra tus propios sitios web, con miniaturas extraídas de cada página",
   "displayName": "Websites",
   "sections": {
     "websites": {
       "config": {
         "websites_autofill": {
-          "description": "Read title, description and thumbnail from each page's Open Graph tags",
-          "label": "Fill in from the page",
-          "tooltip": "Turn this off to use only what you typed. With it on, each website is fetched once per generation to read its <meta> tags — that makes generation slower and depends on the site being reachable."
+          "description": "Lee título, descripción y miniatura de las etiquetas Open Graph de cada página",
+          "label": "Rellenar desde la página",
+          "tooltip": "Desactívalo para usar solo lo que escribiste. Activado, cada sitio se consulta una vez por generación para leer sus etiquetas <meta> — esto hace la generación más lenta y depende de que el sitio esté accesible."
         },
         "websites_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "websites_items": {
-          "description": "The websites to show. Only the URL is required.",
-          "label": "Websites",
-          "tooltip": "Add one entry per website. Title, description and image are filled in automatically from the page's Open Graph tags when 'Fill in from the page' is on — anything you type here wins over what is detected."
+          "description": "Los sitios web a mostrar. Solo la URL es obligatoria.",
+          "label": "Sitios web",
+          "tooltip": "Añade una entrada por sitio web. El título, la descripción y la imagen se rellenan automáticamente desde las etiquetas Open Graph de la página cuando 'Rellenar desde la página' está activado — lo que escribas aquí tiene prioridad sobre lo detectado."
         },
         "websites_max": {
-          "description": "Maximum 12 websites",
-          "label": "Maximum websites",
-          "tooltip": "Websites beyond this limit are not fetched or displayed."
+          "description": "Máximo de 12 sitios web",
+          "label": "Máximo de sitios web",
+          "tooltip": "Los sitios web que superen este límite no se consultan ni se muestran."
         },
         "websites_show_description": {
-          "label": "Show description"
+          "label": "Mostrar descripción"
         },
         "websites_show_thumbnail": {
-          "label": "Show thumbnail",
-          "tooltip": "When off, the Grid and Featured styles fall back to a favicon-only layout."
+          "label": "Mostrar miniatura",
+          "tooltip": "Desactivado, los estilos Grid y Featured usan un diseño solo con favicon."
         },
         "websites_title": {
-          "defaultValue": "Websites",
-          "label": "Title"
+          "defaultValue": "Sitios web",
+          "label": "Título"
         },
         "websites_variant": {
-          "description": "Choose how the websites are laid out",
-          "label": "Style",
+          "description": "Elige cómo se organizan los sitios web",
+          "label": "Estilo",
           "options": {
-            "featured": "Featured (first site highlighted, rest as a list)",
-            "grid": "Grid (cards with a big thumbnail)",
-            "list": "List (compact rows with favicon)"
+            "featured": "Destacado (primer sitio resaltado, el resto en lista)",
+            "grid": "Cuadrícula (tarjetas con miniatura grande)",
+            "list": "Lista (filas compactas con favicon)"
           }
         }
       },
-      "description": "A showcase of the websites you add, with page thumbnail, title and description",
-      "name": "Websites"
+      "description": "Una vitrina de los sitios web que añades, con miniatura de la página, título y descripción",
+      "name": "Sitios web"
     }
   }
 }

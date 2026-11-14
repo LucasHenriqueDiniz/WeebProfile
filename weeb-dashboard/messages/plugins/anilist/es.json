@@ -1,59 +1,59 @@
 {
-  "description": "Show your AniList anime and manga statistics",
+  "description": "Muestra tus estadísticas de anime y manga de AniList",
   "displayName": "AniList",
   "sections": {
     "currently_watching": {
       "config": {
         "currently_watching_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "currently_watching_max": {
-          "label": "Max items"
+          "label": "Máximo de elementos"
         },
         "currently_watching_title": {
-          "defaultValue": "Currently Watching",
-          "label": "Title"
+          "defaultValue": "Viendo Ahora",
+          "label": "Título"
         }
       },
-      "description": "In-progress anime with episode progress. Requires a public list.",
-      "name": "Currently Watching"
+      "description": "Animes en curso con progreso de episodios. Requiere una lista pública.",
+      "name": "Viendo Ahora"
     },
     "favorites_anime": {
       "config": {
         "favorites_anime_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "favorites_anime_max": {
-          "label": "Max items"
+          "label": "Máximo de elementos"
         },
         "favorites_anime_title": {
-          "defaultValue": "Favorite Anime",
-          "label": "Title"
+          "defaultValue": "Animes Favoritos",
+          "label": "Título"
         }
       },
-      "description": "Cover grid of your favourited anime",
-      "name": "Favorite Anime"
+      "description": "Cuadrícula de portadas de tus animes favoritos",
+      "name": "Animes Favoritos"
     },
     "statistics": {
       "config": {
         "statistics_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "statistics_media": {
-          "label": "Media",
+          "label": "Medio",
           "options": {
-            "anime": "Anime only",
-            "both": "Anime and manga",
-            "manga": "Manga only"
+            "anime": "Solo anime",
+            "both": "Anime y manga",
+            "manga": "Solo manga"
           }
         },
         "statistics_title": {
-          "defaultValue": "AniList Statistics",
-          "label": "Title"
+          "defaultValue": "Estadísticas de AniList",
+          "label": "Título"
         }
       },
-      "description": "Anime and manga counts, time watched and mean scores",
-      "name": "Statistics"
+      "description": "Conteos de anime y manga, tiempo visto y puntuaciones promedio",
+      "name": "Estadísticas"
     }
   }
 }

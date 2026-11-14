@@ -1,50 +1,50 @@
 {
-  "description": "Showcase your own websites, with thumbnails pulled from each page",
+  "description": "Mostre seus próprios sites, com miniaturas extraídas de cada página",
   "displayName": "Websites",
   "sections": {
     "websites": {
       "config": {
         "websites_autofill": {
-          "description": "Read title, description and thumbnail from each page's Open Graph tags",
-          "label": "Fill in from the page",
-          "tooltip": "Turn this off to use only what you typed. With it on, each website is fetched once per generation to read its <meta> tags — that makes generation slower and depends on the site being reachable."
+          "description": "Lê título, descrição e miniatura das tags Open Graph de cada página",
+          "label": "Preencher a partir da página",
+          "tooltip": "Desative para usar só o que você digitou. Ativado, cada site é buscado uma vez por geração para ler as tags <meta> — isso deixa a geração mais lenta e depende de o site estar acessível."
         },
         "websites_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "websites_items": {
-          "description": "The websites to show. Only the URL is required.",
-          "label": "Websites",
-          "tooltip": "Add one entry per website. Title, description and image are filled in automatically from the page's Open Graph tags when 'Fill in from the page' is on — anything you type here wins over what is detected."
+          "description": "Os sites a exibir. Só a URL é obrigatória.",
+          "label": "Sites",
+          "tooltip": "Adicione uma entrada por site. Título, descrição e imagem são preenchidos automaticamente a partir das tags Open Graph da página quando 'Preencher a partir da página' está ativado — o que você digitar aqui tem prioridade sobre o detectado."
         },
         "websites_max": {
-          "description": "Maximum 12 websites",
-          "label": "Maximum websites",
-          "tooltip": "Websites beyond this limit are not fetched or displayed."
+          "description": "Máximo de 12 sites",
+          "label": "Máximo de sites",
+          "tooltip": "Sites além desse limite não são buscados nem exibidos."
         },
         "websites_show_description": {
-          "label": "Show description"
+          "label": "Mostrar descrição"
         },
         "websites_show_thumbnail": {
-          "label": "Show thumbnail",
-          "tooltip": "When off, the Grid and Featured styles fall back to a favicon-only layout."
+          "label": "Mostrar miniatura",
+          "tooltip": "Desativado, os estilos Grid e Featured usam um layout só com favicon."
         },
         "websites_title": {
-          "defaultValue": "Websites",
-          "label": "Title"
+          "defaultValue": "Sites",
+          "label": "Título"
         },
         "websites_variant": {
-          "description": "Choose how the websites are laid out",
-          "label": "Style",
+          "description": "Escolha como os sites são organizados",
+          "label": "Estilo",
           "options": {
-            "featured": "Featured (first site highlighted, rest as a list)",
-            "grid": "Grid (cards with a big thumbnail)",
-            "list": "List (compact rows with favicon)"
+            "featured": "Destaque (primeiro site em evidência, o resto em lista)",
+            "grid": "Grade (cards com miniatura grande)",
+            "list": "Lista (linhas compactas com favicon)"
           }
         }
       },
-      "description": "A showcase of the websites you add, with page thumbnail, title and description",
-      "name": "Websites"
+      "description": "Uma vitrine dos sites que você adiciona, com miniatura da página, título e descrição",
+      "name": "Sites"
     }
   }
 }

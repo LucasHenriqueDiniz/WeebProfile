@@ -1,51 +1,51 @@
 {
-  "description": "Show your Dev.to profile and recent articles",
+  "description": "Muestra tu perfil de Dev.to y tus artículos recientes",
   "displayName": "Dev.to",
   "sections": {
     "profile": {
       "config": {
         "profile_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "profile_title": {
           "defaultValue": "Dev.to",
-          "label": "Title"
+          "label": "Título"
         }
       },
-      "description": "Name, avatar, location and join date",
-      "name": "Profile"
+      "description": "Nombre, avatar, ubicación y fecha de registro",
+      "name": "Perfil"
     },
     "recent_articles": {
       "config": {
         "recent_articles_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "recent_articles_max": {
-          "label": "Max items"
+          "label": "Máximo de elementos"
         },
         "recent_articles_title": {
-          "defaultValue": "Recent Articles",
-          "label": "Title"
+          "defaultValue": "Artículos Recientes",
+          "label": "Título"
         }
       },
-      "description": "Latest posts with reactions and comments",
-      "name": "Recent Articles"
+      "description": "Últimas publicaciones con reacciones y comentarios",
+      "name": "Artículos Recientes"
     },
     "top_tags": {
       "config": {
         "top_tags_hide_title": {
-          "label": "Hide title"
+          "label": "Ocultar título"
         },
         "top_tags_max": {
-          "label": "Max tags"
+          "label": "Máximo de etiquetas"
         },
         "top_tags_title": {
-          "defaultValue": "Top Tags (recent posts)",
-          "label": "Title"
+          "defaultValue": "Etiquetas Principales (publicaciones recientes)",
+          "label": "Título"
         }
       },
-      "description": "Most used tags across your recent posts. Counts that window, not your whole history.",
-      "name": "Top Tags"
+      "description": "Etiquetas más usadas en tus publicaciones recientes. Cuenta solo esa ventana, no todo tu historial.",
+      "name": "Etiquetas Principales"
     }
   }
 }

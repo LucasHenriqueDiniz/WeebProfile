@@ -3,9 +3,9 @@
   "displayName": "Steam",
   "essentialConfig": {
     "steamId": {
-      "description": "Seu Steam ID64 (17 dígitos)",
-      "label": "Steam ID64",
-      "placeholder": "76561198000000000"
+      "description": "Cole a URL do seu perfil da Steam (ou o SteamID64 de 17 dígitos)",
+      "label": "Perfil da Steam",
+      "placeholder": "steamcommunity.com/id/seu-perfil"
     }
   },
   "sections": {
