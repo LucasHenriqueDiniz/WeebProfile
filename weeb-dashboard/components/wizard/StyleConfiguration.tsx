@@ -19,7 +19,6 @@ import { useTranslations } from "@/i18n/use-translations"
 
 export interface StyleConfigurationProps {
   style: "default" | "terminal"
-  size: "half" | "full"
   theme: string
   hideTerminalEmojis: boolean
   hideTerminalHeader: boolean
@@ -28,7 +27,6 @@ export interface StyleConfigurationProps {
   customCss: string
   customThemeColors: Record<string, string>
   setStyle: (style: "default" | "terminal") => void
-  setSize: (size: "half" | "full") => void
   setTheme: (theme: string) => void
   setHideTerminalEmojis: (value: boolean) => void
   setHideTerminalHeader: (value: boolean) => void
@@ -43,7 +41,6 @@ export interface StyleConfigurationProps {
 // Repository wizard (useRepositoryWizardStore) — each passes its own slice down.
 export function StyleConfiguration({
   style,
-  size,
   theme,
   hideTerminalEmojis,
   hideTerminalHeader,
@@ -52,7 +49,6 @@ export function StyleConfiguration({
   customCss,
   customThemeColors,
   setStyle,
-  setSize,
   setTheme,
   setHideTerminalEmojis,
   setHideTerminalHeader,
@@ -152,34 +148,8 @@ export function StyleConfiguration({
         </div>
       </div>
 
-      {/* Size selector */}
-      <div className="py-4 space-y-2.5">
-        <p className="text-sm font-semibold text-foreground">{t("size")}</p>
-        <div className="flex gap-2">
-          {[
-            { value: "half", label: t("options.halfWidth"), desc: "415px" },
-            { value: "full", label: t("options.fullWidth"), desc: "830px" },
-          ].map((s) => (
-            // Mesmo caso do seletor de estilo acima: o input e filho direto do label e
-            // o texto vem de t(...), que a regra nao resolve estaticamente.
-            // eslint-disable-next-line jsx-a11y/label-has-associated-control
-            <label key={s.value} className="flex-1 cursor-pointer">
-              <input
-                type="radio"
-                name="size"
-                className="sr-only peer"
-                checked={size === s.value}
-                onChange={() => setSize(s.value as "half" | "full")}
-              />
-              <div className="rounded-md border border-border px-3 py-2 text-center peer-checked:border-primary peer-checked:bg-primary/10 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background transition-all">
-                <span className="text-sm font-medium">{s.label}</span>
-                <p className="text-xs text-muted-foreground mt-0.5">{s.desc}</p>
-              </div>
-            </label>
-          ))}
-        </div>
-      </div>
-
+      {/* No size selector here: the toggle above the preview sets it, next to the card
+          it resizes and on every tab. Two controls for one setting was one too many. */}
       {/* Theme selector */}
       <div className="py-4 space-y-2.5">
         <p className="text-sm font-semibold text-foreground">{t("theme")}</p>

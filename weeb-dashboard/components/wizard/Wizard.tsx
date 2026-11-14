@@ -63,7 +63,6 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
         styleConfig={
           <StyleConfiguration
             style={style}
-            size={size}
             theme={theme ?? "default"}
             hideTerminalEmojis={hideTerminalEmojis}
             hideTerminalHeader={hideTerminalHeader}
@@ -72,7 +71,6 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
             customCss={customCss}
             customThemeColors={customThemeColors}
             setStyle={setStyle}
-            setSize={setSize}
             setTheme={setTheme}
             setHideTerminalEmojis={setHideTerminalEmojis}
             setHideTerminalHeader={setHideTerminalHeader}
