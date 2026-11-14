@@ -82,7 +82,9 @@ const MOCK_SVGS = [
     size: "half",
     status: "pending",
     storageUrl: null,
-    pluginsOrder: "github",
+    // Like the SVGs saved before pluginsOrder was persisted.
+    pluginsOrder: null,
+    pluginsConfig: { myanimelist: { enabled: true, sections: ["statistics", "last_activity"] } },
     lastGeneratedAt: null,
     updatedAt: new Date().toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
