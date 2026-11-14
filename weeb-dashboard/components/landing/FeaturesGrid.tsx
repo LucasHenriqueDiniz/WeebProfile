@@ -1,5 +1,6 @@
 "use client"
 
+import { publicSvgUrl } from "@/lib/utils/svg-url"
 import { BookMarked, Eye, KeyRound, RefreshCw, Zap } from "lucide-react"
 import { FaGithub } from "react-icons/fa"
 import { useTranslations } from "@/i18n/use-translations"
@@ -57,7 +58,9 @@ export function FeaturesGrid() {
                 <span className="text-pink-500">![</span>
                 <span className="text-foreground">WeebProfile</span>
                 <span className="text-pink-500">](</span>
-                <span className="text-cyan-500">https://weebprofile.com/svg/you.svg</span>
+                {/* The address the dashboard gives, on whatever origin this is served from:
+                    it promised weebprofile.com, which nothing points at. */}
+                <span className="text-cyan-500">{publicSvgUrl("<id>")}</span>
                 <span className="text-pink-500">)</span>
               </code>
             </pre>

@@ -21,29 +21,31 @@ export const SVG_CONTENT_SECURITY_POLICY =
   "default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; font-src data:; sandbox"
 
 /**
- * GET /api/svg/[id] - Serve generated SVG file from R2
+ * GET /api/svg/[id] - Serve generated SVG file from R2. Also at /svg/[id].svg
+ * (functions/svg/[id].ts), the address the dashboard gives for READMEs.
  *
  * Public route — no auth required.
+ *
+ * This is the URL people paste, so it has to keep answering for as long as there is
+ * something to show. It used to require status "completed", but every regeneration
+ * passes through "generating", and a failed one ends in "failed" while R2 still holds
+ * the last good SVG: a README pointing here would have gone blank each time.
  */
 export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params }) => {
   try {
-    const id = params.id as string
+    const id = String(params.id).replace(/\.svg$/, "")
     const db = getDb(env)
 
-    const [svg] = await db.select().from(svgs).where(eq(svgs.id, id)).limit(1)
+    const [svg] = await db.select({ id: svgs.id, status: svgs.status }).from(svgs).where(eq(svgs.id, id)).limit(1)
 
     if (!svg) {
       return Response.json({ error: "SVG not found" }, { status: 404 })
     }
 
-    if (svg.status !== "completed" || !svg.storageUrl) {
-      return Response.json({ error: "SVG not generated yet", status: svg.status }, { status: 404 })
-    }
-
     const svgContent = await getSvgFromR2(env, id)
 
     if (svgContent === null) {
-      return Response.json({ error: "SVG file not found in storage" }, { status: 404 })
+      return Response.json({ error: "SVG not generated yet", status: svg.status }, { status: 404 })
     }
 
     return new Response(svgContent, {

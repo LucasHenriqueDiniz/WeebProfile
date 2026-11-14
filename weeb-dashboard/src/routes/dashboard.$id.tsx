@@ -29,6 +29,7 @@ import { useSvgStore } from "@/stores/svg-store"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { SvgViewSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import { generateMarkdown } from "@/lib/utils/markdown"
+import { publicSvgUrl } from "@/lib/utils/svg-url"
 
 /** Compact card shell shared by the side panels — quieter than the shadcn Card headers. */
 function PanelCard({
@@ -148,8 +149,8 @@ export default function SvgViewPage() {
   }, [svg?.status, svgId]) // Só re-executar se o status mudar
 
   const handleCopyMarkdown = async () => {
-    const url = svg?.storageUrl || urlFromQuery
-    if (!url || !svg) return
+    if (!svg || !(svg.storageUrl || urlFromQuery)) return
+    const url = publicSvgUrl(svgId)
 
     const markdown = generateMarkdown({
       name: svg.name || "Profile",
@@ -176,8 +177,8 @@ export default function SvgViewPage() {
   }
 
   const handleCopyUrl = async () => {
-    const url = svg?.storageUrl || urlFromQuery
-    if (!url) return
+    if (!(svg?.storageUrl || urlFromQuery)) return
+    const url = publicSvgUrl(svgId)
 
     try {
       await navigator.clipboard.writeText(url)
@@ -351,16 +352,17 @@ export default function SvgViewPage() {
       : Date.now()
   const imageUrl = baseImageUrl ? `${baseImageUrl}${baseImageUrl.includes("?") ? "&" : "?"}t=${cacheBuster}` : null
 
-  // Gerar markdown usando o helper (inclui cache-busting e formato correto por tamanho)
+  // What gets pasted is the stable address; the bucket URL only feeds the preview above.
+  const publicUrl = baseImageUrl ? publicSvgUrl(svgId) : null
   const markdownCode =
-    svg && baseImageUrl
+    svg && publicUrl
       ? generateMarkdown({
           name: svg.name || "Profile",
-          url: baseImageUrl,
+          url: publicUrl,
           size: (svg.size as "half" | "full") || "half",
           lastGeneratedAt: svg.lastGeneratedAt,
         })
-      : `![${svg?.name || "Profile"}](${baseImageUrl || imageUrl})`
+      : `![${svg?.name || "Profile"}](${publicUrl ?? ""})`
 
   const plugins: string[] = (svg?.pluginsOrder || "")
     .split(",")
@@ -538,7 +540,7 @@ export default function SvgViewPage() {
             </PanelCard>
 
             {/* URL */}
-            {imageUrl && (
+            {publicUrl && (
               <PanelCard
                 icon={Link2}
                 title={t("url.title")}
@@ -551,7 +553,7 @@ export default function SvgViewPage() {
                       variant="ghost"
                       size="sm"
                       className="h-7 w-7 p-0"
-                      onClick={() => window.open(imageUrl, "_blank")}
+                      onClick={() => window.open(publicUrl, "_blank")}
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
                     </Button>
@@ -559,7 +561,7 @@ export default function SvgViewPage() {
                 }
               >
                 <code className="block break-all rounded-lg border border-border/50 bg-muted/50 p-3 text-xs text-muted-foreground">
-                  {imageUrl}
+                  {publicUrl}
                 </code>
               </PanelCard>
             )}
