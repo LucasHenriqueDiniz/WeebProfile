@@ -7,6 +7,7 @@ import {
   DEFAULT_THEME_VARIABLES,
   DEFAULT_THEME_VARIABLE_LABELS,
   defaultThemes as themesFromPlugins,
+  terminalThemes,
 } from "@weeb/weeb-plugins/themes"
 import React, { useCallback, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
@@ -112,21 +113,18 @@ export function StyleConfiguration({
       ? ["default", "purple", "pink", "cyan", "orange", "blue", "green", "red", "custom"]
       : ["default", "dracula", "monokai"]
 
-  // Swatch de cor por tema — o chip mostra a cor real em vez de pedir que o usuario
-  // decore o nome. "default" e "custom" usam gradiente (marca / arco-iris).
-  const themeSwatches: Record<string, string> = {
-    default: "linear-gradient(135deg,#8b5cf6,#06b6d4)",
-    purple: "#8b5cf6",
-    pink: "#ec4899",
-    cyan: "#06b6d4",
-    orange: "#f97316",
-    blue: "#3b82f6",
-    green: "#10b981",
-    red: "#ef4444",
-    custom: "conic-gradient(#ef4444,#f97316,#10b981,#06b6d4,#8b5cf6,#ec4899,#ef4444)",
-    dracula: "#bd93f9",
-    monokai: "#a6e22e",
-  }
+  // The swatch is the highlight color the theme applies to the card (titles, icons),
+  // read from the theme itself. It used to be a hand-kept list that drifted: Default
+  // showed the brand's violet-to-cyan gradient while its cards came out orange
+  // (#FF7A3D), and the terminal Default showed the same gradient for a blue card.
+  // "custom" keeps the rainbow: it stands for "pick your own".
+  const CUSTOM_SWATCH = "conic-gradient(#ef4444,#f97316,#10b981,#06b6d4,#8b5cf6,#ec4899,#ef4444)"
+  const themeSwatch = (name: string): string | undefined =>
+    name === "custom"
+      ? CUSTOM_SWATCH
+      : style === "terminal"
+        ? terminalThemes[name]?.["--terminal-color-highlight"]
+        : themesFromPlugins[name]?.["--default-color-highlight"]
 
   return (
     <div className="divide-y divide-border/60">
@@ -201,7 +199,7 @@ export function StyleConfiguration({
               <span
                 aria-hidden
                 className="h-2.5 w-2.5 flex-shrink-0 rounded-full ring-1 ring-black/10 dark:ring-white/20"
-                style={{ background: themeSwatches[t] ?? "#8b5cf6" }}
+                style={{ background: themeSwatch(t) }}
               />
               {t}
             </button>
