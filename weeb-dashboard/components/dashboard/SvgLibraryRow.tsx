@@ -13,8 +13,12 @@ import type { Svg } from "@/lib/db/schema"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { formatRelative } from "@/lib/utils/relative-time"
 import { useLocale } from "@/i18n/use-translations"
+import { usePluginI18n } from "@/lib/plugins/i18n-helper"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { Copy, Edit2, ExternalLink, Image as ImageIcon, Loader2, MoreVertical, RefreshCw, Trash2 } from "lucide-react"
 import { motion } from "framer-motion"
+
+type SectionMeta = { id: string; name: string; i18nKey?: { name?: string } }
 
 export const STATUS_DOT: Record<string, string> = {
   completed: "bg-emerald-400",
@@ -57,6 +61,7 @@ export function SvgLibraryRow({
   t,
 }: SvgLibraryRowProps) {
   const locale = useLocale()
+  const { tWithFallback } = usePluginI18n()
   const hasImage = svg.storageUrl && svg.status === "completed" && !imageErrored
   const cacheBuster = svg.lastGeneratedAt
     ? new Date(svg.lastGeneratedAt).getTime()
@@ -69,6 +74,28 @@ export function SvgLibraryRow({
     .map((p) => p.trim())
     .filter(Boolean)
   const visiblePlugins = plugins.slice(0, 4)
+
+  // What the card shows, in the wizard's words. The name is generated from the plugins,
+  // so two cards of one plugin shared it ("Myanimelist Stats" twice) and the slug under
+  // it was cut before the part that differs; the sections are what actually differs.
+  const pluginsConfig = (svg.pluginsConfig ?? {}) as Record<string, { sections?: string[] } | undefined>
+  const sectionGroups = plugins
+    .map((plugin) => {
+      const metadata = (PLUGINS_METADATA as Record<string, { displayName?: string; sections?: SectionMeta[] }>)[plugin]
+      const names = (pluginsConfig[plugin]?.sections ?? []).map((id) => {
+        const section = metadata?.sections?.find((s) => s.id === id)
+        if (!section) return id
+        const key = section.i18nKey?.name
+        return key ? tWithFallback(key.replace(/^plugins\./, ""), section.name) : section.name
+      })
+      return { plugin: metadata?.displayName ?? plugin, names }
+    })
+    .filter((group) => group.names.length > 0)
+  // Several plugins can each have a "Statistics": name the plugin only when it is needed.
+  const sectionsSummary = sectionGroups
+    .map(({ plugin, names }) => (sectionGroups.length > 1 ? `${plugin}: ${names.join(", ")}` : names.join(" · ")))
+    .join(" · ")
+  const slugPath = `/${svg.slug || svg.id.slice(0, 8)}`
   const statusLabel =
     svg.status === "completed"
       ? t("status.ready")
@@ -114,13 +141,17 @@ export function SvgLibraryRow({
         )}
       </div>
 
-      {/* Name + slug + plugins */}
+      {/* Name + sections + plugins */}
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-sm font-semibold transition-colors group-hover:text-primary">{svg.name}</h3>
+        <h3 className="truncate text-sm font-semibold transition-colors group-hover:text-primary" title={slugPath}>
+          {svg.name}
+        </h3>
         <div className="mt-1 flex items-center gap-2">
-          <code className="truncate font-mono text-[11px] text-muted-foreground">
-            /{svg.slug || svg.id.slice(0, 8)}
-          </code>
+          {sectionsSummary ? (
+            <span className="truncate text-[11px] text-muted-foreground">{sectionsSummary}</span>
+          ) : (
+            <code className="truncate font-mono text-[11px] text-muted-foreground">{slugPath}</code>
+          )}
           {visiblePlugins.length > 0 && (
             <span className="hidden items-center gap-1 sm:flex">
               {visiblePlugins.map((plugin) => {

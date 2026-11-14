@@ -4,9 +4,10 @@ import { getAuthUserId, unauthorized, notFound, badRequest, serverError } from "
 import { getDb } from "../_shared/db"
 import { deleteSvgFromR2 } from "../_shared/storage"
 import { svgs } from "../../../lib/db/schema"
-import { eq, and } from "drizzle-orm"
+import { eq, and, ne } from "drizzle-orm"
 import { assertPluginsMatchEntityType } from "../_shared/artifact-types"
 import { parseBody, svgUpdateSchema } from "../_shared/validation"
+import { uniqueSvgName } from "../_shared/svg-name"
 
 /**
  * GET /api/svgs/[id] - Get a specific SVG
@@ -61,10 +62,24 @@ export const onRequestPut: PagesFunction<CloudflareEnv> = async ({ request, env,
     const entityTypeError = assertPluginsMatchEntityType(nextEntityType, nextPluginsConfig)
     if (entityTypeError) return badRequest(entityTypeError)
 
+    // The wizard sends the name on every save, regenerated from the plugins, so it is
+    // checked against the user's other SVGs each time, never against this one.
+    let nextName = existingSvg.name
+    if (body.name) {
+      const others = await db
+        .select({ name: svgs.name })
+        .from(svgs)
+        .where(and(eq(svgs.userId, userId), ne(svgs.id, id)))
+      nextName = uniqueSvgName(
+        body.name,
+        others.map((svg) => svg.name)
+      )
+    }
+
     const [updatedSvg] = await db
       .update(svgs)
       .set({
-        name: body.name || existingSvg.name,
+        name: nextName,
         entityType: nextEntityType,
         artifactType: body.artifactType !== undefined ? body.artifactType : existingSvg.artifactType,
         variant: body.variant !== undefined ? body.variant : existingSvg.variant,

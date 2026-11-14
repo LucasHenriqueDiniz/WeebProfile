@@ -39,6 +39,7 @@ const MOCK_SVGS = [
     status: "completed",
     storageUrl: "/sora/sora-head.png",
     pluginsOrder: "github,anime,music",
+    pluginsConfig: { github: { enabled: true, sections: ["profile", "calendar"] } },
     lastGeneratedAt: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(),
@@ -65,6 +66,10 @@ const MOCK_SVGS = [
     status: "completed",
     storageUrl: null,
     pluginsOrder: "myanimelist,anilist",
+    pluginsConfig: {
+      myanimelist: { enabled: true, sections: ["statistics", "last_activity"] },
+      anilist: { enabled: true, sections: ["statistics"] },
+    },
     lastGeneratedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
