@@ -51,7 +51,6 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
       styleConfig={
         <StyleConfiguration
           style={style}
-          size={size}
           theme={theme}
           hideTerminalEmojis={hideTerminalEmojis}
           hideTerminalHeader={hideTerminalHeader}
@@ -60,7 +59,6 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
           customCss={customCss}
           customThemeColors={customThemeColors}
           setStyle={setStyle}
-          setSize={setSize}
           setTheme={setTheme}
           setHideTerminalEmojis={setHideTerminalEmojis}
           setHideTerminalHeader={setHideTerminalHeader}
