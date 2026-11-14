@@ -69,16 +69,26 @@ export function SvgLibraryRow({
       ? new Date(svg.updatedAt).getTime()
       : Date.now()
 
-  const plugins = (svg.pluginsOrder || "")
+  const pluginsConfig = (svg.pluginsConfig ?? {}) as Record<
+    string,
+    { enabled?: boolean; sections?: string[] } | undefined
+  >
+  // pluginsOrder first, then any other plugin that draws something. SVGs saved before
+  // the order was persisted have pluginsOrder null, and reading only that left their
+  // rows with no plugin icons and no sections.
+  const ordered = (svg.pluginsOrder || "")
     .split(",")
     .map((p) => p.trim())
     .filter(Boolean)
+  const configured = Object.keys(pluginsConfig)
+    .filter((p) => pluginsConfig[p]?.enabled !== false && (pluginsConfig[p]?.sections?.length ?? 0) > 0)
+    .sort()
+  const plugins = [...ordered, ...configured.filter((p) => !ordered.includes(p))]
   const visiblePlugins = plugins.slice(0, 4)
 
   // What the card shows, in the wizard's words. The name is generated from the plugins,
   // so two cards of one plugin shared it ("Myanimelist Stats" twice) and the slug under
   // it was cut before the part that differs; the sections are what actually differs.
-  const pluginsConfig = (svg.pluginsConfig ?? {}) as Record<string, { sections?: string[] } | undefined>
   const sectionGroups = plugins
     .map((plugin) => {
       const metadata = (PLUGINS_METADATA as Record<string, { displayName?: string; sections?: SectionMeta[] }>)[plugin]
