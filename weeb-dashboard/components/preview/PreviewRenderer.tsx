@@ -274,8 +274,10 @@ export function PreviewRenderer({
     return null
   }
 
-  // Calcular altura: usar propHeight se fornecido, senão estimar
-  const height = propHeight ?? Math.max(400, renderedPlugins.length * 200)
+  // Only a floor, and by default none: the container measures the real content height.
+  // The old estimate (at least 400px, or 200 per plugin) turned into the height of
+  // short cards -- a 100px repository banner sat in a 400px box.
+  const height = propHeight ?? 0
 
   return (
     <div className="w-full" style={{ width: `${width}px` }}>

@@ -11,6 +11,7 @@ import { FaGithub } from "react-icons/fa"
 import { Link } from "@/i18n/navigation"
 import { templateApi } from "@/lib/api"
 import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
+import { FitWidth } from "@/components/preview/FitWidth"
 import { ensureConsistentPlatforms, pluginIdsToDisplayNames, formatDate } from "@/lib/templates"
 import type { SvgTemplate } from "@/types/svg"
 import { getPluginIcon } from "@/lib/plugin-icons"
@@ -229,14 +230,16 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
                     className="w-full max-w-4xl flex items-center justify-center"
                   >
                     <motion.div
-                      className="relative overflow-hidden rounded-lg"
+                      // w-full so FitWidth sees the column's width; shrink-wrapped, it only
+                      // ever saw the card's own 830px and the preview was cut on the right.
+                      className="relative w-full overflow-hidden rounded-lg"
                       whileHover={{
                         scale: 1.02,
                         transition: { duration: 0.3 },
                       }}
                     >
                       {/* Static preview container */}
-                      <div className="relative">
+                      <FitWidth width={template.size === "full" ? 830 : 415}>
                         <PreviewRenderer
                           plugins={pluginsConfig.plugins}
                           pluginsOrder={pluginsConfig.pluginsOrder}
@@ -250,7 +253,7 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
                           customCss={template.customCss}
                           customThemeColors={template.customThemeColors}
                         />
-                      </div>
+                      </FitWidth>
 
                       {/* Hover overlay effect */}
                       <motion.div

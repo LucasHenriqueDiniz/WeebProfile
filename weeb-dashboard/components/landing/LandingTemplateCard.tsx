@@ -44,7 +44,10 @@ export function LandingTemplateCard({ template, href }: { template: Template; hr
           onError={() => {
             if (previewSrc !== fallbackSrc) setPreviewSrc(fallbackSrc)
           }}
-          className="w-full min-h-full object-cover object-top transition-transform duration-[4000ms] ease-linear group-hover:[transform:translateY(min(0px,calc(196px-100%)))]"
+          // Full width at its own aspect ratio, from the top. object-cover filled the
+          // 196px height instead and cut the sides off a wide card ("…feat. Hatsune
+          // Miku" started mid-word).
+          className="block w-full h-auto transition-transform duration-[4000ms] ease-linear group-hover:[transform:translateY(min(0px,calc(196px-100%)))]"
         />
       </div>
       <div className="flex flex-1 flex-col p-5">
