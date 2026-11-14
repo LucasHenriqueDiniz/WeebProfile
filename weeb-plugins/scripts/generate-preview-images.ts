@@ -18,6 +18,7 @@ import * as path from "path"
 import { fileURLToPath } from "url"
 import { dirname } from "path"
 import { PLUGINS_METADATA } from "../src/plugins/metadata.js"
+import { PREVIEW_STYLES as STYLES, previewPath as previewFile, type PreviewStyle } from "./preview-paths.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -97,9 +98,6 @@ async function getPluginSections(pluginName: string): Promise<string[]> {
   }
 }
 
-const STYLES = ["default", "terminal"] as const
-type PreviewStyle = (typeof STYLES)[number]
-
 /**
  * validateRequiredConfig() runs even for mock generation, so previews need
  * placeholder values for every requiredField / required secret or the
@@ -178,9 +176,9 @@ async function generatePreviewSvg(pluginName: string, sectionId: string, style: 
  * Salva SVG na pasta previews/{style} do plugin
  */
 function savePreviewSvg(pluginName: string, sectionId: string, style: PreviewStyle, svgContent: string): void {
-  const previewsDir = path.join(PLUGINS_DIR, pluginName, "previews", style)
-  const previewFileName = `${sectionId}.svg`
-  const previewPath = path.join(previewsDir, previewFileName)
+  const previewPath = previewFile(PLUGINS_DIR, pluginName, style, sectionId)
+  const previewsDir = path.dirname(previewPath)
+  const previewFileName = path.basename(previewPath)
 
   // Criar diretório se não existir
   if (!fs.existsSync(previewsDir)) {
@@ -257,10 +255,8 @@ async function main() {
 
     for (const sectionId of sections) {
       for (const style of STYLES) {
-        const previewsDir = path.join(PLUGINS_DIR, pluginName, "previews", style)
-        const previewFileName = `${sectionId}.svg`
-        const previewPath = path.join(previewsDir, previewFileName)
-        const label = `${pluginName}/${style}/${previewFileName}`
+        const previewPath = previewFile(PLUGINS_DIR, pluginName, style, sectionId)
+        const label = `${pluginName}/${style}/${sectionId}.svg`
 
         // Verificar se já existe (a menos que --force esteja ativo)
         if (!force && fs.existsSync(previewPath)) {
