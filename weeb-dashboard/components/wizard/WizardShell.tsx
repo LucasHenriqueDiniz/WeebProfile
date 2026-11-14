@@ -47,6 +47,8 @@ interface WizardShellProps {
   size: "half" | "full"
   setSize: (size: "half" | "full") => void
   contentCount: number
+  /** Opens the first plugin with a pending setting. Without it the notice is plain text. */
+  onShowPending?: () => void
 }
 
 // Fluxo mobile/tablet dedicado: nunca 3 colunas espremidas, sempre um passo de cada vez.
@@ -67,6 +69,7 @@ export function WizardShell({
   size,
   setSize,
   contentCount,
+  onShowPending,
 }: WizardShellProps) {
   const t = useTranslations("wizard.plugins")
   const tOrder = useTranslations("wizard.order")
@@ -254,11 +257,22 @@ export function WizardShell({
         }
         actions={
           <div className="flex items-center gap-2">
-            {missingCount > 0 && (
-              <span className="hidden sm:inline-flex text-[11px] font-medium text-amber-400 bg-amber-400/10 px-2 py-1 rounded-md whitespace-nowrap">
-                {tShell("pendingConfigs", { count: missingCount })}
-              </span>
-            )}
+            {/* The one notice of pending settings on desktop. Below lg the footer at the
+                bottom carries it, so this would be a second copy there. */}
+            {missingCount > 0 &&
+              (onShowPending ? (
+                <button
+                  type="button"
+                  onClick={onShowPending}
+                  className="hidden lg:inline-flex text-[11px] font-medium text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 px-2 py-1 rounded-md whitespace-nowrap transition-colors"
+                >
+                  {tShell("pendingConfigs", { count: missingCount })}
+                </button>
+              ) : (
+                <span className="hidden lg:inline-flex text-[11px] font-medium text-amber-400 bg-amber-400/10 px-2 py-1 rounded-md whitespace-nowrap">
+                  {tShell("pendingConfigs", { count: missingCount })}
+                </span>
+              ))}
             <div className="hidden lg:block">
               <WizardFooter {...footerProps} compact />
             </div>
