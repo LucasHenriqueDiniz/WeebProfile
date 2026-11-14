@@ -2,20 +2,26 @@
 
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
+import { SectionLink, type LandingSection } from "./SectionLink"
 
 const GITHUB_REPO_URL = "https://github.com/LucasHenriqueDiniz/WeebProfile"
 
 export function LandingFooter() {
   const t = useTranslations("landing")
 
-  const columns: Array<{ heading: string; links: Array<{ label: string; href: string; external?: boolean }> }> = [
+  const columns: Array<{
+    heading: string
+    links: Array<{ label: string; href?: string; section?: LandingSection; external?: boolean }>
+  }> = [
     {
       heading: t("footer.product"),
+      // Sections go through SectionLink: this footer is also on /plugins, where a bare
+      // "#plugins" did nothing.
       links: [
-        { label: t("nav.plugins"), href: "#plugins" },
-        { label: t("nav.templates"), href: "#templates" },
-        { label: t("nav.repos"), href: "#repos" },
-        { label: t("nav.styles"), href: "#styles" },
+        { label: t("nav.plugins"), section: "plugins" },
+        { label: t("nav.templates"), section: "templates" },
+        { label: t("nav.repos"), section: "repos" },
+        { label: t("nav.styles"), section: "styles" },
       ],
     },
     {
@@ -45,7 +51,15 @@ export function LandingFooter() {
                 {col.heading}
               </div>
               {col.links.map((link) =>
-                link.external ? (
+                link.section ? (
+                  <SectionLink
+                    key={link.label}
+                    section={link.section}
+                    className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.label}
+                  </SectionLink>
+                ) : link.external ? (
                   <a
                     key={link.label}
                     href={link.href}
@@ -55,7 +69,7 @@ export function LandingFooter() {
                   >
                     {link.label}
                   </a>
-                ) : link.href.startsWith("/") ? (
+                ) : link.href?.startsWith("/") ? (
                   <Link
                     key={link.label}
                     href={link.href}

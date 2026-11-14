@@ -21,6 +21,16 @@ export default function HomePageClient() {
     void fetchPublic({ limit: 3, ttlMs: 60_000 })
   }, [fetchPublic])
 
+  // Arriving from another page through the header or footer ("/#plugins"). The router
+  // scrolls to the hash when it renders, but this route is lazy-loaded, so at that
+  // point the section can still be missing; by the time this effect runs every
+  // section is in the DOM. Called directly, not in requestAnimationFrame: a hidden
+  // tab never runs that callback.
+  useEffect(() => {
+    const id = window.location.hash.slice(1)
+    if (id) document.getElementById(id)?.scrollIntoView()
+  }, [])
+
   return (
     <div className="relative overflow-hidden bg-background">
       {/* Ambient backdrop: dot grid + glow orbs fading out down the page */}

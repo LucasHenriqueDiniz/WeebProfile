@@ -20,6 +20,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { LanguageSelector } from "./LanguageSelector"
 import { barContainer, type ContentWidth } from "./page-width"
+import { SectionLink, type LandingSection } from "@/components/landing/SectionLink"
 
 interface HeaderProps {
   className?: string
@@ -77,13 +78,15 @@ export function Header({ className, variant, title, description, actions, width 
   const headerBgAlpha = useTransform(scrollY, [0, 100], [0, 0.85])
   const headerBorderAlpha = useTransform(scrollY, [0, 100], [0, 0.6])
 
-  // Home nav mirrors the landing sections (in-page anchors) plus the external docs.
-  const navigation = [
-    { name: tLanding("plugins"), href: "#plugins", anchor: true },
-    { name: tLanding("templates"), href: "#templates", anchor: true },
-    { name: tLanding("repos"), href: "#repos", anchor: true },
-    { name: tLanding("styles"), href: "#styles", anchor: true },
-    { name: tLanding("docs"), href: "https://github.com/LucasHenriqueDiniz/WeebProfile", anchor: true },
+  // Home nav mirrors the landing sections plus the external docs. The sections go
+  // through SectionLink, which points at "/" with the hash when this header is on
+  // another page -- a bare "#plugins" did nothing there.
+  const navigation: Array<{ name: string; section?: LandingSection; href?: string }> = [
+    { name: tLanding("plugins"), section: "plugins" },
+    { name: tLanding("templates"), section: "templates" },
+    { name: tLanding("repos"), section: "repos" },
+    { name: tLanding("styles"), section: "styles" },
+    { name: tLanding("docs"), href: "https://github.com/LucasHenriqueDiniz/WeebProfile" },
   ]
 
   const handleSignOut = async () => {
@@ -134,7 +137,15 @@ export function Header({ className, variant, title, description, actions, width 
           {/* Desktop Navigation — links de texto simples, sem caixas de botao */}
           <div className="hidden flex-1 items-center gap-5 md:flex">
             {navigation.map((item) =>
-              item.anchor ? (
+              item.section ? (
+                <SectionLink
+                  key={item.name}
+                  section={item.section}
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {item.name}
+                </SectionLink>
+              ) : (
                 <a
                   key={item.name}
                   href={item.href}
@@ -142,14 +153,6 @@ export function Header({ className, variant, title, description, actions, width 
                 >
                   {item.name}
                 </a>
-              ) : (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {item.name}
-                </Link>
               )
             )}
           </div>
@@ -304,7 +307,11 @@ export function Header({ className, variant, title, description, actions, width 
                   className="w-full justify-start text-muted-foreground hover:text-foreground"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item.anchor ? <a href={item.href}>{item.name}</a> : <Link href={item.href}>{item.name}</Link>}
+                  {item.section ? (
+                    <SectionLink section={item.section}>{item.name}</SectionLink>
+                  ) : (
+                    <a href={item.href}>{item.name}</a>
+                  )}
                 </Button>
               ))}
               <div className="pt-2 border-t border-border/50">
