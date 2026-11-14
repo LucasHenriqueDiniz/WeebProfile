@@ -485,6 +485,18 @@
       "style": "Estilo",
       "order": "Ordem"
     },
+    "shell": {
+      "newSvg": "Novo SVG",
+      "back": "Voltar",
+      "halfWidth": "Meia largura",
+      "fullWidth": "Largura completa",
+      "emptyTitle": "Seu SVG aparecerá aqui",
+      "configure": "Configurar",
+      "activePlugins_one": "{{count}} plugin ativo",
+      "activePlugins_other": "{{count}} plugins ativos",
+      "pendingConfigs_one": "{{count}} configuração pendente",
+      "pendingConfigs_other": "{{count}} configurações pendentes"
+    },
     "style": {
       "title": "Estilo",
       "size": "Tamanho",
@@ -758,12 +770,12 @@
       "kicker": "NÃO SÓ O PERFIL",
       "title": "Cards para os seus repositórios também",
       "subtitle": "No modo {mode} você escolhe um visual só — banner, contadores, curva de estrelas ou stack — e cola no README do projeto. Cada visual tem opções próprias de tamanho e detalhe.",
-      "mode": "Repository",
+      "mode": "Repositório",
       "banner": "Banner",
-      "stats": "Stats",
-      "starGrowth": "Star growth",
-      "languages": "Languages",
-      "topics": "Topics",
+      "stats": "Contadores",
+      "starGrowth": "Curva de estrelas",
+      "languages": "Linguagens",
+      "topics": "Tópicos",
       "updated": "atualizado há 2h"
     },
     "styles": {
