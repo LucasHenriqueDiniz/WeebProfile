@@ -14,14 +14,28 @@ const PLUGIN_ORDER = [
   "github",
   "lastfm",
   "myanimelist",
+  "anilist",
   "steam",
   "codeforces",
   "codewars",
   "stackoverflow",
+  "devto",
   "duolingo",
   "lyfta",
   "16personalities",
   "websites",
+  "github_repo",
+]
+
+// Every registered plugin is shown, in PLUGIN_ORDER where it is listed. The list used
+// to be the only source, and AniList and Dev.to were left out of it for months while
+// the hero counted 14 plugins and the grid showed 12. A plugin missing from the list
+// now still appears, after the listed ones and before the repository card.
+const LANDING_PLUGINS = [
+  ...PLUGIN_ORDER.filter((id) => id !== "github_repo"),
+  ...Object.keys(PLUGINS_METADATA)
+    .filter((id) => !PLUGIN_ORDER.includes(id))
+    .sort(),
   "github_repo",
 ]
 
@@ -57,7 +71,7 @@ const CATEGORY_STYLE: Record<string, { label: string; tile: string; hover: strin
 export function PluginsShowcase() {
   const t = useTranslations("landing.plugins")
 
-  const plugins = PLUGIN_ORDER.map((id) => PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]).filter(Boolean)
+  const plugins = LANDING_PLUGINS.map((id) => PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]).filter(Boolean)
 
   return (
     <section id="plugins" className="border-t border-border/60 bg-muted/50 dark:bg-muted/30">
@@ -97,7 +111,7 @@ export function PluginsShowcase() {
                   </div>
                 </div>
                 <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
-                  {/* The metadata text, if a plugin joins PLUGIN_ORDER before its key does:
+                  {/* The metadata text, if a plugin reaches the grid before its key does:
                       Websites showed the raw key path instead. */}
                   {t(`descriptions.${plugin.name}`, { defaultValue: plugin.description })}
                 </p>
