@@ -3,9 +3,10 @@ import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, unauthorized, badRequest, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
 import { svgs } from "../../../lib/db/schema"
-import { eq, count } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { assertPluginsMatchEntityType } from "../_shared/artifact-types"
 import { parseBody, svgCreateSchema } from "../_shared/validation"
+import { uniqueSvgName } from "../_shared/svg-name"
 
 const MAX_SVGS_FREE_TIER = 3
 
@@ -80,16 +81,20 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
 
     const db = getDb(env)
 
-    const [svgCount] = await db.select({ count: count() }).from(svgs).where(eq(svgs.userId, userId))
+    const existing = await db.select({ name: svgs.name }).from(svgs).where(eq(svgs.userId, userId))
 
-    if (svgCount.count >= MAX_SVGS_FREE_TIER) {
+    if (existing.length >= MAX_SVGS_FREE_TIER) {
       return Response.json(
         { error: `Maximum of ${MAX_SVGS_FREE_TIER} SVGs per user (free tier limit)` },
         { status: 403 }
       )
     }
 
-    const slugBase = name
+    const finalName = uniqueSvgName(
+      name,
+      existing.map((svg) => svg.name)
+    )
+    const slugBase = finalName
       .toLowerCase()
       .normalize("NFD")
       .replace(/[̀-ͯ]/g, "")
@@ -119,7 +124,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       .values({
         userId,
         slug,
-        name,
+        name: finalName,
         entityType,
         artifactType,
         variant,

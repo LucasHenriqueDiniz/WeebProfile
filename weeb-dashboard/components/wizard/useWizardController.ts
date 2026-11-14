@@ -177,7 +177,13 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
       const enabledPluginNames = enabledPlugins
       const autoName =
         enabledPluginNames.length > 0
-          ? `${enabledPluginNames.map((n) => n.charAt(0).toUpperCase() + n.slice(1)).join(" ")} Stats`
+          ? `${enabledPluginNames
+              .map(
+                (n) =>
+                  (PLUGINS_METADATA as Record<string, { displayName?: string }>)[n]?.displayName ??
+                  n.charAt(0).toUpperCase() + n.slice(1)
+              )
+              .join(" ")} Stats`
           : "My Profile Stats"
       const autoSlug = autoName
         .toLowerCase()
