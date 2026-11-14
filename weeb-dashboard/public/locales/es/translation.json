@@ -68,7 +68,11 @@
       "repoTitle": "Repositorio",
       "repoDesc": "Una tarjeta independiente para un repositorio de GitHub — banner, stats, curva de estrellas.",
       "cta": "Empezar"
-    }
+    },
+    "readyCount_one": "{{count}} listo",
+    "readyCount_other": "{{count}} listos",
+    "generatingCount_one": "{{count}} generando",
+    "generatingCount_other": "{{count}} generando"
   },
   "header": {
     "changeLanguage": "Cambiar idioma",
@@ -563,7 +567,9 @@
       "selectSection": "Seleccionar sección",
       "deselectSection": "Deseleccionar sección",
       "enablePluginToPreview": "Habilita al menos un plugin y selecciona secciones para ver la vista previa",
-      "clearSearch": "Limpiar búsqueda"
+      "clearSearch": "Limpiar búsqueda",
+      "selectTitle": "Selecciona un plugin",
+      "selectHint": "Elige un plugin de la lista para configurar sus campos y secciones."
     },
     "repository": {
       "label": "Repositorio",

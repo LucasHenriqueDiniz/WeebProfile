@@ -1,6 +1,7 @@
 "use client"
 
 import { Puzzle } from "lucide-react"
+import { useTranslations } from "@/i18n/use-translations"
 import { PluginCard } from "./PluginCard"
 import type { PluginWorkspace } from "./usePluginWorkspace"
 
@@ -11,6 +12,7 @@ interface PluginDetailPanelProps {
 // Coluna central - area principal de trabalho. Mostra a configuracao completa do plugin
 // selecionado na lista ao lado, ou um placeholder quando nada foi selecionado ainda.
 export function PluginDetailPanel({ workspace }: PluginDetailPanelProps) {
+  const t = useTranslations("wizard.plugins")
   const {
     plugins,
     selectedPlugin,
@@ -38,10 +40,8 @@ export function PluginDetailPanel({ workspace }: PluginDetailPanelProps) {
         <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/15 to-cyan-500/10">
           <Puzzle className="w-6 h-6 text-primary/70" />
         </span>
-        <p className="text-sm font-medium text-foreground mb-1">Selecione um plugin</p>
-        <p className="text-xs text-muted-foreground max-w-[220px]">
-          Escolha um plugin na lista ao lado para configurar seus campos e seções.
-        </p>
+        <p className="text-sm font-medium text-foreground mb-1">{t("selectTitle")}</p>
+        <p className="text-xs text-muted-foreground max-w-[220px]">{t("selectHint")}</p>
       </div>
     )
   }
