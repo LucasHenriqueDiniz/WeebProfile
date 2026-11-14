@@ -70,6 +70,9 @@ export function WizardShell({
 }: WizardShellProps) {
   const t = useTranslations("wizard.plugins")
   const tOrder = useTranslations("wizard.order")
+  const tShell = useTranslations("wizard.shell")
+  const tWizard = useTranslations("wizard")
+  const tNew = useTranslations("dashboard.newPage")
   const router = useRouter()
   const contentWidth = size === "half" ? 415 : 830
   const [mobileStep, setMobileStep] = useState<MobileStep>(pluginsList ? "list" : "detail")
@@ -83,7 +86,7 @@ export function WizardShell({
   }, [selectedPlugin])
 
   const missingCount = footerProps.missingConfigs.length
-  const kindLabel = kind === "repository" ? "Repositório" : "Perfil"
+  const kindLabel = kind === "repository" ? tNew("repoTitle") : tNew("profileTitle")
 
   /**
    * O preview precisa de largura do card + 64px de padding: 479px para o de 415,
@@ -112,7 +115,7 @@ export function WizardShell({
             )}
           >
             <Square className="w-3.5 h-3.5" />
-            Meia largura
+            {tShell("halfWidth")}
           </button>
           <button
             type="button"
@@ -123,7 +126,7 @@ export function WizardShell({
             )}
           >
             <Columns2 className="w-3.5 h-3.5" />
-            Largura completa
+            {tShell("fullWidth")}
           </button>
         </div>
         <span className="text-[11px] font-mono text-slate-500">{contentWidth}px</span>
@@ -183,7 +186,7 @@ export function WizardShell({
                 </motion.div>
               </div>
               <div className="max-w-sm">
-                <p className="text-sm font-medium text-foreground mb-1">Seu SVG aparecerá aqui</p>
+                <p className="text-sm font-medium text-foreground mb-1">{tShell("emptyTitle")}</p>
                 <p className="text-sm text-muted-foreground">{t("enablePluginToPreview")}</p>
               </div>
             </motion.div>
@@ -212,7 +215,7 @@ export function WizardShell({
               type="button"
               onClick={() => router.push("/dashboard")}
               className="text-slate-400 hover:text-slate-200 transition-colors -ml-1 p-1 flex-shrink-0"
-              aria-label="Voltar"
+              aria-label={tShell("back")}
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -237,16 +240,14 @@ export function WizardShell({
             </span>
           </>
         }
-        title={name || "Novo SVG"}
+        title={name || tShell("newSvg")}
         description={
           <span className="flex items-center gap-1.5">
             <span className={kind === "repository" ? "text-violet-400/90" : "text-cyan-400/90"}>{kindLabel}</span>
             {contentCount > 0 && (
               <>
                 <span className="text-muted-foreground/40">·</span>
-                <span>
-                  {contentCount} {contentCount === 1 ? "plugin ativo" : "plugins ativos"}
-                </span>
+                <span>{tShell("activePlugins", { count: contentCount })}</span>
               </>
             )}
           </span>
@@ -255,7 +256,7 @@ export function WizardShell({
           <div className="flex items-center gap-2">
             {missingCount > 0 && (
               <span className="hidden sm:inline-flex text-[11px] font-medium text-amber-400 bg-amber-400/10 px-2 py-1 rounded-md whitespace-nowrap">
-                {missingCount === 1 ? "1 configuração pendente" : `${missingCount} configurações pendentes`}
+                {tShell("pendingConfigs", { count: missingCount })}
               </span>
             )}
             <div className="hidden lg:block">
@@ -277,7 +278,7 @@ export function WizardShell({
           )}
         >
           <Puzzle className="w-3.5 h-3.5" />
-          Plugins
+          {tWizard("tabs.plugins")}
         </button>
         {orderConfig && (
           <button
@@ -301,7 +302,7 @@ export function WizardShell({
           )}
         >
           <Settings2 className="w-3.5 h-3.5" />
-          Estilo
+          {tWizard("tabs.style")}
         </button>
       </div>
 
@@ -310,18 +311,18 @@ export function WizardShell({
       <div className="lg:hidden flex-shrink-0 flex border-b border-border bg-muted/30">
         {(activeTab === "plugins"
           ? ([
-              ...(pluginsList ? ([["list", "Plugins", Puzzle]] as const) : []),
-              ["detail", "Configurar", Settings2],
-              ["preview", "Preview", ListFilter],
+              ...(pluginsList ? ([["list", tWizard("tabs.plugins"), Puzzle]] as const) : []),
+              ["detail", tShell("configure"), Settings2],
+              ["preview", tWizard("sidebar.preview"), ListFilter],
             ] as const)
           : activeTab === "order"
             ? ([
                 ["detail", tOrder("tab"), ListOrdered],
-                ["preview", "Preview", ListFilter],
+                ["preview", tWizard("sidebar.preview"), ListFilter],
               ] as const)
             : ([
-                ["detail", "Estilo", Settings2],
-                ["preview", "Preview", ListFilter],
+                ["detail", tWizard("tabs.style"), Settings2],
+                ["preview", tWizard("sidebar.preview"), ListFilter],
               ] as const)
         ).map(([step, label, Icon]) => (
           <button
