@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { useParams } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
@@ -19,16 +19,21 @@ export default function EditSvgPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const params = useParams<{ id: string }>()
-  const { getSvg, getSvgSync } = useSvgStore()
+  const { getSvg } = useSvgStore()
   const { bootstrap } = useWizardBootstrapStore()
   const svgId = params.id as string
 
-  // Tentar pegar do cache imediatamente
-  const cachedSvg = getSvgSync(svgId)
-  const [loading, setLoading] = useState(!cachedSvg)
-  const [hasLoaded, setHasLoaded] = useState(false)
-  const [entityType, setEntityType] = useState<string | null>((cachedSvg as any)?.entityType || null)
+  // Set only after the SVG is in the wizard store, and the wizard mounts only then.
+  //
+  // The wizard used to mount as soon as auth finished and reset the store from its
+  // own mount effect, while this page loaded the SVG into the store on a 100ms timer.
+  // Whenever Clerk took longer than that -- any direct open or reload of this URL --
+  // the load landed first and the reset wiped it: the editor came up as an empty
+  // "Novo SVG", and enabling a plugin and saving would have overwritten the SVG.
+  const [entityType, setEntityType] = useState<string | null>(null)
+  const requestedIdRef = useRef<string | null>(null)
   const {
+    resetForEdit,
     setBasicInfo,
     setPluginConfig,
     setStyle,
@@ -45,63 +50,33 @@ export default function EditSvgPage() {
   const { loadFromSvg: loadRepositoryFromSvg } = useRepositoryWizardStore()
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (authLoading) return
+    if (!user) {
       router.push("/login")
       return
     }
 
     // Bootstrap secrets presence (for validation)
-    if (user) {
-      bootstrap()
-    }
+    bootstrap()
 
-    // Só carregar uma vez
-    if (user && svgId && !hasLoaded) {
-      // Small delay to ensure wizard store reset has completed
-      setTimeout(() => {
-        loadSvg()
-      }, 100)
-    } else if (cachedSvg && !hasLoaded) {
-      // Se tem cache, carregar dados imediatamente (with small delay for reset)
-      setTimeout(() => {
-        loadSvgData(cachedSvg)
-        setHasLoaded(true)
-        setLoading(false)
-      }, 100)
-    }
+    // Once per SVG id: a second load would reset the store over the user's edits.
+    if (!svgId || requestedIdRef.current === svgId) return
+    requestedIdRef.current = svgId
+    setEntityType(null)
+    loadSvg()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading, svgId])
 
   const loadSvg = async () => {
-    // Verificar cache novamente (pode ter mudado)
-    let svg: Svg | null = getSvgSync(svgId)
-
     try {
-      // Se não tem cache, buscar
-      if (!svg) {
-        setLoading(true)
-        svg = await getSvg(svgId)
-      } else {
-        // Se tem cache, fazer refresh em background (sem mostrar loading)
-        getSvg(svgId)
-          .then((updatedSvg) => {
-            if (updatedSvg) {
-              // Recarregar dados se o SVG foi atualizado
-              loadSvgData(updatedSvg)
-            }
-          })
-          .catch(() => {
-            // Ignorar erros no background refresh
-          })
-      }
-
+      // getSvg answers from the cache while it is fresh and fetches otherwise. There is
+      // no background refresh after a cache hit any more: re-applying the SVG resets
+      // the store, which would throw away whatever the user changed in the meantime.
+      const svg: Svg | null = await getSvg(svgId)
       if (!svg) {
         throw new Error("SVG not found")
       }
-
-      // Carregar dados do SVG no wizard store
       loadSvgData(svg)
-      setHasLoaded(true)
     } catch (error) {
       console.error("Error loading SVG:", error)
       const errorMessage =
@@ -110,21 +85,21 @@ export default function EditSvgPage() {
           : t("error.loadingImage")
       alert(errorMessage)
       router.push("/dashboard")
-    } finally {
-      setLoading(false)
     }
   }
 
   const loadSvgData = (svg: Svg) => {
     const svgEntityType = (svg as any).entityType || "profile"
-    setEntityType(svgEntityType)
 
     if (svgEntityType === "repository") {
       loadRepositoryFromSvg(svg as any)
+      setEntityType(svgEntityType)
       return
     }
 
-    // Carregar dados no wizard store
+    // Start from a clean store: no plugin enabled, nothing left from a draft or from
+    // another SVG, then apply this SVG's config on top.
+    resetForEdit()
     setBasicInfo(svg.name, svg.id, false) // Usar ID como slug temporário
     setStyle(svg.style as "default" | "terminal")
     setSize(svg.size as "half" | "full")
@@ -206,15 +181,17 @@ export default function EditSvgPage() {
         ...habilitados.filter((nome) => !ordemSalva.includes(nome)),
       ])
     }
+
+    setEntityType(svgEntityType)
   }
 
-  // Só mostrar loading se não tiver dados e estiver carregando
-  if (authLoading || (loading && !cachedSvg)) {
-    return <LoadingScreen />
-  }
-
-  if (!user) {
+  if (!authLoading && !user) {
     return null
+  }
+
+  // Until the SVG is in the store, so the wizard never mounts over an empty one.
+  if (!entityType) {
+    return <LoadingScreen />
   }
 
   if (entityType === "repository") {

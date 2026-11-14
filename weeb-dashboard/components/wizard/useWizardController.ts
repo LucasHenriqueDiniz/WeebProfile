@@ -6,7 +6,7 @@
  */
 
 import { useRouter } from "@/src/compat/next-navigation"
-import { useMemo, useState, useEffect, useRef } from "react"
+import { useMemo, useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useWizardStore } from "@/stores/wizard-store"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
@@ -31,7 +31,6 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
   const router = useRouter()
   const { toast } = useToast()
   const [isSaving, setIsSaving] = useState(false)
-  const hasResetRef = useRef(false)
 
   // UX 2: Use persisted UI state for activeTab
   const { activeTab, setActiveTab } = useWizardUIState()
@@ -51,24 +50,11 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     customThemeColors,
     setBasicInfo,
     reset,
-    resetForEdit,
   } = useWizardStore()
 
-  // Reset store when entering edit mode to avoid loading persisted data
-  // This must happen before any data loading
-  useEffect(() => {
-    if (isEditMode && !hasResetRef.current) {
-      resetForEdit() // Use edit mode reset (no plugins enabled by default)
-      hasResetRef.current = true
-    }
-  }, [isEditMode, resetForEdit])
-
-  // Reset store when entering edit mode to avoid loading persisted data
-  useEffect(() => {
-    if (isEditMode) {
-      reset()
-    }
-  }, [isEditMode, reset])
+  // No reset on mount in edit mode: the edit page (dashboard.$id.edit.tsx) resets the
+  // store and loads the SVG into it before mounting the wizard. A reset here ran after
+  // that load whenever auth was slow, and opened the editor empty.
 
   // Computed values using canonical selectors
   const enabledPlugins = useMemo(() => {
