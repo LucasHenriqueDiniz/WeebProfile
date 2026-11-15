@@ -119,3 +119,42 @@ describe("sanitizeCustomThemeColors", () => {
     expect(sanitizeCustomThemeColors(null)).toBeUndefined()
   })
 })
+
+describe("light terminal palettes", () => {
+  const channels = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
+  const luminance = (rgb: number[]) => {
+    const [r, g, b] = rgb.map((v) => {
+      const c = v / 255
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+    })
+    return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!
+  }
+  const contrast = (a: number[], b: number[]) => {
+    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+    return (hi! + 0.05) / (lo! + 0.05)
+  }
+  /** `rgba(0, 0, 0, a)` laid over an opaque background. */
+  const blackOver = (background: number[], stripe: string) => {
+    const alpha = Number(stripe.match(/rgba\(0, 0, 0, ([\d.]+)\)/)?.[1])
+    expect(alpha).toBeGreaterThanOrEqual(0)
+    return background.map((v) => v * (1 - alpha))
+  }
+
+  // TerminalGrid draws every other row on the stripe. Black at 25% turned a white row
+  // #bfbfbf, and the gray text on it fell to 1.9:1.
+  it.each(Object.keys(terminalLightThemes))("keeps %s's text at 4.5:1 on the background and on the stripe", (name) => {
+    const theme = terminalLightThemes[name]!
+    const background = channels(theme["--terminal-color-background"])
+    const stripe = blackOver(background, theme["--terminal-color-stripe"])
+    for (const text of [
+      "--terminal-color-default",
+      "--terminal-color-muted",
+      "--terminal-color-muted-light",
+      "--terminal-color-warning",
+    ] as const) {
+      const color = channels(theme[text])
+      expect(contrast(color, background), `${text} on the background`).toBeGreaterThanOrEqual(4.5)
+      expect(contrast(color, stripe), `${text} on the stripe`).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+})

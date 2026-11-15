@@ -29,6 +29,8 @@ export interface TerminalThemeVariables extends Record<string, string> {
   "--terminal-color-raw": string
   // Keys of key/value lines (`.text-terminal-warning`)
   "--terminal-color-warning": string
+  // Zebra rows of TerminalGrid (`.bg-terminal-stripe`)
+  "--terminal-color-stripe": string
 }
 
 /**
@@ -139,6 +141,7 @@ export const terminalThemes: Record<string, TerminalThemeVariables> = {
     "--terminal-color-muted-light": "#6e7681",
     "--terminal-color-raw": "#c9d1d9",
     "--terminal-color-warning": "#ffaa00",
+    "--terminal-color-stripe": "rgba(0, 0, 0, 0.25)",
   },
   dracula: {
     "--terminal-color-surface": "#282a36",
@@ -150,6 +153,7 @@ export const terminalThemes: Record<string, TerminalThemeVariables> = {
     "--terminal-color-muted-light": "#8be9fd",
     "--terminal-color-raw": "#f8f8f2",
     "--terminal-color-warning": "#ffaa00",
+    "--terminal-color-stripe": "rgba(0, 0, 0, 0.25)",
   },
   monokai: {
     "--terminal-color-surface": "#272822",
@@ -161,6 +165,7 @@ export const terminalThemes: Record<string, TerminalThemeVariables> = {
     "--terminal-color-muted-light": "#e6db74",
     "--terminal-color-raw": "#f8f8f2",
     "--terminal-color-warning": "#ffaa00",
+    "--terminal-color-stripe": "rgba(0, 0, 0, 0.25)",
   },
 }
 
@@ -235,8 +240,9 @@ export const defaultDarkThemes: Record<string, ThemeVariables> = {
 /**
  * Light counterparts of the terminal themes, used by the "auto" color mode.
  *
- * The terminal style is dark, so in auto mode these are the base palette and the
- * theme's own (dark) values apply inside `@media (prefers-color-scheme: dark)`.
+ * In auto mode these are the base palette and the theme's own (dark) values apply
+ * inside `@media (prefers-color-scheme: dark)`. Text colors hold 4.5:1 on the
+ * background and on the zebra stripe of TerminalGrid; theme-utils.test.ts checks.
  */
 export const terminalLightThemes: Record<string, TerminalThemeVariables> = {
   default: {
@@ -246,9 +252,10 @@ export const terminalLightThemes: Record<string, TerminalThemeVariables> = {
     "--terminal-color-default": "#1f2328",
     "--terminal-color-success": "#1a7f37",
     "--terminal-color-muted": "#59636e",
-    "--terminal-color-muted-light": "#818b98",
+    "--terminal-color-muted-light": "#656d76",
     "--terminal-color-raw": "#1f2328",
-    "--terminal-color-warning": "#9a6700",
+    "--terminal-color-warning": "#8a5c00",
+    "--terminal-color-stripe": "rgba(0, 0, 0, 0.04)",
   },
   dracula: {
     "--terminal-color-surface": "#f5f0d8",
@@ -260,6 +267,7 @@ export const terminalLightThemes: Record<string, TerminalThemeVariables> = {
     "--terminal-color-muted-light": "#036a96",
     "--terminal-color-raw": "#1f1f1f",
     "--terminal-color-warning": "#a34d14",
+    "--terminal-color-stripe": "rgba(0, 0, 0, 0.04)",
   },
   monokai: {
     "--terminal-color-surface": "#efefea",
@@ -267,9 +275,10 @@ export const terminalLightThemes: Record<string, TerminalThemeVariables> = {
     "--terminal-color-highlight": "#4d7c0f",
     "--terminal-color-default": "#272822",
     "--terminal-color-success": "#4d7c0f",
-    "--terminal-color-muted": "#75715e",
-    "--terminal-color-muted-light": "#8a6d00",
+    "--terminal-color-muted": "#666250",
+    "--terminal-color-muted-light": "#735b00",
     "--terminal-color-raw": "#272822",
-    "--terminal-color-warning": "#b45309",
+    "--terminal-color-warning": "#9c4807",
+    "--terminal-color-stripe": "rgba(0, 0, 0, 0.04)",
   },
 }

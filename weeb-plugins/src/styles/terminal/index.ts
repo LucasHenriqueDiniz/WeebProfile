@@ -172,6 +172,12 @@ const TERMINAL_STYLE_CSS = `/* Terminal Style CSS */
   background-color: rgba(0, 0, 0, 0.25);
 }
 
+/* Zebra rows of TerminalGrid. A theme value, not black at 25%: on the light palette
+   of the auto mode that turned the row #bfbfbf, under gray text at 1.9:1. */
+#svg-main .bg-terminal-stripe {
+  background-color: var(--terminal-color-stripe, rgba(0, 0, 0, 0.25));
+}
+
 /* Terminal Command */
 #svg-main .terminal-command {
   display: flex;
