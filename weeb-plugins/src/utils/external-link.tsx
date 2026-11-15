@@ -48,12 +48,15 @@ export function safeHref(raw: unknown): string | null {
 
 /**
  * Adds https:// to an address typed without a scheme ("example.com"), the way a
- * GitHub profile keeps its website. Anything that already has a scheme is left
- * as is, so `javascript:` still reaches safeHref and is refused there.
+ * GitHub profile keeps its website. A scheme is only recognised with "://", so
+ * "localhost:3000" or "example.com:8080/x" get https:// instead of being read as
+ * the scheme "localhost:". `javascript:alert(1)` and `data:…` then become
+ * unparseable hosts and `mailto:a@b` a URL with credentials, all of which safeHref
+ * refuses; `javascript://…` keeps its scheme and is refused there too.
  */
 export function withDefaultScheme(raw: string): string {
   const trimmed = raw.trim()
-  return /^[a-z][a-z0-9+.-]*:/i.test(trimmed) ? trimmed : `https://${trimmed.replace(/^\/\//, "")}`
+  return /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) ? trimmed : `https://${trimmed.replace(/^\/\//, "")}`
 }
 
 interface ExternalLinkProps {

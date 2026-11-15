@@ -51,16 +51,22 @@ describe("withDefaultScheme", () => {
     ["example.com/about", "https://example.com/about"],
     ["//example.com", "https://example.com/"],
     ["http://example.com", "http://example.com/"],
+    ["example.com:8080/x", "https://example.com:8080/x"],
+    ["localhost:3000", "https://localhost:3000/"],
   ])("makes %j linkable", (input, expected) => {
     expect(safeHref(withDefaultScheme(input))).toBe(expected)
   })
 
-  it.each(["javascript:alert(1)", " JavaScript:alert(1)", "data:text/html,x"])(
-    "keeps the scheme of %j, so safeHref still refuses it",
-    (input) => {
-      expect(safeHref(withDefaultScheme(input))).toBeNull()
-    }
-  )
+  it.each([
+    "javascript:alert(1)",
+    " JavaScript:alert(1)",
+    "data:text/html,x",
+    "mailto:a@b.com",
+    "vbscript:msgbox(1)",
+    "javascript://%0aalert(1)",
+  ])("never turns %j into a link", (input) => {
+    expect(safeHref(withDefaultScheme(input))).toBeNull()
+  })
 })
 
 describe("ExternalLink", () => {
