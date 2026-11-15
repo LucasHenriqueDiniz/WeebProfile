@@ -1,9 +1,9 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DeleteAccountDialog } from "@/components/dashboard/DeleteAccountDialog"
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter, usePathname } from "@/i18n/navigation"
 import { useMemo, useState } from "react"
 import LoadingScreen from "@/components/loading/LoadingScreen"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { motion } from "framer-motion"
@@ -258,9 +258,7 @@ export default function SettingsPage() {
                 <div className="max-w-md rounded-xl border border-destructive/30 bg-destructive/5 p-4">
                   <p className="text-sm font-medium text-destructive">{t("account.dangerZone")}</p>
                   <p className="text-xs text-muted-foreground mt-1 mb-3">{t("account.dangerZoneDescription")}</p>
-                  <Button variant="destructive" size="sm">
-                    {t("account.deleteAccount")}
-                  </Button>
+                  <DeleteAccountDialog />
                 </div>
               </motion.section>
             )}

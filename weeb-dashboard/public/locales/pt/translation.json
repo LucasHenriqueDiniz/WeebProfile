@@ -344,6 +344,23 @@
       "dangerZone": "Zona Perigosa",
       "dangerZoneDescription": "Ações irreversíveis e destrutivas",
       "deleteAccount": "Deletar Conta",
+      "deleteDialog": {
+        "title": "Excluir sua conta?",
+        "description": "Isto apaga, para sempre:",
+        "items": {
+          "svgs": "Seus SVGs e as imagens publicadas deles. Os links no README do GitHub param de carregar.",
+          "secrets": "As chaves de API e tokens que você salvou para os plugins.",
+          "templates": "Seus templates, inclusive os públicos, e suas curtidas.",
+          "login": "Seu perfil e seu login no WeebProfile."
+        },
+        "irreversible": "Não dá para desfazer.",
+        "confirmLabel": "Digite {{word}} para confirmar",
+        "confirmWord": "EXCLUIR",
+        "cancel": "Cancelar",
+        "confirm": "Excluir minha conta",
+        "deleting": "Excluindo…",
+        "error": "Não deu para excluir sua conta. Tente de novo: o que já foi apagado não volta, e a nova tentativa apaga o resto."
+      },
       "description": "Gerencie suas configurações de conta",
       "title": "Conta"
     },

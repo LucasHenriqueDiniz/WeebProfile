@@ -344,6 +344,23 @@
       "dangerZone": "Zona de Peligro",
       "dangerZoneDescription": "Acciones irreversibles y destructivas",
       "deleteAccount": "Eliminar Cuenta",
+      "deleteDialog": {
+        "title": "¿Eliminar tu cuenta?",
+        "description": "Esto elimina para siempre:",
+        "items": {
+          "svgs": "Tus SVG y sus imágenes publicadas. Los enlaces en tu README de GitHub dejarán de cargar.",
+          "secrets": "Las claves de API y tokens que guardaste para los plugins.",
+          "templates": "Tus plantillas, incluidas las públicas, y tus me gusta.",
+          "login": "Tu perfil y tu inicio de sesión en WeebProfile."
+        },
+        "irreversible": "No se puede deshacer.",
+        "confirmLabel": "Escribe {{word}} para confirmar",
+        "confirmWord": "ELIMINAR",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar mi cuenta",
+        "deleting": "Eliminando…",
+        "error": "No se pudo eliminar tu cuenta. Inténtalo de nuevo: lo ya eliminado no vuelve, y el nuevo intento elimina el resto."
+      },
       "description": "Administra la configuración de tu cuenta",
       "title": "Cuenta"
     },

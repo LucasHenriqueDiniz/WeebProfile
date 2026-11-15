@@ -227,6 +227,19 @@ export const svgApi = {
   },
 }
 
+/**
+ * Account API helpers
+ */
+export const accountApi = {
+  /**
+   * Excluir a conta e tudo o que ela guarda (SVGs, secrets, templates, login).
+   * Sem volta: ver functions/api/account/index.ts.
+   */
+  async delete() {
+    return apiDelete<{ success: boolean }>("/api/account")
+  },
+}
+
 export const templateApi = {
   list: () => apiRequest<{ templates: any[] }>("/api/templates"),
   get: (id: string) => apiRequest<{ template: any }>(`/api/templates/${id}`),

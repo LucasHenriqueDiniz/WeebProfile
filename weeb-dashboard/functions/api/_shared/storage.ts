@@ -35,3 +35,12 @@ export async function getSvgFromR2(env: CloudflareEnv, id: string): Promise<stri
 export async function deleteSvgFromR2(env: CloudflareEnv, id: string): Promise<void> {
   await env.SVGS_BUCKET.delete(svgKey(id))
 }
+
+/** R2 deletes at most this many keys per call (Workers API reference, `delete`). */
+const R2_MAX_KEYS_PER_DELETE = 1000
+
+export async function deleteSvgsFromR2(env: CloudflareEnv, ids: string[]): Promise<void> {
+  for (let i = 0; i < ids.length; i += R2_MAX_KEYS_PER_DELETE) {
+    await env.SVGS_BUCKET.delete(ids.slice(i, i + R2_MAX_KEYS_PER_DELETE).map(svgKey))
+  }
+}
