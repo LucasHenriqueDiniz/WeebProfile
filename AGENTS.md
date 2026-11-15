@@ -224,14 +224,16 @@ Configuração em Workers & Pages → `weeb-svg-generator` → Settings → Buil
 
 **Variáveis CSS de tema** — prefixo `--default-color-*` ou `--terminal-color-*`. Cada plugin herda essas variáveis; não usar cores hardcoded.
 
-**Custom themes:** usuário pode sobrescrever qualquer variável `--default-color-*` via `customThemeColors: Record<string, string>` no wizard do dashboard. O worker só aceita cor simples (`sanitizeCustomThemeColors`). Até 11/2026 o worker descartava o campo e o SVG gerado saía no tema base, embora o preview mostrasse as cores.
+**Custom themes:** usuário pode sobrescrever qualquer variável `--default-color-*` via `customThemeColors: Record<string, string>` no wizard do dashboard. O worker e o preview só aceitam cor simples (`sanitizeCustomThemeColors`). Até 11/2026 o worker descartava o campo e o SVG gerado saía no tema base, embora o preview mostrasse as cores.
+
+**`ui_config` é regravado inteiro ao salvar.** O que o editor não carregar some do D1 no próximo save: o editor de perfil não carregava `customThemeColors`, e o de repositório não carregava nada do `ui_config`. Os dois wizards salvam com `buildStyleUiConfig` e os dois editores carregam com `readStyleUiConfig` (`lib/config/svg-config-helpers.ts`). Campo novo de estilo entra nas duas funções; `svg-config-helpers.test.ts` faz a ida e volta.
 
 ### Modo de cor `auto` (claro/escuro)
 
 Um SVG só, claro no GitHub claro e escuro no GitHub escuro. Liga com `ui_config.colorMode = "auto"` (sem coluna nova; o `theme` continua sendo a paleta) e vale para os dois estilos.
 
 - **Como sai no SVG:** o `PluginStyles` não põe as variáveis inline (declaração inline ganha de qualquer regra, media query inclusa). Emite um `<style>` com a paleta clara na regra base e a escura dentro de `@media (prefers-color-scheme: dark)`, escopado por `data-theme-scope` (`buildAutoThemeCss` em `themes/theme-utils.ts`).
-- **Paletas:** `defaultDarkThemes` (contraparte escura de cada tema default) e `terminalLightThemes` (contraparte clara de cada terminal), em `themes.ts`. Variável de tema nova precisa existir nas duas; `theme-utils.test.ts` confere.
+- **Paletas:** `defaultDarkThemes` (contraparte escura de cada tema default) e `terminalLightThemes` (contraparte clara de cada terminal), em `themes.ts`. Variável de tema nova precisa existir nas duas; `theme-utils.test.ts` confere. As faixas zebradas do `TerminalGrid` usam `--terminal-color-stripe` (preto a 25% no escuro, 4% no claro); preto a 25% fixo deixava o texto cinza em 1,9:1 na variante clara. O mesmo teste exige 4,5:1 de todo texto do terminal claro, no fundo e na faixa.
 - **`customThemeColors` no auto:** valem todas na variante clara. A escura herda só `--default-color-highlight`; superfície e texto vêm da paleta escura, senão uma superfície branca customizada desfaria o modo escuro.
 - **Estilo default é transparente:** no auto mudam texto, destaque e superfícies; o fundo é o da página.
 - **Preview do dashboard:** mostra as duas variantes empilhadas, cada uma sobre o fundo da página do GitHub (`ColorVariantsPreview`). A variante é forçada por `colorVariant`, sem media query, então não depende do tema de quem está vendo.

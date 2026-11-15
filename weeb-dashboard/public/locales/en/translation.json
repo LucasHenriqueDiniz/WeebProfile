@@ -521,7 +521,7 @@
       "size": "Size",
       "theme": "Theme",
       "colorMode": "Light / dark",
-      "colorModeDescription": "Auto follows the theme of the page that shows the card: light on GitHub's light theme, dark on its dark theme.",
+      "colorModeDescription": "Auto follows the theme of the page that shows the card: light on GitHub's light theme, dark on its dark theme. In Safari and on iPhone and iPad the card may stay light.",
       "colorModeFixed": "Fixed",
       "colorModeAuto": "Auto",
       "colorModeCustomNote": "In dark mode the card keeps your highlight color; surfaces and text use the dark palette.",

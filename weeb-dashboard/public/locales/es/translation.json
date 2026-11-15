@@ -521,7 +521,7 @@
       "size": "Tamaño",
       "theme": "Tema",
       "colorMode": "Claro / oscuro",
-      "colorModeDescription": "Auto sigue el tema de la página que muestra la tarjeta: claro en el tema claro de GitHub, oscuro en el tema oscuro.",
+      "colorModeDescription": "Auto sigue el tema de la página que muestra la tarjeta: claro en el tema claro de GitHub, oscuro en el tema oscuro. En Safari y en iPhone y iPad la tarjeta puede quedarse en la versión clara.",
       "colorModeFixed": "Fijo",
       "colorModeAuto": "Auto",
       "colorModeCustomNote": "En modo oscuro la tarjeta mantiene tu color de resaltado; superficies y textos usan la paleta oscura.",
