@@ -4,6 +4,7 @@ import { getAuthUserId, unauthorized, serverError } from "../_shared/auth"
 import { getDb, queryInChunks } from "../_shared/db"
 import { parseBody, templateCreateSchema } from "../_shared/validation"
 import { templates, templateLikes, svgs } from "../../../lib/db/schema"
+import { templateForViewer } from "../../../lib/templates/template-layout"
 import { eq, and, inArray, ne } from "drizzle-orm"
 
 async function withPreviewUrls<T extends { svgId: string | null }>(
@@ -90,7 +91,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
 
       return Response.json({
         templates: publicTemplatesWithPreviews.map((t) => ({
-          ...t,
+          ...templateForViewer(t, userId),
           likesCount: likesData[t.id]?.count || 0,
           userLiked: likesData[t.id]?.userLiked || false,
         })),
@@ -135,7 +136,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env 
 
     return Response.json({
       templates: combinedWithPreviews.map((t) => ({
-        ...t,
+        ...templateForViewer(t, userId),
         likesCount: likesData[t.id]?.count || 0,
         userLiked: likesData[t.id]?.userLiked || false,
       })),
