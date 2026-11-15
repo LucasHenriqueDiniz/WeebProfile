@@ -6,7 +6,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Heart, Share2, ExternalLink, Loader2, Eye, Monitor, Terminal, Copy } from "lucide-react"
+import { ArrowLeft, Heart, Share2, ExternalLink, Loader2, Eye, Monitor, Terminal, Check } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { FaGithub } from "react-icons/fa"
 import { Link } from "@/i18n/navigation"
 import { templateApi } from "@/lib/api"
@@ -178,6 +179,10 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
     )
   }
 
+  const hasLikes = (template.likes ?? 0) > 0
+  const likeLabel = template.liked ? t("unlikeTemplate") : t("likeTemplate")
+  const shareLabel = shareCopied ? t("share.copied") : t("shareTemplate")
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-8 md:py-12 relative">
       {/* Back Button - Absolute Position */}
@@ -315,40 +320,50 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
               {template.description}
             </motion.p>
 
+            {/* One row: the main action takes the width, like and share are icons with
+                tooltips. Three labelled buttons did not fit the side column and wrapped. */}
             <motion.div
-              className="flex flex-wrap gap-2"
+              className="flex gap-2"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
             >
-              <Button asChild className="gap-2 shadow-lg">
+              <Button asChild className="flex-1 gap-2 shadow-lg">
                 <Link href={toLocalePath(`/dashboard/new?template=${template.id}`)}>
                   <ExternalLink className="w-4 h-4" />
                   {t("useTemplate")}
                 </Link>
               </Button>
-              <Button variant="outline" onClick={handleLike} className="gap-2">
-                <Heart
-                  className={`w-4 h-4 transition-colors ${
-                    template.liked ? "fill-red-500 text-red-500" : "hover:text-red-500"
-                  }`}
-                />
-                {template.liked ? t("unlikeTemplate") : t("likeTemplate")}
-                {template.likes !== undefined && template.likes > 0 && (
-                  <span className="text-sm">({template.likes})</span>
-                )}
-              </Button>
-              <Button variant="outline" onClick={handleShare} className="gap-2">
-                <Share2 className="w-4 h-4" />
-                {shareCopied ? (
-                  <span className="flex items-center gap-1">
-                    <Copy className="w-4 h-4" />
-                    {t("share.copied")}
-                  </span>
-                ) : (
-                  <span>{t("shareTemplate")}</span>
-                )}
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size={hasLikes ? "default" : "icon"}
+                    onClick={handleLike}
+                    aria-label={likeLabel}
+                    className={hasLikes ? "gap-1.5 px-3" : undefined}
+                  >
+                    <Heart
+                      className={`w-4 h-4 transition-colors ${
+                        template.liked ? "fill-red-500 text-red-500" : "hover:text-red-500"
+                      }`}
+                    />
+                    {hasLikes && <span className="text-sm tabular-nums">{template.likes}</span>}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{likeLabel}</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon" onClick={handleShare} aria-label={shareLabel}>
+                    {shareCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{shareLabel}</TooltipContent>
+              </Tooltip>
+              <span className="sr-only" aria-live="polite">
+                {shareCopied ? t("share.copied") : ""}
+              </span>
             </motion.div>
           </div>
 
