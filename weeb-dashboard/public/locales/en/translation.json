@@ -362,12 +362,10 @@
     },
     "description": "Manage your account settings and preferences",
     "profile": {
-      "description": "Update your profile information",
+      "description": "Your name, photo and email come from the account you signed in with.",
       "email": "Email",
       "emailCannotChange": "Email cannot be changed",
-      "saveChanges": "Save Changes",
-      "title": "Profile",
-      "username": "Username"
+      "title": "Profile"
     },
     "title": "Settings"
   },

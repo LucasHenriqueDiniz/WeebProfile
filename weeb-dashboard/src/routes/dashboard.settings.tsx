@@ -163,18 +163,10 @@ export default function SettingsPage() {
                     <Input id="email" type="email" value={user.email || ""} disabled className="bg-muted" />
                     <p className="text-xs text-muted-foreground">{t("profile.emailCannotChange")}</p>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="username" className="text-sm">
-                      {t("profile.username")}
-                    </Label>
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder={user.user_metadata?.user_name || t("profile.username")}
-                      defaultValue={user.user_metadata?.user_name || ""}
-                    />
-                  </div>
-                  <Button size="sm">{t("profile.saveChanges")}</Button>
+                  {/* No username field. There was one, with a Save button that had no
+                      handler: it changed nothing, and the value it would have stored
+                      (profiles.username) is read by nothing that draws a card. It also
+                      opened empty, since user_metadata.user_name is a Supabase-era field. */}
                 </div>
               </motion.section>
             )}
