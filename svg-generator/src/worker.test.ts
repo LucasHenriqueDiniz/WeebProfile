@@ -716,11 +716,12 @@ describe("POST / — opt-in animations", () => {
     expect(absent.svg).not.toContain("@property")
   })
 
-  it.each(["default", "terminal"])("animates the %s style without changing the height", async (style) => {
-    const { body: off } = await post(card({ style }))
+  // No height check here: the height comes from calculateHeight(), which never sees the
+  // markup, so on and off could not differ. The rendered height was measured in a
+  // browser instead (docs/animations.md).
+  it.each(["default", "terminal"])("animates the %s style", async (style) => {
     const { response, body: on } = await post(card({ style, animations: true }))
     expect(response.status).toBe(200)
-    expect(on.height).toBe(off.height)
     expect(on.svg).toContain(`${style}-container weeb-anim`)
     // One timeline across plugins: github's sections start after devto's two.
     expect(on.svg).toContain("--weeb-base:0")

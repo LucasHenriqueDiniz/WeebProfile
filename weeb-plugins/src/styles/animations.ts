@@ -37,9 +37,14 @@ const LEAF = "#svg-main .weeb-anim section:not(:has(section))"
 
 function sectionIndexRules(): string {
   const rules: string[] = []
-  for (let k = 1; k <= MAX_SECTIONS_PER_PLUGIN; k++) {
+  for (let k = 1; k < MAX_SECTIONS_PER_PLUGIN; k++) {
     rules.push(`#svg-main .weeb-anim section:nth-of-type(${k}){--weeb-k:${k - 1}}`)
   }
+  // The last slot and everything after it: without the n+, sections past it matched no
+  // rule and started first, at k=0.
+  rules.push(
+    `#svg-main .weeb-anim section:nth-of-type(n+${MAX_SECTIONS_PER_PLUGIN}){--weeb-k:${MAX_SECTIONS_PER_PLUGIN - 1}}`
+  )
   return rules.join("\n")
 }
 

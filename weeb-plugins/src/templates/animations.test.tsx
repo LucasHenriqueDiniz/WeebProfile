@@ -151,3 +151,10 @@ describe("parseCountTarget", () => {
     expect(parseCountTarget(text)).toBeNull()
   })
 })
+
+describe("section slots", () => {
+  it("puts every section past the last slot in the last slot, not back at the start", () => {
+    expect(ANIMATIONS_CSS).toContain("section:nth-of-type(n+24){--weeb-k:23}")
+    expect(ANIMATIONS_CSS).not.toContain("section:nth-of-type(24){")
+  })
+})

@@ -176,12 +176,13 @@ ${cssVariables}
 
   // Inject plugin CSS, theme variables and the author's custom CSS -- all of it
   // into the frame's own head, never the dashboard's.
+  // On the flag, not the object: the renderer builds a new { step } on every render, and
+  // depending on it rewrote the whole stylesheet on each keystroke.
+  const animated = Boolean(animations)
   useEffect(() => {
     if (!styleNode) return
-    styleNode.textContent = [pluginsCss, animations ? ANIMATIONS_CSS : "", themeCss, customCss]
-      .filter(Boolean)
-      .join("\n")
-  }, [styleNode, pluginsCss, themeCss, customCss, animations])
+    styleNode.textContent = [pluginsCss, animated ? ANIMATIONS_CSS : "", themeCss, customCss].filter(Boolean).join("\n")
+  }, [styleNode, pluginsCss, themeCss, customCss, animated])
 
   // Keep the frame element sized to the preview, and mirror size/theme onto the
   // portal root so selectors keyed on those attributes still match.
