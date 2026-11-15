@@ -33,6 +33,9 @@ describe("safeReturnTo", () => {
     ["data URI", "data:text/html,<script>alert(1)</script>"],
     ["our host as a prefix of theirs", "https://app.test.evil.example/steal"],
     ["userinfo trick", "https://app.test@evil.example/steal"],
+    ["dot segment before a double slash", "/.//evil.example/steal"],
+    ["dot-dot segment before a double slash", "/a/..//evil.example/steal"],
+    ["our origin followed by a double slash", `${ORIGIN}//evil.example/steal`],
   ])("rejects %s", (_label, candidate) => {
     expect(safeReturnTo(candidate, ORIGIN, FALLBACK)).toBe(FALLBACK)
   })

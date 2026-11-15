@@ -246,10 +246,17 @@ export type GenerationStart = typeof generationStarts.$inferSelect
  * visitor and `global` for everyone together. Only cache misses are counted -- the
  * requests that spend upstream quota. See preview-rate-limit.ts.
  */
-export const previewHits = sqliteTable("preview_hits", {
-  bucket: text("bucket").primaryKey(),
-  windowStart: text("window_start").notNull(),
-  count: integer("count").notNull(),
-})
+export const previewHits = sqliteTable(
+  "preview_hits",
+  {
+    bucket: text("bucket").primaryKey(),
+    windowStart: text("window_start").notNull(),
+    count: integer("count").notNull(),
+  },
+  // The daily prune deletes by window_start.
+  (table) => ({
+    windowStartIdx: index("idx_preview_hits_window_start").on(table.windowStart),
+  })
+)
 
 export type PreviewHit = typeof previewHits.$inferSelect

@@ -28,12 +28,35 @@ export type PreviewSlot = { claimed: true } | { claimed: false; scope: PreviewSc
 type Db = ReturnType<typeof getDb>
 
 /**
+ * The part of an address one visitor controls. An IPv6 host usually gets a whole /64
+ * (any VPS does), so counting each address would give one visitor 2^64 buckets; the
+ * first four groups are the visitor. IPv4 addresses, and anything unparseable, count
+ * as they are.
+ */
+export function addressKey(ip: string): string {
+  // IPv4, and IPv4-mapped IPv6 (::ffff:1.2.3.4), whose /64 would hold every IPv4 visitor.
+  if (!ip.includes(":") || ip.includes(".")) return ip
+  const [head, tail = ""] = ip.toLowerCase().split("%")[0].split("::")
+  const left = head ? head.split(":") : []
+  const right = ip.includes("::") && tail ? tail.split(":") : []
+  // An embedded IPv4 tail (::ffff:1.2.3.4) is two groups; it is past the /64 anyway.
+  const groups = ip.includes("::")
+    ? [...left, ...Array(Math.max(0, 8 - left.length - right.length)).fill("0"), ...right]
+    : left
+  if (groups.length < 4 || groups.slice(0, 4).some((g) => !/^[0-9a-f]{1,4}$/.test(g))) return ip
+  return `${groups
+    .slice(0, 4)
+    .map((g) => g.replace(/^0+(?=.)/, ""))
+    .join(":")}::/64`
+}
+
+/**
  * The address is not stored as-is. A hash of an IPv4 address can be reversed by trying
  * them all, so this is not anonymisation; it keeps addresses out of casual reads of the
  * table, and rows live for a day at most.
  */
 export async function ipBucket(ip: string): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip))
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(addressKey(ip)))
   const hex = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("")
   return `ip:${hex}`
 }
@@ -79,14 +102,29 @@ async function claimBucket(
   return { claimed: false, retryAfterSeconds: Math.max(1, Math.ceil((freeAt - now.getTime()) / 1000)) }
 }
 
+/** The global window's state, read without writing: null while it has room. */
+async function globalFull(db: Db, now: Date): Promise<{ retryAfterSeconds: number } | null> {
+  const [row] = await db.select().from(previewHits).where(eq(previewHits.bucket, "global")).limit(1)
+  const windowStart = Date.parse(row?.windowStart ?? "")
+  if (!row || !Number.isFinite(windowStart)) return null
+  const freeAt = windowStart + PREVIEW_LIMITS.global.windowSeconds * 1000
+  if (freeAt <= now.getTime() || row.count < PREVIEW_LIMITS.global.max) return null
+  return { retryAfterSeconds: Math.max(1, Math.ceil((freeAt - now.getTime()) / 1000)) }
+}
+
 /**
  * Takes a preview slot for `ip`, then one from the global budget.
  *
- * The visitor's own limit is checked first so that one visitor over it never touches the
- * shared budget. The reverse is accepted: a request the global cap refuses has already
- * counted against its IP.
+ * A spent global budget is read first, without writing: otherwise every request from a
+ * new address while previews are closed would still insert its IP row, an unbounded
+ * write from an unauthenticated caller. Then the visitor's own limit, so that one
+ * visitor over it never touches the shared budget. A request that loses the race for
+ * the last global slot has already counted against its IP; that is accepted.
  */
 export async function claimPreviewSlot(db: Db, ip: string, now: Date): Promise<PreviewSlot> {
+  const closed = await globalFull(db, now)
+  if (closed) return { claimed: false, scope: "global", retryAfterSeconds: closed.retryAfterSeconds }
+
   const own = await claimBucket(db, await ipBucket(ip), PREVIEW_LIMITS.ip, now)
   if (!own.claimed) return { claimed: false, scope: "ip", retryAfterSeconds: own.retryAfterSeconds }
 

@@ -19,6 +19,10 @@ export function safeReturnTo(candidate: string | null, origin: string, fallback:
   }
 
   if (parsed.origin !== origin) return fallback
+  // Same origin, but the path can still start with two slashes: "/.//evil.example" and
+  // "/a/..//evil.example" normalise to "//evil.example", which a later
+  // window.location or <a href> would read as another host.
+  if (/^[/\\]{2}/.test(parsed.pathname)) return fallback
   return `${parsed.pathname}${parsed.search}${parsed.hash}`
 }
 

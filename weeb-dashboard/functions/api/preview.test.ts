@@ -289,6 +289,30 @@ describe("GET /api/preview, on a real D1", { timeout: 60_000 }, () => {
       expect((await hits()).find((row) => row.bucket === bucket)?.count).toBe(1)
     })
 
+    it("counts every address of one IPv6 /64 as one visitor", async () => {
+      for (let n = 1; n <= PREVIEW_LIMITS.ip.max; n++) {
+        expect((await preview(nthCodewars(n), `2001:db8:1:2::${n.toString(16)}`)).status).toBe(200)
+      }
+
+      const refused = await preview(nthCodewars(99), "2001:0db8:0001:0002:ffff:ffff:ffff:ffff")
+
+      expect(refused.status).toBe(429)
+      expect(generator.calls).toHaveLength(PREVIEW_LIMITS.ip.max)
+      expect((await preview(nthCodewars(98), "2001:db8:1:3::1")).status).toBe(200)
+    })
+
+    it("writes no row for a new address while the global budget is spent", async () => {
+      await env.DB.prepare("INSERT INTO preview_hits (bucket, window_start, count) VALUES ('global', ?, ?)")
+        .bind(new Date().toISOString(), PREVIEW_LIMITS.global.max)
+        .run()
+
+      for (let n = 1; n <= 5; n++) {
+        expect((await preview(nthCodewars(n), `192.0.2.${n}`)).status).toBe(429)
+      }
+
+      expect(await hits()).toHaveLength(1)
+    })
+
     it("does not store the address itself", async () => {
       await preview(codewars, "203.0.113.7")
 
