@@ -124,6 +124,10 @@ export const onRequestDelete: PagesFunction<CloudflareEnv> = async ({ request, e
     }
 
     await db.delete(svgs).where(eq(svgs.id, id))
+    // Again, and whatever storagePath said: a generation that finished in between
+    // wrote the image back. Any later one finds no row and takes it down itself
+    // (publishGeneratedSvg).
+    await deleteSvgFromR2(env, id)
 
     return Response.json({ success: true })
   } catch (e) {

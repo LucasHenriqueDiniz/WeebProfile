@@ -22,17 +22,33 @@ import { useWizardStore } from "@/stores/wizard-store"
 const ITEMS = ["svgs", "secrets", "templates", "login"] as const
 
 /**
- * Drafts and generated SVGs this browser kept for the account. The theme stays:
- * it is a preference of the browser, not data of the account.
+ * Gives the browser a little while to end the Clerk session before leaving. With the
+ * user already deleted, signOut() can hang instead of failing, and the dialog would
+ * sit on "Excluindo…" with the account gone.
+ */
+const SIGN_OUT_GRACE_MS = 3000
+
+/**
+ * Drafts and generated SVGs this browser kept for the account, in memory and in
+ * storage. The state is reset first: `persist` writes every change to storage, which
+ * is cleared after it. The theme stays: it is a preference of the browser, not data of
+ * the account.
  */
 function forgetAccountInThisBrowser() {
+  useWizardStore.setState(useWizardStore.getInitialState(), true)
   useWizardStore.persist.clearStorage()
+  useSvgStore.setState(useSvgStore.getInitialState(), true)
   useSvgStore.persist.clearStorage()
   try {
     localStorage.removeItem(WIZARD_UI_STATE_KEY)
   } catch {
     // Storage blocked: there is nothing stored to forget.
   }
+}
+
+/** The typed word matches regardless of case: "excluir" is as deliberate as "EXCLUIR". */
+function matchesConfirmWord(typed: string, confirmWord: string): boolean {
+  return typed.trim().toUpperCase() === confirmWord.toUpperCase()
 }
 
 export function DeleteAccountDialog() {
@@ -44,7 +60,7 @@ export function DeleteAccountDialog() {
   const [failed, setFailed] = useState(false)
 
   const confirmWord = t("deleteDialog.confirmWord")
-  const confirmed = typed.trim() === confirmWord
+  const confirmed = matchesConfirmWord(typed, confirmWord)
 
   const handleOpenChange = (next: boolean) => {
     if (deleting) return
@@ -66,9 +82,12 @@ export function DeleteAccountDialog() {
       return
     }
     forgetAccountInThisBrowser()
-    // The Clerk user is gone, and its sessions with it, so signing out can fail.
-    // The landing page is where this ends either way.
-    await signOut().catch(() => undefined)
+    // The Clerk user is gone, and its sessions with it, so signing out can fail or
+    // never settle. The landing page is where this ends either way.
+    await Promise.race([
+      signOut().catch(() => undefined),
+      new Promise((resolve) => setTimeout(resolve, SIGN_OUT_GRACE_MS)),
+    ])
     window.location.assign("/")
   }
 

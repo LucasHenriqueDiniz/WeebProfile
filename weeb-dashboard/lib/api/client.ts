@@ -232,8 +232,8 @@ export const svgApi = {
  */
 export const accountApi = {
   /**
-   * Excluir a conta e tudo o que ela guarda (SVGs, secrets, templates, login).
-   * Sem volta: ver functions/api/account/index.ts.
+   * Delete the account and everything it holds (SVGs, secrets, templates, sign-in).
+   * Irreversible: see functions/api/account/index.ts.
    */
   async delete() {
     return apiDelete<{ success: boolean }>("/api/account")

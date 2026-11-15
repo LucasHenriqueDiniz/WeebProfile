@@ -10,11 +10,13 @@ import { essentialConfigs, generationStarts, profiles, svgs, templateLikes, temp
 /**
  * DELETE /api/account - Deletes the signed-in user and everything stored for them.
  *
- * R2 first, then D1, then Clerk. Every step is idempotent, so a request that fails
- * partway is finished by sending it again:
+ * R2 first, then D1, then R2 again, then Clerk. Every step is idempotent, so a request
+ * that fails partway is finished by sending it again:
  * - R2 before D1: an object's key is `svgs/<svg id>.svg`, with nothing of the user in
  *   it, so the SVG rows are the only record of which objects are theirs. Dropping the
  *   rows first and then failing on R2 would leave public SVGs nobody can find again.
+ * - R2 again after D1: a generation running meanwhile can write its image back before
+ *   the rows go (see publishGeneratedSvg for the other order).
  * - Clerk last: once the Clerk user is gone the session goes with it, and the user can
  *   no longer call this route to finish what is left.
  */
@@ -26,10 +28,8 @@ export const onRequestDelete: PagesFunction<CloudflareEnv> = async ({ request, e
     const db = getDb(env)
 
     const userSvgs = await db.select({ id: svgs.id }).from(svgs).where(eq(svgs.userId, userId))
-    await deleteSvgsFromR2(
-      env,
-      userSvgs.map((svg) => svg.id)
-    )
+    const svgIds = userSvgs.map((svg) => svg.id)
+    await deleteSvgsFromR2(env, svgIds)
 
     // One batch, which D1 runs as a single transaction: the rows go together or not at all.
     const userTemplateIds = db.select({ id: templates.id }).from(templates).where(eq(templates.userId, userId))
@@ -42,6 +42,10 @@ export const onRequestDelete: PagesFunction<CloudflareEnv> = async ({ request, e
       db.delete(essentialConfigs).where(eq(essentialConfigs.userId, userId)),
       db.delete(profiles).where(eq(profiles.userId, userId)),
     ])
+    // Again: a generation that finished between the first pass and the batch wrote its
+    // image back and still found its row. Past the batch, any later one finds no row
+    // and takes its own image down (publishGeneratedSvg).
+    await deleteSvgsFromR2(env, svgIds)
     await deleteGenerationStart(db, userId)
 
     await deleteClerkUser(env, userId)
