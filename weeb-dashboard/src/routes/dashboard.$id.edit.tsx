@@ -11,7 +11,7 @@ import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import type { Svg } from "@/lib/db/schema"
 import { ApiException } from "@/lib/api"
 import LoadingScreen from "@/components/loading/LoadingScreen"
-import { getTerminalConfigs } from "@/lib/config/svg-config-helpers"
+import { readStyleUiConfig } from "@/lib/config/svg-config-helpers"
 import { useTranslations } from "@/i18n/use-translations"
 
 export default function EditSvgPage() {
@@ -44,6 +44,7 @@ export default function EditSvgPage() {
     setHideTerminalCommand,
     setFontFamily,
     setColorMode,
+    setCustomThemeColors,
     setTerminalHeaderText,
     setCustomCss,
     reorderPlugins,
@@ -106,15 +107,16 @@ export default function EditSvgPage() {
     setSize(svg.size as "half" | "full")
     setTheme(svg.theme || "default")
 
-    // Read terminal configs from ui_config (not plugins_config)
-    const uiConfig = (svg as any).uiConfig || {}
-    const terminalConfigs = getTerminalConfigs(uiConfig)
-    setHideTerminalEmojis(terminalConfigs.hideTerminalEmojis)
-    setHideTerminalHeader(terminalConfigs.hideTerminalHeader)
-    setHideTerminalCommand(terminalConfigs.hideTerminalCommand)
-    setFontFamily(terminalConfigs.fontFamily)
-    setTerminalHeaderText(terminalConfigs.terminalHeaderText)
-    setColorMode(terminalConfigs.colorMode)
+    // Everything the wizard's save writes to ui_config. The save replaces ui_config
+    // whole, so a setting not loaded here is erased from D1 by the next save.
+    const saved = readStyleUiConfig((svg as any).uiConfig)
+    setHideTerminalEmojis(saved.hideTerminalEmojis)
+    setHideTerminalHeader(saved.hideTerminalHeader)
+    setHideTerminalCommand(saved.hideTerminalCommand)
+    setFontFamily(saved.fontFamily)
+    setTerminalHeaderText(saved.terminalHeaderText)
+    setColorMode(saved.colorMode)
+    setCustomThemeColors(saved.customThemeColors)
 
     setCustomCss(svg.customCss || "")
 

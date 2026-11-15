@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useRepositoryWizardStore } from "@/stores/repository-wizard-store"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { ApiException, svgApi } from "@/lib/api"
-import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
+import { buildStyleUiConfig } from "@/lib/config/svg-config-helpers"
 
 interface UseRepositoryWizardControllerProps {
   isEditMode?: boolean
@@ -80,20 +80,15 @@ export function useRepositoryWizardController({
         },
       }
 
-      const uiConfig = setTerminalConfigs(
-        {},
-        {
-          hideTerminalEmojis,
-          hideTerminalHeader,
-          hideTerminalCommand,
-          fontFamily,
-          terminalHeaderText: terminalHeaderText.trim() || undefined,
-          colorMode,
-        }
-      )
-      if (theme === "custom" && Object.keys(customThemeColors).length > 0) {
-        uiConfig.customThemeColors = customThemeColors
-      }
+      const uiConfig = buildStyleUiConfig(theme, {
+        hideTerminalEmojis,
+        hideTerminalHeader,
+        hideTerminalCommand,
+        fontFamily,
+        terminalHeaderText,
+        colorMode,
+        customThemeColors,
+      })
 
       const autoName = `${owner}/${repo} Repository Card`
 

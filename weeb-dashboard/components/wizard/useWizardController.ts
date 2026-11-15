@@ -20,7 +20,7 @@ import {
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ApiException, missingRequiredConfig, svgApi } from "@/lib/api"
 import { debugWizard } from "@/lib/debug"
-import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
+import { buildStyleUiConfig } from "@/lib/config/svg-config-helpers"
 
 interface UseWizardControllerProps {
   isEditMode?: boolean
@@ -146,23 +146,16 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         }
       })
 
-      // 2. Build ui_config (only global flags: hideTerminal*, customThemeColors)
-      const uiConfig = setTerminalConfigs(
-        {},
-        {
-          hideTerminalEmojis,
-          hideTerminalHeader,
-          hideTerminalCommand,
-          fontFamily,
-          terminalHeaderText: terminalHeaderText.trim() || undefined,
-          colorMode,
-        }
-      )
-
-      // Add customThemeColors if theme is custom
-      if (theme === "custom" && Object.keys(customThemeColors).length > 0) {
-        uiConfig.customThemeColors = customThemeColors
-      }
+      // 2. Build ui_config (only global flags: hideTerminal*, colorMode, customThemeColors)
+      const uiConfig = buildStyleUiConfig(theme, {
+        hideTerminalEmojis,
+        hideTerminalHeader,
+        hideTerminalCommand,
+        fontFamily,
+        terminalHeaderText,
+        colorMode,
+        customThemeColors,
+      })
 
       // Validate that at least one enabled plugin has sections before creating
       if (pluginsWithSections.length === 0) {

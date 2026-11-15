@@ -74,6 +74,7 @@ export interface WizardState {
   setColorMode: (colorMode: "fixed" | "auto") => void
   setTerminalHeaderText: (text: string) => void
   setCustomThemeColor: (variable: string, color: string) => void
+  setCustomThemeColors: (colors: Record<string, string>) => void
   resetCustomThemeColors: () => void
   setPreviewUrl: (url: string | null) => void
   reorderPlugins: (newOrder: string[]) => void
@@ -397,6 +398,9 @@ export const useWizardStore = create<WizardState>()(
             [variable]: color,
           },
         }))
+      },
+      setCustomThemeColors: (colors) => {
+        set({ customThemeColors: colors })
       },
       resetCustomThemeColors: () => {
         set({ customThemeColors: {} })
