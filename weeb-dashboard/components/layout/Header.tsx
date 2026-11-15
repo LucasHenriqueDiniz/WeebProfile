@@ -78,15 +78,15 @@ export function Header({ className, variant, title, description, actions, width 
   const headerBgAlpha = useTransform(scrollY, [0, 100], [0, 0.85])
   const headerBorderAlpha = useTransform(scrollY, [0, 100], [0, 0.6])
 
-  // Home nav mirrors the landing sections plus the external docs. The sections go
-  // through SectionLink, which points at "/" with the hash when this header is on
-  // another page -- a bare "#plugins" did nothing there.
-  const navigation: Array<{ name: string; section?: LandingSection; href?: string }> = [
+  // Home nav mirrors the landing sections. They go through SectionLink, which points
+  // at "/" with the hash when this header is on another page -- a bare "#plugins" did
+  // nothing there. There was also a "Docs" item, but it opened the repository, the
+  // same place as the GitHub icon beside it (and the menu's "GitHub" on phones).
+  const navigation: Array<{ name: string; section: LandingSection }> = [
     { name: tLanding("plugins"), section: "plugins" },
     { name: tLanding("templates"), section: "templates" },
     { name: tLanding("repos"), section: "repos" },
     { name: tLanding("styles"), section: "styles" },
-    { name: tLanding("docs"), href: "https://github.com/LucasHenriqueDiniz/WeebProfile" },
   ]
 
   const handleSignOut = async () => {
@@ -136,25 +136,15 @@ export function Header({ className, variant, title, description, actions, width 
 
           {/* Desktop Navigation — links de texto simples, sem caixas de botao */}
           <div className="hidden flex-1 items-center gap-5 md:flex">
-            {navigation.map((item) =>
-              item.section ? (
-                <SectionLink
-                  key={item.name}
-                  section={item.section}
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {item.name}
-                </SectionLink>
-              ) : (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {item.name}
-                </a>
-              )
-            )}
+            {navigation.map((item) => (
+              <SectionLink
+                key={item.name}
+                section={item.section}
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {item.name}
+              </SectionLink>
+            ))}
           </div>
 
           {/* Actions */}
@@ -307,11 +297,7 @@ export function Header({ className, variant, title, description, actions, width 
                   className="w-full justify-start text-muted-foreground hover:text-foreground"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item.section ? (
-                    <SectionLink section={item.section}>{item.name}</SectionLink>
-                  ) : (
-                    <a href={item.href}>{item.name}</a>
-                  )}
+                  <SectionLink section={item.section}>{item.name}</SectionLink>
                 </Button>
               ))}
               <div className="pt-2 border-t border-border/50">
