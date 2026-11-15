@@ -295,6 +295,91 @@ describe("POST / — segredos", () => {
   })
 })
 
+describe("POST / — preview público", () => {
+  const TOKEN = "github_pat_preview_que_nunca_pode_sair_daqui"
+  const github = { github: { enabled: true, sections: ["profile"], username: "someone" } }
+
+  /** The Authorization headers the plugins sent, read from the fetch spy. */
+  function authorizationsSent(): string[] {
+    const spy = globalThis.fetch as unknown as ReturnType<typeof vi.fn>
+    return spy.mock.calls.map(([input, init]) => {
+      const headers = new Headers((init as RequestInit | undefined)?.headers ?? (input as Request).headers)
+      return headers.get("authorization") ?? ""
+    })
+  }
+
+  it("não lê segredo de usuário no D1 mesmo com userId no corpo", async () => {
+    const spy = vi.fn(async () => ({ results: [] }))
+    const fakeDb = { prepare: () => ({ bind: () => ({ all: spy }) }) } as unknown as D1Database
+
+    await post(validRequest({ preview: true, userId: "user_1" }), env({ DB: fakeDb }))
+
+    expect(spy).not.toHaveBeenCalled()
+  })
+
+  it("ignora essentialConfigs vindos no corpo", async () => {
+    const { response, body } = await post(
+      validRequest({ preview: true, plugins: github, essentialConfigs: { github: { pat: "ghp_do_corpo" } } })
+    )
+
+    expect(response.status).toBe(400)
+    expect(body.code).toBe("MISSING_REQUIRED_SECRETS")
+  })
+
+  it("usa o GITHUB_PREVIEW_TOKEN no GitHub e não o devolve", async () => {
+    const { response, text } = await post(
+      validRequest({ preview: true, debug: true, plugins: github }),
+      env({ GITHUB_PREVIEW_TOKEN: TOKEN })
+    )
+
+    expect(response.status).toBe(200)
+    expect(authorizationsSent().some((value) => value.includes(TOKEN))).toBe(true)
+    expect(text).not.toContain(TOKEN)
+  })
+
+  it("nunca empresta o token de preview a uma geração normal", async () => {
+    const { response, body } = await post(validRequest({ plugins: github }), env({ GITHUB_PREVIEW_TOKEN: TOKEN }))
+
+    expect(response.status).toBe(400)
+    expect(body.code).toBe("MISSING_REQUIRED_SECRETS")
+    expect(authorizationsSent().some((value) => value.includes(TOKEN))).toBe(false)
+  })
+
+  it("leva o SteamID64 da config pública para o plugin Steam", async () => {
+    const { response } = await post(
+      validRequest({
+        preview: true,
+        plugins: { steam: { enabled: true, sections: ["statistics"], steamId: "76561197960287930" } },
+      }),
+      env({ STEAM_API_KEY: "chave_da_aplicacao" })
+    )
+
+    expect(response.status).toBe(200)
+  })
+
+  it("não aceita outra coisa como SteamID64", async () => {
+    const { response, body } = await post(
+      validRequest({
+        preview: true,
+        plugins: { steam: { enabled: true, sections: ["statistics"], steamId: "not-an-id" } },
+      }),
+      env({ STEAM_API_KEY: "chave_da_aplicacao" })
+    )
+
+    expect(response.status).toBe(400)
+    expect(body.code).toBe("MISSING_REQUIRED_SECRETS")
+  })
+
+  it("não devolve debug nem usa dados mock", async () => {
+    const { body } = await post(validRequest({ preview: true, dev: true, mock: true, debug: true }))
+
+    expect(body.debug).toBeUndefined()
+    // dev forçado a false: o Dev.to foi chamado de verdade (e o fetch falso recusou).
+    const spy = globalThis.fetch as unknown as ReturnType<typeof vi.fn>
+    expect(spy.mock.calls.some(([input]) => String((input as Request).url ?? input).includes("dev.to/api"))).toBe(true)
+  })
+})
+
 describe("POST / — saneamento de entrada", () => {
   it("remove markup do terminalHeaderText e limita o tamanho", async () => {
     const { body } = await post(

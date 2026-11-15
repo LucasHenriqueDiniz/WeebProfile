@@ -15,7 +15,7 @@ import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
 import { getUserEssentialConfigs, SecretsUnreadableError } from "./db/essential-configs.js"
 import { validateRequiredConfig } from "./validation/validate-required-config.js"
 import { log, hashUserId } from "./utils/log.js"
-import { withAppCredentials } from "./db/app-credentials.js"
+import { withAppCredentials, previewCredentials } from "./db/app-credentials.js"
 
 export interface Env {
   DB: D1Database
@@ -29,6 +29,9 @@ export interface Env {
   // Application-owned provider credential -- see db/app-credentials.ts. Optional
   // so a deployment without it simply has no Steam data rather than failing.
   STEAM_API_KEY?: string
+  // Read-only token used only for public previews -- see previewCredentials in
+  // db/app-credentials.ts. Without it a GitHub preview reports the PAT as missing.
+  GITHUB_PREVIEW_TOKEN?: string
 }
 
 interface GenerateRequest {
@@ -50,6 +53,9 @@ interface GenerateRequest {
   userId?: string
   essentialConfigs?: Record<string, any>
   debug?: boolean
+  // A visitor's card on the landing page (weeb-dashboard/functions/api/preview.ts):
+  // no user, so no secrets are read, and no debug or mock output.
+  preview?: boolean
 }
 
 const CORS_HEADERS = {
@@ -90,18 +96,27 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
     order: requestData.pluginsOrder,
     style: requestData.style,
     size: requestData.size,
-    authenticated: !!requestData.userId,
+    // A preview ignores any userId it carries, so it never counts as authenticated.
+    authenticated: requestData.preview !== true && !!requestData.userId,
+    preview: requestData.preview === true,
   })
 
   if (!requestData.style || !requestData.size) {
     return json({ error: "style and size are required" }, 400)
   }
 
+  const isPreview = requestData.preview === true
+
   // Fetch essential configs (secrets) from D1 if userId provided.
   // Username and other non-sensitive configs come directly from the request (svgs.plugins_config).
   let essentialConfigs: Record<string, any> = {}
 
-  if (requestData.userId) {
+  if (isPreview) {
+    // Checked first: whatever else the body carries, a preview never reads a user's
+    // secrets or takes inline ones. Only the dashboard can reach this Worker, but the
+    // route that preceded the preview forwarded an attacker-supplied userId (b7d0e02).
+    essentialConfigs = previewCredentials(requestData.plugins || {}, env)
+  } else if (requestData.userId) {
     // The hash, never the id: this used to log the Clerk user id verbatim on every
     // authenticated generation. It is stable and joins straight into plugin_secrets.
     const user = await hashUserId(requestData.userId)
@@ -142,7 +157,8 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
 
   // Applied after the user's own secrets and regardless of whether a userId was
   // given: an application credential is not tied to the account being rendered.
-  essentialConfigs = withAppCredentials(essentialConfigs, env)
+  // previewCredentials already did it for a preview.
+  if (!isPreview) essentialConfigs = withAppCredentials(essentialConfigs, env)
 
   // Prepare plugins config - fully dynamic, iterates over all plugins in the request
   const plugins: Record<string, any> = {}
@@ -183,7 +199,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
         : undefined,
     primaryColor: requestData.primaryColor || "#ff7a00",
     essentialConfigs,
-    dev: requestData.dev === true || requestData.mock === true,
+    dev: !isPreview && (requestData.dev === true || requestData.mock === true),
   }
 
   // Validate required secrets and fields
@@ -214,7 +230,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
   }
 
   const normalizedConfig = normalizeConfig(config)
-  const includeDebug = requestData.debug === true || requestData.mock === true
+  const includeDebug = !isPreview && (requestData.debug === true || requestData.mock === true)
 
   try {
     const result = await generateSvg(normalizedConfig)
