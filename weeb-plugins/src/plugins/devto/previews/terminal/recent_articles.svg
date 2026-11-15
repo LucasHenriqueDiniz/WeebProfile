@@ -42,6 +42,15 @@
   box-sizing: border-box;
 }
 
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card (GitHub recent activity, among others). :where() keeps it at zero
+   specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Container */
 #svg-main .terminal-container {
   --font-family:
@@ -1377,10 +1386,6 @@
   background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
 }
 
-#svg-main .bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
-}
-
 #svg-main .bg-yellow-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1))
@@ -2332,22 +2337,22 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9"><div><div><section id="devto-plugin"><section id="devto-recent-articles"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run devto recent_articles</span></div><div class="flex items-baseline gap-1 w-full overflow-hidden px-1 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="font-semibold whitespace-nowrap truncate flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-warning, #ffaa00)">Rendering React to SVG inside a Cloudflare Worker</span><span class="flex-1 h-px opacity-50 self-end mb-1" style="background:repeating-linear-gradient(
+</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9"><div><div><section id="devto-plugin"><section id="devto-recent-articles"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run devto recent_articles</span></div><a href="https://dev.to/weebprofile/rendering-react-to-svg" target="_top" rel="noopener noreferrer" class="flex items-baseline gap-1 w-full overflow-hidden px-1 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="font-semibold whitespace-nowrap truncate flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-warning, #ffaa00)">Rendering React to SVG inside a Cloudflare Worker</span><span class="flex-1 h-px opacity-50 self-end mb-1" style="background:repeating-linear-gradient(
             to right,
             var(--terminal-color-muted) 0,
             var(--terminal-color-muted) 2px,
             transparent 2px,
             transparent 4px
-          )"></span><span class="text-terminal-muted whitespace-nowrap pr-1 flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem">184 ♥</span></div><div class="flex items-baseline gap-1 w-full overflow-hidden px-1 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="font-semibold whitespace-nowrap truncate flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-warning, #ffaa00)">Why your D1 migrations are lying to you</span><span class="flex-1 h-px opacity-50 self-end mb-1" style="background:repeating-linear-gradient(
+          )"></span><span class="text-terminal-muted whitespace-nowrap pr-1 flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem">184 ♥</span></a><a href="https://dev.to/weebprofile/d1-migrations" target="_top" rel="noopener noreferrer" class="flex items-baseline gap-1 w-full overflow-hidden px-1 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="font-semibold whitespace-nowrap truncate flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-warning, #ffaa00)">Why your D1 migrations are lying to you</span><span class="flex-1 h-px opacity-50 self-end mb-1" style="background:repeating-linear-gradient(
             to right,
             var(--terminal-color-muted) 0,
             var(--terminal-color-muted) 2px,
             transparent 2px,
             transparent 4px
-          )"></span><span class="text-terminal-muted whitespace-nowrap pr-1 flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem">97 ♥</span></div><div class="flex items-baseline gap-1 w-full overflow-hidden px-1 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="font-semibold whitespace-nowrap truncate flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-warning, #ffaa00)">Static height calculation, or: how to render SVG without a browser</span><span class="flex-1 h-px opacity-50 self-end mb-1" style="background:repeating-linear-gradient(
+          )"></span><span class="text-terminal-muted whitespace-nowrap pr-1 flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem">97 ♥</span></a><a href="https://dev.to/weebprofile/static-height" target="_top" rel="noopener noreferrer" class="flex items-baseline gap-1 w-full overflow-hidden px-1 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="font-semibold whitespace-nowrap truncate flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-warning, #ffaa00)">Static height calculation, or: how to render SVG without a browser</span><span class="flex-1 h-px opacity-50 self-end mb-1" style="background:repeating-linear-gradient(
             to right,
             var(--terminal-color-muted) 0,
             var(--terminal-color-muted) 2px,
             transparent 2px,
             transparent 4px
-          )"></span><span class="text-terminal-muted whitespace-nowrap pr-1 flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem">61 ♥</span></div></section></section></div></div></div></div></foreignObject></svg>
+          )"></span><span class="text-terminal-muted whitespace-nowrap pr-1 flex-shrink-0 " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem">61 ♥</span></a></section></section></div></div></div></div></foreignObject></svg>
