@@ -5475,10 +5475,10 @@ export async function getMockGithubData(): Promise<GithubData> {
         },
       ],
     },
-    // A believable 64-commit sample: hours and weekdays both sum to analyzedCommits. It
-    // used to be a capture of a run where every commit lookup failed, so the showcase
-    // printed 0 / 0 / 0 under Commit Statistics. languages stays empty because the real
-    // fetch never fills it, and the preview should not show a column no card can have.
+    // A believable 64-commit sample: hours, weekdays and languages all sum to
+    // analyzedCommits (the fetch credits each commit to its repository's primary
+    // language). It used to be a capture of a run where every commit lookup failed, so
+    // the showcase printed 0 / 0 / 0 under Commit Statistics.
     codeHabits: {
       commitsByHour: {
         "0": 2,
@@ -5508,7 +5508,12 @@ export async function getMockGithubData(): Promise<GithubData> {
         Friday: 8,
         Saturday: 4,
       },
-      languages: {},
+      languages: {
+        TypeScript: { count: 41, color: "#3178c6" },
+        JavaScript: { count: 12, color: "#f1e05a" },
+        Python: { count: 7, color: "#3572A5" },
+        CSS: { count: 4, color: "#563d7c" },
+      },
       commitStats: {
         averageChangesPerCommit: 86,
         totalFilesChanged: 212,

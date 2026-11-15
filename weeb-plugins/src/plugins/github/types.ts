@@ -191,7 +191,8 @@ export interface GithubData {
         color: string
       }
     }
-    commitStats: {
+    /** Absent when no commit could be read in detail: zeros would read as a real measurement. */
+    commitStats?: {
       averageChangesPerCommit: number
       totalFilesChanged: number
       largestCommit: number

@@ -74,10 +74,24 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           break
         }
         case "code_habits": {
+          // Measured in Chromium (svg-generator audit:heights). The base includes the
+          // stats block; it renders only when commits were read, and languages only
+          // when the fetch found some (terminal lists the top 5).
+          const habits = gh.codeHabits
+          const showsStats = !cfg.code_habits_hide_stats && !!habits?.commitStats
+          const languageCount = cfg.code_habits_hide_languages ? 0 : Object.keys(habits?.languages ?? {}).length
           if (isTerminal) {
             h += 1010
+            if (!showsStats) h -= 103
+            if (languageCount > 0) h += 55 + Math.min(languageCount, 5) * 24
+          } else if (size === "half") {
+            h += 590
+            if (!showsStats) h -= 116
+            // Two columns make "Commit activity per day of week" wrap.
+            if (languageCount > 0) h += 20
           } else {
-            h += size === "half" ? 590 : 563
+            h += 563
+            if (!showsStats) h -= 84
           }
           break
         }
