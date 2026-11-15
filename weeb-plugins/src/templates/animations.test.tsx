@@ -1,6 +1,6 @@
 import React from "react"
 import { renderToString } from "react-dom/server"
-import { describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { PluginManager } from "../plugins/manager"
 import { ANIMATIONS_CSS } from "../styles/animations"
 import { AnimatedNumber, parseCountTarget } from "./AnimatedNumber"
@@ -71,6 +71,12 @@ describe("ANIMATIONS_CSS", () => {
 })
 
 describe("with animations off", () => {
+  // No network in these tests: a request means a test depends on a CDN being up and fast.
+  beforeEach(() => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("no network in animation tests"))
+  })
+  afterEach(() => vi.restoreAllMocks())
+
   const templates: Array<[string, React.ReactNode]> = [
     ["TerminalCommand", <TerminalCommand key="c" command="run github profile" />],
     ["HorizontalMultipleItemsBar", <HorizontalMultipleItemsBar key="b" items={[{ value: 3 }, { value: 1 }]} />],
@@ -100,7 +106,9 @@ describe("with animations off", () => {
         ? ["profile", "activity", "favorite_languages", "repositories"]
         : ["statistics", "recent_tracks"]
     const config = { ...plugin.config, enabled: true, sections, style, size: "half" } as any
-    const data = await plugin.fetchData(config, true)
+    // previewMode: the mock as is, without downloading its images. With dev alone LastFM
+    // fetched every cover from the CDN and timed out in CI.
+    const data = await plugin.fetchData(config, true, undefined, true)
     const html = render(plugin.render(config, data), false)
     expect(html).not.toContain("weeb-")
     expect(html).toBe(render(plugin.render(config, data)))
