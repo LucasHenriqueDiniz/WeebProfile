@@ -1,6 +1,14 @@
 import { FaGithub, FaSteam, FaLastfmSquare, FaSpotify, FaGlobe } from "react-icons/fa"
 import { TbNumber16Small } from "react-icons/tb"
-import { SiMyanimelist, SiStackoverflow, SiCodeforces, SiCodewars, SiDuolingo } from "react-icons/si"
+import {
+  SiAnilist,
+  SiCodeforces,
+  SiCodewars,
+  SiDevdotto,
+  SiDuolingo,
+  SiMyanimelist,
+  SiStackoverflow,
+} from "react-icons/si"
 import { GiWeightLiftingUp } from "react-icons/gi"
 import { GoRepo } from "react-icons/go"
 import type { ComponentType } from "react"
@@ -9,12 +17,16 @@ import type { ComponentType } from "react"
  * Icon mapping for plugins using react-icons
  * Maps plugin ID to the appropriate icon component
  *
- * IMPORTANT: This mapping must match the plugin IDs exactly from metadata
+ * IMPORTANT: This mapping must match the plugin IDs exactly from metadata.
+ * plugin-icons.test.ts fails for a registered plugin with no icon: AniList and Dev.to
+ * went without one, an empty square in the wizard and the SVG list.
  */
 const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   github: FaGithub,
   lastfm: FaLastfmSquare,
   myanimelist: SiMyanimelist,
+  anilist: SiAnilist,
+  devto: SiDevdotto,
   "16personalities": TbNumber16Small,
   lyfta: GiWeightLiftingUp,
   steam: FaSteam,

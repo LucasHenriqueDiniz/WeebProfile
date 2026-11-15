@@ -10,6 +10,6 @@ export default defineConfig({
   test: {
     // The modules under test use Web Crypto and fetch, both global in Node 22.
     environment: "node",
-    include: ["functions/**/*.test.ts", "i18n/**/*.test.ts"],
+    include: ["functions/**/*.test.ts", "i18n/**/*.test.ts", "lib/**/*.test.ts"],
   },
 })
