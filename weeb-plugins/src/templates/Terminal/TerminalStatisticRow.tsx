@@ -4,6 +4,7 @@
  */
 
 import React from "react"
+import { AnimatedNumber } from "../AnimatedNumber"
 
 export interface TerminalStatisticRowProps {
   icon?: React.ReactElement | null
@@ -35,7 +36,9 @@ export function TerminalStatisticRow({
           <span className={`text-terminal-warning font-semibold truncate flex-1 ${row.strong ? "font-bold" : ""}`}>
             {row.title}
           </span>
-          <span className="text-terminal-muted whitespace-nowrap flex-shrink-0">{row.value}</span>
+          <span className="text-terminal-muted whitespace-nowrap flex-shrink-0">
+            <AnimatedNumber value={row.value} />
+          </span>
         </div>
       ))}
     </div>

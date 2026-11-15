@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import { PluginStyles } from "@weeb/weeb-plugins/templates"
 import {
+  ANIMATIONS_CSS,
   getStyleCSS,
   getActivePluginsCSS as getPluginsCSS,
   SHARED_CSS,
@@ -26,6 +27,7 @@ interface PreviewSvgContainerProps {
   customCss?: string
   customThemeColors?: Record<string, string> // Custom theme colors (only used when theme === 'custom')
   plugins?: Record<string, any> // Plugin configs for CSS loading
+  animations?: { step: number } // Opt-in card animations: the gap between sections
 }
 
 // Baseline for the preview document. The parent page's Tailwind does not reach
@@ -66,6 +68,7 @@ export function PreviewSvgContainer({
   customCss,
   customThemeColors,
   plugins,
+  animations,
 }: PreviewSvgContainerProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null)
@@ -175,8 +178,10 @@ ${cssVariables}
   // into the frame's own head, never the dashboard's.
   useEffect(() => {
     if (!styleNode) return
-    styleNode.textContent = [pluginsCss, themeCss, customCss].filter(Boolean).join("\n")
-  }, [styleNode, pluginsCss, themeCss, customCss])
+    styleNode.textContent = [pluginsCss, animations ? ANIMATIONS_CSS : "", themeCss, customCss]
+      .filter(Boolean)
+      .join("\n")
+  }, [styleNode, pluginsCss, themeCss, customCss, animations])
 
   // Keep the frame element sized to the preview, and mirror size/theme onto the
   // portal root so selectors keyed on those attributes still match.
@@ -281,6 +286,7 @@ ${cssVariables}
             fontFamily={fontFamily}
             terminalHeaderText={terminalHeaderText}
             customThemeColors={customThemeColors}
+            animations={animations}
           >
             {children}
           </PluginStyles>,

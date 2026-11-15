@@ -533,6 +533,9 @@
       "fontDescription": "Fonte usada no card",
       "terminalHeaderText": "Texto do Cabeçalho do Terminal",
       "terminalHeaderTextDescription": "Título personalizado para a barra de cabeçalho do terminal",
+      "animations": "Animações",
+      "animationsDescription": "As seções entram, as barras enchem e os números sobem quando o card carrega; no estilo terminal os comandos são digitados. Acaba em menos de 2 segundos e fica desligado para quem pede menos movimento.",
+      "animationsReplay": "Repetir",
       "reset": "Redefinir",
       "options": {
         "default": "padrão",

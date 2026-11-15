@@ -34,6 +34,9 @@ export interface SvgConfig {
   fontFamily?: string
   terminalHeaderText?: string
   primaryColor?: string // Custom primary color
+  // Opt-in CSS animations (typing, sections entering, bars filling, numbers counting).
+  // Off unless the request says true; see weeb-plugins templates/animations.tsx.
+  animations?: boolean
   dev?: boolean // Development mode (uses mock data)
   // Essential configurations (API keys, tokens) per plugin
   // Fully dynamic - supports any plugin

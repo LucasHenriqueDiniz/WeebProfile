@@ -8,6 +8,7 @@ import React from "react"
 import { renderToString } from "react-dom/server"
 import { log } from "../utils/log.js"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
+import { AnimationsProvider, animationBaseStyle, animationTimeline } from "@weeb/weeb-plugins/templates"
 import type { SvgConfig } from "../types/index.js"
 import { PluginError } from "../components/PluginError.js"
 
@@ -19,6 +20,8 @@ export interface RenderPluginsResult {
   pluginsConfig: Record<string, any>
   pluginsData: Record<string, any>
   pluginsErrors: Record<string, Error>
+  /** Gap between sections in seconds, when animations are on. */
+  animationStep?: number
 }
 
 /**
@@ -165,6 +168,21 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
   const activePluginsMap = new Map(activePlugins)
   const renderedPlugins: React.ReactElement[] = []
 
+  // Animations run on one timeline across the card: each plugin's sections start where
+  // the previous plugin's left off. Only plugins about to draw sections take a slot; a
+  // plugin that fails while rendering below just leaves a gap.
+  const animated = config.animations === true
+  const timelinePlugins = animated
+    ? pluginsOrder.filter(
+        (name) =>
+          activePluginsMap.has(name) && pluginsConfig[name]?.enabled && !pluginsErrors[name] && pluginsData[name]
+      )
+    : []
+  const timeline = animationTimeline(
+    config.style,
+    timelinePlugins.map((name) => (pluginsConfig[name]?.sections || []).length)
+  )
+
   // Render in specified order
   for (const pluginName of pluginsOrder) {
     const plugin = activePluginsMap.get(pluginName)
@@ -208,8 +226,17 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
       // Each call is its own React root, so useId() would number from scratch in every
       // plugin and two plugins could emit the same gradient id into one SVG. The prefix
       // keeps them apart.
-      const html = renderToString(rendered, { identifierPrefix: `${pluginName}-` })
-      renderedPlugins.push(<div key={pluginName} dangerouslySetInnerHTML={{ __html: html }} />)
+      const html = renderToString(animated ? <AnimationsProvider enabled>{rendered}</AnimationsProvider> : rendered, {
+        identifierPrefix: `${pluginName}-`,
+      })
+      const base = animated ? timeline.bases[timelinePlugins.indexOf(pluginName)] : undefined
+      renderedPlugins.push(
+        <div
+          key={pluginName}
+          {...(base !== undefined ? { style: animationBaseStyle(base) } : {})}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      )
     } catch (thrown) {
       const error = thrown instanceof Error ? thrown : new Error(String(thrown))
       log.error("plugin.render_failed", { plugin: pluginName, reason: error.message })
@@ -237,5 +264,6 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
     pluginsConfig,
     pluginsData,
     pluginsErrors,
+    ...(animated ? { animationStep: timeline.step } : {}),
   }
 }

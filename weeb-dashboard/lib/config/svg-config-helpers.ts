@@ -15,6 +15,7 @@ export function getTerminalConfigs(uiConfig: UiConfig | null | undefined): {
   hideTerminalCommand: boolean
   fontFamily: string
   terminalHeaderText: string
+  animations: boolean
 } {
   const config = uiConfig || {}
   return {
@@ -23,6 +24,7 @@ export function getTerminalConfigs(uiConfig: UiConfig | null | undefined): {
     hideTerminalCommand: config.hideTerminalCommand ?? false,
     fontFamily: config.fontFamily ?? "poppins",
     terminalHeaderText: config.terminalHeaderText ?? "",
+    animations: config.animations === true,
   }
 }
 
@@ -37,6 +39,7 @@ export function setTerminalConfigs(
     hideTerminalCommand?: boolean
     fontFamily?: string
     terminalHeaderText?: string
+    animations?: boolean
   }
 ): UiConfig {
   const current = uiConfig || {}
@@ -47,6 +50,7 @@ export function setTerminalConfigs(
     ...(configs.hideTerminalCommand !== undefined && { hideTerminalCommand: configs.hideTerminalCommand }),
     ...(configs.fontFamily !== undefined && { fontFamily: configs.fontFamily }),
     ...(configs.terminalHeaderText !== undefined && { terminalHeaderText: configs.terminalHeaderText }),
+    ...(configs.animations !== undefined && { animations: configs.animations }),
   }
 }
 

@@ -4,6 +4,7 @@
  */
 
 import React from "react"
+import { AnimatedNumber } from "../AnimatedNumber"
 
 interface TerminalLineWithDotsProps {
   title: string | React.ReactNode
@@ -61,7 +62,7 @@ export function TerminalLineWithDots({
           fontSize: "0.875rem",
         }}
       >
-        {String(value)}
+        <AnimatedNumber value={value} />
       </span>
     </div>
   )

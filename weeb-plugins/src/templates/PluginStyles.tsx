@@ -6,6 +6,7 @@
 
 import React from "react"
 import { TerminalHeader } from "./Terminal/TerminalHeader"
+import { AnimationsProvider, animationStepStyle } from "./animations"
 import { getDefaultThemeVariables } from "../themes/theme-utils"
 import { getTerminalThemeVariables } from "../themes/theme-utils"
 import type { DefaultTheme, TerminalTheme } from "../themes/types"
@@ -23,6 +24,9 @@ interface PluginStylesProps {
   fontFamily?: string
   // Texto custom do título do header do terminal (janela com os três botões).
   terminalHeaderText?: string
+  // Opt-in card animations (templates/animations.tsx). The gap between sections comes
+  // from animationTimeline(); the stylesheet itself is ANIMATIONS_CSS, added by the caller.
+  animations?: { step: number }
 }
 
 export const FONT_FAMILIES: Record<string, string> = {
@@ -55,6 +59,7 @@ export function PluginStyles({
   customThemeColors,
   fontFamily,
   terminalHeaderText,
+  animations,
 }: PluginStylesProps): React.ReactElement {
   const styleDef = STYLE_DEFINITIONS[style] || STYLE_DEFINITIONS.default
 
@@ -81,15 +86,21 @@ export function PluginStyles({
     // Apply background color for terminal style
     ...(terminalBackground ? { backgroundColor: terminalBackground } : {}),
     ...themeVariables,
+    ...(animations ? animationStepStyle(animations.step) : {}),
   } as React.CSSProperties & Record<string, string>
 
   // Terminal-specific: show header
   const showTerminalHeader = style === "terminal" && !hideTerminalHeader
 
   return (
-    <div className={styleDef.containerClass} data-style={styleDef.name} data-theme={theme} style={themeStyles}>
+    <div
+      className={animations ? `${styleDef.containerClass} weeb-anim` : styleDef.containerClass}
+      data-style={styleDef.name}
+      data-theme={theme}
+      style={themeStyles}
+    >
       {showTerminalHeader && <TerminalHeader title={terminalHeaderText?.trim() || undefined} />}
-      {children}
+      <AnimationsProvider enabled={Boolean(animations)}>{children}</AnimationsProvider>
     </div>
   )
 }

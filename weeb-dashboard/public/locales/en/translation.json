@@ -533,6 +533,9 @@
       "fontDescription": "Font used across the card",
       "terminalHeaderText": "Terminal Header Text",
       "terminalHeaderTextDescription": "Custom title for the terminal header bar",
+      "animations": "Animations",
+      "animationsDescription": "Sections slide in, bars fill and numbers count up as the card loads; in the terminal style the commands are typed out. Done in under 2 seconds, and off for readers who ask for reduced motion.",
+      "animationsReplay": "Replay",
       "reset": "Reset",
       "options": {
         "default": "default",

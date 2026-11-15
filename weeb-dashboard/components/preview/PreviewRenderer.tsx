@@ -2,6 +2,7 @@
 
 import { useMockPluginData } from "@/hooks/useMockPluginData"
 import { PluginManager } from "@weeb/weeb-plugins/plugins/manager"
+import { animationBaseStyle, animationTimeline } from "@weeb/weeb-plugins/templates"
 import { AnimatePresence, motion } from "framer-motion"
 import React, { useEffect, useMemo, useState } from "react"
 import { PreviewSvgContainer } from "./PreviewSvgContainer"
@@ -31,6 +32,10 @@ interface PreviewRendererProps {
   previewMode?: boolean // Quando true, componentes não devem renderizar links externos
   disableFadeIn?: boolean // Quando true, desativa a animação de fade-in das seções
   sectionTransition?: "fade" | "slide" // "slide" anima entrada/saída lateral (usa AnimatePresence); default "fade"
+  // The card's own opt-in animations (ui_config.animations), played as the SVG will play
+  // them. Never in previewMode, which shows cards at rest. Bumping the key replays them.
+  animations?: boolean
+  animationsReplayKey?: number
 }
 
 /**
@@ -82,7 +87,10 @@ export function PreviewRenderer({
   previewMode,
   disableFadeIn = false,
   sectionTransition = "fade",
+  animations = false,
+  animationsReplayKey = 0,
 }: PreviewRendererProps) {
+  const animate = animations && !previewMode
   const { data, loading } = useMockPluginData({ plugins })
 
   // Calcular largura: usar propWidth se fornecido, senão baseado no size
@@ -141,7 +149,7 @@ export function PreviewRenderer({
   }, [preparedPluginsConfig])
 
   // Renderizar plugins dinamicamente
-  const renderedPlugins = useMemo(() => {
+  const { components: renderedPlugins, animationStep } = useMemo(() => {
     // Pegar TODOS os plugins habilitados (não apenas os que estão em pluginsOrder)
     const allEnabledPlugins = Object.keys(preparedPluginsConfig).filter(
       (name) => preparedPluginsConfig[name]?.enabled && preparedPluginsConfig[name]?.sections?.length > 0
@@ -155,6 +163,20 @@ export function PreviewRenderer({
     ]
 
     const components: React.ReactElement[] = []
+
+    // One animation timeline across the card, as the generator builds it
+    // (svg-generator react-renderer): each plugin's sections start after the previous
+    // plugin's. Only plugins about to draw sections take a slot.
+    const timelinePlugins = animate
+      ? orderedPlugins.filter((name) => {
+          const pluginData = (data as Record<string, any>)[name]
+          return activePluginsMap.has(name) && pluginData && !pluginData._error
+        })
+      : []
+    const timeline = animationTimeline(
+      style,
+      timelinePlugins.map((name) => preparedPluginsConfig[name]?.sections?.length ?? 0)
+    )
 
     for (const pluginName of orderedPlugins) {
       const plugin = activePluginsMap.get(pluginName)
@@ -208,7 +230,10 @@ export function PreviewRenderer({
             : `${pluginName}-${components.length}`
         components.push(
           <PluginErrorBoundary key={stableKey} pluginName={pluginName}>
-            {disableFadeIn ? (
+            {animate ? (
+              // The card's own animations replace the preview's fade-in.
+              <div style={animationBaseStyle(timeline.bases[timelinePlugins.indexOf(pluginName)] ?? 0)}>{rendered}</div>
+            ) : disableFadeIn ? (
               <div>{rendered}</div>
             ) : sectionTransition === "slide" ? (
               <motion.div
@@ -238,8 +263,8 @@ export function PreviewRenderer({
       }
     }
 
-    return components
-  }, [pluginsOrder, data, activePluginsMap, preparedPluginsConfig, disableFadeIn, sectionTransition])
+    return { components, animationStep: animate ? timeline.step : undefined }
+  }, [pluginsOrder, data, activePluginsMap, preparedPluginsConfig, disableFadeIn, sectionTransition, animate, style])
 
   if (loading) {
     return (
@@ -294,13 +319,17 @@ export function PreviewRenderer({
         customCss={customCss}
         customThemeColors={customThemeColors}
         plugins={plugins}
+        animations={animationStep !== undefined ? { step: animationStep } : undefined}
       >
         {sectionTransition === "slide" ? (
           <AnimatePresence mode="popLayout" initial={false}>
             {renderedPlugins}
           </AnimatePresence>
         ) : (
-          renderedPlugins
+          // A new key remounts the sections, which is what restarts CSS animations.
+          <React.Fragment key={animate ? `animations-${animationsReplayKey}` : "static"}>
+            {renderedPlugins}
+          </React.Fragment>
         )}
       </PreviewSvgContainer>
     </div>

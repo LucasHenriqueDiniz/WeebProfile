@@ -45,6 +45,7 @@ interface GenerateRequest {
   fontFamily?: string
   terminalHeaderText?: string
   primaryColor?: string
+  animations?: boolean
   dev?: boolean
   mock?: boolean
   userId?: string
@@ -182,6 +183,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
         ? requestData.terminalHeaderText.replace(/[<>]/g, "").slice(0, 60)
         : undefined,
     primaryColor: requestData.primaryColor || "#ff7a00",
+    animations: requestData.animations === true,
     essentialConfigs,
     dev: requestData.dev === true || requestData.mock === true,
   }
