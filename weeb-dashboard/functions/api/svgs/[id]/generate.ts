@@ -3,7 +3,7 @@ import type { CloudflareEnv } from "../../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../../_shared/auth"
 import { getDb } from "../../_shared/db"
 import { claimGenerationSlot } from "../../_shared/generation-rate-limit"
-import { saveSvgToR2 } from "../../_shared/storage"
+import { publishGeneratedSvg } from "../../_shared/publish-svg"
 import { assertGenerationSucceeded } from "../../_shared/svg-generation-validation"
 import { svgs } from "../../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
@@ -126,24 +126,17 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       // (one with a <PluginError> section) over a previously-valid stored version.
       assertGenerationSucceeded(result)
 
-      // Save to R2
-      const { path: storagePath, url: storageUrl } = await saveSvgToR2(env, id, svgContent)
-
       const nextRegenerationAt = new Date()
       nextRegenerationAt.setHours(nextRegenerationAt.getHours() + 24)
 
-      const [updatedSvg] = await db
-        .update(svgs)
-        .set({
-          status: "completed",
-          storagePath: storagePath || null,
-          storageUrl: storageUrl || null,
-          lastGeneratedAt: new Date().toISOString(),
-          nextRegenerationAt: nextRegenerationAt.toISOString(),
-          forceRegenerate: false,
-        })
-        .where(eq(svgs.id, id))
-        .returning()
+      const updatedSvg = await publishGeneratedSvg(env, db, id, svgContent, {
+        status: "completed",
+        lastGeneratedAt: new Date().toISOString(),
+        nextRegenerationAt: nextRegenerationAt.toISOString(),
+        forceRegenerate: false,
+      })
+      // Deleted while it was being generated; publishGeneratedSvg took the image down.
+      if (!updatedSvg) return notFound("SVG")
 
       return Response.json({ success: true, svg: updatedSvg })
     } catch (error: any) {

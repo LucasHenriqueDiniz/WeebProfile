@@ -4,7 +4,7 @@ import { serverError } from "../_shared/auth"
 import { pruneErrorLog } from "../_shared/error-log"
 import { getDb } from "../_shared/db"
 import { nightsFrom, retryDelayNights } from "../_shared/regeneration-schedule"
-import { saveSvgToR2 } from "../_shared/storage"
+import { publishGeneratedSvg } from "../_shared/publish-svg"
 import { assertGenerationSucceeded } from "../_shared/svg-generation-validation"
 import { svgs } from "../../../lib/db/schema"
 import { eq, ne, or, lte, isNull, and, lt, asc } from "drizzle-orm"
@@ -125,21 +125,18 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         // on the generator's response now, not gated behind a `debug` request flag.
         assertGenerationSucceeded(result)
 
-        const { path: storagePath, url: storageUrl } = await saveSvgToR2(env, svg.id, svgContent)
-
-        await db
-          .update(svgs)
-          .set({
-            status: "completed",
-            storagePath: storagePath || null,
-            storageUrl: storageUrl || null,
-            lastGeneratedAt: now.toISOString(),
-            nextRegenerationAt: nightsFrom(now, 1),
-            forceRegenerate: false,
-            failCount: 0,
-            lastError: null,
-          })
-          .where(eq(svgs.id, svg.id))
+        const published = await publishGeneratedSvg(env, db, svg.id, svgContent, {
+          status: "completed",
+          lastGeneratedAt: now.toISOString(),
+          nextRegenerationAt: nightsFrom(now, 1),
+          forceRegenerate: false,
+          failCount: 0,
+          lastError: null,
+        })
+        if (!published) {
+          console.warn(`[CRON] SVG ${svg.id} was deleted while it was being generated; not published`)
+          continue
+        }
 
         results.success++
       } catch (error) {

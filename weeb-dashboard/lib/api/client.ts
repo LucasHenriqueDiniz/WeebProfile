@@ -227,6 +227,19 @@ export const svgApi = {
   },
 }
 
+/**
+ * Account API helpers
+ */
+export const accountApi = {
+  /**
+   * Delete the account and everything it holds (SVGs, secrets, templates, sign-in).
+   * Irreversible: see functions/api/account/index.ts.
+   */
+  async delete() {
+    return apiDelete<{ success: boolean }>("/api/account")
+  },
+}
+
 export const templateApi = {
   list: () => apiRequest<{ templates: any[] }>("/api/templates"),
   get: (id: string) => apiRequest<{ template: any }>(`/api/templates/${id}`),

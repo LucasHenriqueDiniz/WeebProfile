@@ -344,6 +344,23 @@
       "dangerZone": "Danger Zone",
       "dangerZoneDescription": "Irreversible and destructive actions",
       "deleteAccount": "Delete Account",
+      "deleteDialog": {
+        "title": "Delete your account?",
+        "description": "This deletes, for good:",
+        "items": {
+          "svgs": "Your SVGs and their published images. The links in your GitHub README stop loading.",
+          "secrets": "The API keys and tokens you saved for plugins.",
+          "templates": "Your templates, public ones included, and your likes.",
+          "login": "Your profile and your WeebProfile sign-in."
+        },
+        "irreversible": "This cannot be undone.",
+        "confirmLabel": "Type {{word}} to confirm",
+        "confirmWord": "DELETE",
+        "cancel": "Cancel",
+        "confirm": "Delete my account",
+        "deleting": "Deleting…",
+        "error": "Could not delete your account. Try again: anything already deleted stays deleted, and the retry finishes the rest."
+      },
       "description": "Manage your account settings",
       "title": "Account"
     },

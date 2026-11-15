@@ -5,7 +5,8 @@
 
 import { useState, useEffect, useCallback } from "react"
 
-const STORAGE_KEY = "wizard-ui-state"
+export const WIZARD_UI_STATE_KEY = "wizard-ui-state"
+const STORAGE_KEY = WIZARD_UI_STATE_KEY
 
 interface WizardUIState {
   expandedPlugins: Set<string>
