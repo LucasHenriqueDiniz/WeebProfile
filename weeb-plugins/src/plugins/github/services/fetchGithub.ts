@@ -12,6 +12,7 @@ import {
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { randomColorWithString } from "../../../utils/string"
 
 // Under the dashboard's 60 s; code_habits stops itself at 30 s within it.
 const GITHUB_BUDGET_MS = 45_000
@@ -1448,6 +1449,52 @@ async function processRecentActivityData(
 /**
  * Processa dados de code habits (usa REST API)
  */
+// Repositories whose language code habits looks up, the busiest first: one GraphQL call.
+const MAX_LANGUAGE_REPOS = 50
+
+/**
+ * Primary language of each repository, in one GraphQL call. Code habits credits a commit
+ * to its repository's language: push events say nothing about files, and reading the
+ * files would cost a call per commit. A repository the token cannot see (deleted, made
+ * private) fails its own alias; the others still arrive, in the error's data.
+ */
+async function fetchPrimaryLanguages(
+  rest: Octokit,
+  repos: Array<{ owner: string; repo: string }>
+): Promise<Map<string, { name: string; color: string }>> {
+  const languages = new Map<string, { name: string; color: string }>()
+  if (repos.length === 0) return languages
+
+  const variables: Record<string, string> = {}
+  const declarations: string[] = []
+  const fields: string[] = []
+  repos.forEach(({ owner, repo }, i) => {
+    variables[`o${i}`] = owner
+    variables[`n${i}`] = repo
+    declarations.push(`$o${i}: String!, $n${i}: String!`)
+    fields.push(`r${i}: repository(owner: $o${i}, name: $n${i}) { primaryLanguage { name color } }`)
+  })
+
+  type Result = Record<string, { primaryLanguage: { name: string; color: string | null } | null } | null>
+  let data: Result | undefined
+  try {
+    data = await rest.graphql<Result>(`query(${declarations.join(", ")}) { ${fields.join(" ")} }`, variables)
+  } catch (error) {
+    data = error instanceof GraphqlResponseError ? (error.data as Result) : undefined
+  }
+
+  repos.forEach(({ owner, repo }, i) => {
+    const language = data?.[`r${i}`]?.primaryLanguage
+    if (language?.name) {
+      languages.set(`${owner}/${repo}`, {
+        name: language.name,
+        color: language.color ?? randomColorWithString(language.name),
+      })
+    }
+  })
+  return languages
+}
+
 async function processCodeHabitsData(
   rest: Octokit,
   login: string,
@@ -1805,17 +1852,20 @@ async function processCodeHabitsData(
           if (stats) {
             const changes = (stats.additions || 0) + (stats.deletions || 0)
             totalChanges += changes
-            totalFilesChanged += stats.total || files.length
+            // stats.total is additions + deletions (lines), so it counted lines as files.
+            totalFilesChanged += files.length
             largestCommit = Math.max(largestCommit, changes)
             analyzedCommitsCount++
           }
         } catch (error: any) {
-          // Detectar rate limit especificamente
+          // Rate limit, or the Worker's subrequest cap: past it every fetch fails the
+          // same way, so keep what was read and stop asking.
           const isRateLimit =
             error.status === 429 ||
             error.response?.status === 429 ||
             error.message?.toLowerCase().includes("rate limit") ||
-            error.message?.toLowerCase().includes("api rate limit")
+            error.message?.toLowerCase().includes("api rate limit") ||
+            error.message?.toLowerCase().includes("too many subrequests")
 
           if (isRateLimit) {
             rateLimitHit = true
@@ -1855,6 +1905,26 @@ async function processCodeHabitsData(
       totalFilesChanged = Math.round(totalFilesChanged * scalingFactor)
     }
 
+    // Language activity: each commit counts toward its repository's primary language.
+    if (!rateLimitHit) {
+      const commitsByRepo = new Map<string, { owner: string; repo: string; count: number }>()
+      for (const { owner, repo } of commitShas) {
+        const key = `${owner}/${repo}`
+        const entry = commitsByRepo.get(key) ?? { owner, repo, count: 0 }
+        entry.count++
+        commitsByRepo.set(key, entry)
+      }
+      const repos = [...commitsByRepo.values()].sort((a, b) => b.count - a.count).slice(0, MAX_LANGUAGE_REPOS)
+      const repoLanguages = await fetchPrimaryLanguages(rest, repos)
+      for (const { owner, repo, count } of repos) {
+        const language = repoLanguages.get(`${owner}/${repo}`)
+        if (!language) continue
+        const current = languages[language.name] ?? { count: 0, color: language.color }
+        current.count += count
+        languages[language.name] = current
+      }
+    }
+
     const totalProcessingTime = Date.now() - startTime
     const timeLimitReached = totalProcessingTime >= MAX_TIME_MS
 
@@ -1862,11 +1932,7 @@ async function processCodeHabitsData(
       commitsByHour,
       commitsByDay,
       languages,
-      commitStats: {
-        averageChangesPerCommit,
-        totalFilesChanged,
-        largestCommit,
-      },
+      commitStats: analyzedCommitsCount > 0 ? { averageChangesPerCommit, totalFilesChanged, largestCommit } : undefined,
       analyzedCommits: analyzedCommitsCount || totalCommits,
     }
 
@@ -1925,16 +1991,12 @@ async function processCodeHabitsData(
       throw new Error(`GitHub authentication failed: ${errorMessage}. Please check your token permissions.`)
     }
 
-    // Return empty data with warning
+    // Return empty data with warning. No commitStats: the card leaves the block out
+    // rather than print zeros it never measured.
     const emptyData = {
       commitsByHour: {},
       commitsByDay: {},
       languages: {},
-      commitStats: {
-        averageChangesPerCommit: 0,
-        totalFilesChanged: 0,
-        largestCommit: 0,
-      },
       analyzedCommits: 0,
     }
 
