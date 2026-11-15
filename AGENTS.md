@@ -236,18 +236,26 @@ Um SVG só, claro no GitHub claro e escuro no GitHub escuro. Liga com `ui_config
 - **Estilo default é transparente:** no auto mudam texto, destaque e superfícies; o fundo é o da página.
 - **Preview do dashboard:** mostra as duas variantes empilhadas, cada uma sobre o fundo da página do GitHub (`ColorVariantsPreview`). A variante é forçada por `colorVariant`, sem media query, então não depende do tema de quem está vendo.
 
-**Comportamento medido (15/11/2026, Chromium 151 headless, SVG servido como `image/svg+xml` dentro de `<img>`):** `prefers-color-scheme` dentro do SVG segue o `color-scheme` da página que embute, não o do SO. Fundo do terminal auto (header / corpo):
+**Comportamento medido (15/11/2026, Playwright 1.60 headless, SVG servido como `image/svg+xml` dentro de `<img>`, contexto novo e URL única por combinação):** Chromium e Firefox avaliam `prefers-color-scheme` dentro do SVG pelo `color-scheme` da página que embute. WebKit não: ignora a página. Variante que o terminal auto desenhou:
 
-| SO \ `color-scheme` da página | `light`           | `dark`            | sem `color-scheme` |
-| ----------------------------- | ----------------- | ----------------- | ------------------ |
-| claro                         | #f6f8fa / #ffffff | #161b22 / #0d1117 | #f6f8fa / #ffffff  |
-| escuro                        | #f6f8fa / #ffffff | #161b22 / #0d1117 | #161b22 / #0d1117  |
+| SO \ `color-scheme` da página | Chromium 151 / Firefox 150                     | WebKit 26.4                                          |
+| ----------------------------- | ---------------------------------------------- | ---------------------------------------------------- |
+| claro                         | `light` → claro, `dark` → escuro, sem → claro  | claro nas 3 (18/18 em 3 rodadas, terminal e dracula) |
+| escuro                        | `light` → claro, `dark` → escuro, sem → escuro | oscila entre rodadas: 8/18 escuro                    |
 
-Terminal dracula: 6/6 iguais na mesma lógica. Terminal sem `auto` (controle): #161b22 / #0d1117 nas 6.
+Chromium e Firefox: 12/12 cada (terminal default e dracula; claro = #f6f8fa / #ffffff, escuro = #161b22 / #0d1117 no default). Terminal sem `auto` (controle): escuro nas 6, nos três browsers.
 
-**No GitHub real** (README de perfil, deslogado, onde o tema do GitHub segue o SO; o GitHub põe `color-scheme: dark` no `<html>` no tema escuro): tema claro → #f6f8fa / #ffffff; tema escuro → #161b22 / #0d1117. Igual pelo arquivo do repo e pelo camo (`camo.githubusercontent.com`, o caminho dos cards do WeebProfile).
+**No GitHub real** (README de perfil, deslogado, onde o tema do GitHub segue o SO; o GitHub põe `color-scheme: dark` no `<html>` no tema escuro). Corpo do terminal auto:
 
-**Não testado:** Firefox e Safari/WebKit. Se algum seguir o SO em vez da página, o fallback é `<picture><source media="(prefers-color-scheme: dark)" srcset="…escuro.svg"><img src="…claro.svg"></picture>` com duas URLs; o sanitizer do GitHub mantém (vira `<themed-picture>`).
+| Browser      | GitHub claro             | GitHub escuro                                                       |
+| ------------ | ------------------------ | ------------------------------------------------------------------- |
+| Chromium 151 | claro (repo e camo)      | escuro (repo e camo)                                                |
+| Firefox 150  | claro (repo e camo)      | escuro (repo e camo)                                                |
+| WebKit 26.4  | claro (9/9 em 3 rodadas) | **claro em 7/9**: escuro só 2/3 pelo arquivo do repo, 0/6 pelo camo |
+
+Conclusão: no Safari um card auto pode sair claro sobre o GitHub escuro. Isso é medido no WebKit do Playwright com tema emulado, não no Safari de verdade. E com o SO claro ele ignora uma página escura (18/18 claro), então quem escolheu no GitHub um tema diferente do SO também vê a variante errada.
+
+**Fallback com duas URLs (medido, mesmo README):** `<picture><source media="(prefers-color-scheme: dark)" srcset="…escuro.svg"><img src="…claro.svg"></picture>`. O sanitizer do GitHub mantém e embrulha em `<themed-picture>`. Acertou nos três browsers, nos dois temas: WebKit escuro 3/3, claro 3/3. O `media` do `<source>` é avaliado no documento do GitHub. Não medido: se ele segue o tema escolhido no GitHub quando difere do SO (só dá para medir logado, mudando o tema da conta). O dashboard ainda não serve as duas variantes fixas de um card auto, e o snippet (`lib/utils/markdown.ts`) não usa `<picture>`.
 
 **CSS de plugin:** cada plugin pode ter CSS específico em `styles` no objeto do plugin. O `svg-generator` injeta automaticamente via `PluginStyles.tsx`.
 
