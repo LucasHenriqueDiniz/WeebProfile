@@ -72,7 +72,28 @@
     "readyCount_one": "{{count}} ready",
     "readyCount_other": "{{count}} ready",
     "generatingCount_one": "{{count}} generating",
-    "generatingCount_other": "{{count}} generating"
+    "generatingCount_other": "{{count}} generating",
+    "emptyState": {
+      "badge": "New here",
+      "title": "Your first profile card starts here",
+      "description": "Connect GitHub, anime, music, games and more, and get a dynamic SVG for the top of your README that keeps itself up to date.",
+      "steps": {
+        "signIn": {
+          "title": "Sign in",
+          "description": "GitHub, Google or email. Takes 10 seconds."
+        },
+        "plugins": {
+          "title": "Pick plugins",
+          "description": "GitHub, anime, music, games and over a dozen more sources."
+        },
+        "readme": {
+          "title": "Paste it in your README",
+          "description": "Copy the ready-made markdown to the top of your profile."
+        }
+      },
+      "cta": "Create my first SVG",
+      "freeTier": "Free for up to {{max}} SVGs"
+    }
   },
   "header": {
     "changeLanguage": "Change language",
@@ -609,6 +630,25 @@
       "cardPlural": "cards",
       "emptyTitle": "No cards to order yet",
       "emptyDescription": "Enable a plugin and select at least one section to arrange the order of the cards."
+    },
+    "saveToast": {
+      "incompleteTitle": "Configuration incomplete",
+      "incompleteDescription": "Fill in every required field of the enabled plugins.",
+      "invalidTitle": "Nothing to generate",
+      "invalidDescription": "Enable at least one plugin with at least one section.",
+      "generatingTitle": "Generating image...",
+      "generatingDescription": "Hold on while we generate your SVG.",
+      "doneTitle": "Done!",
+      "createdDescription": "Your SVG was created and generated.",
+      "updatedDescription": "Your SVG was updated and generated.",
+      "savedTitle": "Image saved",
+      "pendingDescription": "The image is still being generated. Taking you to it...",
+      "missingConfigTitle": "Required configuration missing",
+      "missingConfigDescription": "Fill in these fields: {{fields}}",
+      "generationFailedDescription": "The image was saved, but generating it failed. Check its details page.",
+      "errorTitle": "Error",
+      "createError": "Could not create the image",
+      "updateError": "Could not update the image"
     }
   },
   "templatesPage": {

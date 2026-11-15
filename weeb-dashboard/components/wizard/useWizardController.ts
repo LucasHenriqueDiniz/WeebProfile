@@ -21,6 +21,7 @@ import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ApiException, missingRequiredConfig, svgApi } from "@/lib/api"
 import { debugWizard } from "@/lib/debug"
 import { setTerminalConfigs } from "@/lib/config/svg-config-helpers"
+import { useTranslations } from "@/i18n/use-translations"
 
 interface UseWizardControllerProps {
   isEditMode?: boolean
@@ -30,6 +31,7 @@ interface UseWizardControllerProps {
 export function useWizardController({ isEditMode = false, editSvgId }: UseWizardControllerProps = {}) {
   const router = useRouter()
   const { toast } = useToast()
+  const t = useTranslations("wizard.saveToast")
   const [isSaving, setIsSaving] = useState(false)
 
   // UX 2: Use persisted UI state for activeTab
@@ -86,8 +88,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     // Check if there are missing configs
     if (hasMissingEssential) {
       toast({
-        title: "Configuração incompleta",
-        description: "Por favor, preencha todos os campos obrigatórios dos plugins habilitados",
+        title: t("incompleteTitle"),
+        description: t("incompleteDescription"),
         variant: "destructive",
       })
       return
@@ -165,8 +167,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
       // Validate that at least one enabled plugin has sections before creating
       if (pluginsWithSections.length === 0) {
         toast({
-          title: "Configuração inválida",
-          description: "Pelo menos um plugin deve estar habilitado com pelo menos uma seção",
+          title: t("invalidTitle"),
+          description: t("invalidDescription"),
           variant: "destructive",
         })
         setIsSaving(false)
@@ -225,8 +227,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
 
       // 2. Generate SVG automatically after creating
       toast({
-        title: "Gerando imagem...",
-        description: "Aguarde enquanto geramos sua imagem SVG",
+        title: t("generatingTitle"),
+        description: t("generatingDescription"),
       })
 
       try {
@@ -238,8 +240,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
 
           // 3. Success - show URL and redirect
           toast({
-            title: "Sucesso!",
-            description: `Imagem SVG ${isEditMode ? "atualizada" : "criada"} e gerada com sucesso!`,
+            title: t("doneTitle"),
+            description: t(isEditMode ? "updatedDescription" : "createdDescription"),
           })
 
           // Reset wizard store after successful creation (only in creation mode)
@@ -257,8 +259,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
 
           // If no URL yet, redirect anyway (page will do polling)
           toast({
-            title: "Imagem criada",
-            description: "A imagem está sendo gerada. Você será redirecionado...",
+            title: t("savedTitle"),
+            description: t("pendingDescription"),
           })
           router.push(`/dashboard/${svgId}`)
         }
@@ -280,8 +282,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
             .join("; ")
 
           toast({
-            title: "Configuração obrigatória faltando",
-            description: `Configure os seguintes campos: ${missingList}`,
+            title: t("missingConfigTitle"),
+            description: t("missingConfigDescription", { fields: missingList }),
             variant: "destructive",
           })
           // Don't redirect - let user fix the config
@@ -291,8 +293,8 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
         // If generation fails, still redirect (page will show error)
         console.error("Error generating SVG:", generateError)
         toast({
-          title: "Imagem criada",
-          description: "A imagem foi criada, mas houve um problema na geração. Verifique na página de detalhes.",
+          title: t("savedTitle"),
+          description: t("generationFailedDescription"),
           variant: "default",
         })
         router.push(`/dashboard/${svgId}`)
@@ -304,10 +306,10 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
           ? error.data.message || error.data.error || error.message
           : error instanceof Error
             ? error.message
-            : `Erro ao ${isEditMode ? "atualizar" : "criar"} imagem`
+            : t(isEditMode ? "updateError" : "createError")
 
       toast({
-        title: "Erro",
+        title: t("errorTitle"),
         description: errorMessage,
         variant: "destructive",
       })
