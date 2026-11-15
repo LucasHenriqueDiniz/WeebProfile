@@ -7,6 +7,7 @@ import type { Plugin } from "../shared/types/plugin"
 import type { PluginData } from "../../types/index"
 import type { CodeforcesConfig, CodeforcesData } from "./types"
 import { RenderCodeforces } from "./components/RenderCodeforces"
+import { DIFFICULTY_COLUMNS } from "./components/ProblemsSolved"
 import { fetchCodeforcesData } from "./services/fetchData"
 
 export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesData> = {
@@ -25,7 +26,7 @@ export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesD
     const size = ((config as any).size || "half") as "half" | "full"
     return <RenderCodeforces config={config} data={data as CodeforcesData} style={style} size={size} />
   },
-  calculateHeight: (config, data) => {
+  calculateHeight: (config, data, size) => {
     const ne = config.nonEssential || {}
     const cfData = data as CodeforcesData
     const isTerminal = (config as { style?: string }).style === "terminal"
@@ -37,12 +38,14 @@ export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesD
       } else if (s === "contests_participated") {
         h += isTerminal ? 76 : 80
       } else if (s === "problems_solved") {
+        const byDifficulty = cfData.problemsSolved?.byDifficulty ?? {}
+        const n = Object.values(byDifficulty).filter((count) => (count ?? 0) > 0).length
         if (isTerminal) {
-          const byDifficulty = cfData.problemsSolved?.byDifficulty ?? {}
-          const n = Object.values(byDifficulty).filter((count) => (count ?? 0) > 0).length
           h += 24 + (1 + n) * 25
         } else {
-          h += 104
+          // One grid row is in the 104; each extra row adds a 20px line and an 8px gap.
+          const rows = Math.max(1, Math.ceil(n / DIFFICULTY_COLUMNS[size === "full" ? "full" : "half"]))
+          h += 104 + (rows - 1) * 28
         }
       } else if (s === "recent_submissions") {
         const max = ne.recent_submissions_max ?? 5

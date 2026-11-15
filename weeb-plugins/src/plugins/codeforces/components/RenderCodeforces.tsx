@@ -73,6 +73,7 @@ export function RenderCodeforces({
             key="problems_solved"
             total={data.problemsSolved.total}
             byDifficulty={data.problemsSolved.byDifficulty}
+            capped={data.problemsSolved.capped ?? false}
             config={fullConfig}
             style={style}
             size={size}

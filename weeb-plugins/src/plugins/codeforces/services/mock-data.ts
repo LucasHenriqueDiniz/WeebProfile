@@ -9,15 +9,19 @@ export function getMockCodeforcesData(): CodeforcesData {
     rating: 3096,
     rank: "legendary grandmaster",
     contestsCount: 150,
+    // A whole history: letters past H grouped under I+, and the groups sum to the total.
     problemsSolved: {
-      total: 842,
+      total: 1842,
       byDifficulty: {
-        A: 156,
-        B: 198,
-        C: 187,
-        D: 142,
-        E: 98,
-        F: 61,
+        A: 312,
+        B: 305,
+        C: 291,
+        D: 268,
+        E: 224,
+        F: 181,
+        G: 122,
+        H: 81,
+        "I+": 58,
       },
     },
     recentSubmissions: [
