@@ -1,4 +1,5 @@
 import React from "react"
+import { ExternalLink } from "../../../utils/external-link"
 import { ImageComponent } from "../../../utils/image"
 import type { WebsiteEntry } from "../types"
 
@@ -18,8 +19,9 @@ export function WebsitesList({ websites, size, showDescription }: WebsitesListPr
   return (
     <div className="flex flex-col gap-1.5">
       {websites.map((site) => (
-        <div
+        <ExternalLink
           key={site.url}
+          href={site.url}
           className="flex items-center gap-2 rounded-lg border border-default-border/50 px-2 py-1.5 half:py-1"
         >
           <ImageComponent
@@ -40,7 +42,7 @@ export function WebsitesList({ websites, size, showDescription }: WebsitesListPr
             )}
           </div>
           <span className="text-[11px] half:text-[10px] text-default-muted whitespace-nowrap">{site.domain}</span>
-        </div>
+        </ExternalLink>
       ))}
     </div>
   )
