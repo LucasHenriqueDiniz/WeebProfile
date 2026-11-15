@@ -38,9 +38,14 @@ export default function NewProfileSvgPage() {
     return enabledPlugins.length > 0 || pluginsOrder.length > 0
   }, [plugins, pluginsOrder])
 
-  // Load template data if template ID is provided
+  // Load template data if template ID is provided, once per template id. This effect
+  // used to list isLoadingTemplate in its deps and check it here: each finished load
+  // set it back to false, which ran the effect again, so the page refetched the
+  // template in a loop and never left the loading screen.
+  const requestedTemplateRef = useRef<string | null>(null)
   useEffect(() => {
-    if (templateId && user && !authLoading && initialized && !isLoadingTemplate) {
+    if (templateId && user && !authLoading && initialized && requestedTemplateRef.current !== templateId) {
+      requestedTemplateRef.current = templateId
       setIsLoadingTemplate(true)
 
       fetch(`/api/templates/${templateId}`)
@@ -69,7 +74,7 @@ export default function NewProfileSvgPage() {
           setIsLoadingTemplate(false)
         })
     }
-  }, [templateId, user, authLoading, initialized, loadFromTemplate, isLoadingTemplate])
+  }, [templateId, user, authLoading, initialized, loadFromTemplate, reset])
 
   // Bootstrap wizard data once on mount
   useEffect(() => {
