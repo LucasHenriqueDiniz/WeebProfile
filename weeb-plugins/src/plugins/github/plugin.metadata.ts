@@ -80,7 +80,7 @@ export const githubPluginMetadata = {
           type: "boolean" as const,
           defaultValue: false,
           tooltip:
-            "Needs a token with the 'repo' scope, and their names end up on your public card. The token from the setup link has no scopes, so this does nothing with it.",
+            "Shows private repositories, names included, in every GitHub section of this public card. Needs a token with the 'repo' scope; the token from the setup link has none, so with it this does nothing.",
         },
       ],
     },

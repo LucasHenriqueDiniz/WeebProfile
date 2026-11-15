@@ -279,7 +279,7 @@
         },
         "repositories_use_private": {
           "label": "Incluir repositórios privados",
-          "tooltip": "Exige um token com o escopo 'repo', e os nomes deles aparecem no seu card público. O token do link de configuração não tem escopos, então com ele esta opção não faz nada."
+          "tooltip": "Mostra repositórios privados, com nome, em todas as seções do GitHub deste card público. Exige um token com o escopo 'repo'; o token do link de configuração não tem nenhum, então com ele esta opção não faz nada."
         }
       },
       "description": "Lista de repositórios",

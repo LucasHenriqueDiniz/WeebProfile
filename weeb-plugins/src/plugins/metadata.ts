@@ -1085,7 +1085,7 @@ export const PLUGINS_METADATA = {
           label: "Include private repositories",
           type: "boolean",
           defaultValue: false,
-          tooltip: "Needs a token with the 'repo' scope, and their names end up on your public card. The token from the setup link has no scopes, so this does nothing with it.",
+          tooltip: "Shows private repositories, names included, in every GitHub section of this public card. Needs a token with the 'repo' scope; the token from the setup link has none, so with it this does nothing.",
           i18nKey: {
             label: "plugins.github.sections.repositories.config.repositories_use_private.label",
             tooltip: "plugins.github.sections.repositories.config.repositories_use_private.tooltip"

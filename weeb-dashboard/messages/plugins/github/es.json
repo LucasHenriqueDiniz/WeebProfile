@@ -279,7 +279,7 @@
         },
         "repositories_use_private": {
           "label": "Incluir repositorios privados",
-          "tooltip": "Requiere un token con el scope 'repo', y sus nombres aparecen en tu tarjeta pública. El token del enlace de configuración no tiene scopes, así que con él esta opción no hace nada."
+          "tooltip": "Muestra repositorios privados, con su nombre, en todas las secciones de GitHub de esta tarjeta pública. Requiere un token con el scope 'repo'; el token del enlace de configuración no tiene ninguno, así que con él esta opción no hace nada."
         }
       },
       "description": "Lista de repositorios",

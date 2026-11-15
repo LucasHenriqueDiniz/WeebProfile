@@ -153,3 +153,66 @@ describe("fetchGithub code_habits", () => {
     expect(calls.filter((p) => p === "/graphql")).toHaveLength(0)
   })
 })
+
+/**
+ * The card is public. A token with the repo scope makes GitHub return private
+ * repositories in the sections that do not query by privacy; their names must stay
+ * off the card unless "Include private repositories" is on.
+ */
+describe("fetchGithub with private repositories in GitHub's answer", () => {
+  const SECTIONS = ["favorite_languages", "top_repositories", "starred_repositories", "notable_contributions"]
+
+  const repo = (name: string, isPrivate: boolean) => ({
+    isPrivate,
+    name,
+    nameWithOwner: `octocat/${name}`,
+    description: null,
+    url: `https://github.com/octocat/${name}`,
+    stargazerCount: 3,
+    forkCount: 0,
+    primaryLanguage: null,
+    updatedAt: "2026-11-01T00:00:00Z",
+    languages: { edges: [{ size: 100, node: { name: isPrivate ? "SecretLang" : "TypeScript", color: "#000" } }] },
+  })
+  const both = [repo("public-app", false), repo("private-app", true)]
+  const ANSWERS: Record<string, unknown> = {
+    userLanguages: { user: { repositories: { nodes: both } } },
+    userTopRepositories: { user: { topRepositories: { nodes: both } } },
+    userStarredRepositories: { user: { starredRepositories: { totalCount: 2, nodes: both } } },
+    userRecentActivity: {
+      user: {
+        contributionsCollection: {
+          commitContributionsByRepository: both.map((repository) => ({ repository, contributions: { totalCount: 5 } })),
+        },
+      },
+    },
+  }
+
+  beforeEach(() => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
+      const request = input instanceof Request ? input : new Request(String(input), init)
+      if (new URL(request.url).pathname !== "/graphql") throw new Error(`unexpected fetch: ${request.url}`)
+      const { query } = (await request.json()) as { query: string }
+      const operation = query.match(/query\s+(\w+)/)?.[1] ?? ""
+      const answer = JSON.stringify(ANSWERS[operation] ?? { user: {} })
+      // Like GitHub, answer only the fields the query asks for.
+      const data = query.includes("isPrivate") ? answer : answer.replace(/"isPrivate":(true|false),/g, "")
+      return Response.json({ data: JSON.parse(data) })
+    })
+  })
+
+  const fetchCard = async (extra: Record<string, unknown> = {}) =>
+    JSON.stringify(await github().fetchData({ ...card(SECTIONS), ...extra } as never, false, { pat: "ghp_test" }))
+
+  it("leaves private repositories off the card by default", async () => {
+    const data = await fetchCard()
+    expect(data).toContain("public-app")
+    expect(data).not.toMatch(/private-app|SecretLang/)
+  })
+
+  it("shows them when Include private repositories is on", async () => {
+    const data = await fetchCard({ repositories_use_private: true })
+    expect(data).toContain("private-app")
+    expect(data).toContain("SecretLang")
+  })
+})
