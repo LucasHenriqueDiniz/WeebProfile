@@ -40,8 +40,8 @@ async function request(path: string, signal: AbortSignal): Promise<Response> {
 async function embedAvatar(url: string | null | undefined, previewMode: boolean): Promise<string | null> {
   if (!url) return null
   if (previewMode) return url
-  // null, nunca a URL original: um SVG em Gist não carrega URL externa, então
-  // devolvê-la deixaria uma imagem quebrada em vez de nenhuma.
+  // null, never the original URL: an SVG shown as an image cannot load an external
+  // URL, so returning it would leave a broken image instead of none.
   return embedImageOrNull(url, { maxBytes: AVATAR_MAX_BYTES, context: "devto/avatar" })
 }
 

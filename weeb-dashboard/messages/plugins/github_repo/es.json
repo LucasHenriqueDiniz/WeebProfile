@@ -28,7 +28,7 @@
         "banner_image": {
           "description": "URL de imagen opcional (logo del proyecto, etc.) que se muestra en lugar de la marca del repositorio",
           "label": "Imagen personalizada (URL)",
-          "tooltip": "Se convierte a base64 al generar para que funcione dentro de Gists. Déjalo vacío para usar el avatar del propietario."
+          "tooltip": "Se incrusta en el SVG al generar, porque un SVG mostrado como imagen en un README no carga URL externas. Déjalo vacío para usar el avatar del propietario."
         },
         "banner_show_avatar": {
           "label": "Mostrar avatar",

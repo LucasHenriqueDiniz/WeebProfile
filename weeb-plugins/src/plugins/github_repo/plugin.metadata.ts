@@ -129,7 +129,7 @@ export const githubRepoPluginMetadata = {
           defaultValue: "",
           description: "Optional image URL (project logo etc.) shown instead of the repository mark",
           tooltip:
-            "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
+            "Embedded into the SVG at generation time, since an SVG shown as an image in a README cannot load external URLs. Leave empty to use the owner avatar.",
         },
         CONTENT_SIZE_OPTION,
       ],

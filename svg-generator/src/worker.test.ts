@@ -85,8 +85,8 @@ describe("POST / — geração", () => {
     expect(body.height).toBeGreaterThan(0)
   })
 
-  // O chamador dimensiona o embed no Gist com o width/height do JSON. Se o SVG
-  // trouxer outros números no próprio atributo, o card sai cortado ou com sobra.
+  // The caller sizes the embed with the width/height in the JSON. If the SVG's own
+  // attributes say otherwise, the card comes out cropped or padded.
   it("faz o SVG declarar as mesmas dimensões que o JSON informa", async () => {
     const { body } = await post(validRequest())
 
@@ -644,7 +644,7 @@ describe("POST / — Dev.to sem dev, com a rede simulada só na borda", () => {
     expect(urls.some((u) => u.startsWith("https://dev.to/api/articles?username=some%20one&"))).toBe(true)
   })
 
-  // Um SVG em Gist não carrega URL externa; o avatar inválido some, o resto fica.
+  // An SVG shown as an image cannot load external URLs; the bad avatar is dropped, the rest stays.
   it("deixa de fora um avatar que não é imagem, sem derrubar o card", async () => {
     network({ avatar: () => new Response("<html>login</html>", { headers: { "content-type": "text/html" } }) })
 

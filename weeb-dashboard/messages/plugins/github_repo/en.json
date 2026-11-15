@@ -28,7 +28,7 @@
         "banner_image": {
           "description": "Optional image URL (project logo etc.) shown instead of the repository mark",
           "label": "Custom image (URL)",
-          "tooltip": "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar."
+          "tooltip": "Embedded into the SVG at generation time, since an SVG shown as an image in a README cannot load external URLs. Leave empty to use the owner avatar."
         },
         "banner_show_avatar": {
           "label": "Show avatar",

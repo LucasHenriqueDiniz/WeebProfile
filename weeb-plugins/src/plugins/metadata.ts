@@ -2130,7 +2130,7 @@ export const PLUGINS_METADATA = {
           type: "string",
           defaultValue: "",
           description: "Optional image URL (project logo etc.) shown instead of the repository mark",
-          tooltip: "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
+          tooltip: "Embedded into the SVG at generation time, since an SVG shown as an image in a README cannot load external URLs. Leave empty to use the owner avatar.",
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_image.label",
             description: "plugins.github_repo.sections.banner.config.banner_image.description",

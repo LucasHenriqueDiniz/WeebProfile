@@ -19,8 +19,8 @@ Isso já causou três bugs distintos:
    era: é um hash, e faltava montar a URL. Por causa disso a miniatura quadrada
    usava um recorte da capa larga, cortando o logo no meio ("COUNTER STRIK", "DOT A").
 3. Um fallback montava `library_hero.jpg` e mandava a URL **crua** para dentro do
-   SVG. URL externa não carrega num Gist do GitHub, então o card ficava com um
-   buraco em vez de um layout sem imagem.
+   SVG. URL externa não carrega num SVG exibido como imagem no README, então o
+   card ficava com um buraco em vez de um layout sem imagem.
 
 ---
 
@@ -72,8 +72,8 @@ O avatar padrão (conta sem foto) é
 
 ## Regras ao mexer nisso
 
-**Toda imagem vira base64 antes de entrar no SVG.** O SVG é servido em Gist e
-README do GitHub, onde URL externa não carrega. Ver
+**Toda imagem vira base64 antes de entrar no SVG.** O SVG entra no README do
+GitHub como imagem, e uma imagem SVG não carrega URL externa. Ver
 `weeb-plugins/src/utils/image-to-base64.ts`, que embute os bytes exatos — sem
 decode, resize ou recompressão — e valida MIME, magic bytes e tamanho máximo.
 
