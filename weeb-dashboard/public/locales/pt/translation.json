@@ -362,12 +362,10 @@
     },
     "description": "Gerencie suas configurações de conta e preferências",
     "profile": {
-      "description": "Atualize suas informações de perfil",
+      "description": "Nome, foto e email vêm da conta com que você entrou.",
       "email": "Email",
       "emailCannotChange": "Email não pode ser alterado",
-      "saveChanges": "Salvar Alterações",
-      "title": "Perfil",
-      "username": "Nome de usuário"
+      "title": "Perfil"
     },
     "title": "Configurações"
   },
