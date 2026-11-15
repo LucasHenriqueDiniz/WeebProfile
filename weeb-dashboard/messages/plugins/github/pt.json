@@ -3,7 +3,7 @@
   "displayName": "GitHub",
   "essentialConfig": {
     "pat": {
-      "description": "Token clássico usado para buscar dados da API do GitHub",
+      "description": "Um token clássico sem nenhum escopo basta: o card só lê dados públicos.",
       "label": "Token Clássico GitHub",
       "placeholder": "ghp_..."
     }
@@ -278,7 +278,8 @@
           "label": "Título"
         },
         "repositories_use_private": {
-          "label": "Incluir repositórios privados"
+          "label": "Incluir repositórios privados",
+          "tooltip": "Exige um token com o escopo 'repo', e os nomes deles aparecem no seu card público. O token do link de configuração não tem escopos, então com ele esta opção não faz nada."
         }
       },
       "description": "Lista de repositórios",

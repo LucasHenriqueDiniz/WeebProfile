@@ -1001,8 +1001,8 @@ export const PLUGINS_METADATA = {
           label: "GitHub Classic Token",
           type: "password",
           placeholder: "ghp_...",
-          description: "Classic token is used to fetch data from GitHub API",
-          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
+          description: "A classic token with no scopes is enough: the card only reads public data.",
+          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&default_expires_at=none",
           docKey: "github.pat",
           i18nKey: {
             label: "plugins.github.essentialConfig.pat.label",
@@ -1085,8 +1085,10 @@ export const PLUGINS_METADATA = {
           label: "Include private repositories",
           type: "boolean",
           defaultValue: false,
+          tooltip: "Needs a token with the 'repo' scope, and their names end up on your public card. The token from the setup link has no scopes, so this does nothing with it.",
           i18nKey: {
-            label: "plugins.github.sections.repositories.config.repositories_use_private.label"
+            label: "plugins.github.sections.repositories.config.repositories_use_private.label",
+            tooltip: "plugins.github.sections.repositories.config.repositories_use_private.tooltip"
           }
         }
         ]
@@ -1990,8 +1992,8 @@ export const PLUGINS_METADATA = {
           label: "GitHub Classic Token",
           type: "password",
           placeholder: "ghp_...",
-          description: "Reuses the same token configured for the GitHub plugin, if you already have one.",
-          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
+          description: "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository.",
+          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&default_expires_at=none",
           docKey: "github.pat",
           i18nKey: {
             label: "plugins.github_repo.essentialConfig.pat.label",

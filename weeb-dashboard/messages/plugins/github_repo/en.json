@@ -3,7 +3,7 @@
   "displayName": "Repository",
   "essentialConfig": {
     "pat": {
-      "description": "Reuses the same token configured for the GitHub plugin, if you already have one.",
+      "description": "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository.",
       "label": "GitHub Classic Token",
       "placeholder": "ghp_..."
     }

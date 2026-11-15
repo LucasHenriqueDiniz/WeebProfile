@@ -25,9 +25,9 @@ export const githubPluginMetadata = {
       label: "GitHub Classic Token",
       type: "password",
       placeholder: "ghp_...",
-      description: "Classic token is used to fetch data from GitHub API",
+      description: "A classic token with no scopes is enough: the card only reads public data.",
       helpUrl:
-        "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
+        "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&default_expires_at=none",
       docKey: "github.pat",
     },
   ],
@@ -79,6 +79,8 @@ export const githubPluginMetadata = {
           label: "Include private repositories",
           type: "boolean" as const,
           defaultValue: false,
+          tooltip:
+            "Needs a token with the 'repo' scope, and their names end up on your public card. The token from the setup link has no scopes, so this does nothing with it.",
         },
       ],
     },

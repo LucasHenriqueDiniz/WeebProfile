@@ -3,7 +3,7 @@
   "displayName": "Repository",
   "essentialConfig": {
     "pat": {
-      "description": "Reutiliza o mesmo token configurado no plugin do GitHub, caso você já tenha um.",
+      "description": "Reaproveita o mesmo token configurado no plugin GitHub, se você já tiver um. Repositório público não precisa de escopo.",
       "label": "Token Clássico GitHub",
       "placeholder": "ghp_..."
     }
