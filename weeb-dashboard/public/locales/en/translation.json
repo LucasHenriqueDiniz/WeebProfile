@@ -649,6 +649,10 @@
       "errorTitle": "Error",
       "createError": "Could not create the image",
       "updateError": "Could not update the image"
+    },
+    "templateLoadError": {
+      "title": "Template not available",
+      "description": "It may have been removed or made private. Nothing in the wizard was changed."
     }
   },
   "templatesPage": {

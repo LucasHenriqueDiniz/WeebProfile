@@ -16,9 +16,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useTranslations } from "@/i18n/use-translations"
+import { useToast } from "@/hooks/use-toast"
 
 export default function NewProfileSvgPage() {
   const t = useTranslations("wizard")
+  const { toast } = useToast()
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -56,25 +58,30 @@ export default function NewProfileSvgPage() {
           return response.json()
         })
         .then((data: any) => {
-          const template = data.template
-          if (template) {
-            loadFromTemplate(template)
-            hasResetRef.current = true
-          }
+          if (!data?.template) throw new Error("Template not found")
+          loadFromTemplate(data.template)
+          hasResetRef.current = true
         })
         .catch((error) => {
           console.error("Error loading template:", error)
-          // Fall back to normal reset if template loading fails
-          if (!hasResetRef.current) {
-            reset()
-            hasResetRef.current = true
-          }
+          // Say so and leave the wizard alone. This used to reset it, which silently
+          // wiped a saved draft. Dropping the template from the URL lets the page go
+          // on as if none was asked for: it offers to resume a draft, or starts fresh.
+          toast({
+            title: t("templateLoadError.title"),
+            description: t("templateLoadError.description"),
+            variant: "destructive",
+          })
+          const rest = new URLSearchParams(searchParams.toString())
+          rest.delete("template")
+          const query = rest.toString()
+          router.replace(`/dashboard/new/profile${query ? `?${query}` : ""}`)
         })
         .finally(() => {
           setIsLoadingTemplate(false)
         })
     }
-  }, [templateId, user, authLoading, initialized, loadFromTemplate, reset])
+  }, [templateId, user, authLoading, initialized, loadFromTemplate, toast, t, searchParams, router])
 
   // Bootstrap wizard data once on mount
   useEffect(() => {

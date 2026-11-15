@@ -649,6 +649,10 @@
       "errorTitle": "Error",
       "createError": "No se pudo crear la imagen",
       "updateError": "No se pudo actualizar la imagen"
+    },
+    "templateLoadError": {
+      "title": "Template no disponible",
+      "description": "Puede que lo hayan eliminado o hecho privado. No se cambió nada en el asistente."
     }
   },
   "templatesPage": {
