@@ -27,6 +27,15 @@ const DEFAULT_STYLE_CSS = `/* Default Style CSS */
   padding: 0;
 }
 
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card: GitHub repositories, activity, people and gists, the 16Personalities
+   link. :where() keeps it at zero specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Container */
 #svg-main .default-container {
   --font-family: Poppins, sans-serif;

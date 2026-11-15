@@ -36,6 +36,15 @@ const TERMINAL_STYLE_CSS = `/* Terminal Style CSS */
   box-sizing: border-box;
 }
 
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card (GitHub recent activity, among others). :where() keeps it at zero
+   specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Container */
 #svg-main .terminal-container {
   --font-family:
