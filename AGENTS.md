@@ -257,6 +257,8 @@ Conclusão: no Safari um card auto pode sair claro sobre o GitHub escuro. Isso �
 
 **Fallback com duas URLs (medido, mesmo README):** `<picture><source media="(prefers-color-scheme: dark)" srcset="…escuro.svg"><img src="…claro.svg"></picture>`. O sanitizer do GitHub mantém e embrulha em `<themed-picture>`. Acertou nos três browsers, nos dois temas: WebKit escuro 3/3, claro 3/3. O `media` do `<source>` é avaliado no documento do GitHub. Não medido: se ele segue o tema escolhido no GitHub quando difere do SO (só dá para medir logado, mudando o tema da conta). O dashboard ainda não serve as duas variantes fixas de um card auto, e o snippet (`lib/utils/markdown.ts`) não usa `<picture>`.
 
+- **`<themed-picture>` é inline** nos três browsers, então dois cards de 50% lado a lado cabem numa linha, desde que os tags estejam colados. Par clonado no DOM do GitHub, com `<img align="top" width="50%">`: com tags colados, 1 linha em 390/768/1034/1280/1440 px, igual ao par de `<img>` puro. Com quebra de linha ou indentação dentro do `<picture>`: 2 linhas em todas as larguras. Foi clone no DOM, não um README publicado.
+
 **CSS de plugin:** cada plugin pode ter CSS específico em `styles` no objeto do plugin. O `svg-generator` injeta automaticamente via `PluginStyles.tsx`.
 
 ---
