@@ -871,5 +871,34 @@
       "backHome": "Back to home",
       "cta": "Create my SVG"
     }
+  },
+  "embed": {
+    "altLabel": "Alt text",
+    "altHint": "Read by screen readers, and shown if the image fails to load.",
+    "sideBySide": {
+      "title": "Side by side",
+      "description": "This card and your other half-width ones in one snippet, two per row at any screen width.",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "toastCopied": "Copied!",
+      "toastCopiedDescription": "Snippet with {{count}} cards copied",
+      "toastError": "Could not copy the snippet"
+    },
+    "readme": {
+      "title": "Put it on your profile",
+      "explainer": "GitHub shows the README.md of a public repository named after your username, {{repo}}, at the top of your profile. Paste the snippet there.",
+      "repoPlaceholder": "username/username",
+      "usernameLabel": "GitHub username",
+      "usernamePlaceholder": "your-username",
+      "open": "Open my README on GitHub",
+      "addReadme": "Add a README on GitHub",
+      "create": "Create profile repository",
+      "createHint": "Keep it public and turn on \"Add README\"."
+    },
+    "nextRefresh": {
+      "label": "Next refresh",
+      "paused": "Paused",
+      "nightly": "Refreshed every night at {{time}}"
+    }
   }
 }

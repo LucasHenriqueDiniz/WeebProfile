@@ -871,5 +871,34 @@
       "backHome": "Voltar ao início",
       "cta": "Criar meu SVG"
     }
+  },
+  "embed": {
+    "altLabel": "Texto alternativo",
+    "altHint": "Lido por leitores de tela e mostrado se a imagem não carregar.",
+    "sideBySide": {
+      "title": "Lado a lado",
+      "description": "Este card e seus outros cards de meia largura num snippet só, dois por linha em qualquer largura de tela.",
+      "copy": "Copiar",
+      "copied": "Copiado!",
+      "toastCopied": "Copiado!",
+      "toastCopiedDescription": "Snippet com {{count}} cards copiado",
+      "toastError": "Não foi possível copiar o snippet"
+    },
+    "readme": {
+      "title": "Coloque no seu perfil",
+      "explainer": "O GitHub mostra no topo do seu perfil o README.md de um repositório público com o mesmo nome do seu usuário, {{repo}}. Cole o snippet lá.",
+      "repoPlaceholder": "usuario/usuario",
+      "usernameLabel": "Usuário do GitHub",
+      "usernamePlaceholder": "seu-usuario",
+      "open": "Abrir meu README no GitHub",
+      "addReadme": "Adicionar um README no GitHub",
+      "create": "Criar repositório de perfil",
+      "createHint": "Deixe-o público e ative \"Add README\"."
+    },
+    "nextRefresh": {
+      "label": "Próxima atualização",
+      "paused": "Pausado",
+      "nightly": "Atualizado toda noite às {{time}}"
+    }
   }
 }

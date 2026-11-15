@@ -1,106 +1,65 @@
 /**
- * Markdown Helper
+ * The snippet people paste into their GitHub README.
  *
- * Gera código markdown para incluir imagens SVG no README do GitHub.
- * Considera o tamanho da imagem para usar o formato apropriado:
- * - full: markdown simples
- * - half: formato com <p align="center"> para permitir imagens lado a lado
+ * The URL goes in as given, with no `?v=` cache-buster. The old one froze at copy time,
+ * so it never changed again in the README, and GitHub's image proxy (camo) already
+ * refetches: it passes on the route's `Cache-Control: max-age=60, s-maxage=60`, and on
+ * 15/11/2026 a camo URL for /svg/<id>.svg went from HIT at age 50 to MISS at age 0
+ * 64 seconds after the previous miss. A regenerated card shows up within about two
+ * minutes (camo's 60s plus the browser's 60s) under the same URL.
  */
 
-export interface MarkdownOptions {
-  name: string
+export interface EmbedImage {
+  /** Alt text: what screen readers say, and what shows if the image fails to load. */
+  alt: string
   url: string
+}
+
+export interface MarkdownOptions extends EmbedImage {
   size: "half" | "full"
-  lastGeneratedAt?: Date | string | null
+}
+
+/** Quotes and angle brackets would end the attribute or the tag early. */
+function escapeAttribute(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+}
+
+/** A `]` would close the alt text of `![alt](url)` early. */
+function escapeMarkdownAlt(value: string): string {
+  return value.replace(/[\\[\]]/g, "\\$&")
+}
+
+function imgTag({ alt, url }: EmbedImage, width?: string): string {
+  const widthAttribute = width ? ` width="${width}"` : ""
+  return `<img align="top"${widthAttribute} alt="${escapeAttribute(alt)}" src="${escapeAttribute(url)}" />`
 }
 
 /**
- * Adiciona cache-busting à URL usando timestamp da última geração
+ * The snippet for one SVG.
+ *
+ * - full (830px): a plain markdown image. GitHub caps images at `max-width: 100%`, so
+ *   it fills the 846px README column and shrinks with it on narrower screens.
+ * - half (415px): centred at its natural size. It has no `width`: alone, `width="50%"`
+ *   only makes it smaller (154px instead of 308px on a 390px phone). Two halves side by
+ *   side come from generateMarkdownForMultipleHalf, which does set it.
  */
-function addCacheBusting(url: string, lastGeneratedAt?: Date | string | null): string {
-  if (!lastGeneratedAt) {
-    return url
-  }
-
-  const timestamp =
-    typeof lastGeneratedAt === "string" ? new Date(lastGeneratedAt).getTime() : lastGeneratedAt.getTime()
-
-  const separator = url.includes("?") ? "&" : "?"
-  return `${url}${separator}v=${timestamp}`
-}
-
-/**
- * Gera código markdown para uma imagem SVG
- *
- * @param options - Opções para gerar o markdown
- * @returns Código markdown formatado
- *
- * @example
- * // Para imagem full:
- * generateMarkdown({ name: "Profile", url: "https://...", size: "full" })
- * // Retorna: ![Profile](https://...?v=1234567890)
- *
- * @example
- * // Para imagem half:
- * generateMarkdown({ name: "Profile", url: "https://...", size: "half" })
- * // Retorna:
- * // <p align="center">
- * //   <img align="top" alt="Profile" src="https://...?v=1234567890" />
- * // </p>
- */
-export function generateMarkdown(options: MarkdownOptions): string {
-  const { name, url, size, lastGeneratedAt } = options
-
-  // Adicionar cache-busting à URL
-  const urlWithCache = addCacheBusting(url, lastGeneratedAt)
-
+export function generateMarkdown({ alt, url, size }: MarkdownOptions): string {
   if (size === "full") {
-    // Para imagens full, usar markdown simples
-    return `![${name}](${urlWithCache})`
-  } else {
-    // Para imagens half, usar formato que permite imagens lado a lado
-    return `<p align="center">
-  <img align="top" alt="${name}" src="${urlWithCache}" />
-</p>`
+    return `![${escapeMarkdownAlt(alt)}](${url})`
   }
+  return `<p align="center">${imgTag({ alt, url })}</p>`
 }
 
 /**
- * Gera código markdown para múltiplas imagens half lado a lado
+ * Several half SVGs in one paragraph, two per row.
  *
- * @param images - Array de imagens half
- * @returns Código markdown formatado com todas as imagens
- *
- * @example
- * generateMarkdownForMultipleHalf([
- *   { name: "LastFM", url: "https://...", lastGeneratedAt: new Date() },
- *   { name: "MAL", url: "https://...", lastGeneratedAt: new Date() }
- * ])
+ * Each gets `width="50%"`: at a fixed 415px, two of them only fit the README column
+ * at 1280px and wider, and wrap onto separate rows below that. The tags are glued
+ * together, because any whitespace between them is a space character that pushes
+ * 50% + space + 50% past the column width, and the second one wraps.
  */
-export function generateMarkdownForMultipleHalf(
-  images: Array<{ name: string; url: string; lastGeneratedAt?: Date | string | null }>
-): string {
-  if (images.length === 0) {
-    return ""
-  }
-
-  if (images.length === 1) {
-    return generateMarkdown({
-      name: images[0].name,
-      url: images[0].url,
-      size: "half",
-      lastGeneratedAt: images[0].lastGeneratedAt,
-    })
-  }
-
-  const imagesHtml = images
-    .map((img) => {
-      const urlWithCache = addCacheBusting(img.url, img.lastGeneratedAt)
-      return `  <img align="top" alt="${img.name}" src="${urlWithCache}" />`
-    })
-    .join("\n")
-
-  return `<p align="center">
-${imagesHtml}
-</p>`
+export function generateMarkdownForMultipleHalf(images: EmbedImage[]): string {
+  if (images.length === 0) return ""
+  if (images.length === 1) return generateMarkdown({ ...images[0], size: "half" })
+  return `<p align="center">${images.map((image) => imgTag(image, "50%")).join("")}</p>`
 }
