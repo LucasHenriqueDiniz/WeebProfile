@@ -84,7 +84,12 @@ export function PluginRow({ plugin, state, isSelected, missingConfigs, onSelect 
             </span>
           )}
         </div>
-        <p className="text-xs text-muted-foreground truncate">{description}</p>
+        {/* Up to three lines, not one: the list column leaves ~180px at 1280 and the
+            descriptions run 280-390px, so a single line cut all 14 of them mid-word, and
+            two still cut 7. The full text stays in the tooltip for any that run longer. */}
+        <p className="text-xs text-muted-foreground line-clamp-3" title={description}>
+          {description}
+        </p>
       </div>
 
       <div className="flex items-center gap-1.5 flex-shrink-0">
