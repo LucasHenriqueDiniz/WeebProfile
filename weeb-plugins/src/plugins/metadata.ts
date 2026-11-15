@@ -35,15 +35,11 @@ export interface I18nKeyMap {
 export interface EssentialConfigKeyMetadata {
   key: string
   label: string
-  type: "text" | "password" | "oauth"
+  type: "text" | "password"
   placeholder?: string
   description?: string
   helpUrl?: string // Direct link to create/get token (e.g., https://github.com/settings/personal-access-tokens/new)
   docKey?: string // Key for future documentation (e.g., "github.pat")
-  // Provider when type === "oauth". "steam" is really OpenID 2.0 rather than OAuth
-  // -- it returns a SteamID64 and nothing else, no token and no scope -- but the
-  // wizard treats both the same way: leave, come back connected.
-  oauthProvider?: "spotify" | "steam"
   i18nKey?: {
     label?: string
     placeholder?: string
