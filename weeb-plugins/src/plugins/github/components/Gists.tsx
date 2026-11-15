@@ -7,6 +7,7 @@ import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 const DefaultGists = ({ data, maxGists }: { data: NonNullable<GithubData["gists"]>; maxGists: number }) => {
   const gistsToShow = data.nodes.slice(0, maxGists)
@@ -15,11 +16,9 @@ const DefaultGists = ({ data, maxGists }: { data: NonNullable<GithubData["gists"
     <div className="github-gists">
       <div className="flex flex-col gap-4">
         {gistsToShow.map((gist, index) => (
-          <a
+          <ExternalLink
             key={index}
             href={gist.url}
-            target="_blank"
-            rel="noopener noreferrer"
             className="flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px]"
           >
             <div className="flex-shrink-0 mt-0.5">
@@ -56,7 +55,7 @@ const DefaultGists = ({ data, maxGists }: { data: NonNullable<GithubData["gists"
                 </div>
               )}
             </div>
-          </a>
+          </ExternalLink>
         ))}
       </div>
       {data.totalCount > maxGists && (

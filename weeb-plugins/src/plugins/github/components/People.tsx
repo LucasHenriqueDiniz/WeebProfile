@@ -8,6 +8,7 @@ import type { GridItemProps } from "../../../templates/types"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { ImageComponent } from "../../../utils/image"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 interface PeopleProps {
   data: GithubData["people"]
@@ -26,11 +27,9 @@ const DefaultPeople = ({ data, max }: { data: GithubData["people"]; max: number 
   return (
     <div className="flex flex-wrap gap-2">
       {people.map((person, index) => (
-        <a
+        <ExternalLink
           key={index}
           href={`https://github.com/${person.login}`}
-          target="_blank"
-          rel="noopener noreferrer"
           className="inline-block"
           title={person.name || person.login}
         >
@@ -41,7 +40,7 @@ const DefaultPeople = ({ data, max }: { data: GithubData["people"]; max: number 
             height={40}
             className="w-10 h-10 rounded-full hover:opacity-80 transition-opacity"
           />
-        </a>
+        </ExternalLink>
       ))}
       {data.totalCount > max && (
         <div className="flex items-center ml-2 text-sm text-default-muted">+{data.totalCount - max} more</div>

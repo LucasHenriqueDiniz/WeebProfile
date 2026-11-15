@@ -8,6 +8,7 @@ import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 const DefaultTopRepositories = ({
   data,
@@ -24,21 +25,14 @@ const DefaultTopRepositories = ({
     <div className="github-top-repositories">
       <div className="flex flex-col gap-4">
         {reposToShow.map((repo, index) => (
-          <a
+          <ExternalLink
             key={index}
             href={repo.url}
-            target="_blank"
-            rel="noopener noreferrer"
             className={
               previewMode
                 ? "flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px] opacity-75"
                 : "flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px] cursor-pointer hover:bg-muted/50 transition-colors"
             }
-            onClick={(e) => {
-              if (previewMode) {
-                e.preventDefault()
-              }
-            }}
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -72,7 +66,7 @@ const DefaultTopRepositories = ({
                 </div>
               </div>
             </div>
-          </a>
+          </ExternalLink>
         ))}
       </div>
       {data.length > maxRepos && (

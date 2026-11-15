@@ -9,6 +9,7 @@ import type { GridItemProps } from "../../../templates/types"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 interface FeaturedRepositoriesProps {
   data: GithubData["featuredRepositories"]
@@ -31,11 +32,9 @@ const DefaultFeaturedRepositories = ({
   return (
     <div className="flex flex-col gap-4">
       {data.map((repo, index) => (
-        <a
+        <ExternalLink
           key={index}
           href={repo.url}
-          target="_blank"
-          rel="noopener noreferrer"
           className="flex items-start gap-3 p-4 rounded-lg border border-default-border h-[120px]"
         >
           <div className="flex-1 min-w-0">
@@ -90,7 +89,7 @@ const DefaultFeaturedRepositories = ({
               )}
             </div>
           </div>
-        </a>
+        </ExternalLink>
       ))}
     </div>
   )
