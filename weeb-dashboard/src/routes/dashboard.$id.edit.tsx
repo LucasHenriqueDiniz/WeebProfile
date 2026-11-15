@@ -43,6 +43,7 @@ export default function EditSvgPage() {
     setHideTerminalHeader,
     setHideTerminalCommand,
     setFontFamily,
+    setColorMode,
     setTerminalHeaderText,
     setCustomCss,
     reorderPlugins,
@@ -113,6 +114,7 @@ export default function EditSvgPage() {
     setHideTerminalCommand(terminalConfigs.hideTerminalCommand)
     setFontFamily(terminalConfigs.fontFamily)
     setTerminalHeaderText(terminalConfigs.terminalHeaderText)
+    setColorMode(terminalConfigs.colorMode)
 
     setCustomCss(svg.customCss || "")
 

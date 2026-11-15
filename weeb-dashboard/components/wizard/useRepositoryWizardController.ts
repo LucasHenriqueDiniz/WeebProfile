@@ -32,6 +32,7 @@ export function useRepositoryWizardController({
     terminalHeaderText,
     customCss,
     customThemeColors,
+    colorMode,
     sections,
     sectionConfigs,
     reset,
@@ -87,6 +88,7 @@ export function useRepositoryWizardController({
           hideTerminalCommand,
           fontFamily,
           terminalHeaderText: terminalHeaderText.trim() || undefined,
+          colorMode,
         }
       )
       if (theme === "custom" && Object.keys(customThemeColors).length > 0) {

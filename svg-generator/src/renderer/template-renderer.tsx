@@ -20,6 +20,8 @@ interface SvgContainerProps {
   hideTerminalHeader?: boolean
   fontFamily?: string
   terminalHeaderText?: string
+  colorMode?: string
+  customThemeColors?: Record<string, string>
 }
 
 /**
@@ -40,6 +42,8 @@ export function createSvgContainer(props: SvgContainerProps): React.ReactElement
     hideTerminalHeader,
     fontFamily,
     terminalHeaderText,
+    colorMode,
+    customThemeColors,
   } = props
 
   const containerClass = `${size} ${style} flex flex-col relative`
@@ -69,6 +73,8 @@ export function createSvgContainer(props: SvgContainerProps): React.ReactElement
             hideTerminalHeader={hideTerminalHeader}
             fontFamily={fontFamily}
             terminalHeaderText={terminalHeaderText}
+            colorMode={colorMode}
+            customThemeColors={customThemeColors}
           >
             {children}
           </PluginStyles>

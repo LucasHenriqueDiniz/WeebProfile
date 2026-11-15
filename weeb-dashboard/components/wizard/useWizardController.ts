@@ -48,6 +48,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
     terminalHeaderText,
     customCss,
     customThemeColors,
+    colorMode,
     setBasicInfo,
     reset,
   } = useWizardStore()
@@ -154,6 +155,7 @@ export function useWizardController({ isEditMode = false, editSvgId }: UseWizard
           hideTerminalCommand,
           fontFamily,
           terminalHeaderText: terminalHeaderText.trim() || undefined,
+          colorMode,
         }
       )
 

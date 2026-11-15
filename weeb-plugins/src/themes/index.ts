@@ -2,9 +2,17 @@
  * Theme utilities - Simplified CSS Variables
  */
 
-export { getDefaultThemeVariables, getTerminalThemeVariables } from "./theme-utils"
+export {
+  buildAutoThemeCss,
+  getDefaultThemeVariables,
+  getTerminalThemeVariables,
+  getThemeVariantVariables,
+  isAutoColorMode,
+  sanitizeCustomThemeColors,
+} from "./theme-utils"
+export type { ColorMode, ColorVariant } from "./theme-utils"
 export type { DefaultTheme, TerminalTheme } from "./types"
-export { defaultThemes, terminalThemes } from "./themes"
+export { defaultDarkThemes, defaultThemes, terminalLightThemes, terminalThemes } from "./themes"
 export type { ThemeVariables, TerminalThemeVariables } from "./themes"
 export {
   DEFAULT_THEME_VARIABLES,

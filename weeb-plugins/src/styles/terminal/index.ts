@@ -104,7 +104,7 @@ const TERMINAL_STYLE_CSS = `/* Terminal Style CSS */
 }
 
 #svg-main .text-terminal-warning {
-  color: #ffaa00 !important;
+  color: var(--terminal-color-warning, #ffaa00) !important;
 }
 
 #svg-main .bg-terminal-highlight {

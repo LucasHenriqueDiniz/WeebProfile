@@ -112,6 +112,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
           hideTerminalCommand: terminalConfigs.hideTerminalCommand,
           fontFamily: terminalConfigs.fontFamily,
           terminalHeaderText: terminalConfigs.terminalHeaderText || undefined,
+          colorMode: terminalConfigs.colorMode,
           customThemeColors: uiConfig.customThemeColors || undefined,
           userId: svg.userId,
           mock: false,

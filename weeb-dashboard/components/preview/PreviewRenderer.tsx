@@ -26,6 +26,8 @@ interface PreviewRendererProps {
   terminalHeaderText?: string
   customCss?: string
   customThemeColors?: Record<string, string>
+  colorMode?: "fixed" | "auto"
+  colorVariant?: "light" | "dark" // Which variant of an auto card to draw (no media query)
   width?: number // Largura fixa opcional (sobrescreve size)
   height?: number // Altura fixa opcional
   previewMode?: boolean // Quando true, componentes não devem renderizar links externos
@@ -77,6 +79,8 @@ export function PreviewRenderer({
   terminalHeaderText,
   customCss,
   customThemeColors,
+  colorMode,
+  colorVariant,
   width: propWidth,
   height: propHeight,
   previewMode,
@@ -293,6 +297,8 @@ export function PreviewRenderer({
         terminalHeaderText={terminalHeaderText}
         customCss={customCss}
         customThemeColors={customThemeColors}
+        colorMode={colorMode}
+        colorVariant={colorVariant}
         plugins={plugins}
       >
         {sectionTransition === "slide" ? (

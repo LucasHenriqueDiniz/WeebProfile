@@ -36,6 +36,8 @@ export interface WizardState {
   terminalHeaderText: string
   customCss: string
   customThemeColors: Record<string, string> // Custom theme colors (only used when theme === 'custom')
+  // "auto": the card follows the light/dark theme of the page that shows it (GitHub's).
+  colorMode: "fixed" | "auto"
 
   // Step 3: Preview
   previewUrl: string | null
@@ -69,6 +71,7 @@ export interface WizardState {
   setHideTerminalHeader: (hide: boolean) => void
   setHideTerminalCommand: (hide: boolean) => void
   setFontFamily: (fontFamily: string) => void
+  setColorMode: (colorMode: "fixed" | "auto") => void
   setTerminalHeaderText: (text: string) => void
   setCustomThemeColor: (variable: string, color: string) => void
   resetCustomThemeColors: () => void
@@ -139,6 +142,7 @@ const initialState = {
   terminalHeaderText: "",
   customCss: "",
   customThemeColors: {},
+  colorMode: "fixed" as const,
   previewUrl: null,
   pluginsHaveMissingEssentialConfigs: false,
   currentStep: 1,
@@ -378,6 +382,10 @@ export const useWizardStore = create<WizardState>()(
         set({ fontFamily })
       },
 
+      setColorMode: (colorMode) => {
+        set({ colorMode })
+      },
+
       setTerminalHeaderText: (text) => {
         set({ terminalHeaderText: text })
       },
@@ -518,6 +526,7 @@ export const useWizardStore = create<WizardState>()(
               fontFamily: templateData.uiConfig.fontFamily || "poppins",
               terminalHeaderText: templateData.uiConfig.terminalHeaderText || "",
               customThemeColors: templateData.uiConfig.customThemeColors || {},
+              colorMode: templateData.uiConfig.colorMode === "auto" ? "auto" : "fixed",
             })
           }
 
@@ -577,6 +586,7 @@ export const useWizardStore = create<WizardState>()(
         terminalHeaderText: state.terminalHeaderText,
         customCss: state.customCss,
         customThemeColors: state.customThemeColors,
+        colorMode: state.colorMode,
         previewUrl: state.previewUrl,
       }),
       // Prevent excessive synchronization that can cause refresh

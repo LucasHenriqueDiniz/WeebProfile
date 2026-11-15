@@ -30,12 +30,14 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     terminalHeaderText,
     customCss,
     customThemeColors,
+    colorMode,
     setStyle,
     setSize,
     setTheme,
     setHideTerminalEmojis,
     setHideTerminalHeader,
     setFontFamily,
+    setColorMode,
     setTerminalHeaderText,
     setCustomCss,
     setCustomThemeColor,
@@ -70,11 +72,13 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
             terminalHeaderText={terminalHeaderText}
             customCss={customCss}
             customThemeColors={customThemeColors}
+            colorMode={colorMode}
             setStyle={setStyle}
             setTheme={setTheme}
             setHideTerminalEmojis={setHideTerminalEmojis}
             setHideTerminalHeader={setHideTerminalHeader}
             setFontFamily={setFontFamily}
+            setColorMode={setColorMode}
             setTerminalHeaderText={setTerminalHeaderText}
             setCustomCss={setCustomCss}
             setCustomThemeColor={setCustomThemeColor}

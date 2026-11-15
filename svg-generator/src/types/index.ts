@@ -34,6 +34,10 @@ export interface SvgConfig {
   fontFamily?: string
   terminalHeaderText?: string
   primaryColor?: string // Custom primary color
+  // "auto": light and dark palettes in one SVG, picked by prefers-color-scheme.
+  colorMode?: "auto"
+  // Custom theme colors (theme "custom"), already sanitized by the worker.
+  customThemeColors?: Record<string, string>
   dev?: boolean // Development mode (uses mock data)
   // Essential configurations (API keys, tokens) per plugin
   // Fully dynamic - supports any plugin

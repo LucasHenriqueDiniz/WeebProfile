@@ -156,5 +156,7 @@ export function getTerminalConfigs(uiConfig: Record<string, any> | null | undefi
     hideTerminalCommand: config.hideTerminalCommand ?? false,
     fontFamily: config.fontFamily ?? "poppins",
     terminalHeaderText: typeof config.terminalHeaderText === "string" ? config.terminalHeaderText.trim() : "",
+    // "auto" ships the light and the dark palette in one SVG (see the generator's PluginStyles).
+    colorMode: config.colorMode === "auto" ? ("auto" as const) : undefined,
   }
 }

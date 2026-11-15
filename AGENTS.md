@@ -220,11 +220,34 @@ Configuração em Workers & Pages → `weeb-svg-generator` → Settings → Buil
 **Temas built-in** (em `weeb-plugins/src/themes/themes.ts`):
 
 - Default: `default`, `purple`, `pink`, `cyan`, `orange`, `blue`, `green`, `red`
-- Terminal: variantes equivalentes
+- Terminal: `default`, `dracula`, `monokai`
 
 **Variáveis CSS de tema** — prefixo `--default-color-*` ou `--terminal-color-*`. Cada plugin herda essas variáveis; não usar cores hardcoded.
 
-**Custom themes:** usuário pode sobrescrever qualquer variável via `customThemeColors: Record<string, string>` no wizard do dashboard.
+**Custom themes:** usuário pode sobrescrever qualquer variável `--default-color-*` via `customThemeColors: Record<string, string>` no wizard do dashboard. O worker só aceita cor simples (`sanitizeCustomThemeColors`). Até 11/2026 o worker descartava o campo e o SVG gerado saía no tema base, embora o preview mostrasse as cores.
+
+### Modo de cor `auto` (claro/escuro)
+
+Um SVG só, claro no GitHub claro e escuro no GitHub escuro. Liga com `ui_config.colorMode = "auto"` (sem coluna nova; o `theme` continua sendo a paleta) e vale para os dois estilos.
+
+- **Como sai no SVG:** o `PluginStyles` não põe as variáveis inline (declaração inline ganha de qualquer regra, media query inclusa). Emite um `<style>` com a paleta clara na regra base e a escura dentro de `@media (prefers-color-scheme: dark)`, escopado por `data-theme-scope` (`buildAutoThemeCss` em `themes/theme-utils.ts`).
+- **Paletas:** `defaultDarkThemes` (contraparte escura de cada tema default) e `terminalLightThemes` (contraparte clara de cada terminal), em `themes.ts`. Variável de tema nova precisa existir nas duas; `theme-utils.test.ts` confere.
+- **`customThemeColors` no auto:** valem todas na variante clara. A escura herda só `--default-color-highlight`; superfície e texto vêm da paleta escura, senão uma superfície branca customizada desfaria o modo escuro.
+- **Estilo default é transparente:** no auto mudam texto, destaque e superfícies; o fundo é o da página.
+- **Preview do dashboard:** mostra as duas variantes empilhadas, cada uma sobre o fundo da página do GitHub (`ColorVariantsPreview`). A variante é forçada por `colorVariant`, sem media query, então não depende do tema de quem está vendo.
+
+**Comportamento medido (15/11/2026, Chromium 151 headless, SVG servido como `image/svg+xml` dentro de `<img>`):** `prefers-color-scheme` dentro do SVG segue o `color-scheme` da página que embute, não o do SO. Fundo do terminal auto (header / corpo):
+
+| SO \ `color-scheme` da página | `light`           | `dark`            | sem `color-scheme` |
+| ----------------------------- | ----------------- | ----------------- | ------------------ |
+| claro                         | #f6f8fa / #ffffff | #161b22 / #0d1117 | #f6f8fa / #ffffff  |
+| escuro                        | #f6f8fa / #ffffff | #161b22 / #0d1117 | #161b22 / #0d1117  |
+
+Terminal dracula: 6/6 iguais na mesma lógica. Terminal sem `auto` (controle): #161b22 / #0d1117 nas 6.
+
+**No GitHub real** (README de perfil, deslogado, onde o tema do GitHub segue o SO; o GitHub põe `color-scheme: dark` no `<html>` no tema escuro): tema claro → #f6f8fa / #ffffff; tema escuro → #161b22 / #0d1117. Igual pelo arquivo do repo e pelo camo (`camo.githubusercontent.com`, o caminho dos cards do WeebProfile).
+
+**Não testado:** Firefox e Safari/WebKit. Se algum seguir o SO em vez da página, o fallback é `<picture><source media="(prefers-color-scheme: dark)" srcset="…escuro.svg"><img src="…claro.svg"></picture>` com duas URLs; o sanitizer do GitHub mantém (vira `<themed-picture>`).
 
 **CSS de plugin:** cada plugin pode ter CSS específico em `styles` no objeto do plugin. O `svg-generator` injeta automaticamente via `PluginStyles.tsx`.
 

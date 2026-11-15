@@ -30,7 +30,9 @@ export async function loadCss(config: SvgConfig): Promise<React.ReactElement> {
   const theme = config.style === "terminal" ? config.terminalTheme || "default" : config.defaultTheme || "default"
 
   // Get custom colors (if any) and merge with primaryColor
-  const customColors = (config as any).customThemeColors || {}
+  // A copy: the primaryColor fallback below must not leak into config.customThemeColors,
+  // which PluginStyles reads later.
+  const customColors: Record<string, string> = { ...(config.customThemeColors || {}) }
   const primaryColor = config.primaryColor
 
   // If primaryColor is provided, add it to customColors as --default-color-highlight

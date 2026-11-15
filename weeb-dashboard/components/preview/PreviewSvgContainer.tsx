@@ -25,6 +25,8 @@ interface PreviewSvgContainerProps {
   terminalHeaderText?: string
   customCss?: string
   customThemeColors?: Record<string, string> // Custom theme colors (only used when theme === 'custom')
+  colorMode?: "fixed" | "auto"
+  colorVariant?: "light" | "dark"
   plugins?: Record<string, any> // Plugin configs for CSS loading
 }
 
@@ -65,6 +67,8 @@ export function PreviewSvgContainer({
   terminalHeaderText,
   customCss,
   customThemeColors,
+  colorMode,
+  colorVariant,
   plugins,
 }: PreviewSvgContainerProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
@@ -281,6 +285,8 @@ ${cssVariables}
             fontFamily={fontFamily}
             terminalHeaderText={terminalHeaderText}
             customThemeColors={customThemeColors}
+            colorMode={colorMode}
+            colorVariant={colorVariant}
           >
             {children}
           </PluginStyles>,

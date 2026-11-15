@@ -23,6 +23,7 @@ export interface RepositoryWizardState {
   terminalHeaderText: string
   customCss: string
   customThemeColors: Record<string, string>
+  colorMode: "fixed" | "auto"
 
   // Seções ativas (banner/insights) e as opções de cada uma - mesmo formato
   // "sections + sectionConfigs" usado pelo wizard-store genérico, pra reaproveitar
@@ -43,6 +44,7 @@ export interface RepositoryWizardState {
   setHideTerminalEmojis: (hide: boolean) => void
   setHideTerminalHeader: (hide: boolean) => void
   setFontFamily: (fontFamily: string) => void
+  setColorMode: (colorMode: "fixed" | "auto") => void
   setTerminalHeaderText: (text: string) => void
   setCustomThemeColor: (variable: string, color: string) => void
   resetCustomThemeColors: () => void
@@ -55,6 +57,7 @@ export interface RepositoryWizardState {
     theme: string | null
     customCss: string | null
     pluginsConfig: Record<string, any>
+    uiConfig?: Record<string, unknown> | null
   }) => void
 }
 
@@ -77,6 +80,7 @@ const initialState = {
   terminalHeaderText: "",
   customCss: "",
   customThemeColors: {},
+  colorMode: "fixed" as "fixed" | "auto",
   sections: [DEFAULT_SECTION],
   sectionConfigs: {},
   previewUrl: null,
@@ -101,6 +105,7 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
   setHideTerminalEmojis: (hide) => set({ hideTerminalEmojis: hide }),
   setHideTerminalHeader: (hide) => set({ hideTerminalHeader: hide }),
   setFontFamily: (fontFamily) => set({ fontFamily }),
+  setColorMode: (colorMode) => set({ colorMode }),
   setTerminalHeaderText: (text) => set({ terminalHeaderText: text }),
   setCustomThemeColor: (variable, color) =>
     set((state) => ({ customThemeColors: { ...state.customThemeColors, [variable]: color } })),
@@ -125,6 +130,7 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
       repo: repoConfig.repo || "",
       sections: [section],
       sectionConfigs: repoConfig.sectionConfigs || {},
+      colorMode: svg.uiConfig?.colorMode === "auto" ? "auto" : "fixed",
     })
   },
 }))
