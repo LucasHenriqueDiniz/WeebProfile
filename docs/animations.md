@@ -55,19 +55,26 @@ em `(--weeb-base + --weeb-k) × --weeb-step`:
 
 ## Medições
 
-Em 15/11/2026, cards gerados pelo `POST /` do gerador rodando em `wrangler dev` (workerd),
-**sem `dev`** para o GitHub (dados reais, seções `profile`, `favorite_languages`, `calendar`) e
-com `dev` para o LastFM (sem API key nesta máquina; dados mock, imagens reais de CDN). Quadros
-capturados do `<img>` em sequência por 3,5 s; "pixels movidos" é a soma de pixels diferentes
-entre quadros consecutivos; "repouso × estático" compara o quadro após 4 s com o card gerado
-com a opção desligada.
+Em 15/11/2026, cards gerados pelo `POST /` do gerador, **sem `dev`**:
 
-| card                   | ligada  | desligada | ligada + `reduce` | repouso × estático | altura (SVG = HTML renderizado) | fim da última animação |
-| ---------------------- | ------- | --------- | ----------------- | ------------------ | ------------------------------- | ---------------------- |
-| GitHub default (real)  | 183.693 | 0         | 0                 | 0                  | 804 = 804                       | 1,05 s                 |
-| GitHub terminal (real) | 52.128  | 0         | 0                 | 0                  | 726 (HTML 597)                  | 1,55 s                 |
-| LastFM default (mock)  | 121.634 | 0         | 0                 | 0                  | 853 = 853                       | 0,90 s                 |
-| LastFM terminal (mock) | 43.252  | 0         | 0                 | 0                  | 598 (HTML 489)                  | 1,35 s                 |
+- GitHub: `wrangler dev` (workerd) com dados reais da API, seções `profile`,
+  `favorite_languages`, `calendar` (token local do `gh`).
+- LastFM: `worker.fetch` no vitest, caminho de produção inteiro (`fetchLastFmDataFromApi`,
+  embed das imagens, render, altura). Sem API key nesta máquina, só as respostas de
+  `ws.audioscrobbler.com` foram simuladas (`user.getinfo`, `user.getrecenttracks`,
+  `user.gettopartists` para `Amayacrab`, com o conteúdo do mock do plugin); as 11 imagens
+  vieram da CDN real do Last.fm. **Falta** rodar com a key do usuário.
+
+Quadros capturados do `<img>` em sequência por 3,5 s; "pixels movidos" é a soma de pixels
+diferentes entre quadros consecutivos; "repouso × estático" compara o quadro após 4 s com o
+card gerado com a opção desligada.
+
+| card                       | ligada  | desligada | ligada + `reduce` | repouso × estático | altura (SVG = HTML renderizado) | fim da última animação |
+| -------------------------- | ------- | --------- | ----------------- | ------------------ | ------------------------------- | ---------------------- |
+| GitHub default (real)      | 183.693 | 0         | 0                 | 0                  | 804 = 804                       | 1,05 s                 |
+| GitHub terminal (real)     | 52.128  | 0         | 0                 | 0                  | 726 (HTML 597)                  | 1,55 s                 |
+| LastFM default (API sim.)  | 476.085 | 0         | 0                 | 0                  | 853 = 853                       | 0,90 s                 |
+| LastFM terminal (API sim.) | 64.101  | 0         | 0                 | 0                  | 598 (HTML 489)                  | 1,35 s                 |
 
 - Altura: igual com e sem a opção em todos. No terminal o SVG já era mais alto que o HTML
   antes desta mudança (`calculateHeight` do estilo terminal superestima; não é das animações).
