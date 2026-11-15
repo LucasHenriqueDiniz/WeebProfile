@@ -713,6 +713,34 @@
       "check2": "Sem GitHub Action, sem YAML",
       "check3": "Login com GitHub"
     },
+    "preview": {
+      "kicker": "EXPERIMENTE",
+      "title": "Veja o seu card, com os seus dados reais",
+      "subtitle": "Sem criar conta. Digite um username e veja o card que iria para o seu perfil do GitHub.",
+      "platform": "Plataforma",
+      "usernameLabel": "Seu username no {{platform}}",
+      "steamLabel": "URL do seu perfil Steam ou SteamID64",
+      "submit": "Ver meu card",
+      "style": "Estilo",
+      "styles": {
+        "default": "Padrão",
+        "terminal": "Terminal"
+      },
+      "empty": "Seu card aparece aqui, montado a partir do seu perfil público.",
+      "loading": "Montando seu card",
+      "alt": "Card do {{platform}} de {{username}}",
+      "save": "Salvar no meu perfil",
+      "saveHint": "Conta grátis. O assistente abre com este mesmo card.",
+      "saveHintSignedIn": "O assistente abre com este mesmo card.",
+      "errors": {
+        "invalid": "Isso não parece um username válido.",
+        "notFound": "Nenhuma conta no {{platform}} com esse nome.",
+        "private": "Esse perfil do {{platform}} é privado. Deixe-o público para ver a prévia.",
+        "rateLimited": "Muitas prévias seguidas. Tente de novo em {{minutes}} min.",
+        "unavailable": "Prévias do {{platform}} estão indisponíveis agora. Tente outra plataforma.",
+        "generic": "Não deu para montar o card. Tente de novo em instantes."
+      }
+    },
     "platforms": {
       "label": "PUXA DADOS DE"
     },

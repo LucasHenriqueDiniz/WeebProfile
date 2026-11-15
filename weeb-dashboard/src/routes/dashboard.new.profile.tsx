@@ -16,6 +16,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useTranslations } from "@/i18n/use-translations"
+import { PREVIEW_HANDOFF_SOURCE, parsePreviewRequest, previewToTemplate } from "@/lib/preview/public-preview"
+import { forgetReturnTo, withReturnTo } from "@/lib/return-to"
 
 export default function NewProfileSvgPage() {
   const t = useTranslations("wizard")
@@ -30,6 +32,23 @@ export default function NewProfileSvgPage() {
 
   // Get template ID from URL
   const templateId = searchParams.get("template")
+
+  // The card a visitor built on the landing page before signing up (?source=preview&plugin=…).
+  // Read once: loadFromTemplate is applied a single time, and the parse is a whitelist.
+  const [previewHandoff] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("source") !== PREVIEW_HANDOFF_SOURCE) return null
+    const parsed = parsePreviewRequest(params)
+    return parsed.ok ? previewToTemplate(parsed.value) : null
+  })
+
+  useEffect(() => {
+    if (previewHandoff && user && !authLoading && !hasResetRef.current) {
+      loadFromTemplate(previewHandoff)
+      hasResetRef.current = true
+      forgetReturnTo()
+    }
+  }, [previewHandoff, user, authLoading, loadFromTemplate])
 
   // Check if there are saved configurations
   const hasSavedData = useMemo(() => {
@@ -80,21 +99,24 @@ export default function NewProfileSvgPage() {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push("/login")
+      // Back here after signing in, with the same query: a template or a previewed card.
+      router.push(withReturnTo("/login", `${window.location.pathname}${window.location.search}`))
       return
     }
 
     // Only check for saved data after auth is loaded and we have a user
     // Skip if we're loading a template
     if (user && !authLoading && !hasResetRef.current && !isLoadingTemplate) {
-      if (hasSavedData && !templateId) {
+      if (previewHandoff) {
+        // Applied by the effect above; the visitor chose this card, nothing to resume.
+      } else if (hasSavedData && !templateId) {
         setShowResumeDialog(true)
       } else if (!templateId) {
         reset() // Normal reset for new creation
         hasResetRef.current = true
       }
     }
-  }, [user, authLoading, router, reset, hasSavedData, templateId, isLoadingTemplate])
+  }, [user, authLoading, router, reset, hasSavedData, templateId, isLoadingTemplate, previewHandoff])
 
   const handleStartFresh = () => {
     reset() // Normal reset for new creation

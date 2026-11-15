@@ -713,6 +713,34 @@
       "check2": "No GitHub Action, no YAML",
       "check3": "Sign in with GitHub"
     },
+    "preview": {
+      "kicker": "TRY IT",
+      "title": "See your own card, with your real data",
+      "subtitle": "No account needed. Type a username and get the card you would put on your GitHub profile.",
+      "platform": "Platform",
+      "usernameLabel": "Your {{platform}} username",
+      "steamLabel": "Your Steam profile URL or SteamID64",
+      "submit": "Show my card",
+      "style": "Style",
+      "styles": {
+        "default": "Default",
+        "terminal": "Terminal"
+      },
+      "empty": "Your card shows up here, built from your public profile.",
+      "loading": "Building your card",
+      "alt": "{{platform}} card for {{username}}",
+      "save": "Save to my profile",
+      "saveHint": "Free account. The wizard opens with this same card.",
+      "saveHintSignedIn": "The wizard opens with this same card.",
+      "errors": {
+        "invalid": "That does not look like a valid username.",
+        "notFound": "No {{platform}} account with that name.",
+        "private": "This {{platform}} profile is private. Make it public to preview it.",
+        "rateLimited": "Too many previews in a row. Try again in {{minutes}} min.",
+        "unavailable": "{{platform}} previews are not available right now. Try another platform.",
+        "generic": "Could not build the card. Try again in a moment."
+      }
+    },
     "platforms": {
       "label": "PULLS DATA FROM"
     },
