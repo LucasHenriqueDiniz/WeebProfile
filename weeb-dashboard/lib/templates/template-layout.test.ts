@@ -54,6 +54,18 @@ describe("templateLayout", () => {
     expect(layout.myanimelist.sectionConfigs).toEqual({})
   })
 
+  it("never carries Include private repositories, though it is a boolean", () => {
+    const layout = templateLayout({
+      github: {
+        enabled: true,
+        sections: ["repositories"],
+        sectionConfigs: { repositories: { repositories_use_private: true, repositories_hide_title: true } },
+      },
+    })
+
+    expect(layout.github.sectionConfigs).toEqual({ repositories: { repositories_hide_title: true } })
+  })
+
   it("drops plugins and sections the metadata does not know, and options of sections not enabled", () => {
     const layout = templateLayout({
       not_a_plugin: { enabled: true, sections: ["x"] },

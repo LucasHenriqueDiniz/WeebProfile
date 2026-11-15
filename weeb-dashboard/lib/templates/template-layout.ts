@@ -36,6 +36,13 @@ export interface TemplateUiLayout {
 
 const METADATA = PLUGINS_METADATA as Record<string, PluginMetadata>
 
+/**
+ * Closed-choice options a template still must not carry, because they decide which of
+ * the user's own private data goes on a public card. Someone else's template turning
+ * one on would publish what the user never chose to show.
+ */
+const PRIVACY_OPTIONS = new Set(["repositories_use_private"])
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
@@ -77,6 +84,7 @@ function sectionLayout(
 
   const kept: Record<string, unknown> = {}
   for (const option of options) {
+    if (PRIVACY_OPTIONS.has(option.key)) continue
     if (option.key in saved && isLayoutValue(option, saved[option.key])) {
       kept[option.key] = saved[option.key]
     }
