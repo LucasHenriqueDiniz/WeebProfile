@@ -54,6 +54,39 @@ describe("resolveProfileReadme", () => {
     })
   })
 
+  it("opens the editor when the typed login differs in case from GitHub's canonical one", async () => {
+    const fetchJson = api({
+      "https://api.github.com/repos/SindreSorhus/SindreSorhus/readme": {
+        status: 200,
+        body: { html_url: "https://github.com/sindresorhus/sindresorhus/blob/main/readme.md" },
+      },
+    })
+    expect(await resolveProfileReadme("SindreSorhus", fetchJson)).toEqual({
+      kind: "edit",
+      url: "https://github.com/sindresorhus/sindresorhus/edit/main/readme.md",
+    })
+  })
+
+  it("swaps the path segment, not the first /blob/ in the text, for a login named blob", async () => {
+    const fetchJson = api({
+      "https://api.github.com/repos/blob/blob/readme": {
+        status: 200,
+        body: { html_url: "https://github.com/blob/blob/blob/main/README.md" },
+      },
+    })
+    expect(await resolveProfileReadme("blob", fetchJson)).toEqual({
+      kind: "edit",
+      url: "https://github.com/blob/blob/edit/main/README.md",
+    })
+  })
+
+  it("does not trust an html_url for another repository", async () => {
+    const fetchJson = api({
+      [`${base}/readme`]: { status: 200, body: { html_url: "https://github.com/someone/else/blob/main/README.md" } },
+    })
+    expect((await resolveProfileReadme("octocat", fetchJson)).kind).toBe("unknown")
+  })
+
   it("offers to add a README to a repository that has none", async () => {
     const fetchJson = api({ [base]: { status: 200, body: { default_branch: "trunk" } } })
     expect(await resolveProfileReadme("octocat", fetchJson)).toEqual({

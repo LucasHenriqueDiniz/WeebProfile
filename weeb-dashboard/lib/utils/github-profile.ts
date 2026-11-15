@@ -58,6 +58,27 @@ export type ProfileReadmeTarget =
   | { kind: "no-repo"; url: string }
   | { kind: "unknown"; url: string }
 
+/**
+ * The editor URL for a README's `html_url`, read by path segment. The API answers with
+ * the login's canonical case (`sindresorhus` for a typed `SindreSorhus`), and a login
+ * can itself be `blob`, so neither a prefix match on the typed login nor a text replace
+ * of "/blob/" works.
+ */
+function readmeEditUrl(login: string, htmlUrl: string): string | null {
+  let url: URL
+  try {
+    url = new URL(htmlUrl)
+  } catch {
+    return null
+  }
+  const [owner, repo, kind, ...rest] = url.pathname.split("/").filter(Boolean)
+  const sameLogin = (value: string | undefined) => value?.toLowerCase() === login.toLowerCase()
+  if (url.origin !== "https://github.com" || !sameLogin(owner) || !sameLogin(repo) || kind !== "blob" || !rest.length) {
+    return null
+  }
+  return `https://github.com/${owner}/${repo}/edit/${rest.join("/")}`
+}
+
 export async function resolveProfileReadme(
   login: string,
   fetchJson: typeof fetch = (input, init) => fetch(input, init)
@@ -69,8 +90,8 @@ export async function resolveProfileReadme(
     const readme = await fetchJson(`${api}/readme`, { headers })
     if (readme.ok) {
       const { html_url } = (await readme.json()) as { html_url?: string }
-      const blob = `${profileRepoUrl(login)}/blob/`
-      return html_url?.startsWith(blob) ? { kind: "edit", url: html_url.replace("/blob/", "/edit/") } : unknown
+      const editUrl = html_url ? readmeEditUrl(login, html_url) : null
+      return editUrl ? { kind: "edit", url: editUrl } : unknown
     }
     if (readme.status !== 404) return unknown
 

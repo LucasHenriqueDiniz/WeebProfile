@@ -354,7 +354,7 @@ export default function SvgViewPage() {
           url: publicUrl,
           size: (svg.size as "half" | "full") || "half",
         })
-      : `![${altText}](${publicUrl ?? ""})`
+      : ""
 
   // Generated ones only: a README pointing at an SVG with nothing in R2 shows a broken image.
   const otherHalves =
@@ -567,7 +567,7 @@ export default function SvgViewPage() {
               <SideBySidePanel current={svg} currentAlt={altText} others={otherHalves} />
             )}
 
-            {svg && <ProfileReadmePanel guessedLogin={guessedLogin} />}
+            {svg && user && <ProfileReadmePanel userId={user.id} guessedLogin={guessedLogin} />}
 
             {/* URL */}
             {publicUrl && (

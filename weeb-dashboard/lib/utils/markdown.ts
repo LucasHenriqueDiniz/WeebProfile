@@ -24,9 +24,13 @@ function escapeAttribute(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 }
 
-/** A `]` would close the alt text of `![alt](url)` early. */
+/**
+ * A `]` would close the alt text of `![alt](url)` early, and `*`, `` ` `` or `<` would
+ * turn into emphasis, code or HTML. CommonMark lets any ASCII punctuation be
+ * backslash-escaped, so all of it is.
+ */
 function escapeMarkdownAlt(value: string): string {
-  return value.replace(/[\\[\]]/g, "\\$&")
+  return value.replace(/[!-/:-@[-`{-~]/g, "\\$&")
 }
 
 function imgTag({ alt, url }: EmbedImage, width?: string): string {
@@ -57,9 +61,14 @@ export function generateMarkdown({ alt, url, size }: MarkdownOptions): string {
  * at 1280px and wider, and wrap onto separate rows below that. The tags are glued
  * together, because any whitespace between them is a space character that pushes
  * 50% + space + 50% past the column width, and the second one wraps.
+ *
+ * With an odd count the last one is alone on its row, so it keeps its natural size,
+ * like a lone half: at 50% it would be 154px on a 390px phone instead of 308px.
  */
 export function generateMarkdownForMultipleHalf(images: EmbedImage[]): string {
   if (images.length === 0) return ""
   if (images.length === 1) return generateMarkdown({ ...images[0], size: "half" })
-  return `<p align="center">${images.map((image) => imgTag(image, "50%")).join("")}</p>`
+  const lastAlone = images.length % 2 === 1
+  const tags = images.map((image, i) => imgTag(image, lastAlone && i === images.length - 1 ? undefined : "50%"))
+  return `<p align="center">${tags.join("")}</p>`
 }

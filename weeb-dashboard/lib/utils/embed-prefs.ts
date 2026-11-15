@@ -6,7 +6,8 @@
  */
 
 const altKey = (svgId: string) => `weeb:embed-alt:${svgId}`
-const GITHUB_LOGIN_KEY = "weeb:github-login"
+/** Per account: another account signed in on the same browser must not inherit it. */
+const githubLoginKey = (userId: string) => `weeb:github-login:${userId}`
 
 function read(key: string): string | null {
   try {
@@ -33,5 +34,5 @@ export function embedAltFor(svg: { id: string; name: string }): string {
 export const readEmbedAlt = (svgId: string) => read(altKey(svgId))
 export const writeEmbedAlt = (svgId: string, alt: string) => write(altKey(svgId), alt.trim() ? alt : null)
 
-export const readGithubLogin = () => read(GITHUB_LOGIN_KEY)
-export const writeGithubLogin = (login: string) => write(GITHUB_LOGIN_KEY, login.trim() || null)
+export const readGithubLogin = (userId: string) => read(githubLoginKey(userId))
+export const writeGithubLogin = (userId: string, login: string) => write(githubLoginKey(userId), login.trim() || null)

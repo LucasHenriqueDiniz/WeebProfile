@@ -21,9 +21,11 @@ const RESOLVE_DELAY_MS = 500
  * From the copied snippet to the README it goes in: what the <login>/<login> repository
  * is, and a link straight into its editor, or to create it.
  */
-export function ProfileReadmePanel({ guessedLogin }: { guessedLogin: string | null }) {
+export function ProfileReadmePanel({ userId, guessedLogin }: { userId: string; guessedLogin: string | null }) {
   const t = useTranslations("embed.readme")
-  const [typed, setTyped] = useState<string | null>(() => readGithubLogin())
+  // What the user typed overrides the guess (it is how they correct a wrong one), and is
+  // remembered per account.
+  const [typed, setTyped] = useState<string | null>(() => readGithubLogin(userId))
   const login = (typed ?? guessedLogin ?? "").trim()
   const valid = isGithubLogin(login)
   const [target, setTarget] = useState<{ login: string; target: ProfileReadmeTarget } | null>(null)
@@ -61,7 +63,7 @@ export function ProfileReadmePanel({ guessedLogin }: { guessedLogin: string | nu
         value={login}
         onChange={(e) => {
           setTyped(e.target.value)
-          writeGithubLogin(e.target.value)
+          writeGithubLogin(userId, e.target.value)
         }}
         placeholder={t("usernamePlaceholder")}
         autoComplete="off"

@@ -32,6 +32,10 @@ describe("generateMarkdown", () => {
   it("escapes brackets in a full SVG's alt text so they do not close it early", () => {
     expect(generateMarkdown({ alt: "Stats [beta]", url, size: "full" })).toBe(`![Stats \\[beta\\]](${url})`)
   })
+
+  it("escapes the punctuation that markdown would turn into emphasis, code or HTML in a full SVG's alt", () => {
+    expect(generateMarkdown({ alt: "*a* `b` <i>", url, size: "full" })).toBe(`![\\*a\\* \\\`b\\\` \\<i\\>](${url})`)
+  })
 })
 
 describe("generateMarkdownForMultipleHalf", () => {
@@ -72,6 +76,15 @@ describe("generateMarkdownForMultipleHalf", () => {
       { alt: "C", url },
     ])
     expect(snippet).not.toMatch(/>\s+</)
-    expect(snippet.match(/width="50%"/g)).toHaveLength(3)
+  })
+
+  it("leaves the last of an odd count at its natural size, since it is alone on its row", () => {
+    const snippet = generateMarkdownForMultipleHalf([
+      { alt: "A", url },
+      { alt: "B", url: other },
+      { alt: "C", url: `${url}?c` },
+    ])
+    const tags = snippet.match(/<img [^>]*>/g) ?? []
+    expect(tags.map((tag) => tag.includes('width="50%"'))).toEqual([true, true, false])
   })
 })
