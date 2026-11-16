@@ -4,6 +4,7 @@ import { getAuthUserId, unauthorized, notFound, serverError } from "../../_share
 import { getDb } from "../../_shared/db"
 import { claimGenerationSlot } from "../../_shared/generation-rate-limit"
 import { publishGeneratedSvg } from "../../_shared/publish-svg"
+import { nextNightFrom } from "../../_shared/regeneration-schedule"
 import { assertGenerationSucceeded } from "../../_shared/svg-generation-validation"
 import { svgs } from "../../../../lib/db/schema"
 import { eq, and } from "drizzle-orm"
@@ -127,13 +128,11 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       // (one with a <PluginError> section) over a previously-valid stored version.
       assertGenerationSucceeded(result)
 
-      const nextRegenerationAt = new Date()
-      nextRegenerationAt.setHours(nextRegenerationAt.getHours() + 24)
-
+      const now = new Date()
       const updatedSvg = await publishGeneratedSvg(env, db, id, svgContent, {
         status: "completed",
-        lastGeneratedAt: new Date().toISOString(),
-        nextRegenerationAt: nextRegenerationAt.toISOString(),
+        lastGeneratedAt: now.toISOString(),
+        nextRegenerationAt: nextNightFrom(now),
         forceRegenerate: false,
       })
       // Deleted while it was being generated; publishGeneratedSvg took the image down.

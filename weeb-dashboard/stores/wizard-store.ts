@@ -6,6 +6,7 @@ import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 const getPluginMetadata = (name: string) => (PLUGINS_METADATA as Record<string, any>)[name] || {}
 const getEnabledPlugins = (config?: any) => Object.keys(config || {}).filter((name) => config?.[name]?.enabled)
 import { applyPluginDefaults } from "@/lib/config/plugin-defaults"
+import { templateLayout, templateUiLayout } from "@/lib/templates/template-layout"
 
 export interface PluginConfig {
   enabled: boolean
@@ -501,72 +502,46 @@ export const useWizardStore = create<WizardState>()(
           // Reset to initial state first
           get().reset()
 
-          // Load template data
-          const templateData = {
-            style: template.style || "default",
-            size: template.size || "half",
+          // Only the layout: the author's username, repositories and anything else
+          // they typed stay behind, so the wizard opens like a fresh one with the
+          // template's plugins, sections and options turned on. The API already strips
+          // these for anyone but the author; this covers the author's own templates.
+          const layout = templateLayout(template.pluginsConfig)
+          const ui = templateUiLayout(template.uiConfig)
+
+          set({
+            style: template.style === "terminal" ? "terminal" : "default",
+            size: template.size === "full" ? "full" : "half",
             theme: template.theme || "default",
-            pluginsOrder: template.pluginsOrder
-              ? Array.isArray(template.pluginsOrder)
-                ? template.pluginsOrder
-                : template.pluginsOrder.split(",").filter(Boolean)
-              : [],
-            pluginsConfig: template.pluginsConfig || {},
-            uiConfig: template.uiConfig || {},
             customCss: template.customCss || "",
+            hideTerminalEmojis: ui.hideTerminalEmojis ?? false,
+            hideTerminalHeader: ui.hideTerminalHeader ?? true,
+            hideTerminalCommand: ui.hideTerminalCommand ?? false,
+            fontFamily: ui.fontFamily || "poppins",
+            animations: ui.animations === true,
+            customThemeColors: ui.customThemeColors ?? {},
+          })
+
+          // The saved order is a preference; which plugins the template enables decides.
+          const savedOrder: string[] = Array.isArray(template.pluginsOrder)
+            ? template.pluginsOrder
+            : String(template.pluginsOrder || "")
+                .split(",")
+                .map((name: string) => name.trim())
+                .filter(Boolean)
+          const enabledInTemplate = Object.keys(layout).filter((name) => layout[name].enabled)
+          const pluginsOrder = [
+            ...savedOrder.filter((name) => enabledInTemplate.includes(name)),
+            ...enabledInTemplate.filter((name) => !savedOrder.includes(name)),
+          ]
+
+          const updatedPlugins = { ...get().plugins }
+          for (const pluginName of pluginsOrder) {
+            const { enabled, sections, sectionConfigs } = layout[pluginName]
+            updatedPlugins[pluginName] = { ...updatedPlugins[pluginName], enabled, sections, sectionConfigs }
           }
 
-          // Set basic style configuration
-          set({
-            style: templateData.style as "default" | "terminal",
-            size: templateData.size as "half" | "full",
-            theme: templateData.theme,
-            customCss: templateData.customCss,
-          })
-
-          // Apply UI config if present
-          if (templateData.uiConfig) {
-            set({
-              hideTerminalEmojis: templateData.uiConfig.hideTerminalEmojis || false,
-              hideTerminalHeader: templateData.uiConfig.hideTerminalHeader ?? true,
-              hideTerminalCommand: templateData.uiConfig.hideTerminalCommand || false,
-              fontFamily: templateData.uiConfig.fontFamily || "poppins",
-              terminalHeaderText: templateData.uiConfig.terminalHeaderText || "",
-              animations: templateData.uiConfig.animations === true,
-              customThemeColors: templateData.uiConfig.customThemeColors || {},
-            })
-          }
-
-          // Configure plugins based on template
-          const plugins = get().plugins
-          const updatedPlugins = { ...plugins }
-
-          // Process each plugin from template
-          templateData.pluginsOrder.forEach((pluginId: string) => {
-            const pluginConfig = templateData.pluginsConfig[pluginId]
-            if (pluginConfig) {
-              // Apply plugin configuration
-              updatedPlugins[pluginId] = {
-                ...updatedPlugins[pluginId],
-                enabled: pluginConfig.enabled !== false,
-                sections: pluginConfig.sections || [],
-                sectionConfigs: pluginConfig.sectionConfigs || {},
-                fields: pluginConfig.fields || {},
-                // Copy other fields from template config
-                ...Object.fromEntries(
-                  Object.entries(pluginConfig).filter(
-                    ([key]) => !["enabled", "sections", "sectionConfigs", "fields"].includes(key)
-                  )
-                ),
-              }
-            }
-          })
-
-          // Update plugins and order
-          set({
-            plugins: updatedPlugins,
-            pluginsOrder: templateData.pluginsOrder,
-          })
+          set({ plugins: updatedPlugins, pluginsOrder })
 
           // Validate steps
           get().validateStep(1)

@@ -59,9 +59,9 @@ async function embedCover(url: string | null | undefined, previewMode: boolean):
   // Em preview a URL original serve: o browser carrega direto, e converter para
   // data URI aqui só desperdiçaria uma requisição por card.
   if (previewMode) return url
-  // null, nunca a URL original: um SVG em Gist não consegue carregar URL externa,
-  // então devolvê-la deixaria uma imagem quebrada em vez de nenhuma. O helper
-  // registra o motivo da falha, que antes se perdia num catch vazio.
+  // null, never the original URL: an SVG shown as an image cannot load an external
+  // URL, so returning it would leave a broken image instead of none. The helper
+  // logs why the conversion failed, which used to vanish in an empty catch.
   return embedImageOrNull(url, { maxBytes: COVER_MAX_BYTES, context: "anilist/cover" })
 }
 

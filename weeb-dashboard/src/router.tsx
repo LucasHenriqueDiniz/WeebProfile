@@ -1,6 +1,7 @@
 import { createRouter, createRoute, createRootRoute, Outlet } from "@tanstack/react-router"
 import { lazy, Suspense } from "react"
 import LoadingScreen from "@/components/loading/LoadingScreen"
+import { forwardTemplateToWizard } from "@/lib/templates/template-route"
 
 function Lazy(factory: () => Promise<{ default: React.ComponentType<any> }>) {
   const Comp = lazy(factory)
@@ -77,6 +78,7 @@ const dashboardRoute = createRoute({
 const newSvgRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/dashboard/new",
+  beforeLoad: forwardTemplateToWizard,
   component: NewSvgPage,
 })
 

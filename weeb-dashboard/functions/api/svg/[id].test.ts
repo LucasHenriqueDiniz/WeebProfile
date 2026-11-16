@@ -79,9 +79,33 @@ describe("GET /api/svg/:id", () => {
     expect(state.readIds).toEqual(["svg-1"])
   })
 
-  it("is the handler behind /svg/:id.svg", async () => {
+  it("is the handler behind /svg/:id.svg, for GET and HEAD", async () => {
     const alias = await import("../../svg/[id]")
     const route = await import("./[id]")
     expect(alias.onRequestGet).toBe(route.onRequestGet)
+    expect(alias.onRequestHead).toBe(route.onRequestHead)
+  })
+})
+
+describe("HEAD /api/svg/:id", () => {
+  const head = async (id: string) => {
+    const { onRequestHead } = await import("./[id]")
+    return onRequestHead({ env: {}, params: { id } } as never)
+  }
+
+  // Without a HEAD handler, Pages answered HEAD from the SPA fallback: 200 text/html.
+  it("answers with GET's status and headers, and no body", async () => {
+    const [headResponse, getResponse] = [await head("svg-1.svg"), await get("svg-1.svg")]
+    expect(headResponse.status).toBe(200)
+    expect(headResponse.headers.get("Content-Type")).toBe("image/svg+xml")
+    expect([...headResponse.headers]).toEqual([...getResponse.headers])
+    expect(headResponse.body).toBeNull()
+  })
+
+  it("answers 404 for an unknown id", async () => {
+    state.row = null
+    const response = await head("nope.svg")
+    expect(response.status).toBe(404)
+    expect(response.body).toBeNull()
   })
 })

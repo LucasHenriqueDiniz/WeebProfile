@@ -9,6 +9,7 @@ import type { GridItemProps } from "../../../templates/types"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 interface NotableContributionsProps {
   data: GithubData["notableContributions"]
@@ -53,11 +54,9 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData["notableC
   return (
     <div className="flex flex-col gap-3">
       {contributions.map((contribution, index) => (
-        <a
+        <ExternalLink
           key={index}
           href={contribution.repositoryUrl}
-          target="_blank"
-          rel="noopener noreferrer"
           className="flex items-start gap-3 p-4 half:p-3 rounded-lg border border-default-border h-[100px]"
         >
           <div className="flex-shrink-0 mt-0.5">
@@ -77,7 +76,7 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData["notableC
               </div>
             </div>
           </div>
-        </a>
+        </ExternalLink>
       ))}
     </div>
   )

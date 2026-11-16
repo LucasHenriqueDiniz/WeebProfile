@@ -3,6 +3,7 @@
  */
 
 import React from "react"
+import { ExternalLink } from "../../utils/external-link"
 import type { TerminalLineProps } from "../types"
 
 interface ClassNames {
@@ -20,11 +21,14 @@ interface Styles {
 export interface TerminalLineComponentProps extends TerminalLineProps {
   className?: ClassNames
   style?: Styles
+  /** Makes the whole line a link; an href that is not http(s) leaves it plain. */
+  href?: string
 }
 
-export function TerminalLine({ right, className, left, style }: TerminalLineComponentProps): React.ReactElement {
+export function TerminalLine({ right, className, left, style, href }: TerminalLineComponentProps): React.ReactElement {
   return (
-    <div
+    <ExternalLink
+      href={href}
       className={`grid grid-cols-[auto_min-content] overflow-hidden px-1 ${className?.container || ""}`}
       style={{ ...(style?.container ? style.container : {}) }}
     >
@@ -37,6 +41,6 @@ export function TerminalLine({ right, className, left, style }: TerminalLineComp
       <span className={`text-terminal-muted truncate sm-text ${className?.left || ""}`} style={style?.left}>
         {left}
       </span>
-    </div>
+    </ExternalLink>
   )
 }

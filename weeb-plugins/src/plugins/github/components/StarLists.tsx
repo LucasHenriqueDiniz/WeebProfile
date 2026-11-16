@@ -8,6 +8,7 @@ import type { GridItemProps } from "../../../templates/types"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 interface StarListsProps {
   data: GithubData["starLists"]
@@ -31,16 +32,14 @@ const DefaultStarLists = ({ data, max }: { data: GithubData["starLists"]; max: n
           {list.description && <p className="text-sm text-default-muted mb-3 line-clamp-2">{list.description}</p>}
           <div className="flex flex-col gap-2">
             {list.repositories.slice(0, 5).map((repo, repoIndex) => (
-              <a
+              <ExternalLink
                 key={repoIndex}
                 href={repo.url}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="text-sm text-default-link flex items-center gap-2"
               >
                 <span className="truncate">{repo.nameWithOwner}</span>
                 <span className="text-default-muted flex-shrink-0">⭐ {abbreviateNumber(repo.stargazerCount)}</span>
-              </a>
+              </ExternalLink>
             ))}
             {list.repositories.length > 5 && (
               <div className="text-xs text-default-muted mt-1">

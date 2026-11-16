@@ -4,6 +4,7 @@ import { getAuthUserId, unauthorized, notFound, serverError } from "../_shared/a
 import { getDb } from "../_shared/db"
 import { parseBody, templateUpdateSchema } from "../_shared/validation"
 import { templates, svgs } from "../../../lib/db/schema"
+import { templateForViewer } from "../../../lib/templates/template-layout"
 import { eq, and } from "drizzle-orm"
 
 function setTerminalConfigs(
@@ -53,7 +54,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env,
       previewUrl = svgRow?.storageUrl || null
     }
 
-    return Response.json({ template: { ...template, previewUrl } })
+    return Response.json({ template: { ...templateForViewer(template, userId), previewUrl } })
   } catch (e) {
     return serverError(e)
   }

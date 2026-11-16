@@ -7,6 +7,7 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { formatRelativeTime, formatRelativeTimeShort } from "../../shared/utils/formatting"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 interface RecentActivityProps {
   data: GithubData["recentActivity"]
@@ -149,11 +150,9 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData["recentActivity
             <div className="flex flex-col gap-3">
               {dayActivities.map((activity, index) => {
                 return (
-                  <a
+                  <ExternalLink
                     key={index}
                     href={activity.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="flex items-start gap-3 p-3 rounded-lg border border-default-border"
                   >
                     {/* Icon */}
@@ -193,7 +192,7 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData["recentActivity
                         <span className="text-xs text-default-muted font-mono">{activity.repository}</span>
                       </div>
                     </div>
-                  </a>
+                  </ExternalLink>
                 )
               })}
             </div>
@@ -238,19 +237,13 @@ const TerminalRecentActivity = ({ data, max }: { data: GithubData["recentActivit
         const typeSymbol = getTypeSymbol(activity.type)
 
         return (
-          <a
-            key={index}
-            href={activity.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-start gap-2 text-terminal-text"
-          >
+          <ExternalLink key={index} href={activity.url} className="flex items-start gap-2 text-terminal-text">
             <span className="text-terminal-muted">*</span>
             <span className="text-terminal-muted w-12 shrink-0 truncate">{relativeTime}</span>
             <span className="text-terminal-highlight w-16 shrink-0 truncate">{typeSymbol}</span>
             <span className="text-terminal-muted w-32 shrink-0 truncate">{activity.repository}</span>
             <span className="text-terminal-text truncate">{activity.title}</span>
-          </a>
+          </ExternalLink>
         )
       })}
     </div>

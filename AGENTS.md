@@ -1,6 +1,6 @@
 # WeebProfile — Guia para agentes de IA (Claude, GPT/Codex, etc.)
 
-Gerador de SVGs para perfis GitHub. O usuário configura uma GitHub Action (ou o dashboard web) e o sistema gera cards visuais com stats de código, anime e música, salvos como Gists públicos.
+Gerador de SVGs para perfis GitHub. O usuário monta os cards no dashboard web e o sistema gera cards visuais com stats de código, anime e música, hospedados no R2 e regerados pelo cron, prontos para colar no README.
 
 Este arquivo é a fonte única de instruções para assistentes de IA neste repositório. `CLAUDE.md` apenas importa este arquivo (`@AGENTS.md`) — não duplique conteúdo nele.
 
@@ -62,8 +62,8 @@ pnpm generate-previews                                    # Regera SVGs de previ
 
 - `CLERK_SECRET_KEY` (autenticação do dashboard)
 - `CRON_SECRET` / `INTERNAL_SECRET` (autenticam endpoints internos)
-- `WEEB_GH_TOKEN` / `GH_TOKEN` (token GitHub do usuário)
-- API keys de plugins (Steam `apiKey`, LastFM key, etc.)
+- `SECRETS_ENCRYPTION_KEY` (cifra os `plugin_secrets`) e `STEAM_API_KEY` (credencial da aplicação no gerador)
+- Tokens e API keys de plugins dos usuários (o `pat` do GitHub, a key do LastFM etc.)
 - Qualquer valor de `essentialConfig` passado aos plugins
 
 **Como os segredos funcionam:** dados sensíveis dos usuários (API keys, tokens) ficam na tabela `plugin_secrets` do **Cloudflare D1** e nunca viajam junto com a configuração pública (`svgs.plugins_config`).
@@ -325,7 +325,7 @@ Os dois serviços guardam erro em lugares diferentes, porque a Cloudflare não p
 - **svg-generator não usa mais Playwright/Chromium** — a altura do SVG é calculada estaticamente somando `calculateHeight()` de cada seção. Qualquer mudança de layout que afete altura precisa atualizar essa função no plugin correspondente.
 - **Opções de seção chegam na raiz da config do plugin** (é como o dashboard grava e como o renderer achata `sectionConfigs`), nunca em `nonEssential`. O `PluginManager` copia a raiz para `config.nonEssential` antes de chamar `fetchData`, `render` e `calculateHeight` (`plugins/shared/plugin-options.ts`), então ler de um ou de outro dá o mesmo valor. Chamar um plugin sem passar pelo manager perde isso. Ao testar opções, passe-as na raiz, como produção faz — `plugin-options.test.ts` compara as duas formas.
 - **Dev local do dashboard com D1:** usar `pnpm dev:pages` (= `wrangler pages dev dist`, **sem** `--d1`). Passar `--d1 DB=weebprofile-db` cria um banco SQLite local **diferente** do resolvido via `wrangler.toml`, e não terá as migrations aplicadas.
-- **Imagens externas nos SVGs:** converter para base64 é necessário para SVGs embutidos em Gists (GitHub não carrega URLs externas em SVGs). O utilitário está em `weeb-plugins/src/utils/image-to-base64.ts`.
+- **Imagens externas nos SVGs:** converter para base64 é necessário porque o SVG entra no README como imagem, e o navegador não carrega URL externa de dentro de um SVG exibido como imagem. O utilitário está em `weeb-plugins/src/utils/image-to-base64.ts`.
 - **metadata.ts é singleton:** o `PluginManager.register` recusa plugin sem entrada em `PLUGINS_METADATA`, então esquecer o `generate-metadata` faz o gerador lançar erro na inicialização. O `pnpm validate` (no CI) confere o mesmo nos dois sentidos, e o `pnpm validate-config-options` (no CI, reprova) acusa opção de config que nenhum componente lê.
 - **`weeb-dashboard/wrangler.toml` → `SVG_GENERATOR_URL`:** após o primeiro `pnpm deploy:generator`, atualizar para a URL real `https://<nome>.<subdomínio>.workers.dev` do Worker (o subdomínio só é conhecido após o deploy / `wrangler whoami`).
 
