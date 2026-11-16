@@ -85,8 +85,8 @@ describe("POST / — geração", () => {
     expect(body.height).toBeGreaterThan(0)
   })
 
-  // O chamador dimensiona o embed no Gist com o width/height do JSON. Se o SVG
-  // trouxer outros números no próprio atributo, o card sai cortado ou com sobra.
+  // The caller sizes the embed with the width/height in the JSON. If the SVG's own
+  // attributes say otherwise, the card comes out cropped or padded.
   it("faz o SVG declarar as mesmas dimensões que o JSON informa", async () => {
     const { body } = await post(validRequest())
 
@@ -729,7 +729,7 @@ describe("POST / — Dev.to sem dev, com a rede simulada só na borda", () => {
     expect(urls.some((u) => u.startsWith("https://dev.to/api/articles?username=some%20one&"))).toBe(true)
   })
 
-  // Um SVG em Gist não carrega URL externa; o avatar inválido some, o resto fica.
+  // An SVG shown as an image cannot load external URLs; the bad avatar is dropped, the rest stays.
   it("deixa de fora um avatar que não é imagem, sem derrubar o card", async () => {
     network({ avatar: () => new Response("<html>login</html>", { headers: { "content-type": "text/html" } }) })
 
@@ -777,5 +777,118 @@ describe("POST / — altura de um plugin que falhou", () => {
     ).body
 
     expect(mixed.height).toBe(healthy.height + PLUGIN_ERROR_HEIGHT)
+  })
+})
+
+describe("POST / — auto color mode", () => {
+  /** The opening tag of the theme container PluginStyles draws. */
+  const container = (svg: string, style: "default" | "terminal") =>
+    svg.match(new RegExp(`<div class="${style}-container"[^>]*>`))?.[0] ?? ""
+
+  /** The <style> element carrying the auto palettes, if any. */
+  const autoStyle = (svg: string) => svg.match(/<style>\[data-theme-scope=[^<]*<\/style>/)?.[0] ?? ""
+
+  it("ships the light palette and overrides it inside the dark media query, terminal style", async () => {
+    const { body } = await post(validRequest({ style: "terminal", theme: "default", colorMode: "auto" }))
+    const css = autoStyle(body.svg)
+    const dark = css.slice(css.indexOf("@media (prefers-color-scheme: dark)"))
+
+    expect(css).toContain("--terminal-color-background: #ffffff;")
+    expect(dark).toContain("--terminal-color-background: #0d1117;")
+  })
+
+  it("ships the light palette and overrides it inside the dark media query, default style", async () => {
+    const { body } = await post(validRequest({ style: "default", theme: "purple", colorMode: "auto" }))
+    const css = autoStyle(body.svg)
+    const dark = css.slice(css.indexOf("@media (prefers-color-scheme: dark)"))
+
+    expect(css).toContain("--default-color-surface: #f7f2ff;")
+    expect(dark).toContain("--default-color-surface: #212233;")
+  })
+
+  // An inline declaration beats any stylesheet rule, media query included: with the
+  // variables inline the dark override would never apply.
+  it("keeps the theme variables out of the container's inline style", async () => {
+    const { body } = await post(validRequest({ style: "terminal", colorMode: "auto" }))
+    const tag = container(body.svg, "terminal")
+
+    expect(tag).toContain('data-color-mode="auto"')
+    expect(tag).not.toMatch(/--terminal-color-[a-z-]+:/)
+    expect(tag).toContain("background-color:var(--terminal-color-background)")
+  })
+
+  it("leaves a card without colorMode exactly as before: inline variables, no media query", async () => {
+    const { body } = await post(validRequest({ style: "terminal" }))
+
+    expect(container(body.svg, "terminal")).toContain("--terminal-color-background:#0d1117")
+    expect(autoStyle(body.svg)).toBe("")
+  })
+
+  it("draws the custom theme's colors, which the request used to drop", async () => {
+    const { body } = await post(
+      validRequest({ theme: "custom", customThemeColors: { "--default-color-highlight": "#e11d48" } })
+    )
+
+    expect(container(body.svg, "default")).toContain("--default-color-highlight:#e11d48")
+  })
+
+  it("drops a custom color that could break out of its declaration", async () => {
+    const { body } = await post(
+      validRequest({
+        theme: "custom",
+        colorMode: "auto",
+        customThemeColors: { "--default-color-highlight": "red;} *{display:none" },
+      })
+    )
+
+    expect(body.svg).not.toContain("display:none")
+  })
+})
+
+describe("POST / — opt-in animations", () => {
+  const card = (extra: Record<string, unknown> = {}) =>
+    validRequest({
+      essentialConfigs: { github: { pat: "x" } },
+      plugins: {
+        devto: { enabled: true, sections: ["profile", "recent_articles"], username: "someone" },
+        github: { enabled: true, sections: ["profile", "favorite_languages"], username: "someone" },
+      },
+      pluginsOrder: ["devto", "github"],
+      ...extra,
+    })
+
+  // Off by default, and off adds nothing: a card from before this feature is unchanged.
+  it("leaves the card untouched unless the request asks for them", async () => {
+    const { body: absent } = await post(card())
+    const { body: off } = await post(card({ animations: false }))
+    expect(absent.svg).toBe(off.svg)
+    expect(absent.svg).not.toContain("weeb-")
+    expect(absent.svg).not.toContain("@property")
+  })
+
+  // No height check here: the height comes from calculateHeight(), which never sees the
+  // markup, so on and off could not differ. The rendered height was measured in a
+  // browser instead (docs/animations.md).
+  it.each(["default", "terminal"])("animates the %s style", async (style) => {
+    const { response, body: on } = await post(card({ style, animations: true }))
+    expect(response.status).toBe(200)
+    expect(on.svg).toContain(`${style}-container weeb-anim`)
+    // One timeline across plugins: github's sections start after devto's two.
+    expect(on.svg).toContain("--weeb-base:0")
+    expect(on.svg).toContain("--weeb-base:2")
+    expect(on.svg).toMatch(/--weeb-step:0\.\d+s/)
+  })
+
+  // The SVG is parsed as XML: a raw "<integer>" from @property would open an element
+  // and break the whole image.
+  it("escapes the stylesheet for the XML parser", async () => {
+    const { body } = await post(card({ animations: true }))
+    expect(body.svg).toContain('syntax: "&lt;integer>"')
+    expect(body.svg).not.toContain("<integer>")
+  })
+
+  it("does not animate on anything but a literal true", async () => {
+    const { body } = await post(card({ animations: "yes" }))
+    expect(body.svg).not.toContain("weeb-anim")
   })
 })

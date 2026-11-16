@@ -1,5 +1,6 @@
 import React from "react"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -67,7 +68,7 @@ const DefaultStatistic = ({ title, value }: { title: string; value: string }) =>
     </p>
 
     <p className="text-xl half:text-lg font-black text-default-text tabular-nums tracking-tight whitespace-nowrap">
-      {abbreviateNumber(value)}
+      <AnimatedNumber value={abbreviateNumber(value)} />
     </p>
   </div>
 )

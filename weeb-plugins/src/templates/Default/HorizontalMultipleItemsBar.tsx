@@ -3,6 +3,7 @@
  */
 
 import React from "react"
+import { useAnimations } from "../animations"
 
 export interface HorizontalMultipleItem {
   value: number
@@ -17,9 +18,10 @@ interface HorizontalMultipleItemsBarProps {
 
 export function HorizontalMultipleItemsBar({ items, total }: HorizontalMultipleItemsBarProps): React.ReactElement {
   const totalValue = total || items.reduce((acc, item) => acc + item.value, 0)
+  const animations = useAnimations()
 
   return (
-    <div className="flex h-2.5 w-full rounded overflow-hidden">
+    <div className={`flex h-2.5 w-full rounded overflow-hidden${animations ? " weeb-bar" : ""}`}>
       {items.map((item, index) => (
         <span
           {...(item.className ? { className: item.className } : {})}

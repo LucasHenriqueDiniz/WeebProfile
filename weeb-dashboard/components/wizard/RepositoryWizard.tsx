@@ -30,12 +30,14 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
     terminalHeaderText,
     customCss,
     customThemeColors,
+    colorMode,
     setStyle,
     setSize,
     setTheme,
     setHideTerminalEmojis,
     setHideTerminalHeader,
     setFontFamily,
+    setColorMode,
     setTerminalHeaderText,
     setCustomCss,
     setCustomThemeColor,
@@ -58,11 +60,13 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
           terminalHeaderText={terminalHeaderText}
           customCss={customCss}
           customThemeColors={customThemeColors}
+          colorMode={colorMode}
           setStyle={setStyle}
           setTheme={setTheme}
           setHideTerminalEmojis={setHideTerminalEmojis}
           setHideTerminalHeader={setHideTerminalHeader}
           setFontFamily={setFontFamily}
+          setColorMode={setColorMode}
           setTerminalHeaderText={setTerminalHeaderText}
           setCustomCss={setCustomCss}
           setCustomThemeColor={setCustomThemeColor}

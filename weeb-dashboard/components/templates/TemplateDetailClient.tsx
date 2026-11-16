@@ -17,7 +17,7 @@ import { ensureConsistentPlatforms, pluginIdsToDisplayNames, formatDate } from "
 import type { SvgTemplate } from "@/types/svg"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { useTranslations } from "@/i18n/use-translations"
-import { useLocaleNavigation } from "@/lib/navigation"
+import { templateWizardHref } from "@/lib/templates/template-route"
 
 interface TemplateDetailClientProps {
   templateId: string
@@ -25,7 +25,6 @@ interface TemplateDetailClientProps {
 
 export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) {
   const t = useTranslations("templatesPage")
-  const { toLocalePath } = useLocaleNavigation()
   const [template, setTemplate] = useState<SvgTemplate | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -188,7 +187,7 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
       {/* Back Button - Absolute Position */}
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="absolute top-0 left-0">
         <Button variant="ghost" asChild className="gap-2">
-          <Link href={toLocalePath("/templates")}>
+          <Link href="/templates">
             <ArrowLeft className="w-4 h-4" />
             {t("backToTemplates")}
           </Link>
@@ -329,7 +328,7 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
               transition={{ delay: 0.6 }}
             >
               <Button asChild className="flex-1 gap-2 shadow-lg">
-                <Link href={toLocalePath(`/dashboard/new?template=${template.id}`)}>
+                <Link href={templateWizardHref(template.id)}>
                   <ExternalLink className="w-4 h-4" />
                   {t("useTemplate")}
                 </Link>

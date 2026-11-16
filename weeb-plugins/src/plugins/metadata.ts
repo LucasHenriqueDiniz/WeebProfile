@@ -35,15 +35,11 @@ export interface I18nKeyMap {
 export interface EssentialConfigKeyMetadata {
   key: string
   label: string
-  type: "text" | "password" | "oauth"
+  type: "text" | "password"
   placeholder?: string
   description?: string
   helpUrl?: string // Direct link to create/get token (e.g., https://github.com/settings/personal-access-tokens/new)
   docKey?: string // Key for future documentation (e.g., "github.pat")
-  // Provider when type === "oauth". "steam" is really OpenID 2.0 rather than OAuth
-  // -- it returns a SteamID64 and nothing else, no token and no scope -- but the
-  // wizard treats both the same way: leave, come back connected.
-  oauthProvider?: "spotify" | "steam"
   i18nKey?: {
     label?: string
     placeholder?: string
@@ -1005,8 +1001,8 @@ export const PLUGINS_METADATA = {
           label: "GitHub Classic Token",
           type: "password",
           placeholder: "ghp_...",
-          description: "Classic token is used to fetch data from GitHub API",
-          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
+          description: "A classic token with no scopes is enough: the card only reads public data.",
+          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&default_expires_at=none",
           docKey: "github.pat",
           i18nKey: {
             label: "plugins.github.essentialConfig.pat.label",
@@ -1089,8 +1085,10 @@ export const PLUGINS_METADATA = {
           label: "Include private repositories",
           type: "boolean",
           defaultValue: false,
+          tooltip: "Shows private repositories, names included, in every GitHub section of this public card. Needs a token with the 'repo' scope; the token from the setup link has none, so with it this does nothing.",
           i18nKey: {
-            label: "plugins.github.sections.repositories.config.repositories_use_private.label"
+            label: "plugins.github.sections.repositories.config.repositories_use_private.label",
+            tooltip: "plugins.github.sections.repositories.config.repositories_use_private.tooltip"
           }
         }
         ]
@@ -1994,8 +1992,8 @@ export const PLUGINS_METADATA = {
           label: "GitHub Classic Token",
           type: "password",
           placeholder: "ghp_...",
-          description: "Reuses the same token configured for the GitHub plugin, if you already have one.",
-          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
+          description: "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository.",
+          helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&default_expires_at=none",
           docKey: "github.pat",
           i18nKey: {
             label: "plugins.github_repo.essentialConfig.pat.label",
@@ -2132,7 +2130,7 @@ export const PLUGINS_METADATA = {
           type: "string",
           defaultValue: "",
           description: "Optional image URL (project logo etc.) shown instead of the repository mark",
-          tooltip: "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
+          tooltip: "Embedded into the SVG at generation time, since an SVG shown as an image in a README cannot load external URLs. Leave empty to use the owner avatar.",
           i18nKey: {
             label: "plugins.github_repo.sections.banner.config.banner_image.label",
             description: "plugins.github_repo.sections.banner.config.banner_image.description",

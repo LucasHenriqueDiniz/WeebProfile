@@ -5,6 +5,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink, withDefaultScheme } from "../../../utils/external-link"
 
 interface IntroductionProps {
   data: GithubData["introduction"]
@@ -51,26 +52,22 @@ const DefaultIntroduction = ({
           </div>
         )}
         {data.websiteUrl && (
-          <a
-            href={data.websiteUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <ExternalLink
+            href={withDefaultScheme(data.websiteUrl)}
             className="flex items-center gap-1.5 text-default-link hover:underline"
           >
             <FaLink className="text-base" />
             <span>{data.websiteUrl.replace(/^https?:\/\//, "")}</span>
-          </a>
+          </ExternalLink>
         )}
         {data.twitterUsername && (
-          <a
+          <ExternalLink
             href={`https://twitter.com/${data.twitterUsername}`}
-            target="_blank"
-            rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-default-link hover:underline"
           >
             <FaTwitter className="text-base" />
             <span>@{data.twitterUsername}</span>
-          </a>
+          </ExternalLink>
         )}
       </div>
     </div>

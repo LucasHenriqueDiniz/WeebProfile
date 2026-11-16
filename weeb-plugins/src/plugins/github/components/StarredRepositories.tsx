@@ -8,6 +8,7 @@ import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 const DefaultStarredRepositories = ({
   data,
@@ -22,11 +23,9 @@ const DefaultStarredRepositories = ({
     <div className="github-starred-repositories">
       <div className="flex flex-col gap-4">
         {reposToShow.map((repo, index) => (
-          <a
+          <ExternalLink
             key={index}
             href={repo.url}
-            target="_blank"
-            rel="noopener noreferrer"
             className="flex items-start gap-3 p-3 rounded-lg border border-default-border h-[120px]"
           >
             <div className="flex-1 min-w-0">
@@ -61,7 +60,7 @@ const DefaultStarredRepositories = ({
                 </div>
               </div>
             </div>
-          </a>
+          </ExternalLink>
         ))}
       </div>
       {data.totalCount > maxRepos && (

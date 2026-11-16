@@ -48,6 +48,15 @@
   padding: 0;
 }
 
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card: GitHub repositories, activity, people and gists, the 16Personalities
+   link. :where() keeps it at zero specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Container */
 #svg-main .default-container {
   --font-family: Poppins, sans-serif;
@@ -1660,10 +1669,6 @@
   background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
 }
 
-#svg-main .bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
-}
-
 #svg-main .bg-yellow-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1))
@@ -2615,4 +2620,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="anilist-plugin"><section id="anilist-currently-watching"><div class="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Currently Watching</h2></div></div><div class="flex flex-col" style="gap:8px"><div class="flex items-center gap-2 w-full"><div class="flex flex-col min-w-0 flex-1"><p class="text-sm truncate text-default-highlight">One Piece</p><p class="text-xs text-default-muted">1094/?<!-- --> episodes</p></div></div><div class="flex items-center gap-2 w-full"><div class="flex flex-col min-w-0 flex-1"><p class="text-sm truncate text-default-highlight">Shingeki no Kyojin</p><p class="text-xs text-default-muted">18/25<!-- --> episodes</p></div></div><div class="flex items-center gap-2 w-full"><div class="flex flex-col min-w-0 flex-1"><p class="text-sm truncate text-default-highlight">Kimetsu no Yaiba</p><p class="text-xs text-default-muted">7/26<!-- --> episodes</p></div></div></div></div></section></section></div></div></div></div></foreignObject></svg>
+</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="anilist-plugin"><section id="anilist-currently-watching"><div class="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Currently Watching</h2></div></div><div class="flex flex-col" style="gap:8px"><a href="https://anilist.co/anime/21" target="_top" rel="noopener noreferrer" class="flex items-center gap-2 w-full"><div class="flex flex-col min-w-0 flex-1"><p class="text-sm truncate text-default-highlight">One Piece</p><p class="text-xs text-default-muted">1094/?<!-- --> episodes</p></div></a><a href="https://anilist.co/anime/16498" target="_top" rel="noopener noreferrer" class="flex items-center gap-2 w-full"><div class="flex flex-col min-w-0 flex-1"><p class="text-sm truncate text-default-highlight">Shingeki no Kyojin</p><p class="text-xs text-default-muted">18/25<!-- --> episodes</p></div></a><a href="https://anilist.co/anime/101922" target="_top" rel="noopener noreferrer" class="flex items-center gap-2 w-full"><div class="flex flex-col min-w-0 flex-1"><p class="text-sm truncate text-default-highlight">Kimetsu no Yaiba</p><p class="text-xs text-default-muted">7/26<!-- --> episodes</p></div></a></div></div></section></section></div></div></div></div></foreignObject></svg>

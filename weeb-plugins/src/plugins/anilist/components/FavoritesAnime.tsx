@@ -6,6 +6,8 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLine } from "../../../templates/Terminal/TerminalLine"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { AniListConfig, AniListMedia } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
+import { anilistAnimeUrl } from "../services/anime-url"
 
 interface FavoritesAnimeProps {
   favorites: AniListMedia[]
@@ -44,7 +46,12 @@ export function FavoritesAnime({
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
             <div className="flex flex-wrap gap-2">
               {shown.map((item) => (
-                <div key={item.id} className="flex flex-col" style={{ width: `${100 / columns}%` }}>
+                <ExternalLink
+                  key={item.id}
+                  href={anilistAnimeUrl(item.id)}
+                  className="flex flex-col"
+                  style={{ width: `${100 / columns}%` }}
+                >
                   {/* Capa ausente vira um bloco do mesmo tamanho: sem isso a grade
                       se desalinha e a altura real deixa de bater com a calculada. */}
                   {item.cover ? (
@@ -60,7 +67,7 @@ export function FavoritesAnime({
                       style={{ height: `${FAVORITES_COVER_HEIGHT}px` }}
                     />
                   )}
-                </div>
+                </ExternalLink>
               ))}
             </div>
           </div>
@@ -70,7 +77,7 @@ export function FavoritesAnime({
             <TerminalCommand command={getPseudoCommands({ plugin: "anilist", section: "favorites_anime", size })} />
             {/* left vazio: um favorito não tem valor à direita, só o título. */}
             {shown.map((item) => (
-              <TerminalLine key={item.id} right={item.title} left="" />
+              <TerminalLine key={item.id} href={anilistAnimeUrl(item.id)} right={item.title} left="" />
             ))}
           </>
         }

@@ -104,7 +104,7 @@ const TERMINAL_STYLE_CSS = `/* Terminal Style CSS */
 }
 
 #svg-main .text-terminal-warning {
-  color: #ffaa00 !important;
+  color: var(--terminal-color-warning, #ffaa00) !important;
 }
 
 #svg-main .bg-terminal-highlight {
@@ -170,6 +170,12 @@ const TERMINAL_STYLE_CSS = `/* Terminal Style CSS */
 
 #svg-main .bg-black\\/25 {
   background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Zebra rows of TerminalGrid. A theme value, not black at 25%: on the light palette
+   of the auto mode that turned the row #bfbfbf, under gray text at 1.9:1. */
+#svg-main .bg-terminal-stripe {
+  background-color: var(--terminal-color-stripe, rgba(0, 0, 0, 0.25));
 }
 
 /* Terminal Command */

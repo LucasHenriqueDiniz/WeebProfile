@@ -61,3 +61,13 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params }
     return serverError(e)
   }
 }
+
+/**
+ * HEAD /api/svg/[id] and /svg/[id].svg - what GET answers, without the body. With only
+ * onRequestGet exported, Pages passed HEAD on to the static assets, and the SPA fallback
+ * answered 200 text/html for every id, existing or not.
+ */
+export const onRequestHead: PagesFunction<CloudflareEnv> = async (context) => {
+  const response = await onRequestGet(context)
+  return new Response(null, { status: response.status, headers: response.headers })
+}

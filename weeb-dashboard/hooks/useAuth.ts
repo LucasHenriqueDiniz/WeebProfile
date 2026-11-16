@@ -45,6 +45,8 @@ interface AuthUser {
   email: string
   user_metadata: {
     user_name: string | null
+    /** The GitHub login of the account linked through Clerk, which user_name may not be. */
+    github_login: string | null
     preferred_username: string | null
     login: string | null
     full_name: string | null
@@ -59,6 +61,7 @@ const MOCK_USER: AuthUser = {
   email: "sora@weebprofile.dev",
   user_metadata: {
     user_name: "sora-dev",
+    github_login: "sora-dev",
     preferred_username: "sora-dev",
     login: "sora-dev",
     full_name: "Sora Dev",
@@ -84,15 +87,15 @@ export function useAuth() {
     }
   }
 
+  const githubLogin =
+    user?.externalAccounts.find((a: { provider: string }) => a.provider.includes("github"))?.username ?? null
   const mappedUser: AuthUser | null = user
     ? {
         id: user.id,
         email: user.primaryEmailAddress?.emailAddress ?? "",
         user_metadata: {
-          user_name:
-            user.username ??
-            user.externalAccounts.find((a: { provider: string }) => a.provider.includes("github"))?.username ??
-            null,
+          user_name: user.username ?? githubLogin,
+          github_login: githubLogin,
           preferred_username: user.username ?? null,
           login: user.username ?? null,
           full_name: user.fullName ?? null,

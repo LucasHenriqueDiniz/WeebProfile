@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { RotateCcw } from "lucide-react"
+import { Play, RotateCcw } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
 
 export interface StyleConfigurationProps {
@@ -26,15 +26,21 @@ export interface StyleConfigurationProps {
   terminalHeaderText: string
   customCss: string
   customThemeColors: Record<string, string>
+  colorMode: "fixed" | "auto"
   setStyle: (style: "default" | "terminal") => void
   setTheme: (theme: string) => void
   setHideTerminalEmojis: (value: boolean) => void
   setHideTerminalHeader: (value: boolean) => void
   setFontFamily: (value: string) => void
+  setColorMode: (value: "fixed" | "auto") => void
   setTerminalHeaderText: (value: string) => void
   setCustomCss: (css: string) => void
   setCustomThemeColor: (variable: string, value: string) => void
   resetCustomThemeColors: () => void
+  // Opt-in card animations. The toggle shows only when the wizard passes a setter.
+  animations?: boolean
+  setAnimations?: (value: boolean) => void
+  onReplayAnimations?: () => void
 }
 
 // Store-agnostic: reused by both the Profile wizard (useWizardStore) and the
@@ -48,15 +54,20 @@ export function StyleConfiguration({
   terminalHeaderText,
   customCss,
   customThemeColors,
+  colorMode,
   setStyle,
   setTheme,
   setHideTerminalEmojis,
   setHideTerminalHeader,
   setFontFamily,
+  setColorMode,
   setTerminalHeaderText,
   setCustomCss,
   setCustomThemeColor,
   resetCustomThemeColors,
+  animations = false,
+  setAnimations,
+  onReplayAnimations,
 }: StyleConfigurationProps) {
   const t = useTranslations("wizard.style")
 
@@ -177,6 +188,34 @@ export function StyleConfiguration({
         </div>
       </div>
 
+      {/* Color mode: "auto" ships a light and a dark palette in one SVG */}
+      <div className="py-4 space-y-2.5">
+        <p className="text-sm font-semibold text-foreground">{t("colorMode")}</p>
+        <p className="text-xs text-muted-foreground">{t("colorModeDescription")}</p>
+        <div className="flex gap-2">
+          {(["fixed", "auto"] as const).map((mode) => (
+            // eslint-disable-next-line jsx-a11y/label-has-associated-control
+            <label key={mode} className="flex-1 cursor-pointer">
+              <input
+                type="radio"
+                name="color-mode"
+                className="sr-only peer"
+                checked={colorMode === mode}
+                onChange={() => setColorMode(mode)}
+              />
+              <div className="rounded-md border border-border px-3 py-2 text-center peer-checked:border-primary peer-checked:bg-primary/10 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background transition-all">
+                <span className="text-sm font-medium">
+                  {mode === "auto" ? t("colorModeAuto") : t("colorModeFixed")}
+                </span>
+              </div>
+            </label>
+          ))}
+        </div>
+        {colorMode === "auto" && theme === "custom" && style === "default" && (
+          <p className="text-xs text-muted-foreground">{t("colorModeCustomNote")}</p>
+        )}
+      </div>
+
       {/* Font selector */}
       <div className="py-4 space-y-2.5">
         <p className="text-sm font-semibold text-foreground">{t("font")}</p>
@@ -193,6 +232,27 @@ export function StyleConfiguration({
           </SelectContent>
         </Select>
       </div>
+
+      {/* Animations: both styles */}
+      {setAnimations && (
+        <div className="py-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="space-y-0.5 flex-1">
+              <Label htmlFor="card-animations" className="text-sm font-semibold cursor-pointer">
+                {t("animations")}
+              </Label>
+              <p className="text-xs text-muted-foreground">{t("animationsDescription")}</p>
+            </div>
+            {animations && onReplayAnimations && (
+              <Button type="button" variant="outline" size="sm" onClick={onReplayAnimations} className="h-7 text-xs">
+                <Play className="w-3 h-3 mr-1" />
+                {t("animationsReplay")}
+              </Button>
+            )}
+            <Switch id="card-animations" checked={animations} onCheckedChange={setAnimations} />
+          </div>
+        </div>
+      )}
 
       {/* Custom Theme Colors */}
       {theme === "custom" && style === "default" && (
