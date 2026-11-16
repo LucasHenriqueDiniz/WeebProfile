@@ -211,6 +211,19 @@ Configuração em Workers & Pages → `weeb-svg-generator` → Settings → Buil
 - **Log dos builds:** no painel do Worker e como check run no commit do GitHub.
 - **Voltar uma versão:** `pnpm exec wrangler rollback <version-id>` em `svg-generator/` (`wrangler deployments list` mostra as versões).
 
+### Plano e limites da Cloudflare
+
+A conta está no **Workers Paid**. Os Workers da conta e o projeto Pages (produção e preview) usam o modelo de uso `standard`, sem `limits` customizado (conferido em 15/11/2026). As Pages Functions são cobradas e limitadas como Workers.
+
+| Limite (por invocação)    | Paid (nosso)                      | Free  |
+| ------------------------- | --------------------------------- | ----- |
+| Subrequests               | 10.000                            | 50    |
+| CPU por request HTTP      | 5 min (padrão 30 s)               | 10 ms |
+| CPU no cron (`7 3 * * *`) | 15 min (intervalo de 1 h ou mais) | 10 ms |
+
+- **Por que importa:** a seção Code Habits do GitHub sozinha faz uns 115 subrequests para um usuário ativo (events, um `compare` por push, um `getCommit` por commit até 200, uma query GraphQL de linguagens). No Free, ou num Worker que ainda esteja no modelo legado `bundled`, o teto é 50: o fetch para no `Too many subrequests` e o card sai sem estatísticas.
+- **Worker novo:** conferir o `usage_model` dele antes de contar com esses limites.
+
 ---
 
 ## Temas e estilos
@@ -345,7 +358,7 @@ Os dois serviços guardam erro em lugares diferentes, porque a Cloudflare não p
 
 | Serviço                                 | Onde fica                                                                             | Retenção                              | Como ler                                                                                                                                                                         |
 | --------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `svg-generator` (Worker, inclui o cron) | Workers Logs (`[observability]` em `svg-generator/wrangler.toml`)                     | 3 dias no Free, 7 no Paid             | Workers Logs do Worker `weeb-svg-generator` no dashboard da Cloudflare. Filtrar por `event` (`plugin.fetch_failed`, `cron.batch_rejected`, `cron.svg_failed`, `generate.failed`) |
+| `svg-generator` (Worker, inclui o cron) | Workers Logs (`[observability]` em `svg-generator/wrangler.toml`)                     | 7 dias (3 no Free)                    | Workers Logs do Worker `weeb-svg-generator` no dashboard da Cloudflare. Filtrar por `event` (`plugin.fetch_failed`, `cron.batch_rejected`, `cron.svg_failed`, `generate.failed`) |
 | `weeb-dashboard` (Pages Functions)      | Tabela `error_log` no D1, uma linha por resposta 5xx (`functions/api/_middleware.ts`) | 30 dias, podada pelo endpoint de cron | `pnpm --filter weeb-dashboard logs:errors`                                                                                                                                       |
 
 - Todo log do gerador passa por `svg-generator/src/utils/log.ts`, que tira `userId`/`apiKey`/`token` por chave e `?key=`/`Bearer` de dentro do texto. Não usar `console.*` direto lá.
