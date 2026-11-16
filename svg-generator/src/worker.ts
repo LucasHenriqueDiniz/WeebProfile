@@ -48,6 +48,7 @@ interface GenerateRequest {
   primaryColor?: string
   colorMode?: string
   customThemeColors?: Record<string, string>
+  animations?: boolean
   dev?: boolean
   mock?: boolean
   userId?: string
@@ -187,6 +188,7 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
     primaryColor: requestData.primaryColor || "#ff7a00",
     colorMode: isAutoColorMode(requestData.colorMode) ? "auto" : undefined,
     customThemeColors: sanitizeCustomThemeColors(requestData.customThemeColors),
+    animations: requestData.animations === true,
     essentialConfigs,
     dev: requestData.dev === true || requestData.mock === true,
   }

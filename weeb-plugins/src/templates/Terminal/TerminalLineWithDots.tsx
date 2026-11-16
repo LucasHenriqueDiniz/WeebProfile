@@ -4,6 +4,8 @@
  */
 
 import React from "react"
+import { ExternalLink } from "../../utils/external-link"
+import { AnimatedNumber } from "../AnimatedNumber"
 
 interface TerminalLineWithDotsProps {
   title: string | React.ReactNode
@@ -12,6 +14,8 @@ interface TerminalLineWithDotsProps {
   titleClassName?: string
   valueClassName?: string
   titleStyle?: React.CSSProperties
+  /** Makes the whole line a link; an href that is not http(s) leaves it plain. */
+  href?: string
 }
 
 export function TerminalLineWithDots({
@@ -21,9 +25,11 @@ export function TerminalLineWithDots({
   titleClassName = "",
   valueClassName = "",
   titleStyle,
+  href,
 }: TerminalLineWithDotsProps): React.ReactElement {
   return (
-    <div
+    <ExternalLink
+      href={href}
       className={`flex items-baseline gap-1 w-full overflow-hidden px-1 ${className}`}
       style={{
         fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
@@ -61,8 +67,8 @@ export function TerminalLineWithDots({
           fontSize: "0.875rem",
         }}
       >
-        {String(value)}
+        <AnimatedNumber value={value} />
       </span>
-    </div>
+    </ExternalLink>
   )
 }

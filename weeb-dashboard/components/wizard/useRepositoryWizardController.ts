@@ -87,6 +87,8 @@ export function useRepositoryWizardController({
         fontFamily,
         terminalHeaderText,
         colorMode,
+        // Repository cards have no animations toggle.
+        animations: false,
         customThemeColors,
       })
 

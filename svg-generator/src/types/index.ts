@@ -38,6 +38,9 @@ export interface SvgConfig {
   colorMode?: "auto"
   // Custom theme colors (theme "custom"), already sanitized by the worker.
   customThemeColors?: Record<string, string>
+  // Opt-in CSS animations (typing, sections entering, bars filling, numbers counting).
+  // Off unless the request says true; see weeb-plugins templates/animations.tsx.
+  animations?: boolean
   dev?: boolean // Development mode (uses mock data)
   // Essential configurations (API keys, tokens) per plugin
   // Fully dynamic - supports any plugin

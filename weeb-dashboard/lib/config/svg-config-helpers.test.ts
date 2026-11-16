@@ -9,6 +9,7 @@ const style: StyleUiConfig = {
   fontFamily: "mono",
   terminalHeaderText: "me@host:~",
   colorMode: "auto",
+  animations: true,
   customThemeColors: { "--default-color-highlight": "#e11d48", "--default-color-surface": "#fef9c3" },
 }
 

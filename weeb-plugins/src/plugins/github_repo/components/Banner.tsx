@@ -5,6 +5,7 @@ import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { resolveBannerText, resolveBannerVariant } from "../types"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
+import { ExternalLink } from "../../../utils/external-link"
 import {
   Card,
   Delta,
@@ -402,13 +403,17 @@ export function Banner({ config, data, style = "default", size = "half" }: Banne
       <ScaledBox size={config.content_size}>
         <RenderBasedOnStyle
           style={style}
-          defaultComponent={<DefaultBanner data={data} config={config} />}
+          defaultComponent={
+            <ExternalLink href={data.url} className="block">
+              <DefaultBanner data={data} config={config} />
+            </ExternalLink>
+          }
           terminalComponent={
             <>
               <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "banner", size })} />
-              <div className="flex items-baseline gap-2 px-1 py-1">
+              <ExternalLink href={data.url} className="flex items-baseline gap-2 px-1 py-1">
                 <span className="text-terminal-highlight font-bold">{`${data.owner.login}/${title}`}</span>
-              </div>
+              </ExternalLink>
               {(config.banner_show_description ?? true) && description && (
                 <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{description}</p>
               )}

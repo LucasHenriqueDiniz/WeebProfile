@@ -153,9 +153,10 @@ describe("POST /api/svgs/:id/generate inside the user's generation floor", () =>
   })
 })
 
-describe("POST /api/svgs/:id/generate with the card's color settings", () => {
+describe("POST /api/svgs/:id/generate with the card's ui_config", () => {
   /** Runs the route and returns the JSON body it sent to the generator binding. */
-  async function sentToGenerator(): Promise<Record<string, unknown>> {
+  async function sentToGenerator(uiConfig?: Record<string, unknown>): Promise<Record<string, unknown>> {
+    if (uiConfig) svgRow.uiConfig = uiConfig
     let sent: Record<string, unknown> = {}
     const { onRequestPost } = await import("./generate")
     const env = {
@@ -187,5 +188,13 @@ describe("POST /api/svgs/:id/generate with the card's color settings", () => {
 
   it("sends no color mode for a card that never turned it on", async () => {
     expect((await sentToGenerator()).colorMode).toBeUndefined()
+  })
+
+  it("asks the generator for animations when the SVG has them on", async () => {
+    expect((await sentToGenerator({ animations: true })).animations).toBe(true)
+  })
+
+  it("leaves them off for an SVG saved before the option existed", async () => {
+    expect((await sentToGenerator()).animations).toBe(false)
   })
 })

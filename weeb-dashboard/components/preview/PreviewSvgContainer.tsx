@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import { PluginStyles } from "@weeb/weeb-plugins/templates"
 import {
+  ANIMATIONS_CSS,
   getStyleCSS,
   getActivePluginsCSS as getPluginsCSS,
   SHARED_CSS,
@@ -32,6 +33,7 @@ interface PreviewSvgContainerProps {
   colorMode?: "fixed" | "auto"
   colorVariant?: "light" | "dark"
   plugins?: Record<string, any> // Plugin configs for CSS loading
+  animations?: { step: number } // Opt-in card animations: the gap between sections
 }
 
 // Baseline for the preview document. The parent page's Tailwind does not reach
@@ -74,6 +76,7 @@ export function PreviewSvgContainer({
   colorMode,
   colorVariant,
   plugins,
+  animations,
 }: PreviewSvgContainerProps) {
   // The generator keeps only plain colors on --default-color-* variables; the preview
   // applies the same filter, or it would show a color the generated SVG drops.
@@ -181,10 +184,13 @@ ${cssVariables}
 
   // Inject plugin CSS, theme variables and the author's custom CSS -- all of it
   // into the frame's own head, never the dashboard's.
+  // On the flag, not the object: the renderer builds a new { step } on every render, and
+  // depending on it rewrote the whole stylesheet on each keystroke.
+  const animated = Boolean(animations)
   useEffect(() => {
     if (!styleNode) return
-    styleNode.textContent = [pluginsCss, themeCss, customCss].filter(Boolean).join("\n")
-  }, [styleNode, pluginsCss, themeCss, customCss])
+    styleNode.textContent = [pluginsCss, animated ? ANIMATIONS_CSS : "", themeCss, customCss].filter(Boolean).join("\n")
+  }, [styleNode, pluginsCss, themeCss, customCss, animated])
 
   // Keep the frame element sized to the preview, and mirror size/theme onto the
   // portal root so selectors keyed on those attributes still match.
@@ -291,6 +297,7 @@ ${cssVariables}
             customThemeColors={safeCustomColors}
             colorMode={colorMode}
             colorVariant={colorVariant}
+            animations={animations}
           >
             {children}
           </PluginStyles>,

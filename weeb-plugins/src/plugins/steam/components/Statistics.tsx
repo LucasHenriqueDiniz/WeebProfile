@@ -6,6 +6,8 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { SteamData, SteamNonEssentialConfig } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
+import { steamStoreUrl } from "../services/store-url"
 
 interface StatisticsProps {
   data: SteamData
@@ -73,7 +75,10 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
 
             {/* Profile Header */}
             {data.playerSummary && (
-              <div className="w-full overflow-hidden flex items-center gap-3">
+              <ExternalLink
+                href={data.playerSummary.profileurl}
+                className="w-full overflow-hidden flex items-center gap-3"
+              >
                 {data.playerSummary.avatarfull && (
                   <img
                     src={data.playerSummary.avatarfull}
@@ -91,7 +96,7 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
                     {stats.totalGames} jogos na biblioteca
                   </p>
                 </div>
-              </div>
+              </ExternalLink>
             )}
 
             {/* Statistics Cards */}
@@ -115,7 +120,10 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
 
             {/* Featured Game (Destaque recente) */}
             {showFeatured && featuredGame && (
-              <div className="relative overflow-hidden rounded-xl border border-default-border/50 min-h-[120px] half:min-h-[100px]">
+              <ExternalLink
+                href={steamStoreUrl(featuredGame.appid)}
+                className="block relative overflow-hidden rounded-xl border border-default-border/50 min-h-[120px] half:min-h-[100px]"
+              >
                 {(() => {
                   const coverUrl = getSteamCoverImageUrl(featuredGame)
                   const imageUrl = getSteamIconUrl(featuredGame)
@@ -186,7 +194,7 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
                     </div>
                   )
                 })()}
-              </div>
+              </ExternalLink>
             )}
           </div>
         }

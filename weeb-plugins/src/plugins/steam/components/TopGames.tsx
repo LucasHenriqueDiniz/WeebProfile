@@ -6,6 +6,8 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { SteamData, SteamNonEssentialConfig } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
+import { steamStoreUrl } from "../services/store-url"
 
 interface TopGamesProps {
   data: SteamData
@@ -62,7 +64,11 @@ export function TopGames({ data, config, style = "default", size = "half" }: Top
             {displayStyle === "compact" ? (
               <div className="grid grid-cols-4 gap-3 half:grid-cols-3 half:gap-2.5">
                 {topGames.map((game) => (
-                  <div key={game.appid} className="flex flex-col items-center gap-2 half:gap-1.5 group">
+                  <ExternalLink
+                    key={game.appid}
+                    href={steamStoreUrl(game.appid)}
+                    className="flex flex-col items-center gap-2 half:gap-1.5 group"
+                  >
                     {game.header_image && (
                       <div className="relative w-full aspect-video overflow-hidden rounded-lg border-2 border-default-border/60 group-hover:border-default-highlight transition-all shadow-md group-hover:shadow-lg">
                         <img
@@ -80,7 +86,7 @@ export function TopGames({ data, config, style = "default", size = "half" }: Top
                         {formatPlaytime(game.playtime_forever)}
                       </p>
                     </div>
-                  </div>
+                  </ExternalLink>
                 ))}
               </div>
             ) : (
@@ -89,9 +95,10 @@ export function TopGames({ data, config, style = "default", size = "half" }: Top
                   const gameIconUrl = getSteamIconUrl(game)
 
                   return (
-                    <div
+                    <ExternalLink
                       key={game.appid}
-                      className="relative overflow-hidden rounded-xl border border-default-border/50 min-h-[80px] half:min-h-[70px] group hover:border-default-highlight/50 transition-all"
+                      href={steamStoreUrl(game.appid)}
+                      className="block relative overflow-hidden rounded-xl border border-default-border/50 min-h-[80px] half:min-h-[70px] group hover:border-default-highlight/50 transition-all"
                     >
                       {/* Background com blur */}
                       {game.header_image && (
@@ -131,7 +138,7 @@ export function TopGames({ data, config, style = "default", size = "half" }: Top
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </ExternalLink>
                   )
                 })}
               </div>

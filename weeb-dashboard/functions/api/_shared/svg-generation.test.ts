@@ -59,7 +59,16 @@ describe("getTerminalConfigs", () => {
       hideTerminalCommand: false,
       fontFamily: "poppins",
       terminalHeaderText: "",
+      animations: false,
     })
+  })
+
+  // Off unless the stored value is exactly true: a stray string must not start animating
+  // every card the cron regenerates.
+  it("turns animations on only for a literal true", () => {
+    expect(getTerminalConfigs({ animations: true }).animations).toBe(true)
+    expect(getTerminalConfigs({ animations: "true" }).animations).toBe(false)
+    expect(getTerminalConfigs({ animations: 1 }).animations).toBe(false)
   })
 
   it("passes through explicit values", () => {

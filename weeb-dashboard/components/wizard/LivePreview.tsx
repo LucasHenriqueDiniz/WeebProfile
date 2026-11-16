@@ -22,6 +22,8 @@ export function LivePreview() {
     customCss,
     customThemeColors,
     colorMode,
+    animations,
+    animationsReplayKey,
   } = useWizardStore(
     useShallow((state) => ({
       plugins: state.plugins,
@@ -36,6 +38,8 @@ export function LivePreview() {
       customCss: state.customCss,
       customThemeColors: state.customThemeColors,
       colorMode: state.colorMode,
+      animations: state.animations,
+      animationsReplayKey: state.animationsReplayKey,
     }))
   )
 
@@ -142,6 +146,8 @@ export function LivePreview() {
               customThemeColors={theme === "custom" ? customThemeColors : undefined}
               colorMode={colorMode}
               colorVariant={variant}
+              animations={animations}
+              animationsReplayKey={animationsReplayKey}
             />
           )}
         </ColorVariantsPreview>

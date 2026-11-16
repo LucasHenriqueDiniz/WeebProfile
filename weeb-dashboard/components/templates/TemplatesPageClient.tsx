@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { templateApi } from "@/lib/api"
-import { useLocaleNavigation } from "@/lib/navigation"
 import { ensureConsistentPlatforms } from "@/lib/templates-utils"
 import { motion } from "framer-motion"
 import { Filter, Search } from "lucide-react"
@@ -18,7 +17,6 @@ import type { Template } from "@/types/template"
 
 export function TemplatesPageClient() {
   const t = useTranslations("templatesPage")
-  const { toLocalePath } = useLocaleNavigation()
   const [templates, setTemplates] = useState<Template[]>([])
   const [filteredTemplates, setFilteredTemplates] = useState<Template[]>([])
   const [loading, setLoading] = useState(true)
@@ -288,7 +286,7 @@ export function TemplatesPageClient() {
               <h3 className="text-2xl font-semibold mb-2">{t("noTemplatesFound")}</h3>
               <p className="text-muted-foreground mb-6">{t("noTemplatesFoundDescription")}</p>
               <Button asChild>
-                <Link href={toLocalePath("/dashboard/new")}>{t("createYourOwn")}</Link>
+                <Link href="/dashboard/new">{t("createYourOwn")}</Link>
               </Button>
             </div>
           ) : (

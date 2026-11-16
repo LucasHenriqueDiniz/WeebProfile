@@ -46,6 +46,7 @@ export default function EditSvgPage() {
     setColorMode,
     setCustomThemeColors,
     setTerminalHeaderText,
+    setAnimations,
     setCustomCss,
     reorderPlugins,
   } = useWizardStore()
@@ -116,6 +117,7 @@ export default function EditSvgPage() {
     setFontFamily(saved.fontFamily)
     setTerminalHeaderText(saved.terminalHeaderText)
     setColorMode(saved.colorMode)
+    setAnimations(saved.animations)
     setCustomThemeColors(saved.customThemeColors)
 
     setCustomCss(svg.customCss || "")

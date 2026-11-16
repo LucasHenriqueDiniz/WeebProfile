@@ -28,6 +28,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     hideTerminalHeader,
     fontFamily,
     terminalHeaderText,
+    animations,
     customCss,
     customThemeColors,
     colorMode,
@@ -39,6 +40,8 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     setFontFamily,
     setColorMode,
     setTerminalHeaderText,
+    setAnimations,
+    replayAnimations,
     setCustomCss,
     setCustomThemeColor,
     resetCustomThemeColors,
@@ -70,6 +73,9 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
             hideTerminalHeader={hideTerminalHeader}
             fontFamily={fontFamily}
             terminalHeaderText={terminalHeaderText}
+            animations={animations}
+            setAnimations={setAnimations}
+            onReplayAnimations={replayAnimations}
             customCss={customCss}
             customThemeColors={customThemeColors}
             colorMode={colorMode}

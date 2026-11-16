@@ -37,6 +37,8 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { ImageComponent } from "../../../utils/image"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { treatJapaneseName } from "../../../utils/string"
+import { ExternalLink } from "../../../utils/external-link"
+import { malFavoriteUrl } from "../services/favorite-url"
 import type {
   BasicCharacterFavorite,
   BasicPeopleFavorite,
@@ -149,9 +151,11 @@ interface FavoritesListProps {
 // ============================================================================
 
 function SimpleFavoriteImage({
+  href,
   favorite,
   hideOverlay,
 }: {
+  href?: string
   favorite: FullAnimeFavorite | FullMangaFavorite | BasicCharacterFavorite | BasicPeopleFavorite
   hideOverlay: boolean
 }): React.ReactElement {
@@ -159,7 +163,7 @@ function SimpleFavoriteImage({
   const title = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
-    <div className="favorite-container relative">
+    <ExternalLink href={href} className="favorite-container relative">
       <ImageComponent
         url64={imageUrl}
         alt={title ?? "Name not found"}
@@ -172,22 +176,29 @@ function SimpleFavoriteImage({
           <span className="truncate whitespace-nowrap">{title}</span>
         </div>
       )}
-    </div>
+    </ExternalLink>
   )
 }
 
 function RenderSimpleFavorites({
   data,
+  type,
   hideOverlay,
 }: {
   data: FavoriteData
+  type: FavoriteType
   hideOverlay: boolean
   size: "half" | "full"
 }): React.ReactElement {
   return (
     <div className="grid grid-cols-10 half:grid-cols-5 gap-2">
       {data.map((item, index) => (
-        <SimpleFavoriteImage favorite={item} key={`simple-${item.mal_id}-${index}`} hideOverlay={hideOverlay} />
+        <SimpleFavoriteImage
+          favorite={item}
+          href={malFavoriteUrl(type, item.mal_id)}
+          key={`simple-${item.mal_id}-${index}`}
+          hideOverlay={hideOverlay}
+        />
       ))}
     </div>
   )
@@ -198,9 +209,11 @@ function RenderSimpleFavorites({
 // ============================================================================
 
 function DefaultCompactFavorite({
+  href,
   favorite,
   index,
 }: {
+  href?: string
   favorite: FullAnimeFavorite | FullMangaFavorite | BasicCharacterFavorite | BasicPeopleFavorite
   index: number
 }): React.ReactElement {
@@ -208,7 +221,10 @@ function DefaultCompactFavorite({
   const name = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
-    <div className="h-[50px] flex rounded-lg overflow-hidden border border-default-highlight-50 border-solid bg-default-surface/50 hover:bg-default-surface/80 transition-colors">
+    <ExternalLink
+      href={href}
+      className="h-[50px] flex rounded-lg overflow-hidden border border-default-highlight-50 border-solid bg-default-surface/50 hover:bg-default-surface/80 transition-colors"
+    >
       <div className="w-10 bg-default-highlight text-sm text-center text-white font-bold flex items-center justify-center text-default-surface flex-shrink-0">
         {index + 1}
       </div>
@@ -218,24 +234,26 @@ function DefaultCompactFavorite({
       <div className="w-16 h-full overflow-hidden flex-shrink-0 rounded-r-lg">
         <ImageComponent url64={img} alt={name} className="image-square" width={64} height={64} />
       </div>
-    </div>
+    </ExternalLink>
   )
 }
 
 function TerminalCompactFavorite({
+  href,
   favorite,
   index,
 }: {
+  href?: string
   favorite: FullAnimeFavorite | FullMangaFavorite | BasicCharacterFavorite | BasicPeopleFavorite
   index: number
 }): React.ReactElement {
   const name = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
-    <div className="flex align-center sm-text gap-1">
+    <ExternalLink href={href} className="flex align-center sm-text gap-1">
       <span className="text-terminal-raw">[{index + 1}]</span>
       <span className="text-terminal-warning md-2-text text-bold truncate no-underline">- {name}</span>
-    </div>
+    </ExternalLink>
   )
 }
 
@@ -244,10 +262,12 @@ function TerminalCompactFavorite({
 // ============================================================================
 
 function DefaultDetailedFavorite({
+  href,
   favorite,
   isHalf,
   type,
 }: {
+  href?: string
   favorite: FullAnimeFavorite | FullMangaFavorite
   isHalf: boolean
   type: "anime" | "manga"
@@ -272,7 +292,7 @@ function DefaultDetailedFavorite({
   const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
-    <div className="flex h-[120px] overflow-hidden gap-4">
+    <ExternalLink href={href} className="flex h-[120px] overflow-hidden gap-4">
       <div className="favorite-container">
         <ImageComponent url64={imageUrl} alt={title} className="image-portrait" width={75} height={120} />
       </div>
@@ -328,15 +348,17 @@ function DefaultDetailedFavorite({
           </div>
         )}
       </div>
-    </div>
+    </ExternalLink>
   )
 }
 
 function TerminalDetailedFavorite({
+  href,
   favorite,
   isHalf,
   type,
 }: {
+  href?: string
   favorite: FullAnimeFavorite | FullMangaFavorite
   isHalf: boolean
   type: "anime" | "manga"
@@ -358,7 +380,7 @@ function TerminalDetailedFavorite({
   const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
-    <div className="mt-[0.5rem]">
+    <ExternalLink href={href} className="mt-[0.5rem]">
       <div className="text-terminal-warning truncate">* {title}</div>
       <div className="flex gap-4 items-baseline">
         {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
@@ -384,7 +406,7 @@ function TerminalDetailedFavorite({
           <span className="synopsis-text line-clamp-2 truncate">{synopsis}</span>
         </div>
       )}
-    </div>
+    </ExternalLink>
   )
 }
 
@@ -393,10 +415,12 @@ function TerminalDetailedFavorite({
 // ============================================================================
 
 function DefaultMinimalFavorite({
+  href,
   favorite,
   isHalf,
   type,
 }: {
+  href?: string
   favorite: FullAnimeFavorite | FullMangaFavorite
   isHalf: boolean
   type: "anime" | "manga"
@@ -420,7 +444,7 @@ function DefaultMinimalFavorite({
   const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
-    <div className="flex h-[75px] overflow-hidden gap-2">
+    <ExternalLink href={href} className="flex h-[75px] overflow-hidden gap-2">
       <div className="image-square-container-75 h-full flex-shrink-0">
         <ImageComponent url64={imageUrl} alt={title} className="image-square" width={75} height={75} />
       </div>
@@ -471,15 +495,17 @@ function DefaultMinimalFavorite({
           ))}
         </div>
       </div>
-    </div>
+    </ExternalLink>
   )
 }
 
 function TerminalMinimalFavorite({
+  href,
   favorite,
   isHalf,
   type,
 }: {
+  href?: string
   favorite: FullAnimeFavorite | FullMangaFavorite
   isHalf: boolean
   type: "anime" | "manga"
@@ -500,7 +526,7 @@ function TerminalMinimalFavorite({
   const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
-    <div className="mt-[0.5rem]">
+    <ExternalLink href={href} className="mt-[0.5rem]">
       <div className="text-terminal-warning truncate">* {title}</div>
       <div className="flex gap-4 items-baseline">
         {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
@@ -521,7 +547,7 @@ function TerminalMinimalFavorite({
           <TerminalTag genre={genre} key={genre} />
         ))}
       </div>
-    </div>
+    </ExternalLink>
   )
 }
 
@@ -599,7 +625,7 @@ export function FavoritesList({
         return (
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-            <RenderSimpleFavorites data={displayData} hideOverlay={hideOverlay} size={size} />
+            <RenderSimpleFavorites data={displayData} type={type} hideOverlay={hideOverlay} size={size} />
           </>
         )
 
@@ -609,7 +635,12 @@ export function FavoritesList({
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
             <div className="flex flex-col gap-1">
               {displayData.map((item, index) => (
-                <DefaultCompactFavorite favorite={item} index={index} key={`${type}-${item.mal_id}-${index}`} />
+                <DefaultCompactFavorite
+                  favorite={item}
+                  href={malFavoriteUrl(type, item.mal_id)}
+                  index={index}
+                  key={`${type}-${item.mal_id}-${index}`}
+                />
               ))}
             </div>
           </>
@@ -625,6 +656,7 @@ export function FavoritesList({
                 {displayData.map((item, index) => (
                   <DefaultCompactFavorite
                     favorite={item}
+                    href={malFavoriteUrl(type, item.mal_id)}
                     index={index}
                     key={`${type}-compact-fallback-${item.mal_id}-${index}`}
                   />
@@ -640,6 +672,7 @@ export function FavoritesList({
               {displayData.map((item, index) => (
                 <DefaultDetailedFavorite
                   favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                  href={malFavoriteUrl(type, item.mal_id)}
                   isHalf={isHalf}
                   type={type}
                   key={`${type}-detailed-${item.mal_id}-${index}`}
@@ -659,6 +692,7 @@ export function FavoritesList({
                 {displayData.map((item, index) => (
                   <DefaultCompactFavorite
                     favorite={item}
+                    href={malFavoriteUrl(type, item.mal_id)}
                     index={index}
                     key={`${type}-compact-${item.mal_id}-${index}`}
                   />
@@ -674,6 +708,7 @@ export function FavoritesList({
               {displayData.map((item, index) => (
                 <DefaultMinimalFavorite
                   favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                  href={malFavoriteUrl(type, item.mal_id)}
                   isHalf={isHalf}
                   type={type}
                   key={`${type}-minimal-${item.mal_id}-${index}`}
@@ -701,7 +736,11 @@ export function FavoritesList({
               />
             )}
             {displayData.map((item, index) => (
-              <div className="truncate" key={`${type}-simple-${item.mal_id}-${index}`}>
+              <ExternalLink
+                className="block truncate"
+                href={malFavoriteUrl(type, item.mal_id)}
+                key={`${type}-simple-${item.mal_id}-${index}`}
+              >
                 <p className="sm-text font-semibold text-terminal-warning">
                   * {"name" in item ? treatJapaneseName(item.name) : item.title}
                 </p>
@@ -710,7 +749,7 @@ export function FavoritesList({
                     ({item.type}, {item.start_year})
                   </p>
                 )}
-              </div>
+              </ExternalLink>
             ))}
           </>
         )
@@ -729,6 +768,7 @@ export function FavoritesList({
               {displayData.map((item, index) => (
                 <TerminalCompactFavorite
                   favorite={item}
+                  href={malFavoriteUrl(type, item.mal_id)}
                   index={index}
                   key={`${type}-terminal-compact-${item.mal_id}-${index}`}
                 />
@@ -753,6 +793,7 @@ export function FavoritesList({
                 {displayData.map((item, index) => (
                   <TerminalCompactFavorite
                     favorite={item}
+                    href={malFavoriteUrl(type, item.mal_id)}
                     index={index}
                     key={`${type}-terminal-compact-${item.mal_id}-${index}`}
                   />
@@ -773,6 +814,7 @@ export function FavoritesList({
             {displayData.map((item, index) => (
               <TerminalDetailedFavorite
                 favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                href={malFavoriteUrl(type, item.mal_id)}
                 isHalf={isHalf}
                 type={type}
                 key={`${type}-terminal-detailed-${item.mal_id}-${index}`}
@@ -797,6 +839,7 @@ export function FavoritesList({
                 {displayData.map((item, index) => (
                   <TerminalCompactFavorite
                     favorite={item}
+                    href={malFavoriteUrl(type, item.mal_id)}
                     index={index}
                     key={`${type}-terminal-compact-${item.mal_id}-${index}`}
                   />
@@ -817,6 +860,7 @@ export function FavoritesList({
             {displayData.map((item, index) => (
               <TerminalMinimalFavorite
                 favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                href={malFavoriteUrl(type, item.mal_id)}
                 isHalf={isHalf}
                 type={type}
                 key={`${type}-terminal-minimal-${item.mal_id}-${index}`}

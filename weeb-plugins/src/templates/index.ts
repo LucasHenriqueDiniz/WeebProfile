@@ -1,5 +1,17 @@
 export { PluginStyles } from "./PluginStyles"
 export { RenderBasedOnStyle } from "./RenderBasedOnStyle"
+export {
+  AnimationsProvider,
+  useAnimations,
+  animationTimeline,
+  animationBaseStyle,
+  animationStepStyle,
+  sectionTail,
+  ANIMATION_BUDGET_S,
+  ANIMATION_TIMING,
+  type AnimationTimeline,
+} from "./animations"
+export { AnimatedNumber } from "./AnimatedNumber"
 
 // Default Templates
 export { DefaultGrid } from "./Default/DefaultGrid"

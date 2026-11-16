@@ -30,33 +30,18 @@ import LoadingScreen from "@/components/loading/LoadingScreen"
 import { SvgViewSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import { generateMarkdown } from "@/lib/utils/markdown"
 import { publicSvgUrl } from "@/lib/utils/svg-url"
-
-/** Compact card shell shared by the side panels — quieter than the shadcn Card headers. */
-function PanelCard({
-  icon: Icon,
-  title,
-  action,
-  children,
-}: {
-  icon: typeof Code2
-  title: string
-  action?: React.ReactNode
-  children: React.ReactNode
-}) {
-  return (
-    <div className="rounded-2xl border border-border bg-card">
-      <div className="flex items-center gap-2 border-b border-border/60 px-4 py-3">
-        <Icon className="h-4 w-4 text-primary" />
-        <span className="text-sm font-semibold text-foreground">{title}</span>
-        {action ? <span className="ml-auto">{action}</span> : null}
-      </div>
-      <div className="p-4">{children}</div>
-    </div>
-  )
-}
+import { nextRefreshAt } from "@/lib/utils/nightly-run"
+import { guessGithubLogin } from "@/lib/utils/github-profile"
+import { readEmbedAlt, writeEmbedAlt } from "@/lib/utils/embed-prefs"
+import { PanelCard } from "@/components/dashboard/PanelCard"
+import { SideBySidePanel } from "@/components/dashboard/SideBySidePanel"
+import { ProfileReadmePanel } from "@/components/dashboard/ProfileReadmePanel"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export default function SvgViewPage() {
   const t = useTranslations("view")
+  const tEmbed = useTranslations("embed")
   const locale = useLocale()
   const params = useParams<{ id: string }>()
   const searchParams = useSearchParams()
@@ -65,7 +50,7 @@ export default function SvgViewPage() {
   const { toast } = useToast()
   const svgId = params.id as string
   const urlFromQuery = searchParams.get("url")
-  const { getSvg, getSvgSync, updateSvg } = useSvgStore()
+  const { getSvg, getSvgSync, updateSvg, svgs: allSvgs, fetchSvgs } = useSvgStore()
 
   // Tentar pegar do cache imediatamente (síncrono)
   const cachedSvg = getSvgSync(svgId)
@@ -73,6 +58,8 @@ export default function SvgViewPage() {
   const [loading, setLoading] = useState(!cachedSvg) // Só loading se não tiver cache
   const [copied, setCopied] = useState(false)
   const [generating, setGenerating] = useState(false)
+  // What the user typed as alt text; null until they do, and then the SVG's name applies.
+  const [typedAlt, setTypedAlt] = useState<string | null>(() => readEmbedAlt(svgId))
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -94,6 +81,13 @@ export default function SvgViewPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading, svgId])
+
+  // The other SVGs: the half ones can share a row with this one, and a github plugin
+  // username is a guess at the README's owner. Cached by the store for 5 minutes.
+  useEffect(() => {
+    if (user) fetchSvgs()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
 
   const loadSvg = async (force = false) => {
     // Só mostrar loading se realmente não tiver dados
@@ -148,15 +142,14 @@ export default function SvgViewPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [svg?.status, svgId]) // Só re-executar se o status mudar
 
+  const altText = typedAlt?.trim() || svg?.name || "Profile"
+
   const handleCopyMarkdown = async () => {
     if (!svg || !(svg.storageUrl || urlFromQuery)) return
-    const url = publicSvgUrl(svgId)
-
     const markdown = generateMarkdown({
-      name: svg.name || "Profile",
-      url,
+      alt: altText,
+      url: publicSvgUrl(svgId),
       size: (svg.size as "half" | "full") || "half",
-      lastGeneratedAt: svg.lastGeneratedAt,
     })
 
     try {
@@ -357,12 +350,22 @@ export default function SvgViewPage() {
   const markdownCode =
     svg && publicUrl
       ? generateMarkdown({
-          name: svg.name || "Profile",
+          alt: altText,
           url: publicUrl,
           size: (svg.size as "half" | "full") || "half",
-          lastGeneratedAt: svg.lastGeneratedAt,
         })
-      : `![${svg?.name || "Profile"}](${publicUrl ?? ""})`
+      : ""
+
+  // Generated ones only: a README pointing at an SVG with nothing in R2 shows a broken image.
+  const otherHalves =
+    svg?.size === "half"
+      ? allSvgs.filter((other) => other.id !== svgId && other.size === "half" && other.storageUrl)
+      : []
+  const guessedLogin = guessGithubLogin(user?.user_metadata.github_login, [
+    ...(svg ? [svg] : []),
+    ...allSvgs.filter((other) => other.id !== svgId),
+  ])
+  const nextRefresh = svg ? nextRefreshAt(svg, new Date()) : null
 
   const plugins: string[] = (svg?.pluginsOrder || "")
     .split(",")
@@ -540,7 +543,31 @@ export default function SvgViewPage() {
               <pre className="whitespace-pre-wrap [overflow-wrap:anywhere] rounded-lg border border-border/50 bg-muted/50 p-3 font-mono text-xs">
                 <code className="text-foreground">{markdownCode}</code>
               </pre>
+              {svg && (
+                <div className="mt-3">
+                  <Label htmlFor="embed-alt" className="mb-1.5 block text-xs text-muted-foreground">
+                    {tEmbed("altLabel")}
+                  </Label>
+                  <Input
+                    id="embed-alt"
+                    value={typedAlt ?? svg.name ?? ""}
+                    onChange={(e) => {
+                      setTypedAlt(e.target.value)
+                      writeEmbedAlt(svgId, e.target.value)
+                    }}
+                    placeholder={svg.name}
+                    className="h-8 text-xs"
+                  />
+                  <p className="mt-1.5 text-xs text-muted-foreground">{tEmbed("altHint")}</p>
+                </div>
+              )}
             </PanelCard>
+
+            {svg && otherHalves.length > 0 && (
+              <SideBySidePanel current={svg} currentAlt={altText} others={otherHalves} />
+            )}
+
+            {svg && user && <ProfileReadmePanel userId={user.id} guessedLogin={guessedLogin} />}
 
             {/* URL */}
             {publicUrl && (
@@ -608,6 +635,29 @@ export default function SvgViewPage() {
                       </dd>
                     </div>
                   )}
+                  <div className="flex items-center justify-between gap-4 border-t border-border/50 pt-3">
+                    <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                      {tEmbed("nextRefresh.label")}
+                    </dt>
+                    <dd
+                      className="text-right text-xs text-foreground"
+                      title={
+                        nextRefresh
+                          ? tEmbed("nextRefresh.nightly", {
+                              time: nextRefresh.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" }),
+                            })
+                          : undefined
+                      }
+                    >
+                      {nextRefresh
+                        ? `${formatRelative(nextRefresh.toISOString(), locale)} · ${nextRefresh.toLocaleString(locale, {
+                            weekday: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}`
+                        : tEmbed("nextRefresh.paused")}
+                    </dd>
+                  </div>
                   <div className="flex items-center justify-between gap-4 border-t border-border/50 pt-3">
                     <dt className="text-xs uppercase tracking-wide text-muted-foreground">{t("info.createdAt")}</dt>
                     <dd className="text-xs text-foreground" title={new Date(svg.createdAt).toLocaleString()}>

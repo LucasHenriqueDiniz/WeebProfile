@@ -14,6 +14,7 @@ import {
   isAutoColorMode,
   type ColorVariant,
 } from "../themes/theme-utils"
+import { AnimationsProvider, animationStepStyle } from "./animations"
 import type { DefaultTheme, TerminalTheme } from "../themes/types"
 
 interface PluginStylesProps {
@@ -35,6 +36,9 @@ interface PluginStylesProps {
   // Draws one variant of an auto card without the media query, so a preview can show
   // the light and the dark card whatever the viewer's own scheme is.
   colorVariant?: ColorVariant
+  // Opt-in card animations (templates/animations.tsx). The gap between sections comes
+  // from animationTimeline(); the stylesheet itself is ANIMATIONS_CSS, added by the caller.
+  animations?: { step: number }
 }
 
 export const FONT_FAMILIES: Record<string, string> = {
@@ -69,6 +73,7 @@ export function PluginStyles({
   terminalHeaderText,
   colorMode,
   colorVariant,
+  animations,
 }: PluginStylesProps): React.ReactElement {
   const styleDef = STYLE_DEFINITIONS[style] || STYLE_DEFINITIONS.default
   const scopeId = React.useId()
@@ -110,6 +115,7 @@ export function PluginStyles({
     // Apply background color for terminal style
     ...(terminalBackground ? { backgroundColor: terminalBackground } : {}),
     ...(autoCss ? {} : themeVariables),
+    ...(animations ? animationStepStyle(animations.step) : {}),
   } as React.CSSProperties & Record<string, string>
 
   // Terminal-specific: show header
@@ -117,7 +123,7 @@ export function PluginStyles({
 
   const container = (
     <div
-      className={styleDef.containerClass}
+      className={animations ? `${styleDef.containerClass} weeb-anim` : styleDef.containerClass}
       data-style={styleDef.name}
       data-theme={theme}
       data-color-mode={auto ? "auto" : undefined}
@@ -125,7 +131,7 @@ export function PluginStyles({
       style={themeStyles}
     >
       {showTerminalHeader && <TerminalHeader title={terminalHeaderText?.trim() || undefined} />}
-      {children}
+      <AnimationsProvider enabled={Boolean(animations)}>{children}</AnimationsProvider>
     </div>
   )
 

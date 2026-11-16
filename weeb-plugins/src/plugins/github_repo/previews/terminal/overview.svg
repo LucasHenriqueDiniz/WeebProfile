@@ -42,6 +42,15 @@
   box-sizing: border-box;
 }
 
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card (GitHub recent activity, among others). :where() keeps it at zero
+   specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Container */
 #svg-main .terminal-container {
   --font-family:
@@ -1362,10 +1371,6 @@
   background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
 }
 
-#svg-main .bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
-}
-
 #svg-main .bg-yellow-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1))
@@ -2317,4 +2322,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9"><div><div><section id="github-repo-overview"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run github_repo overview</span></div><div class="flex items-center gap-4 px-1 py-1 text-sm"><span class="text-terminal-highlight font-bold">weebprofile/WeebProfile</span><span class="text-terminal-muted">★ <!-- -->128</span><span class="text-terminal-muted">⑂ <!-- -->24</span><span class="text-terminal-muted">issues <!-- -->12</span></div></section></div></div></div></div></foreignObject></svg>
+</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9"><div><div><section id="github-repo-overview"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run github_repo overview</span></div><a href="https://github.com/weebprofile/WeebProfile" target="_top" rel="noopener noreferrer" class="flex items-center gap-4 px-1 py-1 text-sm"><span class="text-terminal-highlight font-bold">weebprofile/WeebProfile</span><span class="text-terminal-muted">★ <!-- -->128</span><span class="text-terminal-muted">⑂ <!-- -->24</span><span class="text-terminal-muted">issues <!-- -->12</span></a></section></div></div></div></div></foreignObject></svg>

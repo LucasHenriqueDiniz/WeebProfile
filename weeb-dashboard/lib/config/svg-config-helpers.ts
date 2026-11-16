@@ -16,6 +16,7 @@ export function getTerminalConfigs(uiConfig: UiConfig | null | undefined): {
   fontFamily: string
   terminalHeaderText: string
   colorMode: "fixed" | "auto"
+  animations: boolean
 } {
   const config = uiConfig || {}
   return {
@@ -25,6 +26,7 @@ export function getTerminalConfigs(uiConfig: UiConfig | null | undefined): {
     fontFamily: config.fontFamily ?? "poppins",
     terminalHeaderText: config.terminalHeaderText ?? "",
     colorMode: config.colorMode === "auto" ? "auto" : "fixed",
+    animations: config.animations === true,
   }
 }
 
@@ -40,6 +42,7 @@ export function setTerminalConfigs(
     fontFamily?: string
     terminalHeaderText?: string
     colorMode?: "fixed" | "auto"
+    animations?: boolean
   }
 ): UiConfig {
   const current = uiConfig || {}
@@ -52,6 +55,7 @@ export function setTerminalConfigs(
     ...(configs.terminalHeaderText !== undefined && { terminalHeaderText: configs.terminalHeaderText }),
     // Stored only when on: a card without the key is a fixed one, as every card was.
     ...(configs.colorMode === "auto" && { colorMode: "auto" }),
+    ...(configs.animations !== undefined && { animations: configs.animations }),
   }
 }
 
@@ -63,6 +67,7 @@ export interface StyleUiConfig {
   fontFamily: string
   terminalHeaderText: string
   colorMode: "fixed" | "auto"
+  animations: boolean
   customThemeColors: Record<string, string>
 }
 
@@ -80,6 +85,7 @@ export function buildStyleUiConfig(theme: string, style: StyleUiConfig): UiConfi
       fontFamily: style.fontFamily,
       terminalHeaderText: style.terminalHeaderText.trim() || undefined,
       colorMode: style.colorMode,
+      animations: style.animations,
     }
   )
   if (theme === "custom" && Object.keys(style.customThemeColors).length > 0) {
