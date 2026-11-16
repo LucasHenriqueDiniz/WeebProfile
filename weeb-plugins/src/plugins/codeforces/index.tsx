@@ -34,17 +34,17 @@ export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesD
     let h = 0
     for (const s of config.sections) {
       if (s === "rating_rank") {
-        h += isTerminal ? 96 : 76
+        h += isTerminal ? 64 : 76
       } else if (s === "contests_participated") {
-        h += isTerminal ? 76 : 80
+        h += isTerminal ? 44 : 80
       } else if (s === "problems_solved") {
         const byDifficulty = cfData.problemsSolved?.byDifficulty ?? {}
         const n = Object.values(byDifficulty).filter((count) => (count ?? 0) > 0).length
-        // Measured in Chromium. Terminal: the command and the total take 76px, and each
+        // Measured in Chromium. Terminal: the command and the total take 44px, and each
         // difficulty is a 20px line. Default: the title and the total take 76px, and each
         // grid row is a 20px line plus an 8px gap; with no difficulty there is no grid.
         if (isTerminal) {
-          h += 76 + n * 20
+          h += 44 + n * 20
         } else {
           const rows = Math.ceil(n / DIFFICULTY_COLUMNS[size === "full" ? "full" : "half"])
           h += 76 + rows * 28
@@ -53,7 +53,7 @@ export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesD
         const max = ne.recent_submissions_max ?? 5
         const n = Math.min(cfData.recentSubmissions?.length ?? max, max)
         if (n === 0) continue
-        h += isTerminal ? 56 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
+        h += isTerminal ? 24 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
       }
     }
     return h

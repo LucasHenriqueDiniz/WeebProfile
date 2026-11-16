@@ -152,6 +152,8 @@ this.register(meuPlugin)
 
 A altura do SVG é calculada **estaticamente** somando o `calculateHeight()` de cada seção habilitada (sem browser/Playwright). Se o plugin tiver seções com altura variável (listas, grids), garanta que `calculateHeight()` reflita o layout real renderizado.
 
+**O header do terminal (32px, `TERMINAL_HEADER_HEIGHT`) não entra no `calculateHeight()`.** Ele é desenhado uma vez por SVG, acima de todos os plugins, e o `generateSvg` soma os 32px uma vez quando o estilo é terminal e o header está visível. Até 11/2026, 53 seções terminais tinham o header embutido na própria altura (o `audit:heights` media com o header desenhado): um card com três seções do Stack Overflow saía com 96px de terminal vazio com o header desligado, que é o padrão. Outras não contavam, e um card do Dev.to com o header ligado perdia os últimos 8px. O `audit:heights` mede sem o header, então ele compara exatamente o que a seção desenha.
+
 ### 6. Regenerar o metadata centralizado
 
 ```bash

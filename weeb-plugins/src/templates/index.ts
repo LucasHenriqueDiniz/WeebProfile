@@ -25,7 +25,7 @@ export { HorizontalMultipleItemsBar } from "./Default/HorizontalMultipleItemsBar
 export { TerminalBody } from "./Terminal/TerminalBody"
 export { TerminalCommand } from "./Terminal/TerminalCommand"
 export { TerminalGrid } from "./Terminal/TerminalGrid"
-export { TerminalHeader } from "./Terminal/TerminalHeader"
+export { TerminalHeader, TERMINAL_HEADER_HEIGHT } from "./Terminal/TerminalHeader"
 export { TerminalHorizontalMultipleItemsBar } from "./Terminal/TerminalHorizontalMultipleItems"
 export { TerminalLine } from "./Terminal/TerminalLine"
 export { TerminalLineWithDots } from "./Terminal/TerminalLineWithDots"

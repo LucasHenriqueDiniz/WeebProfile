@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="336" class="half terminal flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="304" class="half terminal flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
     #svg-main {
   --terminal-color-surface: #161b22;
   --terminal-color-background: #0d1117;
@@ -8,6 +8,8 @@
   --terminal-color-muted: #8b949e;
   --terminal-color-muted-light: #6e7681;
   --terminal-color-raw: #c9d1d9;
+  --terminal-color-warning: #ffaa00;
+  --terminal-color-stripe: rgba(0, 0, 0, 0.25);
     }
   </style><style>@font-face {
   font-family: 'JetBrains Mono';
@@ -40,6 +42,15 @@
 #svg-main ::before,
 #svg-main ::after {
   box-sizing: border-box;
+}
+
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card (GitHub recent activity, among others). :where() keeps it at zero
+   specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Container */
@@ -101,7 +112,7 @@
 }
 
 #svg-main .text-terminal-warning {
-  color: #ffaa00 !important;
+  color: var(--terminal-color-warning, #ffaa00) !important;
 }
 
 #svg-main .bg-terminal-highlight {
@@ -167,6 +178,12 @@
 
 #svg-main .bg-black\/25 {
   background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Zebra rows of TerminalGrid. A theme value, not black at 25%: on the light palette
+   of the auto mode that turned the row #bfbfbf, under gray text at 1.9:1. */
+#svg-main .bg-terminal-stripe {
+  background-color: var(--terminal-color-stripe, rgba(0, 0, 0, 0.25));
 }
 
 /* Terminal Command */
@@ -1080,6 +1097,11 @@
   gap: 9px
 }
 
+#svg-main .gap-x-1 {
+  -moz-column-gap: 0.25rem;
+       column-gap: 0.25rem
+}
+
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
@@ -1310,10 +1332,6 @@
   background-color: rgb(0 0 0 / 0.2)
 }
 
-#svg-main .bg-black\/25 {
-  background-color: rgb(0 0 0 / 0.25)
-}
-
 #svg-main .bg-black\/40 {
   background-color: rgb(0 0 0 / 0.4)
 }
@@ -1360,10 +1378,6 @@
 #svg-main .bg-red-950 {
   --tw-bg-opacity: 1;
   background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
-}
-
-#svg-main .bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
 }
 
 #svg-main .bg-yellow-50 {
@@ -2317,4 +2331,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9"><div><div><div class="font-mono terminal-container terminal-body px-2 "><section id="github-starred-repositories"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run github starred_repositories</span></div><div class="grid grid-cols-2 grid-cols-3"><span class="truncate text-sm text-white font-semibold bg-terminal-highlight text-center px-1">Repository</span><span class="text-sm whitespace-nowrap bg-terminal-highlight text-white font-semibold text-center px-1">Stats</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-black/25">KittenBusters/CharmingKitten</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-black/25">Exposing CharmingKitten&#x27;s malicious activity for IRGC-IO  Counterintelligence division (1500)</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-black/25">⭐ 378 🍴 86</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">weebprofile/vscode-context-tools</span><span class="text-terminal-muted-light w-full text-center truncate text-sm ">Copy current file/selection/open editors as fenced blocks, project tree, and diagnostics (Problems). Optimized for pasting into LLM/chat.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 1 🍴 0</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-black/25">Raphire/Win11Debloat</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-black/25">A simple, lightweight PowerShell script to remove pre-installed apps, disable telemetry, as well as perform various other changes to customize, declutter and improve your Windows experience. Win11Debloat works for both Windows 10 and Windows 11.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-black/25">⭐ 33.4K 🍴 1.3K</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">lafayettegabe/fastsqs</span><span class="text-terminal-muted-light w-full text-center truncate text-sm ">📨 Fast and modern SQS routing and middleware for Python.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 2 🍴 1</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-black/25">VSCodium/vscodium</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-black/25">binary releases of VS Code without MS branding/telemetry/licensing</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-black/25">⭐ 29.2K 🍴 1.5K</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">Zagrios/bs-manager</span><span class="text-terminal-muted-light w-full text-center truncate text-sm ">An all-in-one tool that lets you easly manage BeatSaber versions, maps, mods, and even more.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 927 🍴 73</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-black/25">BuildandShoot/openspades</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-black/25">Compatible client of Ace of Spades 0.75</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-black/25">⭐ 13 🍴 1</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">elias-sundqvist/obsidian-react-components</span><span class="text-terminal-muted-light w-full text-center truncate text-sm ">Write and use React (Jsx) components in your Obsidian notes.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 278 🍴 20</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-black/25">lafayettegabe/elk-deploy</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-black/25">🦌 One-command Terraform stack that deploys single-node ELK + Fleet/APM on AWS, fronted by an ALB with custom domain and HTTPS</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-black/25">⭐ 4 🍴 1</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">Live2D/CubismWebSamples</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 352 🍴 110</span></div><div class="text-terminal-muted text-sm text-center mt-2">+<!-- -->60<!-- --> more</div></section></div></div></div></div></div></foreignObject></svg>
+</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9;--terminal-color-warning:#ffaa00;--terminal-color-stripe:rgba(0, 0, 0, 0.25)"><div><div><div class="font-mono terminal-container terminal-body px-2 "><section id="github-starred-repositories"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run github starred_repositories</span></div><div class="grid grid-cols-2 grid-cols-3"><span class="truncate text-sm text-white font-semibold bg-terminal-highlight text-center px-1">Repository</span><span class="text-sm whitespace-nowrap bg-terminal-highlight text-white font-semibold text-center px-1">Stats</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-terminal-stripe">KittenBusters/CharmingKitten</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-terminal-stripe">Exposing CharmingKitten&#x27;s malicious activity for IRGC-IO  Counterintelligence division (1500)</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-terminal-stripe">⭐ 378 🍴 86</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">weebprofile/vscode-context-tools</span><span class="text-terminal-muted-light w-full text-center truncate text-sm ">Copy current file/selection/open editors as fenced blocks, project tree, and diagnostics (Problems). Optimized for pasting into LLM/chat.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 1 🍴 0</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-terminal-stripe">Raphire/Win11Debloat</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-terminal-stripe">A simple, lightweight PowerShell script to remove pre-installed apps, disable telemetry, as well as perform various other changes to customize, declutter and improve your Windows experience. Win11Debloat works for both Windows 10 and Windows 11.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-terminal-stripe">⭐ 33.4K 🍴 1.3K</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">lafayettegabe/fastsqs</span><span class="text-terminal-muted-light w-full text-center truncate text-sm ">📨 Fast and modern SQS routing and middleware for Python.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 2 🍴 1</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-terminal-stripe">VSCodium/vscodium</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-terminal-stripe">binary releases of VS Code without MS branding/telemetry/licensing</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-terminal-stripe">⭐ 29.2K 🍴 1.5K</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">Zagrios/bs-manager</span><span class="text-terminal-muted-light w-full text-center truncate text-sm ">An all-in-one tool that lets you easly manage BeatSaber versions, maps, mods, and even more.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 927 🍴 73</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-terminal-stripe">BuildandShoot/openspades</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-terminal-stripe">Compatible client of Ace of Spades 0.75</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-terminal-stripe">⭐ 13 🍴 1</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">elias-sundqvist/obsidian-react-components</span><span class="text-terminal-muted-light w-full text-center truncate text-sm ">Write and use React (Jsx) components in your Obsidian notes.</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 278 🍴 20</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 bg-terminal-stripe">lafayettegabe/elk-deploy</span><span class="text-terminal-muted-light w-full text-center truncate text-sm bg-terminal-stripe">🦌 One-command Terraform stack that deploys single-node ELK + Fleet/APM on AWS, fronted by an ALB with custom domain and HTTPS</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end bg-terminal-stripe">⭐ 4 🍴 1</span><span class="font-semibold w-full truncate text-sm text-terminal-warning pl-1 ">Live2D/CubismWebSamples</span><span class="text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ">⭐ 352 🍴 110</span></div><div class="text-terminal-muted text-sm text-center mt-2">+<!-- -->60<!-- --> more</div></section></div></div></div></div></div></foreignObject></svg>

@@ -143,11 +143,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       // As constantes do terminal já incluem o espaçamento completo de cada seção -
       // desconta o pad global (+24) que o PluginManager soma no total.
       h -= 24
-      // Header do terminal (janela com os três botões) é renderizado uma única vez
-      // por SVG, fora do ScaledBox - 32px fixos, sem escalar, apenas quando visível.
-      if (!(config as { hideTerminalHeader?: boolean }).hideTerminalHeader) {
-        h += 32
-      }
+      // The terminal header is counted once per SVG by generateSvg, not here.
     }
 
     return h

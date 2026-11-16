@@ -4,6 +4,13 @@
 
 import React from "react"
 
+/**
+ * Height of the header in px, measured in Chromium. It is drawn once per SVG, above every
+ * plugin, so it is added to the SVG's height once (svg-generator's generateSvg), never
+ * by a plugin's calculateHeight.
+ */
+export const TERMINAL_HEADER_HEIGHT = 32
+
 interface TerminalHeaderProps {
   title?: string
   className?: string
