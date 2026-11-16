@@ -21,6 +21,20 @@ export const SVG_CONTENT_SECURITY_POLICY =
   "default-src 'none'; style-src 'unsafe-inline'; img-src data: https:; font-src data:; sandbox"
 
 /**
+ * A card's CSS animations play once, when the browser decodes the image. With
+ * `max-age=60` a reload inside that minute reused the decoded image, already at rest:
+ * WebKit never replayed, Firefox did not on a new navigation, and Chromium did not
+ * when the README repeats the same URL. `no-cache` makes the browser fetch it again,
+ * and a fresh copy plays again in all three (docs/animations.md, "Replay").
+ *
+ * The browser's copy comes from GitHub's camo, which forwards this header as is and
+ * keeps the image `s-maxage` seconds, so this route still sees at most one request per
+ * card per camo cache per minute. No ETag or Last-Modified: on a 304 WebKit keeps the
+ * image at rest, and camo drops the ETag anyway.
+ */
+export const SVG_CACHE_CONTROL = "no-cache, s-maxage=60"
+
+/**
  * GET /api/svg/[id] - Serve generated SVG file from R2. Also at /svg/[id].svg
  * (functions/svg/[id].ts), the address the dashboard gives for READMEs.
  *
@@ -53,7 +67,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params }
         "Content-Type": "image/svg+xml",
         "Content-Security-Policy": SVG_CONTENT_SECURITY_POLICY,
         "X-Content-Type-Options": "nosniff",
-        "Cache-Control": "public, max-age=60, s-maxage=60",
+        "Cache-Control": SVG_CACHE_CONTROL,
         "CDN-Cache-Control": "public, max-age=300",
       },
     })
