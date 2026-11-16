@@ -15,10 +15,38 @@ import { ApiError, upstreamFailure } from "../../shared/utils/errors"
 const CODEFORCES_API_BASE = "https://codeforces.com/api"
 
 /**
- * Último timestamp de requisição para throttling
+ * Codeforces has no endpoint for the solved count, so it is counted from the
+ * submission history. `count=100` counted only the last 100 submissions: tourist's
+ * card said 72 while his profile says 3060.
+ *
+ * The whole history costs time, so it is asked for only when the card shows the solved
+ * count: tourist's answered in 0.34 s for count=50 and 1.23 s for all 5,519
+ * submissions (2026-11-16). The heaviest accounts measured (11-13k submissions) take
+ * 1.7-5.2 s, 0.5 MB gzipped, under fetchJson's 8 s per attempt. It is one call rather
+ * than pages because each page would be one more call against the API's rate limit
+ * (see MIN_REQUEST_INTERVAL). The cap only bounds the payload of an outlier, and a
+ * total counted from a capped history is marked as a lower bound.
+ */
+export const SUBMISSION_HISTORY_CAP = 20_000
+const RECENT_SUBMISSIONS_LIMIT = 50
+
+/**
+ * A long history has letters up to U (tourist) and the numbered acmsguru problems.
+ * Letters past H go under `I+` and anything that is not a letter under `Other`, so
+ * the breakdown has at most ten groups.
+ */
+const LAST_SINGLE_DIFFICULTY = "H"
+const LATER_DIFFICULTIES = "I+"
+const OTHER_DIFFICULTIES = "Other"
+
+/**
+ * Spacing between this plugin's calls. Codeforces' API documentation asks for at most
+ * one call every two seconds; this is 5 a second, what the plugin has always used.
+ * Honouring the documented limit would add up to 4 s to every card (three calls), so
+ * it is a known gap, not an oversight.
  */
 let lastRequestTime = 0
-const MIN_REQUEST_INTERVAL = 200 // 200ms = 5 req/s
+const MIN_REQUEST_INTERVAL = 200
 
 /**
  * Aguarda o intervalo mínimo entre requisições (throttling)
@@ -88,6 +116,7 @@ interface CodeforcesSubmissionResponse {
   relativeTimeSeconds: number
   problem: {
     contestId?: number
+    problemsetName?: string
     index?: string
     name: string
     type: string
@@ -130,6 +159,33 @@ function formatVerdict(verdict: string): string {
   return verdictMap[verdict] || verdict
 }
 
+function difficultyOf(index: string | undefined): string {
+  const letter = index?.[0] ?? ""
+  if (letter < "A" || letter > "Z") return OTHER_DIFFICULTIES
+  return letter > LAST_SINGLE_DIFFICULTY ? LATER_DIFFICULTIES : letter
+}
+
+/**
+ * Counts each accepted problem once, the way the profile's "problems solved for all
+ * time" does, and puts each one in exactly one difficulty, so the breakdown sums to
+ * the total.
+ */
+function countSolvedProblems(submissions: CodeforcesSubmissionResponse[]): CodeforcesData["problemsSolved"] {
+  const solved = new Set<string>()
+  const byDifficulty: Record<string, number> = {}
+
+  for (const { verdict, problem } of submissions) {
+    if (verdict !== "OK" || !problem.name) continue
+    const key = `${problem.contestId ?? problem.problemsetName ?? "unknown"}-${problem.index ?? problem.name}`
+    if (solved.has(key)) continue
+    solved.add(key)
+    const difficulty = difficultyOf(problem.index)
+    byDifficulty[difficulty] = (byDifficulty[difficulty] || 0) + 1
+  }
+
+  return { total: solved.size, byDifficulty }
+}
+
 /**
  * Busca dados do Codeforces
  */
@@ -166,55 +222,42 @@ export async function fetchCodeforcesData(config: CodeforcesConfig, dev = false)
 
     const contestsCount = ratingResponse.result?.length || 0
 
-    // Buscar submissões recentes
-    await throttleRequest()
-    const submissionsUrl = `${CODEFORCES_API_BASE}/user.status?handle=${encodeURIComponent(handle)}&from=1&count=100`
-    const submissionsResponse = await fetchJson<CodeforcesApiResponse<CodeforcesSubmissionResponse[]>>(submissionsUrl)
-
-    // Processar submissões
-    const recentSubmissions: CodeforcesSubmission[] = []
-    const problemsSolvedSet = new Set<string>()
-    const problemsSolvedByDifficulty: Record<string, number> = {}
-
-    if (submissionsResponse.result) {
-      for (const submission of submissionsResponse.result) {
-        // Contar apenas submissões aceitas (OK) como problemas resolvidos
-        if (submission.verdict === "OK" && submission.problem.name) {
-          const problemKey = `${submission.problem.contestId || "unknown"}-${submission.problem.index || "unknown"}`
-          if (!problemsSolvedSet.has(problemKey)) {
-            problemsSolvedSet.add(problemKey)
-            const difficulty = submission.problem.index?.[0] || "Unknown"
-            problemsSolvedByDifficulty[difficulty] = (problemsSolvedByDifficulty[difficulty] || 0) + 1
-          }
-        }
-
-        // Adicionar às submissões recentes (limitado)
-        if (recentSubmissions.length < 50) {
-          const problemName = submission.problem.name
-          const contestId = submission.problem.contestId
-          const index = submission.problem.index
-          const displayName = contestId && index ? `${contestId}${index} - ${problemName}` : problemName
-
-          recentSubmissions.push({
-            problem: displayName,
-            verdict: formatVerdict(submission.verdict),
-            date: new Date(submission.creationTimeSeconds * 1000).toISOString(),
-            contestId,
-            index,
-          })
-        }
-      }
+    // The whole history only when the solved count is on the card, the newest few for
+    // the recent list, and no call at all when neither is (the landing page's preview
+    // shows only rating and contests).
+    const sections = config.sections ?? []
+    const countsSolved = sections.includes("problems_solved")
+    let submissions: CodeforcesSubmissionResponse[] = []
+    if (countsSolved || sections.includes("recent_submissions")) {
+      const submissionsCount = countsSolved ? SUBMISSION_HISTORY_CAP : RECENT_SUBMISSIONS_LIMIT
+      await throttleRequest()
+      const submissionsUrl = `${CODEFORCES_API_BASE}/user.status?handle=${encodeURIComponent(handle)}&from=1&count=${submissionsCount}`
+      const submissionsResponse = await fetchJson<CodeforcesApiResponse<CodeforcesSubmissionResponse[]>>(submissionsUrl)
+      submissions = submissionsResponse.result ?? []
     }
+
+    const recentSubmissions: CodeforcesSubmission[] = submissions
+      .slice(0, RECENT_SUBMISSIONS_LIMIT)
+      .map(({ problem, verdict, creationTimeSeconds }) => {
+        const { name, contestId, index } = problem
+        return {
+          problem: contestId && index ? `${contestId}${index} - ${name}` : name,
+          verdict: formatVerdict(verdict),
+          date: new Date(creationTimeSeconds * 1000).toISOString(),
+          contestId,
+          index,
+        }
+      })
 
     return {
       rating: userInfo.rating || 0,
       rank: userInfo.rank || "Unrated",
       contestsCount,
       problemsSolved: {
-        total: problemsSolvedSet.size,
-        byDifficulty: problemsSolvedByDifficulty,
+        ...countSolvedProblems(submissions),
+        capped: countsSolved && submissions.length >= SUBMISSION_HISTORY_CAP,
       },
-      recentSubmissions: recentSubmissions.slice(0, 50),
+      recentSubmissions,
     }
   } catch (error) {
     console.error("[Codeforces] Error fetching data:", error)

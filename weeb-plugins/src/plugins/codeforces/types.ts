@@ -43,6 +43,8 @@ export interface CodeforcesData {
   problemsSolved: {
     total: number
     byDifficulty: Record<string, number>
+    /** The history was cut at the cap, so the total is a lower bound. */
+    capped?: boolean
   }
   recentSubmissions: CodeforcesSubmission[]
 }

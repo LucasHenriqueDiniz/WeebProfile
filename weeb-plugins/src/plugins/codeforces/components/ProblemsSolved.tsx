@@ -9,13 +9,22 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
-import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
+import { formatNumber } from "../../shared/utils/formatting"
 import type { CodeforcesConfig } from "../types"
+
+/**
+ * Columns of the breakdown grid, matching `grid-cols-10 half:grid-cols-5` below. A
+ * fixed grid gives a row count calculateHeight can know; the wrapping row it replaced
+ * spilled out of the section once the whole history brought nine or more groups.
+ */
+export const DIFFICULTY_COLUMNS = { half: 5, full: 10 } as const
 
 interface ProblemsSolvedProps {
   total: number
   byDifficulty: Record<string, number>
+  /** The total is a lower bound: it is shown with a trailing "+". */
+  capped?: boolean
   config: CodeforcesConfig
   style?: "default" | "terminal"
   size?: "half" | "full"
@@ -24,14 +33,18 @@ interface ProblemsSolvedProps {
 export function ProblemsSolved({
   total,
   byDifficulty,
+  capped = false,
   config,
   style = "default",
   size = "half",
 }: ProblemsSolvedProps): React.ReactElement {
   const hideTitle = config.nonEssential?.problems_solved_hide_title || false
   const title = config.nonEssential?.problems_solved_title || "Programming Problems Solved"
+  // Exact, like each difficulty below: the total reads the same as the Codeforces
+  // profile, and the difficulties visibly add up to it.
+  const totalLabel = `${formatNumber(total)}${capped ? "+" : ""}`
 
-  const difficultyOrder = ["A", "B", "C", "D", "E", "F", "G", "H"]
+  const difficultyOrder = ["A", "B", "C", "D", "E", "F", "G", "H", "I+", "Other"]
   const sortedDifficulties = Object.entries(byDifficulty)
     .filter(([_, count]) => count > 0)
     .sort(([a], [b]) => {
@@ -54,13 +67,15 @@ export function ProblemsSolved({
               <div className="flex flex-col items-start w-full gap-2">
                 <div className="flex items-center gap-2">
                   <FaCheckCircle className="text-green-500" />
-                  <p className="text-base font-semibold text-default-highlight">Total: {abbreviateNumber(total)}</p>
+                  <p className="text-base font-semibold text-default-highlight">Total: {totalLabel}</p>
                 </div>
                 {sortedDifficulties.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
+                  // gap-x-1: at 8px a half card's columns are 70px, and "Other: 888"
+                  // (acmsguru has a few hundred problems) is 72px.
+                  <div className="grid grid-cols-10 half:grid-cols-5 gap-x-1 gap-y-2 w-full">
                     {sortedDifficulties.map(([difficulty, count]) => (
-                      <span key={difficulty} className="text-sm text-default-muted">
-                        {difficulty}: {abbreviateNumber(count)}
+                      <span key={difficulty} className="text-sm text-default-muted whitespace-nowrap">
+                        {difficulty}: {formatNumber(count)}
                       </span>
                     ))}
                   </div>
@@ -78,13 +93,9 @@ export function ProblemsSolved({
                 size,
               })}
             />
-            <TerminalLineWithDots title="Total Problems Solved" value={abbreviateNumber(total)} />
+            <TerminalLineWithDots title="Total Problems Solved" value={totalLabel} />
             {sortedDifficulties.map(([difficulty, count]) => (
-              <TerminalLineWithDots
-                key={difficulty}
-                title={`Difficulty ${difficulty}`}
-                value={abbreviateNumber(count)}
-              />
+              <TerminalLineWithDots key={difficulty} title={`Difficulty ${difficulty}`} value={formatNumber(count)} />
             ))}
           </>
         }
