@@ -19,10 +19,13 @@ const CODEFORCES_API_BASE = "https://codeforces.com/api"
  * submission history. `count=100` counted only the last 100 submissions: tourist's
  * card said 72 while his profile says 3060.
  *
- * The heaviest accounts measured (11-13k submissions) send their whole history in
- * 1.7-5.2 s, 0.5 MB gzipped, under fetchJson's 8 s per attempt. Paging is not an
- * option: the API allows one call every two seconds. The cap only bounds the payload
- * of an outlier, and a total counted from a capped history is marked as a lower bound.
+ * The whole history costs time, so it is asked for only when the card shows the solved
+ * count: tourist's answered in 0.34 s for count=50 and 1.23 s for all 5,519
+ * submissions (2026-11-16). The heaviest accounts measured (11-13k submissions) take
+ * 1.7-5.2 s, 0.5 MB gzipped, under fetchJson's 8 s per attempt. It is one call rather
+ * than pages because each page would be one more call against the API's rate limit
+ * (see MIN_REQUEST_INTERVAL). The cap only bounds the payload of an outlier, and a
+ * total counted from a capped history is marked as a lower bound.
  */
 export const SUBMISSION_HISTORY_CAP = 20_000
 const RECENT_SUBMISSIONS_LIMIT = 50
@@ -37,10 +40,13 @@ const LATER_DIFFICULTIES = "I+"
 const OTHER_DIFFICULTIES = "Other"
 
 /**
- * Último timestamp de requisição para throttling
+ * Spacing between this plugin's calls. Codeforces' API documentation asks for at most
+ * one call every two seconds; this is 5 a second, what the plugin has always used.
+ * Honouring the documented limit would add up to 4 s to every card (three calls), so
+ * it is a known gap, not an oversight.
  */
 let lastRequestTime = 0
-const MIN_REQUEST_INTERVAL = 200 // 200ms = 5 req/s
+const MIN_REQUEST_INTERVAL = 200
 
 /**
  * Aguarda o intervalo mínimo entre requisições (throttling)
@@ -216,14 +222,19 @@ export async function fetchCodeforcesData(config: CodeforcesConfig, dev = false)
 
     const contestsCount = ratingResponse.result?.length || 0
 
-    // The whole history only when the solved count is on the card; the recent list
-    // needs the newest few.
-    const countsSolved = (config.sections ?? []).includes("problems_solved")
-    const submissionsCount = countsSolved ? SUBMISSION_HISTORY_CAP : RECENT_SUBMISSIONS_LIMIT
-    await throttleRequest()
-    const submissionsUrl = `${CODEFORCES_API_BASE}/user.status?handle=${encodeURIComponent(handle)}&from=1&count=${submissionsCount}`
-    const submissionsResponse = await fetchJson<CodeforcesApiResponse<CodeforcesSubmissionResponse[]>>(submissionsUrl)
-    const submissions = submissionsResponse.result ?? []
+    // The whole history only when the solved count is on the card, the newest few for
+    // the recent list, and no call at all when neither is (the landing page's preview
+    // shows only rating and contests).
+    const sections = config.sections ?? []
+    const countsSolved = sections.includes("problems_solved")
+    let submissions: CodeforcesSubmissionResponse[] = []
+    if (countsSolved || sections.includes("recent_submissions")) {
+      const submissionsCount = countsSolved ? SUBMISSION_HISTORY_CAP : RECENT_SUBMISSIONS_LIMIT
+      await throttleRequest()
+      const submissionsUrl = `${CODEFORCES_API_BASE}/user.status?handle=${encodeURIComponent(handle)}&from=1&count=${submissionsCount}`
+      const submissionsResponse = await fetchJson<CodeforcesApiResponse<CodeforcesSubmissionResponse[]>>(submissionsUrl)
+      submissions = submissionsResponse.result ?? []
+    }
 
     const recentSubmissions: CodeforcesSubmission[] = submissions
       .slice(0, RECENT_SUBMISSIONS_LIMIT)

@@ -9,7 +9,6 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
-import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { formatNumber } from "../../shared/utils/formatting"
 import type { CodeforcesConfig } from "../types"
@@ -41,7 +40,8 @@ export function ProblemsSolved({
 }: ProblemsSolvedProps): React.ReactElement {
   const hideTitle = config.nonEssential?.problems_solved_hide_title || false
   const title = config.nonEssential?.problems_solved_title || "Programming Problems Solved"
-  // Exact, so the card reads the same number as the Codeforces profile.
+  // Exact, like each difficulty below: the total reads the same as the Codeforces
+  // profile, and the difficulties visibly add up to it.
   const totalLabel = `${formatNumber(total)}${capped ? "+" : ""}`
 
   const difficultyOrder = ["A", "B", "C", "D", "E", "F", "G", "H", "I+", "Other"]
@@ -70,10 +70,12 @@ export function ProblemsSolved({
                   <p className="text-base font-semibold text-default-highlight">Total: {totalLabel}</p>
                 </div>
                 {sortedDifficulties.length > 0 && (
-                  <div className="grid grid-cols-10 half:grid-cols-5 gap-2 w-full">
+                  // gap-x-1: at 8px a half card's columns are 70px, and "Other: 888"
+                  // (acmsguru has a few hundred problems) is 72px.
+                  <div className="grid grid-cols-10 half:grid-cols-5 gap-x-1 gap-y-2 w-full">
                     {sortedDifficulties.map(([difficulty, count]) => (
                       <span key={difficulty} className="text-sm text-default-muted whitespace-nowrap">
-                        {difficulty}: {abbreviateNumber(count)}
+                        {difficulty}: {formatNumber(count)}
                       </span>
                     ))}
                   </div>
@@ -93,11 +95,7 @@ export function ProblemsSolved({
             />
             <TerminalLineWithDots title="Total Problems Solved" value={totalLabel} />
             {sortedDifficulties.map(([difficulty, count]) => (
-              <TerminalLineWithDots
-                key={difficulty}
-                title={`Difficulty ${difficulty}`}
-                value={abbreviateNumber(count)}
-              />
+              <TerminalLineWithDots key={difficulty} title={`Difficulty ${difficulty}`} value={formatNumber(count)} />
             ))}
           </>
         }

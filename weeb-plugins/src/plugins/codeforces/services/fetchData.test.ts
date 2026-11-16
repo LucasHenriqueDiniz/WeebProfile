@@ -119,4 +119,16 @@ describe("Codeforces problems solved", () => {
     expect(data.recentSubmissions).toHaveLength(50)
     expect(data.recentSubmissions[0]).toMatchObject({ problem: "1000A - P0", verdict: "Accepted" })
   })
+
+  // The landing page's preview shows only these two: each call is one more against the
+  // API's rate limit, and this one would be thrown away.
+  it("makes no submissions call when neither the solved count nor the recent list is on the card", async () => {
+    const statusUrls = codeforcesApi(solvedProblems(250))
+
+    const data = await fetchCodeforcesData(config(["rating_rank", "contests_participated"]))
+
+    expect(statusUrls).toEqual([])
+    expect(data.rank).toBe("legendary grandmaster")
+    expect(data.recentSubmissions).toEqual([])
+  })
 })

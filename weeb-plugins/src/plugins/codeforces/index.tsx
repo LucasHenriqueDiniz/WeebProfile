@@ -40,12 +40,14 @@ export const codeforcesPlugin: Plugin<CodeforcesConfig, PluginData & CodeforcesD
       } else if (s === "problems_solved") {
         const byDifficulty = cfData.problemsSolved?.byDifficulty ?? {}
         const n = Object.values(byDifficulty).filter((count) => (count ?? 0) > 0).length
+        // Measured in Chromium. Terminal: the command and the total take 76px, and each
+        // difficulty is a 20px line. Default: the title and the total take 76px, and each
+        // grid row is a 20px line plus an 8px gap; with no difficulty there is no grid.
         if (isTerminal) {
-          h += 24 + (1 + n) * 25
+          h += 76 + n * 20
         } else {
-          // One grid row is in the 104; each extra row adds a 20px line and an 8px gap.
-          const rows = Math.max(1, Math.ceil(n / DIFFICULTY_COLUMNS[size === "full" ? "full" : "half"]))
-          h += 104 + (rows - 1) * 28
+          const rows = Math.ceil(n / DIFFICULTY_COLUMNS[size === "full" ? "full" : "half"])
+          h += 76 + rows * 28
         }
       } else if (s === "recent_submissions") {
         const max = ne.recent_submissions_max ?? 5
