@@ -32,6 +32,7 @@ export default function PluginsGalleryPage() {
   const [activeId, setActiveId] = useState<string>(plugins[0]?.name ?? "")
   const [headerHeight, setHeaderHeight] = useState(64)
   const [indexHeight, setIndexHeight] = useState(0)
+  const jumpingTo = useRef<string | null>(null)
   // Room the fixed Header and the sticky index take at the top of the viewport. Each
   // plugin section gets it as scroll-margin-top, so every way of scrolling to one --
   // a chip in the index, a link to /plugins#steam, the router's own scrollIntoView on
@@ -58,10 +59,17 @@ export default function PluginsGalleryPage() {
   // being read: the last one whose heading has scrolled up to the index.
   useEffect(() => {
     const update = () => {
+      if (jumpingTo.current) return
+      // The last plugins cannot scroll up to the index: the page ends first. At the
+      // bottom, the last plugin on screen is the one being read; by heading position
+      // alone the index marked 16Personalities with Websites and Repository in view.
+      const atBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2 && window.scrollY > 0
       let current = plugins[0]?.name ?? ""
       for (const plugin of plugins) {
-        const section = document.getElementById(plugin.name)
-        if (section && section.getBoundingClientRect().top <= covered + 1) current = plugin.name
+        const top = document.getElementById(plugin.name)?.getBoundingClientRect().top
+        if (top === undefined) continue
+        if (top <= covered + 1 || (atBottom && top < window.innerHeight)) current = plugin.name
       }
       setActiveId(current)
     }
@@ -88,8 +96,23 @@ export default function PluginsGalleryPage() {
   // The chip scrolls by itself instead of following the #hash: the router reacts to a
   // hash change with an instant scrollIntoView that cut the smooth scroll short. The
   // href stays for opening a plugin in a new tab or copying its link.
+  //
+  // The clicked plugin stays marked until the scroll ends. Websites and Repository
+  // stop short of the index, and reading positions on the way there marked whatever
+  // the scroll passed or stopped on.
   const jumpTo = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
     event.preventDefault()
+    jumpingTo.current = id
+    setActiveId(id)
+    let fallback = 0
+    const settle = () => {
+      jumpingTo.current = null
+      window.clearTimeout(fallback)
+      window.removeEventListener("scrollend", settle)
+    }
+    window.addEventListener("scrollend", settle)
+    // scrollend never fires when the page is already there, nor in browsers without it.
+    fallback = window.setTimeout(settle, 1500)
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
