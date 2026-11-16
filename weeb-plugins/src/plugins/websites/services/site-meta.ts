@@ -8,6 +8,7 @@
  * — o que vier primeiro — para não carregar uma página inteira na memória do Worker.
  */
 
+import { decodeHtmlEntities } from "../../../utils/html-entities"
 import { assertSafePublicUrl } from "../../../utils/url-guard"
 
 const HTML_MAX_BYTES = 256_000
@@ -31,32 +32,9 @@ const EMPTY_META = (finalUrl: string): SiteMeta => ({
   iconUrl: null,
 })
 
-const HTML_ENTITIES: Record<string, string> = {
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  apos: "'",
-  nbsp: " ",
-  "#39": "'",
-  "#x27": "'",
-  "#x2F": "/",
-  "#47": "/",
-}
-
-function decodeEntities(value: string): string {
-  return value.replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g, (match, entity: string) => {
-    const direct = HTML_ENTITIES[entity] ?? HTML_ENTITIES[entity.toLowerCase()]
-    if (direct !== undefined) return direct
-    if (/^#\d+$/.test(entity)) return String.fromCodePoint(Number(entity.slice(1)))
-    if (/^#x[0-9a-fA-F]+$/i.test(entity)) return String.fromCodePoint(parseInt(entity.slice(2), 16))
-    return match
-  })
-}
-
 function clean(value: string | null | undefined): string | null {
   if (!value) return null
-  const text = decodeEntities(value).replace(/\s+/g, " ").trim()
+  const text = decodeHtmlEntities(value).replace(/\s+/g, " ").trim()
   return text === "" ? null : text
 }
 
