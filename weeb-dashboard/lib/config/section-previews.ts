@@ -6,118 +6,124 @@
 // e verifica quais previews existem (por estilo) na pasta previews/ de cada plugin.
 // Os arquivos são copiados para weeb-dashboard/public/previews/ pelo mesmo script.
 
-export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean; terminal: boolean }>> = {
+/** [width, height] of the preview SVG, or null when that style has no preview. */
+export type PreviewSize = [width: number, height: number]
+
+export const SECTION_PREVIEWS: Record<
+  string,
+  Record<string, { default: PreviewSize | null; terminal: PreviewSize | null }>
+> = {
   "16personalities": {
-    personality: { default: true, terminal: true },
+    personality: { default: [415, 227], terminal: [415, 208] },
   },
 
   anilist: {
-    statistics: { default: true, terminal: true },
-    favorites_anime: { default: true, terminal: true },
-    currently_watching: { default: true, terminal: true },
+    statistics: { default: [415, 245], terminal: [415, 208] },
+    favorites_anime: { default: [415, 189], terminal: [415, 148] },
+    currently_watching: { default: [415, 253], terminal: [415, 108] },
   },
 
   codeforces: {
-    rating_rank: { default: true, terminal: true },
-    contests_participated: { default: true, terminal: true },
-    problems_solved: { default: true, terminal: true },
-    recent_submissions: { default: true, terminal: true },
+    rating_rank: { default: [415, 100], terminal: [415, 88] },
+    contests_participated: { default: [415, 104], terminal: [415, 68] },
+    problems_solved: { default: [415, 156], terminal: [415, 248] },
+    recent_submissions: { default: [415, 235], terminal: [415, 96] },
   },
 
   codewars: {
-    rank_honor: { default: true, terminal: true },
-    completed_kata: { default: true, terminal: true },
-    languages_proficiency: { default: true, terminal: true },
-    leaderboard_position: { default: true, terminal: true },
+    rank_honor: { default: [415, 100], terminal: [415, 88] },
+    completed_kata: { default: [415, 343], terminal: [415, 128] },
+    languages_proficiency: { default: [415, 343], terminal: [415, 128] },
+    leaderboard_position: { default: [415, 100], terminal: [415, 78] },
   },
 
   devto: {
-    profile: { default: true, terminal: true },
-    recent_articles: { default: true, terminal: true },
-    top_tags: { default: true, terminal: true },
+    profile: { default: [415, 117], terminal: [415, 128] },
+    recent_articles: { default: [415, 217], terminal: [415, 108] },
+    top_tags: { default: [415, 123], terminal: [415, 148] },
   },
 
   duolingo: {
-    current_streak: { default: true, terminal: true },
-    total_xp: { default: true, terminal: true },
-    languages_learning: { default: true, terminal: true },
+    current_streak: { default: [415, 136], terminal: [415, 68] },
+    total_xp: { default: [415, 164], terminal: [415, 68] },
+    languages_learning: { default: [415, 235], terminal: [415, 96] },
   },
 
   github: {
-    profile: { default: true, terminal: true },
-    activity: { default: true, terminal: true },
-    repositories: { default: true, terminal: true },
-    favorite_languages: { default: true, terminal: true },
-    favorite_license: { default: true, terminal: true },
-    calendar: { default: true, terminal: true },
-    code_habits: { default: true, terminal: true },
-    starred_repositories: { default: true, terminal: true },
-    gists: { default: true, terminal: true },
-    stargazers: { default: true, terminal: true },
-    top_repositories: { default: true, terminal: true },
-    star_lists: { default: true, terminal: true },
-    notable_contributions: { default: true, terminal: true },
-    recent_activity: { default: true, terminal: true },
-    introduction: { default: true, terminal: true },
-    featured_repositories: { default: true, terminal: true },
-    sponsorships: { default: true, terminal: true },
-    sponsors: { default: true, terminal: true },
-    people: { default: true, terminal: true },
-    repository_contributors: { default: true, terminal: true },
+    profile: { default: [415, 143], terminal: [415, 156] },
+    activity: { default: [415, 180], terminal: [415, 256] },
+    repositories: { default: [415, 156], terminal: [415, 236] },
+    favorite_languages: { default: [415, 354], terminal: [415, 322] },
+    favorite_license: { default: [415, 112], terminal: [415, 142] },
+    calendar: { default: [415, 355], terminal: [415, 200] },
+    code_habits: { default: [415, 634], terminal: [415, 1153] },
+    starred_repositories: { default: [415, 1440], terminal: [415, 304] },
+    gists: { default: [415, 456], terminal: [415, 136] },
+    stargazers: { default: [415, 597], terminal: [415, 196] },
+    top_repositories: { default: [415, 728], terminal: [415, 176] },
+    star_lists: { default: [415, 380], terminal: [415, 116] },
+    notable_contributions: { default: [415, 1172], terminal: [415, 276] },
+    recent_activity: { default: [415, 1441], terminal: [415, 292] },
+    introduction: { default: [415, 154], terminal: [415, 202] },
+    featured_repositories: { default: [415, 458], terminal: [415, 136] },
+    sponsorships: { default: [415, 272], terminal: [415, 136] },
+    sponsors: { default: [415, 272], terminal: [415, 136] },
+    people: { default: [415, 173], terminal: [415, 276] },
+    repository_contributors: { default: [415, 375], terminal: [415, 276] },
   },
 
   github_repo: {
-    banner: { default: true, terminal: true },
-    stats: { default: true, terminal: true },
-    star_graph: { default: true, terminal: true },
-    languages: { default: true, terminal: true },
-    topics: { default: true, terminal: true },
-    overview: { default: true, terminal: true },
+    banner: { default: [415, 184], terminal: [415, 94] },
+    stats: { default: [415, 134], terminal: [415, 52] },
+    star_graph: { default: [415, 228], terminal: [415, 153] },
+    languages: { default: [415, 152], terminal: [415, 78] },
+    topics: { default: [415, 110], terminal: [415, 44] },
+    overview: { default: [415, 276], terminal: [415, 72] },
   },
 
   lastfm: {
-    recent_tracks: { default: true, terminal: true },
-    statistics: { default: true, terminal: true },
-    top_artists: { default: true, terminal: true },
-    top_albums: { default: true, terminal: true },
-    top_tracks: { default: true, terminal: true },
+    recent_tracks: { default: [415, 338], terminal: [415, 141] },
+    statistics: { default: [415, 248], terminal: [415, 134] },
+    top_artists: { default: [415, 315], terminal: [415, 275] },
+    top_albums: { default: [415, 276], terminal: [415, 275] },
+    top_tracks: { default: [415, 276], terminal: [415, 375] },
   },
 
   lyfta: {
-    statistics: { default: true, terminal: true },
-    recent_workouts: { default: true, terminal: true },
-    exercises: { default: true, terminal: true },
-    overview: { default: true, terminal: true },
-    last_workout: { default: true, terminal: true },
+    statistics: { default: [415, 156], terminal: [415, 115] },
+    recent_workouts: { default: [415, 356], terminal: [415, 142] },
+    exercises: { default: [415, 314], terminal: [415, 176] },
+    overview: { default: [415, 245], terminal: [415, 136] },
+    last_workout: { default: [415, 339], terminal: [415, 240] },
   },
 
   myanimelist: {
-    statistics: { default: true, terminal: true },
-    last_activity: { default: true, terminal: true },
-    statistics_simple: { default: true, terminal: true },
-    anime_bar: { default: true, terminal: true },
-    manga_bar: { default: true, terminal: true },
-    anime_favorites: { default: true, terminal: true },
-    manga_favorites: { default: true, terminal: true },
-    character_favorites: { default: true, terminal: true },
-    people_favorites: { default: true, terminal: true },
+    statistics: { default: [415, 400], terminal: [415, 520] },
+    last_activity: { default: [415, 534], terminal: [415, 532] },
+    statistics_simple: { default: [415, 124], terminal: [415, 136] },
+    anime_bar: { default: [415, 158], terminal: [415, 180] },
+    manga_bar: { default: [415, 158], terminal: [415, 180] },
+    anime_favorites: { default: [415, 680], terminal: [415, 583] },
+    manga_favorites: { default: [415, 680], terminal: [415, 583] },
+    character_favorites: { default: [415, 330], terminal: [415, 178] },
+    people_favorites: { default: [415, 330], terminal: [415, 178] },
   },
 
   stackoverflow: {
-    reputation: { default: true, terminal: true },
-    badges: { default: true, terminal: true },
-    answers_questions: { default: true, terminal: true },
-    tags_expertise: { default: true, terminal: true },
+    reputation: { default: [415, 104], terminal: [415, 68] },
+    badges: { default: [415, 132], terminal: [415, 128] },
+    answers_questions: { default: [415, 104], terminal: [415, 88] },
+    tags_expertise: { default: [415, 343], terminal: [415, 128] },
   },
 
   steam: {
-    statistics: { default: true, terminal: true },
-    recent_games: { default: true, terminal: true },
-    top_games: { default: true, terminal: true },
+    statistics: { default: [415, 336], terminal: [415, 156] },
+    recent_games: { default: [415, 384], terminal: [415, 156] },
+    top_games: { default: [415, 464], terminal: [415, 176] },
   },
 
   websites: {
-    websites: { default: true, terminal: true },
+    websites: { default: [415, 496], terminal: [415, 162] },
   },
 }
 
