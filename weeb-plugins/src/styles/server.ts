@@ -8,6 +8,7 @@
 import { getStyleCSS } from "./registry"
 import { getActivePluginsCSS } from "./plugins"
 import { SHARED_CSS } from "./generated-shared-css.js"
+export { ANIMATIONS_CSS } from "./animations"
 import { getFontCss, getFontsForStyle } from "../fonts/index.js"
 
 /**

@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { RotateCcw } from "lucide-react"
+import { Play, RotateCcw } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
 
 export interface StyleConfigurationProps {
@@ -35,6 +35,10 @@ export interface StyleConfigurationProps {
   setCustomCss: (css: string) => void
   setCustomThemeColor: (variable: string, value: string) => void
   resetCustomThemeColors: () => void
+  // Opt-in card animations. The toggle shows only when the wizard passes a setter.
+  animations?: boolean
+  setAnimations?: (value: boolean) => void
+  onReplayAnimations?: () => void
 }
 
 // Store-agnostic: reused by both the Profile wizard (useWizardStore) and the
@@ -57,6 +61,9 @@ export function StyleConfiguration({
   setCustomCss,
   setCustomThemeColor,
   resetCustomThemeColors,
+  animations = false,
+  setAnimations,
+  onReplayAnimations,
 }: StyleConfigurationProps) {
   const t = useTranslations("wizard.style")
 
@@ -193,6 +200,27 @@ export function StyleConfiguration({
           </SelectContent>
         </Select>
       </div>
+
+      {/* Animations: both styles */}
+      {setAnimations && (
+        <div className="py-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="space-y-0.5 flex-1">
+              <Label htmlFor="card-animations" className="text-sm font-semibold cursor-pointer">
+                {t("animations")}
+              </Label>
+              <p className="text-xs text-muted-foreground">{t("animationsDescription")}</p>
+            </div>
+            {animations && onReplayAnimations && (
+              <Button type="button" variant="outline" size="sm" onClick={onReplayAnimations} className="h-7 text-xs">
+                <Play className="w-3 h-3 mr-1" />
+                {t("animationsReplay")}
+              </Button>
+            )}
+            <Switch id="card-animations" checked={animations} onCheckedChange={setAnimations} />
+          </div>
+        </div>
+      )}
 
       {/* Custom Theme Colors */}
       {theme === "custom" && style === "default" && (

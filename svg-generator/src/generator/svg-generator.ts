@@ -32,7 +32,13 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
   const width = config.size === "half" ? 415 : 830
 
   // 1. Render plugins (do this once only)
-  const { element: pluginsContent, pluginsConfig, pluginsData, pluginsErrors } = await renderPlugins(config)
+  const {
+    element: pluginsContent,
+    pluginsConfig,
+    pluginsData,
+    pluginsErrors,
+    animationStep,
+  } = await renderPlugins(config)
 
   // 2. Calculate height by summing each enabled plugin's calculateHeight(), plus the
   // error box of each plugin that failed: calculateTotalHeight skips a plugin with no
@@ -61,6 +67,7 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
     fontFamily: config.fontFamily,
     terminalHeaderText: config.terminalHeaderText,
     hideTerminalEmojis: config.hideTerminalEmojis,
+    animations: animationStep !== undefined ? { step: animationStep } : undefined,
   })
 
   // 5. Render to string

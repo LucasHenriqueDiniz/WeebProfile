@@ -8,13 +8,13 @@ import { ApiException, missingRequiredConfig, type ApiError } from "../../../../
  * between the client and this route shows up here, not only in production.
  */
 
-const { db, updates, slot } = vi.hoisted(() => {
+const { db, updates, slot, svgRow } = vi.hoisted(() => {
   const updates: Record<string, unknown>[] = []
   // What claimGenerationSlot's upsert returns: a row when the slot was taken, none
   // when the user's last start is inside the floor. Its SQL is checked against a real
   // D1 separately; here it only drives the route.
   const slot = { claimed: true }
-  const svgRow = {
+  const svgRow: Record<string, unknown> = {
     id: "svg_1",
     userId: "user_1",
     status: "completed",
@@ -42,7 +42,7 @@ const { db, updates, slot } = vi.hoisted(() => {
       },
     }),
   }
-  return { db, updates, slot }
+  return { db, updates, slot, svgRow }
 })
 
 vi.mock("../../_shared/db", () => ({ getDb: () => db }))
@@ -54,6 +54,7 @@ vi.mock("../../_shared/auth", async (importOriginal) => ({
 beforeEach(() => {
   updates.length = 0
   slot.claimed = true
+  delete svgRow.uiConfig
 })
 
 // What svg-generator/src/worker.ts answers when it cannot read the user's secrets.
@@ -149,5 +150,37 @@ describe("POST /api/svgs/:id/generate inside the user's generation floor", () =>
     await regenerate(() => env.SVG_GENERATOR.fetch() as unknown as Response, { force: true }).catch(() => undefined)
 
     expect(generator).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("POST /api/svgs/:id/generate with ui_config.animations", () => {
+  async function sentToGenerator(uiConfig?: Record<string, unknown>) {
+    if (uiConfig) svgRow.uiConfig = uiConfig
+    let body: Record<string, unknown> | undefined
+    const { onRequestPost } = await import("./generate")
+    const env = {
+      SVG_GENERATOR: {
+        fetch: async (_url: string, init: RequestInit) => {
+          body = JSON.parse(String(init.body))
+          return Response.json({ success: true, svg: "<svg/>", pluginErrors: {}, hasErrors: false })
+        },
+      },
+    } as unknown as CloudflareEnv
+    await (
+      onRequestPost({
+        request: new Request("https://dash/api/svgs/svg_1/generate", { method: "POST", body: "{}" }),
+        env,
+        params: { id: "svg_1" },
+      } as unknown as Parameters<typeof onRequestPost>[0]) as Promise<Response>
+    ).catch(() => undefined)
+    return body
+  }
+
+  it("asks the generator for animations when the SVG has them on", async () => {
+    expect((await sentToGenerator({ animations: true }))?.animations).toBe(true)
+  })
+
+  it("leaves them off for an SVG saved before the option existed", async () => {
+    expect((await sentToGenerator())?.animations).toBe(false)
   })
 })

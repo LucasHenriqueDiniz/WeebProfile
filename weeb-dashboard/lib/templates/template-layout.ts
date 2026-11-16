@@ -30,6 +30,7 @@ export interface TemplateUiLayout {
   hideTerminalEmojis?: boolean
   hideTerminalHeader?: boolean
   hideTerminalCommand?: boolean
+  animations?: boolean
   fontFamily?: string
   customThemeColors?: Record<string, string>
 }
@@ -123,7 +124,7 @@ export function templateUiLayout(uiConfig: unknown): TemplateUiLayout {
   const saved = asRecord(uiConfig)
   const ui: TemplateUiLayout = {}
 
-  for (const key of ["hideTerminalEmojis", "hideTerminalHeader", "hideTerminalCommand"] as const) {
+  for (const key of ["hideTerminalEmojis", "hideTerminalHeader", "hideTerminalCommand", "animations"] as const) {
     if (typeof saved[key] === "boolean") ui[key] = saved[key]
   }
   if (typeof saved.fontFamily === "string") ui.fontFamily = saved.fontFamily

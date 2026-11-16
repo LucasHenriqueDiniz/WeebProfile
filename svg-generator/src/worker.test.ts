@@ -694,3 +694,51 @@ describe("POST / — altura de um plugin que falhou", () => {
     expect(mixed.height).toBe(healthy.height + PLUGIN_ERROR_HEIGHT)
   })
 })
+
+describe("POST / — opt-in animations", () => {
+  const card = (extra: Record<string, unknown> = {}) =>
+    validRequest({
+      essentialConfigs: { github: { pat: "x" } },
+      plugins: {
+        devto: { enabled: true, sections: ["profile", "recent_articles"], username: "someone" },
+        github: { enabled: true, sections: ["profile", "favorite_languages"], username: "someone" },
+      },
+      pluginsOrder: ["devto", "github"],
+      ...extra,
+    })
+
+  // Off by default, and off adds nothing: a card from before this feature is unchanged.
+  it("leaves the card untouched unless the request asks for them", async () => {
+    const { body: absent } = await post(card())
+    const { body: off } = await post(card({ animations: false }))
+    expect(absent.svg).toBe(off.svg)
+    expect(absent.svg).not.toContain("weeb-")
+    expect(absent.svg).not.toContain("@property")
+  })
+
+  // No height check here: the height comes from calculateHeight(), which never sees the
+  // markup, so on and off could not differ. The rendered height was measured in a
+  // browser instead (docs/animations.md).
+  it.each(["default", "terminal"])("animates the %s style", async (style) => {
+    const { response, body: on } = await post(card({ style, animations: true }))
+    expect(response.status).toBe(200)
+    expect(on.svg).toContain(`${style}-container weeb-anim`)
+    // One timeline across plugins: github's sections start after devto's two.
+    expect(on.svg).toContain("--weeb-base:0")
+    expect(on.svg).toContain("--weeb-base:2")
+    expect(on.svg).toMatch(/--weeb-step:0\.\d+s/)
+  })
+
+  // The SVG is parsed as XML: a raw "<integer>" from @property would open an element
+  // and break the whole image.
+  it("escapes the stylesheet for the XML parser", async () => {
+    const { body } = await post(card({ animations: true }))
+    expect(body.svg).toContain('syntax: "&lt;integer>"')
+    expect(body.svg).not.toContain("<integer>")
+  })
+
+  it("does not animate on anything but a literal true", async () => {
+    const { body } = await post(card({ animations: "yes" }))
+    expect(body.svg).not.toContain("weeb-anim")
+  })
+})

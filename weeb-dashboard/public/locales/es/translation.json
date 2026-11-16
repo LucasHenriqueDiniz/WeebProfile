@@ -554,6 +554,9 @@
       "fontDescription": "Fuente utilizada en la tarjeta",
       "terminalHeaderText": "Texto del Encabezado de la Terminal",
       "terminalHeaderTextDescription": "Título personalizado para la barra de encabezado de la terminal",
+      "animations": "Animaciones",
+      "animationsDescription": "Las secciones entran, las barras se llenan y los números suben al cargar la tarjeta; en el estilo terminal los comandos se escriben. Termina en menos de 2 segundos y queda desactivado para quien pide menos movimiento.",
+      "animationsReplay": "Repetir",
       "reset": "Restablecer",
       "options": {
         "default": "predeterminado",

@@ -3,6 +3,7 @@
  */
 
 import React from "react"
+import { useAnimations } from "../animations"
 
 interface HorizontalMultipleItem {
   value: number
@@ -24,10 +25,11 @@ export function TerminalHorizontalMultipleItemsBar({
   const totalValue = total || items.reduce((acc, item) => acc + item.value, 0)
   // Limite fixo de caracteres: 58 para half (400px), 116 para full (800px)
   const maxChars = size === "half" ? 58 : 116
+  const animations = useAnimations()
 
   return (
     <div
-      className="font-mono tracking-tighter text-center mx-1 overflow-hidden w-full"
+      className={`font-mono tracking-tighter text-center mx-1 overflow-hidden w-full${animations ? " weeb-bar" : ""}`}
       style={{
         fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
         fontSize: "0.875rem",

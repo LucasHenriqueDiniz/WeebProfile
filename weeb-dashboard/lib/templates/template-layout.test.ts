@@ -94,6 +94,7 @@ describe("templateUiLayout", () => {
       templateUiLayout({
         hideTerminalEmojis: true,
         hideTerminalHeader: "yes",
+        animations: true,
         fontFamily: "inter",
         terminalHeaderText: "author@home:~",
         customThemeColors: { "--default-color-highlight": "#ff00aa", bad: 3 },
@@ -101,6 +102,7 @@ describe("templateUiLayout", () => {
       })
     ).toEqual({
       hideTerminalEmojis: true,
+      animations: true,
       fontFamily: "inter",
       customThemeColors: { "--default-color-highlight": "#ff00aa" },
     })

@@ -20,6 +20,8 @@ export function LivePreview() {
     terminalHeaderText,
     customCss,
     customThemeColors,
+    animations,
+    animationsReplayKey,
   } = useWizardStore(
     useShallow((state) => ({
       plugins: state.plugins,
@@ -33,6 +35,8 @@ export function LivePreview() {
       terminalHeaderText: state.terminalHeaderText,
       customCss: state.customCss,
       customThemeColors: state.customThemeColors,
+      animations: state.animations,
+      animationsReplayKey: state.animationsReplayKey,
     }))
   )
 
@@ -134,6 +138,8 @@ export function LivePreview() {
           terminalHeaderText={terminalHeaderText}
           customCss={customCss}
           customThemeColors={theme === "custom" ? customThemeColors : undefined}
+          animations={animations}
+          animationsReplayKey={animationsReplayKey}
         />
       </div>
       <style>{`
