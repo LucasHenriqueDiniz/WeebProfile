@@ -1,4 +1,4 @@
-import { createClerkClient } from "@clerk/backend"
+import { createClerkClient, verifyToken } from "@clerk/backend"
 import { TokenVerificationErrorReason } from "@clerk/backend/errors"
 import { decodeJwt } from "@clerk/backend/jwt"
 import { attachError } from "./error-log"
@@ -98,10 +98,48 @@ export async function getAuthUserId(request: Request, env: CloudflareEnv): Promi
   }
 
   if (state.reason && SERVER_SIDE_REASONS.has(state.reason)) {
-    const detail = state.message ? ` (${state.message})` : ""
+    const detail = state.message
+      ? ` (${state.message})`
+      : state.reason === "unexpected-error"
+        ? await whatClerkHid(request, env.CLERK_SECRET_KEY)
+        : ""
     throw new AuthUnavailableError(`Clerk could not verify the session: ${state.reason}${detail}`)
   }
   return state.toAuth()?.userId ?? null
+}
+
+/**
+ * Clerk turns any error that is not a TokenVerificationError into "unexpected-error"
+ * and drops it, so error_log read the same for a network failure, a JWKS that is not
+ * JSON or a runtime TypeError. On 16/11/2026 the first signed-in request on a preview
+ * deploy failed like that with nothing else to go on. Verifying the same token again,
+ * outside authenticateRequest, throws the original error; its name and message go in
+ * the log, with keys and tokens taken out.
+ */
+async function whatClerkHid(request: Request, secretKey: string): Promise<string> {
+  const token = tokenInAuthorizationHeader(request) ?? sessionCookie(request)
+  if (!token) return ""
+  try {
+    await verifyToken(token, { secretKey })
+    return " (the same token verified when tried again)"
+  } catch (error) {
+    const text = error instanceof Error ? `${error.name}: ${error.message}` : String(error)
+    return ` (${redactCredentials(text)})`
+  }
+}
+
+function sessionCookie(request: Request): string | undefined {
+  for (const cookie of (request.headers.get("Cookie") ?? "").split(";")) {
+    const [name, ...value] = cookie.trim().split("=")
+    if (name && /^__session(_|$)/.test(name)) return value.join("=")
+  }
+  return undefined
+}
+
+function redactCredentials(text: string): string {
+  return text
+    .replace(/\b(sk|pk)_(test|live)_[A-Za-z0-9]+/g, "$1_$2_[redacted]")
+    .replace(/\beyJ[\w-]+\.[\w-]+\.[\w-]+/g, "[jwt]")
 }
 
 /**
