@@ -70,6 +70,11 @@ describe("resolveBannerText", () => {
 
 // O bug que motivou tudo isso em outra seção: o campo existe, o usuário digita, e o
 // card continua mostrando o valor antigo. Aqui cada variante é renderizada de fato.
+/** The markup without tags: attributes such as the link's href carry the repo name. */
+function visibleText(html: string): string {
+  return html.replace(/<[^>]*>/g, " ")
+}
+
 describe("Banner renderiza o texto custom em todas as variantes", () => {
   const variants = ["hero", "minimal", "split", "display", "centered", "centered_dark", "centered_gradient", "dark"]
   // "display" é só eyebrow + nome gigante + meta row; nunca teve linha de descrição
@@ -85,7 +90,8 @@ describe("Banner renderiza o texto custom em todas as variantes", () => {
       })
     )
     expect(html).toContain("Sora")
-    expect(html).not.toContain("WeebProfile")
+    // The repository URL is in the banner's link, so only the text is checked.
+    expect(visibleText(html)).not.toContain("WeebProfile")
   })
 
   it.each(comDescricao)("%s mostra a descrição custom", (variant) => {

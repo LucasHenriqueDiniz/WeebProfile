@@ -1,4 +1,5 @@
 import React from "react"
+import { ExternalLink } from "../../../utils/external-link"
 import { ImageComponent } from "../../../utils/image"
 import type { WebsiteEntry } from "../types"
 
@@ -24,8 +25,9 @@ export function WebsitesGrid({
   return (
     <div className="grid grid-cols-4 gap-2.5 half:grid-cols-2">
       {websites.map((site) => (
-        <div
+        <ExternalLink
           key={site.url}
+          href={site.url}
           className="flex flex-col overflow-hidden rounded-lg border border-default-border/60 bg-default-muted/5"
         >
           {showThumbnail && (
@@ -61,7 +63,7 @@ export function WebsitesGrid({
             )}
             <p className="text-[11px] half:text-[10px] text-default-muted truncate leading-tight">{site.domain}</p>
           </div>
-        </div>
+        </ExternalLink>
       ))}
     </div>
   )

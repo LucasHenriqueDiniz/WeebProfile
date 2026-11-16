@@ -6,6 +6,8 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { AniListConfig, AniListWatchingEntry } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
+import { anilistAnimeUrl } from "../services/anime-url"
 
 interface CurrentlyWatchingProps {
   entries: AniListWatchingEntry[]
@@ -46,7 +48,11 @@ export function CurrentlyWatching({
             {!hideTitle && <DefaultTitle title={title} icon={<FaPlay />} />}
             <div className="flex flex-col" style={{ gap: `${WATCHING_ROW_GAP}px` }}>
               {shown.map((entry) => (
-                <div key={entry.id} className="flex items-center gap-2 w-full">
+                <ExternalLink
+                  key={entry.id}
+                  href={anilistAnimeUrl(entry.id)}
+                  className="flex items-center gap-2 w-full"
+                >
                   {entry.cover && (
                     <img
                       src={entry.cover}
@@ -59,7 +65,7 @@ export function CurrentlyWatching({
                     <p className="text-sm truncate text-default-highlight">{entry.title}</p>
                     <p className="text-xs text-default-muted">{formatProgress(entry)} episodes</p>
                   </div>
-                </div>
+                </ExternalLink>
               ))}
             </div>
           </div>
@@ -68,7 +74,12 @@ export function CurrentlyWatching({
           <>
             <TerminalCommand command={getPseudoCommands({ plugin: "anilist", section: "currently_watching", size })} />
             {shown.map((entry) => (
-              <TerminalLineWithDots key={entry.id} title={entry.title} value={formatProgress(entry)} />
+              <TerminalLineWithDots
+                key={entry.id}
+                href={anilistAnimeUrl(entry.id)}
+                title={entry.title}
+                value={formatProgress(entry)}
+              />
             ))}
           </>
         }

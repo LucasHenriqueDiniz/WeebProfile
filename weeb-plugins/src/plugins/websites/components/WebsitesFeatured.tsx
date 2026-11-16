@@ -1,4 +1,5 @@
 import React from "react"
+import { ExternalLink } from "../../../utils/external-link"
 import { ImageComponent } from "../../../utils/image"
 import { WebsitesList } from "./WebsitesList"
 import type { WebsiteEntry } from "../types"
@@ -26,7 +27,7 @@ export function WebsitesFeatured({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="overflow-hidden rounded-xl border border-default-highlight/40">
+      <ExternalLink href={featured.url} className="block overflow-hidden rounded-xl border border-default-highlight/40">
         {showThumbnail && (
           <div className="w-full overflow-hidden bg-default-muted/10" style={{ height: `${heroHeight}px` }}>
             <ImageComponent
@@ -58,7 +59,7 @@ export function WebsitesFeatured({
           </div>
           <span className="text-[11px] half:text-[10px] text-default-muted whitespace-nowrap">{featured.domain}</span>
         </div>
-      </div>
+      </ExternalLink>
 
       {rest.length > 0 && <WebsitesList websites={rest} size={size} showDescription={showDescription} />}
     </div>
