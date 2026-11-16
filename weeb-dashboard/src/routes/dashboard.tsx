@@ -20,6 +20,7 @@ import type { Svg } from "@/lib/db/schema"
 import { useSvgStore } from "@/stores/svg-store"
 import { generateMarkdown } from "@/lib/utils/markdown"
 import { publicSvgUrl } from "@/lib/utils/svg-url"
+import { embedAltFor } from "@/lib/utils/embed-prefs"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import { ArrowUpDown, Filter, Loader2, Plus } from "lucide-react"
@@ -225,10 +226,9 @@ export default function DashboardPage() {
   const handleCopyUrl = async (svg: Svg) => {
     const url = publicSvgUrl(svg.id)
     const markdown = generateMarkdown({
-      name: svg.name,
+      alt: embedAltFor(svg),
       url,
       size: (svg.size as "half" | "full") || "half",
-      lastGeneratedAt: svg.lastGeneratedAt,
     })
     await navigator.clipboard.writeText(markdown)
     toast({
