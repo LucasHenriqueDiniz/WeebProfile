@@ -40,6 +40,9 @@ describe("plugin keys in settings, on a real D1", () => {
         .bind(crypto.randomUUID(), userId, plugin, key, value, "2026-11-10T12:00:00.000Z", "2026-11-12T09:30:00.000Z")
         .run()
     }
+    // Load the routes under beforeAll's 60 s rather than the first test's 5 s.
+    await import("./index")
+    await import("./[plugin]/[key]")
   }, 60_000)
 
   afterAll(async () => {

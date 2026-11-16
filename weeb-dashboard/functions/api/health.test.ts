@@ -56,11 +56,23 @@ describe("GET /api/health", () => {
       SVG_GENERATOR: { fetch: async () => slow(60).then(() => new Response("ok")) },
     }
 
-    const started = Date.now()
-    await call(env)
-    // Sequential would be ~180ms. Generous bound so this does not flake on a
-    // loaded runner while still failing if the Promise.all is ever unrolled.
-    expect(Date.now() - started).toBeLessThan(150)
+    // Fake timers, not the wall clock: a 150 ms bound measured the machine's load. With
+    // two D1 suites starting workerd alongside, it took 234-277 ms, longer than the
+    // sequential 180 ms it was meant to rule out. Concurrent checks are all done once
+    // 60 ms have passed; one after another, the second would still be waiting.
+    vi.useFakeTimers()
+    try {
+      let done = false
+      const response = call(env).then((r) => {
+        done = true
+        return r
+      })
+      await vi.advanceTimersByTimeAsync(60)
+      expect(done).toBe(true)
+      expect((await response).status).toBe(200)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("never caches, since a cached health check reports the past", async () => {

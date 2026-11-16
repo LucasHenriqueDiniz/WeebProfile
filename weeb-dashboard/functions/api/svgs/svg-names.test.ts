@@ -43,6 +43,10 @@ describe("SVG names on a real D1", () => {
         if (statement.trim()) await env.DB.prepare(statement).run()
       }
     }
+    // Load the routes here, under beforeAll's 60 s, not in the first test's 5 s: with
+    // another D1 suite starting workerd alongside, the import alone ran past 5 s.
+    await import("./index")
+    await import("./[id]")
   }, 60_000)
 
   afterAll(async () => {
