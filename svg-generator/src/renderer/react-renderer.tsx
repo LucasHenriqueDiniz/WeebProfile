@@ -75,9 +75,6 @@ export async function renderPlugins(config: SvgConfig): Promise<RenderPluginsRes
         style: config.style,
         size: config.size,
         hideTerminalEmojis: config.hideTerminalEmojis,
-        // Permite que calculateHeight() saiba se o header global do terminal (32px)
-        // está visível - sem isso a altura do estilo terminal fica superestimada.
-        hideTerminalHeader: config.hideTerminalHeader,
         ...flattenedConfig,
         enabled: pluginConfig.enabled,
       }

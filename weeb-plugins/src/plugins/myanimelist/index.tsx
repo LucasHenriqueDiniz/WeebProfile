@@ -92,12 +92,12 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
             const nAnime = 10
             const nManga = 11
             if (size === "full") {
-              if (showAnime && showManga) h += 24 + 60 + Math.max(nAnime, nManga) * 20
-              else h += 24 + 60 + (showAnime ? nAnime : nManga) * 20
+              if (showAnime && showManga) h += 52 + Math.max(nAnime, nManga) * 20
+              else h += 52 + (showAnime ? nAnime : nManga) * 20
             } else if (showAnime && showManga) {
-              h += 48 + 60 + (nAnime + nManga) * 20
+              h += 76 + (nAnime + nManga) * 20
             } else {
-              h += 24 + 60 + (showAnime ? nAnime : nManga) * 20
+              h += 52 + (showAnime ? nAnime : nManga) * 20
             }
           } else if (size === "full") {
             h += 184
@@ -108,7 +108,7 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
         }
         case "statistics_simple": {
           if (isTerminal) {
-            h += 24 + 4 * 30
+            h += 4 * 30 - 8
           } else {
             const rows = size === "half" ? 2 : 1
             h += 48 + rows * 24 + Math.max(0, rows - 1) * 4
@@ -118,7 +118,7 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
         case "anime_bar":
         case "manga_bar": {
           if (isTerminal) {
-            h += 24 + 44 + 5 * 24
+            h += 36 + 5 * 24
           } else {
             const rows = size === "full" ? 1 : 3
             h += 58 + rows * 20 + Math.max(0, rows - 1) * 8

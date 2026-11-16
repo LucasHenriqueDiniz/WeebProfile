@@ -8,6 +8,8 @@
   --terminal-color-muted: #8b949e;
   --terminal-color-muted-light: #6e7681;
   --terminal-color-raw: #c9d1d9;
+  --terminal-color-warning: #ffaa00;
+  --terminal-color-stripe: rgba(0, 0, 0, 0.25);
     }
   </style><style>@font-face {
   font-family: 'JetBrains Mono';
@@ -110,7 +112,7 @@
 }
 
 #svg-main .text-terminal-warning {
-  color: #ffaa00 !important;
+  color: var(--terminal-color-warning, #ffaa00) !important;
 }
 
 #svg-main .bg-terminal-highlight {
@@ -176,6 +178,12 @@
 
 #svg-main .bg-black\/25 {
   background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Zebra rows of TerminalGrid. A theme value, not black at 25%: on the light palette
+   of the auto mode that turned the row #bfbfbf, under gray text at 1.9:1. */
+#svg-main .bg-terminal-stripe {
+  background-color: var(--terminal-color-stripe, rgba(0, 0, 0, 0.25));
 }
 
 /* Terminal Command */
@@ -1189,6 +1197,11 @@
   gap: 9px
 }
 
+#svg-main .gap-x-1 {
+  -moz-column-gap: 0.25rem;
+       column-gap: 0.25rem
+}
+
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
@@ -1417,10 +1430,6 @@
 
 #svg-main .bg-black\/20 {
   background-color: rgb(0 0 0 / 0.2)
-}
-
-#svg-main .bg-black\/25 {
-  background-color: rgb(0 0 0 / 0.25)
 }
 
 #svg-main .bg-black\/40 {
@@ -2422,4 +2431,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9"><div><div><div class="font-mono terminal-container terminal-body px-2 "><section id="mal-characters-favorites"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run mal view character_favorites --max=5</span></div><div class="flex flex-col gap-1"><a href="https://myanimelist.net/character/22037" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->1<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Senjougahara  Hitagi</span></a><a href="https://myanimelist.net/character/1185" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->2<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Noda  Megumi</span></a><a href="https://myanimelist.net/character/12064" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->3<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Aisaka  Taiga</span></a><a href="https://myanimelist.net/character/153859" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->4<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Saotome  Yae</span></a><a href="https://myanimelist.net/character/50057" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->5<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Kuroki  Tomoko</span></a></div></section></div></div></div></div></div></foreignObject></svg>
+</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9;--terminal-color-warning:#ffaa00;--terminal-color-stripe:rgba(0, 0, 0, 0.25)"><div><div><div class="font-mono terminal-container terminal-body px-2 "><section id="mal-characters-favorites"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run mal view character_favorites --max=5</span></div><div class="flex flex-col gap-1"><a href="https://myanimelist.net/character/22037" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->1<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Senjougahara  Hitagi</span></a><a href="https://myanimelist.net/character/1185" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->2<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Noda  Megumi</span></a><a href="https://myanimelist.net/character/12064" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->3<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Aisaka  Taiga</span></a><a href="https://myanimelist.net/character/153859" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->4<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Saotome  Yae</span></a><a href="https://myanimelist.net/character/50057" target="_top" rel="noopener noreferrer" class="flex align-center sm-text gap-1"><span class="text-terminal-raw">[<!-- -->5<!-- -->]</span><span class="text-terminal-warning md-2-text text-bold truncate no-underline">- <!-- -->Kuroki  Tomoko</span></a></div></section></div></div></div></div></div></foreignObject></svg>

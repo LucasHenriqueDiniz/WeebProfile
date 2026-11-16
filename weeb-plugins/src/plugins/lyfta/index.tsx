@@ -41,14 +41,14 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
     const isTerminal = (config as { style?: string }).style === "terminal"
 
     // TerminalGrid: TerminalCommand + grid header + n rows
-    const terminalGridH = (n: number): number => (n > 0 ? 84 + n * 20 : 0)
+    const terminalGridH = (n: number): number => (n > 0 ? 52 + n * 20 : 0)
 
     let h = 0
     for (const s of config.sections) {
       if (s === "statistics") {
-        h += isTerminal ? 123 : 132
+        h += isTerminal ? 91 : 132
       } else if (s === "overview") {
-        h += isTerminal ? 144 : 221
+        h += isTerminal ? 112 : 221
       } else if (s === "last_workout") {
         if (!ld.workouts || ld.workouts.length === 0) continue
         const maxExercises = ne.last_workout_max_exercises ?? 5
@@ -59,7 +59,7 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
         if (isTerminal) {
           const showBodyWeight = ne.last_workout_show_body_weight !== false
           const hasBodyWeight = showBodyWeight && (lastWorkout.body_weight ?? 0) > 0
-          h += 24 + (2 + (hasBodyWeight ? 1 : 0) + n) * 28
+          h += (2 + (hasBodyWeight ? 1 : 0) + n) * 28 - 8
         } else {
           const base = size === "half" ? 315 : 334
           const itemH = size === "half" ? 37 : 40
@@ -81,7 +81,7 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
         const n = Math.min(ld.workoutSummaries?.length ?? max, max)
         if (n === 0) continue
         if (isTerminal) {
-          h += 70 + n * 20
+          h += 38 + n * 20
         } else {
           const base = size === "half" ? 52 : 54
           const itemH = size === "half" ? 70 : 73

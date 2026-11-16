@@ -14,7 +14,7 @@ export const SECTION_PREVIEWS: Record<
   Record<string, { default: PreviewSize | null; terminal: PreviewSize | null }>
 > = {
   "16personalities": {
-    personality: { default: [415, 227], terminal: [415, 240] },
+    personality: { default: [415, 227], terminal: [415, 208] },
   },
 
   anilist: {
@@ -24,16 +24,16 @@ export const SECTION_PREVIEWS: Record<
   },
 
   codeforces: {
-    rating_rank: { default: [415, 100], terminal: [415, 120] },
-    contests_participated: { default: [415, 104], terminal: [415, 100] },
-    problems_solved: { default: [415, 156], terminal: [415, 280] },
-    recent_submissions: { default: [415, 235], terminal: [415, 128] },
+    rating_rank: { default: [415, 100], terminal: [415, 88] },
+    contests_participated: { default: [415, 104], terminal: [415, 68] },
+    problems_solved: { default: [415, 156], terminal: [415, 248] },
+    recent_submissions: { default: [415, 235], terminal: [415, 96] },
   },
 
   codewars: {
-    rank_honor: { default: [415, 100], terminal: [415, 120] },
-    completed_kata: { default: [415, 343], terminal: [415, 160] },
-    languages_proficiency: { default: [415, 343], terminal: [415, 160] },
+    rank_honor: { default: [415, 100], terminal: [415, 88] },
+    completed_kata: { default: [415, 343], terminal: [415, 128] },
+    languages_proficiency: { default: [415, 343], terminal: [415, 128] },
     leaderboard_position: { default: [415, 100], terminal: [415, 78] },
   },
 
@@ -44,32 +44,32 @@ export const SECTION_PREVIEWS: Record<
   },
 
   duolingo: {
-    current_streak: { default: [415, 136], terminal: [415, 100] },
-    total_xp: { default: [415, 164], terminal: [415, 100] },
-    languages_learning: { default: [415, 235], terminal: [415, 128] },
+    current_streak: { default: [415, 136], terminal: [415, 68] },
+    total_xp: { default: [415, 164], terminal: [415, 68] },
+    languages_learning: { default: [415, 235], terminal: [415, 96] },
   },
 
   github: {
-    profile: { default: [415, 143], terminal: [415, 188] },
-    activity: { default: [415, 180], terminal: [415, 288] },
-    repositories: { default: [415, 156], terminal: [415, 268] },
-    favorite_languages: { default: [415, 354], terminal: [415, 354] },
-    favorite_license: { default: [415, 112], terminal: [415, 174] },
-    calendar: { default: [415, 355], terminal: [415, 232] },
-    code_habits: { default: [415, 634], terminal: [415, 1185] },
-    starred_repositories: { default: [415, 1440], terminal: [415, 336] },
-    gists: { default: [415, 456], terminal: [415, 168] },
-    stargazers: { default: [415, 597], terminal: [415, 228] },
-    top_repositories: { default: [415, 728], terminal: [415, 208] },
-    star_lists: { default: [415, 380], terminal: [415, 148] },
-    notable_contributions: { default: [415, 1172], terminal: [415, 308] },
-    recent_activity: { default: [415, 1441], terminal: [415, 324] },
-    introduction: { default: [415, 154], terminal: [415, 234] },
-    featured_repositories: { default: [415, 458], terminal: [415, 168] },
-    sponsorships: { default: [415, 272], terminal: [415, 168] },
-    sponsors: { default: [415, 272], terminal: [415, 168] },
-    people: { default: [415, 173], terminal: [415, 308] },
-    repository_contributors: { default: [415, 375], terminal: [415, 308] },
+    profile: { default: [415, 143], terminal: [415, 156] },
+    activity: { default: [415, 180], terminal: [415, 256] },
+    repositories: { default: [415, 156], terminal: [415, 236] },
+    favorite_languages: { default: [415, 354], terminal: [415, 322] },
+    favorite_license: { default: [415, 112], terminal: [415, 142] },
+    calendar: { default: [415, 355], terminal: [415, 200] },
+    code_habits: { default: [415, 634], terminal: [415, 1153] },
+    starred_repositories: { default: [415, 1440], terminal: [415, 304] },
+    gists: { default: [415, 456], terminal: [415, 136] },
+    stargazers: { default: [415, 597], terminal: [415, 196] },
+    top_repositories: { default: [415, 728], terminal: [415, 176] },
+    star_lists: { default: [415, 380], terminal: [415, 116] },
+    notable_contributions: { default: [415, 1172], terminal: [415, 276] },
+    recent_activity: { default: [415, 1441], terminal: [415, 292] },
+    introduction: { default: [415, 154], terminal: [415, 202] },
+    featured_repositories: { default: [415, 458], terminal: [415, 136] },
+    sponsorships: { default: [415, 272], terminal: [415, 136] },
+    sponsors: { default: [415, 272], terminal: [415, 136] },
+    people: { default: [415, 173], terminal: [415, 276] },
+    repository_contributors: { default: [415, 375], terminal: [415, 276] },
   },
 
   github_repo: {
@@ -82,27 +82,27 @@ export const SECTION_PREVIEWS: Record<
   },
 
   lastfm: {
-    recent_tracks: { default: [415, 338], terminal: [415, 173] },
-    statistics: { default: [415, 248], terminal: [415, 166] },
-    top_artists: { default: [415, 315], terminal: [415, 307] },
-    top_albums: { default: [415, 276], terminal: [415, 307] },
-    top_tracks: { default: [415, 276], terminal: [415, 407] },
+    recent_tracks: { default: [415, 338], terminal: [415, 141] },
+    statistics: { default: [415, 248], terminal: [415, 134] },
+    top_artists: { default: [415, 315], terminal: [415, 275] },
+    top_albums: { default: [415, 276], terminal: [415, 275] },
+    top_tracks: { default: [415, 276], terminal: [415, 375] },
   },
 
   lyfta: {
-    statistics: { default: [415, 156], terminal: [415, 147] },
-    recent_workouts: { default: [415, 356], terminal: [415, 174] },
-    exercises: { default: [415, 314], terminal: [415, 208] },
-    overview: { default: [415, 245], terminal: [415, 168] },
-    last_workout: { default: [415, 339], terminal: [415, 272] },
+    statistics: { default: [415, 156], terminal: [415, 115] },
+    recent_workouts: { default: [415, 356], terminal: [415, 142] },
+    exercises: { default: [415, 314], terminal: [415, 176] },
+    overview: { default: [415, 245], terminal: [415, 136] },
+    last_workout: { default: [415, 339], terminal: [415, 240] },
   },
 
   myanimelist: {
-    statistics: { default: [415, 400], terminal: [415, 552] },
+    statistics: { default: [415, 400], terminal: [415, 520] },
     last_activity: { default: [415, 534], terminal: [415, 532] },
-    statistics_simple: { default: [415, 124], terminal: [415, 168] },
-    anime_bar: { default: [415, 158], terminal: [415, 212] },
-    manga_bar: { default: [415, 158], terminal: [415, 212] },
+    statistics_simple: { default: [415, 124], terminal: [415, 136] },
+    anime_bar: { default: [415, 158], terminal: [415, 180] },
+    manga_bar: { default: [415, 158], terminal: [415, 180] },
     anime_favorites: { default: [415, 680], terminal: [415, 583] },
     manga_favorites: { default: [415, 680], terminal: [415, 583] },
     character_favorites: { default: [415, 330], terminal: [415, 178] },
@@ -110,20 +110,20 @@ export const SECTION_PREVIEWS: Record<
   },
 
   stackoverflow: {
-    reputation: { default: [415, 104], terminal: [415, 100] },
-    badges: { default: [415, 132], terminal: [415, 160] },
-    answers_questions: { default: [415, 104], terminal: [415, 120] },
-    tags_expertise: { default: [415, 343], terminal: [415, 160] },
+    reputation: { default: [415, 104], terminal: [415, 68] },
+    badges: { default: [415, 132], terminal: [415, 128] },
+    answers_questions: { default: [415, 104], terminal: [415, 88] },
+    tags_expertise: { default: [415, 343], terminal: [415, 128] },
   },
 
   steam: {
-    statistics: { default: [415, 336], terminal: [415, 188] },
-    recent_games: { default: [415, 384], terminal: [415, 188] },
-    top_games: { default: [415, 464], terminal: [415, 208] },
+    statistics: { default: [415, 336], terminal: [415, 156] },
+    recent_games: { default: [415, 384], terminal: [415, 156] },
+    top_games: { default: [415, 464], terminal: [415, 176] },
   },
 
   websites: {
-    websites: { default: [415, 496], terminal: [415, 194] },
+    websites: { default: [415, 496], terminal: [415, 162] },
   },
 }
 

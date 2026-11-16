@@ -16,6 +16,7 @@
 import { renderToString } from "react-dom/server"
 import { log } from "../utils/log.js"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
+import { TERMINAL_HEADER_HEIGHT } from "@weeb/weeb-plugins/templates"
 import type { SvgConfig, SvgGenerationResult } from "../types/index.js"
 import { loadCss } from "./css-loader.js"
 import { renderPlugins } from "../renderer/react-renderer.js"
@@ -46,7 +47,11 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
   const pluginsHeight = PluginManager.getInstance().calculateTotalHeight(pluginsConfig, pluginsData, config.size)
   const errorsHeight = Object.keys(pluginsErrors).length * PLUGIN_ERROR_HEIGHT
   // calculateTotalHeight adds its 24px safety pad only when something rendered.
-  const height = pluginsHeight + errorsHeight + (pluginsHeight === 0 && errorsHeight > 0 ? 24 : 0)
+  const contentHeight = pluginsHeight + errorsHeight + (pluginsHeight === 0 && errorsHeight > 0 ? 24 : 0)
+  // The terminal header is drawn once, above every plugin, and no plugin counts it.
+  // Without it a terminal card with the header on lost its last 8px (32 minus the pad).
+  const showsTerminalHeader = config.style === "terminal" && !config.hideTerminalHeader
+  const height = contentHeight + (showsTerminalHeader && contentHeight > 0 ? TERMINAL_HEADER_HEIGHT : 0)
 
   log.debug("height_calculated", { height })
 

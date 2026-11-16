@@ -9,6 +9,7 @@ import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
 import type { GithubConfig, GithubData } from "./types"
+import { TERMINAL_HEADER_HEIGHT } from "../../templates/Terminal/TerminalHeader"
 import { RenderGithub } from "./components/RenderGithub"
 import { fetchGithubData } from "./services/fetchGithub"
 
@@ -45,27 +46,27 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
       n > 0 ? 40 + n * 120 + Math.max(0, n - 1) * 16 + (hasPager ? 32 : 0) : 0
 
     // Terminal "table" sections: TerminalCommand + TerminalGrid header + n rows (+ "+N more" footer)
-    const terminalGridH = (n: number, hasMore: boolean): number => (n > 0 ? 84 + n * 20 + (hasMore ? 28 : 0) : 0)
+    const terminalGridH = (n: number, hasMore: boolean): number => (n > 0 ? 52 + n * 20 + (hasMore ? 28 : 0) : 0)
 
     let h = 0
     for (const s of cfg.sections) {
       switch (s) {
         case "profile":
-          h += isTerminal ? 164 : size === "full" ? 127 : 119
+          h += isTerminal ? 132 : size === "full" ? 127 : 119
           break
         case "repositories":
-          h += isTerminal ? 244 : 132
+          h += isTerminal ? 212 : 132
           break
         case "activity":
-          h += isTerminal ? 264 : 156
+          h += isTerminal ? 232 : 156
           break
         case "calendar": {
           const yearMode = cfg.calendar_year_mode ?? "current_year"
           const years = gh.calendar?.years?.length ?? 1
           if (years > 1) {
-            h += isTerminal ? 33 + years * 175 + 28 : 33 + years * 150 + 28
+            h += isTerminal ? 1 + years * 175 + 28 : 33 + years * 150 + 28
           } else if (isTerminal) {
-            h += 33 + 175
+            h += 1 + 175
           } else {
             // half mode splits the calendar into two rows of weeks
             const rows = size === "half" && yearMode !== "last_6_months" ? 2 : 1
@@ -81,7 +82,7 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           const showsStats = !cfg.code_habits_hide_stats && !!habits?.commitStats
           const languageCount = cfg.code_habits_hide_languages ? 0 : Object.keys(habits?.languages ?? {}).length
           if (isTerminal) {
-            h += 1010
+            h += 978
             if (!showsStats) h -= 103
             if (languageCount > 0) h += 55 + Math.min(languageCount, 5) * 24
           } else if (size === "half") {
@@ -99,16 +100,18 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           const maxLangs = cfg.favorite_languages_max_languages ?? 5
           const n = Math.min(gh.languages?.length ?? maxLangs, maxLangs)
           // ~54px per language row (preview 325px for 5 items: (325-43)/5 = 56.4, rounded up)
-          h += 33 + 11 + n * 54 + Math.max(0, n - 1) * 4
+          // One formula for both styles; measured in terminal with the header drawn, so
+          // the header comes off there (generateSvg counts it once per SVG).
+          h += 33 + 11 + n * 54 + Math.max(0, n - 1) * 4 - (isTerminal ? TERMINAL_HEADER_HEIGHT : 0)
           break
         }
         case "favorite_license":
-          h += isTerminal ? 150 : 88
+          h += isTerminal ? 118 : 88
           break
         case "introduction": {
           if (!gh.introduction) break
           if (isTerminal) {
-            h += 210
+            h += 178
           } else {
             h += size === "full" ? 100 : 130
           }
@@ -174,7 +177,7 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           const max = cfg.recent_activity_max ?? 10
           const n = Math.min(gh.recentActivity?.length ?? max, max)
           if (n === 0) break
-          h += isTerminal ? 20 + n * 28 : 33 + n * 124 + Math.max(0, n - 1) * 16
+          h += isTerminal ? n * 28 - 12 : 33 + n * 124 + Math.max(0, n - 1) * 16
           break
         }
         case "notable_contributions": {

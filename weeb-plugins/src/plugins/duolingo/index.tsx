@@ -37,19 +37,19 @@ export const duolingoPlugin: Plugin<DuolingoConfig, PluginData & DuolingoData> =
     for (const s of config.sections) {
       if (s === "current_streak") {
         if (isTerminal) {
-          h += 76
+          h += 44
         } else {
           // hideTitle defaults to true for current_streak
           const hideTitle = ne.current_streak_hide_title ?? true
           h += hideTitle ? 112 : 157
         }
       } else if (s === "total_xp") {
-        h += isTerminal ? 76 : 140
+        h += isTerminal ? 44 : 140
       } else if (s === "languages_learning") {
         const max = ne.languages_learning_max ?? 10
         const n = Math.min((data as DuolingoData).languages?.length ?? max, max)
         if (n === 0) continue
-        h += isTerminal ? 56 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
+        h += isTerminal ? 24 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
       }
     }
     return h

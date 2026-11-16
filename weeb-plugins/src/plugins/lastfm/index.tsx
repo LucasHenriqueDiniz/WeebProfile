@@ -56,11 +56,11 @@ export const lastFmPlugin: Plugin<LastFmConfig, PluginData & LastFmData> = {
     const gapH = size === "half" ? 10 : 12
 
     // TerminalGrid: TerminalCommand + grid header + n rows
-    const terminalGridH = (n: number): number => (n > 0 ? 84 + n * 20 : 0)
+    const terminalGridH = (n: number): number => (n > 0 ? 52 + n * 20 : 0)
     // TerminalCommand + n TerminalLine rows
-    const terminalListH = (n: number): number => (n > 0 ? 64 + n * 17 : 0)
+    const terminalListH = (n: number): number => (n > 0 ? 32 + n * 17 : 0)
     // TerminalTree: header + n items (title + value, plus subtitle row if present)
-    const terminalTreeH = (n: number, hasSubtitle: boolean): number => (n > 0 ? 83 + n * (hasSubtitle ? 60 : 40) : 0)
+    const terminalTreeH = (n: number, hasSubtitle: boolean): number => (n > 0 ? 51 + n * (hasSubtitle ? 60 : 40) : 0)
     // DefaultList: title (with interval subtitle) + n rows (50px, gap-1) + pb-2
     const defaultListH = (n: number): number => (n > 0 ? 40 + n * 50 + Math.max(0, n - 1) * 4 + 8 : 0)
     // DefaultImageGrid: title + rows of 100px (limited to multiples of 4) + pb-2
@@ -90,7 +90,7 @@ export const lastFmPlugin: Plugin<LastFmConfig, PluginData & LastFmData> = {
       if (s === "statistics") {
         const hasFeatured = !ne.statistics_hide_featured_track && !!lfmData.featuredTrack
         if (isTerminal) {
-          h += 24 + 2 * 30 + (hasFeatured ? 58 : 0)
+          h += 2 * 30 - 8 + (hasFeatured ? 58 : 0)
         } else {
           const hideTitle = ne.statistics_hide_title || false
           const titleH = hideTitle ? 0 : 40
