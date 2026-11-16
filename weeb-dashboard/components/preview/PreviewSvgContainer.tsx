@@ -11,7 +11,11 @@ import {
   getFontCssClient,
   getFontsForStyle,
 } from "@weeb/weeb-plugins/styles"
-import { getDefaultThemeVariables, getTerminalThemeVariables } from "@weeb/weeb-plugins/themes"
+import {
+  getDefaultThemeVariables,
+  getTerminalThemeVariables,
+  sanitizeCustomThemeColors,
+} from "@weeb/weeb-plugins/themes"
 
 interface PreviewSvgContainerProps {
   width: number
@@ -26,6 +30,8 @@ interface PreviewSvgContainerProps {
   terminalHeaderText?: string
   customCss?: string
   customThemeColors?: Record<string, string> // Custom theme colors (only used when theme === 'custom')
+  colorMode?: "fixed" | "auto"
+  colorVariant?: "light" | "dark"
   plugins?: Record<string, any> // Plugin configs for CSS loading
   animations?: { step: number } // Opt-in card animations: the gap between sections
 }
@@ -67,9 +73,14 @@ export function PreviewSvgContainer({
   terminalHeaderText,
   customCss,
   customThemeColors,
+  colorMode,
+  colorVariant,
   plugins,
   animations,
 }: PreviewSvgContainerProps) {
+  // The generator keeps only plain colors on --default-color-* variables; the preview
+  // applies the same filter, or it would show a color the generated SVG drops.
+  const safeCustomColors = useMemo(() => sanitizeCustomThemeColors(customThemeColors), [customThemeColors])
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null)
   const [styleNode, setStyleNode] = useState<HTMLStyleElement | null>(null)
@@ -155,13 +166,10 @@ export function PreviewSvgContainer({
     const themeVariables =
       style === "terminal"
         ? getTerminalThemeVariables(selectedTheme)
-        : getDefaultThemeVariables(selectedTheme, customThemeColors)
+        : getDefaultThemeVariables(selectedTheme, safeCustomColors)
 
     // Se houver customThemeColors, mesclar (customThemeColors sobrescreve)
-    const finalVariables =
-      customThemeColors && Object.keys(customThemeColors).length > 0
-        ? { ...themeVariables, ...customThemeColors }
-        : themeVariables
+    const finalVariables = safeCustomColors ? { ...themeVariables, ...safeCustomColors } : themeVariables
 
     // Converter para CSS
     const cssVariables = Object.entries(finalVariables)
@@ -172,7 +180,7 @@ export function PreviewSvgContainer({
     #svg-main {
 ${cssVariables}
     }`
-  }, [style, theme, customThemeColors])
+  }, [style, theme, safeCustomColors])
 
   // Inject plugin CSS, theme variables and the author's custom CSS -- all of it
   // into the frame's own head, never the dashboard's.
@@ -286,7 +294,9 @@ ${cssVariables}
             hideTerminalHeader={hideTerminalHeader}
             fontFamily={fontFamily}
             terminalHeaderText={terminalHeaderText}
-            customThemeColors={customThemeColors}
+            customThemeColors={safeCustomColors}
+            colorMode={colorMode}
+            colorVariant={colorVariant}
             animations={animations}
           >
             {children}

@@ -695,6 +695,71 @@ describe("POST / — altura de um plugin que falhou", () => {
   })
 })
 
+describe("POST / — auto color mode", () => {
+  /** The opening tag of the theme container PluginStyles draws. */
+  const container = (svg: string, style: "default" | "terminal") =>
+    svg.match(new RegExp(`<div class="${style}-container"[^>]*>`))?.[0] ?? ""
+
+  /** The <style> element carrying the auto palettes, if any. */
+  const autoStyle = (svg: string) => svg.match(/<style>\[data-theme-scope=[^<]*<\/style>/)?.[0] ?? ""
+
+  it("ships the light palette and overrides it inside the dark media query, terminal style", async () => {
+    const { body } = await post(validRequest({ style: "terminal", theme: "default", colorMode: "auto" }))
+    const css = autoStyle(body.svg)
+    const dark = css.slice(css.indexOf("@media (prefers-color-scheme: dark)"))
+
+    expect(css).toContain("--terminal-color-background: #ffffff;")
+    expect(dark).toContain("--terminal-color-background: #0d1117;")
+  })
+
+  it("ships the light palette and overrides it inside the dark media query, default style", async () => {
+    const { body } = await post(validRequest({ style: "default", theme: "purple", colorMode: "auto" }))
+    const css = autoStyle(body.svg)
+    const dark = css.slice(css.indexOf("@media (prefers-color-scheme: dark)"))
+
+    expect(css).toContain("--default-color-surface: #f7f2ff;")
+    expect(dark).toContain("--default-color-surface: #212233;")
+  })
+
+  // An inline declaration beats any stylesheet rule, media query included: with the
+  // variables inline the dark override would never apply.
+  it("keeps the theme variables out of the container's inline style", async () => {
+    const { body } = await post(validRequest({ style: "terminal", colorMode: "auto" }))
+    const tag = container(body.svg, "terminal")
+
+    expect(tag).toContain('data-color-mode="auto"')
+    expect(tag).not.toMatch(/--terminal-color-[a-z-]+:/)
+    expect(tag).toContain("background-color:var(--terminal-color-background)")
+  })
+
+  it("leaves a card without colorMode exactly as before: inline variables, no media query", async () => {
+    const { body } = await post(validRequest({ style: "terminal" }))
+
+    expect(container(body.svg, "terminal")).toContain("--terminal-color-background:#0d1117")
+    expect(autoStyle(body.svg)).toBe("")
+  })
+
+  it("draws the custom theme's colors, which the request used to drop", async () => {
+    const { body } = await post(
+      validRequest({ theme: "custom", customThemeColors: { "--default-color-highlight": "#e11d48" } })
+    )
+
+    expect(container(body.svg, "default")).toContain("--default-color-highlight:#e11d48")
+  })
+
+  it("drops a custom color that could break out of its declaration", async () => {
+    const { body } = await post(
+      validRequest({
+        theme: "custom",
+        colorMode: "auto",
+        customThemeColors: { "--default-color-highlight": "red;} *{display:none" },
+      })
+    )
+
+    expect(body.svg).not.toContain("display:none")
+  })
+})
+
 describe("POST / — opt-in animations", () => {
   const card = (extra: Record<string, unknown> = {}) =>
     validRequest({

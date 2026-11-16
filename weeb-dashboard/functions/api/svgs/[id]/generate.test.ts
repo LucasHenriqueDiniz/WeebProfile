@@ -153,15 +153,16 @@ describe("POST /api/svgs/:id/generate inside the user's generation floor", () =>
   })
 })
 
-describe("POST /api/svgs/:id/generate with ui_config.animations", () => {
-  async function sentToGenerator(uiConfig?: Record<string, unknown>) {
+describe("POST /api/svgs/:id/generate with the card's ui_config", () => {
+  /** Runs the route and returns the JSON body it sent to the generator binding. */
+  async function sentToGenerator(uiConfig?: Record<string, unknown>): Promise<Record<string, unknown>> {
     if (uiConfig) svgRow.uiConfig = uiConfig
-    let body: Record<string, unknown> | undefined
+    let sent: Record<string, unknown> = {}
     const { onRequestPost } = await import("./generate")
     const env = {
       SVG_GENERATOR: {
         fetch: async (_url: string, init: RequestInit) => {
-          body = JSON.parse(String(init.body))
+          sent = JSON.parse(String(init.body))
           return Response.json({ success: true, svg: "<svg/>", pluginErrors: {}, hasErrors: false })
         },
       },
@@ -173,14 +174,27 @@ describe("POST /api/svgs/:id/generate with ui_config.animations", () => {
         params: { id: "svg_1" },
       } as unknown as Parameters<typeof onRequestPost>[0]) as Promise<Response>
     ).catch(() => undefined)
-    return body
+    return sent
   }
 
+  it("passes the auto color mode and the custom colors stored in ui_config", async () => {
+    svgRow.uiConfig = { colorMode: "auto", customThemeColors: { "--default-color-highlight": "#e11d48" } }
+
+    expect(await sentToGenerator()).toMatchObject({
+      colorMode: "auto",
+      customThemeColors: { "--default-color-highlight": "#e11d48" },
+    })
+  })
+
+  it("sends no color mode for a card that never turned it on", async () => {
+    expect((await sentToGenerator()).colorMode).toBeUndefined()
+  })
+
   it("asks the generator for animations when the SVG has them on", async () => {
-    expect((await sentToGenerator({ animations: true }))?.animations).toBe(true)
+    expect((await sentToGenerator({ animations: true })).animations).toBe(true)
   })
 
   it("leaves them off for an SVG saved before the option existed", async () => {
-    expect((await sentToGenerator())?.animations).toBe(false)
+    expect((await sentToGenerator()).animations).toBe(false)
   })
 })

@@ -67,6 +67,8 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
     fontFamily: config.fontFamily,
     terminalHeaderText: config.terminalHeaderText,
     hideTerminalEmojis: config.hideTerminalEmojis,
+    colorMode: config.colorMode,
+    customThemeColors: config.customThemeColors,
     animations: animationStep !== undefined ? { step: animationStep } : undefined,
   })
 

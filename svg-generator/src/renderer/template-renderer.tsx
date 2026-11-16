@@ -20,6 +20,8 @@ interface SvgContainerProps {
   hideTerminalHeader?: boolean
   fontFamily?: string
   terminalHeaderText?: string
+  colorMode?: string
+  customThemeColors?: Record<string, string>
   // Present when animations are on: the gap between sections (animationTimeline).
   animations?: { step: number }
 }
@@ -42,6 +44,8 @@ export function createSvgContainer(props: SvgContainerProps): React.ReactElement
     hideTerminalHeader,
     fontFamily,
     terminalHeaderText,
+    colorMode,
+    customThemeColors,
     animations,
   } = props
 
@@ -72,6 +76,8 @@ export function createSvgContainer(props: SvgContainerProps): React.ReactElement
             hideTerminalHeader={hideTerminalHeader}
             fontFamily={fontFamily}
             terminalHeaderText={terminalHeaderText}
+            colorMode={colorMode}
+            customThemeColors={customThemeColors}
             animations={animations}
           >
             {children}

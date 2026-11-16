@@ -16,6 +16,7 @@ import { getUserEssentialConfigs, SecretsUnreadableError } from "./db/essential-
 import { validateRequiredConfig } from "./validation/validate-required-config.js"
 import { log, hashUserId } from "./utils/log.js"
 import { withAppCredentials } from "./db/app-credentials.js"
+import { isAutoColorMode, sanitizeCustomThemeColors } from "@weeb/weeb-plugins/themes/theme-utils"
 
 export interface Env {
   DB: D1Database
@@ -45,6 +46,8 @@ interface GenerateRequest {
   fontFamily?: string
   terminalHeaderText?: string
   primaryColor?: string
+  colorMode?: string
+  customThemeColors?: Record<string, string>
   animations?: boolean
   dev?: boolean
   mock?: boolean
@@ -183,6 +186,8 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
         ? requestData.terminalHeaderText.replace(/[<>]/g, "").slice(0, 60)
         : undefined,
     primaryColor: requestData.primaryColor || "#ff7a00",
+    colorMode: isAutoColorMode(requestData.colorMode) ? "auto" : undefined,
+    customThemeColors: sanitizeCustomThemeColors(requestData.customThemeColors),
     animations: requestData.animations === true,
     essentialConfigs,
     dev: requestData.dev === true || requestData.mock === true,

@@ -31,6 +31,7 @@ export interface TemplateUiLayout {
   hideTerminalHeader?: boolean
   hideTerminalCommand?: boolean
   animations?: boolean
+  colorMode?: "auto"
   fontFamily?: string
   customThemeColors?: Record<string, string>
 }
@@ -128,6 +129,7 @@ export function templateUiLayout(uiConfig: unknown): TemplateUiLayout {
     if (typeof saved[key] === "boolean") ui[key] = saved[key]
   }
   if (typeof saved.fontFamily === "string") ui.fontFamily = saved.fontFamily
+  if (saved.colorMode === "auto") ui.colorMode = "auto"
   if (isRecord(saved.customThemeColors)) {
     const colors = Object.entries(saved.customThemeColors).filter(
       (entry): entry is [string, string] => typeof entry[1] === "string"

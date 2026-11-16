@@ -34,6 +34,10 @@ export interface SvgConfig {
   fontFamily?: string
   terminalHeaderText?: string
   primaryColor?: string // Custom primary color
+  // "auto": light and dark palettes in one SVG, picked by prefers-color-scheme.
+  colorMode?: "auto"
+  // Custom theme colors (theme "custom"), already sanitized by the worker.
+  customThemeColors?: Record<string, string>
   // Opt-in CSS animations (typing, sections entering, bars filling, numbers counting).
   // Off unless the request says true; see weeb-plugins templates/animations.tsx.
   animations?: boolean

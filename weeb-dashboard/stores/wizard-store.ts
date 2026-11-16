@@ -38,6 +38,8 @@ export interface WizardState {
   animations: boolean // Opt-in card animations, stored in ui_config.animations
   customCss: string
   customThemeColors: Record<string, string> // Custom theme colors (only used when theme === 'custom')
+  // "auto": the card follows the light/dark theme of the page that shows it (GitHub's).
+  colorMode: "fixed" | "auto"
 
   // Step 3: Preview
   previewUrl: string | null
@@ -71,12 +73,14 @@ export interface WizardState {
   setHideTerminalHeader: (hide: boolean) => void
   setHideTerminalCommand: (hide: boolean) => void
   setFontFamily: (fontFamily: string) => void
+  setColorMode: (colorMode: "fixed" | "auto") => void
   setTerminalHeaderText: (text: string) => void
   setAnimations: (animations: boolean) => void
   // Bumped to replay the animations in the live preview; never persisted.
   animationsReplayKey: number
   replayAnimations: () => void
   setCustomThemeColor: (variable: string, color: string) => void
+  setCustomThemeColors: (colors: Record<string, string>) => void
   resetCustomThemeColors: () => void
   setPreviewUrl: (url: string | null) => void
   reorderPlugins: (newOrder: string[]) => void
@@ -147,6 +151,7 @@ const initialState = {
   animationsReplayKey: 0,
   customCss: "",
   customThemeColors: {},
+  colorMode: "fixed" as const,
   previewUrl: null,
   pluginsHaveMissingEssentialConfigs: false,
   currentStep: 1,
@@ -386,6 +391,10 @@ export const useWizardStore = create<WizardState>()(
         set({ fontFamily })
       },
 
+      setColorMode: (colorMode) => {
+        set({ colorMode })
+      },
+
       setTerminalHeaderText: (text) => {
         set({ terminalHeaderText: text })
       },
@@ -405,6 +414,9 @@ export const useWizardStore = create<WizardState>()(
             [variable]: color,
           },
         }))
+      },
+      setCustomThemeColors: (colors) => {
+        set({ customThemeColors: colors })
       },
       resetCustomThemeColors: () => {
         set({ customThemeColors: {} })
@@ -519,6 +531,7 @@ export const useWizardStore = create<WizardState>()(
             hideTerminalCommand: ui.hideTerminalCommand ?? false,
             fontFamily: ui.fontFamily || "poppins",
             animations: ui.animations === true,
+            colorMode: ui.colorMode === "auto" ? "auto" : "fixed",
             customThemeColors: ui.customThemeColors ?? {},
           })
 
@@ -569,6 +582,7 @@ export const useWizardStore = create<WizardState>()(
         animations: state.animations,
         customCss: state.customCss,
         customThemeColors: state.customThemeColors,
+        colorMode: state.colorMode,
         previewUrl: state.previewUrl,
       }),
       // Prevent excessive synchronization that can cause refresh

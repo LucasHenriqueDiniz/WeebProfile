@@ -53,6 +53,8 @@ export function normalizeConfig(config: Partial<SvgConfig>): SvgConfig {
     fontFamily: config.fontFamily || undefined,
     terminalHeaderText: config.terminalHeaderText || undefined,
     primaryColor: config.primaryColor || "#ff7a00",
+    colorMode: config.colorMode,
+    customThemeColors: config.customThemeColors,
     animations: config.animations === true,
     dev: config.dev ?? false,
     essentialConfigs: config.essentialConfigs, // CRÍTICO: Preservar essentialConfigs (secrets/tokens)

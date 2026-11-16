@@ -31,12 +31,14 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
     animations,
     customCss,
     customThemeColors,
+    colorMode,
     setStyle,
     setSize,
     setTheme,
     setHideTerminalEmojis,
     setHideTerminalHeader,
     setFontFamily,
+    setColorMode,
     setTerminalHeaderText,
     setAnimations,
     replayAnimations,
@@ -76,11 +78,13 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
             onReplayAnimations={replayAnimations}
             customCss={customCss}
             customThemeColors={customThemeColors}
+            colorMode={colorMode}
             setStyle={setStyle}
             setTheme={setTheme}
             setHideTerminalEmojis={setHideTerminalEmojis}
             setHideTerminalHeader={setHideTerminalHeader}
             setFontFamily={setFontFamily}
+            setColorMode={setColorMode}
             setTerminalHeaderText={setTerminalHeaderText}
             setCustomCss={setCustomCss}
             setCustomThemeColor={setCustomThemeColor}
