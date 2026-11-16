@@ -48,7 +48,7 @@ export const steamPlugin: Plugin<PluginConfig & SteamConfig, PluginData & SteamD
     const gapH = size === "half" ? 10 : 12
 
     // TerminalGrid: TerminalCommand + grid header + n rows
-    const terminalGridH = (n: number): number => (n > 0 ? 84 + n * 20 : 0)
+    const terminalGridH = (n: number): number => (n > 0 ? 52 + n * 20 : 0)
 
     let h = 0
     for (const s of config.sections) {
@@ -58,7 +58,7 @@ export const steamPlugin: Plugin<PluginConfig & SteamConfig, PluginData & SteamD
           const hasProfile = !!steamData.playerSummary
           const hasFavorite = !!steamData.statistics.favoriteGame
           const nLines = (hasProfile ? 1 : 0) + 3 + (hasFavorite ? 1 : 0)
-          h += 24 + nLines * 28
+          h += nLines * 28 - 8
         } else {
           const showFeatured = ne.statistics_show_featured !== false
           const hasProfile = !!steamData.playerSummary

@@ -32,16 +32,16 @@ export const stackoverflowPlugin: Plugin<StackOverflowConfig, PluginData & Stack
     let h = 0
     for (const s of config.sections) {
       if (s === "reputation") {
-        h += isTerminal ? 76 : 80
+        h += isTerminal ? 44 : 80
       } else if (s === "badges") {
-        h += isTerminal ? 136 : 108
+        h += isTerminal ? 104 : 108
       } else if (s === "answers_questions") {
-        h += isTerminal ? 96 : 80
+        h += isTerminal ? 64 : 80
       } else if (s === "tags_expertise") {
         const max = ne.tags_expertise_max ?? 5
         const n = Math.min((data as StackOverflowData).topTags?.length ?? max, max)
         if (n === 0) continue
-        h += isTerminal ? 56 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
+        h += isTerminal ? 24 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
       }
     }
     return h

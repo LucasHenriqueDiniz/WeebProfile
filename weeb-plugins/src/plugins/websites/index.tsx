@@ -40,7 +40,7 @@ export const websitesPlugin: Plugin<PluginConfig & WebsitesConfig, PluginData & 
     }
 
     // Terminal: TerminalCommand + n TerminalLine (medido: 64 + n * 16).
-    if ((config as { style?: string }).style === "terminal") return 68 + n * 17
+    if ((config as { style?: string }).style === "terminal") return 36 + n * 17
 
     const variant = read<WebsitesVariant>("websites_variant", "grid")
     const showThumbnail = read<boolean>("websites_show_thumbnail", true) !== false

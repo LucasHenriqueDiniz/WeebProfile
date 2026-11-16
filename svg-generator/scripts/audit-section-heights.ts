@@ -179,7 +179,9 @@ async function auditSection(
         style,
         terminalTheme: config.terminalTheme,
         defaultTheme: config.defaultTheme,
-        hideTerminalHeader: config.hideTerminalHeader,
+        // Sections only: calculateHeight never counts the terminal header, generateSvg
+        // adds it once per SVG. Drawn here, it showed every terminal section 32px short.
+        hideTerminalHeader: true,
       },
       element
     )

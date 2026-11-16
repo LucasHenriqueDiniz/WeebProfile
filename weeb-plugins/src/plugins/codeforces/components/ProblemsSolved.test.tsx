@@ -35,7 +35,8 @@ describe("Codeforces problems_solved height", () => {
   // Each value is where the section ends in Chromium, rendered by generateSvg from
   // a fake Codeforces API with that many difficulties (2026-11-16). The terminal
   // formula used to add 25px per difficulty against 20px rendered: 42px of empty
-  // terminal under tourist's nine, and 3px cut off a card with none.
+  // terminal under tourist's nine, and 3px cut off a card with none. Terminal values
+  // leave out the 32px header, which generateSvg adds once per SVG.
   it.each([
     ["default", "half", 0, 76],
     ["default", "half", 5, 104],
@@ -44,10 +45,10 @@ describe("Codeforces problems_solved height", () => {
     ["default", "full", 0, 76],
     ["default", "full", 9, 104],
     ["default", "full", 10, 104],
-    ["terminal", "half", 0, 76],
-    ["terminal", "half", 5, 176],
-    ["terminal", "half", 9, 256],
-    ["terminal", "full", 10, 276],
+    ["terminal", "half", 0, 44],
+    ["terminal", "half", 5, 144],
+    ["terminal", "half", 9, 224],
+    ["terminal", "full", 10, 244],
   ] as const)("%s %s with %i difficulties is %ipx", (style, size, groups, height) => {
     expect(codeforcesPlugin.calculateHeight(config(style), data(groups) as never, size)).toBe(height)
   })

@@ -33,17 +33,17 @@ export const codewarsPlugin: Plugin<CodewarsConfig, PluginData & CodewarsData> =
     let h = 0
     for (const s of config.sections) {
       if (s === "rank_honor") {
-        h += isTerminal ? 96 : 76
+        h += isTerminal ? 64 : 76
       } else if (s === "completed_kata") {
         const max = ne.completed_kata_max ?? 5
         const n = Math.min(cwData.completedKata?.length ?? max, max)
         if (n === 0) continue
-        h += isTerminal ? 56 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
+        h += isTerminal ? 24 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
       } else if (s === "languages_proficiency") {
         const max = ne.languages_proficiency_max ?? 5
         const n = Math.min(Object.keys(cwData.languages ?? {}).length, max)
         if (n === 0) continue
-        h += isTerminal ? 56 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
+        h += isTerminal ? 24 + n * 16 : 33 + 12 + n * 50 + Math.max(0, n - 1) * 4 + 8
       } else if (s === "leaderboard_position") {
         // LeaderboardPosition returns <></> when there is no position, and that
         // early return sits above the style branch -- so neither style renders
