@@ -130,7 +130,7 @@ export const meuPlugin: Plugin<PluginConfig & MinhaConfig, PluginData & MeusDado
 
 Ver `steam/plugin.metadata.ts` como referência canônica. Campos obrigatórios:
 
-- `displayName`, `description`, `category` (`"coding" | "music" | "anime" | "gaming"`)
+- `displayName`, `description`, `category` (uma de `PLUGIN_CATEGORIES` em `weeb-plugins/src/plugins/categories.ts`: `coding`, `music`, `anime`, `gaming`, `profile`, `fitness`, `languages`, `repository`; categoria nova precisa de rótulo em `landing.plugins.categories` e `wizard.plugins.categories`, cobrado por `lib/landing/landing-plugins.test.ts`)
 - `icon` (nome de ícone do `lucide-react`)
 - `requiredFields` — campos que vão para a config pública (ex: `["username"]`)
 - `essentialConfigKeys` — segredos armazenados em `plugin_secrets` (D1) (ex: `["apiKey"]`)

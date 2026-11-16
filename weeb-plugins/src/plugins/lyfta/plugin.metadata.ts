@@ -10,7 +10,7 @@
 export const lyftaPluginMetadata = {
   displayName: "Lyfta",
   description: "Show your workout statistics from Lyfta",
-  category: "gaming" as const,
+  category: "fitness" as const,
   icon: "Dumbbell",
   requiredFields: [],
   essentialConfigKeys: ["apiKey"],

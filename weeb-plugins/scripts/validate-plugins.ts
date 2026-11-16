@@ -10,7 +10,7 @@
  * - Sections are valid
  */
 
-import { PLUGINS_METADATA, type PluginMetadata, type PluginCategory } from "../src/plugins/metadata.js"
+import { PLUGINS_METADATA, PLUGIN_CATEGORIES, type PluginMetadata } from "../src/plugins/metadata.js"
 import { githubPlugin } from "../src/plugins/github/index.js"
 import { lastFmPlugin } from "../src/plugins/lastfm/index.js"
 import { myAnimeListPlugin } from "../src/plugins/myanimelist/index.js"
@@ -34,7 +34,7 @@ pluginManager.register(lastFmPlugin)
 pluginManager.register(myAnimeListPlugin)
 
 // Valid categories
-const VALID_CATEGORIES: PluginCategory[] = ["coding", "music", "anime", "gaming", "repository"]
+const VALID_CATEGORIES: readonly string[] = PLUGIN_CATEGORIES
 
 interface ValidationError {
   plugin: string

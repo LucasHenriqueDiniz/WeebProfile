@@ -15,7 +15,7 @@
 export const PLUGIN_NAMEPluginMetadata = {
   displayName: "PLUGIN_NAME",
   description: "PLUGIN_NAME plugin description",
-  category: "coding" as const, // "coding" | "music" | "anime" | "gaming"
+  category: "coding" as const, // one of PLUGIN_CATEGORIES in src/plugins/categories.ts
   icon: "IconName", // lucide-react icon name (e.g., "Github", "Music", "BookOpen")
   requiredFields: ["username"], // Required fields
   essentialConfigKeys: ["apiKey"], // Essential config keys (API keys, tokens, etc)

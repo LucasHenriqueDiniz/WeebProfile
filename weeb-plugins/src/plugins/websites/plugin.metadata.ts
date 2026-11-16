@@ -16,7 +16,7 @@ export const MAX_WEBSITES = 12
 export const websitesPluginMetadata = {
   displayName: "Websites",
   description: "Showcase your own websites, with thumbnails pulled from each page",
-  category: "coding" as const,
+  category: "profile" as const,
   icon: "Globe",
   requiredFields: [],
   essentialConfigKeys: [],
