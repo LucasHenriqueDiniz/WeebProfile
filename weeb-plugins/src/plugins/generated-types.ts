@@ -13,7 +13,7 @@ export type PluginName = "16personalities" | "anilist" | "codeforces" | "codewar
 /**
  * Union type of all available categories
  */
-export type PluginCategory = "coding" | "anime" | "repository" | "music" | "gaming"
+export type PluginCategory = "profile" | "anime" | "coding" | "languages" | "repository" | "music" | "fitness" | "gaming"
 
 /**
  * Union type of section IDs per plugin
@@ -86,5 +86,5 @@ export function isValidPluginName(name: string): name is PluginName {
  * Type guard to check if it's a valid category
  */
 export function isValidCategory(category: string): category is PluginCategory {
-  return ["coding","anime","repository","music","gaming"].includes(category as PluginCategory)
+  return ["profile","anime","coding","languages","repository","music","fitness","gaming"].includes(category as PluginCategory)
 }

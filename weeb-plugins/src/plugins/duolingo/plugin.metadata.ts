@@ -12,7 +12,7 @@
 export const duolingoPluginMetadata = {
   displayName: "Duolingo",
   description: "Show your Duolingo learning statistics",
-  category: "coding" as const,
+  category: "languages" as const,
   icon: "BookOpen",
   requiredFields: ["username"],
   essentialConfigKeys: [],

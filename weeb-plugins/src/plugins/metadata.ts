@@ -12,10 +12,10 @@
  * 2. Run: pnpm tsx scripts/generate-metadata.ts
  */
 
-/**
- * Plugin category
- */
-export type PluginCategory = "coding" | "music" | "anime" | "gaming" | "repository"
+import { PLUGIN_CATEGORIES, isPluginCategory, type PluginCategory } from "./categories"
+
+export { PLUGIN_CATEGORIES }
+export type { PluginCategory }
 
 /**
  * I18n key map for translatable fields
@@ -130,7 +130,7 @@ export const PLUGINS_METADATA = {
     name: "16personalities",
     displayName: "16Personalities",
     description: "Display your 16Personalities type with emoji and link",
-    category: "coding",
+    category: "profile",
     icon: "UserCircle",
     requiredFields: ["personality_url"],
     essentialConfigKeys: [],
@@ -857,7 +857,7 @@ export const PLUGINS_METADATA = {
     name: "duolingo",
     displayName: "Duolingo",
     description: "Show your Duolingo learning statistics",
-    category: "coding",
+    category: "languages",
     icon: "BookOpen",
     requiredFields: ["username"],
     essentialConfigKeys: [],
@@ -2875,7 +2875,7 @@ export const PLUGINS_METADATA = {
     name: "lyfta",
     displayName: "Lyfta",
     description: "Show your workout statistics from Lyfta",
-    category: "gaming",
+    category: "fitness",
     icon: "Dumbbell",
     requiredFields: [],
     essentialConfigKeys: ["apiKey"],
@@ -4132,7 +4132,7 @@ export const PLUGINS_METADATA = {
     name: "websites",
     displayName: "Websites",
     description: "Showcase your own websites, with thumbnails pulled from each page",
-    category: "coding",
+    category: "profile",
     icon: "Globe",
     requiredFields: [],
     essentialConfigKeys: [],
@@ -4336,14 +4336,11 @@ export function getPluginsByCategory(category: PluginCategory): PluginMetadata[]
  * Retorna plugins agrupados por categoria
  */
 export function getPluginsGroupedByCategory(): Record<PluginCategory, PluginMetadata[]> {
-  const grouped: Record<PluginCategory, PluginMetadata[]> = {
-    coding: [],
-    music: [],
-    anime: [],
-    gaming: [],
-    repository: [],
-  }
-  
+  const grouped = Object.fromEntries(PLUGIN_CATEGORIES.map((category) => [category, []])) as unknown as Record<
+    PluginCategory,
+    PluginMetadata[]
+  >
+
   Object.values(PLUGINS_METADATA).forEach((plugin) => {
     grouped[plugin.category].push(plugin)
   })
@@ -4378,7 +4375,7 @@ export function isValidPluginName(name: string): name is keyof typeof PLUGINS_ME
  * Valida se uma categoria é válida
  */
 export function isValidCategory(category: string): category is PluginCategory {
-  return ['coding', 'music', 'anime', 'gaming', 'repository'].includes(category)
+  return isPluginCategory(category)
 }
 
 /**

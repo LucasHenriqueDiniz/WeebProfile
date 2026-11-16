@@ -8,7 +8,7 @@
 export const personality16PluginMetadata = {
   displayName: "16Personalities",
   description: "Display your 16Personalities type with emoji and link",
-  category: "coding" as const,
+  category: "profile" as const,
   icon: "UserCircle", // lucide-react icon
   requiredFields: ["personality_url"],
   essentialConfigKeys: [], // No API key needed

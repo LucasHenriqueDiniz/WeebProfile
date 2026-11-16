@@ -1,7 +1,7 @@
 /**
  * Plugin Tags System
  *
- * Tags allow plugins to be categorized beyond the official categories (coding, music, anime, gaming).
+ * Tags allow plugins to be categorized beyond the official categories (PLUGIN_CATEGORIES in categories.ts).
  * This enables more flexible filtering and organization in the dashboard.
  *
  * To add a new tag:
@@ -21,8 +21,9 @@ export type PluginTag = "health" | "productivity" | "social" | "entertainment"
  * Plugins can have multiple tags to allow flexible categorization
  */
 export const PLUGIN_TAGS: Record<string, PluginTag[]> = {
-  "16personalities": ["health"],
-  lyfta: ["health"],
+  // 16Personalities and Lyfta were tagged "health" while their category was wrong.
+  // They now have categories of their own (profile, fitness), and the "health" chip
+  // only put a personality test next to a workout log.
   // Add more plugins and tags as needed
   // github: ["coding", "productivity"],
   // lastfm: ["music", "entertainment"],

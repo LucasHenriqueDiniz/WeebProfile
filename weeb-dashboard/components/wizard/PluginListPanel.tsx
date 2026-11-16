@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getAllTags, type PluginTag } from "@/lib/config/plugin-tags"
-import type { PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGIN_CATEGORIES, getPluginsByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { useTranslations } from "@/i18n/use-translations"
 import { EmptyState } from "./EmptyState"
 import { PluginRow } from "./PluginRow"
@@ -13,6 +13,14 @@ import type { PluginWorkspace } from "./usePluginWorkspace"
 interface PluginListPanelProps {
   workspace: PluginWorkspace
 }
+
+type ProfileCategory = Exclude<PluginCategory, "repository">
+
+// One chip per category that has a plugin, in PLUGIN_CATEGORIES order. The repository
+// card has its own wizard. The list was typed in by hand here and stopped at gaming.
+const PROFILE_CATEGORIES = PLUGIN_CATEGORIES.filter(
+  (category): category is ProfileCategory => category !== "repository" && getPluginsByCategory(category).length > 0
+)
 
 // Coluna "Plugins" - lista compacta com busca e filtros. Nunca renderiza campos ou
 // thumbnails de um plugin especifico; isso vive no PluginDetailPanel ao lado.
@@ -32,25 +40,21 @@ export function PluginListPanel({ workspace }: PluginListPanelProps) {
     setSelectedPlugin,
   } = workspace
 
-  const categoryLabels: Record<string, string> = {
+  const categoryLabels: Record<ProfileCategory | PluginTag | "all", string> = {
     all: t("categories.all"),
     coding: t("categories.coding"),
     music: t("categories.music"),
     anime: t("categories.anime"),
     gaming: t("categories.gaming"),
+    profile: t("categories.profile"),
+    fitness: t("categories.fitness"),
+    languages: t("categories.languages"),
     health: t("categories.health"),
     productivity: t("categories.productivity"),
     social: t("categories.social"),
     entertainment: t("categories.entertainment"),
   }
-  const categories: Array<PluginCategory | "all" | PluginTag> = [
-    "all",
-    "coding",
-    "music",
-    "anime",
-    "gaming",
-    ...getAllTags(),
-  ]
+  const categories: Array<ProfileCategory | "all" | PluginTag> = ["all", ...PROFILE_CATEGORIES, ...getAllTags()]
 
   return (
     <div className="flex flex-col h-full">

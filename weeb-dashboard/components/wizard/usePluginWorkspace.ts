@@ -15,7 +15,12 @@ import { useMemo, useState, useEffect, useCallback, useDeferredValue } from "rea
 import { useShallow } from "zustand/react/shallow"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
-import { PLUGINS_METADATA, getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
+import {
+  PLUGINS_METADATA,
+  getPluginsGroupedByCategory,
+  isValidCategory,
+  type PluginCategory,
+} from "@weeb/weeb-plugins/plugins/metadata"
 import { useWizardStore } from "@/stores/wizard-store"
 import { selectEnabledPluginNames, selectMissingConfigs } from "@/stores/wizard-selectors"
 import { profileApi } from "@/lib/api/client"
@@ -98,7 +103,7 @@ export function usePluginWorkspace() {
       if (onlyEnabled && !state.enabled) return false
 
       if (category !== "all") {
-        if (["coding", "music", "anime", "gaming"].includes(category)) {
+        if (isValidCategory(category)) {
           if (plugin.categoryId !== category) return false
         } else {
           const pluginTags = getPluginTags(plugin.name)

@@ -1,46 +1,18 @@
 "use client"
 
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { ArrowUpRight } from "lucide-react"
 import { getPluginIcon } from "@/lib/plugin-icons"
+import { LANDING_PLUGINS } from "@/lib/landing/landing-plugins"
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
 import { SectionHeading } from "./SectionHeading"
 
 const GITHUB_REPO_URL = "https://github.com/LucasHenriqueDiniz/WeebProfile"
 
-/** Display order on the landing grid — profile plugins first, repository mode last. */
-const PLUGIN_ORDER = [
-  "github",
-  "lastfm",
-  "myanimelist",
-  "anilist",
-  "steam",
-  "codeforces",
-  "codewars",
-  "stackoverflow",
-  "devto",
-  "duolingo",
-  "lyfta",
-  "16personalities",
-  "websites",
-  "github_repo",
-]
-
-// Every registered plugin is shown, in PLUGIN_ORDER where it is listed. The list used
-// to be the only source, and AniList and Dev.to were left out of it for months while
-// the hero counted 14 plugins and the grid showed 12. A plugin missing from the list
-// now still appears, after the listed ones and before the repository card.
-const LANDING_PLUGINS = [
-  ...PLUGIN_ORDER.filter((id) => id !== "github_repo"),
-  ...Object.keys(PLUGINS_METADATA)
-    .filter((id) => !PLUGIN_ORDER.includes(id))
-    .sort(),
-  "github_repo",
-]
-
-// Identidade por categoria: rótulo, tile do ícone e o glow do hover.
-const CATEGORY_STYLE: Record<string, { label: string; tile: string; hover: string }> = {
+// Identidade por categoria: rótulo, tile do ícone e o glow do hover. Uma entrada por
+// categoria, cobrada pelo tipo: antes, categoria sem entrada caía no estilo de coding.
+const CATEGORY_STYLE: Record<PluginCategory, { label: string; tile: string; hover: string }> = {
   coding: {
     label: "text-violet-500 dark:text-violet-400",
     tile: "from-violet-500/20 to-violet-500/5 text-violet-500 dark:text-violet-400",
@@ -60,6 +32,21 @@ const CATEGORY_STYLE: Record<string, { label: string; tile: string; hover: strin
     label: "text-emerald-500",
     tile: "from-emerald-500/20 to-emerald-500/5 text-emerald-500",
     hover: "hover:border-emerald-500/50 hover:shadow-[0_10px_36px_-14px_rgba(16,185,129,0.5)]",
+  },
+  profile: {
+    label: "text-sky-500",
+    tile: "from-sky-500/20 to-sky-500/5 text-sky-500",
+    hover: "hover:border-sky-500/50 hover:shadow-[0_10px_36px_-14px_rgba(14,165,233,0.5)]",
+  },
+  fitness: {
+    label: "text-orange-500",
+    tile: "from-orange-500/20 to-orange-500/5 text-orange-500",
+    hover: "hover:border-orange-500/50 hover:shadow-[0_10px_36px_-14px_rgba(249,115,22,0.5)]",
+  },
+  languages: {
+    label: "text-lime-600 dark:text-lime-400",
+    tile: "from-lime-500/20 to-lime-500/5 text-lime-600 dark:text-lime-400",
+    hover: "hover:border-lime-500/50 hover:shadow-[0_10px_36px_-14px_rgba(132,204,22,0.5)]",
   },
   repository: {
     label: "text-amber-500",
@@ -93,7 +80,7 @@ export function PluginsShowcase() {
         <div className="mt-9 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {plugins.map((plugin) => {
             const Icon = getPluginIcon(plugin.name)
-            const cat = CATEGORY_STYLE[plugin.category] ?? CATEGORY_STYLE.coding
+            const cat = CATEGORY_STYLE[plugin.category]
             return (
               <div
                 key={plugin.name}

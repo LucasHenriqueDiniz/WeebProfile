@@ -13,6 +13,7 @@ import * as fs from "fs"
 import * as path from "path"
 import { fileURLToPath } from "url"
 import { dirname } from "path"
+import { PLUGIN_CATEGORIES, isPluginCategory, type PluginCategory } from "../src/plugins/categories.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -60,7 +61,7 @@ function discoverPlugins(): string[] {
 interface PluginMetadataPartial {
   displayName: string
   description: string
-  category: "coding" | "music" | "anime" | "gaming"
+  category: PluginCategory
   icon: string
   requiredFields: string[]
   essentialConfigKeys: string[]
@@ -129,8 +130,8 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
   }
   if (!metadata.category) {
     errors.push(`Missing category`)
-  } else if (!["coding", "music", "anime", "gaming", "repository"].includes(metadata.category)) {
-    errors.push(`Invalid category: ${metadata.category}. Must be one of: coding, music, anime, gaming, repository`)
+  } else if (!isPluginCategory(metadata.category)) {
+    errors.push(`Invalid category: ${metadata.category}. Must be one of: ${PLUGIN_CATEGORIES.join(", ")}`)
   }
   if (!metadata.icon) {
     errors.push(`Missing icon`)
@@ -777,10 +778,10 @@ function generateMetadataFile(
  * 2. Run: pnpm tsx scripts/generate-metadata.ts
  */
 
-/**
- * Plugin category
- */
-export type PluginCategory = "coding" | "music" | "anime" | "gaming" | "repository"
+import { PLUGIN_CATEGORIES, isPluginCategory, type PluginCategory } from "./categories"
+
+export { PLUGIN_CATEGORIES }
+export type { PluginCategory }
 
 /**
  * I18n key map for translatable fields
@@ -1195,14 +1196,11 @@ export function getPluginsByCategory(category: PluginCategory): PluginMetadata[]
  * Retorna plugins agrupados por categoria
  */
 export function getPluginsGroupedByCategory(): Record<PluginCategory, PluginMetadata[]> {
-  const grouped: Record<PluginCategory, PluginMetadata[]> = {
-    coding: [],
-    music: [],
-    anime: [],
-    gaming: [],
-    repository: [],
-  }
-  
+  const grouped = Object.fromEntries(PLUGIN_CATEGORIES.map((category) => [category, []])) as unknown as Record<
+    PluginCategory,
+    PluginMetadata[]
+  >
+
   Object.values(PLUGINS_METADATA).forEach((plugin) => {
     grouped[plugin.category].push(plugin)
   })
@@ -1237,7 +1235,7 @@ export function isValidPluginName(name: string): name is keyof typeof PLUGINS_ME
  * Valida se uma categoria é válida
  */
 export function isValidCategory(category: string): category is PluginCategory {
-  return ['coding', 'music', 'anime', 'gaming', 'repository'].includes(category)
+  return isPluginCategory(category)
 }
 
 /**
