@@ -18,7 +18,7 @@ cp .env.local.example .env.local
 
 Preencha as variáveis no `.env.local`:
 
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` / `VITE_CLERK_PUBLISHABLE_KEY` - mesma chave, prefixos diferentes (Functions e build do Vite)
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - chave pública do Clerk, lida pelas Functions. O build do Vite usa a do `[vars]` do `wrangler.toml` se `VITE_CLERK_PUBLISHABLE_KEY` não estiver definida
 - `CLERK_SECRET_KEY` - autenticação server-side
 - `R2_PUBLIC_URL` - URL pública do bucket de SVGs
 - `SVG_GENERATOR_URL` - só para dev local; em produção o acesso é por service binding

@@ -36,7 +36,7 @@ service = "weeb-svg-generator"
 
 [vars]
 # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: lido pelas Pages Functions (server-side, ver functions/api/_shared/auth.ts)
-# VITE_CLERK_PUBLISHABLE_KEY: lido pelo build do Vite (client-side, ver src/main.tsx) — mesmo valor, prefixo diferente
+# O build do Vite lê esta mesma linha como VITE_CLERK_PUBLISHABLE_KEY (ver vite.config.ts), a não ser que ela venha do ambiente
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_test_cmVsYXRlZC1jdWItMzAuY2xlcmsuYWNjb3VudHMuZGV2JA"
 SVG_GENERATOR_URL = "https://weeb-svg-generator.lucas-hdo.workers.dev"
 R2_PUBLIC_URL = "https://pub-25de70ed316a4aebacfedae6e26b4a87.r2.dev"
