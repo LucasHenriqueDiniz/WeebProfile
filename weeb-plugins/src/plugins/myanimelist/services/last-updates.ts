@@ -1,4 +1,5 @@
 import type { MalLastUpdates, MyAnimeListConfig } from "../types"
+import { decodeHtmlEntities } from "../../../utils/html-entities"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 
 type EdgeUpdate = {
@@ -31,6 +32,9 @@ async function imageDataUri(imageUrl: string | null): Promise<string | null> {
   }
 }
 
+// The titles come from MyAnimeList's profile page, scraped by Jikan, still escaped for
+// HTML ("Sea Guardian&#039;s"). The other Jikan Edge routes the plugin reads (lists,
+// favorites) came back clean for the same users.
 export async function transformLastUpdates(
   response: EdgeUpdatesResponse,
   _config: MyAnimeListConfig
@@ -39,7 +43,7 @@ export async function transformLastUpdates(
   return {
     anime: await Promise.all(
       data.anime.map(async (update) => ({
-        title: update.entry.title,
+        title: decodeHtmlEntities(update.entry.title),
         image: await imageDataUri(update.entry.imageUrl),
         score: update.score,
         status: titleCaseStatus(update.status),
@@ -50,7 +54,7 @@ export async function transformLastUpdates(
     ),
     manga: await Promise.all(
       data.manga.map(async (update) => ({
-        title: update.entry.title,
+        title: decodeHtmlEntities(update.entry.title),
         image: await imageDataUri(update.entry.imageUrl),
         score: update.score,
         status: titleCaseStatus(update.status),
