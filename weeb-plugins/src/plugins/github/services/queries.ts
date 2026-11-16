@@ -112,6 +112,7 @@ query userLanguages($login: String!) {
       orderBy: { field: UPDATED_AT, direction: DESC }
     ) {
       nodes {
+        isPrivate
         languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
           edges {
             size
@@ -210,6 +211,7 @@ query userStarredRepositories($login: String!) {
     starredRepositories(first: 20, orderBy: {field: STARRED_AT, direction: DESC}) {
       totalCount
       nodes {
+        isPrivate
         name
         nameWithOwner
         description
@@ -255,6 +257,7 @@ query userTopRepositories($login: String!) {
   user(login: $login) {
     topRepositories(first: 10, orderBy: {field: STARGAZERS, direction: DESC}) {
       nodes {
+        isPrivate
         name
         nameWithOwner
         description
@@ -290,6 +293,7 @@ query userRecentActivity($login: String!) {
     contributionsCollection {
       commitContributionsByRepository(maxRepositories: 10) {
         repository {
+          isPrivate
           name
           nameWithOwner
           url

@@ -30,12 +30,9 @@ export function PluginRow({ plugin, state, isSelected, missingConfigs, onSelect 
   const pluginMissingConfigs = missingConfigs.filter((m) => m.plugin === plugin.name)
   const hasMissingRequired = pluginMissingConfigs.length > 0 && state.enabled
 
-  // "KEY" e "LOGIN" dizem coisas diferentes ao usuário: um pede uma credencial que
-  // ele precisa ir buscar em outro site e colar; o outro é um botão de entrar.
-  // Antes os dois tipos caíam em "KEY", e o Steam -- que só faz login e usa chave da
-  // aplicação -- aparecia pedindo uma chave que ninguém precisa fornecer.
+  // Only a credential the user has to fetch elsewhere and paste earns the badge.
   const keyTypes = metadata.essentialConfigKeysMetadata?.map((k: { type: string }) => k.type) ?? []
-  const credentialBadge = keyTypes.includes("password") ? "KEY" : keyTypes.includes("oauth") ? "LOGIN" : null
+  const credentialBadge = keyTypes.includes("password") ? "KEY" : null
 
   const displayName = (() => {
     const meta = metadata as any

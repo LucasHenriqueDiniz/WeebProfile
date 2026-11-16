@@ -3,7 +3,7 @@
   "displayName": "GitHub",
   "essentialConfig": {
     "pat": {
-      "description": "Classic token is used to fetch data from GitHub API",
+      "description": "A classic token with no scopes is enough: the card only reads public data.",
       "label": "GitHub Classic Token",
       "placeholder": "ghp_..."
     }
@@ -278,7 +278,8 @@
           "label": "Title"
         },
         "repositories_use_private": {
-          "label": "Include private repositories"
+          "label": "Include private repositories",
+          "tooltip": "Shows private repositories, names included, in every GitHub section of this public card. Needs a token with the 'repo' scope; the token from the setup link has none, so with it this does nothing."
         }
       },
       "description": "List of repositories",

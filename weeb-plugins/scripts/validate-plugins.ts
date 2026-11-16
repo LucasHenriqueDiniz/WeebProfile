@@ -232,11 +232,11 @@ for (const [pluginName, metadata] of Object.entries(PLUGINS_METADATA)) {
           message: `essentialConfigKeysMetadata/requiredSecretsMetadata[].label must be a non-empty string`,
         })
       }
-      if (!keyMetadata.type || !["text", "password", "oauth"].includes(keyMetadata.type)) {
+      if (!keyMetadata.type || !["text", "password"].includes(keyMetadata.type)) {
         errors.push({
           plugin: pluginName,
           field: "essentialConfigKeysMetadata/requiredSecretsMetadata",
-          message: `essentialConfigKeysMetadata/requiredSecretsMetadata[].type must be "text", "password", or "oauth"`,
+          message: `essentialConfigKeysMetadata/requiredSecretsMetadata[].type must be "text" or "password"`,
         })
       }
     }

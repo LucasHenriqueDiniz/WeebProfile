@@ -40,9 +40,10 @@ export const githubRepoPluginMetadata = {
       label: "GitHub Classic Token",
       type: "password",
       placeholder: "ghp_...",
-      description: "Reuses the same token configured for the GitHub plugin, if you already have one.",
+      description:
+        "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository.",
       helpUrl:
-        "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&scopes=read:user,repo,gist&default_expires_at=none",
+        "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&default_expires_at=none",
       docKey: "github.pat",
     },
   ],
@@ -128,7 +129,7 @@ export const githubRepoPluginMetadata = {
           defaultValue: "",
           description: "Optional image URL (project logo etc.) shown instead of the repository mark",
           tooltip:
-            "Converted to base64 at generation time so it works inside Gists. Leave empty to use the owner avatar.",
+            "Embedded into the SVG at generation time, since an SVG shown as an image in a README cannot load external URLs. Leave empty to use the owner avatar.",
         },
         CONTENT_SIZE_OPTION,
       ],

@@ -275,8 +275,8 @@ export async function fetchGithubRepoData(
   } catch (error) {
     if (isPermissionError(error)) {
       throw new Error(
-        "Your GitHub Classic Token doesn't have permission to read this repository. " +
-          "Make sure it has the 'repo' or 'public_repo' scope."
+        "Your GitHub Classic Token can't read this repository. " +
+          "A public repository needs no scopes; a private one needs the 'repo' scope."
       )
     }
     throw error

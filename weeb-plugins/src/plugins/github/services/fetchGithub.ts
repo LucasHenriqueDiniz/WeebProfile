@@ -41,6 +41,16 @@ const SECTION_PERMISSIONS: Record<string, string[]> = {
 }
 
 /**
+ * Whether a repository may appear on the card. The card is public, so a private
+ * repository shows only when the user turned on "Include private repositories".
+ * Without this, a token with the repo scope put private names on the card in the
+ * sections that do not query by privacy.
+ */
+function shownOnCard(repo: { isPrivate?: boolean } | null, config: GithubConfig): boolean {
+  return repo !== null && (!repo.isPrivate || Boolean(config.repositories_use_private))
+}
+
+/**
  * Normaliza uma URL de repositório do GitHub para o formato owner/repo
  * Aceita tanto "owner/repo" quanto "https://github.com/owner/repo"
  */
@@ -407,7 +417,7 @@ export async function fetchGithubData(
           }
 
           case "favorite_languages":
-            data.languages = processLanguagesData(result)
+            data.languages = processLanguagesData(result, config)
             break
 
           case "activity":
@@ -427,11 +437,11 @@ export async function fetchGithubData(
             break
 
           case "starred_repositories":
-            data.starredRepositories = processStarredRepositoriesData(result)
+            data.starredRepositories = processStarredRepositoriesData(result, config)
             break
 
           case "top_repositories":
-            data.topRepositories = processTopRepositoriesData(result)
+            data.topRepositories = processTopRepositoriesData(result, config)
             // Calcular stargazers total
             if (data.topRepositories) {
               const totalStars = data.topRepositories.reduce((sum, repo) => sum + repo.stargazerCount, 0)
@@ -547,10 +557,11 @@ export async function fetchGithubData(
 /**
  * Processa dados de linguagens
  */
-function processLanguagesData(result: GraphQLResponse): GithubData["languages"] {
+function processLanguagesData(result: GraphQLResponse, config: GithubConfig): GithubData["languages"] {
   const languagesMap = new Map<string, { color: string; size: number }>()
 
   result.user.repositories?.nodes.forEach((repo: any) => {
+    if (!shownOnCard(repo, config)) return
     if (repo.languages?.edges) {
       repo.languages.edges.forEach((edge: any) => {
         const current = languagesMap.get(edge.node.name) || {
@@ -659,15 +670,19 @@ function processFavoriteLicenseData(result: GraphQLResponse): GithubData["favori
 /**
  * Processa dados de repositórios favoritados
  */
-function processStarredRepositoriesData(result: GraphQLResponse): GithubData["starredRepositories"] {
+function processStarredRepositoriesData(
+  result: GraphQLResponse,
+  config: GithubConfig
+): GithubData["starredRepositories"] {
   const starred = result.user.starredRepositories
   if (!starred) {
     return { totalCount: 0, nodes: [] }
   }
+  const shown = (starred.nodes || []).filter((repo: any) => shownOnCard(repo, config))
 
   return {
     totalCount: starred.totalCount || 0,
-    nodes: (starred.nodes || []).map((repo: any) => ({
+    nodes: shown.map((repo: any) => ({
       name: repo.name,
       nameWithOwner: repo.nameWithOwner,
       description: repo.description,
@@ -747,7 +762,7 @@ async function processGistsDataRest(rest: Octokit, username: string, data: Parti
 /**
  * Processa dados de top repositórios
  */
-function processTopRepositoriesData(result: GraphQLResponse): GithubData["topRepositories"] {
+function processTopRepositoriesData(result: GraphQLResponse, config: GithubConfig): GithubData["topRepositories"] {
   const topRepos = result.user.topRepositories
   if (!topRepos || !topRepos.nodes) {
     return []
@@ -755,7 +770,7 @@ function processTopRepositoriesData(result: GraphQLResponse): GithubData["topRep
 
   // Filtrar nulls (alguns repositórios podem retornar null se não tiverem permissão)
   return topRepos.nodes
-    .filter((repo: any) => repo !== null)
+    .filter((repo: any) => shownOnCard(repo, config))
     .map((repo: any) => ({
       name: repo.name,
       nameWithOwner: repo.nameWithOwner || repo.name,
@@ -1194,7 +1209,7 @@ async function processNotableContributionsData(
   const commitContributions = result.user.contributionsCollection?.commitContributionsByRepository || []
 
   commitContributions.forEach((contribution: any) => {
-    if (contribution.contributions.totalCount > 0) {
+    if (contribution.contributions.totalCount > 0 && shownOnCard(contribution.repository, config)) {
       contributions.push({
         repository: contribution.repository.nameWithOwner,
         repositoryUrl: contribution.repository.url,

@@ -72,7 +72,28 @@
     "readyCount_one": "{{count}} pronto",
     "readyCount_other": "{{count}} prontos",
     "generatingCount_one": "{{count}} gerando",
-    "generatingCount_other": "{{count}} gerando"
+    "generatingCount_other": "{{count}} gerando",
+    "emptyState": {
+      "badge": "Novo por aqui",
+      "title": "Seu primeiro card de perfil começa aqui",
+      "description": "Conecte GitHub, anime, música, jogos e mais, e ganhe um SVG dinâmico para o topo do seu README que se atualiza sozinho.",
+      "steps": {
+        "signIn": {
+          "title": "Entre",
+          "description": "GitHub, Google ou e-mail. Leva 10 segundos."
+        },
+        "plugins": {
+          "title": "Escolha plugins",
+          "description": "GitHub, anime, música, jogos e mais de uma dúzia de fontes."
+        },
+        "readme": {
+          "title": "Cole no README",
+          "description": "Copie o markdown pronto para o topo do seu perfil."
+        }
+      },
+      "cta": "Criar meu primeiro SVG",
+      "freeTier": "Grátis até {{max}} SVGs"
+    }
   },
   "header": {
     "changeLanguage": "Trocar idioma",
@@ -609,6 +630,29 @@
       "cardPlural": "cards",
       "emptyTitle": "Nenhum card para ordenar ainda",
       "emptyDescription": "Ative um plugin e selecione ao menos uma seção para organizar a ordem dos cards."
+    },
+    "saveToast": {
+      "incompleteTitle": "Configuração incompleta",
+      "incompleteDescription": "Preencha todos os campos obrigatórios dos plugins habilitados.",
+      "invalidTitle": "Nada para gerar",
+      "invalidDescription": "Habilite pelo menos um plugin com pelo menos uma seção.",
+      "generatingTitle": "Gerando imagem...",
+      "generatingDescription": "Aguarde enquanto geramos seu SVG.",
+      "doneTitle": "Pronto!",
+      "createdDescription": "Seu SVG foi criado e gerado.",
+      "updatedDescription": "Seu SVG foi atualizado e gerado.",
+      "savedTitle": "Imagem salva",
+      "pendingDescription": "A imagem ainda está sendo gerada. Levando você até ela...",
+      "missingConfigTitle": "Configuração obrigatória faltando",
+      "missingConfigDescription": "Preencha estes campos: {{fields}}",
+      "generationFailedDescription": "A imagem foi salva, mas a geração falhou. Veja a página de detalhes.",
+      "errorTitle": "Erro",
+      "createError": "Não foi possível criar a imagem",
+      "updateError": "Não foi possível atualizar a imagem"
+    },
+    "templateLoadError": {
+      "title": "Template indisponível",
+      "description": "Ele pode ter sido removido ou ficado privado. Nada no wizard foi alterado."
     }
   },
   "templatesPage": {

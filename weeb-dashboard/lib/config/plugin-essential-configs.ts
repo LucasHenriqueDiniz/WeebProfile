@@ -14,16 +14,12 @@ import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 export interface EssentialConfigKey {
   key: string
   label: string
-  type: "text" | "password" | "oauth"
+  type: "text" | "password"
   placeholder?: string
   description?: string
   helpUrl?: string
   tooltip?: string
   docKey?: string
-  // Provider quando type === "oauth". "steam" na verdade é OpenID 2.0, não OAuth:
-  // devolve só o SteamID64, sem token nem escopo. Fica sob o mesmo campo porque do
-  // ponto de vista da UI o fluxo é idêntico -- sai daqui, volta conectado.
-  oauthProvider?: "spotify" | "steam"
 }
 
 export interface PluginEssentialConfig {
