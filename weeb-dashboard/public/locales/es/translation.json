@@ -383,7 +383,29 @@
         "error": "No se pudo eliminar tu cuenta. Inténtalo de nuevo: lo ya eliminado no vuelve, y el nuevo intento elimina el resto."
       },
       "description": "Administra la configuración de tu cuenta",
-      "title": "Cuenta"
+      "title": "Cuenta",
+      "apiKeys": {
+        "title": "Claves de API y tokens",
+        "description": "Lo que guardaste para que los plugins busquen tus datos. El valor nunca sale del servidor: aquí solo aparece si cada clave existe y cuándo se guardó.",
+        "loading": "Cargando tus claves…",
+        "loadFailed": "No se pudieron cargar tus claves. Recarga la página.",
+        "savedAgo": "Guardada {{when}}",
+        "notConfigured": "Sin configurar",
+        "usedBy_one": "usada por {{count}} SVG",
+        "usedBy_other": "usada por {{count}} SVGs",
+        "unused": "ningún SVG la usa",
+        "sharedWith": "también sirve para {{plugins}}",
+        "remove": "Quitar",
+        "confirmTitle": "¿Quitar {{key}} de {{plugin}}?",
+        "confirmUsed_one": "{{count}} SVG usa esta clave. Deja de actualizarse hasta que guardes otra en el editor; la última versión generada sigue publicada.",
+        "confirmUsed_other": "{{count}} SVGs usan esta clave. Dejan de actualizarse hasta que guardes otra en el editor; la última versión generada sigue publicada.",
+        "confirmUnused": "Ningún SVG usa esta clave ahora. Puedes guardar otra en el editor cuando la necesites.",
+        "cancel": "Cancelar",
+        "confirm": "Quitar clave",
+        "removing": "Quitando…",
+        "removed": "{{key}} de {{plugin}} quitada",
+        "removeFailed": "No se pudo quitar la clave. Inténtalo de nuevo."
+      }
     },
     "appearance": {
       "description": "Personaliza la apariencia de la aplicación",

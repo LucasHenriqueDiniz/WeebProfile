@@ -179,6 +179,19 @@ export const profileApi = {
 }
 
 /**
+ * The user's stored plugin keys: which exist and when they were saved, never the value.
+ */
+export const secretsApi = {
+  async list() {
+    return apiGet<{ secrets: Array<{ plugin: string; key: string; updatedAt: string }> }>("/api/secrets")
+  },
+
+  async remove(plugin: string, key: string) {
+    return apiDelete<{ success: boolean }>(`/api/secrets/${encodeURIComponent(plugin)}/${encodeURIComponent(key)}`)
+  },
+}
+
+/**
  * SVG API helpers
  */
 export const svgApi = {

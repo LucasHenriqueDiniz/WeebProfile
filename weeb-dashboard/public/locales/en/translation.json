@@ -383,7 +383,29 @@
         "error": "Could not delete your account. Try again: anything already deleted stays deleted, and the retry finishes the rest."
       },
       "description": "Manage your account settings",
-      "title": "Account"
+      "title": "Account",
+      "apiKeys": {
+        "title": "API keys and tokens",
+        "description": "What you saved for plugins to fetch your data. The value never leaves the server: this only shows whether each key exists and when it was saved.",
+        "loading": "Loading your keys…",
+        "loadFailed": "Could not load your keys. Reload the page.",
+        "savedAgo": "Saved {{when}}",
+        "notConfigured": "Not set",
+        "usedBy_one": "used by {{count}} SVG",
+        "usedBy_other": "used by {{count}} SVGs",
+        "unused": "no SVG uses it",
+        "sharedWith": "also used by {{plugins}}",
+        "remove": "Remove",
+        "confirmTitle": "Remove {{plugin}} {{key}}?",
+        "confirmUsed_one": "{{count}} SVG uses this key. It stops updating until you save another one in the editor; the last generated version stays up.",
+        "confirmUsed_other": "{{count}} SVGs use this key. They stop updating until you save another one in the editor; the last generated version stays up.",
+        "confirmUnused": "No SVG uses this key right now. You can save another one in the editor whenever you need it.",
+        "cancel": "Cancel",
+        "confirm": "Remove key",
+        "removing": "Removing…",
+        "removed": "{{plugin}} {{key}} removed",
+        "removeFailed": "Could not remove the key. Try again."
+      }
     },
     "appearance": {
       "description": "Customize the app's appearance",

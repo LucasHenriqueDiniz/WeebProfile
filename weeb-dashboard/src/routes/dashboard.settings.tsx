@@ -1,3 +1,4 @@
+import { ApiKeysPanel } from "@/components/dashboard/ApiKeysPanel"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DeleteAccountDialog } from "@/components/dashboard/DeleteAccountDialog"
 import { useAuth } from "@/hooks/useAuth"
@@ -255,6 +256,7 @@ export default function SettingsPage() {
                 className="rounded-2xl border border-border bg-card p-6"
               >
                 <p className="text-sm text-muted-foreground mb-6">{t("account.description")}</p>
+                <ApiKeysPanel />
                 <div className="max-w-md rounded-xl border border-destructive/30 bg-destructive/5 p-4">
                   <p className="text-sm font-medium text-destructive">{t("account.dangerZone")}</p>
                   <p className="text-xs text-muted-foreground mt-1 mb-3">{t("account.dangerZoneDescription")}</p>
