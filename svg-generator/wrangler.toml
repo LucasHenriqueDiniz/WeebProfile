@@ -55,6 +55,10 @@ crons = ["7 3 * * *"]
 #                           todos os usuários — ver db/app-credentials.ts. Sem ela o
 #                           plugin Steam falha com mensagem de operador, e nenhum
 #                           usuário consegue resolver sozinho.
+#   GITHUB_PREVIEW_TOKEN    token clássico sem nenhum scope (só lê dado público),
+#                           usado apenas no preview público da landing --
+#                           ver previewCredentials em db/app-credentials.ts. Sem ele
+#                           o preview do GitHub responde indisponível; o resto segue.
 # ============================================================
 
 [vars]

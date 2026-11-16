@@ -767,6 +767,34 @@
       "check2": "Sin GitHub Action, sin YAML",
       "check3": "Inicia sesión con GitHub"
     },
+    "preview": {
+      "kicker": "PRUÉBALO",
+      "title": "Mira tu propia tarjeta, con tus datos reales",
+      "subtitle": "Sin crear cuenta. Escribe un usuario y ve la tarjeta que pondrías en tu perfil de GitHub.",
+      "platform": "Plataforma",
+      "usernameLabel": "Tu usuario de {{platform}}",
+      "steamLabel": "URL de tu perfil de Steam o SteamID64",
+      "submit": "Ver mi tarjeta",
+      "style": "Estilo",
+      "styles": {
+        "default": "Predeterminado",
+        "terminal": "Terminal"
+      },
+      "empty": "Tu tarjeta aparece aquí, construida desde tu perfil público.",
+      "loading": "Construyendo tu tarjeta",
+      "alt": "Tarjeta de {{platform}} de {{username}}",
+      "save": "Guardar en mi perfil",
+      "saveHint": "Cuenta gratis. El asistente se abre con esta misma tarjeta.",
+      "saveHintSignedIn": "El asistente se abre con esta misma tarjeta.",
+      "errors": {
+        "invalid": "Eso no parece un usuario válido.",
+        "notFound": "No hay ninguna cuenta de {{platform}} con ese nombre.",
+        "private": "Este perfil de {{platform}} es privado. Hazlo público para ver la vista previa.",
+        "rateLimited": "Demasiadas vistas previas seguidas. Inténtalo de nuevo en {{minutes}} min.",
+        "unavailable": "Las vistas previas de {{platform}} no están disponibles ahora. Prueba otra plataforma.",
+        "generic": "No se pudo construir la tarjeta. Inténtalo de nuevo en un momento."
+      }
+    },
     "platforms": {
       "label": "OBTIENE DATOS DE"
     },

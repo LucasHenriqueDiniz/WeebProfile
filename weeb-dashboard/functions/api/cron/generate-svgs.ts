@@ -2,6 +2,7 @@
 import type { CloudflareEnv } from "../_shared/auth"
 import { serverError } from "../_shared/auth"
 import { pruneErrorLog } from "../_shared/error-log"
+import { prunePreviewHits } from "../_shared/preview-rate-limit"
 import { getDb } from "../_shared/db"
 import { nightsFrom, retryDelayNights } from "../_shared/regeneration-schedule"
 import { publishGeneratedSvg } from "../_shared/publish-svg"
@@ -29,6 +30,7 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
 
     // Here because this is the one endpoint that runs every day. Never throws.
     await pruneErrorLog(env, now)
+    await prunePreviewHits(env, now)
 
     // Reset SVGs stuck in "generating" for more than 30 minutes
     const STUCK_TIMEOUT_MINUTES = 30

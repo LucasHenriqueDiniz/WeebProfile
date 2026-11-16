@@ -7,6 +7,7 @@ const getPluginMetadata = (name: string) => (PLUGINS_METADATA as Record<string, 
 const getEnabledPlugins = (config?: any) => Object.keys(config || {}).filter((name) => config?.[name]?.enabled)
 import { applyPluginDefaults } from "@/lib/config/plugin-defaults"
 import { templateLayout, templateUiLayout } from "@/lib/templates/template-layout"
+import { PREVIEW_PLUGINS, previewToTemplate, type PreviewRequest } from "@/lib/preview/public-preview"
 
 export interface PluginConfig {
   enabled: boolean
@@ -88,6 +89,7 @@ export interface WizardState {
   resetForEdit: () => void
   validateStep: (step: number) => boolean
   loadFromTemplate: (template: any) => void
+  loadFromPreview: (request: PreviewRequest) => void
 }
 
 /**
@@ -561,6 +563,16 @@ export const useWizardStore = create<WizardState>()(
           get().validateStep(2)
         } catch (error) {
           console.error("Error loading template:", error)
+        }
+      },
+
+      // The card a visitor built on the landing page before signing up. Its layout loads
+      // like any template's; its username is the visitor's own, which loadFromTemplate
+      // drops from every template on purpose, so it is set back here.
+      loadFromPreview: (request) => {
+        get().loadFromTemplate(previewToTemplate(request))
+        if (PREVIEW_PLUGINS[request.plugin].field === "username") {
+          get().setPluginRequiredField(request.plugin, "username", request.username)
         }
       },
     }),

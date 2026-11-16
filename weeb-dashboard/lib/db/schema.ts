@@ -239,3 +239,24 @@ export const generationStarts = sqliteTable("generation_starts", {
 })
 
 export type GenerationStart = typeof generationStarts.$inferSelect
+
+/**
+ * Fixed-window counters for the public preview (GET /api/preview), which anyone can
+ * call without an account. One row per bucket: `ip:<sha-256 of the address>` for each
+ * visitor and `global` for everyone together. Only cache misses are counted -- the
+ * requests that spend upstream quota. See preview-rate-limit.ts.
+ */
+export const previewHits = sqliteTable(
+  "preview_hits",
+  {
+    bucket: text("bucket").primaryKey(),
+    windowStart: text("window_start").notNull(),
+    count: integer("count").notNull(),
+  },
+  // The daily prune deletes by window_start.
+  (table) => ({
+    windowStartIdx: index("idx_preview_hits_window_start").on(table.windowStart),
+  })
+)
+
+export type PreviewHit = typeof previewHits.$inferSelect

@@ -7,6 +7,7 @@ import { LandingFooter } from "@/components/landing/LandingFooter"
 import { LandingHero } from "@/components/landing/LandingHero"
 import { PlatformStrip } from "@/components/landing/PlatformStrip"
 import { PluginsShowcase } from "@/components/landing/PluginsShowcase"
+import { PreviewYourCard } from "@/components/landing/PreviewYourCard"
 import { RepoShowcase } from "@/components/landing/RepoShowcase"
 import { StylesShowcase } from "@/components/landing/StylesShowcase"
 import { TemplatesShowcase } from "@/components/landing/TemplatesShowcase"
@@ -43,6 +44,7 @@ export default function HomePageClient() {
       <Header />
       <main className="relative pt-16">
         <LandingHero />
+        <PreviewYourCard />
         <PlatformStrip />
         <HowItWorks />
         <PluginsShowcase />

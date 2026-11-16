@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { forgetReturnTo, readReturnTo, withReturnTo } from "@/lib/return-to"
 import { useRouter } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { SignIn, ClerkLoaded, ClerkLoading } from "@clerk/react"
@@ -11,13 +12,16 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const router = useRouter()
   const { user, loading: authLoading, authUnavailable } = useAuth()
+  // Where the visitor was headed, e.g. the wizard with the card they previewed on the
+  // landing page. Validated as same-origin; null means the usual /dashboard.
+  const [returnTo] = useState(() => readReturnTo(window.location))
 
   useEffect(() => {
-    // Se o usuário estiver logado, redirecionar para dashboard
     if (!authLoading && user) {
-      router.push("/dashboard")
+      forgetReturnTo()
+      router.push(returnTo ?? "/dashboard")
     }
-  }, [user, authLoading, router])
+  }, [user, authLoading, router, returnTo])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -26,9 +30,9 @@ export default function LoginPage() {
 
     if (error) {
       setErrorMessage(errorDescription || `Erro: ${error}`)
-      window.history.replaceState({}, "", "/login")
+      window.history.replaceState({}, "", withReturnTo("/login", returnTo))
     }
-  }, [])
+  }, [returnTo])
 
   // Sem a publishable key do Clerk o isLoaded nunca resolve e a página ficaria num
   // loading infinito — falha explícita em vez de spinner eterno.
@@ -106,16 +110,21 @@ export default function LoginPage() {
         <SignIn
           routing="path"
           path="/login"
-          signUpUrl="/signup"
+          signUpUrl={withReturnTo("/signup", returnTo)}
           appearance={clerkAppearance}
           fallbackRedirectUrl="/dashboard"
+          forceRedirectUrl={returnTo}
+          signUpForceRedirectUrl={returnTo}
         />
       </ClerkLoaded>
 
       {/* Switch to Signup */}
       <p className="text-[13px] text-center text-muted-foreground mt-6">
         Não tem conta?{" "}
-        <Link href="/signup" className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
+        <Link
+          href={withReturnTo("/signup", returnTo)}
+          className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
+        >
           Criar conta
         </Link>
       </p>

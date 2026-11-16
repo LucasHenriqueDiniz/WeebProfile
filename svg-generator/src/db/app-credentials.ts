@@ -17,6 +17,7 @@ import type { EssentialConfigs } from "./essential-configs.js"
 
 interface AppCredentialEnv {
   STEAM_API_KEY?: string
+  GITHUB_PREVIEW_TOKEN?: string
 }
 
 /**
@@ -45,4 +46,37 @@ export function withAppCredentials(configs: EssentialConfigs, env: AppCredential
   }
 
   return merged
+}
+
+/** Same shape the plugin's own D1 row would have: SteamID64, 17 digits starting 7656. */
+const STEAM_ID64 = /^7656\d{13}$/
+
+/**
+ * Credentials for a public preview: a card rendered for a visitor who has no account,
+ * so there is no user and no plugin_secrets row to read.
+ *
+ * Two things go in that a signed-in render gets elsewhere:
+ *
+ * - `GITHUB_PREVIEW_TOKEN`, a classic token with no scopes, so it reads only what
+ *   anyone can see. GitHub's GraphQL API has no anonymous access, so without it there
+ *   is no GitHub preview. It is never merged into a signed-in render: a user who has
+ *   not stored a PAT of their own would silently spend the preview's shared quota.
+ * - the SteamID64 the visitor typed, which the Steam plugin reads from its essential
+ *   config. It is an identifier anyone can look up, not a secret, so it travels in the
+ *   plugin's public config and is moved here.
+ *
+ * The application's own credentials (Steam's key) are applied on top, as for any render.
+ */
+export function previewCredentials(
+  plugins: Record<string, Record<string, unknown> | undefined>,
+  env: AppCredentialEnv
+): EssentialConfigs {
+  const configs: EssentialConfigs = {}
+
+  if (env.GITHUB_PREVIEW_TOKEN) configs.github = { pat: env.GITHUB_PREVIEW_TOKEN }
+
+  const steamId = plugins.steam?.steamId
+  if (typeof steamId === "string" && STEAM_ID64.test(steamId)) configs.steam = { steamid: steamId }
+
+  return withAppCredentials(configs, env)
 }
