@@ -5,12 +5,12 @@ import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Sparkles } from "lucide-react"
+import { useTranslations } from "@/i18n/use-translations"
 
-const STEPS = [
-  { title: "Conecte", description: "GitHub, Google ou e-mail. Leva 10 segundos." },
-  { title: "Escolha plugins", description: "GitHub, anime, música, jogos e mais de uma dúzia de fontes." },
-  { title: "Cole no README", description: "Copie o markdown pronto para o topo do seu perfil." },
-]
+const STEPS = ["signIn", "plugins", "readme"] as const
+
+// Same limit the API enforces in functions/api/svgs/index.ts.
+const MAX_SVGS_FREE_TIER = 3
 
 const stars = [
   { top: "10%", left: "6%", size: 2, opacity: 0.3 },
@@ -72,6 +72,7 @@ function PreviewCollageBackground() {
 // seção fica intencionalmente escura (como o login) independente do tema do
 // site - é o mesmo tratamento que o AuthDecoration já usa.
 export function DashboardEmptyState() {
+  const t = useTranslations("dashboard.emptyState")
   const [activeStep, setActiveStep] = useState(0)
 
   return (
@@ -96,23 +97,20 @@ export function DashboardEmptyState() {
       >
         <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/50 px-3 py-1 font-heading text-[11px] font-bold uppercase tracking-[0.2em] backdrop-blur-sm">
           <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-            Novo por aqui
+            {t("badge")}
           </span>
         </span>
         <h2 className="mb-3 font-heading text-[28px] font-extrabold leading-[1.08] text-white md:text-[36px]">
-          Seu primeiro card de perfil começa aqui
+          {t("title")}
         </h2>
-        <p className="mx-auto mb-8 max-w-md text-sm leading-relaxed text-white/70 md:text-base">
-          Conecte GitHub, anime, música, jogos e mais - gere um SVG dinâmico para o topo do seu README que se atualiza
-          sozinho.
-        </p>
+        <p className="mx-auto mb-8 max-w-md text-sm leading-relaxed text-white/70 md:text-base">{t("description")}</p>
 
         {/* Passos - lista compacta centralizada, ligados por uma linha vertical */}
         <div className="relative mx-auto mb-8 max-w-sm space-y-4 text-left">
           <div className="absolute bottom-2 left-[15px] top-2 w-px bg-gradient-to-b from-cyan-400/40 via-violet-400/30 to-transparent" />
           {STEPS.map((step, i) => (
             <div
-              key={step.title}
+              key={step}
               className="relative -mx-2 flex cursor-default gap-3.5 rounded-lg px-2 py-1 transition-colors duration-200"
               onMouseEnter={() => setActiveStep(i)}
               style={{ background: activeStep === i ? "rgba(124,58,237,0.15)" : "transparent" }}
@@ -132,8 +130,8 @@ export function DashboardEmptyState() {
                 {i + 1}
               </span>
               <div className="pt-1">
-                <h4 className="mb-0.5 text-sm font-medium text-white">{step.title}</h4>
-                <p className="text-xs leading-relaxed text-white/60">{step.description}</p>
+                <h4 className="mb-0.5 text-sm font-medium text-white">{t(`steps.${step}.title`)}</h4>
+                <p className="text-xs leading-relaxed text-white/60">{t(`steps.${step}.description`)}</p>
               </div>
             </div>
           ))}
@@ -143,11 +141,11 @@ export function DashboardEmptyState() {
           <Button asChild size="lg" className="gap-2 shadow-[0_0_25px_rgba(56,189,248,0.25)]">
             <Link href="/dashboard/new">
               <Sparkles className="h-4 w-4" />
-              Criar meu primeiro SVG
+              {t("cta")}
             </Link>
           </Button>
           <span className="rounded-full border border-white/20 px-3 py-1.5 font-mono text-xs text-white/60">
-            Grátis até 3 SVGs
+            {t("freeTier", { max: MAX_SVGS_FREE_TIER })}
           </span>
         </div>
       </motion.div>

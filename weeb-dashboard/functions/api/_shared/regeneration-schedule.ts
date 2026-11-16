@@ -9,6 +9,8 @@
  * after them waited.
  */
 
+import { nightlyRunAfter } from "../../../lib/utils/nightly-run"
+
 const DAY_MS = 24 * 60 * 60 * 1000
 
 /**
@@ -26,4 +28,14 @@ export function retryDelayNights(failCount: number): number {
 /** The ISO time `nights` cron runs from now. */
 export function nightsFrom(now: Date, nights: number): string {
   return new Date(now.getTime() + nights * DAY_MS - EARLY_MS).toISOString()
+}
+
+/**
+ * The ISO time that makes the next nightly run pick the SVG up, whenever `now` falls.
+ * For a manual regeneration: nightsFrom counts from the cron's own start, and a flat
+ * +24h from a click at 10:00 UTC lands after the next 03:07 run, so the SVG skipped
+ * that night and waited 41h. A click minutes before a run is regenerated again by it.
+ */
+export function nextNightFrom(now: Date): string {
+  return new Date(nightlyRunAfter(now).getTime() - EARLY_MS).toISOString()
 }

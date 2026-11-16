@@ -16,13 +16,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useTranslations } from "@/i18n/use-translations"
+import { PREVIEW_HANDOFF_SOURCE, parsePreviewRequest } from "@/lib/preview/public-preview"
+import { forgetReturnTo, withReturnTo } from "@/lib/return-to"
+import { useToast } from "@/hooks/use-toast"
 
 export default function NewProfileSvgPage() {
   const t = useTranslations("wizard")
+  const { toast } = useToast()
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { reset, plugins, pluginsOrder, loadFromTemplate } = useWizardStore()
+  const { reset, plugins, pluginsOrder, loadFromTemplate, loadFromPreview } = useWizardStore()
   const { bootstrap, initialized } = useWizardBootstrapStore()
   const hasResetRef = useRef(false)
   const [showResumeDialog, setShowResumeDialog] = useState(false)
@@ -31,6 +35,23 @@ export default function NewProfileSvgPage() {
   // Get template ID from URL
   const templateId = searchParams.get("template")
 
+  // The card a visitor built on the landing page before signing up (?source=preview&plugin=…).
+  // Read once: loadFromPreview is applied a single time, and the parse is a whitelist.
+  const [previewHandoff] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("source") !== PREVIEW_HANDOFF_SOURCE) return null
+    const parsed = parsePreviewRequest(params)
+    return parsed.ok ? parsed.value : null
+  })
+
+  useEffect(() => {
+    if (previewHandoff && user && !authLoading && !hasResetRef.current) {
+      loadFromPreview(previewHandoff)
+      hasResetRef.current = true
+      forgetReturnTo()
+    }
+  }, [previewHandoff, user, authLoading, loadFromPreview])
+
   // Check if there are saved configurations
   const hasSavedData = useMemo(() => {
     if (!plugins || !pluginsOrder) return false
@@ -38,9 +59,14 @@ export default function NewProfileSvgPage() {
     return enabledPlugins.length > 0 || pluginsOrder.length > 0
   }, [plugins, pluginsOrder])
 
-  // Load template data if template ID is provided
+  // Load template data if template ID is provided, once per template id. This effect
+  // used to list isLoadingTemplate in its deps and check it here: each finished load
+  // set it back to false, which ran the effect again, so the page refetched the
+  // template in a loop and never left the loading screen.
+  const requestedTemplateRef = useRef<string | null>(null)
   useEffect(() => {
-    if (templateId && user && !authLoading && initialized && !isLoadingTemplate) {
+    if (templateId && user && !authLoading && initialized && requestedTemplateRef.current !== templateId) {
+      requestedTemplateRef.current = templateId
       setIsLoadingTemplate(true)
 
       fetch(`/api/templates/${templateId}`)
@@ -51,25 +77,30 @@ export default function NewProfileSvgPage() {
           return response.json()
         })
         .then((data: any) => {
-          const template = data.template
-          if (template) {
-            loadFromTemplate(template)
-            hasResetRef.current = true
-          }
+          if (!data?.template) throw new Error("Template not found")
+          loadFromTemplate(data.template)
+          hasResetRef.current = true
         })
         .catch((error) => {
           console.error("Error loading template:", error)
-          // Fall back to normal reset if template loading fails
-          if (!hasResetRef.current) {
-            reset()
-            hasResetRef.current = true
-          }
+          // Say so and leave the wizard alone. This used to reset it, which silently
+          // wiped a saved draft. Dropping the template from the URL lets the page go
+          // on as if none was asked for: it offers to resume a draft, or starts fresh.
+          toast({
+            title: t("templateLoadError.title"),
+            description: t("templateLoadError.description"),
+            variant: "destructive",
+          })
+          const rest = new URLSearchParams(searchParams.toString())
+          rest.delete("template")
+          const query = rest.toString()
+          router.replace(`/dashboard/new/profile${query ? `?${query}` : ""}`)
         })
         .finally(() => {
           setIsLoadingTemplate(false)
         })
     }
-  }, [templateId, user, authLoading, initialized, loadFromTemplate, isLoadingTemplate])
+  }, [templateId, user, authLoading, initialized, loadFromTemplate, toast, t, searchParams, router])
 
   // Bootstrap wizard data once on mount
   useEffect(() => {
@@ -80,21 +111,24 @@ export default function NewProfileSvgPage() {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push("/login")
+      // Back here after signing in, with the same query: a template or a previewed card.
+      router.push(withReturnTo("/login", `${window.location.pathname}${window.location.search}`))
       return
     }
 
     // Only check for saved data after auth is loaded and we have a user
     // Skip if we're loading a template
     if (user && !authLoading && !hasResetRef.current && !isLoadingTemplate) {
-      if (hasSavedData && !templateId) {
+      if (previewHandoff) {
+        // Applied by the effect above; the visitor chose this card, nothing to resume.
+      } else if (hasSavedData && !templateId) {
         setShowResumeDialog(true)
       } else if (!templateId) {
         reset() // Normal reset for new creation
         hasResetRef.current = true
       }
     }
-  }, [user, authLoading, router, reset, hasSavedData, templateId, isLoadingTemplate])
+  }, [user, authLoading, router, reset, hasSavedData, templateId, isLoadingTemplate, previewHandoff])
 
   const handleStartFresh = () => {
     reset() // Normal reset for new creation

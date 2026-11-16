@@ -3,6 +3,7 @@
  */
 
 import React from "react"
+import { AnimatedNumber } from "../AnimatedNumber"
 
 export interface StatProps {
   title: string
@@ -22,7 +23,9 @@ export function Stat({ icon, title, value, strong, className, smallInHalf }: Sta
         ${className ?? ""}`}
     >
       {icon && icon}
-      <span>{value}</span>
+      <span>
+        <AnimatedNumber value={value} />
+      </span>
       <span>{title}</span>
     </li>
   )

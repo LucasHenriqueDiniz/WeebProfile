@@ -1,4 +1,5 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { forgetReturnTo, readReturnTo, withReturnTo } from "@/lib/return-to"
 import { useRouter } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
 import { SignUp, ClerkLoaded, ClerkLoading } from "@clerk/react"
@@ -10,13 +11,15 @@ import { clerkAppearance } from "@/components/auth/clerk-appearance"
 export default function SignupPage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
+  // Same as the login page: where to go once the account exists.
+  const [returnTo] = useState(() => readReturnTo(window.location))
 
   useEffect(() => {
-    // Se o usuário estiver logado, redirecionar para dashboard
     if (!authLoading && user) {
-      router.push("/dashboard")
+      forgetReturnTo()
+      router.push(returnTo ?? "/dashboard")
     }
-  }, [user, authLoading, router])
+  }, [user, authLoading, router, returnTo])
 
   // Mostrar loading enquanto verifica autenticação
   // Mesmo guard do login: sem a key do Clerk, falha explicita em vez de loading eterno.
@@ -62,16 +65,21 @@ export default function SignupPage() {
         <SignUp
           routing="path"
           path="/signup"
-          signInUrl="/login"
+          signInUrl={withReturnTo("/login", returnTo)}
           appearance={clerkAppearance}
           fallbackRedirectUrl="/dashboard"
+          forceRedirectUrl={returnTo}
+          signInForceRedirectUrl={returnTo}
         />
       </ClerkLoaded>
 
       {/* Switch to Login */}
       <p className="text-[13px] text-center text-muted-foreground mt-6">
         Já tem conta?{" "}
-        <Link href="/login" className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
+        <Link
+          href={withReturnTo("/login", returnTo)}
+          className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
+        >
           Entrar
         </Link>
       </p>

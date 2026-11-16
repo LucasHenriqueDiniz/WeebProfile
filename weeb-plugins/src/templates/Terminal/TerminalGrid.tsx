@@ -13,17 +13,19 @@ function TerminalGridItem({ title, subtitle, value, index }: GridItemProps & { i
   return (
     <>
       <span
-        className={`font-semibold w-full truncate text-sm text-terminal-warning pl-1 ${isOdd ? "bg-black/25" : ""}`}
+        className={`font-semibold w-full truncate text-sm text-terminal-warning pl-1 ${isOdd ? "bg-terminal-stripe" : ""}`}
       >
         {title}
       </span>
       {subtitle && (
-        <span className={`text-terminal-muted-light w-full text-center truncate text-sm ${isOdd ? "bg-black/25" : ""}`}>
+        <span
+          className={`text-terminal-muted-light w-full text-center truncate text-sm ${isOdd ? "bg-terminal-stripe" : ""}`}
+        >
           {subtitle}
         </span>
       )}
       <span
-        className={`text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ${isOdd ? "bg-black/25" : ""}`}
+        className={`text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ${isOdd ? "bg-terminal-stripe" : ""}`}
       >
         {value}
       </span>

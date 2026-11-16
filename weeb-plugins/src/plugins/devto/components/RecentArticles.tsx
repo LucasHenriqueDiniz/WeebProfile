@@ -7,6 +7,7 @@ import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWi
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { DevToArticle, DevToConfig } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 interface RecentArticlesProps {
   articles: DevToArticle[]
@@ -43,7 +44,7 @@ export function RecentArticles({
             {!hideTitle && <DefaultTitle title={title} icon={<FaRegNewspaper />} />}
             <div className="flex flex-col" style={{ gap: `${ARTICLE_ROW_GAP}px` }}>
               {shown.map((article) => (
-                <div key={article.id} className="flex flex-col min-w-0 w-full">
+                <ExternalLink key={article.id} href={article.url} className="flex flex-col min-w-0 w-full">
                   <p className="text-sm truncate text-default-highlight">{article.title}</p>
                   <div className="flex gap-3 text-xs text-default-muted">
                     <span className="flex items-center gap-1">
@@ -56,7 +57,7 @@ export function RecentArticles({
                     </span>
                     {article.readablePublishDate && <span className="truncate">{article.readablePublishDate}</span>}
                   </div>
-                </div>
+                </ExternalLink>
               ))}
             </div>
           </div>
@@ -67,6 +68,7 @@ export function RecentArticles({
             {shown.map((article) => (
               <TerminalLineWithDots
                 key={article.id}
+                href={article.url}
                 title={article.title}
                 value={`${abbreviateNumber(article.reactions)} ♥`}
               />

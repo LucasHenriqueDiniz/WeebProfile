@@ -3,7 +3,7 @@
   "displayName": "GitHub",
   "essentialConfig": {
     "pat": {
-      "description": "Token clásico usado para obtener datos de la API de GitHub",
+      "description": "Basta un token clásico sin ningún scope: la tarjeta solo lee datos públicos.",
       "label": "Token Clásico de GitHub",
       "placeholder": "ghp_..."
     }
@@ -278,7 +278,8 @@
           "label": "Título"
         },
         "repositories_use_private": {
-          "label": "Incluir repositorios privados"
+          "label": "Incluir repositorios privados",
+          "tooltip": "Muestra repositorios privados, con su nombre, en todas las secciones de GitHub de esta tarjeta pública. Requiere un token con el scope 'repo'; el token del enlace de configuración no tiene ninguno, así que con él esta opción no hace nada."
         }
       },
       "description": "Lista de repositorios",

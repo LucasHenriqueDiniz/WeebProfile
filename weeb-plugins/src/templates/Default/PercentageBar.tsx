@@ -1,6 +1,7 @@
 import React from "react"
 import { FaCheck } from "react-icons/fa"
 import { FiClock } from "react-icons/fi"
+import { useAnimations } from "../animations"
 
 function getStatusColor(status: string) {
   switch (status) {
@@ -37,12 +38,14 @@ export function PercentageBar({ current, total, status }: PercentageBarProps): R
   if (isCompleted) percentage = 100
   if (isPlanTo) percentage = -1
 
+  const animations = useAnimations()
+
   return (
     <div className="w-full flex shadow-md bg-default-15 rounded-2xl h-[15px] relative">
       <span
         className={`${
           isCompleted || isPlanTo ? "flex items-center justify-center" : "flex items-center justify-end"
-        } ${getStatusColor(status)} text-shadow text-center rounded-2xl text-sm text-white`}
+        } ${getStatusColor(status)} text-shadow text-center rounded-2xl text-sm text-white${animations ? " weeb-bar" : ""}`}
         style={{ width: `${isCompleted || isPlanTo ? 100 : percentage > 15 ? percentage : 15}%` }}
       >
         {isPlanTo ? (

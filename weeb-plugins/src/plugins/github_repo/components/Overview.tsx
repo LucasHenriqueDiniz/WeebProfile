@@ -6,6 +6,7 @@ import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
 import { HlFillGradient } from "./StarGraph"
 import { Card, Delta, DotSep, HL, LangDot, computeStarDelta, formatCount, starCoords } from "./redesign"
+import { ExternalLink } from "../../../utils/external-link"
 
 interface OverviewProps {
   config: GithubRepoConfig
@@ -94,16 +95,20 @@ export function Overview({ config, data, style = "default", size = "half" }: Ove
       <ScaledBox size={config.content_size}>
         <RenderBasedOnStyle
           style={style}
-          defaultComponent={<DefaultOverview data={data} />}
+          defaultComponent={
+            <ExternalLink href={data.url} className="block">
+              <DefaultOverview data={data} />
+            </ExternalLink>
+          }
           terminalComponent={
             <>
               <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "overview", size })} />
-              <div className="flex items-center gap-4 px-1 py-1 text-sm">
+              <ExternalLink href={data.url} className="flex items-center gap-4 px-1 py-1 text-sm">
                 <span className="text-terminal-highlight font-bold">{data.nameWithOwner}</span>
                 <span className="text-terminal-muted">★ {data.stargazerCount}</span>
                 <span className="text-terminal-muted">⑂ {data.forkCount}</span>
                 <span className="text-terminal-muted">issues {data.openIssuesCount}</span>
-              </div>
+              </ExternalLink>
             </>
           }
         />

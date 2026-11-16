@@ -3,6 +3,7 @@
 import React from "react"
 import { useWizardStore } from "@/stores/wizard-store"
 import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
+import { ColorVariantsPreview } from "@/components/preview/ColorVariantsPreview"
 import { debugPreview } from "@/lib/debug"
 import { useShallow } from "zustand/react/shallow"
 
@@ -20,6 +21,9 @@ export function LivePreview() {
     terminalHeaderText,
     customCss,
     customThemeColors,
+    colorMode,
+    animations,
+    animationsReplayKey,
   } = useWizardStore(
     useShallow((state) => ({
       plugins: state.plugins,
@@ -33,6 +37,9 @@ export function LivePreview() {
       terminalHeaderText: state.terminalHeaderText,
       customCss: state.customCss,
       customThemeColors: state.customThemeColors,
+      colorMode: state.colorMode,
+      animations: state.animations,
+      animationsReplayKey: state.animationsReplayKey,
     }))
   )
 
@@ -122,19 +129,28 @@ export function LivePreview() {
   return (
     <div className="flex flex-col items-center justify-start" style={{ width: `${previewWidth}px` }}>
       <div className="flex-shrink-0 w-full" style={{ width: `${previewWidth}px` }}>
-        <PreviewRenderer
-          plugins={debouncedPlugins}
-          pluginsOrder={pluginsOrder}
-          style={style}
-          size={size}
-          theme={theme}
-          hideTerminalEmojis={hideTerminalEmojis}
-          hideTerminalHeader={hideTerminalHeader}
-          fontFamily={fontFamily}
-          terminalHeaderText={terminalHeaderText}
-          customCss={customCss}
-          customThemeColors={theme === "custom" ? customThemeColors : undefined}
-        />
+        <ColorVariantsPreview colorMode={colorMode}>
+          {(variant) => (
+            <PreviewRenderer
+              key={variant ?? "fixed"}
+              plugins={debouncedPlugins}
+              pluginsOrder={pluginsOrder}
+              style={style}
+              size={size}
+              theme={theme}
+              hideTerminalEmojis={hideTerminalEmojis}
+              hideTerminalHeader={hideTerminalHeader}
+              fontFamily={fontFamily}
+              terminalHeaderText={terminalHeaderText}
+              customCss={customCss}
+              customThemeColors={theme === "custom" ? customThemeColors : undefined}
+              colorMode={colorMode}
+              colorVariant={variant}
+              animations={animations}
+              animationsReplayKey={animationsReplayKey}
+            />
+          )}
+        </ColorVariantsPreview>
       </div>
       <style>{`
         /* Custom scrollbar styles for container */

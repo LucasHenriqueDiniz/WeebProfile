@@ -85,8 +85,8 @@ describe("POST / — geração", () => {
     expect(body.height).toBeGreaterThan(0)
   })
 
-  // O chamador dimensiona o embed no Gist com o width/height do JSON. Se o SVG
-  // trouxer outros números no próprio atributo, o card sai cortado ou com sobra.
+  // The caller sizes the embed with the width/height in the JSON. If the SVG's own
+  // attributes say otherwise, the card comes out cropped or padded.
   it("faz o SVG declarar as mesmas dimensões que o JSON informa", async () => {
     const { body } = await post(validRequest())
 
@@ -292,6 +292,91 @@ describe("POST / — segredos", () => {
 
     // Sem a injeção o Steam cairia na validação de segredo obrigatório.
     expect(response.status).toBe(200)
+  })
+})
+
+describe("POST / — preview público", () => {
+  const TOKEN = "github_pat_preview_que_nunca_pode_sair_daqui"
+  const github = { github: { enabled: true, sections: ["profile"], username: "someone" } }
+
+  /** The Authorization headers the plugins sent, read from the fetch spy. */
+  function authorizationsSent(): string[] {
+    const spy = globalThis.fetch as unknown as ReturnType<typeof vi.fn>
+    return spy.mock.calls.map(([input, init]) => {
+      const headers = new Headers((init as RequestInit | undefined)?.headers ?? (input as Request).headers)
+      return headers.get("authorization") ?? ""
+    })
+  }
+
+  it("não lê segredo de usuário no D1 mesmo com userId no corpo", async () => {
+    const spy = vi.fn(async () => ({ results: [] }))
+    const fakeDb = { prepare: () => ({ bind: () => ({ all: spy }) }) } as unknown as D1Database
+
+    await post(validRequest({ preview: true, userId: "user_1" }), env({ DB: fakeDb }))
+
+    expect(spy).not.toHaveBeenCalled()
+  })
+
+  it("ignora essentialConfigs vindos no corpo", async () => {
+    const { response, body } = await post(
+      validRequest({ preview: true, plugins: github, essentialConfigs: { github: { pat: "ghp_do_corpo" } } })
+    )
+
+    expect(response.status).toBe(400)
+    expect(body.code).toBe("MISSING_REQUIRED_SECRETS")
+  })
+
+  it("usa o GITHUB_PREVIEW_TOKEN no GitHub e não o devolve", async () => {
+    const { response, text } = await post(
+      validRequest({ preview: true, debug: true, plugins: github }),
+      env({ GITHUB_PREVIEW_TOKEN: TOKEN })
+    )
+
+    expect(response.status).toBe(200)
+    expect(authorizationsSent().some((value) => value.includes(TOKEN))).toBe(true)
+    expect(text).not.toContain(TOKEN)
+  })
+
+  it("nunca empresta o token de preview a uma geração normal", async () => {
+    const { response, body } = await post(validRequest({ plugins: github }), env({ GITHUB_PREVIEW_TOKEN: TOKEN }))
+
+    expect(response.status).toBe(400)
+    expect(body.code).toBe("MISSING_REQUIRED_SECRETS")
+    expect(authorizationsSent().some((value) => value.includes(TOKEN))).toBe(false)
+  })
+
+  it("leva o SteamID64 da config pública para o plugin Steam", async () => {
+    const { response } = await post(
+      validRequest({
+        preview: true,
+        plugins: { steam: { enabled: true, sections: ["statistics"], steamId: "76561197960287930" } },
+      }),
+      env({ STEAM_API_KEY: "chave_da_aplicacao" })
+    )
+
+    expect(response.status).toBe(200)
+  })
+
+  it("não aceita outra coisa como SteamID64", async () => {
+    const { response, body } = await post(
+      validRequest({
+        preview: true,
+        plugins: { steam: { enabled: true, sections: ["statistics"], steamId: "not-an-id" } },
+      }),
+      env({ STEAM_API_KEY: "chave_da_aplicacao" })
+    )
+
+    expect(response.status).toBe(400)
+    expect(body.code).toBe("MISSING_REQUIRED_SECRETS")
+  })
+
+  it("não devolve debug nem usa dados mock", async () => {
+    const { body } = await post(validRequest({ preview: true, dev: true, mock: true, debug: true }))
+
+    expect(body.debug).toBeUndefined()
+    // dev forçado a false: o Dev.to foi chamado de verdade (e o fetch falso recusou).
+    const spy = globalThis.fetch as unknown as ReturnType<typeof vi.fn>
+    expect(spy.mock.calls.some(([input]) => String((input as Request).url ?? input).includes("dev.to/api"))).toBe(true)
   })
 })
 
@@ -644,7 +729,7 @@ describe("POST / — Dev.to sem dev, com a rede simulada só na borda", () => {
     expect(urls.some((u) => u.startsWith("https://dev.to/api/articles?username=some%20one&"))).toBe(true)
   })
 
-  // Um SVG em Gist não carrega URL externa; o avatar inválido some, o resto fica.
+  // An SVG shown as an image cannot load external URLs; the bad avatar is dropped, the rest stays.
   it("deixa de fora um avatar que não é imagem, sem derrubar o card", async () => {
     network({ avatar: () => new Response("<html>login</html>", { headers: { "content-type": "text/html" } }) })
 
@@ -692,5 +777,118 @@ describe("POST / — altura de um plugin que falhou", () => {
     ).body
 
     expect(mixed.height).toBe(healthy.height + PLUGIN_ERROR_HEIGHT)
+  })
+})
+
+describe("POST / — auto color mode", () => {
+  /** The opening tag of the theme container PluginStyles draws. */
+  const container = (svg: string, style: "default" | "terminal") =>
+    svg.match(new RegExp(`<div class="${style}-container"[^>]*>`))?.[0] ?? ""
+
+  /** The <style> element carrying the auto palettes, if any. */
+  const autoStyle = (svg: string) => svg.match(/<style>\[data-theme-scope=[^<]*<\/style>/)?.[0] ?? ""
+
+  it("ships the light palette and overrides it inside the dark media query, terminal style", async () => {
+    const { body } = await post(validRequest({ style: "terminal", theme: "default", colorMode: "auto" }))
+    const css = autoStyle(body.svg)
+    const dark = css.slice(css.indexOf("@media (prefers-color-scheme: dark)"))
+
+    expect(css).toContain("--terminal-color-background: #ffffff;")
+    expect(dark).toContain("--terminal-color-background: #0d1117;")
+  })
+
+  it("ships the light palette and overrides it inside the dark media query, default style", async () => {
+    const { body } = await post(validRequest({ style: "default", theme: "purple", colorMode: "auto" }))
+    const css = autoStyle(body.svg)
+    const dark = css.slice(css.indexOf("@media (prefers-color-scheme: dark)"))
+
+    expect(css).toContain("--default-color-surface: #f7f2ff;")
+    expect(dark).toContain("--default-color-surface: #212233;")
+  })
+
+  // An inline declaration beats any stylesheet rule, media query included: with the
+  // variables inline the dark override would never apply.
+  it("keeps the theme variables out of the container's inline style", async () => {
+    const { body } = await post(validRequest({ style: "terminal", colorMode: "auto" }))
+    const tag = container(body.svg, "terminal")
+
+    expect(tag).toContain('data-color-mode="auto"')
+    expect(tag).not.toMatch(/--terminal-color-[a-z-]+:/)
+    expect(tag).toContain("background-color:var(--terminal-color-background)")
+  })
+
+  it("leaves a card without colorMode exactly as before: inline variables, no media query", async () => {
+    const { body } = await post(validRequest({ style: "terminal" }))
+
+    expect(container(body.svg, "terminal")).toContain("--terminal-color-background:#0d1117")
+    expect(autoStyle(body.svg)).toBe("")
+  })
+
+  it("draws the custom theme's colors, which the request used to drop", async () => {
+    const { body } = await post(
+      validRequest({ theme: "custom", customThemeColors: { "--default-color-highlight": "#e11d48" } })
+    )
+
+    expect(container(body.svg, "default")).toContain("--default-color-highlight:#e11d48")
+  })
+
+  it("drops a custom color that could break out of its declaration", async () => {
+    const { body } = await post(
+      validRequest({
+        theme: "custom",
+        colorMode: "auto",
+        customThemeColors: { "--default-color-highlight": "red;} *{display:none" },
+      })
+    )
+
+    expect(body.svg).not.toContain("display:none")
+  })
+})
+
+describe("POST / — opt-in animations", () => {
+  const card = (extra: Record<string, unknown> = {}) =>
+    validRequest({
+      essentialConfigs: { github: { pat: "x" } },
+      plugins: {
+        devto: { enabled: true, sections: ["profile", "recent_articles"], username: "someone" },
+        github: { enabled: true, sections: ["profile", "favorite_languages"], username: "someone" },
+      },
+      pluginsOrder: ["devto", "github"],
+      ...extra,
+    })
+
+  // Off by default, and off adds nothing: a card from before this feature is unchanged.
+  it("leaves the card untouched unless the request asks for them", async () => {
+    const { body: absent } = await post(card())
+    const { body: off } = await post(card({ animations: false }))
+    expect(absent.svg).toBe(off.svg)
+    expect(absent.svg).not.toContain("weeb-")
+    expect(absent.svg).not.toContain("@property")
+  })
+
+  // No height check here: the height comes from calculateHeight(), which never sees the
+  // markup, so on and off could not differ. The rendered height was measured in a
+  // browser instead (docs/animations.md).
+  it.each(["default", "terminal"])("animates the %s style", async (style) => {
+    const { response, body: on } = await post(card({ style, animations: true }))
+    expect(response.status).toBe(200)
+    expect(on.svg).toContain(`${style}-container weeb-anim`)
+    // One timeline across plugins: github's sections start after devto's two.
+    expect(on.svg).toContain("--weeb-base:0")
+    expect(on.svg).toContain("--weeb-base:2")
+    expect(on.svg).toMatch(/--weeb-step:0\.\d+s/)
+  })
+
+  // The SVG is parsed as XML: a raw "<integer>" from @property would open an element
+  // and break the whole image.
+  it("escapes the stylesheet for the XML parser", async () => {
+    const { body } = await post(card({ animations: true }))
+    expect(body.svg).toContain('syntax: "&lt;integer>"')
+    expect(body.svg).not.toContain("<integer>")
+  })
+
+  it("does not animate on anything but a literal true", async () => {
+    const { body } = await post(card({ animations: "yes" }))
+    expect(body.svg).not.toContain("weeb-anim")
   })
 })

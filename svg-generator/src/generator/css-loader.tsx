@@ -7,7 +7,7 @@
 import React from "react"
 import { log } from "../utils/log.js"
 import type { SvgConfig } from "../types/index.js"
-import { getCompleteCSS } from "@weeb/weeb-plugins/styles/server"
+import { ANIMATIONS_CSS, getCompleteCSS } from "@weeb/weeb-plugins/styles/server"
 import { escapeStyleText } from "./style-text.js"
 
 /**
@@ -30,7 +30,9 @@ export async function loadCss(config: SvgConfig): Promise<React.ReactElement> {
   const theme = config.style === "terminal" ? config.terminalTheme || "default" : config.defaultTheme || "default"
 
   // Get custom colors (if any) and merge with primaryColor
-  const customColors = (config as any).customThemeColors || {}
+  // A copy: the primaryColor fallback below must not leak into config.customThemeColors,
+  // which PluginStyles reads later.
+  const customColors: Record<string, string> = { ...(config.customThemeColors || {}) }
   const primaryColor = config.primaryColor
 
   // If primaryColor is provided, add it to customColors as --default-color-highlight
@@ -64,6 +66,9 @@ ${themeVariablesCss}
     <>
       <style>{escapeStyleText(themeVariablesCssBlock)}</style>
       <style>{completeCSS}</style>
+      {/* Escaped like the request-supplied blocks: @property's syntax is "<integer>",
+          which the XML parser would otherwise read as an element. */}
+      {config.animations && <style>{escapeStyleText(ANIMATIONS_CSS)}</style>}
       {config.customCss && <style>{escapeStyleText(config.customCss)}</style>}
     </>
   )

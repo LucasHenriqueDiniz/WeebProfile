@@ -66,7 +66,7 @@ export function Websites({ data, config, style = "default", size = "half" }: Web
                 a coluna de valor do grid é `whitespace-nowrap` e um domínio longo
                 estoura a largura do card. */}
             {websites.map((site) => (
-              <TerminalLine key={site.url} right={site.title} left={site.domain} />
+              <TerminalLine key={site.url} href={site.url} right={site.title} left={site.domain} />
             ))}
           </>
         }

@@ -9,7 +9,7 @@ import { resolveSteamId } from "./steam-id"
  * precisar de uma segunda cópia do segredo no dashboard -- duas cópias divergem
  * calado, e hoje o generator é o dono declarado das credenciais da aplicação.
  */
-function resolverViaGenerator(env: CloudflareEnv): (vanity: string) => Promise<string | null> {
+export function resolverViaGenerator(env: CloudflareEnv): (vanity: string) => Promise<string | null> {
   return async (vanity: string) => {
     const init = {
       method: "POST",

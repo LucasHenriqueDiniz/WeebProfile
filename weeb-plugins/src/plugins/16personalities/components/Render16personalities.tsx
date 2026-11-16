@@ -6,6 +6,7 @@ import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { Personality16Config, Personality16Data } from "../types"
+import { ExternalLink } from "../../../utils/external-link"
 
 interface RenderPersonality16Props {
   config: Personality16Config
@@ -40,15 +41,13 @@ const DefaultPersonality = ({ data, config }: { data: Personality16Data; config:
 
       {/* Link */}
       {showLink && (
-        <a
+        <ExternalLink
           href={data.url}
-          target="_blank"
-          rel="noopener noreferrer"
           className="inline-flex items-center gap-2 text-sm text-default-link hover:text-default-link-hover transition-colors"
         >
           <FaExternalLinkAlt className="w-4 h-4" />
           <span>Learn more on 16Personalities</span>
-        </a>
+        </ExternalLink>
       )}
     </div>
   )
@@ -129,7 +128,7 @@ export function RenderPersonality16({
                 </div>
               </div>
             )}
-            {showLink && <TerminalLineWithDots title="🔗 Link" value={data.url} />}
+            {showLink && <TerminalLineWithDots title="🔗 Link" value={data.url} href={data.url} />}
           </div>
         }
         wrapTerminalBody={true}
