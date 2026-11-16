@@ -670,7 +670,7 @@
   },
   "templatesPage": {
     "title": "Templates Gallery",
-    "subtitle": "Discover amazing templates created by the community. Use them as inspiration or start from scratch.",
+    "subtitle": "Ready-made combos of plugins, sections and theme. Pick one and tweak it with your own data.",
     "searchPlaceholder": "Search templates...",
     "filters": {
       "style": {

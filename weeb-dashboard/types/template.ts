@@ -2,7 +2,10 @@ export type TemplateStyle = "default" | "terminal"
 
 export type TemplateSize = "half" | "full"
 
-export type TemplateTheme = "default" | "dark" | "purple" | "pink" | "blue" | "green" | "dracula"
+// A key of defaultThemes or terminalThemes in weeb-plugins, which are Record<string, …>.
+// The union typed here had drifted: no cyan, orange, red or monokai, and Gamer Stats
+// in production is cyan.
+export type TemplateTheme = string
 
 export interface TemplateUser {
   id: string
