@@ -954,7 +954,8 @@
       "viewTerminal": "terminal",
       "viewDefault": "default",
       "backHome": "Volver al inicio",
-      "cta": "Crear mi SVG"
+      "cta": "Crear mi SVG",
+      "index": "Ir a un plugin"
     }
   },
   "embed": {

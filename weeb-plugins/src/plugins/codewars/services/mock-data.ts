@@ -25,6 +25,9 @@ export function getMockCodewarsData(): CodewarsData {
       csharp: { language: "C#", score: 34 },
       typescript: { language: "TypeScript", score: 16 },
     },
-    leaderboardPosition: undefined,
+    // A 7 kyu account with 83 honor sits deep in the global ranking. Left undefined,
+    // the leaderboard_position preview rendered nothing: a 415x0 SVG, an empty card
+    // in the plugins gallery.
+    leaderboardPosition: 287_416,
   }
 }

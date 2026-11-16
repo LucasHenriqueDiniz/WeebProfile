@@ -110,6 +110,25 @@ function checkAvailableStyles(pluginName: string, sectionId: string): Array<(typ
   return STYLES.filter((style) => fs.existsSync(previewSourcePath(pluginName, sectionId, style)))
 }
 
+type PreviewSize = [width: number, height: number]
+
+/**
+ * Width and height of the preview's root <svg>. The gallery gives them to its <img> so
+ * the browser reserves the space before a lazy image loads: without them each card was
+ * 0 px tall until it loaded, and jumping to a plugin landed short as the cards above
+ * filled in.
+ */
+function previewSize(pluginName: string, sectionId: string, style: (typeof STYLES)[number]): PreviewSize {
+  const file = previewSourcePath(pluginName, sectionId, style)
+  const root = fs.readFileSync(file, "utf-8").match(/<svg\b[^>]*>/)?.[0] ?? ""
+  const width = Number(root.match(/\swidth="([\d.]+)"/)?.[1])
+  const height = Number(root.match(/\sheight="([\d.]+)"/)?.[1])
+  if (!(width > 0) || !(height > 0)) {
+    throw new Error(`${file}: the root <svg> has no numeric width and height`)
+  }
+  return [width, height]
+}
+
 /**
  * Copia os SVGs de preview de weeb-plugins para weeb-dashboard/public/previews,
  * onde o Vite os serve como assets estáticos em /previews/**.
@@ -130,7 +149,7 @@ function copyPreviewToDashboard(pluginName: string, sectionId: string, style: (t
  * Gera o conteúdo do arquivo section-previews.ts
  */
 function generateSectionPreviewsFile(
-  pluginsData: Map<string, Array<{ section: string; styles: Array<(typeof STYLES)[number]> }>>
+  pluginsData: Map<string, Array<{ section: string; sizes: Partial<Record<(typeof STYLES)[number], PreviewSize>> }>>
 ): string {
   const header = `// Mapeamento de seções para previews de imagem
 // AUTO-GENERATED - DO NOT EDIT MANUALLY
@@ -140,7 +159,13 @@ function generateSectionPreviewsFile(
 // e verifica quais previews existem (por estilo) na pasta previews/ de cada plugin.
 // Os arquivos são copiados para weeb-dashboard/public/previews/ pelo mesmo script.
 
-export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean; terminal: boolean }>> = {
+/** [width, height] of the preview SVG, or null when that style has no preview. */
+export type PreviewSize = [width: number, height: number]
+
+export const SECTION_PREVIEWS: Record<
+  string,
+  Record<string, { default: PreviewSize | null; terminal: PreviewSize | null }>
+> = {
 `
 
   const plugins = Array.from(pluginsData.entries()).sort()
@@ -149,10 +174,11 @@ export const SECTION_PREVIEWS: Record<string, Record<string, { default: boolean;
   for (const [pluginName, sections] of plugins) {
     const sectionEntries: string[] = []
 
-    for (const { section, styles } of sections) {
-      if (styles.length > 0) {
+    const literal = (size: PreviewSize | undefined) => (size ? `[${size[0]}, ${size[1]}]` : "null")
+    for (const { section, sizes } of sections) {
+      if (sizes.default || sizes.terminal) {
         sectionEntries.push(
-          `    ${section}: { default: ${styles.includes("default")}, terminal: ${styles.includes("terminal")} },`
+          `    ${section}: { default: ${literal(sizes.default)}, terminal: ${literal(sizes.terminal)} },`
         )
       }
     }
@@ -196,19 +222,23 @@ async function main() {
   }
 
   const plugins = discoverPlugins()
-  const pluginsData = new Map<string, Array<{ section: string; styles: Array<(typeof STYLES)[number]> }>>()
+  const pluginsData = new Map<
+    string,
+    Array<{ section: string; sizes: Partial<Record<(typeof STYLES)[number], PreviewSize>> }>
+  >()
 
   for (const pluginName of plugins) {
     const sections = await getPluginSections(pluginName)
-    const sectionsData: Array<{ section: string; styles: Array<(typeof STYLES)[number]> }> = []
+    const sectionsData: Array<{ section: string; sizes: Partial<Record<(typeof STYLES)[number], PreviewSize>> }> = []
 
     for (const sectionId of sections) {
       const styles = checkAvailableStyles(pluginName, sectionId)
-      sectionsData.push({ section: sectionId, styles })
-
+      const sizes: Partial<Record<(typeof STYLES)[number], PreviewSize>> = {}
       for (const style of styles) {
+        sizes[style] = previewSize(pluginName, sectionId, style)
         copyPreviewToDashboard(pluginName, sectionId, style)
       }
+      sectionsData.push({ section: sectionId, sizes })
     }
 
     if (sectionsData.length > 0) {
@@ -233,8 +263,8 @@ async function main() {
 
   for (const [, sections] of pluginsData) {
     totalSections += sections.length
-    totalWithDefault += sections.filter((s) => s.styles.includes("default")).length
-    totalWithTerminal += sections.filter((s) => s.styles.includes("terminal")).length
+    totalWithDefault += sections.filter((s) => s.sizes.default).length
+    totalWithTerminal += sections.filter((s) => s.sizes.terminal).length
   }
 
   console.log(`\n✅ section-previews.ts gerado em: ${OUTPUT_FILE}`)
