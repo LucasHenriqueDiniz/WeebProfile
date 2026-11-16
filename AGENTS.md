@@ -306,8 +306,7 @@ Não usa `.env` — é um Cloudflare Worker, configurado via `svg-generator/wran
 ### weeb-dashboard (.env.local)
 
 ```
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_...          # lida pela SPA (Vite)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...   # lida pelas Pages Functions; mesma chave
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...   # lida pelas Pages Functions
 CLERK_SECRET_KEY=sk_test_...
 R2_PUBLIC_URL=https://pub-xxxx.r2.dev
 SVG_GENERATOR_URL=http://localhost:3001
@@ -315,6 +314,8 @@ CRON_SECRET=...
 ```
 
 O `NEXT_PUBLIC_` do nome é resto do Next.js, mas a variável está viva: as Functions leem ela, e o valor de produção está no `[vars]` do `wrangler.toml`.
+
+A SPA recebe a mesma chave como `VITE_CLERK_PUBLISHABLE_KEY` no build. O `vite.config.ts` tira ela do `[vars]` do `wrangler.toml` quando a variável não vem do ambiente, então nenhum build precisa dela. Antes ela só existia no ambiente de produção do Pages, e todo deploy de preview saía com o login desligado.
 
 D1 e R2 não são variáveis de ambiente — são bindings configurados em `wrangler.toml`.
 
@@ -372,6 +373,7 @@ Os dois serviços guardam erro em lugares diferentes, porque a Cloudflare não p
 - **Regeração manual tem piso por usuário** (`GENERATION_FLOOR_SECONDS`, 20s, em `functions/api/_shared/generation-rate-limit.ts`) que o `force` não pula; o `force` só pula o cooldown de 20 minutos. Responde 429 `GENERATION_RATE_LIMITED` com `Retry-After`.
 - **svg-generator não usa mais Playwright/Chromium** — a altura do SVG é calculada estaticamente somando `calculateHeight()` de cada seção. Qualquer mudança de layout que afete altura precisa atualizar essa função no plugin correspondente.
 - **Opções de seção chegam na raiz da config do plugin** (é como o dashboard grava e como o renderer achata `sectionConfigs`), nunca em `nonEssential`. O `PluginManager` copia a raiz para `config.nonEssential` antes de chamar `fetchData`, `render` e `calculateHeight` (`plugins/shared/plugin-options.ts`), então ler de um ou de outro dá o mesmo valor. Chamar um plugin sem passar pelo manager perde isso. Ao testar opções, passe-as na raiz, como produção faz — `plugin-options.test.ts` compara as duas formas.
+- **Deploys de preview usam os dados de produção:** o `[env.preview]` do `wrangler.toml` aponta para o mesmo D1, o mesmo R2 e o mesmo gerador. Com `CLERK_SECRET_KEY` no ambiente de preview (`pnpm --filter weeb-dashboard exec wrangler pages secret put CLERK_SECRET_KEY --env preview`), dá para entrar num preview e testar logado, mas o código do branch lê e grava nos dados reais. Testar lendo; salvar, gerar ou excluir num preview é fazer isso em produção. A `SECRETS_ENCRYPTION_KEY` fica fora do preview: a Cloudflare não devolve o valor de produção, e outra chave gravaria no D1 compartilhado chaves de plugin que produção não decifra. Sem ela, as rotas de chaves de plugin respondem 500 no preview.
 - **Dev local do dashboard com D1:** usar `pnpm dev:pages` (= `wrangler pages dev dist`, **sem** `--d1`). Passar `--d1 DB=weebprofile-db` cria um banco SQLite local **diferente** do resolvido via `wrangler.toml`, e não terá as migrations aplicadas.
 - **Imagens externas nos SVGs:** converter para base64 é necessário porque o SVG entra no README como imagem, e o navegador não carrega URL externa de dentro de um SVG exibido como imagem. O utilitário está em `weeb-plugins/src/utils/image-to-base64.ts`.
 - **metadata.ts é singleton:** o `PluginManager.register` recusa plugin sem entrada em `PLUGINS_METADATA`, então esquecer o `generate-metadata` faz o gerador lançar erro na inicialização. O `pnpm validate` (no CI) confere o mesmo nos dois sentidos, e o `pnpm validate-config-options` (no CI, reprova) acusa opção de config que nenhum componente lê.

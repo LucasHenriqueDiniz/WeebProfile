@@ -161,7 +161,21 @@ describe("getAuthUserId: we cannot tell, so it throws and the route answers 500"
       throw new TypeError("fetch failed")
     }
 
-    await expect(getAuthUserId(bearer(await sessionToken(key)), env)).rejects.toThrow(/unexpected-error/)
+    await expect(getAuthUserId(bearer(await sessionToken(key)), env)).rejects.toThrow(
+      /unexpected-error \(TypeError: fetch failed\)/
+    )
+  })
+
+  // Clerk reports a JWKS body that is not JSON as "unexpected-error" too. The message
+  // has to tell it apart from a network failure, and leave the secret key out.
+  it("says what Clerk hid behind unexpected-error, without the secret key", async () => {
+    skipRetryWait()
+    const key = await signingKey("kid-jwks-html")
+    jwks = () => new Response("<html>bad gateway</html>", { status: 502, headers: { "Content-Type": "text/html" } })
+
+    const error = await getAuthUserId(bearer(await sessionToken(key)), env).catch((e: Error) => e)
+    expect(String(error)).toMatch(/unexpected-error \(SyntaxError: /)
+    expect(String(error)).not.toContain(env.CLERK_SECRET_KEY)
   })
 
   it("throws when Clerk rejects our secret key", async () => {
