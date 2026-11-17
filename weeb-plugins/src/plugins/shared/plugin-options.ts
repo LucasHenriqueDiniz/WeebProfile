@@ -31,5 +31,6 @@ export function withNormalizedOptions(plugin: Plugin): Plugin {
     fetchData: (config, ...rest) => plugin.fetchData(withPluginOptions(config), ...rest),
     render: (config, data) => plugin.render(withPluginOptions(config), data),
     calculateHeight: (config, data, size) => plugin.calculateHeight(withPluginOptions(config), data, size),
+    tiles: plugin.tiles ? (config, data) => plugin.tiles!(withPluginOptions(config), data) : undefined,
   }
 }

@@ -55,8 +55,20 @@ export function svgEdgeCacheKey(origin: string, id: string, generatedAt: string)
   return url.toString()
 }
 
-function edgeCache(): Cache | undefined {
+export function edgeCache(): Cache | undefined {
   return (globalThis as { caches?: { default?: Cache } }).caches?.default
+}
+
+/** The headers of a served card, and of its tiles (functions/svg/[id]/[tile].ts). */
+export function svgHeaders(timing: string): Record<string, string> {
+  return {
+    "Content-Type": "image/svg+xml",
+    "Content-Security-Policy": SVG_CONTENT_SECURITY_POLICY,
+    "X-Content-Type-Options": "nosniff",
+    "Cache-Control": SVG_CACHE_CONTROL,
+    "CDN-Cache-Control": "public, max-age=300",
+    "Server-Timing": timing,
+  }
 }
 
 /**
@@ -88,17 +100,7 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params, 
       return Response.json({ error: "SVG not found" }, { status: 404 })
     }
 
-    const respond = (body: BodyInit, timing: string) =>
-      new Response(body, {
-        headers: {
-          "Content-Type": "image/svg+xml",
-          "Content-Security-Policy": SVG_CONTENT_SECURITY_POLICY,
-          "X-Content-Type-Options": "nosniff",
-          "Cache-Control": SVG_CACHE_CONTROL,
-          "CDN-Cache-Control": "public, max-age=300",
-          "Server-Timing": timing,
-        },
-      })
+    const respond = (body: BodyInit, timing: string) => new Response(body, { headers: svgHeaders(timing) })
 
     const cache = edgeCache()
     const cacheKey =

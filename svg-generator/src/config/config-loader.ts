@@ -57,6 +57,7 @@ export function normalizeConfig(config: Partial<SvgConfig>): SvgConfig {
     customThemeColors: config.customThemeColors,
     animations: config.animations === true,
     dev: config.dev ?? false,
+    tiles: config.tiles === true,
     essentialConfigs: config.essentialConfigs, // CRÍTICO: Preservar essentialConfigs (secrets/tokens)
   }
 

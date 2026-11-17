@@ -996,6 +996,16 @@
       "toastCopiedDescription": "Snippet com {{count}} cards copiado",
       "toastError": "Não foi possível copiar o snippet"
     },
+    "tiles": {
+      "title": "Um link por site",
+      "description": "Cada site vira uma imagem própria dentro do seu link, três por linha. Quem visita abre um site com um clique, direto do seu README. No card único são dois: primeiro a imagem, depois o site.",
+      "note": "Os links ficam escritos no seu README. Depois de adicionar, remover ou reordenar sites, copie de novo. Títulos e imagens se atualizam sozinhos.",
+      "copy": "Copiar",
+      "copied": "Copiado!",
+      "toastCopied": "Copiado!",
+      "toastCopiedDescription": "Snippet com {{count}} sites copiado",
+      "toastError": "Não foi possível copiar o snippet"
+    },
     "readme": {
       "title": "Coloque no seu perfil",
       "explainer": "O GitHub mostra no topo do seu perfil o README.md de um repositório público com o mesmo nome do seu usuário, {{repo}}. Cole o snippet lá.",

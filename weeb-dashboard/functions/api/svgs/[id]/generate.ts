@@ -12,6 +12,7 @@ import {
   generateSvgViaService,
   convertSvgToPluginsConfig,
   getTerminalConfigs,
+  tilesFromResult,
   DB_UNREACHABLE_CODE,
 } from "../../_shared/svg-generation"
 
@@ -120,6 +121,8 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         customThemeColors: uiConfig.customThemeColors || undefined,
         userId,
         mock: false,
+        // One SVG per site of the websites plugin, for the README snippet that links each.
+        tiles: true,
       }
 
       const result = (await generateSvgViaService(requestConfig, env)) as any
@@ -130,12 +133,19 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
       assertGenerationSucceeded(result)
 
       const now = new Date()
-      const updatedSvg = await publishGeneratedSvg(env, db, id, svgContent, {
-        status: "completed",
-        lastGeneratedAt: now.toISOString(),
-        nextRegenerationAt: nextNightFrom(now),
-        forceRegenerate: false,
-      })
+      const updatedSvg = await publishGeneratedSvg(
+        env,
+        db,
+        id,
+        svgContent,
+        {
+          status: "completed",
+          lastGeneratedAt: now.toISOString(),
+          nextRegenerationAt: nextNightFrom(now),
+          forceRegenerate: false,
+        },
+        tilesFromResult(result)
+      )
       // Deleted while it was being generated; publishGeneratedSvg took the image down.
       if (!updatedSvg) return notFound("SVG")
 

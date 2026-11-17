@@ -195,5 +195,24 @@ export async function fetchWebsitesData(
     resolveWebsite(url, item, options)
   )
 
-  return { websites: resolved.filter((entry): entry is WebsiteEntry => entry !== null) }
+  // A site that failed to resolve keeps its place, with what the user typed. Dropping it
+  // moved every later site up one: in a README of one image per site (Plugin.tiles),
+  // whose links were written when the snippet was copied, image n then showed the site
+  // after the one its link opens, until the next generation.
+  return { websites: resolved.map((entry, i) => entry ?? plainWebsite(entries[i]!.url, entries[i]!.item)) }
+}
+
+/** A site with only what the user typed: no page read, no image. */
+function plainWebsite(url: URL, item: WebsiteConfigItem): WebsiteEntry {
+  const domain = url.hostname.replace(/^www\./, "")
+  const title = typeof item.title === "string" ? item.title.trim() : ""
+  const description = typeof item.description === "string" ? item.description.trim() : ""
+  return {
+    url: url.toString(),
+    domain,
+    title: title || domain,
+    description: description || null,
+    thumbnail: null,
+    favicon: null,
+  }
 }

@@ -72,3 +72,53 @@ export function generateMarkdownForMultipleHalf(images: EmbedImage[]): string {
   const tags = images.map((image, i) => imgTag(image, lastAlone && i === images.length - 1 ? undefined : "50%"))
   return `<p align="center">${tags.join("")}</p>`
 }
+
+/** One site of a tiles snippet: its image, where its link goes and what it is called. */
+export interface TileLink {
+  href: string
+  title: string
+  src: string
+}
+
+/** Three tiles fill the 846px README column at 279px each, close to their 270px. */
+export const TILES_PER_ROW = 3
+
+/**
+ * The URL as an href, or null unless it is an absolute http(s) URL with no
+ * credentials. Same rule as safeHref in weeb-plugins (utils/external-link.tsx), which
+ * the generator already applied to these: they are checked again because this is
+ * where they turn into a link on the user's profile.
+ */
+export function linkableUrl(raw: string): string | null {
+  let url: URL
+  try {
+    url = new URL(raw.trim())
+  } catch {
+    return null
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") return null
+  if (url.username || url.password) return null
+  return url.href
+}
+
+/**
+ * One image per site, each inside a link to the site, three per row.
+ *
+ * A card in a README is one <img>, and GitHub gives an image one click target: the
+ * image itself. Its links only work once the image is opened on its own, so reaching
+ * a site takes two clicks. Here each site is its own image, so it takes one.
+ *
+ * Glued together like generateMarkdownForMultipleHalf, for the same reason: whitespace
+ * between the tags is a space character, and three 33% images plus two spaces wrap.
+ * The hrefs are written now and stay in the README, so a site added, removed or moved
+ * needs the snippet pasted again; the images update by themselves.
+ */
+export function generateTilesMarkdown(tiles: TileLink[]): string {
+  const width = `${Math.floor(100 / TILES_PER_ROW)}%`
+  const links = tiles.flatMap((tile) => {
+    const href = linkableUrl(tile.href)
+    if (!href) return []
+    return [`<a href="${escapeAttribute(href)}">${imgTag({ alt: tile.title, url: tile.src }, width)}</a>`]
+  })
+  return links.length > 0 ? `<p align="center">${links.join("")}</p>` : ""
+}

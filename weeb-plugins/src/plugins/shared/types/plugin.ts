@@ -61,6 +61,16 @@ export interface Plugin<TConfig extends BasePluginConfig = BasePluginConfig, TDa
   calculateHeight: (config: TConfig, data: TData, size: "half" | "full") => number
 
   /**
+   * One image per item, for a README that links each item on its own.
+   *
+   * A README shows a card as one <img>, and an image holds one link. Tiles laid side
+   * by side, each inside its own <a href>, give every item its own click. They are
+   * drawn from the same data as render, so fetchData runs once for the card and all
+   * of its tiles. Optional: only plugins whose items each have a destination.
+   */
+  tiles?: (config: TConfig, data: TData) => PluginTile[]
+
+  /**
    * Função opcional para validar configuração
    */
   validate?: (config: TConfig) => ValidationResult
@@ -70,6 +80,18 @@ export interface Plugin<TConfig extends BasePluginConfig = BasePluginConfig, TDa
    * Será automaticamente carregado e injetado
    */
   styles?: string
+}
+
+/** One item of a card drawn on its own, at a fixed size (see Plugin.tiles). */
+export interface PluginTile {
+  /** Where the tile's <a> goes in the README: an http(s) URL already through safeHref. */
+  href: string
+  /** Alt text for the tile's <img>. */
+  title: string
+  element: React.ReactElement
+  /** The SVG's size. Every tile of a plugin has the same, or a row in the README is ragged. */
+  width: number
+  height: number
 }
 
 /**
