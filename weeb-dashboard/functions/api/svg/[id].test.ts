@@ -1,9 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 
 const storedSvg = `<svg xmlns="http://www.w3.org/2000/svg"><style>a{}<script>alert(1)</script></style></svg>`
 
+type Row = { id: string; status: string; lastGeneratedAt: string | null }
+
 const state = vi.hoisted(() => ({
-  row: { id: "svg-1", status: "completed" } as { id: string; status: string } | null,
+  row: null as Row | null,
   stored: null as string | null,
   readIds: [] as string[],
 }))
@@ -28,10 +30,13 @@ vi.mock("../_shared/storage", () => ({
 }))
 
 beforeEach(() => {
-  state.row = { id: "svg-1", status: "completed" }
+  state.row = { id: "svg-1", status: "completed", lastGeneratedAt: "2026-11-17T03:07:06.688Z" }
   state.stored = storedSvg
   state.readIds.length = 0
 })
+
+/** Every header but Server-Timing, whose durations differ between two calls. */
+const withoutTiming = (response: Response) => [...response.headers].filter(([name]) => name !== "server-timing")
 
 // Imported inside each test, not at the top level: the Pages build compiles every file
 // under functions/, tests included, for ES2020, where top-level await is a build error.
@@ -56,14 +61,14 @@ describe("GET /api/svg/:id", () => {
   // This is the address pasted in READMEs. A regeneration passes through "generating"
   // and a failed one ends in "failed", with the last good SVG still in R2.
   it.each(["generating", "failed", "pending"])("keeps serving the last SVG while the status is %s", async (status) => {
-    state.row = { id: "svg-1", status }
+    state.row = { ...state.row!, status }
     const response = await get("svg-1")
     expect(response.status).toBe(200)
     expect(await response.text()).toBe(storedSvg)
   })
 
   it("answers 404 while nothing has been generated yet", async () => {
-    state.row = { id: "svg-1", status: "pending" }
+    state.row = { id: "svg-1", status: "pending", lastGeneratedAt: null }
     state.stored = null
     expect((await get("svg-1")).status).toBe(404)
   })
@@ -106,6 +111,79 @@ describe("GET /api/svg/:id", () => {
   })
 })
 
+describe("GET /api/svg/:id with the edge cache", () => {
+  // caches.default as a Worker sees it: one store per colo, keyed by URL.
+  const store = new Map<string, Response>()
+  const fakeCache = {
+    match: async (key: string) => store.get(key)?.clone(),
+    put: async (key: string, response: Response) => void store.set(key, response),
+  }
+
+  beforeEach(() => {
+    store.clear()
+    vi.stubGlobal("caches", { default: fakeCache })
+  })
+  afterEach(() => vi.unstubAllGlobals())
+
+  const getAtEdge = async (id: string) => {
+    const { onRequestGet } = await import("./[id]")
+    const pending: Promise<unknown>[] = []
+    const response = await onRequestGet({
+      env: {},
+      params: { id },
+      request: new Request(`https://dash.example/svg/${id}`),
+      waitUntil: (promise: Promise<unknown>) => void pending.push(promise),
+    } as never)
+    await Promise.all(pending)
+    return response
+  }
+
+  // camo comes back for the card every minute; R2 was most of this route's time.
+  it("reads R2 once per generation, then serves the copy at the edge", async () => {
+    const first = await getAtEdge("svg-1.svg")
+    const second = await getAtEdge("svg-1.svg")
+
+    expect(await first.text()).toBe(storedSvg)
+    expect(await second.text()).toBe(storedSvg)
+    expect(state.readIds).toEqual(["svg-1"])
+    expect(first.headers.get("Server-Timing")).toContain("edge;desc=miss")
+    expect(second.headers.get("Server-Timing")).toContain("edge;desc=hit")
+  })
+
+  it("answers from the edge with the same headers as from R2: sandbox, no-cache, no ETag", async () => {
+    const fromR2 = await getAtEdge("svg-1.svg")
+    const fromEdge = await getAtEdge("svg-1.svg")
+
+    expect(withoutTiming(fromEdge)).toEqual(withoutTiming(fromR2))
+    expect(fromEdge.headers.get("ETag")).toBeNull()
+  })
+
+  it("serves the new SVG as soon as the card is generated again", async () => {
+    await getAtEdge("svg-1.svg")
+    state.stored = `<svg xmlns="http://www.w3.org/2000/svg"><text>regenerated</text></svg>`
+    state.row = { ...state.row!, lastGeneratedAt: "2026-11-17T12:06:19.675Z" }
+
+    expect(await (await getAtEdge("svg-1.svg")).text()).toBe(state.stored)
+    expect(state.readIds).toEqual(["svg-1", "svg-1"])
+  })
+
+  it("stops serving a deleted card, copy at the edge or not", async () => {
+    await getAtEdge("svg-1.svg")
+    state.row = null
+
+    expect((await getAtEdge("svg-1.svg")).status).toBe(404)
+  })
+
+  it("keeps nothing for a card with no generation recorded", async () => {
+    state.row = { ...state.row!, lastGeneratedAt: null }
+    await getAtEdge("svg-1.svg")
+    await getAtEdge("svg-1.svg")
+
+    expect(state.readIds).toEqual(["svg-1", "svg-1"])
+    expect(store.size).toBe(0)
+  })
+})
+
 describe("HEAD /api/svg/:id", () => {
   const head = async (id: string) => {
     const { onRequestHead } = await import("./[id]")
@@ -117,7 +195,7 @@ describe("HEAD /api/svg/:id", () => {
     const [headResponse, getResponse] = [await head("svg-1.svg"), await get("svg-1.svg")]
     expect(headResponse.status).toBe(200)
     expect(headResponse.headers.get("Content-Type")).toBe("image/svg+xml")
-    expect([...headResponse.headers]).toEqual([...getResponse.headers])
+    expect(withoutTiming(headResponse)).toEqual(withoutTiming(getResponse))
     expect(headResponse.body).toBeNull()
   })
 
