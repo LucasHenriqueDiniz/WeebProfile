@@ -16,7 +16,7 @@ import type { GithubRepoConfig, GithubRepoData } from "./types"
  *
  * Until 11/2026 each default section added 24px on top of the 24px the PluginManager adds to
  * every card, and counted fixed rows: a stats card had 31px of blank under it, a languages
- * card in full 54px, and a topics card in half cut its second row of chips.
+ * card in full 54px, and a card of ten topics in half cut its third row of chips.
  *
  * The terminal heights are the section drawn alone: the command line and the content.
  * `calculateHeight` takes the PluginManager's 24px back off them, as it always did.

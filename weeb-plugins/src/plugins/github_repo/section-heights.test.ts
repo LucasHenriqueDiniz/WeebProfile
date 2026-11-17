@@ -8,10 +8,10 @@ import type { GithubRepoData } from "./types"
  *
  * Until 11/2026 each default section added 24px to its height on top of the 24px the
  * PluginManager adds to every card, and counted fixed rows. A stats grid reserved 110px for
- * 79 drawn, a languages spectrum in full 128 for 74, an overview 252 for 225. Topics counted
- * one row of chips: ten real topics in half drew three rows and cut 37px, and a cloud at lg
- * 121px. In the terminal, languages and overview counted a wrapped line in full too (20px of
- * blank) and topics never did (22px cut).
+ * 79 drawn, a languages spectrum in full 128 for 74, an overview 252 for 226. Topics counted
+ * one row of chips: the card of huggingface/transformers' ten topics in half drew three and
+ * cut the last 22px, 30 as a cloud, 88 to 97 as a cloud at lg. In the terminal, languages and
+ * overview counted a wrapped line in full too (20px of blank) and topics never did (22px cut).
  *
  * `MEASURED` is the height of the section in Chrome 158, Firefox 150 and WebKit 26.4
  * (Playwright 1.60), measured 17/11/2026 the way `pnpm --filter @weeb/svg-generator
