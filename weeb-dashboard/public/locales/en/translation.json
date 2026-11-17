@@ -1012,5 +1012,10 @@
       "paused": "Paused",
       "nightly": "Refreshed every night at {{time}}"
     }
+  },
+  "templateDescriptions": {
+    "24631805e9b581180f00b670638a0fe3": "A developer profile with GitHub activity, the contribution calendar and featured repositories.",
+    "eac59bb5481ce60dc57bf2090ef24c3b": "MyAnimeList anime stats next to your most played tracks on Last.fm.",
+    "d7ed90cfffbbd466cec24ff05ba3abb9": "Steam stats and the challenges you completed on Codewars."
   }
 }

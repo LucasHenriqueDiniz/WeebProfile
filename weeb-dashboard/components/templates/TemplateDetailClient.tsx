@@ -18,6 +18,7 @@ import type { SvgTemplate } from "@/types/svg"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { useTranslations } from "@/i18n/use-translations"
 import { templateWizardHref } from "@/lib/templates/template-route"
+import { useTemplateDescription } from "@/lib/templates/template-description"
 
 interface TemplateDetailClientProps {
   templateId: string
@@ -25,6 +26,7 @@ interface TemplateDetailClientProps {
 
 export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) {
   const t = useTranslations("templatesPage")
+  const templateDescription = useTemplateDescription()
   const [template, setTemplate] = useState<SvgTemplate | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -316,7 +318,7 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              {template.description}
+              {templateDescription(template)}
             </motion.p>
 
             {/* One row: the main action takes the width, like and share are icons with
