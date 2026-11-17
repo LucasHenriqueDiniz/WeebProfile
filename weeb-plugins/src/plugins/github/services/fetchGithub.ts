@@ -11,7 +11,7 @@ import {
   RECENT_ACTIVITY_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
-import { lastSixMonthsStart } from "../utils"
+import { lastSixMonthsStart, sixMonthsBeforeNewestDay } from "../utils"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { randomColorWithString } from "../../../utils/string"
 
@@ -242,7 +242,13 @@ export async function fetchGithubData(
 
   // Development mode - return mock data
   if (dev) {
-    return await getMockGithubData()
+    const mock = await getMockGithubData()
+    // The mock is one fixed year. For last_6_months, answer like the fetch does: its last six
+    // months and their total. The preview showed the mock's figure for the year (844) under
+    // "in the last 6 months".
+    return config.calendar_year_mode === "last_6_months"
+      ? { ...mock, calendar: lastSixMonthsOf(mock.calendar.weeks) }
+      : mock
   }
 
   // Validate Classic Token and username
@@ -797,6 +803,18 @@ function calendarRange(yearMode: string, year: number, now: Date): { from: Date;
     return { from: new Date(`${lastSixMonthsStart(now)}T00:00:00Z`), to: now }
   }
   return { from: new Date(`${year}-01-01T00:00:00Z`), to: new Date(`${year}-12-31T23:59:59Z`) }
+}
+
+/** The last six months of a calendar, from six months before its newest day, and their total. */
+function lastSixMonthsOf(weeks: ContributionWeek[]): GithubData["calendar"] {
+  const from = sixMonthsBeforeNewestDay(weeks)
+  const kept = weeks
+    .map((week) => ({ ...week, contributionDays: week.contributionDays.filter((day) => day.date >= from) }))
+    .filter((week) => week.contributionDays.length > 0)
+  const totalContributions = kept
+    .flatMap((week) => week.contributionDays)
+    .reduce((sum, day) => sum + day.contributionCount, 0)
+  return { totalContributions, weeks: kept }
 }
 
 /**

@@ -2,6 +2,7 @@ import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { PluginManager } from "../../manager"
+import { getMockGithubData } from "../services/mock-data"
 import type { ContributionWeek, GithubConfig, GithubData } from "../types"
 import { GithubCalendar } from "./Calendar"
 
@@ -97,5 +98,14 @@ describe("GithubCalendar last 6 months in the dashboard preview", () => {
     )
     // 2025-07-01 to 2025-12-31
     expect(html.split(" contributions on ").length - 1).toBe(184)
+
+    // The total is those days', not the mock's figure for the year (844, while its days add up to 992)
+    const mock = await getMockGithubData()
+    const total = mock.calendar.weeks
+      .flatMap((week) => week.contributionDays)
+      .filter((day) => day.date >= "2025-07-01")
+      .reduce((sum, day) => sum + day.contributionCount, 0)
+    expect(total).toBe(743)
+    expect(html.replace(/<!-- -->/g, "")).toContain(`${total} contributions in the last 6 months`)
   })
 })
