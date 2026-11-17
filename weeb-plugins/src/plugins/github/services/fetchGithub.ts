@@ -11,6 +11,7 @@ import {
   RECENT_ACTIVITY_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
+import { lastSixMonthsStart, firstDayOfLastSixMonths } from "../utils"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { randomColorWithString } from "../../../utils/string"
 
@@ -241,7 +242,13 @@ export async function fetchGithubData(
 
   // Development mode - return mock data
   if (dev) {
-    return await getMockGithubData()
+    const mock = await getMockGithubData()
+    // The mock is one fixed year. For last_6_months, answer like the fetch does: its last six
+    // months and their total. The preview showed the mock's figure for the year (844) under
+    // "in the last 6 months".
+    return config.calendar_year_mode === "last_6_months"
+      ? { ...mock, calendar: lastSixMonthsOf(mock.calendar.weeks) }
+      : mock
   }
 
   // Validate Classic Token and username
@@ -784,6 +791,33 @@ function processTopRepositoriesData(result: GraphQLResponse, config: GithubConfi
 }
 
 /**
+ * The range one calendar query asks GitHub for. GitHub answers exactly that range, across
+ * the new year if it falls in between, and caps it at a year.
+ *
+ * `last_6_months` runs from six months before today (UTC midnight) to now. Asking for the
+ * current year instead lost the months before January in the first half of the year, and
+ * drew the days up to December 31 as empty future weeks.
+ */
+function calendarRange(yearMode: string, year: number, now: Date): { from: Date; to: Date } {
+  if (yearMode === "last_6_months") {
+    return { from: new Date(`${lastSixMonthsStart(now)}T00:00:00Z`), to: now }
+  }
+  return { from: new Date(`${year}-01-01T00:00:00Z`), to: new Date(`${year}-12-31T23:59:59Z`) }
+}
+
+/** The last six months of a calendar, from six months before its newest day, and their total. */
+function lastSixMonthsOf(weeks: ContributionWeek[]): GithubData["calendar"] {
+  const from = firstDayOfLastSixMonths(weeks)
+  const kept = weeks
+    .map((week) => ({ ...week, contributionDays: week.contributionDays.filter((day) => day.date >= from) }))
+    .filter((week) => week.contributionDays.length > 0)
+  const totalContributions = kept
+    .flatMap((week) => week.contributionDays)
+    .reduce((sum, day) => sum + day.contributionCount, 0)
+  return { totalContributions, weeks: kept }
+}
+
+/**
  * Processa dados do Calendar com suporte a múltiplos anos
  */
 async function processCalendarData(
@@ -794,7 +828,8 @@ async function processCalendarData(
 ): Promise<void> {
   const yearMode = config.calendar_year_mode || "current_year"
   const maxYears = config.calendar_full_max_years || 5
-  const currentYear = new Date().getFullYear()
+  const now = new Date()
+  const currentYear = now.getFullYear()
 
   // Determinar quais anos buscar
   let yearsToFetch: number[] = []
@@ -803,7 +838,7 @@ async function processCalendarData(
   } else if (yearMode === "last_year") {
     yearsToFetch = [currentYear - 1]
   } else if (yearMode === "last_6_months") {
-    // Para last_6_months, buscar o ano atual (vamos filtrar depois)
+    // Uma consulta só, de seis meses atrás até agora (ver calendarRange)
     yearsToFetch = [currentYear]
   } else if (yearMode === "full") {
     // Buscar até maxYears anos, começando do ano atual e indo para trás
@@ -825,8 +860,7 @@ async function processCalendarData(
 
   // Buscar dados para cada ano
   for (const year of yearsToFetch) {
-    const fromDate = new Date(`${year}-01-01T00:00:00Z`)
-    const toDate = new Date(`${year}-12-31T23:59:59Z`)
+    const { from: fromDate, to: toDate } = calendarRange(yearMode, year, now)
 
     try {
       const result = await graphqlClient<GraphQLResponse>(query, {
@@ -856,9 +890,7 @@ async function processCalendarData(
 
   // Se não conseguiu buscar nenhum ano, usar dados padrão (último ano)
   if (calendarYears.length === 0) {
-    const currentYear = new Date().getFullYear()
-    const fromDate = new Date(`${currentYear}-01-01T00:00:00Z`)
-    const toDate = new Date(`${currentYear}-12-31T23:59:59Z`)
+    const { from: fromDate, to: toDate } = calendarRange(yearMode, currentYear, now)
 
     try {
       const result = await graphqlClient<GraphQLResponse>(query, {
@@ -889,35 +921,10 @@ async function processCalendarData(
       }
     }
   } else {
-    let finalWeeks = allWeeks
-    let finalTotalContributions = totalContributions
-
-    // Se last_6_months, filtrar semanas para mostrar apenas últimos 6 meses
-    if (yearMode === "last_6_months") {
-      const sixMonthsAgo = new Date()
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-      sixMonthsAgo.setHours(0, 0, 0, 0)
-
-      // Filtrar semanas que têm pelo menos um dia dentro dos últimos 6 meses
-      finalWeeks = allWeeks.filter((week) => {
-        return week.contributionDays.some((day) => {
-          const dayDate = new Date(day.date)
-          return dayDate >= sixMonthsAgo
-        })
-      })
-
-      // Recalcular totalContributions baseado nas semanas filtradas
-      finalTotalContributions = 0
-      finalWeeks.forEach((week) => {
-        week.contributionDays.forEach((day) => {
-          finalTotalContributions += day.contributionCount || 0
-        })
-      })
-    }
-
+    // last_6_months já vem do GitHub só com os últimos 6 meses (calendarRange)
     data.calendar = {
-      totalContributions: finalTotalContributions,
-      weeks: finalWeeks,
+      totalContributions,
+      weeks: allWeeks,
       // Para last_6_months, não setar years (sempre undefined)
       // Para full mode com múltiplos anos, setar years
       years: yearMode === "last_6_months" ? undefined : calendarYears.length > 1 ? calendarYears : undefined,
