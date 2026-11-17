@@ -8,29 +8,13 @@ import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { SteamData, SteamNonEssentialConfig } from "../types"
 import { ExternalLink } from "../../../utils/external-link"
 import { steamStoreUrl } from "../services/store-url"
+import { formatPlaytime } from "../format-playtime"
 
 interface StatisticsProps {
   data: SteamData
   config: SteamNonEssentialConfig
   style?: "default" | "terminal"
   size?: "half" | "full"
-}
-
-function formatPlaytime(minutes: number): string {
-  const hours = Math.floor(minutes / 60)
-  const days = Math.floor(hours / 24)
-  if (days > 0) {
-    return `${days}d ${hours % 24}h`
-  }
-  return `${hours}h`
-}
-
-function formatHours(minutes: number): string {
-  const hours = Math.floor(minutes / 60)
-  if (hours > 0) {
-    return `${hours}h`
-  }
-  return `${minutes}m`
 }
 
 // Ver TopGames: a miniatura quadrada usa o ícone; a capa larga fica no fundo.
@@ -92,9 +76,7 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
                   <h2 className="text-lg half:text-base font-semibold text-default-fg">
                     {data.playerSummary.personaname}
                   </h2>
-                  <p className="text-sm half:text-xs text-default-muted mt-0.5">
-                    {stats.totalGames} jogos na biblioteca
-                  </p>
+                  <p className="text-sm half:text-xs text-default-muted mt-0.5">{stats.totalGames} games in library</p>
                 </div>
               </ExternalLink>
             )}
@@ -102,23 +84,23 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
             {/* Statistics Cards */}
             <div className="grid grid-cols-2 gap-3 half:gap-2.5">
               <div className="px-4 py-3 half:px-3 half:py-2.5 rounded-xl border border-default-border/50 bg-default-card/40 flex flex-col gap-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Horas totais</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Total playtime</p>
                 <p className="text-xl half:text-lg font-black text-default-highlight tabular-nums">
                   {formatPlaytime(stats.totalPlaytime)}
                 </p>
-                <p className="text-xs half:text-[10px] text-default-muted">Jogos na biblioteca: {stats.totalGames}</p>
+                <p className="text-xs half:text-[10px] text-default-muted">Games in library: {stats.totalGames}</p>
               </div>
 
               <div className="px-4 py-3 half:px-3 half:py-2.5 rounded-xl border border-default-border/50 bg-default-card/40 flex flex-col gap-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Últimas 2 semanas</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Last 2 weeks</p>
                 <p className="text-xl half:text-lg font-black text-default-highlight tabular-nums">
                   {formatPlaytime(stats.recentPlaytime)}
                 </p>
-                <p className="text-xs half:text-[10px] text-default-muted">Jogos ativos: {activeGames.length}</p>
+                <p className="text-xs half:text-[10px] text-default-muted">Active games: {activeGames.length}</p>
               </div>
             </div>
 
-            {/* Featured Game (Destaque recente) */}
+            {/* Featured game */}
             {showFeatured && featuredGame && (
               <ExternalLink
                 href={steamStoreUrl(featuredGame.appid)}
@@ -152,14 +134,14 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] font-bold uppercase tracking-wider text-white/80 mb-1">
-                            Destaque recente
+                            Recent highlight
                           </p>
                           <p className="text-base half:text-sm font-bold text-white truncate mb-1 drop-shadow-lg">
                             {featuredGame.name}
                           </p>
                           <div className="flex flex-col gap-0.5 text-xs half:text-[10px] text-white/90 font-semibold drop-shadow">
-                            <p>Últimas 2 semanas: {formatHours(featuredGame.playtime_2weeks || 0)}</p>
-                            <p>Tempo total jogado: {formatPlaytime(featuredGame.playtime_forever)}</p>
+                            <p>Last 2 weeks: {formatPlaytime(featuredGame.playtime_2weeks || 0)}</p>
+                            <p>Total played: {formatPlaytime(featuredGame.playtime_forever)}</p>
                           </div>
                         </div>
                       </div>
@@ -167,7 +149,7 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
                   ) : (
                     <div className="px-4 py-4 half:px-3 half:py-3">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted mb-2">
-                        Destaque recente
+                        Recent highlight
                       </p>
                       <div className="flex items-center gap-3">
                         {imageUrl ? (
@@ -186,8 +168,8 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
                             {featuredGame.name}
                           </p>
                           <div className="flex flex-col gap-0.5 text-xs half:text-[10px] text-default-muted">
-                            <p>Últimas 2 semanas: {formatHours(featuredGame.playtime_2weeks || 0)}</p>
-                            <p>Tempo total jogado: {formatPlaytime(featuredGame.playtime_forever)}</p>
+                            <p>Last 2 weeks: {formatPlaytime(featuredGame.playtime_2weeks || 0)}</p>
+                            <p>Total played: {formatPlaytime(featuredGame.playtime_forever)}</p>
                           </div>
                         </div>
                       </div>
