@@ -5,7 +5,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
-import { getCalendarColor } from "../utils"
+import { getCalendarColor, lastSixMonthsStart } from "../utils"
 
 interface CalendarProps {
   data: GithubData["calendar"]
@@ -114,16 +114,13 @@ const DefaultCalendar = ({
 
     // If last_6_months, filter weeks and days within those weeks
     if (yearMode === "last_6_months") {
-      const sixMonthsAgo = new Date()
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-      sixMonthsAgo.setHours(0, 0, 0, 0)
+      const sixMonthsAgo = lastSixMonthsStart(new Date())
 
       allWeeks = allWeeks
         .map((week: any) => {
           // Filter days within the week to only include last 6 months
           const filteredDays = week.contributionDays.filter((day: any) => {
-            const dayDate = new Date(day.date)
-            return dayDate >= sixMonthsAgo
+            return day.date >= sixMonthsAgo
           })
 
           // Only include weeks that have at least one day in the last 6 months
@@ -352,16 +349,13 @@ const DefaultCalendar = ({
 
   // If last_6_months, filter weeks and days within those weeks
   if (yearMode === "last_6_months") {
-    const sixMonthsAgo = new Date()
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-    sixMonthsAgo.setHours(0, 0, 0, 0)
+    const sixMonthsAgo = lastSixMonthsStart(new Date())
 
     allWeeks = allWeeks
       .map((week: any) => {
         // Filter days within the week to only include last 6 months
         const filteredDays = week.contributionDays.filter((day: any) => {
-          const dayDate = new Date(day.date)
-          return dayDate >= sixMonthsAgo
+          return day.date >= sixMonthsAgo
         })
 
         // Only include weeks that have at least one day in the last 6 months
@@ -455,15 +449,12 @@ const TerminalCalendar = ({
 
           // If last_6_months, filter weeks and days (shouldn't happen in multi-year, but just in case)
           if (yearMode === "last_6_months") {
-            const sixMonthsAgo = new Date()
-            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-            sixMonthsAgo.setHours(0, 0, 0, 0)
+            const sixMonthsAgo = lastSixMonthsStart(new Date())
 
             weeks = weeks
               .map((week: any) => {
                 const filteredDays = week.contributionDays.filter((day: any) => {
-                  const dayDate = new Date(day.date)
-                  return dayDate >= sixMonthsAgo
+                  return day.date >= sixMonthsAgo
                 })
                 if (filteredDays.length === 0) return null
                 return {
@@ -512,16 +503,13 @@ const TerminalCalendar = ({
 
   // If last_6_months, filter weeks and days within those weeks
   if (yearMode === "last_6_months") {
-    const sixMonthsAgo = new Date()
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-    sixMonthsAgo.setHours(0, 0, 0, 0)
+    const sixMonthsAgo = lastSixMonthsStart(new Date())
 
     weeks = weeks
       .map((week: any) => {
         // Filter days within the week to only include last 6 months
         const filteredDays = week.contributionDays.filter((day: any) => {
-          const dayDate = new Date(day.date)
-          return dayDate >= sixMonthsAgo
+          return day.date >= sixMonthsAgo
         })
 
         // Only include weeks that have at least one day in the last 6 months

@@ -11,6 +11,7 @@ import {
   RECENT_ACTIVITY_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
+import { lastSixMonthsStart } from "../utils"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { randomColorWithString } from "../../../utils/string"
 
@@ -793,10 +794,7 @@ function processTopRepositoriesData(result: GraphQLResponse, config: GithubConfi
  */
 function calendarRange(yearMode: string, year: number, now: Date): { from: Date; to: Date } {
   if (yearMode === "last_6_months") {
-    return {
-      from: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 6, now.getUTCDate())),
-      to: now,
-    }
+    return { from: new Date(`${lastSixMonthsStart(now)}T00:00:00Z`), to: now }
   }
   return { from: new Date(`${year}-01-01T00:00:00Z`), to: new Date(`${year}-12-31T23:59:59Z`) }
 }

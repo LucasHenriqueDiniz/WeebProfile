@@ -95,3 +95,14 @@ export function getCalendarColor(color: string | undefined): string {
     return "rgba(128, 128, 128, 0.25)"
   }
 }
+
+/**
+ * First day of the `last_6_months` calendar, as "YYYY-MM-DD": six months before `now`'s UTC
+ * date. The fetch asks GitHub for the days from it, and the renderers keep the days from it by
+ * comparing GitHub's date strings, so both agree in any time zone. The renderers used local
+ * midnight, and the dashboard preview renders in the visitor's zone: in São Paulo (UTC-3) that
+ * midnight fell after the first day, which left the calendar.
+ */
+export function lastSixMonthsStart(now: Date): string {
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 6, now.getUTCDate())).toISOString().slice(0, 10)
+}
