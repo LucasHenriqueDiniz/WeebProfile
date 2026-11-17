@@ -30,6 +30,7 @@ chave desligada nada muda no markup — o SVG sai **idêntico byte a byte** ao d
 | seções entram em sequência (fade + 6px)           | default  | `opacity`/`transform`                                                                 |
 | barras enchem da esquerda                         | ambos    | `clip-path` em `.weeb-bar`                                                            |
 | números contam de 0                               | ambos    | `@property --weeb-p` (0 a 1) + `counter()` num pseudo-elemento por cima do texto real |
+| calendário do GitHub surge em onda diagonal       | default  | `opacity` por célula, atraso pela distância ao canto superior direito (ver abaixo)    |
 
 Regras que todo efeito segue (testadas em `animations.test.tsx`):
 
@@ -92,11 +93,80 @@ abrindo a página e capturando a imagem desde o carregamento:
 | 6b terminal | camo (jsDelivr)              | 45.496         | 0            |
 | 6c default  | camo (jsDelivr)              | 78.803         | 0            |
 
+## Calendário do GitHub em onda
+
+No estilo default, as células do calendário de contribuições aparecem uma diagonal depois da
+outra, do canto superior direito ao inferior esquerdo. O terminal não muda.
+
+- **Lugar de cada célula na onda:** colunas até a borda direita mais linhas desde o topo. No
+  half o ano quebra em dois blocos (27 + 26 semanas), e no modo `full` com vários anos cada
+  ano é um bloco; o bloco de baixo soma as 7 linhas de cada bloco acima, e as colunas contam
+  a partir da grade mais larga. Assim a onda atravessa o calendário inteiro uma vez, não um
+  bloco de cada vez.
+- **Quem calcula o quê:** `cellWave()` (`templates/animations.tsx`) põe `--weeb-c` em cada
+  coluna (`.weeb-wave`) e `--weeb-wave` (o intervalo entre diagonais) em volta da grade. A
+  linha vem do CSS, por `:nth-child` (`--weeb-r`). Atraso da célula:
+  `--weeb-out + (--weeb-c + --weeb-r) × --weeb-wave`.
+- **Tempo:** cada célula faz fade de 200 ms (`ANIMATION_TIMING.cell`), e a última diagonal
+  começa 600 ms depois da primeira (`ANIMATION_TIMING.wave`), qualquer que seja o tamanho
+  da grade: 15,4 ms entre diagonais no half (40 diagonais), 10,3 ms no full (59), menos com
+  vários anos. `0,1 + 0,6 + 0,2 = 0,9 s`, o mesmo rabo que a contagem dos números já dava à
+  seção (`sectionTail("default")`), então a onda não alonga o card nem muda o `--weeb-step`.
+- **Só `opacity`.** A primeira versão também crescia a célula (`scale(0.4)` → 1). Medido em
+  `<img>` com a animação congelada 1 ms antes do fim, as bordas das células saíam até um
+  pixel fora do card estático: 9.424 px diferentes no Chromium 151 e 20.253 no Firefox 150
+  (diferença de até 215 por canal), ou seja, um pulo quando a animação acabava. Só com
+  `opacity`: 0 px nos três engines. `animations.test.tsx` trava isso.
+
+Medido em 17/11/2026, Playwright 1.60 (Chromium 151, Firefox 150, WebKit 26.4), cards gerados
+por `generateSvg` sem `dev`, com dados reais da API do GitHub (token local do `gh`): calendário
+sozinho em half e em full, calendário como 3ª seção de um card half (`profile`,
+`favorite_languages`, `calendar`) e modo `full` com 3 anos.
+
+**Ordem em `<img>`:** quadros capturados em sequência desde o load; uma célula "aparece" no
+primeiro quadro em que o pixel do centro passou da metade do caminho entre o fundo e a cor do
+card estático. Pares de células a 2 diagonais ou mais de distância que apareceram na ordem
+errada:
+
+| card           | células visíveis | pares   | invertidos (Chromium / Firefox / WebKit) | primeira → última                                  |
+| -------------- | ---------------- | ------- | ---------------------------------------- | -------------------------------------------------- |
+| half           | 365              | 60.496  | 0 / 0 / 0                                | topo, coluna da direita → base, coluna da esquerda |
+| full           | 365              | 62.988  | 0 / 0 / 0                                | idem                                               |
+| half, 3ª seção | 365              | 60.496  | 0 / 0 / 0                                | idem                                               |
+| full, 3 anos   | 1.096            | 570.530 | 0 / 0 / 0                                | topo do 1º ano, direita → base do 3º ano, esquerda |
+
+O intervalo entre quadros variou de 8 a 122 ms com a máquina carregada (load 8 a 34), então o
+filme em `<img>` mostra a ordem por faixas. A ordem exata saiu do SVG aberto como documento,
+todas as animações pausadas e avançadas juntas de 10 em 10 ms: 0 pares invertidos nos três
+engines nos quatro cards (64.569, 65.402, 64.569 e 590.573 pares).
+
+**Tempo:** a última célula termina 900 ms depois do início da seção. No card de 3 seções o
+calendário é a última: a onda vai de 400 a 1.200 ms e o card termina em 1.200 ms, igual a
+antes.
+
+**Último quadro e repouso:** cada célula congelada 1 ms antes do fim dentro do `<img>`
+(`animation-delay` negativo + `paused`), contra o card estático: 0 px nos três engines nos
+quatro cards (controle, congelada no início: 174 mil a 546 mil px). Repouso × estático: 0 px
+em todos. Com a opção desligada, os oito SVGs (os quatro reais e quatro do mock, um deles
+terminal) saíram idênticos byte a byte aos da `main` (406717e).
+
+**`reduce`:** Chromium com `--force-prefers-reduced-motion` e Firefox com a pref
+`ui.prefersReducedMotion=1`, card em `<img>`: 0 px movidos e primeiro quadro igual ao estático
+(controle sem `reduce`: anima). No WebKit o `reducedMotion` do Playwright não chega no `<img>`
+(anima igual ao controle); com o SVG aberto como documento e `reduce` emulado, nenhuma
+animação roda e o primeiro quadro é o estático.
+
 ## Pontos de atenção
 
 - **`page.emulateMedia({ reducedMotion })` não chega no documento de um `<img>`** no Chromium
   headless: o SVG continua vendo `no-preference`. Para medir o caso `reduce`, lançar o
-  Chromium com `--force-prefers-reduced-motion`.
+  Chromium com `--force-prefers-reduced-motion`. No Firefox, a pref
+  `ui.prefersReducedMotion=1` (`firefoxUserPrefs`) chega. No WebKit, o `reducedMotion` do
+  contexto também não chega no `<img>`; só dá para medir com o SVG aberto como documento.
+- **Animação com `scale` não termina no card estático.** Uma escala perto de 1 desenha a
+  borda do elemento fora da grade de pixels do card parado (calendário com `scale`: 9.424 px
+  no Chromium, 20.253 no Firefox, 1 ms antes do fim), e o card pula quando a animação acaba.
+  Para fazer algo aparecer, usar `opacity`.
 - **O XML parser lê `<number>` como elemento.** O `syntax` do `@property` passa por
   `escapeStyleText` no gerador, como o `customCss`.
 - **Número com decimal conta com as mesmas casas.** Contador CSS só imprime inteiro, então

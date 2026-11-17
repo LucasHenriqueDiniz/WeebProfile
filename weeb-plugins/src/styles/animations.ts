@@ -25,7 +25,7 @@
  * on the container). animationTimeline() picks the gap so the last one ends in time.
  */
 
-import { ANIMATION_TIMING } from "../templates/animations"
+import { ANIMATION_TIMING, WAVE_ROWS } from "../templates/animations"
 
 /** Sections per plugin that get their own slot; later ones share the last slot. */
 const MAX_SECTIONS_PER_PLUGIN = 24
@@ -45,6 +45,15 @@ function sectionIndexRules(): string {
   rules.push(
     `#svg-main .weeb-anim section:nth-of-type(n+${MAX_SECTIONS_PER_PLUGIN}){--weeb-k:${MAX_SECTIONS_PER_PLUGIN - 1}}`
   )
+  return rules.join("\n")
+}
+
+/** Row of each cell in a wave column; the first row is the fallback, 0. */
+function waveRowRules(): string {
+  const rules: string[] = []
+  for (let r = 2; r <= WAVE_ROWS; r++) {
+    rules.push(`#svg-main .weeb-anim .weeb-wave > :nth-child(${r}){--weeb-r:${r - 1}}`)
+  }
   return rules.join("\n")
 }
 
@@ -147,6 +156,18 @@ ${sectionIndexRules()}
   }
   #svg-main .weeb-anim .weeb-num::after {
     animation: weeb-count ${s(t.fill)} cubic-bezier(0.2, 0.8, 0.2, 1) var(--weeb-out, 0s) backwards;
+  }
+
+  /* Calendar cells fade in along a diagonal wave, from the top right cell to the
+     bottom left one: each column carries its distance from that corner (--weeb-c), each
+     cell adds its row (--weeb-r), and the grid sets the gap between diagonals
+     (--weeb-wave). See cellWave() in templates/animations.tsx. Opacity only: with a
+     scale the last frame drew every cell edge up to a pixel off the static card in
+     Chromium and Firefox, a jump when the animation ended. */
+${waveRowRules()}
+  #svg-main .weeb-anim .weeb-wave > * {
+    animation: weeb-fade ${s(t.cell)} cubic-bezier(0.2, 0.8, 0.2, 1)
+      calc(var(--weeb-out, 0s) + (var(--weeb-c, 0) + var(--weeb-r, 0)) * var(--weeb-wave, 0s)) backwards;
   }
 }
 

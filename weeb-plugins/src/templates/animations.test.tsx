@@ -4,7 +4,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { PluginManager } from "../plugins/manager"
 import { ANIMATIONS_CSS } from "../styles/animations"
 import { AnimatedNumber, MAX_COUNT_DECIMALS, parseCountTarget } from "./AnimatedNumber"
-import { ANIMATION_BUDGET_S, ANIMATION_TIMING, AnimationsProvider, animationTimeline, sectionTail } from "./animations"
+import {
+  ANIMATION_BUDGET_S,
+  ANIMATION_TIMING,
+  AnimationsProvider,
+  WAVE_ROWS,
+  animationTimeline,
+  sectionTail,
+} from "./animations"
 import { HorizontalMultipleItemsBar } from "./Default/HorizontalMultipleItemsBar"
 import { PercentageBar } from "./Default/PercentageBar"
 import { StatisticRow } from "./Default/DefaultStatRow"
@@ -83,6 +90,25 @@ describe("ANIMATIONS_CSS", () => {
     expect(ANIMATIONS_CSS).toContain(`weeb-type ${ANIMATION_TIMING.type * 1000}ms`)
     expect(ANIMATIONS_CSS).toContain(`weeb-fill ${ANIMATION_TIMING.fill * 1000}ms`)
     expect(ANIMATIONS_CSS).toContain(`weeb-rise ${ANIMATION_TIMING.enter * 1000}ms`)
+    expect(ANIMATIONS_CSS).toContain(`weeb-fade ${ANIMATION_TIMING.cell * 1000}ms`)
+  })
+
+  // A wave cell's place is its column's plus its row; the first row is the fallback, 0.
+  it("gives every cell of a wave column its row", () => {
+    for (let row = 1; row < WAVE_ROWS; row++) {
+      expect(ANIMATIONS_CSS).toContain(`.weeb-wave > :nth-child(${row + 1}){--weeb-r:${row}}`)
+    }
+    expect(ANIMATIONS_CSS).not.toContain(`:nth-child(${WAVE_ROWS + 1}){--weeb-r`)
+  })
+
+  // Measured in <img>, 1 ms before the end: with a scale the cell edges landed up to a
+  // pixel off the static card in Chromium (9,424 px) and Firefox (20,253 px), so the card
+  // jumped when the wave ended. Opacity alone ends on the static card in all three.
+  it("only fades the wave cells in", () => {
+    const rule = /\.weeb-wave > \* \{\s*animation: ([\w-]+) /.exec(ANIMATIONS_CSS)
+    expect(rule).not.toBeNull()
+    const keyframes = new RegExp(`@keyframes ${rule![1]} \\{([\\s\\S]*?)\\n\\}`).exec(ANIMATIONS_CSS)
+    expect([...keyframes![1]!.matchAll(/([\w-]+):/g)].map((m) => m[1])).toEqual(["opacity"])
   })
 })
 
@@ -119,7 +145,7 @@ describe("with animations off", () => {
     const plugin = PluginManager.getInstance().get(name)!
     const sections =
       name === "github"
-        ? ["profile", "activity", "favorite_languages", "repositories"]
+        ? ["profile", "activity", "favorite_languages", "repositories", "calendar"]
         : ["statistics", "recent_tracks"]
     const config = { ...plugin.config, enabled: true, sections, style, size: "half" } as any
     // previewMode: the mock as is, without downloading its images. With dev alone LastFM

@@ -1,5 +1,6 @@
 import React from "react"
 import { FaCalendar } from "react-icons/fa"
+import { type CellWave, cellWave, useAnimations } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -39,6 +40,7 @@ const DefaultCalendar = ({
   const hideWeeks = config.calendar_hide_weeks ?? false
   const hideMonths = config.calendar_hide_months ?? false
   const hideLegends = config.calendar_hide_legends ?? false
+  const animate = useAnimations()
 
   // Helper to get month from date
   const getMonth = (dateString: string): number => {
@@ -107,9 +109,10 @@ const DefaultCalendar = ({
     return monthLabels
   }
 
-  // Render single year calendar with GitHub-style layout. `weeks` comes in the data's order,
-  // oldest first as GitHub returns it, and is drawn in that order, January on the left.
-  const renderYearCalendar = (weeks: any[], _year?: number) => {
+  // Weeks of one year as drawn: one row of week columns, or two in half mode. `weeks` comes
+  // in the data's order, oldest first as GitHub returns it, and is drawn in that order,
+  // January on the left.
+  const layoutYear = (weeks: any[]) => {
     const yearMode = config.calendar_year_mode || "current_year"
     let allWeeks = weeks
 
@@ -138,8 +141,6 @@ const DefaultCalendar = ({
     const displayWeeks = allWeeks
 
     // In half mode, split weeks into 2 rows (but not for last_6_months)
-    const squareSize = "0.7rem"
-    const gapSize = "0.1875rem" // 3px = 0.1875rem (3/16)
     const shouldSplit = isHalfMode && displayWeeks.length > 26 && yearMode !== "last_6_months"
     const midpoint = shouldSplit ? Math.ceil(displayWeeks.length / 2) : displayWeeks.length
     const firstRowWeeks = displayWeeks.slice(0, midpoint)
@@ -149,6 +150,28 @@ const DefaultCalendar = ({
     // mesmo tamanho nas duas — 53 semanas viram 27 + 26, e a segunda apenas deixa
     // a última coluna vazia.
     const columnsPerRow = Math.max(firstRowWeeks.length, secondRowWeeks.length)
+    const hasSecondRow = shouldSplit && secondRowWeeks.length > 0
+    return { firstRowWeeks, secondRowWeeks, hasSecondRow, columnsPerRow, rows: hasSecondRow ? 2 : 1 }
+  }
+
+  type YearLayout = ReturnType<typeof layoutYear>
+
+  // With animations on, the cells show up in one diagonal wave across every row of weeks
+  // the calendar draws, from the top right cell to the bottom left one.
+  const waveFor = (layouts: YearLayout[]): CellWave | null =>
+    animate
+      ? cellWave(
+          Math.max(...layouts.map((layout) => layout.columnsPerRow)),
+          layouts.reduce((rows, layout) => rows + layout.rows, 0)
+        )
+      : null
+
+  // Render single year calendar with GitHub-style layout. `firstBlock` is the position of
+  // its first row of weeks among all the rows the calendar draws.
+  const renderYearCalendar = (layout: YearLayout, wave: CellWave | null, firstBlock: number) => {
+    const { firstRowWeeks, secondRowWeeks, hasSecondRow, columnsPerRow } = layout
+    const squareSize = "0.7rem"
+    const gapSize = "0.1875rem" // 3px = 0.1875rem (3/16)
 
     // Grade de colunas iguais em vez de larguras fixas: com 27 colunas de 0.7rem e
     // gap de 3px o total dá 380px, mais que os 368px disponíveis no half, e a última
@@ -162,7 +185,7 @@ const DefaultCalendar = ({
       maxWidth: `calc(${columnsPerRow} * ${squareSize} + ${columnsPerRow - 1} * ${gapSize})`,
     }
 
-    const renderWeekColumn = (week: any, weekIndex: number, _allWeeksForRow: any[]) => {
+    const renderWeekColumn = (week: any, weekIndex: number, block: number) => {
       // Create array of 7 days, padding with nulls based on weekday
       const days: Array<any | null> = [null, null, null, null, null, null, null]
       week.contributionDays.forEach((day: any) => {
@@ -173,7 +196,11 @@ const DefaultCalendar = ({
       })
 
       return (
-        <div key={weekIndex} className="flex flex-col" style={{ gap: gapSize, minWidth: 0 }}>
+        <div
+          key={weekIndex}
+          className={wave ? "flex flex-col weeb-wave" : "flex flex-col"}
+          style={{ gap: gapSize, minWidth: 0, ...wave?.columnStyle(block, weekIndex) }}
+        >
           {days.map((day, dayIndex) => (
             <div
               key={dayIndex}
@@ -192,13 +219,13 @@ const DefaultCalendar = ({
 
     const renderWeekRow = (rowWeeks: any[], rowIndex: number) => (
       <div key={rowIndex} style={gridStyle}>
-        {rowWeeks.map((week, weekIndex) => renderWeekColumn(week, weekIndex, rowWeeks))}
+        {rowWeeks.map((week, weekIndex) => renderWeekColumn(week, weekIndex, firstBlock + rowIndex))}
       </div>
     )
 
     // Calculate month labels for both rows
     const firstRowMonthLabels = !hideMonths ? calculateMonthLabels(firstRowWeeks) : []
-    const secondRowMonthLabels = !hideMonths && shouldSplit ? calculateMonthLabels(secondRowWeeks) : []
+    const secondRowMonthLabels = !hideMonths && hasSecondRow ? calculateMonthLabels(secondRowWeeks) : []
 
     const renderMonthLabels = (monthLabels: Array<{ month: number; colspan: number; startWeekIndex: number }>) => {
       if (hideMonths || monthLabels.length === 0) return null
@@ -278,7 +305,7 @@ const DefaultCalendar = ({
         </div>
 
         {/* Second calendar row (only in half mode) */}
-        {shouldSplit && secondRowWeeks.length > 0 && (
+        {hasSecondRow && (
           <div className="flex flex-col" style={{ gap: "0.5rem" }}>
             {/* Month labels row for second row */}
             {renderMonthLabels(secondRowMonthLabels)}
@@ -327,14 +354,17 @@ const DefaultCalendar = ({
 
   // Se há múltiplos anos, exibir cada ano separadamente
   if (data.years && data.years.length > 1) {
+    const layouts = data.years.map((yearData) => layoutYear(yearData.weeks))
+    const wave = waveFor(layouts)
+    const firstBlocks = layouts.map((_, i) => layouts.slice(0, i).reduce((rows, layout) => rows + layout.rows, 0))
     return (
-      <div className="flex flex-col gap-4">
-        {data.years.map((yearData) => (
+      <div className="flex flex-col gap-4" style={wave?.style}>
+        {data.years.map((yearData, i) => (
           <div key={yearData.year} className="flex flex-col gap-2">
             <div className="text-sm font-semibold text-default-text">
               {yearData.year} ({yearData.totalContributions} contributions)
             </div>
-            {renderYearCalendar(yearData.weeks, yearData.year)}
+            {renderYearCalendar(layouts[i]!, wave, firstBlocks[i]!)}
           </div>
         ))}
         <div className="flex justify-end text-xs text-default-muted">
@@ -362,9 +392,12 @@ const DefaultCalendar = ({
     }
   }
 
+  const layout = layoutYear(data.weeks)
+  const wave = waveFor([layout])
+
   return (
-    <div className="flex flex-col gap-2">
-      {renderYearCalendar(data.weeks)}
+    <div className="flex flex-col gap-2" style={wave?.style}>
+      {renderYearCalendar(layout, wave, 0)}
       {/* Legend and contributions text - same line in both modes, hide legend in half if too cramped */}
       <div className="flex items-center justify-between text-xs text-default-muted mt-2">
         {!hideLegends && !isHalfMode && (
