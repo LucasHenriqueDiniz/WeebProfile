@@ -216,3 +216,80 @@ describe("fetchGithub with private repositories in GitHub's answer", () => {
     expect(data).toContain("SecretLang")
   })
 })
+
+/**
+ * A fake GitHub that answers a contribution calendar for exactly the range asked for, as the
+ * real one does: from `from` to `to`, across the new year, the first and last weeks cut at the
+ * edges, one contribution a day. Without `to` it answers the year after `from`.
+ */
+describe("fetchGithub calendar, last 6 months", () => {
+  const DAY = 86_400_000
+  const asked: Array<{ from?: string; to?: string }> = []
+
+  function calendarBetween(from: string, to: string) {
+    const weeks: Array<{ contributionDays: Array<Record<string, unknown>> }> = []
+    for (let day = Date.parse(from.slice(0, 10)); day <= Date.parse(to.slice(0, 10)); day += DAY) {
+      const weekday = new Date(day).getUTCDay()
+      if (weeks.length === 0 || weekday === 0) weeks.push({ contributionDays: [] })
+      weeks.at(-1)!.contributionDays.push({
+        date: new Date(day).toISOString().slice(0, 10),
+        weekday,
+        contributionCount: 1,
+        color: "#40c463",
+      })
+    }
+    const totalContributions = weeks.reduce((sum, week) => sum + week.contributionDays.length, 0)
+    return { totalContributions, weeks }
+  }
+
+  beforeEach(() => {
+    asked.length = 0
+    vi.useFakeTimers({ toFake: ["Date"] })
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
+      const request = input instanceof Request ? input : new Request(String(input), init)
+      if (new URL(request.url).pathname !== "/graphql") throw new Error(`unexpected fetch: ${request.url}`)
+      const { variables = {} } = (await request.json()) as { variables?: { from?: string; to?: string } }
+      asked.push({ from: variables.from, to: variables.to })
+      const from = variables.from ?? new Date(Date.now() - 365 * DAY).toISOString()
+      const to = variables.to ?? new Date(Date.parse(from) + 365 * DAY).toISOString()
+      return Response.json({
+        data: { user: { contributionsCollection: { contributionCalendar: calendarBetween(from, to) } } },
+      })
+    })
+  })
+  afterEach(() => vi.useRealTimers())
+
+  async function sixMonthsCalendar(today: string) {
+    vi.setSystemTime(new Date(`${today}T12:00:00Z`))
+    const data = (await github().fetchData(
+      { ...card(["calendar"]), calendar_year_mode: "last_6_months" } as never,
+      false,
+      { pat: "ghp_test" }
+    )) as unknown as GithubData
+    const days = data.calendar.weeks.flatMap((week) => week.contributionDays.map((day) => day.date))
+    return { calendar: data.calendar, days }
+  }
+
+  // Six months before March reach into the previous year.
+  it("reaches into the previous year in the first half of the year", async () => {
+    const { calendar, days } = await sixMonthsCalendar("2026-03-10")
+    expect(days[0]).toBe("2025-09-10")
+    expect(days.at(-1)).toBe("2026-03-10")
+    expect(calendar.totalContributions).toBe(days.length)
+    expect(calendar.years).toBeUndefined()
+  })
+
+  // GitHub draws the rest of the year as empty days when asked for it.
+  it("stops at today, with no empty future weeks", async () => {
+    const { calendar, days } = await sixMonthsCalendar("2026-11-17")
+    expect(days[0]).toBe("2026-05-17")
+    expect(days.at(-1)).toBe("2026-11-17")
+    expect(calendar.totalContributions).toBe(days.length)
+  })
+
+  it("asks GitHub for the range in one query, ending now", async () => {
+    await sixMonthsCalendar("2026-03-10")
+    const ranged = asked.filter((range) => range.from)
+    expect(ranged).toEqual([{ from: "2025-09-10T00:00:00.000Z", to: "2026-03-10T12:00:00.000Z" }])
+  })
+})
