@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import { getPlatformProxy } from "wrangler"
 import type { CloudflareEnv } from "../_shared/auth"
 import { uniqueSvgName } from "../_shared/svg-name"
+import { MAX_SVGS_FREE_TIER } from "../../../lib/config/plan"
 
 // Only Clerk is replaced. The routes run as deployed, against a local D1 (workerd's
 // SQLite) built from the same migrations production applies.
@@ -61,10 +62,14 @@ describe("SVG names on a real D1", () => {
     size: "half",
   })
 
-  async function create(name: string, sections: string[]) {
+  async function post(name: string, sections: string[]) {
     const { onRequestPost } = await import("./index")
     const request = new Request("http://local/api/svgs", { method: "POST", body: JSON.stringify(body(name, sections)) })
-    const response = await onRequestPost({ request, env } as never)
+    return onRequestPost({ request, env } as never)
+  }
+
+  async function create(name: string, sections: string[]) {
+    const response = await post(name, sections)
     expect(response.status).toBe(201)
     return ((await response.json()) as { svg: { id: string; name: string; slug: string } }).svg
   }
@@ -115,5 +120,19 @@ describe("SVG names on a real D1", () => {
     expect((await update(first.id, "MyAnimeList Stats", ["statistics", "last_activity"])).name).toBe(
       "MyAnimeList Stats"
     )
+  })
+
+  // The cap was 3 until 11/2026, which stopped a profile at three cards.
+  it(`lets a user keep ${MAX_SVGS_FREE_TIER} SVGs and refuses one more`, async () => {
+    expect(MAX_SVGS_FREE_TIER).toBe(20)
+    auth.userId = "user_limit"
+    for (let i = 0; i < MAX_SVGS_FREE_TIER; i++) await create(`Card ${i}`, ["statistics"])
+
+    const refused = await post("One too many", ["statistics"])
+    expect(refused.status).toBe(403)
+    const stored = await env.DB.prepare("SELECT COUNT(*) AS n FROM svgs WHERE user_id = 'user_limit'").first<{
+      n: number
+    }>()
+    expect(stored?.n).toBe(MAX_SVGS_FREE_TIER)
   })
 })

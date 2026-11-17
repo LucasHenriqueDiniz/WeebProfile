@@ -3,6 +3,7 @@
 import { ArrowRight, BookOpen, Check } from "lucide-react"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { SECTION_PREVIEWS } from "@/lib/config/section-previews"
+import { MAX_SVGS_FREE_TIER } from "@/lib/config/plan"
 import { Link } from "@/i18n/navigation"
 import { useLocale, useTranslations } from "@/i18n/use-translations"
 
@@ -109,7 +110,7 @@ export function LandingHero() {
             </a>
           </div>
           <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-[13px] font-medium text-muted-foreground/80">
-            {[t("check1"), t("check2"), t("check3")].map((c) => (
+            {[t("check1", { max: MAX_SVGS_FREE_TIER }), t("check2"), t("check3")].map((c) => (
               <span key={c} className="flex items-center gap-1.5 whitespace-nowrap">
                 <Check className="h-3.5 w-3.5 text-emerald-500" />
                 {c}
