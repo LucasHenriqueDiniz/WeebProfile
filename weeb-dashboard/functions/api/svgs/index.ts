@@ -7,8 +7,7 @@ import { eq } from "drizzle-orm"
 import { assertPluginsMatchEntityType } from "../_shared/artifact-types"
 import { parseBody, svgCreateSchema } from "../_shared/validation"
 import { uniqueSvgName } from "../_shared/svg-name"
-
-const MAX_SVGS_FREE_TIER = 3
+import { MAX_SVGS_FREE_TIER } from "../../../lib/config/plan"
 
 function setTerminalConfigs(
   uiConfig: Record<string, any>,
