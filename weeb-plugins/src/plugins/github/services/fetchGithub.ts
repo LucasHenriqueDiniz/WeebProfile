@@ -11,7 +11,7 @@ import {
   RECENT_ACTIVITY_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
-import { lastSixMonthsStart, sixMonthsBeforeNewestDay } from "../utils"
+import { lastSixMonthsStart, firstDayOfLastSixMonths } from "../utils"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { randomColorWithString } from "../../../utils/string"
 
@@ -807,7 +807,7 @@ function calendarRange(yearMode: string, year: number, now: Date): { from: Date;
 
 /** The last six months of a calendar, from six months before its newest day, and their total. */
 function lastSixMonthsOf(weeks: ContributionWeek[]): GithubData["calendar"] {
-  const from = sixMonthsBeforeNewestDay(weeks)
+  const from = firstDayOfLastSixMonths(weeks)
   const kept = weeks
     .map((week) => ({ ...week, contributionDays: week.contributionDays.filter((day) => day.date >= from) }))
     .filter((week) => week.contributionDays.length > 0)

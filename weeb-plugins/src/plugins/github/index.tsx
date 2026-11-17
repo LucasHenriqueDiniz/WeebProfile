@@ -13,6 +13,44 @@ import { TERMINAL_HEADER_HEIGHT } from "../../templates/Terminal/TerminalHeader"
 import { RenderGithub } from "./components/RenderGithub"
 import { fetchGithubData } from "./services/fetchGithub"
 
+type CalendarYear = NonNullable<GithubData["calendar"]["years"]>[number]
+
+/**
+ * Height of the calendar when it draws one block per year (`calendar_year_mode: "full"`
+ * with more than one year), measured in Chromium, Firefox and WebKit against the layout of
+ * Calendar.tsx.
+ *
+ * The default style draws each year as its label plus one row of weeks, or two in half
+ * mode once the year has more than 26 weeks. The terminal style draws one grid per year
+ * at both sizes (half keeps the last 26 weeks), and has no title or month labels to hide.
+ */
+function multiYearCalendarHeight(
+  cfg: GithubConfig,
+  years: CalendarYear[],
+  size: "half" | "full",
+  isTerminal: boolean
+): number {
+  if (isTerminal) {
+    // Command and "Total" line (51), then per year: label (20) + gap (8) + the grid + gap (12).
+    // The grid is 7 lines of 14px in Chromium, but its symbols fall back to another font and
+    // Firefox and WebKit draw each line 1px taller: 145px per year there, 138 in Chromium.
+    // Sized to the taller ones, so Chromium keeps 7px of room per year.
+    return 51 + years.length * 145
+  }
+
+  const yearMode = cfg.calendar_year_mode ?? "current_year"
+  const title = cfg.calendar_hide_title ? 0 : 40
+  // 7 cells of 0.7rem with 3px between them, plus the month labels (13) and their gap (8)
+  const rowH = 7 * 11.2 + 6 * 3 + (cfg.calendar_hide_months ? 0 : 21)
+  const yearsH = years.reduce((sum, year) => {
+    const rows = size === "half" && year.weeks.length > 26 && yearMode !== "last_6_months" ? 2 : 1
+    // Year label (20) + gap (8), the rows 16px apart, then the 16px gap to the next block
+    return sum + 28 + rows * rowH + (rows - 1) * 16 + 16
+  }, 0)
+  // The last block is the "Total: N contributions" line (16)
+  return Math.ceil(title + yearsH + 16)
+}
+
 export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & GithubData> = {
   name: "github",
   essentialConfigKeys: ["pat"], // Uses Classic Token instead of OAuth token
@@ -64,13 +102,25 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           const yearMode = cfg.calendar_year_mode ?? "current_year"
           const years = gh.calendar?.years?.length ?? 1
           if (years > 1) {
-            h += isTerminal ? 1 + years * 175 + 28 : 33 + years * 150 + 28
+            h += multiYearCalendarHeight(cfg, gh.calendar.years ?? [], size, isTerminal)
           } else if (isTerminal) {
-            h += 1 + 175
+            // Command, gap and "N contributions" line (59), plus the grid when there are weeks
+            // (none when the fetch failed). The grid is 7 lines of 14px in Chromium, but its
+            // symbols fall back to another font and Firefox and WebKit draw it 7 and 6px
+            // taller, so it keeps 19px of room.
+            h += 59 + ((gh.calendar?.weeks?.length ?? 0) > 0 ? 7 * 14 + 19 : 0)
           } else {
-            // half mode splits the calendar into two rows of weeks
-            const rows = size === "half" && yearMode !== "last_6_months" ? 2 : 1
-            h += 33 + rows * 135 + 28
+            // Measured in Chromium against Calendar.tsx. Half splits the year in two rows of
+            // weeks past 26 weeks (never last_6_months), the rows 16px apart. Each row is 7
+            // cells of 0.7rem with 3px between them, plus the month labels (13) and their
+            // gap (8). No weeks (the fetch failed) leaves only the weekday labels, if shown.
+            // Below the rows: gap (8), margin (8) and the "N contributions" line (16).
+            const weeks = gh.calendar?.weeks?.length ?? 0
+            const rows = size === "half" && weeks > 26 && yearMode !== "last_6_months" ? 2 : 1
+            const grid = weeks > 0 || !cfg.calendar_hide_weeks ? 7 * 11.2 + 6 * 3 : 0
+            const monthLabels = weeks > 0 && !cfg.calendar_hide_months ? 13 + 8 : 0
+            const title = cfg.calendar_hide_title ? 0 : 40
+            h += Math.ceil(title + rows * (grid + monthLabels) + (rows - 1) * 16 + 32)
           }
           break
         }

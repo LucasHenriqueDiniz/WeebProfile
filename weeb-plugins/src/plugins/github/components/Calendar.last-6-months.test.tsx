@@ -72,6 +72,19 @@ describe("GithubCalendar last 6 months in any time zone", () => {
   })
 })
 
+// GitHub returns the current year up to December 31, with the days after today empty.
+describe("GithubCalendar last 6 months over a calendar that runs past today", () => {
+  afterEach(() => vi.useRealTimers())
+
+  it.each(["default", "terminal"] as const)("keeps the days from six months before today, %s", (style) => {
+    vi.useFakeTimers({ toFake: ["Date"] })
+    vi.setSystemTime(new Date("2026-11-17T12:00:00Z"))
+    const calendar = { totalContributions: 0, weeks: weeksBetween("2026-01-01", "2026-12-31") }
+    // 2026-05-17 to 2026-12-31: the full size draws the empty weeks after today too
+    expect(daysDrawn(calendar, style)).toBe(229)
+  })
+})
+
 /**
  * The dashboard's wizard preview renders the mock through the plugin, as useMockPluginData and
  * PreviewRenderer do. The mock is all of 2025: measured from today, its last six months were

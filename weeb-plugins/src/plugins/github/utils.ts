@@ -107,19 +107,21 @@ export function lastSixMonthsStart(now: Date): string {
 }
 
 /**
- * First day the renderers keep in `last_6_months`, as "YYYY-MM-DD": six months before the newest
- * day the calendar holds, or "" when it holds none.
+ * First day the renderers keep in `last_6_months`, as "YYYY-MM-DD": six months before the
+ * calendar's newest day that is not after today (UTC), or "" when it has none.
  *
- * A fetched calendar ends today, so this is the day the fetch started from. Measured from the
- * clock instead, the dashboard preview drew no days: its mock is all of 2025. And comparing
- * GitHub's date strings, not local midnight, keeps the first day in any time zone: in
- * São Paulo (UTC-3) local midnight fell after it.
+ * A fetched calendar ends today, so this is the day the fetch started from. Counted from the
+ * clock alone, the dashboard preview drew no days: its mock is all of 2025. Counted from the
+ * newest day alone, a calendar that runs to December 31, as GitHub returns the current year,
+ * kept only July to December. Comparing GitHub's date strings, not local midnight, keeps the
+ * first day in any time zone: in São Paulo (UTC-3) local midnight fell after it.
  */
-export function sixMonthsBeforeNewestDay(weeks: ContributionWeek[]): string {
+export function firstDayOfLastSixMonths(weeks: ContributionWeek[], now: Date = new Date()): string {
+  const today = now.toISOString().slice(0, 10)
   let newest = ""
   for (const week of weeks) {
     for (const day of week.contributionDays) {
-      if (day.date > newest) newest = day.date
+      if (day.date > newest && day.date <= today) newest = day.date
     }
   }
   return newest ? lastSixMonthsStart(new Date(`${newest}T00:00:00Z`)) : ""
