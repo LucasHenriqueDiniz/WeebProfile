@@ -13,6 +13,40 @@ import { TERMINAL_HEADER_HEIGHT } from "../../templates/Terminal/TerminalHeader"
 import { RenderGithub } from "./components/RenderGithub"
 import { fetchGithubData } from "./services/fetchGithub"
 
+type CalendarYear = NonNullable<GithubData["calendar"]["years"]>[number]
+
+/**
+ * Height of the calendar when it draws one block per year (`calendar_year_mode: "full"`
+ * with more than one year), measured in Chromium against the layout of Calendar.tsx.
+ *
+ * The default style draws each year as its label plus one row of weeks, or two in half
+ * mode once the year has more than 26 weeks. The terminal style draws one grid per year
+ * at both sizes (half keeps the last 26 weeks), and has no title or month labels to hide.
+ */
+function multiYearCalendarHeight(
+  cfg: GithubConfig,
+  years: CalendarYear[],
+  size: "half" | "full",
+  isTerminal: boolean
+): number {
+  if (isTerminal) {
+    // Command and "Total" line, then per year: label (20) + gap (8) + 7 lines of 14px + gap (12)
+    return 51 + years.length * 138
+  }
+
+  const yearMode = cfg.calendar_year_mode ?? "current_year"
+  const title = cfg.calendar_hide_title ? 0 : 40
+  // 7 cells of 0.7rem with 3px between them, plus the month labels (13) and their gap (8)
+  const rowH = 7 * 11.2 + 6 * 3 + (cfg.calendar_hide_months ? 0 : 21)
+  const yearsH = years.reduce((sum, year) => {
+    const rows = size === "half" && year.weeks.length > 26 && yearMode !== "last_6_months" ? 2 : 1
+    // Year label (20) + gap (8), the rows 16px apart, then the 16px gap to the next block
+    return sum + 28 + rows * rowH + (rows - 1) * 16 + 16
+  }, 0)
+  // The last block is the "Total: N contributions" line (16)
+  return Math.ceil(title + yearsH + 16)
+}
+
 export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & GithubData> = {
   name: "github",
   essentialConfigKeys: ["pat"], // Uses Classic Token instead of OAuth token
@@ -64,7 +98,7 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           const yearMode = cfg.calendar_year_mode ?? "current_year"
           const years = gh.calendar?.years?.length ?? 1
           if (years > 1) {
-            h += isTerminal ? 1 + years * 175 + 28 : 33 + years * 150 + 28
+            h += multiYearCalendarHeight(cfg, gh.calendar.years ?? [], size, isTerminal)
           } else if (isTerminal) {
             h += 1 + 175
           } else {
