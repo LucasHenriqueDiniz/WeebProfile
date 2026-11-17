@@ -49,6 +49,10 @@ export const ANIMATION_TIMING = {
   fill: 0.8,
   /** Default style: content starts this long after its section does. */
   contentDelay: 0.1,
+  /** Default style: a calendar cell fades in... */
+  cell: 0.2,
+  /** ...one diagonal after the other, the last one starting this long after the first. */
+  wave: 0.6,
 } as const
 
 /** Gap between consecutive sections when there is room for it. */
@@ -61,7 +65,7 @@ export function sectionTail(style: "default" | "terminal"): number {
   const t = ANIMATION_TIMING
   return style === "terminal"
     ? Math.max(t.type + t.output, t.type + t.fill)
-    : Math.max(t.enter, t.contentDelay + t.fill)
+    : Math.max(t.enter, t.contentDelay + t.fill, t.contentDelay + t.wave + t.cell)
 }
 
 export interface AnimationTimeline {
@@ -99,4 +103,36 @@ export function animationStepStyle(step: number): React.CSSProperties {
 
 export function animationBaseStyle(base: number): React.CSSProperties {
   return { ["--weeb-base" as string]: base } as React.CSSProperties
+}
+
+/** Cells in a column of a wave grid: one per weekday in a contribution calendar. */
+export const WAVE_ROWS = 7
+
+export interface CellWave {
+  /** Custom property for an element around the whole grid: the gap between diagonals. */
+  style: React.CSSProperties
+  /** Custom property for column `x` (from the left) of block `block` (from the top). */
+  columnStyle: (block: number, x: number) => React.CSSProperties
+}
+
+/**
+ * A grid of cells drawn as columns of WAVE_ROWS (the GitHub contribution calendar) shows
+ * up in a diagonal wave, from the top right cell to the bottom left one. A cell's place in
+ * the wave is its distance from that corner: columns from the right edge plus rows from
+ * the top, counting the rows of the blocks above when the grid wraps (two blocks in half
+ * size, one per year). The stylesheet adds the row from :nth-child, so only columns carry
+ * their place. The last cell starts ANIMATION_TIMING.wave after the first, however big the
+ * grid is, so the wave ends with the rest of its section.
+ *
+ * @param columns - columns of the widest block
+ * @param blocks - blocks stacked one above the other
+ */
+export function cellWave(columns: number, blocks: number): CellWave {
+  const last = columns - 1 + blocks * WAVE_ROWS - 1
+  // Rounded down so the last cell never starts after the wave is over.
+  const step = last > 0 ? Math.floor((ANIMATION_TIMING.wave / last) * 1e5) / 1e5 : 0
+  return {
+    style: { ["--weeb-wave" as string]: `${step}s` } as React.CSSProperties,
+    columnStyle: (block, x) => ({ ["--weeb-c" as string]: columns - 1 - x + block * WAVE_ROWS }) as React.CSSProperties,
+  }
 }
