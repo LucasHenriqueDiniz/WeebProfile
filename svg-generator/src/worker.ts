@@ -60,6 +60,8 @@ interface GenerateRequest {
   // A visitor's card on the landing page (weeb-dashboard/functions/api/preview.ts):
   // no user, so no secrets are read, and no debug or mock output.
   preview?: boolean
+  // Also answer each item of the plugins that have tiles as its own SVG (generator/tiles.tsx).
+  tiles?: boolean
 }
 
 const CORS_HEADERS = {
@@ -207,6 +209,8 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
     animations: requestData.animations === true,
     essentialConfigs,
     dev: !isPreview && (requestData.dev === true || requestData.mock === true),
+    // Nothing stores a preview's tiles, so it does not draw them.
+    tiles: !isPreview && requestData.tiles === true,
   }
 
   // Validate required secrets and fields
@@ -259,6 +263,8 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
       pluginErrors,
       hasErrors: Object.keys(pluginErrors).length > 0,
     }
+    // Absent when tiles were not asked for or failed to draw (svg-generator.ts).
+    if (result.tiles) response.tiles = result.tiles
 
     if (includeDebug && debugInfo) {
       response.debug = {

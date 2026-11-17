@@ -22,6 +22,7 @@ import { loadCss } from "./css-loader.js"
 import { renderPlugins } from "../renderer/react-renderer.js"
 import { PLUGIN_ERROR_HEIGHT } from "../components/PluginError.js"
 import { createSvgContainer } from "../renderer/template-renderer.js"
+import { renderTiles } from "./tiles.js"
 
 /**
  * Generates SVG from configuration
@@ -84,6 +85,16 @@ export async function generateSvg(config: SvgConfig): Promise<SvgGenerationResul
     svg,
     height,
     width,
+  }
+
+  // 6. Tiles, when asked for. A failure leaves them out rather than failing the card:
+  // without `tiles` in the answer the dashboard keeps the ones it already has.
+  if (config.tiles) {
+    try {
+      result.tiles = renderTiles(config, pluginsConfig, pluginsData, pluginsErrors, cssDefs)
+    } catch (error) {
+      log.error("tiles.render_failed", { reason: error instanceof Error ? error.message : String(error) })
+    }
   }
 
   // Add debug info internally (will be used by server)

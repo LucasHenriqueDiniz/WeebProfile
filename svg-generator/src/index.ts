@@ -9,4 +9,4 @@
 export { generateSvg } from "./generator/svg-generator.js"
 export { loadCss } from "./generator/css-loader.js"
 export { normalizeConfig, validateConfig } from "./config/config-loader.js"
-export type { SvgConfig, SvgGenerationResult, PluginConfigMap } from "./types/index.js"
+export type { SvgConfig, SvgGenerationResult, SvgTile, PluginConfigMap } from "./types/index.js"

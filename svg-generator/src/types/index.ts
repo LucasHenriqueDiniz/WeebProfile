@@ -42,6 +42,9 @@ export interface SvgConfig {
   // Off unless the request says true; see weeb-plugins templates/animations.tsx.
   animations?: boolean
   dev?: boolean // Development mode (uses mock data)
+  // Also draw each item of the plugins that have tiles as an SVG of its own
+  // (Plugin.tiles in weeb-plugins), for a README that links every item separately.
+  tiles?: boolean
   // Essential configurations (API keys, tokens) per plugin
   // Fully dynamic - supports any plugin
   essentialConfigs?: {
@@ -53,10 +56,21 @@ export interface SvgConfig {
   }
 }
 
+/** One item of a card as its own SVG, with where it links. */
+export interface SvgTile {
+  href: string
+  title: string
+  svg: string
+  width: number
+  height: number
+}
+
 export interface SvgGenerationResult {
   svg: string
   height: number
   width: number
+  /** Present when the config asked for tiles; empty when no plugin draws any. */
+  tiles?: SvgTile[]
   debug?: {
     config: SvgConfig // Sanitized configuration (no API keys/tokens)
     pluginsData: Record<string, any> // Plugin data used in generation

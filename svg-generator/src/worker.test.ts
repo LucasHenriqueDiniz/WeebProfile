@@ -892,3 +892,62 @@ describe("POST / — opt-in animations", () => {
     expect(body.svg).not.toContain("weeb-anim")
   })
 })
+
+describe("POST / — tiles, one SVG per site", () => {
+  const websites = { websites: { enabled: true, sections: ["websites"], websites_max: 3 } }
+
+  it("answers a tile per site, each an SVG of its declared size linking its site", async () => {
+    const { response, body } = await post(validRequest({ plugins: websites, tiles: true }))
+
+    expect(response.status).toBe(200)
+    expect(body.svg.startsWith("<svg")).toBe(true)
+    expect(body.tiles).toHaveLength(3)
+    for (const tile of body.tiles) {
+      expect(tile.href).toMatch(/^https:\/\//)
+      expect(tile.svg.startsWith("<svg")).toBe(true)
+      expect(tile.svg).toContain(`width="${tile.width}"`)
+      expect(tile.svg).toContain(`height="${tile.height}"`)
+      expect(tile.svg).toContain(`<a href="${tile.href}" target="_top"`)
+    }
+    expect(new Set(body.tiles.map((tile: any) => `${tile.width}x${tile.height}`)).size).toBe(1)
+  })
+
+  // The tiles leave a transparent margin, the gap between them in the README. The
+  // terminal style paints its background on the whole container, which filled it.
+  it("keeps the terminal style's background off the tile's margin", async () => {
+    const { body } = await post(validRequest({ style: "terminal", plugins: websites, tiles: true }))
+    expect(body.tiles[0].svg).toContain("#svg-main .terminal-container{background-color:transparent !important}")
+    expect(body.svg).not.toContain("background-color:transparent !important")
+  })
+
+  it("answers no tiles unless they are asked for", async () => {
+    expect((await post(validRequest({ plugins: websites }))).body.tiles).toBeUndefined()
+  })
+
+  it("answers an empty list for a card whose plugins draw no tiles", async () => {
+    expect((await post(validRequest({ tiles: true }))).body.tiles).toEqual([])
+  })
+
+  it("draws no tiles for a public preview, which nothing stores", async () => {
+    const { response, body } = await post({ ...validRequest({ plugins: websites, tiles: true }), preview: true })
+    expect(response.status).toBe(200)
+    expect(body.tiles).toBeUndefined()
+  })
+
+  // Without the key the dashboard keeps the tiles it has; with an empty list it would
+  // delete them, and a README would lose every site over a drawing bug.
+  it("keeps the card and leaves the tiles out when drawing them throws", async () => {
+    // `tiles` is optional on Plugin, which spyOn cannot take; the websites plugin has it.
+    const plugin = PluginManager.getInstance().get("websites") as unknown as { tiles: () => unknown[] }
+    vi.spyOn(plugin, "tiles").mockImplementation(() => {
+      throw new Error("tile broke")
+    })
+
+    const { response, body } = await post(validRequest({ plugins: websites, tiles: true }))
+
+    expect(response.status).toBe(200)
+    expect(body.success).toBe(true)
+    expect(body.hasErrors).toBe(false)
+    expect(body.tiles).toBeUndefined()
+  })
+})
