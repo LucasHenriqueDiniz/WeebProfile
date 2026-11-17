@@ -76,21 +76,27 @@ export interface MyAnimeListData {
 }
 
 // Favorites types
+/**
+ * The fields below come from two places: the profile's favorites list (id, title,
+ * image, type, start year) and, for the list styles that draw them, the title's own
+ * page (`/v1/anime/:id`, `/v1/manga/:id`). `null` means "not known", and the card
+ * hides it: a detail that could not be fetched never turns into a printed 0.
+ */
 export interface BasicAnimeFavorite {
   mal_id: number
   title: string
   image: string | null
-  start_year: number
+  start_year: number | null
   type: string
 }
 
 export interface FullAnimeFavorite extends BasicAnimeFavorite {
-  synopsis: string
-  score: number
-  popularity: number
+  synopsis: string | null
+  score: number | null
+  popularity: number | null
   episodes: number | null
-  status: string
-  rank: number
+  status: string | null
+  rank: number | null
   year: number | null
   genres?: {
     name: string
@@ -101,18 +107,18 @@ export interface BasicMangaFavorite {
   mal_id: number
   title: string
   image: string | null
-  start_year: number
+  start_year: number | null
   type: string
 }
 
 export interface FullMangaFavorite extends BasicMangaFavorite {
-  synopsis: string
-  score: number
-  popularity: number
+  synopsis: string | null
+  score: number | null
+  popularity: number | null
   chapters: number | null
-  rank: number
+  rank: number | null
   volumes: number | null
-  status: string
+  status: string | null
   year: number | null
   genres?: {
     name: string

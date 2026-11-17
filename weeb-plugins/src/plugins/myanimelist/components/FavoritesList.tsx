@@ -39,6 +39,7 @@ import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { treatJapaneseName } from "../../../utils/string"
 import { ExternalLink } from "../../../utils/external-link"
 import { malFavoriteUrl } from "../services/favorite-url"
+import { type FavoriteFields, favoriteFields, hasTerminalMetaRow, simpleMetaLine } from "./favorite-fields"
 import type {
   BasicCharacterFavorite,
   BasicPeopleFavorite,
@@ -274,22 +275,17 @@ function DefaultDetailedFavorite({
 }): React.ReactElement {
   const imageUrl = favorite.image
   const title = favorite.title
-  const mean_score = favorite.score
-  const release_year =
-    type === "anime" ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
-  const synopsis = favorite.synopsis
-  const allGenres = favorite.genres?.map((genre) => genre.name) ?? []
-
+  const {
+    score,
+    popularity,
+    episodes,
+    chapters,
+    year,
+    status,
+    genres: allGenres,
+    synopsis,
+  } = favoriteFields(favorite, type)
   const genres = isHalf ? allGenres.slice(0, 4) : allGenres
-  const status = favorite.status
-  const popularity = favorite.popularity
-
-  const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
-  const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
-
-  // Only show episodes/chapters if they exist and are greater than 0
-  const showEpisodes = animeEpisodes != null && animeEpisodes > 0
-  const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
     <ExternalLink href={href} className="flex h-[120px] overflow-hidden gap-4">
@@ -299,36 +295,36 @@ function DefaultDetailedFavorite({
       <div className="w-full flex flex-col justify-between overflow-hidden">
         <span className="text-lg font-semibold truncate text-default-muted leading-tight">{title}</span>
         <div className="flex gap-2 items-center">
-          {mean_score && (
+          {score !== null && (
             <span className="text-default-highlight font-semibold flex items-center gap-1 text-[12px]">
-              <FaStar className="text-default-highlight" size={14} /> {mean_score}
+              <FaStar className="text-default-highlight" size={14} /> {score}
             </span>
           )}
-          {popularity && (
+          {popularity !== null && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaHashtag size={14} className="text-default-highlight" />
               {popularity}
             </span>
           )}
-          {showEpisodes && (
+          {episodes !== null && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaVideo size={14} className="text-default-highlight" />
-              {animeEpisodes}
+              {episodes}
             </span>
           )}
-          {showChapters && (
+          {chapters !== null && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaBook size={14} className="text-default-highlight" />
-              {mangaChapters}
+              {chapters}
             </span>
           )}
-          {release_year != null && release_year > 0 && (
+          {year !== null && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaCalendar size={14} className="text-default-highlight" />
-              {release_year}
+              {year}
             </span>
           )}
-          {status && (
+          {status !== null && (
             <span
               className={`font-semibold flex items-center gap-1 text-[12px] text-mal-${getFavoriteStatusClass(status)} half:hidden`}
             >
@@ -342,13 +338,42 @@ function DefaultDetailedFavorite({
             <EnhancedGenreTag key={genre} genre={genre} />
           ))}
         </div>
-        {synopsis && (
+        {synopsis !== null && (
           <div className="w-full overflow-hidden mt-1">
             <span className="synopsis-text line-clamp-2 text-default-muted leading-tight">{synopsis}</span>
           </div>
         )}
       </div>
     </ExternalLink>
+  )
+}
+
+/** The terminal row of numbers. Not drawn at all when every field in it is unknown. */
+function TerminalMetaRow({ fields, isHalf }: { fields: FavoriteFields; isHalf: boolean }): React.ReactElement | null {
+  if (!hasTerminalMetaRow(fields, isHalf)) return null
+  const { score, popularity, episodes, chapters, year, status } = fields
+  return (
+    <div className="flex gap-4 items-baseline">
+      {score !== null && <span className="text-default-muted font-bold truncate">⭐{score}</span>}
+      {popularity !== null && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
+      {episodes !== null && <span className="text-default-muted font-bold truncate">🎞️ {episodes} EP&apos;s</span>}
+      {chapters !== null && <span className="text-default-muted font-bold truncate">📚 {chapters} ch&apos;s</span>}
+      {year !== null && <span className="text-default-muted font-bold truncate">📅 {year}</span>}
+      {status !== null && !isHalf && (
+        <span className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}>● {status}</span>
+      )}
+    </div>
+  )
+}
+
+function TerminalGenres({ genres }: { genres: string[] }): React.ReactElement | null {
+  if (genres.length === 0) return null
+  return (
+    <div className="flex mt-1 gap-1">
+      {genres.map((genre) => (
+        <TerminalTag genre={genre} key={genre} />
+      ))}
+    </div>
   )
 }
 
@@ -363,47 +388,16 @@ function TerminalDetailedFavorite({
   isHalf: boolean
   type: "anime" | "manga"
 }): React.ReactElement {
-  const title = favorite.title
-  const mean_score = favorite.score
-  const release_year =
-    type === "anime" ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
-  const synopsis = favorite.synopsis
-  const genres = favorite.genres?.map((genre) => genre.name) || []
-  const status = favorite.status
-  const popularity = favorite.popularity
-
-  const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
-  const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
-
-  // Only show episodes/chapters if they exist and are greater than 0
-  const showEpisodes = animeEpisodes != null && animeEpisodes > 0
-  const showChapters = mangaChapters != null && mangaChapters > 0
+  const fields = favoriteFields(favorite, type)
 
   return (
     <ExternalLink href={href} className="mt-[0.5rem]">
-      <div className="text-terminal-warning truncate">* {title}</div>
-      <div className="flex gap-4 items-baseline">
-        {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
-        {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
-        {showEpisodes && <span className="text-default-muted font-bold truncate">🎞️ {animeEpisodes} EP&apos;s</span>}
-        {showChapters && <span className="text-default-muted font-bold truncate">📚 {mangaChapters} ch&apos;s</span>}
-        {release_year != null && release_year > 0 && (
-          <span className="text-default-muted font-bold truncate">📅 {release_year}</span>
-        )}
-        {status && !isHalf && (
-          <span className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}>
-            ● {status}
-          </span>
-        )}
-      </div>
-      <div className="flex mt-1 gap-1">
-        {genres.map((genre) => (
-          <TerminalTag genre={genre} key={genre} />
-        ))}
-      </div>
-      {synopsis && (
+      <div className="text-terminal-warning truncate">* {favorite.title}</div>
+      <TerminalMetaRow fields={fields} isHalf={isHalf} />
+      <TerminalGenres genres={fields.genres} />
+      {fields.synopsis !== null && (
         <div className="w-full overflow-hidden mt-2">
-          <span className="synopsis-text line-clamp-2 truncate">{synopsis}</span>
+          <span className="synopsis-text line-clamp-2 truncate">{fields.synopsis}</span>
         </div>
       )}
     </ExternalLink>
@@ -427,21 +421,8 @@ function DefaultMinimalFavorite({
 }): React.ReactElement {
   const imageUrl = favorite.image
   const title = favorite.title
-  const mean_score = favorite.score
-  const release_year =
-    type === "anime" ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
-  const allGenres = favorite.genres?.map((genre) => genre.name) ?? []
-  // Não mutar diretamente - criar novo array
+  const { score, popularity, episodes, chapters, year, status, genres: allGenres } = favoriteFields(favorite, type)
   const genres = isHalf ? allGenres.slice(0, 4) : allGenres
-  const status = favorite.status
-  const popularity = favorite.popularity
-
-  const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
-  const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
-
-  // Only show episodes/chapters if they exist and are greater than 0
-  const showEpisodes = animeEpisodes != null && animeEpisodes > 0
-  const showChapters = mangaChapters != null && mangaChapters > 0
 
   return (
     <ExternalLink href={href} className="flex h-[75px] overflow-hidden gap-2">
@@ -451,36 +432,36 @@ function DefaultMinimalFavorite({
       <div className="w-full flex flex-col justify-between overflow-hidden min-w-0">
         <span className="text-base font-semibold truncate text-default-muted leading-tight">{title}</span>
         <div className="flex gap-1.5 items-baseline flex-wrap">
-          {mean_score && (
+          {score !== null && (
             <span className="text-default-highlight font-semibold flex items-center gap-1 text-[12px]">
-              <FaStar className="text-default-highlight" size={10} /> {mean_score}
+              <FaStar className="text-default-highlight" size={10} /> {score}
             </span>
           )}
-          {popularity && (
+          {popularity !== null && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaHashtag size={10} className="text-default-highlight" />
               {popularity}
             </span>
           )}
-          {showEpisodes && (
+          {episodes !== null && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaVideo size={10} className="text-default-highlight" />
-              {animeEpisodes}
+              {episodes}
             </span>
           )}
-          {showChapters && (
+          {chapters !== null && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaBook size={10} className="text-default-highlight" />
-              {mangaChapters}
+              {chapters}
             </span>
           )}
-          {release_year != null && release_year > 0 && (
+          {year !== null && (
             <span className="font-semibold flex items-center gap-1 text-[12px] text-default-muted">
               <FaCalendar size={10} className="text-default-highlight" />
-              {release_year}
+              {year}
             </span>
           )}
-          {status && (
+          {status !== null && (
             <span
               className={`font-semibold flex items-center gap-1 text-[12px] text-mal-${getFavoriteStatusClass(status)} half:hidden`}
             >
@@ -510,43 +491,13 @@ function TerminalMinimalFavorite({
   isHalf: boolean
   type: "anime" | "manga"
 }): React.ReactElement {
-  const title = favorite.title
-  const mean_score = favorite.score
-  const release_year =
-    type === "anime" ? (favorite as FullAnimeFavorite).year : (favorite as FullMangaFavorite).start_year
-  const genres = favorite.genres?.map((genre) => genre.name) || []
-  const status = favorite.status
-  const popularity = favorite.popularity
-
-  const animeEpisodes = type === "anime" ? (favorite as FullAnimeFavorite).episodes : null
-  const mangaChapters = type === "manga" ? (favorite as FullMangaFavorite).chapters : null
-
-  // Only show episodes/chapters if they exist and are greater than 0
-  const showEpisodes = animeEpisodes != null && animeEpisodes > 0
-  const showChapters = mangaChapters != null && mangaChapters > 0
+  const fields = favoriteFields(favorite, type)
 
   return (
     <ExternalLink href={href} className="mt-[0.5rem]">
-      <div className="text-terminal-warning truncate">* {title}</div>
-      <div className="flex gap-4 items-baseline">
-        {mean_score && <span className="text-default-muted font-bold truncate">⭐{mean_score}</span>}
-        {popularity && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
-        {showEpisodes && <span className="text-default-muted font-bold truncate">🎞️ {animeEpisodes} EP&apos;s</span>}
-        {showChapters && <span className="text-default-muted font-bold truncate">📚 {mangaChapters} ch&apos;s</span>}
-        {release_year != null && release_year > 0 && (
-          <span className="text-default-muted font-bold truncate">📅 {release_year}</span>
-        )}
-        {status && !isHalf && (
-          <span className={`text-mal-${getFavoriteStatusClass(status)} font-bold half:hidden truncate`}>
-            ● {status}
-          </span>
-        )}
-      </div>
-      <div className="flex mt-1 gap-1">
-        {genres.map((genre) => (
-          <TerminalTag genre={genre} key={genre} />
-        ))}
-      </div>
+      <div className="text-terminal-warning truncate">* {favorite.title}</div>
+      <TerminalMetaRow fields={fields} isHalf={isHalf} />
+      <TerminalGenres genres={fields.genres} />
     </ExternalLink>
   )
 }
@@ -744,10 +695,8 @@ export function FavoritesList({
                 <p className="sm-text font-semibold text-terminal-warning">
                   * {"name" in item ? treatJapaneseName(item.name) : item.title}
                 </p>
-                {"type" in item && "start_year" in item && (
-                  <p className="sm-text font-semibold text-overflow text-terminal-muted">
-                    ({item.type}, {item.start_year})
-                  </p>
+                {"type" in item && simpleMetaLine(item) !== "" && (
+                  <p className="sm-text font-semibold text-overflow text-terminal-muted">({simpleMetaLine(item)})</p>
                 )}
               </ExternalLink>
             ))}

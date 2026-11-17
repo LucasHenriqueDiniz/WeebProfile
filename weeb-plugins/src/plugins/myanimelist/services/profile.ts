@@ -1,12 +1,21 @@
 import { jikanEdgeGet } from "./api-client"
 import type { AnimeStatistics, MangaStatistics } from "../types"
 
+/**
+ * One favorite from `/v1/users/:username/favorites`. jikan-edge names its fields in
+ * camelCase (`malId`, `startYear`, `imageUrl`); `mal_id`, `start_year` and `images.jpg`
+ * are Jikan v4's names. Reading only `mal_id` left every real favorite without an id,
+ * so each link pointed at `/anime/undefined` and no detail could be looked up.
+ */
 export type EdgeFavorite = {
-  mal_id: number
+  malId?: number
+  mal_id?: number
   title?: string
   name?: string
   url?: string
   type?: string
+  startYear?: number | null
+  start_year?: number | null
   imageUrl?: string | null
   images?: { jpg?: { small_image_url?: string; image_url?: string } }
 }

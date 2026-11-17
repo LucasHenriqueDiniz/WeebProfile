@@ -15,6 +15,7 @@ import type { PluginConfig, PluginData } from "../../types/index"
 import type { MyAnimeListConfig, MyAnimeListData } from "./types"
 import { DEFAULT_FAVORITES_MAX } from "./constants"
 import { RenderMyAnimeList } from "./components/RenderMyAnimeList"
+import { favoritesSectionHeight } from "./favorites-height"
 import { fetchMyAnimeListData } from "./services/fetchMyAnimeList"
 
 export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginData & MyAnimeListData> = {
@@ -48,35 +49,13 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
     const mal = data as MyAnimeListData
     const isTerminal = (config as { style?: string }).style === "terminal"
 
-    // TerminalGrid: TerminalCommand + grid header + n rows
-    const _terminalGridH = (n: number): number => (n > 0 ? 84 + n * 20 : 0)
-
     const favoritesH = (
-      n: number,
+      favorites: Parameters<typeof favoritesSectionHeight>[0]["favorites"],
+      max: number,
       listStyle: string | undefined,
-      defaultListStyle: "detailed" | "compact",
+      hideTitle: boolean | undefined,
       type: "anime" | "manga" | "characters" | "people"
-    ): number => {
-      if (n === 0) return 0
-      const s = listStyle ?? defaultListStyle
-      if (isTerminal) {
-        if (s === "simple") {
-          const itemH = type === "anime" || type === "manga" ? 40 : 20
-          return 24 + n * itemH
-        }
-        if (s === "compact") return 24 + n * 26
-        if (s === "minimal") return 24 + n * 64
-        // detailed
-        return 24 + n * 107
-      }
-      if (s === "detailed") return 40 + n * 120 + Math.max(0, n - 1) * 4
-      if (s === "compact") return 40 + n * 50 + Math.max(0, n - 1) * 4
-      if (s === "minimal") return 40 + n * 75 + Math.max(0, n - 1) * 4
-      // simple: image grid (image-portrait 120px, gap-2)
-      const cols = size === "full" ? 10 : 5
-      const rows = Math.ceil(n / cols)
-      return 40 + rows * 120 + Math.max(0, rows - 1) * 8
-    }
+    ): number => favoritesSectionHeight({ favorites, max, listStyle, hideTitle, type, isTerminal, size })
 
     let h = 0
     for (const s of cfg.sections) {
@@ -144,26 +123,46 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
         }
         case "anime_favorites": {
           const max = cfg.anime_favorites_max ?? cfg.favorites_max ?? DEFAULT_FAVORITES_MAX
-          const n = Math.min(mal.favorites_full?.anime?.length ?? max, max)
-          h += favoritesH(n, cfg.anime_favorites_list_style, "detailed", "anime")
+          h += favoritesH(
+            mal.favorites_full?.anime,
+            max,
+            cfg.anime_favorites_list_style,
+            cfg.anime_favorites_hide_title,
+            "anime"
+          )
           break
         }
         case "manga_favorites": {
           const max = cfg.manga_favorites_max ?? cfg.favorites_max ?? DEFAULT_FAVORITES_MAX
-          const n = Math.min(mal.favorites_full?.manga?.length ?? max, max)
-          h += favoritesH(n, cfg.manga_favorites_list_style, "detailed", "manga")
+          h += favoritesH(
+            mal.favorites_full?.manga,
+            max,
+            cfg.manga_favorites_list_style,
+            cfg.manga_favorites_hide_title,
+            "manga"
+          )
           break
         }
         case "character_favorites": {
           const max = cfg.character_favorites_max ?? cfg.favorites_max ?? DEFAULT_FAVORITES_MAX
-          const n = Math.min(mal.favorites?.characters?.length ?? max, max)
-          h += favoritesH(n, cfg.character_favorites_list_style, "compact", "characters")
+          h += favoritesH(
+            mal.favorites?.characters,
+            max,
+            cfg.character_favorites_list_style,
+            cfg.character_favorites_hide_title,
+            "characters"
+          )
           break
         }
         case "people_favorites": {
           const max = cfg.people_favorites_max ?? cfg.favorites_max ?? DEFAULT_FAVORITES_MAX
-          const n = Math.min(mal.favorites?.people?.length ?? max, max)
-          h += favoritesH(n, cfg.people_favorites_list_style, "compact", "people")
+          h += favoritesH(
+            mal.favorites?.people,
+            max,
+            cfg.people_favorites_list_style,
+            cfg.people_favorites_hide_title,
+            "people"
+          )
           break
         }
         default:
