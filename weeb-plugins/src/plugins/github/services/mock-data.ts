@@ -3069,7 +3069,8 @@ export async function getMockGithubData(): Promise<GithubData> {
       total: 48,
     },
     calendar: {
-      totalContributions: 844,
+      // The sum of the days below, as GitHub's total is (mock-data.test.ts)
+      totalContributions: 992,
       weeks: [
         {
           contributionDays: [
