@@ -129,6 +129,19 @@ export function usePluginWorkspace() {
     return allPlugins.find((p) => p.name === selectedPlugin) ?? null
   }, [allPlugins, selectedPlugin])
 
+  // A new wizard opened with two of its three columns empty: "select a plugin" in the
+  // middle and a blank frame on the right. With nothing selected yet, open the first
+  // plugin in use, or GitHub, or the first one listed, so its sections and their
+  // previews are there to read. Selecting does not turn it on. Desktop only: on a
+  // phone a selection jumps from the list to the detail step (WizardShell).
+  useEffect(() => {
+    if (selectedPlugin) return
+    if (typeof window === "undefined" || !window.matchMedia("(min-width: 1024px)").matches) return
+    const listed = filteredPlugins.map((plugin) => plugin.name)
+    const first = enabledPlugins[0] ?? (listed.includes("github") ? "github" : listed[0])
+    if (first) setSelectedPlugin(first)
+  }, [selectedPlugin, enabledPlugins, filteredPlugins, setSelectedPlugin])
+
   const toggleSection = useCallback(
     (pluginName: string, sectionId: string) => {
       const currentSections = plugins[pluginName]?.sections || []

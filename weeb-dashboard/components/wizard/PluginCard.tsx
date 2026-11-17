@@ -11,7 +11,7 @@ import { AlertCircle, Check, HelpCircle, ExternalLink, Sparkles, Zap } from "luc
 import React, { useCallback, useState } from "react"
 import { SectionConfigDialog } from "./SectionConfigDialog"
 import { cn } from "@/lib/utils"
-import { getSectionPreview } from "@/lib/config/section-previews"
+import { getSectionPreview, SECTION_PREVIEWS } from "@/lib/config/section-previews"
 import { PluginConfigStatus } from "./PluginConfigStatus"
 import { SecretInput } from "./SecretInput"
 import type { PluginConfig } from "@/stores/wizard-store"
@@ -512,14 +512,19 @@ export const PluginCard = React.memo(
               {metadata.sections.every((s) => state.sections?.includes(s.id)) ? t("deselectAll") : t("selectAll")}
             </Button>
           </div>
-          {/* Duas colunas quando ha espaco (painel central agora e largo o suficiente),
-              uma coluna em telas menores - nao 4 mini-cards espremidos. */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Uma coluna enquanto a coluna de detalhe é estreita: de lg a xl ela tem 400 a
+              500px, e duas colunas davam miniaturas de ~170px, pequenas demais para comparar
+              seções parecidas (Anime Favorites e Manga Favorites). Duas colunas no celular
+              (largura toda) e a partir de 2xl (860px). */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2 gap-3">
             {metadata.sections.map((section) => {
               const isSelected = section && (state.sections?.includes(section.id) || false)
               const hasConfigs = section.configOptions && section.configOptions.length > 0
               const sectionConfig = state.sectionConfigs?.[section.id] || {}
               const previewImage = getSectionPreview(plugin.name, section.id, style as "default" | "terminal")
+              const previewSize =
+                SECTION_PREVIEWS[plugin.name]?.[section.id]?.[style as "default" | "terminal"] ??
+                SECTION_PREVIEWS[plugin.name]?.[section.id]?.default
 
               return (
                 // O controle acessivel desta linha e o input sr-only aninhado, que ja recebe
@@ -573,16 +578,21 @@ export const PluginCard = React.memo(
                   {previewImage && (
                     <button
                       type="button"
-                      className="rounded-md overflow-hidden border border-border bg-background aspect-video w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      className="max-h-72 w-full overflow-hidden rounded-md border border-border bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleSectionToggle(section.id)
                       }}
                     >
+                      {/* Real aspect, not a 16:9 box with object-contain: a 415x400 preview
+                          in that box came out at half the column's width. Taller ones stop at
+                          max-h-72 and show their top. */}
                       <img
                         src={previewImage}
                         alt={`${getSectionName(section)} ${t("preview")}`}
-                        className="w-full h-full object-contain pointer-events-none"
+                        width={previewSize?.[0]}
+                        height={previewSize?.[1]}
+                        className="block h-auto w-full pointer-events-none"
                         draggable={false}
                         onError={(e) => {
                           const placeholderSvg = `data:image/svg+xml,${encodeURIComponent(`<svg width="600" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="300" fill="#f3f4f6"/><text x="300" y="150" text-anchor="middle" font-family="Arial" font-size="14" fill="#6b7280">Preview não disponível</text></svg>`)}`

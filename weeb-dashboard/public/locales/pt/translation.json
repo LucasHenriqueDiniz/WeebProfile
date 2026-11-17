@@ -558,7 +558,8 @@
       "activePlugins_one": "{{count}} plugin ativo",
       "activePlugins_other": "{{count}} plugins ativos",
       "pendingConfigs_one": "{{count}} configuração pendente",
-      "pendingConfigs_other": "{{count}} configurações pendentes"
+      "pendingConfigs_other": "{{count}} configurações pendentes",
+      "startFromTemplate": "Ou comece por um template"
     },
     "style": {
       "title": "Estilo",
@@ -593,7 +594,9 @@
         "terminal": "terminal",
         "halfWidth": "Meia Largura",
         "fullWidth": "Largura Completa"
-      }
+      },
+      "customCssShow": "Mostrar CSS personalizado",
+      "customCssHide": "Esconder CSS personalizado"
     },
     "plugins": {
       "activePlugins": "Plugins ativos:",
