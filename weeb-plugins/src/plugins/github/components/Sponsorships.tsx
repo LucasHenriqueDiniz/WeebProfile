@@ -96,7 +96,7 @@ export function GithubSponsorships({ data, config, style, size }: SponsorshipsPr
               })}
             />
             {isEmpty ? (
-              <div className="text-terminal-muted">😢 Nenhum sponsorship</div>
+              <div className="text-terminal-muted h-6">😢 Nenhum sponsorship</div>
             ) : (
               <TerminalGrid data={gridData} rightText="Sponsor" centerText="Tier" leftText="Amount" />
             )}
