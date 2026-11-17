@@ -790,7 +790,7 @@
       "subtitle": "Código, anime, música, jogos e repositórios em cards SVG que se atualizam sozinhos. Uma linha de markdown e pronto.",
       "ctaPrimary": "Criar meu SVG grátis",
       "ctaSecondary": "Ver todas as seções",
-      "check1": "3 SVGs no plano grátis",
+      "check1": "{{max}} SVGs no plano grátis",
       "check2": "Sem GitHub Action, sem YAML",
       "check3": "Login com GitHub",
       "cardCaption": "Um card de exemplo, com {{plugins}}"

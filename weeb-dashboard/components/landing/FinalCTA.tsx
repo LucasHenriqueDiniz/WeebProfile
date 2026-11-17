@@ -4,6 +4,7 @@ import { ArrowRight, Check } from "lucide-react"
 import { motion } from "framer-motion"
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
+import { MAX_SVGS_FREE_TIER } from "@/lib/config/plan"
 
 const GITHUB_REPO_URL = "https://github.com/LucasHenriqueDiniz/WeebProfile"
 
@@ -81,7 +82,7 @@ export function FinalCTA() {
             </div>
 
             <div className="relative mt-7 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[13px] font-medium text-muted-foreground/80">
-              {[tHero("check1"), tHero("check2"), tHero("check3")].map((c) => (
+              {[tHero("check1", { max: MAX_SVGS_FREE_TIER }), tHero("check2"), tHero("check3")].map((c) => (
                 <span key={c} className="flex items-center gap-1.5 whitespace-nowrap">
                   <Check className="h-3.5 w-3.5 text-emerald-500" />
                   {c}
