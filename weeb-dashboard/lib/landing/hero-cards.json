@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "readme",
+    "width": 415,
+    "height": 568,
+    "plugins": ["github", "myanimelist", "lastfm"]
+  },
+  {
+    "slug": "anime-terminal",
+    "width": 415,
+    "height": 552,
+    "plugins": ["myanimelist"]
+  },
+  {
+    "slug": "github-calendar",
+    "width": 415,
+    "height": 554,
+    "plugins": ["github"]
+  },
+  {
+    "slug": "coding-dracula",
+    "width": 415,
+    "height": 540,
+    "plugins": ["codewars", "stackoverflow"]
+  }
+]

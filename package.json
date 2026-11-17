@@ -23,6 +23,7 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path .gitignore --ignore-path .prettierignore",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
     "generate-previews": "tsx scripts/generate-previews.ts",
+    "generate-hero-cards": "pnpm --filter @weeb/svg-generator exec tsx scripts/generate-hero-cards.ts",
     "generate-plugins-doc": "tsx scripts/generate-plugins-doc.ts",
     "test": "pnpm --filter @weeb/weeb-plugins test && pnpm --filter weeb-dashboard test && pnpm --filter @weeb/svg-generator test"
   },
