@@ -1,6 +1,7 @@
 import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { PluginManager } from "../../manager"
 import type { ContributionWeek, GithubConfig, GithubData } from "../types"
 import { GithubCalendar } from "./Calendar"
 
@@ -67,5 +68,34 @@ describe("GithubCalendar last 6 months in any time zone", () => {
         terminal: days,
       })
     }
+  })
+})
+
+/**
+ * The dashboard's wizard preview renders the mock through the plugin, as useMockPluginData and
+ * PreviewRenderer do. The mock is all of 2025: measured from today, its last six months were
+ * empty and the preview drew no days.
+ */
+describe("GithubCalendar last 6 months in the dashboard preview", () => {
+  afterEach(() => vi.useRealTimers())
+
+  it.each(["default", "terminal"] as const)("draws the mock's last six months, %s", async (style) => {
+    vi.useFakeTimers({ toFake: ["Date"] })
+    vi.setSystemTime(new Date("2026-11-17T12:00:00Z"))
+    const plugin = PluginManager.getInstance().get("github")!
+    const config = {
+      ...plugin.config,
+      enabled: true,
+      sections: ["calendar"],
+      style,
+      size: "full",
+      calendar_year_mode: "last_6_months",
+    }
+    const data = await plugin.fetchData(config as never, true, undefined, true)
+    const html = renderToStaticMarkup(
+      plugin.render({ ...config, previewMode: true } as never, data) as React.ReactElement
+    )
+    // 2025-07-01 to 2025-12-31
+    expect(html.split(" contributions on ").length - 1).toBe(184)
   })
 })

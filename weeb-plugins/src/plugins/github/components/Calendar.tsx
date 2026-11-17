@@ -5,7 +5,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
-import { getCalendarColor, lastSixMonthsStart } from "../utils"
+import { getCalendarColor, sixMonthsBeforeNewestDay } from "../utils"
 
 interface CalendarProps {
   data: GithubData["calendar"]
@@ -114,7 +114,7 @@ const DefaultCalendar = ({
 
     // If last_6_months, filter weeks and days within those weeks
     if (yearMode === "last_6_months") {
-      const sixMonthsAgo = lastSixMonthsStart(new Date())
+      const sixMonthsAgo = sixMonthsBeforeNewestDay(allWeeks)
 
       allWeeks = allWeeks
         .map((week: any) => {
@@ -349,7 +349,7 @@ const DefaultCalendar = ({
 
   // If last_6_months, filter weeks and days within those weeks
   if (yearMode === "last_6_months") {
-    const sixMonthsAgo = lastSixMonthsStart(new Date())
+    const sixMonthsAgo = sixMonthsBeforeNewestDay(allWeeks)
 
     allWeeks = allWeeks
       .map((week: any) => {
@@ -449,7 +449,7 @@ const TerminalCalendar = ({
 
           // If last_6_months, filter weeks and days (shouldn't happen in multi-year, but just in case)
           if (yearMode === "last_6_months") {
-            const sixMonthsAgo = lastSixMonthsStart(new Date())
+            const sixMonthsAgo = sixMonthsBeforeNewestDay(weeks)
 
             weeks = weeks
               .map((week: any) => {
@@ -503,7 +503,7 @@ const TerminalCalendar = ({
 
   // If last_6_months, filter weeks and days within those weeks
   if (yearMode === "last_6_months") {
-    const sixMonthsAgo = lastSixMonthsStart(new Date())
+    const sixMonthsAgo = sixMonthsBeforeNewestDay(weeks)
 
     weeks = weeks
       .map((week: any) => {
