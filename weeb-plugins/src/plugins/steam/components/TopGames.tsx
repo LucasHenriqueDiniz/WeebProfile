@@ -8,21 +8,13 @@ import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { SteamData, SteamNonEssentialConfig } from "../types"
 import { ExternalLink } from "../../../utils/external-link"
 import { steamStoreUrl } from "../services/store-url"
+import { formatPlaytime } from "../format-playtime"
 
 interface TopGamesProps {
   data: SteamData
   config: SteamNonEssentialConfig
   style?: "default" | "terminal"
   size?: "half" | "full"
-}
-
-function formatPlaytime(minutes: number): string {
-  const hours = Math.floor(minutes / 60)
-  const days = Math.floor(hours / 24)
-  if (days > 0) {
-    return `${days}d ${hours % 24}h`
-  }
-  return `${hours}h`
 }
 
 // A miniatura é quadrada, então quer o ícone quadrado -- não um recorte da capa

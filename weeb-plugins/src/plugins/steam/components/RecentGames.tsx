@@ -8,20 +8,13 @@ import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { SteamData, SteamNonEssentialConfig } from "../types"
 import { ExternalLink } from "../../../utils/external-link"
 import { steamStoreUrl } from "../services/store-url"
+import { formatPlaytime } from "../format-playtime"
 
 interface RecentGamesProps {
   data: SteamData
   config: SteamNonEssentialConfig
   style?: "default" | "terminal"
   size?: "half" | "full"
-}
-
-function formatPlaytime(minutes: number): string {
-  const hours = Math.floor(minutes / 60)
-  if (hours > 0) {
-    return `${hours}h`
-  }
-  return `${minutes}m`
 }
 
 // Ver TopGames: a miniatura quadrada usa o ícone; a capa larga fica no fundo.
