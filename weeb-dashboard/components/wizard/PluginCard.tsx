@@ -12,6 +12,7 @@ import React, { useCallback, useState } from "react"
 import { SectionConfigDialog } from "./SectionConfigDialog"
 import { cn } from "@/lib/utils"
 import { getSectionPreview } from "@/lib/config/section-previews"
+import { publicRequiredFields as requiredFieldsWithoutSecret } from "@/lib/plugins/required-fields"
 import { PluginConfigStatus } from "./PluginConfigStatus"
 import { SecretInput } from "./SecretInput"
 import type { PluginConfig } from "@/stores/wizard-store"
@@ -208,6 +209,7 @@ export const PluginCard = React.memo(
     if (!metadata) return null
 
     const hasEssentialConfigs = metadata.essentialConfigKeysMetadata && metadata.essentialConfigKeysMetadata.length > 0
+    const publicRequiredFields = requiredFieldsWithoutSecret(metadata)
 
     const PluginIcon = getPluginIcon(plugin.name)
     const displayName = (() => {
@@ -355,12 +357,9 @@ export const PluginCard = React.memo(
         )}
 
         {/* Required fields (non-sensitive) */}
-        {!hasEssentialConfigs &&
-          metadata.requiredFields.length > 0 &&
+        {publicRequiredFields.length > 0 &&
           (() => {
-            const missingRequiredFields = pluginMissingConfigs.filter((m) =>
-              (metadata.requiredFields as string[]).includes(m.field)
-            )
+            const missingRequiredFields = pluginMissingConfigs.filter((m) => publicRequiredFields.includes(m.field))
             const hasMissing = missingRequiredFields.length > 0
 
             return (
@@ -388,7 +387,7 @@ export const PluginCard = React.memo(
                     {t("requiredFields.title")}
                   </p>
                 </div>
-                {metadata.requiredFields.map((field) => {
+                {publicRequiredFields.map((field) => {
                   const localValue = localInputValues[`required.${field}`]
                   const value = localValue !== undefined ? localValue : (state as any)[field] || ""
                   const isEmpty = !value || (typeof value === "string" && !value.trim())
