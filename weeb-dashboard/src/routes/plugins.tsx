@@ -247,7 +247,11 @@ export default function PluginsGalleryPage() {
                   </span>
                 </div>
 
-                <div className="mt-5 grid grid-cols-1 items-start gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Colunas, não grade: numa grade a linha tem a altura do card mais alto, e
+                    seções de alturas muito diferentes deixavam buracos (só no GitHub, 3.541px
+                    de vazio sob os cards, a 1034px). Em colunas cada card desce logo abaixo do
+                    anterior; a ordem passa a ser de cima para baixo em cada coluna. */}
+                <div className="mt-5 columns-1 gap-5 sm:columns-2 lg:columns-3">
                   {sectionIds.map((sectionId) => {
                     const sectionMeta = (plugin.sections as any[])?.find((s) => s.id === sectionId)
                     const sectionName = sectionMeta?.i18nKey?.name
@@ -255,7 +259,7 @@ export default function PluginsGalleryPage() {
                       : (sectionMeta?.name ?? sectionId)
                     const size = sections[sectionId]?.[style]
                     return (
-                      <figure key={sectionId} className="group">
+                      <figure key={sectionId} className="group mb-5 break-inside-avoid">
                         <div className="overflow-hidden rounded-lg border border-border/60 bg-card/50 transition-colors group-hover:border-primary/40">
                           {/* width/height reserve the card's space before the lazy image
                               loads; without them each card was 0 px tall until then, and
