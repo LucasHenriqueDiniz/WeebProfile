@@ -406,20 +406,18 @@
         "removing": "Quitando…",
         "removed": "{{key}} de {{plugin}} quitada",
         "removeFailed": "No se pudo quitar la clave. Inténtalo de nuevo."
-      }
+      },
+      "planTitle": "Plan",
+      "planManage": "Ver mis SVGs",
+      "planFull": "Usaste todos los SVGs del plan gratis. Elimina uno para crear otro."
     },
     "appearance": {
-      "description": "Personaliza la apariencia de la aplicación",
-      "language": "Idioma",
-      "languageDescription": "Selecciona el idioma de la interfaz",
       "theme": "Tema",
-      "themeDescription": "Alternar entre modo claro y oscuro",
       "themeOptions": {
         "dark": "Oscuro",
         "light": "Claro",
         "system": "Sistema"
-      },
-      "title": "Apariencia"
+      }
     },
     "description": "Administra la configuración y preferencias de tu cuenta",
     "profile": {

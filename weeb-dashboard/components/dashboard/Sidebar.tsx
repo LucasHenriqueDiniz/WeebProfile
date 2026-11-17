@@ -16,8 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { MAX_SVGS_FREE_TIER } from "@/lib/config/plan"
 
-const MAX_SVGS_FREE_TIER = 3
 const COLLAPSE_KEY = "weeb:sidebar-collapsed"
 
 // Compact icon-rail by default (not a wide admin sidebar) - expands on demand to show

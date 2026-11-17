@@ -27,6 +27,7 @@ import { ArrowUpDown, Filter, Loader2, Plus } from "lucide-react"
 import { Link, useRouter } from "@/i18n/navigation"
 import { useEffect, useMemo, useState, useRef } from "react"
 import { useTranslations } from "@/i18n/use-translations"
+import { MAX_SVGS_FREE_TIER } from "@/lib/config/plan"
 
 // DEV-ONLY mock data for the ?mock=full preview state. Never imported in production
 // (the whole call site is gated behind import.meta.env.DEV, which Vite strips).
@@ -105,8 +106,6 @@ const MOCK_SVGS = [
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString(),
   },
 ]
-
-const MAX_SVGS_FREE_TIER = 3
 
 type SortOption = "newest" | "oldest" | "name" | "status"
 type FilterStatus = "all" | "completed" | "generating" | "pending"

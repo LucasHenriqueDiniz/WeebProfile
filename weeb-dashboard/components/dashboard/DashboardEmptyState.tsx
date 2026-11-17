@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Sparkles } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
+import { MAX_SVGS_FREE_TIER } from "@/lib/config/plan"
 
 const STEPS = ["signIn", "plugins", "readme"] as const
 
 // Same limit the API enforces in functions/api/svgs/index.ts.
-const MAX_SVGS_FREE_TIER = 3
 
 const stars = [
   { top: "10%", left: "6%", size: 2, opacity: 0.3 },
