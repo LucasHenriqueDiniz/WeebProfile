@@ -70,6 +70,8 @@ function TopicCloud({ topics, max }: { topics: string[]; max: number }): React.R
             className="rounded-full font-medium"
             style={{
               fontSize: big ? 13 : 12,
+              // Chrome's `normal` line height of Poppins; Firefox drew each row 1.2px taller.
+              lineHeight: big ? "20px" : "18px",
               padding: "5px 12px",
               background: big ? HL_SOFT : ghost ? "transparent" : HL_SOFTER,
               color: ghost
