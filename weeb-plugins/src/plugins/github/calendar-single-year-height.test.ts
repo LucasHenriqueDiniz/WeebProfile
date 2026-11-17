@@ -19,12 +19,15 @@ import type { GithubData } from "./types"
  * the weekday labels are the only thing left in the grid. The terminal style has no title
  * or month labels to hide.
  *
- * Tolerance is the audit's: never shorter than the content, at most 20px taller.
+ * Tolerance is the audit's: never shorter than the content, at most 20px taller. The
+ * terminal gets at most 1px: its height is the same in every engine, so room there is blank.
  *
- * The terminal grid's symbols fall back to another font, and Firefox 150 and WebKit 26.4
- * (Playwright 1.60, same method) draw it taller than Chrome: 164 and 163px for Chrome's 157.
- * The default style measured the same or 1px shorter there. `OTHER_ENGINES` keeps the
- * terminal from being sized to Chrome alone.
+ * The terminal grid's symbols fall back to another font. While its 7 rows were sized by their
+ * content, Firefox 150 and WebKit 26.4 (Playwright 1.60, same method) drew it taller than
+ * Chrome, 164 and 163px for Chrome's 157, and the formula kept 19px of blank in Chrome. The
+ * rows are now a fixed 14px track and the "N contributions" line a fixed 19px (WebKit drew it
+ * 18), so the section measures the same in all three; `OTHER_ENGINES` holds Firefox and
+ * WebKit. The default style measured the same or 1px shorter there.
  */
 
 type Style = "default" | "terminal"
@@ -82,14 +85,14 @@ const MEASURED: Array<[Style, Size, Mode, number, Hide[], number]> = [
 
 // [engine, size, year mode, weeks, measured px], terminal style, no hide options
 const OTHER_ENGINES: Array<["firefox" | "webkit", Size, Mode, number, number]> = [
-  ["firefox", "half", "current_year", 53, 164],
-  ["firefox", "full", "current_year", 53, 164],
-  ["firefox", "half", "last_6_months", 27, 164],
+  ["firefox", "half", "current_year", 53, 157],
+  ["firefox", "full", "current_year", 53, 157],
+  ["firefox", "half", "last_6_months", 27, 157],
   ["firefox", "half", "current_year", 0, 59],
-  ["webkit", "half", "current_year", 53, 163],
-  ["webkit", "full", "current_year", 53, 163],
-  ["webkit", "half", "last_6_months", 27, 163],
-  ["webkit", "half", "current_year", 0, 58],
+  ["webkit", "half", "current_year", 53, 157],
+  ["webkit", "full", "current_year", 53, 157],
+  ["webkit", "half", "last_6_months", 27, 157],
+  ["webkit", "half", "current_year", 0, 59],
 ]
 
 const plugin = PluginManager.getInstance().get("github")!
@@ -118,7 +121,7 @@ describe("github calendar height, single year", () => {
     expect(mock.calendar.weeks).toHaveLength(53)
   })
 
-  it("covers the rendered height of every measured variant, at most 20px over", () => {
+  it("covers the rendered height of every measured variant, at most 20px over (terminal: 1px)", () => {
     const wrong: string[] = []
     for (const [style, size, mode, weeks, hidden, measured] of MEASURED) {
       const config = {
@@ -131,15 +134,15 @@ describe("github calendar height, single year", () => {
         ...Object.fromEntries(hidden.map((key) => [`calendar_hide_${key}`, true])),
       }
       const height = plugin.calculateHeight(config as never, withWeeks(mode, weeks) as never, size)
-      if (height < measured || height - measured > 20) {
+      if (height < measured || height - measured > (style === "terminal" ? 1 : 20)) {
         wrong.push(`${style}/${size} ${mode} weeks=${weeks} hide=[${hidden}]: calc=${height} rendered=${measured}`)
       }
     }
     expect(wrong).toEqual([])
   })
 
-  it("does not cut the terminal grid in Firefox or WebKit", () => {
-    const cut: string[] = []
+  it("fits the terminal calendar in Firefox and WebKit, at most 1px over", () => {
+    const wrong: string[] = []
     for (const [engine, size, mode, weeks, measured] of OTHER_ENGINES) {
       const config = {
         ...plugin.config,
@@ -150,8 +153,10 @@ describe("github calendar height, single year", () => {
         size,
       }
       const height = plugin.calculateHeight(config as never, withWeeks(mode, weeks) as never, size)
-      if (height < measured) cut.push(`${engine} ${size} ${mode} weeks=${weeks}: calc=${height} rendered=${measured}`)
+      if (height < measured || height - measured > 1) {
+        wrong.push(`${engine} ${size} ${mode} weeks=${weeks}: calc=${height} rendered=${measured}`)
+      }
     }
-    expect(cut).toEqual([])
+    expect(wrong).toEqual([])
   })
 })
