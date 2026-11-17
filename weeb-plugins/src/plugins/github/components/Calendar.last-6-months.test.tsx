@@ -112,7 +112,7 @@ describe("GithubCalendar last 6 months in the dashboard preview", () => {
     // 2025-07-01 to 2025-12-31
     expect(html.split(" contributions on ").length - 1).toBe(184)
 
-    // The total is those days', not the mock's figure for the year (844, while its days add up to 992)
+    // The total is those days', not the mock's total for the year (992)
     const mock = await getMockGithubData()
     const total = mock.calendar.weeks
       .flatMap((week) => week.contributionDays)

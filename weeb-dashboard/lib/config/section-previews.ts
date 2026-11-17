@@ -55,7 +55,7 @@ export const SECTION_PREVIEWS: Record<
     repositories: { default: [415, 156], terminal: [415, 236] },
     favorite_languages: { default: [415, 354], terminal: [415, 322] },
     favorite_license: { default: [415, 112], terminal: [415, 142] },
-    calendar: { default: [415, 355], terminal: [415, 181] },
+    calendar: { default: [415, 347], terminal: [415, 181] },
     code_habits: { default: [415, 634], terminal: [415, 1153] },
     starred_repositories: { default: [415, 1440], terminal: [415, 304] },
     gists: { default: [415, 456], terminal: [415, 136] },
