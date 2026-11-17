@@ -103,10 +103,10 @@ export const SECTION_PREVIEWS: Record<
     statistics_simple: { default: [415, 124], terminal: [415, 136] },
     anime_bar: { default: [415, 158], terminal: [415, 180] },
     manga_bar: { default: [415, 158], terminal: [415, 180] },
-    anime_favorites: { default: [415, 680], terminal: [415, 583] },
-    manga_favorites: { default: [415, 680], terminal: [415, 583] },
-    character_favorites: { default: [415, 330], terminal: [415, 178] },
-    people_favorites: { default: [415, 330], terminal: [415, 178] },
+    anime_favorites: { default: [415, 680], terminal: [415, 576] },
+    manga_favorites: { default: [415, 680], terminal: [415, 576] },
+    character_favorites: { default: [415, 330], terminal: [415, 152] },
+    people_favorites: { default: [415, 330], terminal: [415, 152] },
   },
 
   stackoverflow: {
