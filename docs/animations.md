@@ -140,6 +140,12 @@ no camo do GitHub, medido com origens que devolvem cada header:
 - **Sem `ETag` nem `Last-Modified`:** com 304 o WebKit mantém o card em repouso (4/4).
 - **Por que o `s-maxage` explícito:** o camo guarda `no-cache` por 60 s, mas isso não está
   documentado. O `s-maxage=60` fixa o prazo de hoje.
+- **Ponta a ponta pelo camo (preview do PR #62, 16/11/2026):** página local com `<img>` apontando
+  para URLs do camo assinadas pela API de markdown do GitHub, uma URL nova por run, 2 runs por
+  engine × 1 e 7 cópias. Com o header novo, reload e nova navegação animaram 24/24, e o tail do
+  deploy registrou 1 request na origem por run (só o primeiro load; reload e navegação vieram do
+  cache do camo). Produção com o header antigo, no mesmo teste: Chromium 4/4 com 1× e 0/4 com 7×,
+  WebKit 0/8, Firefox reload 4/4 e navegação 0/4.
 - **Não medido:** navegação interna do GitHub (Turbo) entre abas do perfil, e Safari de verdade.
 
 ## Próximo passo: carrossel numa lista
