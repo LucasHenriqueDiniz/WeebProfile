@@ -85,7 +85,7 @@ const TerminalRepositories = ({
   const gridData = [
     {
       title: "Repositories",
-      value: `${data.nodes.length} repos`,
+      value: `${abbreviateNumber(data.totalCount)} repos`,
     },
     {
       title: "Stars",
@@ -139,10 +139,7 @@ export function GithubRepositories({
   style,
   size,
 }: RepositoriesProps): React.ReactElement {
-  const title = (config.repositories_title ?? "<qnt> Repositories").replace(
-    "<qnt>",
-    abbreviateNumber(data.nodes.length)
-  )
+  const title = (config.repositories_title ?? "<qnt> Repositories").replace("<qnt>", abbreviateNumber(data.totalCount))
   const hideTitle = config.repositories_hide_title ?? false
 
   return (
