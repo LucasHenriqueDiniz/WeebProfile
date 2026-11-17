@@ -10,6 +10,8 @@ import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { WebsitesConfig, WebsitesData, WebsitesVariant } from "./types"
 import { RenderWebsites } from "./components/RenderWebsites"
+import { WEBSITE_TILE_WIDTH, WebsiteTile, websiteTileHeight } from "./components/WebsiteTile"
+import { safeHref } from "../../utils/external-link"
 import { fetchWebsitesData } from "./services/fetchData"
 
 export const websitesPlugin: Plugin<PluginConfig & WebsitesConfig, PluginData & WebsitesData> = {
@@ -26,6 +28,30 @@ export const websitesPlugin: Plugin<PluginConfig & WebsitesConfig, PluginData & 
     const style = ((config as any).style || "default") as "default" | "terminal"
     const size = ((config as any).size || "half") as "half" | "full"
     return <RenderWebsites config={config as WebsitesConfig} data={data as WebsitesData} style={style} size={size} />
+  },
+  tiles: (config, data) => {
+    if (!config.sections?.includes("websites")) return []
+    const ne = (config as WebsitesConfig).nonEssential || {}
+    const style = ((config as any).style || "default") as "default" | "terminal"
+    const options = {
+      showThumbnail: ne.websites_show_thumbnail !== false,
+      showDescription: ne.websites_show_description !== false,
+    }
+    const height = websiteTileHeight(options)
+
+    return ((data as WebsitesData).websites ?? []).flatMap((site) => {
+      const href = safeHref(site.url)
+      if (!href) return []
+      return [
+        {
+          href,
+          title: site.title,
+          element: <WebsiteTile site={site} style={style} {...options} />,
+          width: WEBSITE_TILE_WIDTH,
+          height,
+        },
+      ]
+    })
   },
   calculateHeight: (config, data, size) => {
     const websitesData = data as WebsitesData
