@@ -93,16 +93,19 @@ function TerminalUpdate({
   const date = format(new Date(update.date), "MMM d, h:mm a")
   const score = update.score ?? 0
 
-  const percentage = total === 0 ? 0 : Math.round((current / total) * 100) || 0
+  // No total (a manga still running) means the progress is unknown, not 0%: "41/?" used
+  // to read "0%" over an empty bar. The bar is drawn half full, like the default style's,
+  // and a completed entry is full whether or not MyAnimeList has its total.
+  const percentage = status === "Completed" ? 100 : total === 0 ? null : Math.round((current / total) * 100) || 0
   const progressBarLength = 36
-  const filledBlocks = Math.round((percentage / 100) * progressBarLength)
+  const filledBlocks = Math.round(((percentage ?? 50) / 100) * progressBarLength)
   const progressBar = "█".repeat(filledBlocks) + "░".repeat(progressBarLength - filledBlocks)
 
   return (
     <div className="flex flex-col gap-1">
       <div className="text-terminal-warning truncate font-bold text-md">* {title}</div>
       <div className="flex items-center">
-        <span className="text-terminal-muted font-bold">{percentage}%</span>
+        <span className="text-terminal-muted font-bold">{percentage ?? "?"}%</span>
         <span
           className={`text-mal-${status.toLowerCase().split(" ").join("-")} tracking-tighter text-center w-full overflow-hidden`}
         >

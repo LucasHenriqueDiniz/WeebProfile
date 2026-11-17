@@ -48,6 +48,15 @@
   padding: 0;
 }
 
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card: GitHub repositories, activity, people and gists, the 16Personalities
+   link. :where() keeps it at zero specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Container */
 #svg-main .default-container {
   --font-family: Poppins, sans-serif;
@@ -1463,6 +1472,11 @@
   gap: 9px
 }
 
+#svg-main .gap-x-1 {
+  -moz-column-gap: 0.25rem;
+       column-gap: 0.25rem
+}
+
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
@@ -1693,10 +1707,6 @@
   background-color: rgb(0 0 0 / 0.2)
 }
 
-#svg-main .bg-black\/25 {
-  background-color: rgb(0 0 0 / 0.25)
-}
-
 #svg-main .bg-black\/40 {
   background-color: rgb(0 0 0 / 0.4)
 }
@@ -1743,10 +1753,6 @@
 #svg-main .bg-red-950 {
   --tw-bg-opacity: 1;
   background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
-}
-
-#svg-main .bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
 }
 
 #svg-main .bg-yellow-50 {
