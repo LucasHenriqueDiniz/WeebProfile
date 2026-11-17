@@ -41,6 +41,38 @@ describe("fetchWebsitesData", () => {
     expect(fetchSiteMeta).not.toHaveBeenCalled()
   })
 
+  // Its tile's link is written in the README: dropping it would move every later site
+  // up one place, under the links of the sites before them.
+  it("keeps a site whose page read throws in its place, with what the user typed", async () => {
+    vi.mocked(fetchSiteMeta).mockImplementation(async (url: string) => {
+      if (url.includes("broken")) throw new Error("boom")
+      return { ...emptyMeta, title: `Page of ${new URL(url).hostname}` }
+    })
+
+    const data = await fetchWebsitesData(
+      config([
+        { url: "https://first.example" },
+        { url: "https://broken.example", title: "Typed title", description: "Typed description" },
+        { url: "https://last.example" },
+      ])
+    )
+
+    expect(data.websites.map((w) => w.url)).toEqual([
+      "https://first.example/",
+      "https://broken.example/",
+      "https://last.example/",
+    ])
+    expect(data.websites[1]).toEqual({
+      url: "https://broken.example/",
+      domain: "broken.example",
+      title: "Typed title",
+      description: "Typed description",
+      thumbnail: null,
+      favicon: null,
+    })
+    expect(data.websites[2]!.title).toBe("Page of last.example")
+  })
+
   it("returns nothing when no website is configured", async () => {
     expect((await fetchWebsitesData(config([]))).websites).toEqual([])
   })
