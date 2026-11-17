@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { Play, RotateCcw } from "lucide-react"
+import { ChevronDown, Play, RotateCcw } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
 
 export interface StyleConfigurationProps {
@@ -70,6 +70,11 @@ export function StyleConfiguration({
   onReplayAnimations,
 }: StyleConfigurationProps) {
   const t = useTranslations("wizard.style")
+  const [showCustomCss, setShowCustomCss] = useState(() => customCss.trim().length > 0)
+  // Saved CSS that arrives after mount (an editor still loading) opens the section too.
+  useEffect(() => {
+    if (customCss.trim()) setShowCustomCss(true)
+  }, [customCss])
 
   // Local state for debounce of color pickers
   const [localColors, setLocalColors] = useState<Record<string, string>>(customThemeColors)
@@ -331,17 +336,31 @@ export function StyleConfiguration({
         </div>
       )}
 
-      {/* Custom CSS - area maior, aparencia de editor de codigo (sem dependencia nova) */}
+      {/* Custom CSS - recolhido por padrão: era a maior área da aba (220px de editor)
+          para um recurso avançado. Abre sozinho quando já há CSS salvo. */}
       <div className="py-4 last:pb-0 space-y-2">
-        <p className="text-sm font-semibold text-foreground">{t("customCss")}</p>
+        <button
+          type="button"
+          onClick={() => setShowCustomCss((open) => !open)}
+          aria-expanded={showCustomCss}
+          className="flex w-full items-center justify-between gap-2 text-left"
+        >
+          <span className="text-sm font-semibold text-foreground">{t("customCss")}</span>
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            {showCustomCss ? t("customCssHide") : t("customCssShow")}
+            <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", showCustomCss && "rotate-180")} />
+          </span>
+        </button>
         <p className="text-xs text-muted-foreground">{t("customCssDescription")}</p>
-        <Textarea
-          value={customCss}
-          onChange={(e) => setCustomCss(e.target.value)}
-          placeholder={t("customCssPlaceholder")}
-          spellCheck={false}
-          className="w-full min-h-[220px] rounded-md border border-border bg-muted text-foreground px-3 py-2.5 text-xs font-mono leading-relaxed focus:border-primary focus:ring-1 focus:ring-primary"
-        />
+        {showCustomCss && (
+          <Textarea
+            value={customCss}
+            onChange={(e) => setCustomCss(e.target.value)}
+            placeholder={t("customCssPlaceholder")}
+            spellCheck={false}
+            className="w-full min-h-[220px] rounded-md border border-border bg-muted text-foreground px-3 py-2.5 text-xs font-mono leading-relaxed focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        )}
       </div>
     </div>
   )

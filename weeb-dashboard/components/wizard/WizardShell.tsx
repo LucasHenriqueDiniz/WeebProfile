@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { ReactNode, useEffect, useRef, useState } from "react"
 import {
   ArrowLeft,
+  ArrowRight,
   BookMarked,
   Columns2,
   ListFilter,
@@ -14,7 +15,7 @@ import {
   Square,
   UserCircle2,
 } from "lucide-react"
-import { useRouter } from "@/i18n/navigation"
+import { Link, useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "@/i18n/use-translations"
 import { WizardFooter, type WizardFooterProps } from "./WizardFooter"
@@ -146,7 +147,15 @@ export function WizardShell({
             quando o conteudo cabe, mas deixa o wrapper crescer com o conteudo quando o SVG e
             mais alto que a area visivel. Centralizar no container com overflow corta o topo
             do conteudo e o torna inacessivel via scroll, fazendo parecer que o header cobre o SVG. */}
-        <div className="p-4 lg:p-8 w-full min-h-full flex items-center justify-center">
+        {/* Card no topo, perto da lista que o controla: centralizado na vertical, numa
+            coluna de 1700px ele ficava no meio da tela, longe das abas e da ordem. Só o
+            estado vazio continua centralizado. */}
+        <div
+          className={cn(
+            "p-4 lg:p-8 w-full min-h-full flex justify-center",
+            contentCount > 0 ? "items-start" : "items-center"
+          )}
+        >
           {contentCount > 0 ? (
             // Scaled down to the column instead of cut off by it: at 1034px the column
             // is ~310px wide for a 415px card, and the 830px card fits nowhere under
@@ -192,6 +201,15 @@ export function WizardShell({
                 <p className="text-sm font-medium text-foreground mb-1">{tShell("emptyTitle")}</p>
                 <p className="text-sm text-muted-foreground">{t("enablePluginToPreview")}</p>
               </div>
+              {kind === "profile" && (
+                <Link
+                  href="/templates"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                >
+                  {tShell("startFromTemplate")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
             </motion.div>
           )}
         </div>
