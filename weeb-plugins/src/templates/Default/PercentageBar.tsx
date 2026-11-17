@@ -53,7 +53,8 @@ export function PercentageBar({ current, total, status }: PercentageBarProps): R
         ) : isCompleted ? (
           <FaCheck />
         ) : (
-          <span className="pr-2 font-bold text-white">{current ? `${percentage.toFixed(0)}%` : "?"}</span>
+          // Without a total the bar's width is a placeholder (50%), not progress.
+          <span className="pr-2 font-bold text-white">{current && total > 0 ? `${percentage.toFixed(0)}%` : "?"}</span>
         )}
       </span>
       {percentage < 97 && !isPlanTo && (
