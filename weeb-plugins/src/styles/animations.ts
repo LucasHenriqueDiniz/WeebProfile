@@ -48,9 +48,22 @@ function sectionIndexRules(): string {
   return rules.join("\n")
 }
 
+/*
+ * The count. AnimatedNumber puts the target on the number as an integer, `--weeb-to`
+ * (the value times `--weeb-scale`, 10^decimals), and the overlay prints `--weeb-p` (0 to 1,
+ * animated) of it: the integer part, and for numbers with decimals the remainder after
+ * the dot. The keyframes only ever animate --weeb-p between literal numbers: Firefox
+ * interpolates a keyframe that reads var() as a discrete step (0, then the end value at
+ * half time), and WebKit does not redraw a counter set straight from an animated
+ * property, only one computed through round()/mod() as below.
+ */
+const COUNT_N = "round(var(--weeb-to) * var(--weeb-p), 1)"
+const COUNT_INTEGER = `round(down, ${COUNT_N} / var(--weeb-scale, 1), 1)`
+const COUNT_FRACTION = `mod(${COUNT_N}, var(--weeb-scale, 1))`
+
 export const ANIMATIONS_CSS = `
-@property --weeb-n {
-  syntax: "<integer>";
+@property --weeb-p {
+  syntax: "<number>";
   inherits: false;
   initial-value: 0;
 }
@@ -68,18 +81,30 @@ export const ANIMATIONS_CSS = `
   background: var(--terminal-color-highlight, currentColor);
   visibility: hidden;
 }
+/* inline-block gives the number a box as tall as its line, so the overlay's line starts
+   where the number's does and its digits sit on the same baseline. On a plain inline the
+   box is only as tall as the glyphs: the overlay sat half the leading lower and jumped up
+   when the count ended (2px in the terminal style). A number does not wrap, so the
+   number at rest lays out as it does with animations off. */
 #svg-main .weeb-anim .weeb-num {
   position: relative;
+  display: inline-block;
 }
 #svg-main .weeb-anim .weeb-num::after {
-  content: counter(weeb-n) var(--weeb-unit, "");
-  counter-reset: weeb-n var(--weeb-n);
+  content: counter(weeb-i) var(--weeb-unit, "");
+  counter-reset: weeb-i ${COUNT_INTEGER} weeb-f ${COUNT_FRACTION};
   position: absolute;
   left: 0;
   top: 0;
   white-space: nowrap;
   -webkit-text-fill-color: currentColor;
   visibility: hidden;
+}
+#svg-main .weeb-anim .weeb-num-1::after {
+  content: counter(weeb-i) "." counter(weeb-f) var(--weeb-unit, "");
+}
+#svg-main .weeb-anim .weeb-num-2::after {
+  content: counter(weeb-i) "." counter(weeb-f, decimal-leading-zero) var(--weeb-unit, "");
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -175,11 +200,11 @@ ${sectionIndexRules()}
 }
 @keyframes weeb-count {
   from {
-    --weeb-n: 0;
+    --weeb-p: 0;
     visibility: visible;
   }
   to {
-    --weeb-n: var(--weeb-to);
+    --weeb-p: 1;
     visibility: visible;
   }
 }
