@@ -4,7 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
-import type { GithubConfig, GithubData } from "../types"
+import type { ContributionDay, ContributionWeek, GithubConfig, GithubData } from "../types"
 import { getCalendarColor } from "../utils"
 
 interface CalendarProps {
@@ -426,6 +426,64 @@ const DefaultCalendar = ({
   )
 }
 
+// The half terminal card fits 26 week columns.
+const TERMINAL_HALF_WEEKS = 26
+
+/**
+ * The week columns a half terminal card draws: the newest 26 that are not all in the future.
+ * GitHub returns the current year up to December 31, so the plain last 26 would be only
+ * empty future weeks until July. A year with fewer than 26 weeks up to today keeps its first 26.
+ */
+function halfWindow(weeks: ContributionWeek[], today: string): ContributionWeek[] {
+  let end = weeks.length
+  while (end > TERMINAL_HALF_WEEKS && (weeks[end - 1]?.contributionDays[0]?.date ?? "") > today) end--
+  return weeks.slice(Math.max(0, end - TERMINAL_HALF_WEEKS), end)
+}
+
+/** A week's days in rows Sunday to Saturday, `null` where the week has no day (the edges of a year). */
+function daysByWeekday(week: ContributionWeek): Array<ContributionDay | null> {
+  const days: Array<ContributionDay | null> = [null, null, null, null, null, null, null]
+  for (const day of week.contributionDays) {
+    const weekday = day.weekday ?? new Date(day.date).getUTCDay()
+    if (weekday >= 0 && weekday < 7) days[weekday] = day
+  }
+  return days
+}
+
+const getContributionSymbol = (count: number): string => {
+  if (count === 0) return "⬚"
+  if (count <= 3) return "▢"
+  if (count <= 6) return "▣"
+  if (count <= 9) return "▥"
+  return "▩"
+}
+
+/** One column per week, oldest on the left as on GitHub, each day on its weekday's row. */
+const TerminalWeeks = ({ weeks }: { weeks: ContributionWeek[] }) => (
+  <div className="inline-grid grid-flow-col gap-1 text-[0.75rem]">
+    {weeks.map((week, weekIndex) => (
+      <div key={weekIndex} className="grid grid-rows-7 w-[0.60rem]">
+        {daysByWeekday(week).map((day, weekday) =>
+          day ? (
+            <span
+              key={weekday}
+              title={`${day.contributionCount} contributions on ${new Date(day.date).toLocaleDateString()}`}
+              className="flex items-center justify-center text-baseline w-full h-full"
+              style={{
+                color: getCalendarColor(day.color || ""),
+              }}
+            >
+              {getContributionSymbol(day.contributionCount)}
+            </span>
+          ) : (
+            <span key={weekday} />
+          )
+        )}
+      </div>
+    ))}
+  </div>
+)
+
 const TerminalCalendar = ({
   data,
   size,
@@ -437,132 +495,49 @@ const TerminalCalendar = ({
 }) => {
   const isHalfMode = size === "half"
   const yearMode = config.calendar_year_mode || "current_year"
+  const today = new Date().toISOString().slice(0, 10)
 
-  const getContributionSymbol = (count: number): string => {
-    if (count === 0) return "⬚"
-    if (count <= 3) return "▢"
-    if (count <= 6) return "▣"
-    if (count <= 9) return "▥"
-    return "▩"
+  // Weeks in GitHub's order (oldest first). Full draws all of them, up to the 53 of a year
+  // that starts late in the week; half draws `halfWindow`.
+  const visibleWeeks = (weeks: ContributionWeek[]): ContributionWeek[] => {
+    let shown = weeks
+    if (yearMode === "last_6_months") {
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      sixMonthsAgo.setHours(0, 0, 0, 0)
+
+      // Days before the last 6 months leave the calendar, and weeks with none left go too
+      shown = weeks
+        .map((week) => ({
+          ...week,
+          contributionDays: week.contributionDays.filter((day) => new Date(day.date) >= sixMonthsAgo),
+        }))
+        .filter((week) => week.contributionDays.length > 0)
+    }
+    return isHalfMode ? halfWindow(shown, today) : shown
   }
 
   // Se há múltiplos anos, exibir cada ano separadamente
   if (data.years && data.years.length > 1) {
     return (
       <div className="flex flex-col gap-3">
-        {data.years.map((yearData) => {
-          let weeks = yearData.weeks.slice().reverse()
-
-          // If last_6_months, filter weeks and days (shouldn't happen in multi-year, but just in case)
-          if (yearMode === "last_6_months") {
-            const sixMonthsAgo = new Date()
-            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-            sixMonthsAgo.setHours(0, 0, 0, 0)
-
-            weeks = weeks
-              .map((week: any) => {
-                const filteredDays = week.contributionDays.filter((day: any) => {
-                  const dayDate = new Date(day.date)
-                  return dayDate >= sixMonthsAgo
-                })
-                if (filteredDays.length === 0) return null
-                return {
-                  ...week,
-                  contributionDays: filteredDays,
-                }
-              })
-              .filter((week: any) => week !== null)
-          } else if (isHalfMode) {
-            weeks = weeks.slice(-26)
-          }
-
-          return (
-            <div key={yearData.year} className="flex flex-col gap-2">
-              <div className="text-terminal-warning text-sm font-semibold">
-                {yearData.year} ({yearData.totalContributions} contributions)
-              </div>
-              <div className="inline-grid grid-flow-col gap-1 text-[0.75rem]">
-                {weeks.map((week, weekIndex) => (
-                  <div key={weekIndex} className="grid grid-rows-7 w-[0.60rem]">
-                    {week.contributionDays.map((day, dayIndex) => (
-                      <span
-                        key={`${weekIndex}-${dayIndex}`}
-                        title={`${day.contributionCount} contributions on ${new Date(day.date).toLocaleDateString()}`}
-                        className="flex items-center justify-center text-baseline w-full h-full"
-                        style={{
-                          color: getCalendarColor(day.color || ""),
-                        }}
-                      >
-                        {getContributionSymbol(day.contributionCount)}
-                      </span>
-                    ))}
-                  </div>
-                ))}
-              </div>
+        {data.years.map((yearData) => (
+          <div key={yearData.year} className="flex flex-col gap-2">
+            <div className="text-terminal-warning text-sm font-semibold">
+              {yearData.year} ({yearData.totalContributions} contributions)
             </div>
-          )
-        })}
+            <TerminalWeeks weeks={visibleWeeks(yearData.weeks)} />
+          </div>
+        ))}
         <div className="text-terminal-muted text-right">Total: {data.totalContributions} contributions</div>
       </div>
     )
   }
 
   // Exibição padrão (um ano ou todos os anos combinados)
-  let weeks = data.weeks.slice().reverse()
-
-  // If last_6_months, filter weeks and days within those weeks
-  if (yearMode === "last_6_months") {
-    const sixMonthsAgo = new Date()
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-    sixMonthsAgo.setHours(0, 0, 0, 0)
-
-    weeks = weeks
-      .map((week: any) => {
-        // Filter days within the week to only include last 6 months
-        const filteredDays = week.contributionDays.filter((day: any) => {
-          const dayDate = new Date(day.date)
-          return dayDate >= sixMonthsAgo
-        })
-
-        // Only include weeks that have at least one day in the last 6 months
-        if (filteredDays.length === 0) return null
-
-        return {
-          ...week,
-          contributionDays: filteredDays,
-        }
-      })
-      .filter((week: any) => week !== null)
-  } else {
-    // Para outros modos no half, mostrar apenas últimas 26 semanas
-    if (isHalfMode) {
-      weeks = weeks.slice(-26)
-    } else if (yearMode !== "full") {
-      // Para modos normais em full, mostrar até 52 semanas
-      weeks = weeks.slice(-52)
-    }
-  }
-
   return (
     <div className="flex flex-col gap-2">
-      <div className="inline-grid grid-flow-col gap-1 text-[0.75rem]">
-        {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="grid grid-rows-7 w-[0.60rem]">
-            {week.contributionDays.map((day, dayIndex) => (
-              <span
-                key={`${weekIndex}-${dayIndex}`}
-                title={`${day.contributionCount} contributions on ${new Date(day.date).toLocaleDateString()}`}
-                className="flex items-center justify-center text-baseline w-full h-full"
-                style={{
-                  color: getCalendarColor(day.color || ""),
-                }}
-              >
-                {getContributionSymbol(day.contributionCount)}
-              </span>
-            ))}
-          </div>
-        ))}
-      </div>
+      <TerminalWeeks weeks={visibleWeeks(data.weeks)} />
       <div className="text-terminal-muted text-right">
         {data.totalContributions} contributions in the last{" "}
         {yearMode === "last_6_months"
