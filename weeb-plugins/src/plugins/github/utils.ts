@@ -1,3 +1,5 @@
+import type { ContributionWeek } from "./types"
+
 /**
  * Utilitários do plugin GitHub
  */
@@ -94,4 +96,33 @@ export function getCalendarColor(color: string | undefined): string {
     // Fallback para cor vazia se houver erro
     return "rgba(128, 128, 128, 0.25)"
   }
+}
+
+/**
+ * First day of the `last_6_months` calendar, as "YYYY-MM-DD": six months before `now`'s UTC
+ * date. The fetch asks GitHub for the days from it, up to now.
+ */
+export function lastSixMonthsStart(now: Date): string {
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 6, now.getUTCDate())).toISOString().slice(0, 10)
+}
+
+/**
+ * First day the renderers keep in `last_6_months`, as "YYYY-MM-DD": six months before the
+ * calendar's newest day that is not after today (UTC), or "" when it has none.
+ *
+ * A fetched calendar ends today, so this is the day the fetch started from. Counted from the
+ * clock alone, the dashboard preview drew no days: its mock is all of 2025. Counted from the
+ * newest day alone, a calendar that runs to December 31, as GitHub returns the current year,
+ * kept only July to December. Comparing GitHub's date strings, not local midnight, keeps the
+ * first day in any time zone: in São Paulo (UTC-3) local midnight fell after it.
+ */
+export function firstDayOfLastSixMonths(weeks: ContributionWeek[], now: Date = new Date()): string {
+  const today = now.toISOString().slice(0, 10)
+  let newest = ""
+  for (const week of weeks) {
+    for (const day of week.contributionDays) {
+      if (day.date > newest && day.date <= today) newest = day.date
+    }
+  }
+  return newest ? lastSixMonthsStart(new Date(`${newest}T00:00:00Z`)) : ""
 }
