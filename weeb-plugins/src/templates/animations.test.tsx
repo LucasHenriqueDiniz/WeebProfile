@@ -3,7 +3,7 @@ import { renderToString } from "react-dom/server"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { PluginManager } from "../plugins/manager"
 import { ANIMATIONS_CSS } from "../styles/animations"
-import { AnimatedNumber, parseCountTarget } from "./AnimatedNumber"
+import { AnimatedNumber, MAX_COUNT_DECIMALS, parseCountTarget } from "./AnimatedNumber"
 import { ANIMATION_BUDGET_S, ANIMATION_TIMING, AnimationsProvider, animationTimeline, sectionTail } from "./animations"
 import { HorizontalMultipleItemsBar } from "./Default/HorizontalMultipleItemsBar"
 import { PercentageBar } from "./Default/PercentageBar"
@@ -59,8 +59,24 @@ describe("ANIMATIONS_CSS", () => {
     const keyframes = [...ANIMATIONS_CSS.matchAll(/@keyframes [\w-]+ \{([\s\S]*?)\n\}/g)].map((m) => m[1])
     const properties = new Set(keyframes.flatMap((body) => [...body!.matchAll(/([\w-]+):/g)].map((m) => m[1])))
     expect([...properties].sort()).toEqual(
-      ["--weeb-n", "-webkit-text-fill-color", "clip-path", "left", "opacity", "transform", "visibility"].sort()
+      ["--weeb-p", "-webkit-text-fill-color", "clip-path", "left", "opacity", "transform", "visibility"].sort()
     )
+  })
+
+  // Firefox turns a keyframe that reads var() into a discrete step: the counter showed 0,
+  // then the end value at half time, and never counted.
+  it("keeps var() out of the keyframes", () => {
+    const keyframes = [...ANIMATIONS_CSS.matchAll(/@keyframes [\w-]+ \{([\s\S]*?)\n\}/g)].map((m) => m[1])
+    expect(keyframes.length).toBeGreaterThan(0)
+    for (const body of keyframes) expect(body).not.toContain("var(")
+  })
+
+  it("has a counter layout for every number of decimals it counts", () => {
+    for (let decimals = 1; decimals <= MAX_COUNT_DECIMALS; decimals++) {
+      expect(ANIMATIONS_CSS).toMatch(
+        new RegExp(`\\.weeb-num-${decimals}::after \\{\\s*content: counter\\(weeb-i\\) "\\."`)
+      )
+    }
   })
 
   it("takes its durations from ANIMATION_TIMING", () => {
@@ -131,25 +147,51 @@ describe("with animations on", () => {
   it("keeps the real number in the markup, under the counter", () => {
     const html = render(<AnimatedNumber value="155.3K" />, true)
     expect(html).toContain(">155.3K</span>")
-    expect(html).toContain("--weeb-to:155")
+    expect(html).toContain('class="weeb-num weeb-num-1"')
+    expect(html).toContain("--weeb-to:1553;--weeb-scale:10")
     expect(html).toContain("--weeb-unit:&quot;K&quot;")
+  })
+
+  it("counts an integer without a scale", () => {
+    const html = render(<AnimatedNumber value="273" />, true)
+    expect(html).toBe('<span class="weeb-num" style="--weeb-to:273">273</span>')
   })
 })
 
 describe("parseCountTarget", () => {
   it.each([
-    ["523", { to: 523, unit: "" }],
-    ["1,234", { to: 1234, unit: "" }],
-    ["12.3K", { to: 12, unit: "K" }],
-    ["45.2%", { to: 45, unit: "%" }],
+    ["523", { to: 523, decimals: 0, unit: "" }],
+    ["1,234", { to: 1234, decimals: 0, unit: "" }],
+    ["12.3K", { to: 123, decimals: 1, unit: "K" }],
+    ["45.2%", { to: 452, decimals: 1, unit: "%" }],
+    ["68.2", { to: 682, decimals: 1, unit: "" }],
+    ["6.05", { to: 605, decimals: 2, unit: "" }],
+    ["0.5", { to: 5, decimals: 1, unit: "" }],
   ])("counts %s", (text, target) => {
     expect(parseCountTarget(text)).toEqual(target)
   })
 
-  // Text that is not a plain number is left alone rather than counted wrong.
-  it.each(["0", "6 years", "70.4% • 4.4M lines", "MIT License (14)", "", "-3"])("leaves %j alone", (text) => {
-    expect(parseCountTarget(text)).toBeNull()
-  })
+  // What the overlay prints once the count is over (styles/animations.ts: the integer
+  // part, then the remainder padded to the decimals) has to be the text itself, or the
+  // number jumps when the real text takes over.
+  it.each(["523", "68.2", "159.5", "6.05", "6.47", "0.5", "13.1K", "45.2%", "10.00"])(
+    "ends the count of %s on the text itself",
+    (text) => {
+      const { to, decimals, unit } = parseCountTarget(text)!
+      const scale = 10 ** decimals
+      const fraction = decimals ? "." + String(to % scale).padStart(decimals, "0") : ""
+      expect(`${Math.floor(to / scale)}${fraction}${unit}`).toBe(text)
+    }
+  )
+
+  // Text that is not a plain number, or one the counter cannot print as is, is left
+  // alone rather than counted wrong.
+  it.each(["0", "0.0", "6 years", "70.4% • 4.4M lines", "MIT License (14)", "", "-3", "1.234", "8388609", "838860.9"])(
+    "leaves %j alone",
+    (text) => {
+      expect(parseCountTarget(text)).toBeNull()
+    }
+  )
 })
 
 describe("section slots", () => {

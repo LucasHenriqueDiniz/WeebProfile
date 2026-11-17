@@ -879,12 +879,12 @@ describe("POST / — opt-in animations", () => {
     expect(on.svg).toMatch(/--weeb-step:0\.\d+s/)
   })
 
-  // The SVG is parsed as XML: a raw "<integer>" from @property would open an element
+  // The SVG is parsed as XML: a raw "<number>" from @property would open an element
   // and break the whole image.
   it("escapes the stylesheet for the XML parser", async () => {
     const { body } = await post(card({ animations: true }))
-    expect(body.svg).toContain('syntax: "&lt;integer>"')
-    expect(body.svg).not.toContain("<integer>")
+    expect(body.svg).toContain('syntax: "&lt;number>"')
+    expect(body.svg).not.toContain("<number>")
   })
 
   it("does not animate on anything but a literal true", async () => {

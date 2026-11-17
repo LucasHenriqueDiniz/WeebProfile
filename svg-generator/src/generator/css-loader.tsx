@@ -66,7 +66,7 @@ ${themeVariablesCss}
     <>
       <style>{escapeStyleText(themeVariablesCssBlock)}</style>
       <style>{completeCSS}</style>
-      {/* Escaped like the request-supplied blocks: @property's syntax is "<integer>",
+      {/* Escaped like the request-supplied blocks: @property's syntax is "<number>",
           which the XML parser would otherwise read as an element. */}
       {config.animations && <style>{escapeStyleText(ANIMATIONS_CSS)}</style>}
       {config.customCss && <style>{escapeStyleText(config.customCss)}</style>}

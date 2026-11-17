@@ -6,22 +6,45 @@
  * count runs. When the count ends both effects stop applying, so the number at rest is
  * the real text, exactly as with animations off.
  *
- * A CSS counter only prints integers, so "12.3K" counts 0K..12K and then settles on
- * the real "12.3K". Anything that is not a plain number is left alone.
+ * A CSS counter only prints integers, so a number with decimals counts as an integer
+ * scaled by 10^decimals: "68.2" counts 0..682 and prints the integer part, a dot and the
+ * decimal part, "0.0" up to "68.2". Text with more decimals than the counter prints, or
+ * anything that is not a plain number, is left alone rather than counted wrong.
  */
 
 import React from "react"
 import { useAnimations } from "./animations"
 
-const NUMBER = /^(\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?([KMBT%]?)$/
+/** Decimals the counter prints; the stylesheet has a content rule for each. */
+export const MAX_COUNT_DECIMALS = 2
 
-/** Integer to count to and the unit printed after it, or null for text that is not a number. */
-export function parseCountTarget(text: string): { to: number; unit: string } | null {
+/**
+ * Largest value counted (the integer, decimals included). Above 2^23 Firefox 150 gets the
+ * last digit of round() wrong: it printed 8388609 and 16777215 as other numbers, so the
+ * count would not land on the text. Measured exact up to it, and in Chromium and WebKit.
+ */
+const MAX_COUNT = 2 ** 23
+
+const NUMBER = /^(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d+))?([KMBT%]?)$/
+
+export interface CountTarget {
+  /** Value to count to, as an integer: the number times 10^decimals. */
+  to: number
+  /** Digits after the dot, printed while counting as they are in the text. */
+  decimals: number
+  /** Printed after the number ("K", "%"). */
+  unit: string
+}
+
+/** What to count to, or null for text that is not a number the counter can print as is. */
+export function parseCountTarget(text: string): CountTarget | null {
   const match = NUMBER.exec(text.trim())
   if (!match?.[1]) return null
-  const to = Number(match[1].replace(/,/g, ""))
-  if (!Number.isSafeInteger(to) || to <= 0) return null
-  return { to, unit: match[2] ?? "" }
+  const fraction = match[2] ?? ""
+  if (fraction.length > MAX_COUNT_DECIMALS) return null
+  const to = Number(match[1].replace(/,/g, "") + fraction)
+  if (!Number.isSafeInteger(to) || to <= 0 || to > MAX_COUNT) return null
+  return { to, decimals: fraction.length, unit: match[3] ?? "" }
 }
 
 export function AnimatedNumber({ value }: { value: string | number }): React.ReactElement {
@@ -32,10 +55,11 @@ export function AnimatedNumber({ value }: { value: string | number }): React.Rea
 
   return (
     <span
-      className="weeb-num"
+      className={target.decimals ? `weeb-num weeb-num-${target.decimals}` : "weeb-num"}
       style={
         {
           "--weeb-to": target.to,
+          ...(target.decimals ? { "--weeb-scale": 10 ** target.decimals } : {}),
           ...(target.unit ? { "--weeb-unit": JSON.stringify(target.unit) } : {}),
         } as React.CSSProperties
       }

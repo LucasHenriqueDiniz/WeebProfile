@@ -24,12 +24,12 @@ chave desligada nada muda no markup — o SVG sai **idêntico byte a byte** ao d
 
 ## O que anima
 
-| efeito                                            | estilo   | como                                                                          |
-| ------------------------------------------------- | -------- | ----------------------------------------------------------------------------- |
-| comando digitado com cursor, saída aparece depois | terminal | `clip-path` em `steps(n)`, `n` = caracteres do comando                        |
-| seções entram em sequência (fade + 6px)           | default  | `opacity`/`transform`                                                         |
-| barras enchem da esquerda                         | ambos    | `clip-path` em `.weeb-bar`                                                    |
-| números contam de 0                               | ambos    | `@property --weeb-n` + `counter()` num pseudo-elemento por cima do texto real |
+| efeito                                            | estilo   | como                                                                                  |
+| ------------------------------------------------- | -------- | ------------------------------------------------------------------------------------- |
+| comando digitado com cursor, saída aparece depois | terminal | `clip-path` em `steps(n)`, `n` = caracteres do comando                                |
+| seções entram em sequência (fade + 6px)           | default  | `opacity`/`transform`                                                                 |
+| barras enchem da esquerda                         | ambos    | `clip-path` em `.weeb-bar`                                                            |
+| números contam de 0                               | ambos    | `@property --weeb-p` (0 a 1) + `counter()` num pseudo-elemento por cima do texto real |
 
 Regras que todo efeito segue (testadas em `animations.test.tsx`):
 
@@ -97,10 +97,29 @@ abrindo a página e capturando a imagem desde o carregamento:
 - **`page.emulateMedia({ reducedMotion })` não chega no documento de um `<img>`** no Chromium
   headless: o SVG continua vendo `no-preference`. Para medir o caso `reduce`, lançar o
   Chromium com `--force-prefers-reduced-motion`.
-- **O XML parser lê `<integer>` como elemento.** O `syntax` do `@property` passa por
+- **O XML parser lê `<number>` como elemento.** O `syntax` do `@property` passa por
   `escapeStyleText` no gerador, como o `customCss`.
-- **Contador só imprime inteiros.** `12.3K` conta `0K…12K` e assenta em `12.3K` no fim.
-  Texto que não é número puro (`70.4% • 4.4M lines`, `6 years`) não conta.
+- **Número com decimal conta com as mesmas casas.** Contador CSS só imprime inteiro, então
+  `AnimatedNumber` põe o alvo escalado (`68.2` → `--weeb-to: 682`, `--weeb-scale: 10`) e o
+  pseudo-elemento imprime a parte inteira, o ponto e o resto (`decimal-leading-zero` com 2
+  casas): `0.0 … 68.2`, `0.00 … 6.05`, `0.0K … 13.1K`. Até 16/11/2026 contava só a parte
+  inteira (`0 … 68`) e saltava para `68.2` no fim. Texto que não é número puro
+  (`70.4% • 4.4M lines`, `6 years`), com mais de 2 casas ou acima de 2^23 (`8388608`,
+  contando as casas) não conta: acima disso o Firefox 150 erra o último dígito do `round()`
+  (`16777215` sai `16777216`).
+- **Keyframe da contagem só com valor literal.** O `weeb-count` anima `--weeb-p` de `0` a `1`
+  e a conta (`round()`/`mod()` sobre `--weeb-to`) fica no `counter-reset`. Medido em `<img>`
+  (Playwright 1.60) com o desenho anterior (`--weeb-n` de `0` a `var(--weeb-to)`, contador
+  direto da propriedade): o Firefox 150 interpolava em degrau (`0`, e o valor final na
+  metade) e o WebKit 26.4 nunca redesenhava (`0` até o fim). Só o Chromium contava.
+- **O número é `inline-block`.** Assim o pseudo-elemento começa na mesma linha do texto e cai
+  na mesma linha de base. Como inline, ele ficava meia entrelinha abaixo (2 px no terminal) e
+  subia no fim da contagem.
+- **Separador de milhar não entra na contagem.** `1,234` conta `0 … 1234` e assenta em
+  `1,234`. Hoje só o `codeforces` (problemas por dificuldade, `toLocaleString`) pode mandar
+  número com vírgula para o `AnimatedNumber`, e só a partir de 1.000.
+- **Fonte proporcional:** um valor intermediário pode ser mais largo que o final (`3.2K`
+  contra `4.1K` na Poppins) e encostar no rótulo durante a contagem.
 - **Safari e o app do GitHub não foram testados.** Sem `:has()` ou sem `@property`, o pior
   caso é animar menos; o quadro final continua sendo o card estático.
 
