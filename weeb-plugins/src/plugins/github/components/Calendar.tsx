@@ -452,11 +452,25 @@ const getContributionSymbol = (count: number): string => {
   return "▩"
 }
 
+/**
+ * The 7 weekday rows of a week column, each a fixed 14px. The symbols fall back to another
+ * font, and with rows sized by their content Firefox and WebKit drew each line 1px taller
+ * than Chrome (7px per grid). A fixed track keeps the grid 98px in all three, the height
+ * `calculateHeight` counts.
+ */
+const TERMINAL_WEEK_ROWS = "repeat(7, 14px)"
+
+/**
+ * The "N contributions" and "Total" line. With the font's own line height it was 19px in
+ * Chrome and Firefox and 18px in WebKit; `calculateHeight` counts 19.
+ */
+const TERMINAL_TOTAL_LINE: React.CSSProperties = { lineHeight: "19px" }
+
 /** One column per week, oldest on the left as on GitHub, each day on its weekday's row. */
 const TerminalWeeks = ({ weeks }: { weeks: ContributionWeek[] }) => (
   <div className="inline-grid grid-flow-col gap-1 text-[0.75rem]">
     {weeks.map((week, weekIndex) => (
-      <div key={weekIndex} className="grid grid-rows-7 w-[0.60rem]">
+      <div key={weekIndex} className="grid w-[0.60rem]" style={{ gridTemplateRows: TERMINAL_WEEK_ROWS }}>
         {daysByWeekday(week).map((day, weekday) =>
           day ? (
             <span
@@ -521,7 +535,9 @@ const TerminalCalendar = ({
             <TerminalWeeks weeks={visibleWeeks(yearData.weeks)} />
           </div>
         ))}
-        <div className="text-terminal-muted text-right">Total: {data.totalContributions} contributions</div>
+        <div className="text-terminal-muted text-right" style={TERMINAL_TOTAL_LINE}>
+          Total: {data.totalContributions} contributions
+        </div>
       </div>
     )
   }
@@ -530,7 +546,7 @@ const TerminalCalendar = ({
   return (
     <div className="flex flex-col gap-2">
       <TerminalWeeks weeks={visibleWeeks(data.weeks)} />
-      <div className="text-terminal-muted text-right">
+      <div className="text-terminal-muted text-right" style={TERMINAL_TOTAL_LINE}>
         {data.totalContributions} contributions in the last{" "}
         {yearMode === "last_6_months"
           ? "6 months"

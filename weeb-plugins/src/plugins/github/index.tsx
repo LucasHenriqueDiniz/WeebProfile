@@ -31,11 +31,10 @@ function multiYearCalendarHeight(
   isTerminal: boolean
 ): number {
   if (isTerminal) {
-    // Command and "Total" line (51), then per year: label (20) + gap (8) + the grid + gap (12).
-    // The grid is 7 lines of 14px in Chromium, but its symbols fall back to another font and
-    // Firefox and WebKit draw each line 1px taller: 145px per year there, 138 in Chromium.
-    // Sized to the taller ones, so Chromium keeps 7px of room per year.
-    return 51 + years.length * 145
+    // Command and "Total" line (51), then per year: label (20) + gap (8) + the grid's 7 rows
+    // of 14px + gap (12). The rows and the "Total" line have fixed heights in Calendar.tsx, so
+    // the symbols' fallback font no longer makes the grid taller in Firefox and WebKit.
+    return 51 + years.length * (20 + 8 + 7 * 14 + 12)
   }
 
   const yearMode = cfg.calendar_year_mode ?? "current_year"
@@ -104,11 +103,10 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           if (years > 1) {
             h += multiYearCalendarHeight(cfg, gh.calendar.years ?? [], size, isTerminal)
           } else if (isTerminal) {
-            // Command, gap and "N contributions" line (59), plus the grid when there are weeks
-            // (none when the fetch failed). The grid is 7 lines of 14px in Chromium, but its
-            // symbols fall back to another font and Firefox and WebKit draw it 7 and 6px
-            // taller, so it keeps 19px of room.
-            h += 59 + ((gh.calendar?.weeks?.length ?? 0) > 0 ? 7 * 14 + 19 : 0)
+            // Command, gap and "N contributions" line (59), plus the grid's 7 rows of 14px when
+            // there are weeks (none when the fetch failed). The rows and the line have fixed
+            // heights in Calendar.tsx, the same in Chrome, Firefox and WebKit.
+            h += 59 + ((gh.calendar?.weeks?.length ?? 0) > 0 ? 7 * 14 : 0)
           } else {
             // Measured in Chromium against Calendar.tsx. Half splits the year in two rows of
             // weeks past 26 weeks (never last_6_months), the rows 16px apart. Each row is 7

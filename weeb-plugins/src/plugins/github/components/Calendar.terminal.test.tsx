@@ -55,13 +55,16 @@ function render(calendar: Calendar, size: "half" | "full", yearMode: GithubConfi
   )
 }
 
+/** The opening tag of a week column, whatever its other classes and style. */
+const WEEK_COLUMN = /<div class="[^"]*w-\[0\.60rem\][^"]*"[^>]*>/g
+
 /**
  * The week columns left to right, each as its seven rows top to bottom (Sunday first): the
  * count of the day drawn there, or null for an empty row.
  */
 function columns(html: string): Array<Array<number | null>> {
   return html
-    .split('class="grid grid-rows-7 w-[0.60rem]">')
+    .split(WEEK_COLUMN)
     .slice(1)
     .map((column) =>
       [...column.split("</div>")[0]!.matchAll(/<span(?: title="(\d+) contributions on [^"]*")?/g)].map((m) =>
@@ -153,5 +156,24 @@ describe("GithubCalendar terminal style", () => {
     const html = render(calendarOf(years), size, "full")
     expect(columns(html).every((rows) => rows.length === 7)).toBe(true)
     expect(daysOffTheirRow(html)).toBe(0)
+  })
+
+  // The symbols fall back to another font, and Firefox and WebKit draw its lines 1px taller
+  // than Chrome. Rows sized by their content grew with them (164px against Chrome's 157 for
+  // one year), and WebKit drew the total line 1px shorter. calculateHeight counts 7 rows of
+  // 14px and a 19px total line.
+  it.each([
+    ["half", 1],
+    ["full", 1],
+    ["half", 3],
+    ["full", 3],
+  ] as const)("draws the grid in 7 fixed rows of 14px and the total in a 19px line, %s, %i year(s)", (size, count) => {
+    today("2026-11-17")
+    const years = [2026, 2025, 2024].slice(0, count).map((year) => ({ year, weeks: yearWeeks(year) }))
+    const html = render(calendarOf(years), size, count > 1 ? "full" : "current_year")
+    const tags = html.match(WEEK_COLUMN) ?? []
+    expect(tags.length).toBeGreaterThan(0)
+    expect(tags.filter((tag) => !tag.includes('style="grid-template-rows:repeat(7, 14px)"'))).toEqual([])
+    expect(html).toContain('<div class="text-terminal-muted text-right" style="line-height:19px">')
   })
 })
