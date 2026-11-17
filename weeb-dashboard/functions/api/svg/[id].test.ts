@@ -79,6 +79,25 @@ describe("GET /api/svg/:id", () => {
     expect(state.readIds).toEqual(["svg-1"])
   })
 
+  // The animations play when the browser decodes the image, so a reload has to fetch a
+  // fresh copy; camo's cache keeps the origin at one request per minute (s-maxage).
+  it("makes the browser fetch the card again on reload, while camo keeps it a minute", async () => {
+    const response = await get("svg-1.svg")
+    const directives = new Map(
+      (response.headers.get("Cache-Control") ?? "").split(",").map((part) => {
+        const [name, value] = part.trim().toLowerCase().split("=")
+        return [name, value] as const
+      })
+    )
+
+    expect(directives.has("no-cache")).toBe(true)
+    expect(Number(directives.get("max-age") ?? 0)).toBe(0)
+    expect(Number(directives.get("s-maxage"))).toBeGreaterThanOrEqual(60)
+    // A 304 keeps the image at rest in WebKit.
+    expect(response.headers.get("ETag")).toBeNull()
+    expect(response.headers.get("Last-Modified")).toBeNull()
+  })
+
   it("is the handler behind /svg/:id.svg, for GET and HEAD", async () => {
     const alias = await import("../../svg/[id]")
     const route = await import("./[id]")

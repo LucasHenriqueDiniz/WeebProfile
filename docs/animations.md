@@ -104,6 +104,50 @@ abrindo a página e capturando a imagem desde o carregamento:
 - **Safari e o app do GitHub não foram testados.** Sem `:has()` ou sem `@property`, o pior
   caso é animar menos; o quadro final continua sendo o card estático.
 
+## Replay ao recarregar o README
+
+A animação toca quando o browser decodifica a imagem. Reaproveitar a cópia já decodificada
+mostra o card em repouso, então o que decide se um reload anima de novo é o `Cache-Control`
+da rota `/svg/<id>.svg` (`SVG_CACHE_CONTROL` em `functions/api/svg/[id].ts`).
+
+Medido em 16/11/2026, Playwright 1.60, card real de 491 KB em `<img>`, `page.reload()` e nova
+navegação ~5 s depois do primeiro load, 3 runs por célula (Firefox: 6), controle (primeiro
+load) animando em todas. "7×" é a mesma URL 7 vezes na página, como no README do autor.
+
+| engine       | `public, max-age=60, s-maxage=60` (antes) | `no-cache, s-maxage=60` (agora) |
+| ------------ | ----------------------------------------- | ------------------------------- |
+| Chromium 151 | reload 3/3, mas 0/3 com 7×                | 3/3 com 1× e 7×                 |
+| WebKit 26.4  | 0/3 (reload e navegação, 1× e 7×)         | 3/3                             |
+| Firefox 150  | reload 6/6, navegação 0/6                 | 6/6 nos dois                    |
+
+`no-cache`, `no-store` e `max-age=0, must-revalidate` animam igual no browser. A diferença está
+no camo do GitHub, medido com origens que devolvem cada header:
+
+| origem envia                           | camo entrega ao browser    | cache do camo (Fastly)       |
+| -------------------------------------- | -------------------------- | ---------------------------- |
+| `max-age=60` / `no-cache` / `no-store` | o mesmo header             | vai à origem a cada ~61 s    |
+| `no-cache, s-maxage=60`                | o mesmo header             | vai à origem a cada ~61 s    |
+| `max-age=0, must-revalidate`           | o mesmo header             | vai à origem em toda request |
+| sem `Cache-Control`                    | `public, max-age=31536000` | guarda                       |
+| qualquer um + `ETag`                   | sem o `ETag`               | —                            |
+
+- **Custo na origem pelo GitHub:** igual ao de antes, no máximo uma request por card por cache
+  do camo por minuto. A view repetida em menos de 60 s passa a baixar o card do cache do camo
+  (0,12 s para 491 KB), não da nossa rota.
+- **Embed fora do GitHub:** o browser fala direto com a rota, e cada view vira uma invocação
+  (8 ms de CPU, 1 linha do D1, 1 GET no R2). A Cloudflare não guarda a resposta da Function.
+  As prévias do dashboard usam a URL do R2, não a rota.
+- **Sem `ETag` nem `Last-Modified`:** com 304 o WebKit mantém o card em repouso (4/4).
+- **Por que o `s-maxage` explícito:** o camo guarda `no-cache` por 60 s, mas isso não está
+  documentado. O `s-maxage=60` fixa o prazo de hoje.
+- **Ponta a ponta pelo camo (preview do PR #62, 16/11/2026):** página local com `<img>` apontando
+  para URLs do camo assinadas pela API de markdown do GitHub, uma URL nova por run, 2 runs por
+  engine × 1 e 7 cópias. Com o header novo, reload e nova navegação animaram 24/24, e o tail do
+  deploy registrou 1 request na origem por run (só o primeiro load; reload e navegação vieram do
+  cache do camo). Produção com o header antigo, no mesmo teste: Chromium 4/4 com 1× e 0/4 com 7×,
+  WebKit 0/8, Firefox reload 4/4 e navegação 0/4.
+- **Não medido:** navegação interna do GitHub (Turbo) entre abas do perfil, e Safari de verdade.
+
 ## Próximo passo: carrossel numa lista
 
 Não implementado. A ideia (lab `04-carousel.svg`): N itens de uma lista (ex.: LastFM
