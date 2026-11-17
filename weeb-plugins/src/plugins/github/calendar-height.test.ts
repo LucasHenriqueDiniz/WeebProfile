@@ -17,13 +17,20 @@ import type { GithubData } from "./types"
  * the terminal style has no title or month labels to hide.
  *
  * Tolerance is the audit's: never shorter than the content, at most 20px taller.
+ *
+ * The terminal rows hold Firefox 150's height, not Chromium's. The grid's symbols fall back
+ * to another font, and Firefox and WebKit 26.4 (Playwright 1.60, same method) draw each of
+ * its 7 lines 1px taller: 145px per year against Chromium's 138, so a height measured in
+ * Chromium alone cut 7px per year there (21px with 3 years, the whole "Total" line). WebKit
+ * measured 1px under Firefox, and the glyph mix (all ⬚ to all ▩, or real data) did not
+ * change any of the three.
  */
 
 type Style = "default" | "terminal"
 type Size = "half" | "full"
 type Hide = "title" | "months" | "weeks" | "legends"
 
-// [style, size, years ("short": 3 years, the first with 20 weeks), hidden, measured px]
+// [style, size, years ("short": 3 years, the first with 20 weeks), hidden, measured px (terminal: Firefox)]
 const MEASURED: Array<[Style, Size, number | "short", Hide[], number]> = [
   ["default", "half", 2, [], 646],
   ["default", "half", 2, ["title"], 606],
@@ -63,20 +70,20 @@ const MEASURED: Array<[Style, Size, number | "short", Hide[], number]> = [
   ["default", "full", 10, ["title", "months"], 1420],
   ["default", "full", "short", [], 540],
   ["default", "full", "short", ["title", "months"], 437],
-  ["terminal", "half", 2, [], 327],
-  ["terminal", "half", 3, [], 465],
-  ["terminal", "half", 3, ["title", "months", "weeks", "legends"], 465],
-  ["terminal", "half", 4, [], 603],
-  ["terminal", "half", 5, [], 741],
-  ["terminal", "half", 10, [], 1431],
-  ["terminal", "half", "short", [], 465],
-  ["terminal", "full", 2, [], 327],
-  ["terminal", "full", 3, [], 465],
-  ["terminal", "full", 3, ["title", "months", "weeks", "legends"], 465],
-  ["terminal", "full", 4, [], 603],
-  ["terminal", "full", 5, [], 741],
-  ["terminal", "full", 10, [], 1431],
-  ["terminal", "full", "short", [], 465],
+  ["terminal", "half", 2, [], 341],
+  ["terminal", "half", 3, [], 486],
+  ["terminal", "half", 3, ["title", "months", "weeks", "legends"], 486],
+  ["terminal", "half", 4, [], 631],
+  ["terminal", "half", 5, [], 776],
+  ["terminal", "half", 10, [], 1501],
+  ["terminal", "half", "short", [], 486],
+  ["terminal", "full", 2, [], 341],
+  ["terminal", "full", 3, [], 486],
+  ["terminal", "full", 3, ["title", "months", "weeks", "legends"], 486],
+  ["terminal", "full", 4, [], 631],
+  ["terminal", "full", 5, [], 776],
+  ["terminal", "full", 10, [], 1501],
+  ["terminal", "full", "short", [], 486],
 ]
 
 const plugin = PluginManager.getInstance().get("github")!

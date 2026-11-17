@@ -17,7 +17,8 @@ type CalendarYear = NonNullable<GithubData["calendar"]["years"]>[number]
 
 /**
  * Height of the calendar when it draws one block per year (`calendar_year_mode: "full"`
- * with more than one year), measured in Chromium against the layout of Calendar.tsx.
+ * with more than one year), measured in Chromium, Firefox and WebKit against the layout of
+ * Calendar.tsx.
  *
  * The default style draws each year as its label plus one row of weeks, or two in half
  * mode once the year has more than 26 weeks. The terminal style draws one grid per year
@@ -30,8 +31,11 @@ function multiYearCalendarHeight(
   isTerminal: boolean
 ): number {
   if (isTerminal) {
-    // Command and "Total" line, then per year: label (20) + gap (8) + 7 lines of 14px + gap (12)
-    return 51 + years.length * 138
+    // Command and "Total" line (51), then per year: label (20) + gap (8) + the grid + gap (12).
+    // The grid is 7 lines of 14px in Chromium, but its symbols fall back to another font and
+    // Firefox and WebKit draw each line 1px taller: 145px per year there, 138 in Chromium.
+    // Sized to the taller ones, so Chromium keeps 7px of room per year.
+    return 51 + years.length * 145
   }
 
   const yearMode = cfg.calendar_year_mode ?? "current_year"
