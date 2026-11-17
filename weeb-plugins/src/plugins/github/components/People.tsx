@@ -30,7 +30,9 @@ const DefaultPeople = ({ data, max }: { data: GithubData["people"]; max: number 
         <ExternalLink
           key={index}
           href={`https://github.com/${person.login}`}
-          className="inline-block"
+          // flex, not inline-block: the avatar on the text baseline added the font's descent
+          // under it, a height that changed with the font.
+          className="flex"
           title={person.name || person.login}
         >
           <ImageComponent

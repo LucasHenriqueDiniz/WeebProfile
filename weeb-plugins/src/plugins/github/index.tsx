@@ -9,9 +9,28 @@ import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
 import type { GithubConfig, GithubData } from "./types"
-import { TERMINAL_HEADER_HEIGHT } from "../../templates/Terminal/TerminalHeader"
 import { RenderGithub } from "./components/RenderGithub"
 import { fetchGithubData } from "./services/fetchGithub"
+import {
+  DEFAULT_TITLE_HEIGHT,
+  TERMINAL_BODY_PADDING,
+  codeHabitsHeight,
+  favoriteLanguagesHeight,
+  favoriteLicenseHeight,
+  featuredRepositoriesHeight,
+  gistsHeight,
+  introductionHeight,
+  notableContributionsHeight,
+  peopleHeight,
+  recentActivityHeight,
+  repositoryContributorsHeight,
+  sponsorsHeight,
+  sponsorshipsHeight,
+  stargazersHeight,
+  starListsHeight,
+  starredRepositoriesHeight,
+  topRepositoriesHeight,
+} from "./height"
 
 type CalendarYear = NonNullable<GithubData["calendar"]["years"]>[number]
 
@@ -78,24 +97,22 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
     const gh = data as GithubData
     const isTerminal = (config as { style?: string }).style === "terminal"
 
-    // Height formula for repo-card-style sections: each card is h-[120px], gap-4 (16px)
-    const repoCardH = (n: number, hasPager: boolean): number =>
-      n > 0 ? 40 + n * 120 + Math.max(0, n - 1) * 16 + (hasPager ? 32 : 0) : 0
-
-    // Terminal "table" sections: TerminalCommand + TerminalGrid header + n rows (+ "+N more" footer)
-    const terminalGridH = (n: number, hasMore: boolean): number => (n > 0 ? 52 + n * 20 + (hasMore ? 28 : 0) : 0)
-
     let h = 0
+    // Terminal sections that draw something. Each terminal height is the section drawn
+    // alone, with the body's bottom padding, which the card draws once.
+    let terminalSections = 0
     for (const s of cfg.sections) {
+      const before = h
       switch (s) {
         case "profile":
           h += isTerminal ? 132 : size === "full" ? 127 : 119
           break
         case "repositories":
-          h += isTerminal ? 212 : 132
+          // The title, then the stats grid
+          h += isTerminal ? 212 : 132 - (cfg.repositories_hide_title ? DEFAULT_TITLE_HEIGHT : 0)
           break
         case "activity":
-          h += isTerminal ? 232 : 156
+          h += isTerminal ? 232 : 156 - (cfg.activity_hide_title ? DEFAULT_TITLE_HEIGHT : 0)
           break
         case "calendar": {
           const yearMode = cfg.calendar_year_mode ?? "current_year"
@@ -122,167 +139,67 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           }
           break
         }
-        case "code_habits": {
-          // Measured in Chromium (svg-generator audit:heights). The base includes the
-          // stats block; it renders only when commits were read, and languages only
-          // when the fetch found some (terminal lists the top 5).
-          const habits = gh.codeHabits
-          const showsStats = !cfg.code_habits_hide_stats && !!habits?.commitStats
-          const languageCount = cfg.code_habits_hide_languages ? 0 : Object.keys(habits?.languages ?? {}).length
-          if (isTerminal) {
-            h += 978
-            if (!showsStats) h -= 103
-            if (languageCount > 0) h += 55 + Math.min(languageCount, 5) * 24
-          } else if (size === "half") {
-            h += 590
-            if (!showsStats) h -= 116
-            // Two columns make "Commit activity per day of week" wrap.
-            if (languageCount > 0) h += 20
-          } else {
-            h += 563
-            if (!showsStats) h -= 84
-          }
+        case "code_habits":
+          h += codeHabitsHeight(cfg, gh.codeHabits, size, isTerminal)
           break
-        }
-        case "favorite_languages": {
-          const maxLangs = cfg.favorite_languages_max_languages ?? 5
-          const n = Math.min(gh.languages?.length ?? maxLangs, maxLangs)
-          // ~54px per language row (preview 325px for 5 items: (325-43)/5 = 56.4, rounded up)
-          // One formula for both styles; measured in terminal with the header drawn, so
-          // the header comes off there (generateSvg counts it once per SVG).
-          h += 33 + 11 + n * 54 + Math.max(0, n - 1) * 4 - (isTerminal ? TERMINAL_HEADER_HEIGHT : 0)
+        case "favorite_languages":
+          h += favoriteLanguagesHeight(cfg, gh.languages, isTerminal)
           break
-        }
         case "favorite_license":
-          h += isTerminal ? 118 : 88
+          h += favoriteLicenseHeight(cfg, isTerminal)
           break
-        case "introduction": {
-          if (!gh.introduction) break
-          if (isTerminal) {
-            h += 178
-          } else {
-            h += size === "full" ? 100 : 130
-          }
+        case "introduction":
+          h += introductionHeight(cfg, gh, size, isTerminal)
           break
-        }
-        case "stargazers": {
-          const total = gh.stargazers?.repositories?.length ?? 0
-          if (total === 0) break
-          const n = Math.min(total, 10)
-          const hasMore = total > 10
-          if (isTerminal) {
-            h += terminalGridH(n + 1, hasMore)
-          } else {
-            h += 109 + n * 80 + Math.max(0, n - 1) * 16 + (hasMore ? 28 : 0)
-          }
+        case "stargazers":
+          h += stargazersHeight(cfg, gh, isTerminal)
           break
-        }
-        case "people": {
-          const max = cfg.people_max ?? 10
-          const total = gh.people?.totalCount ?? 0
-          const n = Math.min(gh.people?.nodes?.length ?? max, max)
-          if (n === 0) break
-          if (isTerminal) {
-            h += terminalGridH(n, false)
-          } else {
-            const itemsPerRow = size === "full" ? 17 : 8
-            const rows = Math.max(1, Math.ceil(n / itemsPerRow))
-            h += 33 + rows * 48 + (total > n ? 20 : 0)
-          }
+        case "people":
+          h += peopleHeight(cfg, gh, size, isTerminal)
           break
-        }
-        case "starred_repositories": {
-          const max = cfg.starred_repositories_max ?? 10
-          const n = Math.min(gh.starredRepositories?.nodes?.length ?? max, max)
-          const hasPager = (gh.starredRepositories?.totalCount ?? 0) > n
-          h += isTerminal ? terminalGridH(n, hasPager) : repoCardH(n, hasPager)
+        case "starred_repositories":
+          h += starredRepositoriesHeight(cfg, gh, isTerminal)
           break
-        }
-        case "gists": {
-          const max = cfg.gists_max ?? 5
-          const n = Math.min(gh.gists?.nodes?.length ?? max, max)
-          const hasPager = (gh.gists?.totalCount ?? 0) > n
-          h += isTerminal ? terminalGridH(n, hasPager) : repoCardH(n, hasPager)
+        case "gists":
+          h += gistsHeight(cfg, gh, isTerminal)
           break
-        }
-        case "top_repositories": {
-          const max = cfg.top_repositories_max ?? 5
-          const total = gh.topRepositories?.length ?? 0
-          const n = Math.min(total, max)
-          const hasMore = total > max
-          h += isTerminal ? terminalGridH(n, hasMore) : repoCardH(n, false)
+        case "top_repositories":
+          h += topRepositoriesHeight(cfg, gh, isTerminal)
           break
-        }
-        case "featured_repositories": {
-          // Default renders ALL items (no max applied), grid-style cards
-          const n = Math.min(gh.featuredRepositories?.length ?? 0, 20)
-          if (n === 0) break
-          h += isTerminal ? terminalGridH(n, false) : 33 + n * 123 + Math.max(0, n - 1) * 16
+        case "featured_repositories":
+          h += featuredRepositoriesHeight(cfg, gh, isTerminal)
           break
-        }
-        case "recent_activity": {
-          // Items grouped by day, each activity ~85-141px depending on type (files changed stats line)
-          const max = cfg.recent_activity_max ?? 10
-          const n = Math.min(gh.recentActivity?.length ?? max, max)
-          if (n === 0) break
-          h += isTerminal ? n * 28 - 12 : 33 + n * 124 + Math.max(0, n - 1) * 16
+        case "recent_activity":
+          h += recentActivityHeight(cfg, gh, size, isTerminal)
           break
-        }
-        case "notable_contributions": {
-          // h-[100px] fixed per item, gap-3 (12px); preview 1143px for 10 items
-          const max = cfg.notable_contributions_max ?? 10
-          const n = Math.min(gh.notableContributions?.length ?? max, max)
-          if (n === 0) break
-          h += isTerminal ? terminalGridH(n, false) : 40 + n * 100 + Math.max(0, n - 1) * 12
+        case "notable_contributions":
+          h += notableContributionsHeight(cfg, gh, isTerminal)
           break
-        }
-        case "repository_contributors": {
-          // grid-cols-2 (half) / grid-cols-3 (full), card ~97px (half) / ~120px (full), gap-3 (12px)
-          const max = cfg.repository_contributors_max ?? 10
-          const n = Math.min(gh.repositoryContributors?.length ?? max, max)
-          if (n === 0) break
-          if (isTerminal) {
-            h += terminalGridH(n, false)
-          } else {
-            const cols = size === "full" ? 3 : 2
-            const rows = Math.ceil(n / cols)
-            h += 33 + rows * 54 + Math.max(0, rows - 1) * 12
-          }
+        case "repository_contributors":
+          h += repositoryContributorsHeight(cfg, gh, size, isTerminal)
           break
-        }
-        case "sponsors": {
-          const max = cfg.sponsors_max ?? 5
-          const n = Math.min(gh.sponsors?.nodes?.length ?? max, max)
-          if (isTerminal) {
-            h += n === 0 ? 48 : terminalGridH(n, false)
-          } else {
-            h += n > 0 ? 37 + n * 65 + Math.max(0, n - 1) * 8 : 0
-          }
+        case "sponsors":
+          h += sponsorsHeight(cfg, gh, isTerminal)
           break
-        }
-        case "sponsorships": {
-          const max = cfg.sponsorships_max ?? 5
-          const n = Math.min(gh.sponsorships?.nodes?.length ?? max, max)
-          if (isTerminal) {
-            h += n === 0 ? 48 : terminalGridH(n, false)
-          } else {
-            h += n > 0 ? 37 + n * 65 + Math.max(0, n - 1) * 8 : 0
-          }
+        case "sponsorships":
+          h += sponsorshipsHeight(cfg, gh, isTerminal)
           break
-        }
-        case "star_lists": {
-          const max = cfg.star_lists_max ?? 5
-          const n = Math.min(gh.starLists?.length ?? max, max)
-          if (n === 0) break
-          h += isTerminal ? terminalGridH(n, false) : 356
+        case "star_lists":
+          h += starListsHeight(cfg, gh, size, isTerminal)
           break
-        }
         default:
           break
       }
+      if (isTerminal && h > before) terminalSections++
     }
 
-    if (gh.warnings && gh.warnings.length > 0) h += 40
+    // Counted in every section, drawn once per card: a terminal card of three sections
+    // kept 16px of blank under the last one.
+    if (terminalSections > 1) h -= (terminalSections - 1) * TERMINAL_BODY_PADDING
+
+    // GithubWarning: one `text-xs` line in `py-2` with `mt-2`; the terminal's has `py-1`,
+    // `mt-1` and keeps the paragraph's 12px margins.
+    if (gh.warnings && gh.warnings.length > 0) h += isTerminal ? 4 + 4 + 12 + 16 + 12 + 4 : 40
 
     return h
   },

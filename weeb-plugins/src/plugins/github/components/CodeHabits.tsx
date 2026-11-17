@@ -176,6 +176,13 @@ const DefaultCodeHabits = ({
   )
 }
 
+// A fixed line: with the font's own line height WebKit drew these labels 18px, the others 19.
+const TerminalLabel = ({ children }: { children: React.ReactNode }) => (
+  <span className="text-terminal-muted my-1" style={{ lineHeight: "19px" }}>
+    {children}
+  </span>
+)
+
 const TerminalCodeHabits = ({
   data,
   hideLanguages,
@@ -207,7 +214,7 @@ const TerminalCodeHabits = ({
     <div className="flex flex-col gap-1">
       {!hideHours && (
         <>
-          <span className="text-terminal-muted my-1">Commits by Hour:</span>
+          <TerminalLabel>Commits by Hour:</TerminalLabel>
           {Array.from({ length: 24 }).map((_, hour) => {
             const commits = data.commitsByHour[hour] || 0
             return (
@@ -224,7 +231,7 @@ const TerminalCodeHabits = ({
       {/* Days */}
       {!hideWeekdays && (
         <>
-          <span className="text-terminal-muted my-1">Commits by Day:</span>
+          <TerminalLabel>Commits by Day:</TerminalLabel>
           {DAYS.map((day) => {
             const commits = data.commitsByDay[day] || 0
             return (
@@ -241,7 +248,7 @@ const TerminalCodeHabits = ({
       {/* Languages */}
       {!hideLanguages && data.languages && Object.keys(data.languages).length > 0 && (
         <>
-          <span className="text-terminal-muted my-1">Recent Languages:</span>
+          <TerminalLabel>Recent Languages:</TerminalLabel>
           <TerminalHorizontalMultipleItemsBar
             total={Object.values(data.languages).reduce((acc, curr) => acc + curr.count, 0)}
             items={Object.entries(data.languages).map(([_, { count, color }]) => ({
@@ -256,7 +263,12 @@ const TerminalCodeHabits = ({
               <span className="flex flex-col" key={lang}>
                 <TerminalLine
                   className={{ right: "mt-[0.25rem] capitalize" }}
-                  style={{ right: { color: color ?? randomColorWithString(lang) } }}
+                  // A fixed line: with the font's own line height Firefox drew each row
+                  // 21px, Chrome and WebKit 20.
+                  style={{
+                    right: { color: color ?? randomColorWithString(lang), lineHeight: "1rem" },
+                    left: { lineHeight: "1rem" },
+                  }}
                   right={`██ ${lang}`}
                   left={abbreviateNumber(count)}
                 />
@@ -268,7 +280,7 @@ const TerminalCodeHabits = ({
       {/* Stats */}
       {!hideStats && data.commitStats && (
         <>
-          <span className="text-terminal-muted my-1">Commit Statistics:</span>
+          <TerminalLabel>Commit Statistics:</TerminalLabel>
           <TerminalLineWithDots
             title="Avg. Changes per Commit"
             value={abbreviateNumber(data.commitStats.averageChangesPerCommit || 0)}

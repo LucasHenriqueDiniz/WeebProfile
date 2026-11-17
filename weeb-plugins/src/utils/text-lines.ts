@@ -57,7 +57,8 @@ function monoWidth(codePoint: number): number {
   return codePoint >= 0x2e80 ? 1000 : 600
 }
 
-function textWidth(text: string, fontSize: number, font: TextFont): number {
+/** Width of `text` on one line, in px: what a `flex-wrap` row packs. */
+export function textWidth(text: string, fontSize: number, font: TextFont = "poppins"): number {
   let thousandths = 0
   for (const char of text) {
     const codePoint = char.codePointAt(0)!

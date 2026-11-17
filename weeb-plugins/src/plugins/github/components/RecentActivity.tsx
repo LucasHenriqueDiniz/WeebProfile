@@ -17,7 +17,9 @@ interface RecentActivityProps {
 }
 
 // Agrupar atividades por dia
-function groupActivitiesByDay(activities: GithubData["recentActivity"]): Map<string, GithubData["recentActivity"]> {
+export function groupActivitiesByDay(
+  activities: GithubData["recentActivity"]
+): Map<string, GithubData["recentActivity"]> {
   const grouped = new Map<string, GithubData["recentActivity"]>()
 
   if (!activities) {
