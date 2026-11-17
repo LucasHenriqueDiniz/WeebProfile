@@ -339,16 +339,16 @@ export const githubPluginMetadata = {
     {
       id: "top_repositories",
       name: "Top Repositories",
-      description: "Repositories with most stars (alias for stargazers)",
+      description: "Repositories with most stars",
       configOptions: [
         {
-          key: "stargazers_hide_title",
+          key: "top_repositories_hide_title",
           label: "Hide title",
           type: "boolean" as const,
           defaultValue: false,
         },
         {
-          key: "stargazers_title",
+          key: "top_repositories_title",
           label: "Title",
           type: "string" as const,
           defaultValue: "Top Repositories",
@@ -376,12 +376,13 @@ export const githubPluginMetadata = {
           key: "star_lists_max",
           label: "Maximum lists",
           type: "number" as const,
-          defaultValue: 1,
+          defaultValue: 5,
           min: 1,
           max: 20,
           step: 1,
           description: "Maximum 20 lists",
-          tooltip: "Maximum number of star lists to display. Lists are ordered by most recently created.",
+          tooltip:
+            "Maximum number of star lists to display, in GitHub's order: the list a repository was last added to first. Private lists are never shown.",
         },
       ],
     },
