@@ -93,7 +93,8 @@
       },
       "cta": "Crear mi primer SVG",
       "freeTier": "Gratis hasta {{max}} SVGs"
-    }
+    },
+    "moreActions": "Más acciones"
   },
   "header": {
     "changeLanguage": "Cambiar idioma",

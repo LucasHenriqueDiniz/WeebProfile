@@ -1,6 +1,6 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState"
-import { SvgLibraryRow } from "@/components/dashboard/SvgLibraryRow"
+import { SvgLibraryCard } from "@/components/dashboard/SvgLibraryCard"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { SvgCardSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import { Button } from "@/components/ui/button"
@@ -414,23 +414,22 @@ export default function DashboardPage() {
               </motion.div>
             )}
 
-            {/* Biblioteca de SVGs - lista de linhas (asset library). Só chega aqui quando
+            {/* Biblioteca de SVGs - um card por SVG, com a imagem publicada na largura real
+              (os de largura completa ocupam as duas colunas). Só chega aqui quando
               !isTrulyEmpty (ver branch acima que renderiza o onboarding). */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.2 }}
-              className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden"
+              className="grid items-start gap-5 lg:grid-cols-2"
             >
               {svgsLoading && svgs.length === 0
-                ? Array.from({ length: 4 }).map((_, index) => (
-                    <div key={`skeleton-${index}`} className="p-3">
-                      <SvgCardSkeleton index={index} />
-                    </div>
+                ? Array.from({ length: 2 }).map((_, index) => (
+                    <SvgCardSkeleton key={`skeleton-${index}`} index={index} />
                   ))
                 : filteredAndSortedSvgs.length > 0
                   ? filteredAndSortedSvgs.map((svg, index) => (
-                      <SvgLibraryRow
+                      <SvgLibraryCard
                         key={svg.id}
                         svg={svg}
                         index={index}
@@ -458,9 +457,7 @@ export default function DashboardPage() {
               {svgsLoading &&
                 filteredAndSortedSvgs.length > 0 &&
                 Array.from({ length: 2 }).map((_, index) => (
-                  <div key={`loading-${index}`} className="p-3">
-                    <SvgCardSkeleton index={filteredAndSortedSvgs.length + index} />
-                  </div>
+                  <SvgCardSkeleton key={`loading-${index}`} index={filteredAndSortedSvgs.length + index} />
                 ))}
             </motion.div>
 
