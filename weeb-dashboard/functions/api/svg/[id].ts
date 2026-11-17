@@ -36,9 +36,10 @@ export const SVG_CACHE_CONTROL = "no-cache, s-maxage=60"
 
 /**
  * The SVG itself is kept in this colo's edge cache, keyed by the card and the time it
- * was last generated. R2 was most of this route's time (about 0.3 s of 0.4 s), and camo
- * comes back for the card every minute, so a README with few visitors paid it on almost
- * every view: the image sat at zero height until it arrived.
+ * was last generated. Measured on a preview deploy (2026-11-17): D1 150-186 ms and R2
+ * 216 ms per request, 0.4 s to the first byte; with the copy at the edge, 0.19-0.22 s.
+ * camo comes back for the card every minute, so a README with few visitors paid R2 on
+ * almost every view, and the image sat at zero height until it arrived.
  *
  * The key changes with every generation, so a cached copy is never stale: both writers
  * (the generate route and the cron, through publishGeneratedSvg) put the object in R2

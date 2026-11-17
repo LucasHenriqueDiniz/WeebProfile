@@ -138,7 +138,7 @@ describe("GET /api/svg/:id with the edge cache", () => {
     return response
   }
 
-  // camo comes back for the card every minute; R2 was most of this route's time.
+  // camo comes back for the card every minute; R2 was about half of this route's time.
   it("reads R2 once per generation, then serves the copy at the edge", async () => {
     const first = await getAtEdge("svg-1.svg")
     const second = await getAtEdge("svg-1.svg")
