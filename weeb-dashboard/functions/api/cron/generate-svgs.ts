@@ -9,7 +9,12 @@ import { publishGeneratedSvg } from "../_shared/publish-svg"
 import { assertGenerationSucceeded } from "../_shared/svg-generation-validation"
 import { svgs } from "../../../lib/db/schema"
 import { eq, ne, or, lte, isNull, and, lt, asc } from "drizzle-orm"
-import { generateSvgViaService, convertSvgToPluginsConfig, getTerminalConfigs } from "../_shared/svg-generation"
+import {
+  generateSvgViaService,
+  convertSvgToPluginsConfig,
+  getTerminalConfigs,
+  tilesFromResult,
+} from "../_shared/svg-generation"
 
 /**
  * POST /api/cron/generate-svgs - Cron job to regenerate SVGs
@@ -119,6 +124,8 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
           customThemeColors: uiConfig.customThemeColors || undefined,
           userId: svg.userId,
           mock: false,
+          // One SVG per site of the websites plugin, for the README snippet that links each.
+          tiles: true,
         }
 
         const result = (await generateSvgViaService(requestConfig, env)) as any
@@ -129,14 +136,21 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
         // on the generator's response now, not gated behind a `debug` request flag.
         assertGenerationSucceeded(result)
 
-        const published = await publishGeneratedSvg(env, db, svg.id, svgContent, {
-          status: "completed",
-          lastGeneratedAt: now.toISOString(),
-          nextRegenerationAt: nightsFrom(now, 1),
-          forceRegenerate: false,
-          failCount: 0,
-          lastError: null,
-        })
+        const published = await publishGeneratedSvg(
+          env,
+          db,
+          svg.id,
+          svgContent,
+          {
+            status: "completed",
+            lastGeneratedAt: now.toISOString(),
+            nextRegenerationAt: nightsFrom(now, 1),
+            forceRegenerate: false,
+            failCount: 0,
+            lastError: null,
+          },
+          tilesFromResult(result)
+        )
         if (!published) {
           console.warn(`[CRON] SVG ${svg.id} was deleted while it was being generated; not published`)
           continue

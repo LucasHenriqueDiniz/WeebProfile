@@ -1,4 +1,5 @@
 import type { CloudflareEnv } from "./auth"
+import type { GeneratedTile } from "./storage"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 
 /**
@@ -161,4 +162,22 @@ export function getTerminalConfigs(uiConfig: Record<string, any> | null | undefi
     // Opt-in card animations; anything but a literal true leaves the card static.
     animations: config.animations === true,
   }
+}
+
+/**
+ * The tiles in a generator answer, or undefined when it has none to store: an answer
+ * without the key (tiles failed to draw, and the stored ones should stay) or with
+ * something that is not a list of tiles. An empty list is kept: it means the card has
+ * no tiles any more, and the stored ones must go.
+ */
+export function tilesFromResult(result: { tiles?: unknown }): GeneratedTile[] | undefined {
+  if (!Array.isArray(result.tiles)) return undefined
+  const isTile = (tile: any): tile is GeneratedTile =>
+    tile &&
+    typeof tile.href === "string" &&
+    typeof tile.title === "string" &&
+    typeof tile.svg === "string" &&
+    typeof tile.width === "number" &&
+    typeof tile.height === "number"
+  return result.tiles.every(isTile) ? result.tiles : undefined
 }
