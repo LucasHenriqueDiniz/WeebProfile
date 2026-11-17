@@ -951,7 +951,8 @@
           "title": "Open source",
           "body": "Generator, plugins and dashboard under Apache 2.0. Write a new plugin if yours is missing."
         }
-      ]
+      ],
+      "rendersAs": "In the README, it becomes:"
     },
     "cta": {
       "title": "Ready to level up your",

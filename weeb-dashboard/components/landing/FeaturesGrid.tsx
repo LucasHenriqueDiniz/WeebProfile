@@ -1,10 +1,16 @@
 "use client"
 
+import { SECTION_PREVIEWS } from "@/lib/config/section-previews"
 import { publicSvgUrl } from "@/lib/utils/svg-url"
 import { BookMarked, Eye, KeyRound, RefreshCw, Zap } from "lucide-react"
 import { FaGithub } from "react-icons/fa"
 import { useTranslations } from "@/i18n/use-translations"
 import { SectionHeading } from "./SectionHeading"
+
+// What the README line in the first card turns into. That card spans two rows, and with
+// only its text and the snippet half of it (203 of 392 px at 1034 px) was empty.
+const README_RESULT = { plugin: "github", section: "profile" } as const
+const README_RESULT_SIZE = SECTION_PREVIEWS[README_RESULT.plugin]?.[README_RESULT.section]?.default
 
 interface FeatureItem {
   title: string
@@ -41,7 +47,7 @@ export function FeaturesGrid() {
         {/* 2x2 no lg: com 5 cards simples ao lado o grid fecha exato (2 col x 2 row + 5 = 3x3),
             sem card orfao na ultima linha */}
         {first && (
-          <div className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-violet-500/40 hover:shadow-[0_10px_36px_-14px_rgba(139,92,246,0.4)] sm:col-span-2 lg:row-span-2">
+          <div className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-violet-500/40 hover:shadow-[0_10px_36px_-14px_rgba(139,92,246,0.4)] sm:col-span-2 lg:row-span-2">
             <div className="flex items-start gap-4">
               <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-500/5 text-violet-500 transition-transform group-hover:scale-110">
                 <Zap className="h-5 w-5" />
@@ -64,6 +70,15 @@ export function FeaturesGrid() {
                 <span className="text-pink-500">)</span>
               </code>
             </pre>
+            <p className="mt-4 text-xs font-medium text-muted-foreground">{t("rendersAs")}</p>
+            <img
+              src={`/previews/${README_RESULT.plugin}/default/${README_RESULT.section}.svg`}
+              alt=""
+              width={README_RESULT_SIZE?.[0]}
+              height={README_RESULT_SIZE?.[1]}
+              loading="lazy"
+              className="mt-2 block h-auto w-full max-w-[415px] rounded-lg"
+            />
           </div>
         )}
         {rest.map((item, i) => {
