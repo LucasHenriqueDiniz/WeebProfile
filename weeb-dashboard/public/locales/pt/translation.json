@@ -383,7 +383,29 @@
         "error": "Não deu para excluir sua conta. Tente de novo: o que já foi apagado não volta, e a nova tentativa apaga o resto."
       },
       "description": "Gerencie suas configurações de conta",
-      "title": "Conta"
+      "title": "Conta",
+      "apiKeys": {
+        "title": "Chaves de API e tokens",
+        "description": "O que você salvou para os plugins buscarem seus dados. O valor nunca sai do servidor: aqui aparece só se cada chave existe e quando foi salva.",
+        "loading": "Carregando suas chaves…",
+        "loadFailed": "Não deu para carregar suas chaves. Recarregue a página.",
+        "savedAgo": "Salva {{when}}",
+        "notConfigured": "Não configurada",
+        "usedBy_one": "usada por {{count}} SVG",
+        "usedBy_other": "usada por {{count}} SVGs",
+        "unused": "nenhum SVG usa",
+        "sharedWith": "também vale para {{plugins}}",
+        "remove": "Remover",
+        "confirmTitle": "Remover {{key}} do {{plugin}}?",
+        "confirmUsed_one": "{{count}} SVG usa esta chave. Ele para de atualizar até você salvar outra no editor; a última versão gerada continua no ar.",
+        "confirmUsed_other": "{{count}} SVGs usam esta chave. Eles param de atualizar até você salvar outra no editor; a última versão gerada continua no ar.",
+        "confirmUnused": "Nenhum SVG usa esta chave agora. Dá para salvar outra no editor quando precisar.",
+        "cancel": "Cancelar",
+        "confirm": "Remover chave",
+        "removing": "Removendo…",
+        "removed": "{{key}} do {{plugin}} removida",
+        "removeFailed": "Não deu para remover a chave. Tente de novo."
+      }
     },
     "appearance": {
       "description": "Personalize a aparência do aplicativo",
