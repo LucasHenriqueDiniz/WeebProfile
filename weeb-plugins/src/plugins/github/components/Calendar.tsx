@@ -17,6 +17,13 @@ interface CalendarProps {
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""] // GitHub shows only Mon, Wed, Fri
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
+/**
+ * A GitHub day ("2026-05-17") as the tooltip shows it. `new Date` reads the plain date as UTC
+ * midnight, so it is formatted in UTC: in the machine's zone, one behind UTC (the dashboard
+ * preview in São Paulo) named the day before.
+ */
+const formatDay = (date: string): string => new Date(date).toLocaleDateString(undefined, { timeZone: "UTC" })
+
 // Contribution level colors for legend
 const CONTRIBUTION_LEVELS = [
   { label: "No contributions.", color: "rgba(128, 128, 128, 0.25)" },
@@ -42,7 +49,9 @@ const DefaultCalendar = ({
 
   // Helper to get month from date
   const getMonth = (dateString: string): number => {
-    return new Date(dateString).getMonth()
+    // GitHub's plain dates read as UTC midnight: in a zone behind UTC, getMonth() put each
+    // month's 1st in the month before, and a month label could move a column
+    return new Date(dateString).getUTCMonth()
   }
 
   // Helper to get the dominant month for a week (month that appears most, or first day if tie)
@@ -165,7 +174,7 @@ const DefaultCalendar = ({
       // Create array of 7 days, padding with nulls based on weekday
       const days: Array<any | null> = [null, null, null, null, null, null, null]
       week.contributionDays.forEach((day: any) => {
-        const weekday = day.weekday !== undefined ? day.weekday : new Date(day.date).getDay()
+        const weekday = day.weekday !== undefined ? day.weekday : new Date(day.date).getUTCDay()
         if (weekday >= 0 && weekday < 7) {
           days[weekday] = day
         }
@@ -182,7 +191,7 @@ const DefaultCalendar = ({
                 height: squareSize,
                 backgroundColor: day ? getCalendarColor(day.color || "") : "transparent",
               }}
-              title={day ? `${day.contributionCount} contributions on ${new Date(day.date).toLocaleDateString()}` : ""}
+              title={day ? `${day.contributionCount} contributions on ${formatDay(day.date)}` : ""}
             />
           ))}
         </div>
@@ -475,7 +484,7 @@ const TerminalWeeks = ({ weeks }: { weeks: ContributionWeek[] }) => (
           day ? (
             <span
               key={weekday}
-              title={`${day.contributionCount} contributions on ${new Date(day.date).toLocaleDateString()}`}
+              title={`${day.contributionCount} contributions on ${formatDay(day.date)}`}
               className="flex items-center justify-center text-baseline w-full h-full"
               style={{
                 color: getCalendarColor(day.color || ""),
