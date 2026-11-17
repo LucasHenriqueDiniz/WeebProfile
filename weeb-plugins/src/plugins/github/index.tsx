@@ -66,11 +66,23 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           if (years > 1) {
             h += isTerminal ? 1 + years * 175 + 28 : 33 + years * 150 + 28
           } else if (isTerminal) {
-            h += 1 + 175
+            // Command, gap and "N contributions" line (59), plus the grid when there are weeks
+            // (none when the fetch failed). The grid is 7 lines of 14px in Chromium, but its
+            // symbols fall back to another font and Firefox and WebKit draw it 7 and 6px
+            // taller, so it keeps 19px of room.
+            h += 59 + ((gh.calendar?.weeks?.length ?? 0) > 0 ? 7 * 14 + 19 : 0)
           } else {
-            // half mode splits the calendar into two rows of weeks
-            const rows = size === "half" && yearMode !== "last_6_months" ? 2 : 1
-            h += 33 + rows * 135 + 28
+            // Measured in Chromium against Calendar.tsx. Half splits the year in two rows of
+            // weeks past 26 weeks (never last_6_months), the rows 16px apart. Each row is 7
+            // cells of 0.7rem with 3px between them, plus the month labels (13) and their
+            // gap (8). No weeks (the fetch failed) leaves only the weekday labels, if shown.
+            // Below the rows: gap (8), margin (8) and the "N contributions" line (16).
+            const weeks = gh.calendar?.weeks?.length ?? 0
+            const rows = size === "half" && weeks > 26 && yearMode !== "last_6_months" ? 2 : 1
+            const grid = weeks > 0 || !cfg.calendar_hide_weeks ? 7 * 11.2 + 6 * 3 : 0
+            const monthLabels = weeks > 0 && !cfg.calendar_hide_months ? 13 + 8 : 0
+            const title = cfg.calendar_hide_title ? 0 : 40
+            h += Math.ceil(title + rows * (grid + monthLabels) + (rows - 1) * 16 + 32)
           }
           break
         }
