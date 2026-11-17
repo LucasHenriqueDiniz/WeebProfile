@@ -224,6 +224,13 @@ export const svgApi = {
   },
 
   /**
+   * Where each tile of the card links, as the last generation stored them
+   */
+  async tiles(id: string) {
+    return apiGet<{ tiles: Array<{ href: string; title: string }> }>(`/api/svgs/${id}/tiles`)
+  },
+
+  /**
    * Gerar SVG
    * @param id - ID do SVG
    * @param force - Se true, força a geração mesmo com cooldown ativo

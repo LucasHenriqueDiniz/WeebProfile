@@ -6,3 +6,8 @@
 export function publicSvgUrl(id: string, origin: string = window.location.origin): string {
   return `${origin}/svg/${id}.svg`
 }
+
+/** Tile `index` of the card: one site of its websites plugin (functions/svg/[id]/[tile].ts). */
+export function publicTileUrl(id: string, index: number, origin: string = window.location.origin): string {
+  return `${origin}/svg/${id}/${index}.svg`
+}

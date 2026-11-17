@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { generateMarkdown, generateMarkdownForMultipleHalf } from "./markdown"
+import { generateMarkdown, generateMarkdownForMultipleHalf, generateTilesMarkdown, linkableUrl } from "./markdown"
 
 const url = "https://weebprofile-dashboard.pages.dev/svg/abc.svg"
 const other = "https://weebprofile-dashboard.pages.dev/svg/def.svg"
@@ -86,5 +86,58 @@ describe("generateMarkdownForMultipleHalf", () => {
     ])
     const tags = snippet.match(/<img [^>]*>/g) ?? []
     expect(tags.map((tag) => tag.includes('width="50%"'))).toEqual([true, true, false])
+  })
+})
+
+describe("generateTilesMarkdown", () => {
+  const src = (n: number) => `https://weebprofile-dashboard.pages.dev/svg/abc/${n}.svg`
+
+  it("links each site's image to the site, 33% wide and glued together so three fit a row", () => {
+    expect(
+      generateTilesMarkdown([
+        { href: "https://one.example/", title: "One", src: src(0) },
+        { href: "https://two.example/blog", title: "Two", src: src(1) },
+      ])
+    ).toBe(
+      '<p align="center">' +
+        `<a href="https://one.example/"><img align="top" width="33%" alt="One" src="${src(0)}" /></a>` +
+        `<a href="https://two.example/blog"><img align="top" width="33%" alt="Two" src="${src(1)}" /></a>` +
+        "</p>"
+    )
+  })
+
+  it("escapes what would end the attribute or the tag", () => {
+    const snippet = generateTilesMarkdown([
+      { href: 'https://one.example/?q="><script>', title: 'A "quoted" <b>title</b>', src: src(0) },
+    ])
+    expect(snippet).not.toContain("<script>")
+    expect(snippet).not.toContain("<b>")
+    expect(snippet).toContain('alt="A &quot;quoted&quot; &lt;b&gt;title&lt;/b&gt;"')
+  })
+
+  // The generator already refused these; this is the last step before the profile.
+  it.each(["javascript:alert(1)", " JavaScript:alert(1)", "data:text/html,x", "https://github.com@evil.example/"])(
+    "leaves out a site whose link would be %j",
+    (href) => {
+      const snippet = generateTilesMarkdown([
+        { href, title: "Bad", src: src(0) },
+        { href: "https://good.example/", title: "Good", src: src(1) },
+      ])
+      expect(snippet).not.toContain("Bad")
+      expect(snippet).toContain(`src="${src(1)}"`)
+      expect(snippet.match(/<a /g)).toHaveLength(1)
+    }
+  )
+
+  it("answers nothing when there is no site", () => {
+    expect(generateTilesMarkdown([])).toBe("")
+  })
+})
+
+describe("linkableUrl", () => {
+  it("normalizes an http(s) URL and refuses anything else", () => {
+    expect(linkableUrl("HTTPS://Example.COM")).toBe("https://example.com/")
+    expect(linkableUrl("example.com")).toBeNull()
+    expect(linkableUrl("ftp://example.com")).toBeNull()
   })
 })
