@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Link } from "@/i18n/navigation"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import type { Template } from "@/types/template"
+import { useTemplateDescription } from "@/lib/templates/template-description"
 
 // Preview local usada quando o template da API vem sem previewUrl ou com URL quebrada —
 // o card nunca renderiza uma area vazia/imagem quebrada.
@@ -19,6 +20,7 @@ const PREVIEW_FALLBACK: Record<string, string> = {
  * inside a fixed window (duration scales with nothing — slow and constant reads best).
  */
 export function LandingTemplateCard({ template, href }: { template: Template; href?: string }) {
+  const templateDescription = useTemplateDescription()
   const fallbackSrc = PREVIEW_FALLBACK[template.style] ?? PREVIEW_FALLBACK.default
   const [previewSrc, setPreviewSrc] = useState(template.preview || fallbackSrc)
   const plugins = (
@@ -52,7 +54,9 @@ export function LandingTemplateCard({ template, href }: { template: Template; hr
       </div>
       <div className="flex flex-1 flex-col p-5">
         <div className="font-heading text-base font-bold text-foreground">{template.name}</div>
-        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">{template.description}</p>
+        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
+          {templateDescription(template)}
+        </p>
         <div className="mt-3.5 flex flex-wrap items-center gap-1.5">
           {chipPlugins.map((plugin) => {
             const Icon = getPluginIcon(plugin.toLowerCase())

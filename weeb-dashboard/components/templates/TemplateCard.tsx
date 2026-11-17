@@ -19,6 +19,7 @@ import Image from "@/src/compat/next-image"
 import { memo, useMemo, useState } from "react"
 import { FaGithub } from "react-icons/fa"
 import useMeasure from "react-use-measure"
+import { useTemplateDescription } from "@/lib/templates/template-description"
 
 const SECONDS_PER_100PX = 0.5
 
@@ -134,6 +135,7 @@ export const TemplateCard = memo(function TemplateCard({
   index = 0,
 }: TemplateCardProps) {
   const t = useTranslations("templatesPage")
+  const templateDescription = useTemplateDescription()
   const router = useRouter()
   const reduceMotion = useReducedMotion()
 
@@ -293,7 +295,7 @@ export const TemplateCard = memo(function TemplateCard({
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{template.description}</p>
+              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{templateDescription(template)}</p>
 
               <div className="flex items-center gap-1.5 mb-4">
                 {(template.platforms || []).slice(0, 4).map((rawId) => {
