@@ -790,7 +790,8 @@
       "ctaSecondary": "See all sections",
       "check1": "3 SVGs on the free plan",
       "check2": "No GitHub Action, no YAML",
-      "check3": "Sign in with GitHub"
+      "check3": "Sign in with GitHub",
+      "cardCaption": "An example card with {{plugins}}"
     },
     "preview": {
       "kicker": "TRY IT",

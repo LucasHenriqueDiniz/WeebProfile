@@ -1,45 +1,52 @@
 "use client"
 
-import { ArrowRight, Check } from "lucide-react"
+import { ArrowRight, BookOpen, Check } from "lucide-react"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { SECTION_PREVIEWS } from "@/lib/config/section-previews"
 import { Link } from "@/i18n/navigation"
-import { useTranslations } from "@/i18n/use-translations"
+import { useLocale, useTranslations } from "@/i18n/use-translations"
 
-// Real section previews (the same SVGs the generator produces), straight from
-// public/previews — the hero shows the actual product, not mockups. Curated to the
-// tightly-sized, data-rich ones: several previews declare more height than they paint
-// (static calculateHeight overshoot), which reads as ugly empty padding in a frame.
-const COLUMN_UP = [
-  "/previews/lastfm/default/top_artists.svg",
-  "/previews/duolingo/terminal/total_xp.svg",
-  "/previews/myanimelist/default/statistics.svg",
-  "/previews/codewars/terminal/completed_kata.svg",
-  "/previews/codeforces/default/rating_rank.svg",
-]
+/**
+ * One card the way it lands in a README: real section previews (the SVGs the generator
+ * produces, in public/previews), stacked in a frame, sharp and whole.
+ *
+ * The hero used to run two columns of previews scrolling behind a gradient that was
+ * solid background up to 42% of the width and still 80% at 56%, at 85% opacity: no
+ * card could be read, it was cut at the edges, it competed with the title, and it was
+ * hidden below the md breakpoint.
+ */
+const HERO_CARD = [
+  { plugin: "github", section: "profile" },
+  { plugin: "myanimelist", section: "anime_bar" },
+  { plugin: "lastfm", section: "top_artists" },
+] as const
 
-const COLUMN_DOWN = [
-  "/previews/github/default/calendar.svg",
-  "/previews/lastfm/terminal/recent_tracks.svg",
-  "/previews/github/default/activity.svg",
-  "/previews/myanimelist/terminal/manga_bar.svg",
-  "/previews/github_repo/terminal/languages.svg",
-]
-
-function PreviewColumn({ sources }: { sources: string[] }) {
-  // Sem moldura por card (border/bg): overshoot de altura do SVG viraria faixa vazia.
-  // Radius bem leve + drop-shadow que segue o alpha do proprio SVG; o fundo fica no
-  // painel da esteira inteira, la no container.
+function HeroCard({ caption }: { caption: string }) {
   return (
-    <>
-      {sources.map((src) => (
-        <img
-          key={src}
-          src={src}
-          alt=""
-          className="mb-3.5 block w-full overflow-hidden rounded [filter:drop-shadow(0_4px_14px_rgba(0,0,0,0.25))]"
-        />
-      ))}
-    </>
+    <figure className="mx-auto w-full max-w-[415px] flex-none lg:mx-0 lg:w-[415px]">
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_80px_-28px_rgba(139,92,246,0.55)]">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">
+          <BookOpen className="h-3.5 w-3.5" />
+          README.md
+        </div>
+        <div className="p-2">
+          {HERO_CARD.map(({ plugin, section }) => {
+            const size = SECTION_PREVIEWS[plugin]?.[section]?.default
+            return (
+              <img
+                key={`${plugin}/${section}`}
+                src={`/previews/${plugin}/default/${section}.svg`}
+                alt=""
+                width={size?.[0]}
+                height={size?.[1]}
+                className="block h-auto w-full"
+              />
+            )
+          })}
+        </div>
+      </div>
+      <figcaption className="mt-3 text-center text-xs text-muted-foreground">{caption}</figcaption>
+    </figure>
   )
 }
 
@@ -55,41 +62,25 @@ const TOTAL_SECOES = Object.values(PLUGINS_METADATA as Record<string, { sections
 // e assim o texto não muda a cada seção adicionada.
 const SECOES_ARREDONDADAS = Math.floor(TOTAL_SECOES / 10) * 10
 
+const HERO_CARD_PLUGINS = HERO_CARD.map(
+  ({ plugin }) => (PLUGINS_METADATA as Record<string, { displayName: string }>)[plugin]?.displayName ?? plugin
+)
+
 export function LandingHero() {
   const t = useTranslations("landing.hero")
+  const locale = useLocale()
+  // "GitHub, MyAnimeList e LastFM" in the page's language, not a bare comma list.
+  const cardPlugins = new Intl.ListFormat(locale, { type: "conjunction" }).format(HERO_CARD_PLUGINS)
 
   return (
     <section id="top" className="relative flex min-h-[640px] items-center overflow-hidden">
-      {/* Marquee card columns (decorative) */}
-      <div aria-hidden className="absolute bottom-0 right-0 top-0 hidden w-[min(760px,58%)] md:block">
-        {/* Fundo da esteira: painel sutil que ancora as colunas em vez de cards soltos */}
-        <div className="absolute inset-y-0 left-6 right-0 rounded-l-3xl border-l border-border/40 bg-gradient-to-l from-primary/[0.07] via-muted/40 to-transparent dark:from-primary/10 dark:via-white/[0.03]" />
-        <div className="absolute inset-0 flex justify-end gap-[18px] pr-[60px] opacity-85">
-          <div className="h-full w-[300px] overflow-hidden">
-            <div className="animate-marquee-up flex flex-col">
-              <PreviewColumn sources={COLUMN_UP} />
-              <PreviewColumn sources={COLUMN_UP} />
-            </div>
-          </div>
-          <div className="h-full w-[300px] overflow-hidden">
-            <div className="animate-marquee-down flex flex-col">
-              <PreviewColumn sources={COLUMN_DOWN} />
-              <PreviewColumn sources={COLUMN_DOWN} />
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Fades so the copy stays readable over the marquee */}
+      {/* Painel sutil atrás do card, no lugar da esteira: ancora o card sem cobrir nada */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-background from-[42%] via-background/80 via-[56%] to-background/25 md:block"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent from-[76%] to-background"
+        className="absolute bottom-0 right-0 top-0 hidden w-[min(640px,48%)] rounded-l-3xl border-l border-border/40 bg-gradient-to-l from-primary/[0.07] via-muted/40 to-transparent dark:from-primary/10 dark:via-white/[0.03] lg:block"
       />
 
-      <div className="relative mx-auto w-full max-w-6xl px-6 py-20">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-16 md:py-20 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-[600px]">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3.5 py-1.5 text-xs font-semibold text-muted-foreground">
             <img src="/sora/sora-head.png" alt="" className="h-4 w-4 object-contain" />
@@ -126,6 +117,8 @@ export function LandingHero() {
             ))}
           </div>
         </div>
+
+        <HeroCard caption={t("cardCaption", { plugins: cardPlugins })} />
       </div>
     </section>
   )
