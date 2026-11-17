@@ -107,10 +107,11 @@ const DefaultCalendar = ({
     return monthLabels
   }
 
-  // Render single year calendar with GitHub-style layout
+  // Render single year calendar with GitHub-style layout. `weeks` comes in the data's order,
+  // oldest first as GitHub returns it, and is drawn in that order, January on the left.
   const renderYearCalendar = (weeks: any[], _year?: number) => {
     const yearMode = config.calendar_year_mode || "current_year"
-    let allWeeks = weeks.slice().reverse()
+    let allWeeks = weeks
 
     // If last_6_months, filter weeks and days within those weeks
     if (yearMode === "last_6_months") {
@@ -345,31 +346,6 @@ const DefaultCalendar = ({
 
   // Exibição padrão (um ano ou todos os anos combinados)
   const yearMode = config.calendar_year_mode || "current_year"
-  let allWeeks = data.weeks.slice().reverse()
-
-  // If last_6_months, filter weeks and days within those weeks
-  if (yearMode === "last_6_months") {
-    const sixMonthsAgo = firstDayOfLastSixMonths(allWeeks)
-
-    allWeeks = allWeeks
-      .map((week: any) => {
-        // Filter days within the week to only include last 6 months
-        const filteredDays = week.contributionDays.filter((day: any) => {
-          return day.date >= sixMonthsAgo
-        })
-
-        // Only include weeks that have at least one day in the last 6 months
-        if (filteredDays.length === 0) return null
-
-        return {
-          ...week,
-          contributionDays: filteredDays,
-        }
-      })
-      .filter((week: any) => week !== null)
-  }
-
-  const displayWeeks = allWeeks
 
   const getPeriodText = () => {
     switch (yearMode) {
@@ -388,7 +364,7 @@ const DefaultCalendar = ({
 
   return (
     <div className="flex flex-col gap-2">
-      {renderYearCalendar(displayWeeks)}
+      {renderYearCalendar(data.weeks)}
       {/* Legend and contributions text - same line in both modes, hide legend in half if too cramped */}
       <div className="flex items-center justify-between text-xs text-default-muted mt-2">
         {!hideLegends && !isHalfMode && (
