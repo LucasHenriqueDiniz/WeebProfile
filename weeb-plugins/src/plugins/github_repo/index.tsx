@@ -10,13 +10,12 @@ import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
 import {
   CONTENT_SIZE_SCALE,
-  resolveBannerText,
-  resolveBannerVariant,
   resolveLanguagesVariant,
   resolveStarGraphVariant,
   type GithubRepoConfig,
   type GithubRepoData,
 } from "./types"
+import { bannerHeight } from "./banner-height"
 import { RenderGithubRepo } from "./components/RenderGithubRepo"
 import { fetchGithubRepoData } from "./services/fetchGithubRepo"
 
@@ -45,7 +44,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
       <RenderGithubRepo config={config as GithubRepoConfig} data={data as GithubRepoData} style={style} size={size} />
     )
   },
-  calculateHeight: (config, data, _size = "half") => {
+  calculateHeight: (config, data, size = "half") => {
     const cfg = config as GithubRepoConfig
     const repo = data as GithubRepoData
     const isTerminal = (config as { style?: string }).style === "terminal"
@@ -56,42 +55,9 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     let h = 0
 
     if (cfg.sections.includes("banner")) {
-      const variant = resolveBannerVariant(cfg.banner_variant)
-      const showDescription = cfg.banner_show_description ?? true
-      // Texto resolvido, não repo.description cru: uma descrição custom faz a linha
-      // existir mesmo num repo sem descrição, e a altura precisa contar isso.
-      const bannerText = resolveBannerText(cfg, repo)
-      const hasDescription = showDescription && !!bannerText.description
-      const hasEyebrow = bannerText.eyebrow !== null
-      let sectionH = 0
-
-      if (isTerminal) {
-        // Custo cheio da seção medido no render real (Chromium): comando + linha do
-        // nome = 50, descrição com line-clamp-2 = +44. No terminal cada seção carrega
-        // seu espaçamento completo; o pad global do manager (+24) é compensado no fim.
-        sectionH = 50 + (hasDescription ? 44 : 0)
-      } else if (variant === "minimal") {
-        sectionH = 24 + 68
-      } else if (variant === "split") {
-        sectionH = 24 + (hasDescription ? 120 : 88)
-      } else if (variant === "display") {
-        sectionH = 24 + 118
-      } else if (variant === "centered") {
-        const showAvatar = cfg.banner_show_avatar ?? true
-        const showOwner = cfg.banner_show_owner ?? true
-        sectionH = 24 + 106 + (showAvatar ? 50 : 0) + (showOwner || hasEyebrow ? 18 : 0) + (hasDescription ? 44 : 0)
-      } else if (variant === "centered_dark") {
-        const showOwner = cfg.banner_show_owner ?? true
-        sectionH = 24 + 76 + (showOwner || hasEyebrow ? 19 : 0) + (hasDescription ? 49 : 0)
-      } else if (variant === "centered_gradient") {
-        sectionH = 24 + 100 + (hasDescription ? 46 : 0)
-      } else if (variant === "dark") {
-        sectionH = 24 + (hasDescription ? 92 : 76)
-      } else {
-        // hero
-        sectionH = 24 + 96 + (hasDescription ? 40 : 0)
-      }
-      h += Math.round(sectionH * scale)
+      // ScaledBox zooms the section: its text wraps in the width divided by the scale.
+      const width = (size === "full" ? 830 : 415) / scale
+      h += Math.ceil(bannerHeight(cfg, repo, isTerminal, width) * scale)
     }
 
     if (cfg.sections.includes("stats")) {

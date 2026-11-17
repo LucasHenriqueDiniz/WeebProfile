@@ -73,7 +73,7 @@ export const SECTION_PREVIEWS: Record<
   },
 
   github_repo: {
-    banner: { default: [415, 184], terminal: [415, 94] },
+    banner: { default: [415, 161], terminal: [415, 94] },
     stats: { default: [415, 134], terminal: [415, 52] },
     star_graph: { default: [415, 228], terminal: [415, 153] },
     languages: { default: [415, 152], terminal: [415, 78] },
