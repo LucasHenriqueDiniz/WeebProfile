@@ -17,6 +17,11 @@ export const SECTION_PREVIEWS: Record<
     personality: { default: [415, 227], terminal: [415, 208] },
   },
 
+  about: {
+    neofetch: { default: [415, 243], terminal: [415, 298] },
+    links: { default: [415, 120], terminal: [415, 144] },
+  },
+
   anilist: {
     statistics: { default: [415, 245], terminal: [415, 208] },
     favorites_anime: { default: [415, 189], terminal: [415, 148] },

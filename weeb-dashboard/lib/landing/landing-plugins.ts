@@ -15,6 +15,7 @@ const PLUGIN_ORDER = [
   "lyfta",
   "16personalities",
   "websites",
+  "about",
   "github_repo",
 ]
 
@@ -32,9 +33,10 @@ export const LANDING_PLUGINS = [
 
 /**
  * Plugins that are not a platform of their own, so the "pulls data from" strip leaves
- * them out: the repository card reads GitHub, and Websites shows sites the user types in.
+ * them out: the repository card reads GitHub, and Websites and About show what the
+ * user types in.
  */
-export const NOT_A_PLATFORM = new Set(["github_repo", "websites"])
+export const NOT_A_PLATFORM = new Set(["github_repo", "websites", "about"])
 
 // The strip was a hand-typed list of 10 chips that stopped being updated: Stack
 // Overflow and 16Personalities never made it, under a hero that counts 14 plugins.
