@@ -75,12 +75,15 @@ export function FeaturesGrid() {
                 {/* The address the dashboard gives, on whatever origin this is served from. */}
                 <span className="text-cyan-600 dark:text-cyan-400">
                   {/* On a phone the address wraps after a slash, not inside a word. */}
+                  {/* split("/") and the slash put back, not a lookbehind: (?<=…) throws a
+                      SyntaxError before Safari 16.4, and Vite's default target still
+                      includes safari14, so the whole landing would fail to render there. */}
                   {publicSvgUrl("<id>")
-                    .split(/(?<=\/)/)
-                    .map((part, index) => (
+                    .split("/")
+                    .map((part, index, parts) => (
                       <Fragment key={index}>
                         {index > 0 && <wbr />}
-                        {part}
+                        {index < parts.length - 1 ? `${part}/` : part}
                       </Fragment>
                     ))}
                 </span>
