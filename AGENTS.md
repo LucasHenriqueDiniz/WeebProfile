@@ -285,7 +285,7 @@ Conclusão: no Safari um card auto pode sair claro sobre o GitHub escuro. Isso �
 - Framework: **Vite SPA** + **TanStack Router** (não é mais Next.js)
 - State: **Zustand** (`stores/wizard-store.ts` — estado do wizard, `stores/svg-store.ts` — SVG gerado)
 - UI: **shadcn/ui** + Tailwind CSS
-- i18n: **react-i18next** (`i18n/`) — textos da interface em `public/locales/{lang}/translation.json` (a cópia que o site serve; `messages/{lang}.json` era uma segunda cópia que divergiu e foi removida), textos dos plugins em `messages/plugins/{plugin}/{lang}.json` (escritos pelo `generate-metadata`). `i18n/locales.test.ts` confere que os três idiomas têm as mesmas chaves e os mesmos placeholders
+- i18n: **react-i18next** (`i18n/`) — textos da interface em `public/locales/{lang}/translation.json` (a cópia que o site serve; `messages/{lang}.json` era uma segunda cópia que divergiu e foi removida), textos dos plugins em `messages/plugins/{plugin}/{lang}.json` (escritos pelo `generate-metadata`, que põe chave nova em pt e es com o texto em inglês, para traduzir à mão; os campos dos itens de uma lista `object-array` entram em `config.<opção>.items`). `i18n/locales.test.ts` confere que os três idiomas têm as mesmas chaves e os mesmos placeholders
 - Auth: **Clerk** (`@clerk/react` no frontend, `@clerk/backend` nas Pages Functions)
 - DB: **Drizzle ORM** sobre **Cloudflare D1** (SQLite)
 - Storage de SVGs: **Cloudflare R2** (bucket `weebprofile-svgs`, binding `SVGS_BUCKET`)

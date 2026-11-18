@@ -10,6 +10,38 @@
         },
         "links_items": {
           "description": "Up to 8 links. Only the address is required.",
+          "items": {
+            "icon": {
+              "label": "Icon",
+              "options": {
+                "auto": "From the address",
+                "bluesky": "Bluesky",
+                "devto": "DEV",
+                "discord": "Discord",
+                "email": "Email",
+                "github": "GitHub",
+                "instagram": "Instagram",
+                "kofi": "Ko-fi",
+                "linkedin": "LinkedIn",
+                "mastodon": "Mastodon",
+                "medium": "Medium",
+                "rss": "RSS",
+                "twitch": "Twitch",
+                "website": "Website",
+                "x": "X (Twitter)",
+                "youtube": "YouTube"
+              }
+            },
+            "label": {
+              "description": "Optional. Defaults to the site's name or domain.",
+              "label": "Text",
+              "placeholder": "LinkedIn"
+            },
+            "url": {
+              "label": "Address",
+              "placeholder": "https://my-site.dev or you@example.com"
+            }
+          },
           "label": "Links",
           "tooltip": "An address can be a site (https://… or just example.com) or an email (you@example.com). The icon and the text are picked from the address unless you choose them."
         }
@@ -21,6 +53,16 @@
       "config": {
         "neofetch_fields": {
           "description": "Up to 10 lines of Label: value",
+          "items": {
+            "label": {
+              "label": "Label",
+              "placeholder": "Location"
+            },
+            "value": {
+              "label": "Value",
+              "placeholder": "Brazil"
+            }
+          },
           "label": "Lines",
           "tooltip": "Each line is a label and its value, such as Location: Brazil or Stack: TypeScript · React. A value too long for the card ends in an ellipsis."
         },

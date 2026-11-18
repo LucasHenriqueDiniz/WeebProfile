@@ -700,6 +700,29 @@
       "errorType": "Use um arquivo PNG, JPEG ou WebP.",
       "errorTooBig": "Esta imagem não cabe em {{size}} KB nem reduzida. Tente uma menor.",
       "errorRead": "Não foi possível ler esta imagem."
+    },
+    "sectionConfig": {
+      "open": "Configurar seção",
+      "title": "Configurações: {{section}}",
+      "live": "As mudanças aparecem no preview em tempo real.",
+      "helpLink": "Clique no link ao lado para abrir a ajuda e obter mais informações.",
+      "helpLinkMore": "Clique no link ao lado para obter mais informações.",
+      "openHelp": "Abrir link de ajuda",
+      "on": "Ativado",
+      "off": "Desativado",
+      "addItem": "Adicionar {{item}}",
+      "arrayPlaceholder": "Digite um valor e pressione Enter",
+      "arrayEmpty": "Nenhum item adicionado. Digite um valor e pressione Enter ou clique no botão +.",
+      "removeValue": "Remover {{item}}"
+    },
+    "objectArray": {
+      "add": "Adicionar item",
+      "empty": "Nenhum item adicionado ainda.",
+      "moveUp": "Mover para cima",
+      "moveDown": "Mover para baixo",
+      "remove": "Remover item",
+      "missing": "Preencha: {{fields}}",
+      "count": "{{count}} de {{max}}"
     }
   },
   "templatesPage": {
