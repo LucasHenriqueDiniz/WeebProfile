@@ -97,7 +97,8 @@
     "moreActions": "More actions"
   },
   "header": {
-    "changeLanguage": "Change language",
+    "language": "Language",
+    "preferences": "Preferences: language and theme",
     "dashboard": "Dashboard",
     "myAccount": "My Account",
     "settings": "Settings",
@@ -350,13 +351,6 @@
         "applied": "Applied"
       }
     }
-  },
-  "languageSelector": {
-    "comingSoon": "Coming soon",
-    "description": "Select your preferred interface language",
-    "noResults": "No language found",
-    "searchPlaceholder": "Search language...",
-    "title": "Change language"
   },
   "loading": {
     "loading": "LOADING"

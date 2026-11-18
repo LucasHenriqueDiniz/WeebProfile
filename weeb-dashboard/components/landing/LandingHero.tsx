@@ -190,6 +190,8 @@ export function LandingHero() {
   return (
     <section
       id="top"
+      // The header paints itself in the band's colours while this is under it.
+      data-header-band
       className="relative bg-cyan-100 text-slate-900 lg:flex lg:min-h-[calc(100svh-4rem)] lg:items-center"
     >
       <div

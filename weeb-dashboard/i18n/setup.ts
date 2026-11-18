@@ -64,4 +64,10 @@ i18n
     },
   })
 
+// The page's own language follows the interface: screen readers and the browser's
+// translate prompt read <html lang>, which index.html fixes at one value.
+i18n.on("languageChanged", (language) => {
+  if (typeof document !== "undefined") document.documentElement.lang = language
+})
+
 export default i18n
