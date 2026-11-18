@@ -48,6 +48,15 @@
   padding: 0;
 }
 
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card: GitHub repositories, activity, people and gists, the 16Personalities
+   link. :where() keeps it at zero specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Container */
 #svg-main .default-container {
   --font-family: Poppins, sans-serif;
@@ -1363,6 +1372,11 @@
   gap: 9px
 }
 
+#svg-main .gap-x-1 {
+  -moz-column-gap: 0.25rem;
+       column-gap: 0.25rem
+}
+
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
@@ -1593,10 +1607,6 @@
   background-color: rgb(0 0 0 / 0.2)
 }
 
-#svg-main .bg-black\/25 {
-  background-color: rgb(0 0 0 / 0.25)
-}
-
 #svg-main .bg-black\/40 {
   background-color: rgb(0 0 0 / 0.4)
 }
@@ -1643,10 +1653,6 @@
 #svg-main .bg-red-950 {
   --tw-bg-opacity: 1;
   background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
-}
-
-#svg-main .bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
 }
 
 #svg-main .bg-yellow-50 {
@@ -2014,6 +2020,10 @@
 
 #svg-main .uppercase {
   text-transform: uppercase
+}
+
+#svg-main .lowercase {
+  text-transform: lowercase
 }
 
 #svg-main .capitalize {
@@ -2600,4 +2610,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="duolingo-plugin" class="duolingo-plugin-section"><section id="duolingo-languages-learning"><div class="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M152.1 236.2c-3.5-12.1-7.8-33.2-7.8-33.2h-.5s-4.3 21.1-7.8 33.2l-11.1 37.5H163zM616 96H336v320h280c13.3 0 24-10.7 24-24V120c0-13.3-10.7-24-24-24zm-24 120c0 6.6-5.4 12-12 12h-11.4c-6.9 23.6-21.7 47.4-42.7 69.9 8.4 6.4 17.1 12.5 26.1 18 5.5 3.4 7.3 10.5 4.1 16.2l-7.9 13.9c-3.4 5.9-10.9 7.8-16.7 4.3-12.6-7.8-24.5-16.1-35.4-24.9-10.9 8.7-22.7 17.1-35.4 24.9-5.8 3.5-13.3 1.6-16.7-4.3l-7.9-13.9c-3.2-5.6-1.4-12.8 4.2-16.2 9.3-5.7 18-11.7 26.1-18-7.9-8.4-14.9-17-21-25.7-4-5.7-2.2-13.6 3.7-17.1l6.5-3.9 7.3-4.3c5.4-3.2 12.4-1.7 16 3.4 5 7 10.8 14 17.4 20.9 13.5-14.2 23.8-28.9 30-43.2H412c-6.6 0-12-5.4-12-12v-16c0-6.6 5.4-12 12-12h64v-16c0-6.6 5.4-12 12-12h16c6.6 0 12 5.4 12 12v16h64c6.6 0 12 5.4 12 12zM0 120v272c0 13.3 10.7 24 24 24h280V96H24c-13.3 0-24 10.7-24 24zm58.9 216.1L116.4 167c1.7-4.9 6.2-8.1 11.4-8.1h32.5c5.1 0 9.7 3.3 11.4 8.1l57.5 169.1c2.6 7.8-3.1 15.9-11.4 15.9h-22.9a12 12 0 0 1-11.5-8.6l-9.4-31.9h-60.2l-9.1 31.8c-1.5 5.1-6.2 8.7-11.5 8.7H70.3c-8.2 0-14-8.1-11.4-15.9z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Languages Learning</h2></div></div><div class="flex flex-col gap-1"><div class="duolingo-list-item"><div class="flex gap-2 items-center min-h-[50px] max-h-[50px]"><div class="flex flex-col w-full h-full justify-evenly overflow-hidden"><div class="font-semibold text-lg text-default-highlight truncate flex items-center"><span class="inline-flex items-center gap-1.5"><span class="inline-flex items-center justify-center w-6 h-4 text-lg leading-none flex-shrink-0" title="JP" role="img" aria-label="Flag of JP">🇯🇵</span>Japanese</span></div><div class="flex justify-between items-baseline gap-2"><div class="text-sm text-default-muted truncate flex items-center"><span class="duolingo-level-badge">Level <!-- -->12</span></div><div class="text-sm text-default-muted truncate w-fit ml-auto flex items-center"><span class="duolingo-xp-text">45.2K<!-- --> XP</span></div></div></div></div></div><div class="duolingo-list-item"><div class="flex gap-2 items-center min-h-[50px] max-h-[50px]"><div class="flex flex-col w-full h-full justify-evenly overflow-hidden"><div class="font-semibold text-lg text-default-highlight truncate flex items-center"><span class="inline-flex items-center gap-1.5"><span class="inline-flex items-center justify-center w-6 h-4 text-lg leading-none flex-shrink-0" title="FR" role="img" aria-label="Flag of FR">🇫🇷</span>French</span></div><div class="flex justify-between items-baseline gap-2"><div class="text-sm text-default-muted truncate flex items-center"><span class="duolingo-level-badge">Level <!-- -->8</span></div><div class="text-sm text-default-muted truncate w-fit ml-auto flex items-center"><span class="duolingo-xp-text">28.4K<!-- --> XP</span></div></div></div></div></div><div class="duolingo-list-item"><div class="flex gap-2 items-center min-h-[50px] max-h-[50px]"><div class="flex flex-col w-full h-full justify-evenly overflow-hidden"><div class="font-semibold text-lg text-default-highlight truncate flex items-center"><span class="inline-flex items-center gap-1.5"><span class="inline-flex items-center justify-center w-6 h-4 text-lg leading-none flex-shrink-0" title="GB" role="img" aria-label="Flag of GB">🇬🇧</span>English</span></div><div class="flex justify-between items-baseline gap-2"><div class="text-sm text-default-muted truncate flex items-center"><span class="duolingo-level-badge">Level <!-- -->6</span></div><div class="text-sm text-default-muted truncate w-fit ml-auto flex items-center"><span class="duolingo-xp-text">23.1K<!-- --> XP</span></div></div></div></div></div></div></div></section></section></div></div></div></div></foreignObject></svg>
+</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="duolingo-plugin" class="duolingo-plugin-section"><section id="duolingo-languages-learning"><div class="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M152.1 236.2c-3.5-12.1-7.8-33.2-7.8-33.2h-.5s-4.3 21.1-7.8 33.2l-11.1 37.5H163zM616 96H336v320h280c13.3 0 24-10.7 24-24V120c0-13.3-10.7-24-24-24zm-24 120c0 6.6-5.4 12-12 12h-11.4c-6.9 23.6-21.7 47.4-42.7 69.9 8.4 6.4 17.1 12.5 26.1 18 5.5 3.4 7.3 10.5 4.1 16.2l-7.9 13.9c-3.4 5.9-10.9 7.8-16.7 4.3-12.6-7.8-24.5-16.1-35.4-24.9-10.9 8.7-22.7 17.1-35.4 24.9-5.8 3.5-13.3 1.6-16.7-4.3l-7.9-13.9c-3.2-5.6-1.4-12.8 4.2-16.2 9.3-5.7 18-11.7 26.1-18-7.9-8.4-14.9-17-21-25.7-4-5.7-2.2-13.6 3.7-17.1l6.5-3.9 7.3-4.3c5.4-3.2 12.4-1.7 16 3.4 5 7 10.8 14 17.4 20.9 13.5-14.2 23.8-28.9 30-43.2H412c-6.6 0-12-5.4-12-12v-16c0-6.6 5.4-12 12-12h64v-16c0-6.6 5.4-12 12-12h16c6.6 0 12 5.4 12 12v16h64c6.6 0 12 5.4 12 12zM0 120v272c0 13.3 10.7 24 24 24h280V96H24c-13.3 0-24 10.7-24 24zm58.9 216.1L116.4 167c1.7-4.9 6.2-8.1 11.4-8.1h32.5c5.1 0 9.7 3.3 11.4 8.1l57.5 169.1c2.6 7.8-3.1 15.9-11.4 15.9h-22.9a12 12 0 0 1-11.5-8.6l-9.4-31.9h-60.2l-9.1 31.8c-1.5 5.1-6.2 8.7-11.5 8.7H70.3c-8.2 0-14-8.1-11.4-15.9z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">Languages Learning</h2></div></div><div class="flex flex-col gap-1"><div class="duolingo-list-item"><div class="flex gap-2 items-center min-h-[50px] max-h-[50px]"><div class="flex flex-col w-full h-full justify-evenly overflow-hidden"><div class="font-semibold text-lg text-default-highlight truncate flex items-center"><span class="inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:24px;height:16px;flex-shrink:0;box-shadow:0 0 0 1px var(--default-color-muted-light)" role="img" aria-label="Flag of JP" data-flag="JP"><path fill="#FFF" d="M0 0h512v342H0z"></path><circle fill="#D80027" cx="256.5" cy="171" r="96"></circle></svg>Japanese</span></div><div class="flex justify-between items-baseline gap-2"><div class="text-sm text-default-muted truncate flex items-center"><span class="duolingo-level-badge">Level <!-- -->12</span></div><div class="text-sm text-default-muted truncate w-fit ml-auto flex items-center"><span class="duolingo-xp-text">45.2K<!-- --> XP</span></div></div></div></div></div><div class="duolingo-list-item"><div class="flex gap-2 items-center min-h-[50px] max-h-[50px]"><div class="flex flex-col w-full h-full justify-evenly overflow-hidden"><div class="font-semibold text-lg text-default-highlight truncate flex items-center"><span class="inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:24px;height:16px;flex-shrink:0;box-shadow:0 0 0 1px var(--default-color-muted-light)" role="img" aria-label="Flag of FR" data-flag="FR"><path fill="#FFF" d="M0 0h513v342H0z"></path><path fill="#00318A" d="M0 0h171v342H0z"></path><path fill="#D80027" d="M342 0h171v342H342z"></path></svg>French</span></div><div class="flex justify-between items-baseline gap-2"><div class="text-sm text-default-muted truncate flex items-center"><span class="duolingo-level-badge">Level <!-- -->8</span></div><div class="text-sm text-default-muted truncate w-fit ml-auto flex items-center"><span class="duolingo-xp-text">28.4K<!-- --> XP</span></div></div></div></div></div><div class="duolingo-list-item"><div class="flex gap-2 items-center min-h-[50px] max-h-[50px]"><div class="flex flex-col w-full h-full justify-evenly overflow-hidden"><div class="font-semibold text-lg text-default-highlight truncate flex items-center"><span class="inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:24px;height:16px;flex-shrink:0;box-shadow:0 0 0 1px var(--default-color-muted-light)" role="img" aria-label="Flag of GB" data-flag="GB"><g fill="#FFF"><path d="M0 0h513v341.3H0V0z"></path><path d="M311.7 230 513 341.3v-31.5L369.3 230h-57.6zM200.3 111.3 0 0v31.5l143.7 79.8h56.6z"></path></g><path d="M393.8 230 513 295.7V230H393.8zm-82.1 0L513 341.3v-31.5L369.3 230h-57.6zm146.9 111.3-147-81.7v81.7h147zM90.3 230 0 280.2V230h90.3zm110 14.2v97.2H25.5l174.8-97.2zm-82.1-132.9L0 45.6v65.7h118.2zm82.1 0L0 0v31.5l143.7 79.8h56.6zM53.4 0l147 81.7V0h-147zm368.3 111.3L513 61.1v50.2h-91.3zm-110-14.2V0h174.9L311.7 97.1z" fill="#0052B4"></path><g fill="#D80027"><path d="M288 0h-64v138.7H0v64h224v138.7h64V202.7h224v-64H288V0z"></path><path d="M311.7 230 513 341.3v-31.5L369.3 230h-57.6zm-168 0L0 309.9v31.5L200.3 230h-56.6zm56.6-118.7L0 0v31.5l143.7 79.8h56.6zm168 0L513 31.5V0L311.7 111.3h56.6z"></path></g></svg>English</span></div><div class="flex justify-between items-baseline gap-2"><div class="text-sm text-default-muted truncate flex items-center"><span class="duolingo-level-badge">Level <!-- -->6</span></div><div class="text-sm text-default-muted truncate w-fit ml-auto flex items-center"><span class="duolingo-xp-text">23.1K<!-- --> XP</span></div></div></div></div></div></div></div></section></section></div></div></div></div></foreignObject></svg>

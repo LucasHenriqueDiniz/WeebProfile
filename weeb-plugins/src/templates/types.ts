@@ -19,6 +19,6 @@ export interface ListItemProps {
 }
 
 export interface TerminalLineProps {
-  right: string
+  right: string | React.ReactNode
   left: string
 }
