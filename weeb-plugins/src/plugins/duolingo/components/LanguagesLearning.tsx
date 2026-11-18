@@ -47,7 +47,7 @@ export function LanguagesLearning({
     return {
       right: (
         <span className="inline-flex items-center gap-1.5">
-          <CountryFlag code={countryCode} className="flex-shrink-0" />
+          <CountryFlag code={countryCode} edgeColor="var(--default-color-muted-light)" />
           {capitalizedName}
         </span>
       ) as any,
@@ -59,7 +59,17 @@ export function LanguagesLearning({
   const terminalLines: TerminalLineProps[] = limitedData.map((lang) => {
     const capitalizedName = capitalizeLanguage(lang.language)
     return {
-      right: capitalizedName,
+      right: (
+        <>
+          <CountryFlag
+            code={getLanguageCode(lang.language)}
+            width={15}
+            edgeColor="var(--terminal-color-muted-light)"
+            style={{ display: "inline-block", verticalAlign: "-1px", marginRight: 6 }}
+          />
+          {capitalizedName}
+        </>
+      ),
       left: `${abbreviateNumber(lang.xp)} XP${lang.level ? ` (Level ${lang.level})` : ""}`,
     }
   })
