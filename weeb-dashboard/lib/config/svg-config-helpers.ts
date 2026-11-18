@@ -4,6 +4,8 @@
  * These configs are now stored in ui_config (separate from plugins_config).
  */
 
+import { getSectionConfigOptions } from "@weeb/weeb-plugins/plugins/metadata"
+
 type UiConfig = Record<string, any>
 
 /**
@@ -108,6 +110,39 @@ export function readStyleUiConfig(uiConfig: UiConfig | null | undefined): StyleU
     }
   }
   return { ...getTerminalConfigs(uiConfig), customThemeColors }
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value)
+
+/**
+ * A plugin's section options as an editor keeps them (section id → options), from its
+ * saved config. The wizards save them under sectionConfigs, but the generator also
+ * takes them at the root of the plugin's config, and cards written that way through
+ * the API opened in the editor with every option at its default. Saving one wiped
+ * them, since the save writes only sectionConfigs: 6 cards in D1 were like that in
+ * 11/2026, one with the 6 sites of a websites card.
+ *
+ * An option at the root fills each active section that declares it, unless
+ * sectionConfigs already has one for that section.
+ */
+export function readSectionConfigs(
+  pluginName: string,
+  pluginConfig: Record<string, unknown>,
+  sections: string[]
+): Record<string, Record<string, unknown>> {
+  const nested = isRecord(pluginConfig.sectionConfigs) ? pluginConfig.sectionConfigs : {}
+  const result: Record<string, Record<string, unknown>> = {}
+  for (const sectionId of sections) {
+    const saved = isRecord(nested[sectionId]) ? { ...nested[sectionId] } : {}
+    for (const option of getSectionConfigOptions(pluginName, sectionId)) {
+      if (saved[option.key] === undefined && pluginConfig[option.key] !== undefined) {
+        saved[option.key] = pluginConfig[option.key]
+      }
+    }
+    if (Object.keys(saved).length > 0) result[sectionId] = saved
+  }
+  return result
 }
 
 /**
