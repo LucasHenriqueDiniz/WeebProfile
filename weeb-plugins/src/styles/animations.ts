@@ -183,6 +183,14 @@ ${waveRowRules()}
       calc(var(--weeb-out, 0s) + (var(--weeb-c, 0) + var(--weeb-r, 0)) * var(--weeb-wave, 0s)) backwards;
   }
 
+  /* Tiles (svg-generator: one item per SVG, side by side in the README): each fades in at
+     its place in the row (--weeb-at, set on the tile by animationTileStyle()), and what
+     is inside starts with it. A tile has no <section>, so none of the rules above reach it. */
+  #svg-main .weeb-anim .weeb-tile {
+    --weeb-out: calc(var(--weeb-at, 0s) + ${s(t.contentDelay)});
+    animation: weeb-fade ${s(t.enter)} cubic-bezier(0.2, 0.8, 0.2, 1) var(--weeb-at, 0s) backwards;
+  }
+
   /* Items of a list, a grid or a row of tags fade in one after the other, from the
      section's content on: each child carries its place (--weeb-idx), the parent the gap
      between two (--weeb-gap). See itemCascade() in templates/animations.tsx. Opacity only,

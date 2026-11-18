@@ -6,6 +6,7 @@ export {
   animationTimeline,
   animationBaseStyle,
   animationStepStyle,
+  animationTileStyle,
   sectionTail,
   ANIMATION_BUDGET_S,
   ANIMATION_TIMING,

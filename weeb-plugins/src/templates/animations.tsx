@@ -109,6 +109,18 @@ export function animationBaseStyle(base: number): React.CSSProperties {
   return { ["--weeb-base" as string]: base } as React.CSSProperties
 }
 
+/**
+ * Tiles (svg-generator, one item per SVG) sit side by side in a README, each an image of
+ * its own. Each starts at its place in the row, so the row comes in one tile after the
+ * other, as the sections of a card do. For the wrapper with class `weeb-tile`.
+ *
+ * @param index - the tile's place among its plugin's tiles
+ * @param step - seconds between two tiles (animationTimeline over the tiles)
+ */
+export function animationTileStyle(index: number, step: number): React.CSSProperties {
+  return { ["--weeb-at" as string]: `${Math.round(index * step * 1000)}ms` } as React.CSSProperties
+}
+
 /** Cells in a column of a wave grid: one per weekday in a contribution calendar. */
 export const WAVE_ROWS = 7
 
