@@ -97,7 +97,8 @@
     "moreActions": "Más acciones"
   },
   "header": {
-    "changeLanguage": "Cambiar idioma",
+    "language": "Idioma",
+    "preferences": "Preferencias: idioma y tema",
     "dashboard": "Dashboard",
     "myAccount": "Mi Cuenta",
     "settings": "Configuración",
@@ -350,13 +351,6 @@
         "applied": "Aplicado"
       }
     }
-  },
-  "languageSelector": {
-    "comingSoon": "Próximamente",
-    "description": "Selecciona el idioma preferido para la interfaz",
-    "noResults": "No se encontró ningún idioma",
-    "searchPlaceholder": "Buscar idioma...",
-    "title": "Cambiar idioma"
   },
   "loading": {
     "loading": "CARGANDO"

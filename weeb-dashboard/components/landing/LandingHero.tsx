@@ -190,7 +190,11 @@ export function LandingHero() {
   return (
     <section
       id="top"
-      className="relative bg-cyan-100 text-slate-900 lg:flex lg:min-h-[calc(100svh-4rem)] lg:items-center"
+      // The header paints itself in the band's colours while this is under it.
+      data-header-band
+      // pt-16: the band starts at the top of the page, under the bar-less header, so the
+      // dark page colour no longer shows as a 64px strip above the cyan.
+      className="relative bg-cyan-100 pt-16 text-slate-900 lg:flex lg:min-h-[100svh] lg:items-center"
     >
       <div
         aria-hidden
