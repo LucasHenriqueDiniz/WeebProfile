@@ -105,6 +105,29 @@ const VARIANTS = {
     ...m,
     people: { ...m.people!, totalCount: 40, nodes: m.people!.nodes.slice(0, 8) },
   }),
+  // Titles that wrap to the two-line clamp, and a footer that wraps: a repository long
+  // enough to be truncated, after a file count and its additions and deletions
+  "long activity": (m: GithubData): GithubData => ({
+    ...m,
+    recentActivity: m.recentActivity!.map((a, i) =>
+      i === 0
+        ? {
+            ...a,
+            title:
+              "#1234 Refactor the whole rendering pipeline so that every section declares its height and the card never gets cut",
+          }
+        : i === 1
+          ? {
+              ...a,
+              title: "#77 Fix wrapping of long pull request titles in the recent activity section of the GitHub plugin",
+              repository: "some-organization-with-a-long-name/an-equally-long-repository-name",
+              filesChanged: { files: 123, additions: 45678, deletions: 9012 },
+            }
+          : i === 2
+            ? { ...a, title: "a-really-long-branch-name/that-keeps-going-and-going-until-it-has-to-wrap-somewhere" }
+            : a
+    ),
+  }),
   // A list of 12 with its first 5 drawn: "+7 more repositories"
   "long star list": (m: GithubData): GithubData => ({
     ...m,
@@ -245,17 +268,19 @@ const MEASURED: Case[] = [
   [["repositories"], "terminal", "half", "mock", {}, [212, 212, 212]],
   [["repositories"], "terminal", "full", "mock", {}, [212, 212, 212]],
   [["repositories"], "default", "half", "mock", { repositories_hide_title: true }, [92, 92, 92]],
-  [["notable_contributions"], "default", "half", "mock", {}, [1148, 1148, 1148]],
-  [["notable_contributions"], "default", "full", "mock", {}, [1148, 1148, 1148]],
+  [["notable_contributions"], "default", "half", "mock", {}, [440, 440, 440]],
+  [["notable_contributions"], "default", "full", "mock", {}, [440, 440, 440]],
   [["notable_contributions"], "terminal", "half", "mock", {}, [252, 252, 252]],
   [["notable_contributions"], "terminal", "full", "mock", {}, [252, 252, 252]],
-  [["notable_contributions"], "default", "half", "mock", { notable_contributions_max: 3 }, [364, 364, 364]],
-  [["recent_activity"], "default", "half", "mock", {}, [1412, 1412, 1412], WRAP],
-  [["recent_activity"], "default", "full", "mock", {}, [1412, 1412, 1412], WRAP],
-  [["recent_activity"], "terminal", "half", "mock", {}, [268, 268, 268]],
-  [["recent_activity"], "terminal", "full", "mock", {}, [268, 268, 268]],
-  [["recent_activity"], "default", "half", "mock", { recent_activity_max: 3 }, [450, 450, 450], WRAP],
-  [["recent_activity"], "terminal", "half", "mock", { recent_activity_max: 3 }, [100, 100, 100]],
+  [["notable_contributions"], "default", "half", "mock", { notable_contributions_max: 3 }, [160, 160, 160]],
+  [["recent_activity"], "default", "half", "mock", {}, [1057, 1057, 1057], WRAP],
+  [["recent_activity"], "default", "full", "mock", {}, [1057, 1057, 1057], WRAP],
+  [["recent_activity"], "default", "half", "long activity", {}, [1133, 1133, 1133], WRAP],
+  [["recent_activity"], "default", "full", "long activity", {}, [1077, 1077, 1077], WRAP],
+  [["recent_activity"], "terminal", "half", "mock", {}, [232, 232, 232]],
+  [["recent_activity"], "terminal", "full", "mock", {}, [232, 232, 232]],
+  [["recent_activity"], "default", "half", "mock", { recent_activity_max: 3 }, [346, 346, 346], WRAP],
+  [["recent_activity"], "terminal", "half", "mock", { recent_activity_max: 3 }, [92, 92, 92]],
   [["introduction"], "default", "half", "mock", {}, [128, 128, 128], WRAP],
   [["introduction"], "default", "full", "mock", {}, [92, 92, 92], WRAP],
   [["introduction"], "terminal", "half", "mock", {}, [176, 176, 176], WRAP],
@@ -339,10 +364,10 @@ const MEASURED: Case[] = [
     { favorite_languages_max_languages: 8 },
     [368, 368, 368],
   ],
-  [SEVEN, "default", "half", "7 gists", {}, [3690, 3687, 3690], WRAP],
-  [SEVEN, "default", "full", "7 gists", {}, [3650, 3647, 3650], WRAP],
-  [SEVEN, "terminal", "half", "7 gists", {}, [1492, 1492, 1492]],
-  [SEVEN, "terminal", "full", "7 gists", {}, [1492, 1492, 1492]],
+  [SEVEN, "default", "half", "7 gists", {}, [3335, 3332, 3335], WRAP],
+  [SEVEN, "default", "full", "7 gists", {}, [3295, 3292, 3295], WRAP],
+  [SEVEN, "terminal", "half", "7 gists", {}, [1456, 1456, 1456]],
+  [SEVEN, "terminal", "full", "7 gists", {}, [1456, 1456, 1456]],
   [["activity", "repositories", "star_lists"], "terminal", "half", "long star list", {}, [520, 520, 520]],
   [["activity", "repositories", "star_lists"], "default", "full", "long star list", {}, [728, 727, 728], WRAP],
 ]
