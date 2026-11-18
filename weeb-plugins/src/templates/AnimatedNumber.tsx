@@ -25,26 +25,29 @@ export const MAX_COUNT_DECIMALS = 2
  */
 const MAX_COUNT = 2 ** 23
 
-const NUMBER = /^(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d+))?([KMBT%]?)$/
+// An optional "#" before the number (a rank) and one word after it ("123 days").
+const NUMBER = /^(#?)(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d+))?([KkMBT%]?)( [A-Za-z]+)?$/
 
 export interface CountTarget {
   /** Value to count to, as an integer: the number times 10^decimals. */
   to: number
   /** Digits after the dot, printed while counting as they are in the text. */
   decimals: number
-  /** Printed after the number ("K", "%"). */
+  /** Printed before the number ("#"). */
+  prefix: string
+  /** Printed after the number ("K", "%", " days"). */
   unit: string
 }
 
 /** What to count to, or null for text that is not a number the counter can print as is. */
 export function parseCountTarget(text: string): CountTarget | null {
   const match = NUMBER.exec(text.trim())
-  if (!match?.[1]) return null
-  const fraction = match[2] ?? ""
+  if (!match?.[2]) return null
+  const fraction = match[3] ?? ""
   if (fraction.length > MAX_COUNT_DECIMALS) return null
-  const to = Number(match[1].replace(/,/g, "") + fraction)
+  const to = Number(match[2].replace(/,/g, "") + fraction)
   if (!Number.isSafeInteger(to) || to <= 0 || to > MAX_COUNT) return null
-  return { to, decimals: fraction.length, unit: match[3] ?? "" }
+  return { to, decimals: fraction.length, prefix: match[1] ?? "", unit: (match[4] ?? "") + (match[5] ?? "") }
 }
 
 export function AnimatedNumber({ value }: { value: string | number }): React.ReactElement {
@@ -60,6 +63,7 @@ export function AnimatedNumber({ value }: { value: string | number }): React.Rea
         {
           "--weeb-to": target.to,
           ...(target.decimals ? { "--weeb-scale": 10 ** target.decimals } : {}),
+          ...(target.prefix ? { "--weeb-prefix": JSON.stringify(target.prefix) } : {}),
           ...(target.unit ? { "--weeb-unit": JSON.stringify(target.unit) } : {}),
         } as React.CSSProperties
       }

@@ -2,9 +2,11 @@ import React from "react"
 import { FaCode } from "react-icons/fa"
 import { TbLicense } from "react-icons/tb"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import TerminalTree from "../../../templates/Terminal/TerminalTree"
+import { CascadeGroup } from "../../../templates/animations"
 import type { GridItemProps } from "../../../templates/types"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
@@ -25,7 +27,7 @@ const DefaultFavoriteLicense = ({ data, total }: { data: GithubData["favoriteLic
       <div className="flex flex-col w-full">
         <span className="text-semibold text-default-text text-lg">{data.name}</span>
         <span className="text-sm text-default-text">
-          Used in {data.count} out of {total} repositories
+          Used in <AnimatedNumber value={data.count} /> out of <AnimatedNumber value={total} /> repositories
         </span>
       </div>
     </div>
@@ -42,7 +44,12 @@ const TerminalFavoriteLicense = ({ data, total }: { data: GithubData["favoriteLi
     },
   ]
 
-  return <TerminalTree data={TreeItems} title="Favorite License" />
+  // The tree's title and its items sit straight in the section, one block under the other.
+  return (
+    <CascadeGroup count={TreeItems.length + 1}>
+      <TerminalTree data={TreeItems} title="Favorite License" />
+    </CascadeGroup>
+  )
 }
 
 export function FavoriteLicense({ data, config, style }: FavoriteLicenseProps): React.ReactElement {

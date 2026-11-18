@@ -1,9 +1,11 @@
 import React from "react"
 import { FaCode, FaFileCode } from "react-icons/fa"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
@@ -11,10 +13,11 @@ import { ExternalLink } from "../../../utils/external-link"
 
 const DefaultGists = ({ data, maxGists }: { data: NonNullable<GithubData["gists"]>; maxGists: number }) => {
   const gistsToShow = data.nodes.slice(0, maxGists)
+  const cascade = useItemCascade(gistsToShow.length)
 
   return (
     <div className="github-gists">
-      <div className="flex flex-col gap-4">
+      <div className={withCascade("flex flex-col gap-4", cascade)} style={cascade?.style}>
         {gistsToShow.map((gist, index) => (
           <ExternalLink
             key={index}
@@ -31,7 +34,9 @@ const DefaultGists = ({ data, maxGists }: { data: NonNullable<GithubData["gists"
                 <span className="font-semibold text-base text-default-text truncate">{gist.name}</span>
                 {gist.stargazerCount > 0 && (
                   <div className="flex items-center gap-1 text-default-muted flex-shrink-0">
-                    <span className="text-xs font-medium">⭐ {abbreviateNumber(gist.stargazerCount)}</span>
+                    <span className="text-xs font-medium">
+                      ⭐ <AnimatedNumber value={abbreviateNumber(gist.stargazerCount)} />
+                    </span>
                   </div>
                 )}
               </div>

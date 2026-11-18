@@ -1,10 +1,12 @@
 import React from "react"
 import { FaCodeBranch, FaStar } from "react-icons/fa"
 import { RiStarLine } from "react-icons/ri"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
@@ -18,10 +20,11 @@ const DefaultStarredRepositories = ({
   maxRepos: number
 }) => {
   const reposToShow = data.nodes.slice(0, maxRepos)
+  const cascade = useItemCascade(reposToShow.length)
 
   return (
     <div className="github-starred-repositories">
-      <div className="flex flex-col gap-4">
+      <div className={withCascade("flex flex-col gap-4", cascade)} style={cascade?.style}>
         {reposToShow.map((repo, index) => (
           <ExternalLink
             key={index}
@@ -52,11 +55,15 @@ const DefaultStarredRepositories = ({
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-1.5 text-default-muted">
                   <FaStar className="text-yellow-500 fill-yellow-500" size={14} />
-                  <span className="text-sm font-medium">{abbreviateNumber(repo.stargazerCount)}</span>
+                  <span className="text-sm font-medium">
+                    <AnimatedNumber value={abbreviateNumber(repo.stargazerCount)} />
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-default-muted">
                   <FaCodeBranch size={14} />
-                  <span className="text-sm font-medium">{abbreviateNumber(repo.forkCount)}</span>
+                  <span className="text-sm font-medium">
+                    <AnimatedNumber value={abbreviateNumber(repo.forkCount)} />
+                  </span>
                 </div>
               </div>
             </div>

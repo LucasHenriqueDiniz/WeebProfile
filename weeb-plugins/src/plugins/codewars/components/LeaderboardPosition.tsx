@@ -5,6 +5,7 @@
 import React from "react"
 import { FaTrophy } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -26,6 +27,8 @@ export function LeaderboardPosition({
   style = "default",
   size = "half",
 }: LeaderboardPositionProps): React.ReactElement {
+  // The label and the position, one line each.
+  const cascade = useItemCascade(2)
   if (!position) {
     return <></>
   }
@@ -41,7 +44,7 @@ export function LeaderboardPosition({
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<IoStatsChartOutline />} />}
             <div className="flex gap-4 half:gap-3 items-start w-full">
-              <div className="flex flex-col items-start w-full">
+              <div className={withCascade("flex flex-col items-start w-full", cascade)} style={cascade?.style}>
                 <p className="text-sm text-default-muted font-medium">Position</p>
                 <p className="relative text-xl half:text-lg font-black text-default-foreground tabular-nums tracking-tight whitespace-nowrap flex items-center gap-2">
                   <FaTrophy className="text-yellow-500" />#{abbreviateNumber(position)}

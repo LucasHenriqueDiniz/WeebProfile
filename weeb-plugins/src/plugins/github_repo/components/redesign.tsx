@@ -1,4 +1,5 @@
 import React from "react"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import type { StarHistoryPoint } from "../types"
 
 // Primitivas compartilhadas do redesign do plugin Repository.
@@ -136,7 +137,7 @@ export function StarsHead({
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         <div className={`flex items-baseline gap-2 ${eyebrow ? "mt-1.5" : ""}`}>
           <span className="text-[28px] font-semibold leading-none tracking-[-0.02em] text-default-text">
-            {formatCount(count)}
+            <AnimatedNumber value={formatCount(count)} />
           </span>
           <span className="text-[13px] text-default-muted">stars</span>
         </div>

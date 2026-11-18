@@ -1461,6 +1461,10 @@
   text-transform: uppercase
 }
 
+#svg-main .lowercase {
+  text-transform: lowercase
+}
+
 #svg-main .capitalize {
   text-transform: capitalize
 }

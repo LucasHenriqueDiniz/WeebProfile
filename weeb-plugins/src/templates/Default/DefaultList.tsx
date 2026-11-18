@@ -5,6 +5,7 @@
 import React from "react"
 import { ImageComponent } from "../../utils/image"
 import type { ListItemProps } from "../types"
+import { useItemCascade, withCascade } from "../animations"
 
 function ListItem({ right, center, left, image }: ListItemProps): React.ReactElement {
   const rightContent = typeof right === "string" ? right : right
@@ -35,8 +36,9 @@ interface DefaultListProps {
 }
 
 export function DefaultList({ data }: DefaultListProps): React.ReactElement {
+  const cascade = useItemCascade(data.length)
   return (
-    <div className="flex flex-col gap-1">
+    <div className={withCascade("flex flex-col gap-1", cascade)} style={cascade?.style}>
       {data.map((item, index) => (
         <ListItem key={`list-item-${index}`} {...item} />
       ))}

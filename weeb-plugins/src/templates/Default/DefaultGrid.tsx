@@ -5,6 +5,7 @@
 import React from "react"
 import { ImageComponent } from "../../utils/image"
 import type { GridItemProps } from "../types"
+import { useItemCascade, withCascade } from "../animations"
 
 function GridItem({ image, title, value, subtitle, index }: GridItemProps & { index: number }): React.ReactElement {
   return (
@@ -53,8 +54,9 @@ export function DefaultGrid({ data, size = "full" }: DefaultGridProps): React.Re
     limitedData = data.slice(0, 13)
   }
 
+  const cascade = useItemCascade(limitedData.length)
   return (
-    <div className="grid grid-cols-8 gap-1 half:grid-cols-4 grid-rows-2">
+    <div className={withCascade("grid grid-cols-8 gap-1 half:grid-cols-4 grid-rows-2", cascade)} style={cascade?.style}>
       {limitedData.map((item, index) => (
         <GridItem key={`grid-item-${index}`} index={index} {...item} />
       ))}

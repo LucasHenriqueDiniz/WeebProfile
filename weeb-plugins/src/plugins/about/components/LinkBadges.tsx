@@ -1,5 +1,6 @@
 import React from "react"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { useItemCascade } from "../../../templates/animations"
 import {
   BADGE,
   DEFAULT_PADDING_Y,
@@ -28,6 +29,7 @@ interface LinkBadgesProps {
  * looking at; the tiles (Plugin.tiles) give each badge an image and a link of its own.
  */
 export function LinkBadges({ links, style, size, brandColors }: LinkBadgesProps): React.ReactElement | null {
+  const cascade = useItemCascade(links.length)
   if (links.length === 0) return null
   const terminal = style === "terminal"
 
@@ -42,6 +44,7 @@ export function LinkBadges({ links, style, size, brandColors }: LinkBadgesProps)
     >
       {terminal && <TerminalCommand command="ls ~/links" />}
       <div
+        className={cascade?.className}
         style={{
           display: "flex",
           flexWrap: "wrap",
@@ -49,6 +52,7 @@ export function LinkBadges({ links, style, size, brandColors }: LinkBadgesProps)
           gap: `${BADGE.gap}px`,
           marginTop: terminal ? `${TERMINAL_GAP}px` : 0,
           paddingLeft: `${badgeRowIndent(style)}px`,
+          ...cascade?.style,
         }}
       >
         {links.map((link, i) => (

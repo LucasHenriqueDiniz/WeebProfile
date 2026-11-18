@@ -1,4 +1,5 @@
 import React from "react"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { ExternalLink } from "../../../utils/external-link"
 import { ImageComponent } from "../../../utils/image"
 import { WebsitesList } from "./WebsitesList"
@@ -21,12 +22,14 @@ export function WebsitesFeatured({
   showDescription,
 }: WebsitesFeaturedProps): React.ReactElement {
   const [featured, ...rest] = websites
+  // The featured site, then the list of the others (which cascades its own rows).
+  const cascade = useItemCascade(rest.length > 0 ? 2 : 1)
   if (!featured) return <></>
 
   const heroHeight = size === "half" ? 120 : 140
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className={withCascade("flex flex-col gap-2", cascade)} style={cascade?.style}>
       <ExternalLink href={featured.url} className="block overflow-hidden rounded-xl border border-default-highlight/40">
         {showThumbnail && (
           <div className="w-full overflow-hidden bg-default-muted/10" style={{ height: `${heroHeight}px` }}>

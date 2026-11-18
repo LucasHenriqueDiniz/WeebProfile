@@ -5,6 +5,8 @@
 import React from "react"
 import { FaMedal } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -25,6 +27,8 @@ export function Badges({ badges, config, style = "default", size = "half" }: Bad
   const title = config.nonEssential?.badges_title || "Stack Overflow Badges"
 
   const totalBadges = badges.gold + badges.silver + badges.bronze
+  // Gold, silver and bronze.
+  const cascade = useItemCascade(3)
 
   return (
     <section id="stackoverflow-badges">
@@ -36,28 +40,36 @@ export function Badges({ badges, config, style = "default", size = "half" }: Bad
             <div className="flex flex-col gap-2 w-full">
               <div className="flex items-center gap-2">
                 <p className="text-sm text-default-muted">Total:</p>
-                <p className="text-lg font-semibold text-default-highlight">{abbreviateNumber(totalBadges)}</p>
+                <p className="text-lg font-semibold text-default-highlight">
+                  <AnimatedNumber value={abbreviateNumber(totalBadges)} />
+                </p>
               </div>
-              <div className="flex gap-4 half:gap-3 items-center w-full">
+              <div className={withCascade("flex gap-4 half:gap-3 items-center w-full", cascade)} style={cascade?.style}>
                 <div className="flex items-center gap-1.5 flex-1">
                   <FaMedal className="text-yellow-500 flex-shrink-0" />
                   <div className="flex items-center gap-1">
                     <p className="text-xs text-default-muted">Gold:</p>
-                    <p className="text-sm font-semibold text-default-highlight">{abbreviateNumber(badges.gold)}</p>
+                    <p className="text-sm font-semibold text-default-highlight">
+                      <AnimatedNumber value={abbreviateNumber(badges.gold)} />
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-1">
                   <FaMedal className="text-gray-300 flex-shrink-0" />
                   <div className="flex items-center gap-1">
                     <p className="text-xs text-default-muted">Silver:</p>
-                    <p className="text-sm font-semibold text-default-highlight">{abbreviateNumber(badges.silver)}</p>
+                    <p className="text-sm font-semibold text-default-highlight">
+                      <AnimatedNumber value={abbreviateNumber(badges.silver)} />
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-1">
                   <FaMedal className="text-orange-500 flex-shrink-0" />
                   <div className="flex items-center gap-1">
                     <p className="text-xs text-default-muted">Bronze:</p>
-                    <p className="text-sm font-semibold text-default-highlight">{abbreviateNumber(badges.bronze)}</p>
+                    <p className="text-sm font-semibold text-default-highlight">
+                      <AnimatedNumber value={abbreviateNumber(badges.bronze)} />
+                    </p>
                   </div>
                 </div>
               </div>
@@ -73,10 +85,12 @@ export function Badges({ badges, config, style = "default", size = "half" }: Bad
                 size,
               })}
             />
-            <TerminalLineWithDots title="Total Badges" value={abbreviateNumber(totalBadges)} />
-            <TerminalLineWithDots title="Gold" value={abbreviateNumber(badges.gold)} />
-            <TerminalLineWithDots title="Silver" value={abbreviateNumber(badges.silver)} />
-            <TerminalLineWithDots title="Bronze" value={abbreviateNumber(badges.bronze)} />
+            <CascadeGroup count={4}>
+              <TerminalLineWithDots title="Total Badges" value={abbreviateNumber(totalBadges)} />
+              <TerminalLineWithDots title="Gold" value={abbreviateNumber(badges.gold)} />
+              <TerminalLineWithDots title="Silver" value={abbreviateNumber(badges.silver)} />
+              <TerminalLineWithDots title="Bronze" value={abbreviateNumber(badges.bronze)} />
+            </CascadeGroup>
           </>
         }
       />

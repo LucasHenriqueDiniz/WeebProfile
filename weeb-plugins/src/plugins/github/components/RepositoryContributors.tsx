@@ -1,9 +1,11 @@
 import React from "react"
 import { FaCodeBranch } from "react-icons/fa"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import type { GridItemProps } from "../../../templates/types"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { ImageComponent } from "../../../utils/image"
@@ -17,6 +19,7 @@ interface RepositoryContributorsProps {
 }
 
 const DefaultRepositoryContributors = ({ data, max }: { data: GithubData["repositoryContributors"]; max: number }) => {
+  const cascade = useItemCascade(Math.min(data?.length ?? 0, max))
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No contributors found</div>
   }
@@ -24,7 +27,7 @@ const DefaultRepositoryContributors = ({ data, max }: { data: GithubData["reposi
   const contributors = data.slice(0, max)
 
   return (
-    <div className="grid grid-cols-3 half:grid-cols-2 gap-3">
+    <div className={withCascade("grid grid-cols-3 half:grid-cols-2 gap-3", cascade)} style={cascade?.style}>
       {contributors.map((contributor, index) => (
         <div
           key={index}
@@ -41,7 +44,9 @@ const DefaultRepositoryContributors = ({ data, max }: { data: GithubData["reposi
             <div className="font-semibold text-sm text-default-text truncate">
               {contributor.name || contributor.login}
             </div>
-            <div className="text-xs text-default-muted">{contributor.contributions} contributions</div>
+            <div className="text-xs text-default-muted">
+              <AnimatedNumber value={contributor.contributions} /> contributions
+            </div>
           </div>
         </div>
       ))}

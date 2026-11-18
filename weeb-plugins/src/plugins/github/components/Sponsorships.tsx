@@ -1,9 +1,11 @@
 import React from "react"
 import { FaFrown, FaHeart } from "react-icons/fa"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import type { GridItemProps } from "../../../templates/types"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { ImageComponent } from "../../../utils/image"
@@ -17,6 +19,8 @@ interface SponsorshipsProps {
 }
 
 const DefaultSponsorships = ({ data, max }: { data: GithubData["sponsorships"]; max: number }) => {
+  // The items and the "+N more" line after them.
+  const cascade = useItemCascade(data ? Math.min(data.nodes.length, max) + (data.totalCount > max ? 1 : 0) : 0)
   if (!data || data.nodes.length === 0) {
     return (
       <div className="flex items-center gap-2 text-default-muted text-sm py-4">
@@ -29,7 +33,7 @@ const DefaultSponsorships = ({ data, max }: { data: GithubData["sponsorships"]; 
   const sponsorships = data.nodes.slice(0, max)
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className={withCascade("flex flex-col gap-2", cascade)} style={cascade?.style}>
       {sponsorships.map((sponsorship, index) => (
         <div
           key={index}
@@ -48,7 +52,8 @@ const DefaultSponsorships = ({ data, max }: { data: GithubData["sponsorships"]; 
             </div>
             {sponsorship.tier && (
               <div className="text-xs text-default-muted">
-                {sponsorship.tier.name} • ${sponsorship.tier.monthlyPriceInDollars}/month
+                {sponsorship.tier.name} • $<AnimatedNumber value={sponsorship.tier.monthlyPriceInDollars} />
+                /month
               </div>
             )}
           </div>

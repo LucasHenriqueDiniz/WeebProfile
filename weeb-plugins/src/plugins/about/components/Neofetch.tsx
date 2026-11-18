@@ -1,5 +1,6 @@
 import React from "react"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { useItemCascade } from "../../../templates/animations"
 import {
   COMMAND_HEIGHT,
   DEFAULT_PADDING_Y,
@@ -67,6 +68,8 @@ export function Neofetch({ content, style, size, showPalette, showCursor }: Neof
     showCursor,
   })
   const { user, host } = splitTitle(content.title)
+  // Each field is a label and a value: they print in reading order, line by line.
+  const cascade = useItemCascade(content.fields.length * 2)
   const accent = terminal ? "var(--terminal-color-highlight)" : "var(--default-color-highlight)"
   const text = terminal ? "var(--terminal-color-default)" : "var(--default-color-default)"
 
@@ -119,6 +122,7 @@ export function Neofetch({ content, style, size, showPalette, showCursor }: Neof
   const fields =
     content.fields.length > 0 ? (
       <div
+        className={cascade?.className}
         style={{
           display: "grid",
           gridTemplateColumns: `max-content minmax(0, 1fr)`,
@@ -126,6 +130,7 @@ export function Neofetch({ content, style, size, showPalette, showCursor }: Neof
           columnGap: terminal ? "10px" : "14px",
           fontSize: `${m.fieldFont}px`,
           lineHeight: `${m.fieldLine}px`,
+          ...cascade?.style,
         }}
       >
         {content.fields.map((field, i) => (

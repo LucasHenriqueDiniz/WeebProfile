@@ -1,8 +1,10 @@
 import React from "react"
 import { FaBuilding, FaLink, FaMapMarkerAlt, FaTwitter, FaUser, FaUsers } from "react-icons/fa"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
 import { ExternalLink, withDefaultScheme } from "../../../utils/external-link"
@@ -15,6 +17,16 @@ interface IntroductionProps {
   activity?: GithubData["activity"]
 }
 
+/** Blocks drawn one under the other: the custom text, the bio and the row of details. */
+const blockCount = (data: GithubData["introduction"], customText?: string): number =>
+  (customText ? 1 : 0) + (data?.bio ? 1 : 0) + 1
+
+/** Details drawn: location, company, organizations, website and Twitter. */
+const detailCount = (data: GithubData["introduction"], activity?: GithubData["activity"]): number =>
+  [data?.location, data?.company, (activity?.organizations ?? 0) > 0, data?.websiteUrl, data?.twitterUsername].filter(
+    Boolean
+  ).length
+
 const DefaultIntroduction = ({
   data,
   activity,
@@ -24,13 +36,18 @@ const DefaultIntroduction = ({
   activity?: GithubData["activity"]
   customText?: string
 }) => {
+  const blocks = useItemCascade(blockCount(data, customText))
+  const details = useItemCascade(detailCount(data, activity))
   if (!data) return null
 
   return (
-    <div className="flex flex-col gap-3 text-sm">
+    <div className={withCascade("flex flex-col gap-3 text-sm", blocks)} style={blocks?.style}>
       {customText && <p className="text-default-text whitespace-pre-line">{customText}</p>}
       {data.bio && <p className="text-default-text">{data.bio}</p>}
-      <div className="flex flex-wrap gap-4 text-default-muted items-center">
+      <div
+        className={withCascade("flex flex-wrap gap-4 text-default-muted items-center", details)}
+        style={details?.style}
+      >
         {data.location && (
           <div className="flex items-center gap-1.5">
             <FaMapMarkerAlt className="text-base" />
@@ -47,7 +64,7 @@ const DefaultIntroduction = ({
           <div className="flex items-center gap-1.5">
             <FaUsers className="text-base" />
             <span>
-              {activity.organizations} organization{activity.organizations !== 1 ? "s" : ""}
+              <AnimatedNumber value={activity.organizations} /> organization{activity.organizations !== 1 ? "s" : ""}
             </span>
           </div>
         )}
@@ -83,18 +100,21 @@ const TerminalIntroduction = ({
   activity?: GithubData["activity"]
   customText?: string
 }) => {
+  const blocks = useItemCascade(blockCount(data, customText))
+  const details = useItemCascade(detailCount(data, activity))
   if (!data) return null
 
   return (
-    <div className="flex flex-col gap-1 text-terminal-text text-sm">
+    <div className={withCascade("flex flex-col gap-1 text-terminal-text text-sm", blocks)} style={blocks?.style}>
       {customText && <p className="whitespace-pre-line">{customText}</p>}
       {data.bio && <p>{data.bio}</p>}
-      <div className="flex flex-col gap-1 text-terminal-muted">
+      <div className={withCascade("flex flex-col gap-1 text-terminal-muted", details)} style={details?.style}>
         {data.location && <span>📍 {data.location}</span>}
         {data.company && <span>🏢 {data.company}</span>}
         {activity?.organizations && activity.organizations > 0 && (
           <span>
-            👥 {activity.organizations} organization{activity.organizations !== 1 ? "s" : ""}
+            👥 <AnimatedNumber value={activity.organizations} /> organization
+            {activity.organizations !== 1 ? "s" : ""}
           </span>
         )}
         {data.websiteUrl && <span>🔗 {data.websiteUrl}</span>}

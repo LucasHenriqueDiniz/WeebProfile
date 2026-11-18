@@ -4,6 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalStatisticRow } from "../../../templates/Terminal/TerminalStatisticRow"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
 import { formatWeight } from "../utils/weight"
@@ -18,6 +19,9 @@ interface ExercisesProps {
 }
 
 export function Exercises({ data, config, style = "default", size = "half" }: ExercisesProps): React.ReactElement {
+  const topExercises = data?.exercises?.length ? selectTopExercises(data, config) : []
+  const cascade = useItemCascade(topExercises.length)
+
   if (!data || !data.exercises || data.exercises.length === 0) {
     return <></>
   }
@@ -27,8 +31,6 @@ export function Exercises({ data, config, style = "default", size = "half" }: Ex
   const weightUnit = config.weight_unit || "kg"
   const show1RM = config.exercises_show_1rm !== false
   const hideImages = config.exercises_hide_images === true
-
-  const topExercises = selectTopExercises(data, config)
 
   if (topExercises.length === 0) {
     return <></>
@@ -43,7 +45,7 @@ export function Exercises({ data, config, style = "default", size = "half" }: Ex
             {!hideTitle && <DefaultTitle title={title} icon={<GiWeightLiftingUp />} />}
 
             <div className="rounded-lg shadow-sm p-4">
-              <div className="space-y-2">
+              <div className={withCascade("space-y-2", cascade)} style={cascade?.style}>
                 {topExercises.map((exercise) => {
                   const oneRMDisplay = show1RM && exercise.best1RM > 0 ? format1RM(exercise.best1RM, weightUnit) : null
 

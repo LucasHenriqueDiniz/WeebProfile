@@ -4,6 +4,8 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup, itemCascade, useAnimations, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
 
@@ -15,6 +17,7 @@ interface OverviewProps {
 }
 
 export function Overview({ data, config, style = "default", size = "half" }: OverviewProps): React.ReactElement {
+  const animations = useAnimations()
   if (!data || !data.workoutSummaries || data.workoutSummaries.length === 0) {
     return <></>
   }
@@ -87,6 +90,10 @@ export function Overview({ data, config, style = "default", size = "half" }: Ove
       : "0m"
 
   const workoutsPerWeek = periodDays > 0 ? (totalWorkouts / (periodDays / 7)).toFixed(1) : "0"
+  const showWeeklyAvgMetric = showWeeklyAvg && workoutsPerWeek !== "0"
+  const metricsCascade = animations
+    ? itemCascade(1 + Number(showVolume) + Number(showDuration) + Number(showWeeklyAvgMetric))
+    : null
 
   return (
     <section id="lyfta-overview">
@@ -98,10 +105,10 @@ export function Overview({ data, config, style = "default", size = "half" }: Ove
 
             <div className="rounded-lg shadow-sm p-4 mb-3 space-y-3">
               {/* Grid 2x2 responsivo para 415px */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className={withCascade("grid grid-cols-2 gap-3", metricsCascade)} style={metricsCascade?.style}>
                 <div className="text-center">
                   <div className="text-2xl half:text-xl font-bold text-default-highlight tabular-nums">
-                    {totalWorkouts}
+                    <AnimatedNumber value={totalWorkouts} />
                   </div>
                   <div className="text-xs text-default-muted">workouts ({periodDays}d)</div>
                 </div>
@@ -109,7 +116,7 @@ export function Overview({ data, config, style = "default", size = "half" }: Ove
                 {showVolume && (
                   <div className="text-center">
                     <div className="text-2xl half:text-xl font-bold text-default-success tabular-nums">
-                      {totalVolume}
+                      <AnimatedNumber value={totalVolume} />
                     </div>
                     <div className="text-xs text-default-muted">volume {weightUnit}</div>
                   </div>
@@ -124,7 +131,7 @@ export function Overview({ data, config, style = "default", size = "half" }: Ove
                   </div>
                 )}
 
-                {showWeeklyAvg && workoutsPerWeek !== "0" && (
+                {showWeeklyAvgMetric && (
                   <div className="text-center">
                     <div className="text-2xl half:text-xl font-bold text-default-success tabular-nums">
                       {workoutsPerWeek}x
@@ -151,10 +158,12 @@ export function Overview({ data, config, style = "default", size = "half" }: Ove
                 size,
               })}
             />
-            <TerminalLineWithDots title={`Workouts (${periodDays}d)`} value={String(totalWorkouts)} />
-            {showWeeklyAvg && <TerminalLineWithDots title="Avg per Week" value={`${workoutsPerWeek} workouts`} />}
-            {showVolume && <TerminalLineWithDots title="Total Volume" value={`${totalVolume}${weightUnit}`} />}
-            {showDuration && <TerminalLineWithDots title="Total Duration" value={totalDurationStr} />}
+            <CascadeGroup count={1 + Number(showWeeklyAvg) + Number(showVolume) + Number(showDuration)}>
+              <TerminalLineWithDots title={`Workouts (${periodDays}d)`} value={String(totalWorkouts)} />
+              {showWeeklyAvg && <TerminalLineWithDots title="Avg per Week" value={`${workoutsPerWeek} workouts`} />}
+              {showVolume && <TerminalLineWithDots title="Total Volume" value={`${totalVolume}${weightUnit}`} />}
+              {showDuration && <TerminalLineWithDots title="Total Duration" value={totalDurationStr} />}
+            </CascadeGroup>
           </>
         }
       />

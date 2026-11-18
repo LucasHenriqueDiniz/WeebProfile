@@ -5,6 +5,8 @@
 import React from "react"
 import { FaMedal, FaTrophy } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -30,6 +32,7 @@ export function RankHonor({
 }: RankHonorProps): React.ReactElement {
   const hideTitle = config.nonEssential?.rank_honor_hide_title || false
   const title = config.nonEssential?.rank_honor_title || "Codewars Rank & Honor"
+  const cascade = useItemCascade(2)
 
   return (
     <section id="codewars-rank-honor">
@@ -38,7 +41,7 @@ export function RankHonor({
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<IoStatsChartOutline />} />}
-            <div className="flex gap-4 half:gap-3 items-center w-full">
+            <div className={withCascade("flex gap-4 half:gap-3 items-center w-full", cascade)} style={cascade?.style}>
               <div className="flex items-center gap-2 flex-1">
                 <FaMedal style={{ color: rank.color }} className="flex-shrink-0" />
                 <p className="text-base font-semibold text-default-highlight">{rank.name}</p>
@@ -46,7 +49,9 @@ export function RankHonor({
               <div className="flex items-center gap-2">
                 <FaTrophy className="text-yellow-500 flex-shrink-0" />
                 <p className="text-sm text-default-muted">Honor:</p>
-                <p className="text-base font-semibold text-default-highlight">{abbreviateNumber(honor)}</p>
+                <p className="text-base font-semibold text-default-highlight">
+                  <AnimatedNumber value={abbreviateNumber(honor)} />
+                </p>
               </div>
             </div>
           </div>
@@ -60,8 +65,10 @@ export function RankHonor({
                 size,
               })}
             />
-            <TerminalLineWithDots title="Rank" value={rank.name} />
-            <TerminalLineWithDots title="Honor" value={abbreviateNumber(honor)} />
+            <CascadeGroup count={2}>
+              <TerminalLineWithDots title="Rank" value={rank.name} />
+              <TerminalLineWithDots title="Honor" value={abbreviateNumber(honor)} />
+            </CascadeGroup>
           </>
         }
       />

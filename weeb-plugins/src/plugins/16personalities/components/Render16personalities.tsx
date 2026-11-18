@@ -4,6 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { Personality16Config, Personality16Data } from "../types"
 import { ExternalLink } from "../../../utils/external-link"
@@ -18,9 +19,11 @@ interface RenderPersonality16Props {
 const DefaultPersonality = ({ data, config }: { data: Personality16Data; config: Personality16Config }) => {
   const showDescription = config.personality_show_description !== false
   const showLink = config.personality_show_link !== false
+  // Type and name, description, link.
+  const cascade = useItemCascade(1 + (showDescription ? 1 : 0) + (showLink ? 1 : 0))
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={withCascade("flex flex-col gap-4", cascade)} style={cascade?.style}>
       {/* Tipo e Nome */}
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-lg bg-default-muted/20">
@@ -62,6 +65,8 @@ export function RenderPersonality16({
   style = "default",
   size = "half",
 }: RenderPersonality16Props): React.ReactElement {
+  // Terminal: the two lines of the type block and the two of the description block.
+  const lines = useItemCascade(2)
   if (!config.enabled || !config.sections || config.sections.length === 0) {
     return <></>
   }
@@ -92,11 +97,12 @@ export function RenderPersonality16({
               })}
             />
             <div
-              className="px-1 py-0.5"
+              className={withCascade("px-1 py-0.5", lines)}
               style={{
                 fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
                 fontSize: "0.875rem",
                 lineHeight: "1.25rem",
+                ...lines?.style,
               }}
             >
               <div className="text-terminal-warning font-semibold">
@@ -108,11 +114,12 @@ export function RenderPersonality16({
             </div>
             {showDescription && (
               <div
-                className="px-1 py-0.5"
+                className={withCascade("px-1 py-0.5", lines)}
                 style={{
                   fontFamily: "monospace, 'Courier New', Courier, 'Lucida Console', Monaco, ui-monospace",
                   fontSize: "0.875rem",
                   lineHeight: "1.25rem",
+                  ...lines?.style,
                 }}
               >
                 <div className="text-terminal-warning font-semibold mb-0.5">📝 Description</div>

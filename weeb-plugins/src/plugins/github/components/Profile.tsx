@@ -1,9 +1,11 @@
 import React from "react"
 import { FaGithub, FaUserFriends } from "react-icons/fa"
 import { RiGitRepositoryLine } from "react-icons/ri"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { ImageComponent } from "../../../utils/image"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
@@ -21,6 +23,8 @@ const DefaultProfile = ({ data, size }: { data: GithubData["user"]; size: "half"
   const years = new Date().getFullYear() - new Date(data.createdAt).getFullYear()
   const isHalfMode = size === "half"
   const weeksToShow = isHalfMode ? 12 : 24
+  const weeks = data.contributionCalendar.weeks.slice(-weeksToShow)
+  const cascade = useItemCascade(weeks.length)
 
   return (
     <div className="flex flex-col">
@@ -43,18 +47,22 @@ const DefaultProfile = ({ data, size }: { data: GithubData["user"]; size: "half"
         <div className="flex flex-col gap-1">
           <div className="flex flex-row items-center gap-2 truncate text-default-text">
             <FaGithub className="text-default-muted" />
-            <span>Joined {years} years ago</span>
+            <span>
+              Joined <AnimatedNumber value={years} /> years ago
+            </span>
           </div>
           <div className="flex flex-row items-center gap-2 truncate text-default-text">
             <FaUserFriends className="text-default-muted" />
-            <span>{abbreviateNumber(data.followers)} followers</span>
+            <span>
+              <AnimatedNumber value={abbreviateNumber(data.followers)} /> followers
+            </span>
           </div>
         </div>
 
         {/* Contribution Calendar */}
         <div className="flex flex-col justify-between">
-          <div className="flex gap-1">
-            {data.contributionCalendar.weeks.slice(-weeksToShow).map((week, weekIndex) => (
+          <div className={withCascade("flex gap-1", cascade)} style={cascade?.style}>
+            {weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="flex gap-1">
                 {week.contributionDays.slice(-1).map((day, dayIndex) => (
                   <div

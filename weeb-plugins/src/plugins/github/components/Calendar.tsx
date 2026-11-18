@@ -1,6 +1,7 @@
 import React from "react"
 import { FaCalendar } from "react-icons/fa"
-import { type CellWave, cellWave, useAnimations } from "../../../templates/animations"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { type CellWave, cellWave, useAnimations, useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -484,31 +485,37 @@ const TERMINAL_WEEK_ROWS = "repeat(7, 14px)"
  */
 const TERMINAL_TOTAL_LINE: React.CSSProperties = { lineHeight: "19px" }
 
-/** One column per week, oldest on the left as on GitHub, each day on its weekday's row. */
-const TerminalWeeks = ({ weeks }: { weeks: ContributionWeek[] }) => (
-  <div className="inline-grid grid-flow-col gap-1 text-[0.75rem]">
-    {weeks.map((week, weekIndex) => (
-      <div key={weekIndex} className="grid w-[0.60rem]" style={{ gridTemplateRows: TERMINAL_WEEK_ROWS }}>
-        {daysByWeekday(week).map((day, weekday) =>
-          day ? (
-            <span
-              key={weekday}
-              title={`${day.contributionCount} contributions on ${formatDay(day.date)}`}
-              className="flex items-center justify-center text-baseline w-full h-full"
-              style={{
-                color: getCalendarColor(day.color || ""),
-              }}
-            >
-              {getContributionSymbol(day.contributionCount)}
-            </span>
-          ) : (
-            <span key={weekday} />
-          )
-        )}
-      </div>
-    ))}
-  </div>
-)
+/**
+ * One column per week, oldest on the left as on GitHub, each day on its weekday's row.
+ * With animations on, the columns cascade from left to right.
+ */
+const TerminalWeeks = ({ weeks }: { weeks: ContributionWeek[] }) => {
+  const cascade = useItemCascade(weeks.length)
+  return (
+    <div className={withCascade("inline-grid grid-flow-col gap-1 text-[0.75rem]", cascade)} style={cascade?.style}>
+      {weeks.map((week, weekIndex) => (
+        <div key={weekIndex} className="grid w-[0.60rem]" style={{ gridTemplateRows: TERMINAL_WEEK_ROWS }}>
+          {daysByWeekday(week).map((day, weekday) =>
+            day ? (
+              <span
+                key={weekday}
+                title={`${day.contributionCount} contributions on ${formatDay(day.date)}`}
+                className="flex items-center justify-center text-baseline w-full h-full"
+                style={{
+                  color: getCalendarColor(day.color || ""),
+                }}
+              >
+                {getContributionSymbol(day.contributionCount)}
+              </span>
+            ) : (
+              <span key={weekday} />
+            )
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const TerminalCalendar = ({
   data,
@@ -548,13 +555,13 @@ const TerminalCalendar = ({
         {data.years.map((yearData) => (
           <div key={yearData.year} className="flex flex-col gap-2">
             <div className="text-terminal-warning text-sm font-semibold">
-              {yearData.year} ({yearData.totalContributions} contributions)
+              {yearData.year} (<AnimatedNumber value={yearData.totalContributions} /> contributions)
             </div>
             <TerminalWeeks weeks={visibleWeeks(yearData.weeks)} />
           </div>
         ))}
         <div className="text-terminal-muted text-right" style={TERMINAL_TOTAL_LINE}>
-          Total: {data.totalContributions} contributions
+          Total: <AnimatedNumber value={data.totalContributions} /> contributions
         </div>
       </div>
     )
@@ -565,7 +572,7 @@ const TerminalCalendar = ({
     <div className="flex flex-col gap-2">
       <TerminalWeeks weeks={visibleWeeks(data.weeks)} />
       <div className="text-terminal-muted text-right" style={TERMINAL_TOTAL_LINE}>
-        {data.totalContributions} contributions in the last{" "}
+        <AnimatedNumber value={data.totalContributions} /> contributions in the last{" "}
         {yearMode === "last_6_months"
           ? "6 months"
           : yearMode === "last_year"

@@ -1,6 +1,8 @@
 import React from "react"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { useAnimations, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { resolveLanguagesVariant } from "../types"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
@@ -31,8 +33,12 @@ function readableTextColor(hexColor: string): string {
 }
 
 function Legend({ langs, column = false }: { langs: Lang[]; column?: boolean }): React.ReactElement {
+  const cascade = useItemCascade(langs.length)
   return (
-    <div className={column ? "flex flex-col gap-[7px]" : "mt-3 flex flex-wrap gap-x-4 gap-y-1.5"}>
+    <div
+      className={withCascade(column ? "flex flex-col gap-[7px]" : "mt-3 flex flex-wrap gap-x-4 gap-y-1.5", cascade)}
+      style={cascade?.style}
+    >
       {langs.map((lang) => (
         <span key={lang.name} className="flex items-center gap-1.5 text-xs text-default-text">
           <LangDot color={lang.color} />
@@ -46,9 +52,16 @@ function Legend({ langs, column = false }: { langs: Lang[]; column?: boolean }):
 
 // "spectrum" (default): barra segmentada arredondada com gaps + legenda inline.
 function SpectrumLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
+  const animations = useAnimations()
   return (
     <Card className="px-[18px] py-4">
-      <div className="flex h-3.5 gap-0.5 overflow-hidden rounded-full">
+      <div
+        className={
+          animations
+            ? "flex h-3.5 gap-0.5 overflow-hidden rounded-full weeb-bar"
+            : "flex h-3.5 gap-0.5 overflow-hidden rounded-full"
+        }
+      >
         {langs.map((lang) => (
           <span key={lang.name} className="h-full" style={{ width: `${lang.percentage}%`, background: lang.color }} />
         ))}
@@ -60,8 +73,10 @@ function SpectrumLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
 
 // "bars": uma linha por linguagem - nome, trilha, porcentagem.
 function BarsLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
+  const animations = useAnimations()
+  const cascade = useItemCascade(langs.length)
   return (
-    <Card className="flex flex-col gap-2.5 px-[18px] py-4">
+    <Card className={withCascade("flex flex-col gap-2.5 px-[18px] py-4", cascade)} style={cascade?.style}>
       {langs.map((lang) => (
         <div
           key={lang.name}
@@ -70,10 +85,13 @@ function BarsLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
         >
           <b className="truncate font-semibold text-default-text">{lang.name}</b>
           <div className="h-2 overflow-hidden rounded-full bg-default-muted/10">
-            <div className="h-full rounded-full" style={{ width: `${lang.percentage}%`, background: lang.color }} />
+            <div
+              className={animations ? "h-full rounded-full weeb-bar" : "h-full rounded-full"}
+              style={{ width: `${lang.percentage}%`, background: lang.color }}
+            />
           </div>
           <span className="text-right text-[11px] text-default-muted" style={{ fontVariantNumeric: "tabular-nums" }}>
-            {lang.percentage}%
+            <AnimatedNumber value={lang.percentage} />%
           </span>
         </div>
       ))}
@@ -154,6 +172,8 @@ function DonutLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
 // o resto empilhado numa coluna.
 function BlocksLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
   const [first, second, ...rest] = langs
+  // First block, second block, column with the rest.
+  const cascade = useItemCascade(1 + (second ? 1 : 0) + (rest.length > 0 ? 1 : 0))
   if (!first) return <></>
   const restTotal = rest.reduce((acc, l) => acc + l.percentage, 0)
   const firstW = first.percentage
@@ -162,7 +182,10 @@ function BlocksLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
 
   return (
     <Card>
-      <div className="flex gap-[3px] px-3.5 pb-2 pt-3" style={{ height: 88 }}>
+      <div
+        className={withCascade("flex gap-[3px] px-3.5 pb-2 pt-3", cascade)}
+        style={{ height: 88, ...cascade?.style }}
+      >
         <div
           className="flex flex-col justify-end rounded-lg px-3 py-2.5"
           style={{
@@ -214,14 +237,22 @@ function BlocksLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
 
 // Terminal (pré-redesign, alturas calibradas): barra fina + legenda inline.
 function TerminalLanguages({ langs }: { langs: Lang[] }): React.ReactElement {
+  const animations = useAnimations()
+  const cascade = useItemCascade(langs.length)
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-default-muted/10">
+      <div
+        className={
+          animations
+            ? "flex h-1.5 w-full overflow-hidden rounded-full bg-default-muted/10 weeb-bar"
+            : "flex h-1.5 w-full overflow-hidden rounded-full bg-default-muted/10"
+        }
+      >
         {langs.map((lang) => (
           <div key={lang.name} style={{ width: `${lang.percentage}%`, background: lang.color }} />
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <div className={withCascade("flex flex-wrap items-center gap-x-3 gap-y-1", cascade)} style={cascade?.style}>
         {langs.map((lang) => (
           <span key={lang.name} className="flex items-center gap-1 text-xs text-terminal-muted">
             <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: lang.color }} />

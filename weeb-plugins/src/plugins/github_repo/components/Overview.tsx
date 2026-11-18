@@ -1,6 +1,8 @@
 import React from "react"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { useAnimations, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
@@ -25,10 +27,15 @@ function DefaultOverview({ data }: { data: GithubRepoData }): React.ReactElement
   const H = 92
   const coords = hasChart ? starCoords(data.starHistory, W, H, 0.12) : []
   const line = hasChart ? `M ${coords.map((c) => `${c.x},${c.y}`).join(" L ")}` : ""
+  const animations = useAnimations()
+  // Name, description, meta row.
+  const cascade = useItemCascade(data.description ? 3 : 2)
+  const forks = <AnimatedNumber value={formatCount(data.forkCount)} />
+  const issues = <AnimatedNumber value={formatCount(data.openIssuesCount)} />
 
   return (
     <Card className="flex flex-col">
-      <div className="px-[18px] pb-2.5 pt-4">
+      <div className={withCascade("px-[18px] pb-2.5 pt-4", cascade)} style={cascade?.style}>
         <div className="truncate text-[19px] font-semibold tracking-[-0.02em] text-default-text">
           <span className="font-normal text-default-muted">{data.owner.login} /</span> {data.name}
         </div>
@@ -46,11 +53,11 @@ function DefaultOverview({ data }: { data: GithubRepoData }): React.ReactElement
             </>
           )}
           <span>
-            <b className="font-semibold text-default-text">{formatCount(data.forkCount)}</b> forks
+            <b className="font-semibold text-default-text">{forks}</b> forks
           </span>
           <DotSep />
           <span>
-            <b className="font-semibold text-default-text">{formatCount(data.openIssuesCount)}</b> issues
+            <b className="font-semibold text-default-text">{issues}</b> issues
           </span>
           {data.licenseInfo?.spdxId && (
             <>
@@ -63,7 +70,7 @@ function DefaultOverview({ data }: { data: GithubRepoData }): React.ReactElement
       <div className="flex items-baseline justify-between px-[18px]">
         <div className="flex items-baseline gap-2">
           <span className="text-2xl font-semibold leading-none tracking-[-0.02em] text-default-text">
-            {formatCount(data.stargazerCount)}
+            <AnimatedNumber value={formatCount(data.stargazerCount)} />
           </span>
           <span className="text-xs text-default-muted">stars</span>
         </div>
@@ -74,7 +81,7 @@ function DefaultOverview({ data }: { data: GithubRepoData }): React.ReactElement
           xmlns="http://www.w3.org/2000/svg"
           viewBox={`0 0 ${W} ${H}`}
           preserveAspectRatio="none"
-          className="mt-1.5 w-full"
+          className={animations ? "mt-1.5 w-full weeb-bar" : "mt-1.5 w-full"}
           style={{ height: H }}
           aria-hidden="true"
         >
@@ -88,6 +95,8 @@ function DefaultOverview({ data }: { data: GithubRepoData }): React.ReactElement
 }
 
 export function Overview({ config, data, style = "default", size = "half" }: OverviewProps): React.ReactElement {
+  // The terminal row: name, stars, forks, issues.
+  const cascade = useItemCascade(4)
   if (!config.enabled || !data) return <></>
 
   return (
@@ -103,11 +112,21 @@ export function Overview({ config, data, style = "default", size = "half" }: Ove
           terminalComponent={
             <>
               <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "overview", size })} />
-              <ExternalLink href={data.url} className="flex items-center gap-4 px-1 py-1 text-sm">
+              <ExternalLink
+                href={data.url}
+                className={withCascade("flex items-center gap-4 px-1 py-1 text-sm", cascade)}
+                style={cascade?.style}
+              >
                 <span className="text-terminal-highlight font-bold">{data.nameWithOwner}</span>
-                <span className="text-terminal-muted">★ {data.stargazerCount}</span>
-                <span className="text-terminal-muted">⑂ {data.forkCount}</span>
-                <span className="text-terminal-muted">issues {data.openIssuesCount}</span>
+                <span className="text-terminal-muted">
+                  ★ <AnimatedNumber value={data.stargazerCount} />
+                </span>
+                <span className="text-terminal-muted">
+                  ⑂ <AnimatedNumber value={data.forkCount} />
+                </span>
+                <span className="text-terminal-muted">
+                  issues <AnimatedNumber value={data.openIssuesCount} />
+                </span>
               </ExternalLink>
             </>
           }

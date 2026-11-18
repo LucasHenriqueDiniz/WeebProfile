@@ -1,4 +1,5 @@
 import React from "react"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { ExternalLink } from "../../../utils/external-link"
 import { ImageComponent } from "../../../utils/image"
 import type { WebsiteEntry } from "../types"
@@ -21,9 +22,10 @@ export function WebsitesGrid({
   showDescription,
 }: WebsitesGridProps): React.ReactElement {
   const thumbHeight = size === "half" ? 72 : 88
+  const cascade = useItemCascade(websites.length)
 
   return (
-    <div className="grid grid-cols-4 gap-2.5 half:grid-cols-2">
+    <div className={withCascade("grid grid-cols-4 gap-2.5 half:grid-cols-2", cascade)} style={cascade?.style}>
       {websites.map((site) => (
         <ExternalLink
           key={site.url}

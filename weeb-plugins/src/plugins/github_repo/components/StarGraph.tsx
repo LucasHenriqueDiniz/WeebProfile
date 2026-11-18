@@ -1,6 +1,8 @@
 import React from "react"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { useAnimations, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { resolveStarGraphVariant } from "../types"
 import type { GithubRepoConfig, GithubRepoData, StarHistoryPoint } from "../types"
@@ -39,12 +41,13 @@ function AreaChart({ points, gradientId }: { points: StarHistoryPoint[]; gradien
   const coords = starCoords(points, CHART_W, CHART_H)
   const line = `M ${coords.map((c) => `${c.x},${c.y}`).join(" L ")}`
   const last = coords[coords.length - 1]
+  const animations = useAnimations()
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`0 0 ${CHART_W} ${CHART_H}`}
       preserveAspectRatio="none"
-      className="mt-2 w-full"
+      className={animations ? "mt-2 w-full weeb-bar" : "mt-2 w-full"}
       style={{ height: CHART_H }}
       aria-hidden="true"
     >
@@ -66,9 +69,13 @@ function BarsChart({ points }: { points: StarHistoryPoint[] }): React.ReactEleme
   const maxDelta = Math.max(...deltas, 1)
   const first = points[0]
   const last = points[points.length - 1]
+  const cascade = useItemCascade(deltas.length)
   return (
     <>
-      <div className="flex flex-1 items-end gap-1.5 px-[18px] pt-3" style={{ minHeight: 84 }}>
+      <div
+        className={withCascade("flex flex-1 items-end gap-1.5 px-[18px] pt-3", cascade)}
+        style={{ minHeight: 84, ...cascade?.style }}
+      >
         {deltas.map((d, i) => (
           <div
             key={i}
@@ -106,13 +113,16 @@ function MilestonesChart({ points }: { points: StarHistoryPoint[] }): React.Reac
 
   // posição atual na régua: fração do caminho até o próximo marco
   const progress = Math.min(0.92, Math.max(0.35, total / next))
+  const animations = useAnimations()
 
   return (
     <div className="px-[18px] pb-4">
       <Eyebrow>Star milestones</Eyebrow>
       <div className="relative mt-3.5 h-1 rounded-full bg-default-muted/10">
         <div
-          className="absolute inset-y-0 left-0 rounded-full"
+          className={
+            animations ? "absolute inset-y-0 left-0 rounded-full weeb-bar" : "absolute inset-y-0 left-0 rounded-full"
+          }
           style={{
             width: `${progress * 100}%`,
             background: `linear-gradient(90deg, color-mix(in srgb, ${HL} 50%, transparent), ${HL})`,
@@ -147,7 +157,9 @@ function MilestonesChart({ points }: { points: StarHistoryPoint[] }): React.Reac
           </span>
         ))}
         <span className="text-center">
-          <b style={{ color: HL }}>{formatCount(total)}</b>
+          <b style={{ color: HL }}>
+            <AnimatedNumber value={formatCount(total)} />
+          </b>
           <br />
           today
         </span>
@@ -172,12 +184,13 @@ function SparklineChart({
   const H = 76
   const coords = starCoords(points, W, H, 0.12)
   const line = `M ${coords.map((c) => `${c.x},${c.y}`).join(" L ")}`
+  const animations = useAnimations()
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`0 0 ${W} ${H}`}
       preserveAspectRatio="none"
-      className="h-full flex-1"
+      className={animations ? "h-full flex-1 weeb-bar" : "h-full flex-1"}
       aria-hidden="true"
     >
       <HlFillGradient id={gradientId} strength={0.14} />
@@ -195,12 +208,13 @@ function StepsChart({ points, gradientId }: { points: StarHistoryPoint[]; gradie
     else steps.push(`L ${c.x},${coords[i - 1]?.y ?? c.y}`, `L ${c.x},${c.y}`)
   })
   const line = steps.join(" ")
+  const animations = useAnimations()
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`0 0 ${CHART_W} ${CHART_H}`}
       preserveAspectRatio="none"
-      className="mt-2 w-full"
+      className={animations ? "mt-2 w-full weeb-bar" : "mt-2 w-full"}
       style={{ height: CHART_H }}
       aria-hidden="true"
     >
@@ -215,11 +229,12 @@ function DotsChart({ points }: { points: StarHistoryPoint[] }): React.ReactEleme
   const coords = starCoords(points, CHART_W - 40, CHART_H - 20).map((c) => ({ ...c, x: c.x + 20, y: c.y + 10 }))
   const line = `M ${coords.map((c) => `${c.x},${c.y}`).join(" L ")}`
   const last = coords[coords.length - 1]
+  const animations = useAnimations()
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox={`0 0 ${CHART_W} ${CHART_H}`}
-      className="mt-2 w-full"
+      className={animations ? "mt-2 w-full weeb-bar" : "mt-2 w-full"}
       style={{ height: CHART_H }}
       aria-hidden="true"
     >
@@ -252,11 +267,12 @@ function DotsChart({ points }: { points: StarHistoryPoint[] }): React.ReactEleme
 function TerminalChart({ points }: { points: StarHistoryPoint[] }): React.ReactElement {
   const coords = starCoords(points, 300, 120)
   const line = `M ${coords.map((c) => `${c.x},${c.y}`).join(" L ")}`
+  const animations = useAnimations()
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 300 120"
-      className="w-full"
+      className={animations ? "w-full weeb-bar" : "w-full"}
       style={{ height: 120 }}
       preserveAspectRatio="none"
       aria-hidden="true"
@@ -312,7 +328,7 @@ export function StarGraph({ config, data, style = "default", size = "half" }: St
                   <div className="flex-shrink-0 py-3 pl-[18px] pr-2">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-[22px] font-semibold leading-none tracking-[-0.02em] text-default-text">
-                        {formatCount(total)}
+                        <AnimatedNumber value={formatCount(total)} />
                       </span>
                       <span className="text-xs text-default-muted">★</span>
                     </div>

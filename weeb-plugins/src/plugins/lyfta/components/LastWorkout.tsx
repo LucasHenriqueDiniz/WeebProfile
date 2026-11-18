@@ -4,6 +4,8 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup, itemCascade, useAnimations, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
 import { formatWeight } from "../utils/weight"
@@ -25,6 +27,7 @@ interface LastWorkoutProps {
 }
 
 export function LastWorkout({ data, config, style = "default", size = "half" }: LastWorkoutProps): React.ReactElement {
+  const animations = useAnimations()
   if (!data || !data.workouts || data.workouts.length === 0) {
     return <></>
   }
@@ -44,6 +47,8 @@ export function LastWorkout({ data, config, style = "default", size = "half" }: 
   const topExercises = lastWorkoutTopExercises(lastWorkout, config)
 
   const visibleExercises = topExercises.filter(({ volume }) => volume > 0)
+  const exercisesCascade = animations ? itemCascade(visibleExercises.length) : null
+  const showBodyWeightLine = showBodyWeight && lastWorkout.body_weight > 0
 
   const workoutDate = formatDate(lastWorkout.workout_perform_date)
 
@@ -67,10 +72,10 @@ export function LastWorkout({ data, config, style = "default", size = "half" }: 
                 </div>
                 <div className="text-right flex-shrink-0">
                   <div className="text-sm half:text-xs font-bold text-default-highlight tabular-nums">
-                    {totalVolumeKg}
+                    <AnimatedNumber value={totalVolumeKg} />
                     {weightUnit}
                   </div>
-                  {showBodyWeight && lastWorkout.body_weight > 0 && (
+                  {showBodyWeightLine && (
                     <div className="text-xs half:text-[10px] text-default-muted">
                       BW: {formatWeight(lastWorkout.body_weight * 1000, weightUnit)}
                     </div>
@@ -80,7 +85,7 @@ export function LastWorkout({ data, config, style = "default", size = "half" }: 
 
               {/* Lista de exercícios com sets + volume */}
               {visibleExercises.length > 0 && (
-                <div className="space-y-2.5 pt-1">
+                <div className={withCascade("space-y-2.5 pt-1", exercisesCascade)} style={exercisesCascade?.style}>
                   {visibleExercises.map(({ exercise, volume }) => {
                     const completedSets = exercise.sets.filter((set) => set.is_completed && set.weight && set.reps)
                     const setsCount = completedSets.length || exercise.sets.length || 0
@@ -140,46 +145,48 @@ export function LastWorkout({ data, config, style = "default", size = "half" }: 
                 size,
               })}
             />
-            <TerminalLineWithDots title="Workout" value={lastWorkout.title} />
-            <TerminalLineWithDots title="Date" value={workoutDate} />
-            <TerminalLineWithDots title="Total Volume" value={`${totalVolumeKg}${weightUnit}`} />
-            {showBodyWeight && lastWorkout.body_weight > 0 && (
-              <TerminalLineWithDots
-                title="Body Weight"
-                value={formatWeight(lastWorkout.body_weight * 1000, weightUnit)}
-              />
-            )}
-            {topExercises.map(({ exercise, volume }) => {
-              const completedSets = exercise.sets.filter((set) => set.is_completed && set.weight && set.reps)
-              const _setsCount = completedSets.length
-
-              // Encontrar o melhor set (maior peso, depois maior reps)
-              let bestSet = { weight: 0, reps: 0 }
-              for (const set of completedSets) {
-                const weight = parseFloat(set.weight || "0")
-                const reps = parseInt(set.reps || "0", 10)
-                if (weight > bestSet.weight || (weight === bestSet.weight && reps > bestSet.reps)) {
-                  bestSet = { weight, reps }
-                }
-              }
-
-              // Formatar: "Best: 15x20kg • 1160kg" (mais simples)
-              const parts: string[] = []
-              if (bestSet.weight > 0 && bestSet.reps > 0) {
-                parts.push(`${bestSet.reps}x${formatWeight(bestSet.weight * 1000, weightUnit)}`)
-              }
-              if (volume > 0) {
-                parts.push(formatWeight(volume * 1000, weightUnit))
-              }
-
-              return (
+            <CascadeGroup count={3 + Number(showBodyWeightLine) + topExercises.length}>
+              <TerminalLineWithDots title="Workout" value={lastWorkout.title} />
+              <TerminalLineWithDots title="Date" value={workoutDate} />
+              <TerminalLineWithDots title="Total Volume" value={`${totalVolumeKg}${weightUnit}`} />
+              {showBodyWeightLine && (
                 <TerminalLineWithDots
-                  key={exercise.exercise_id}
-                  title={exercise.excercise_name}
-                  value={parts.join(" • ")}
+                  title="Body Weight"
+                  value={formatWeight(lastWorkout.body_weight * 1000, weightUnit)}
                 />
-              )
-            })}
+              )}
+              {topExercises.map(({ exercise, volume }) => {
+                const completedSets = exercise.sets.filter((set) => set.is_completed && set.weight && set.reps)
+                const _setsCount = completedSets.length
+
+                // Encontrar o melhor set (maior peso, depois maior reps)
+                let bestSet = { weight: 0, reps: 0 }
+                for (const set of completedSets) {
+                  const weight = parseFloat(set.weight || "0")
+                  const reps = parseInt(set.reps || "0", 10)
+                  if (weight > bestSet.weight || (weight === bestSet.weight && reps > bestSet.reps)) {
+                    bestSet = { weight, reps }
+                  }
+                }
+
+                // Formatar: "Best: 15x20kg • 1160kg" (mais simples)
+                const parts: string[] = []
+                if (bestSet.weight > 0 && bestSet.reps > 0) {
+                  parts.push(`${bestSet.reps}x${formatWeight(bestSet.weight * 1000, weightUnit)}`)
+                }
+                if (volume > 0) {
+                  parts.push(formatWeight(volume * 1000, weightUnit))
+                }
+
+                return (
+                  <TerminalLineWithDots
+                    key={exercise.exercise_id}
+                    title={exercise.excercise_name}
+                    value={parts.join(" • ")}
+                  />
+                )
+              })}
+            </CascadeGroup>
           </>
         }
       />

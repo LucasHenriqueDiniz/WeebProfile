@@ -25,7 +25,7 @@
  * on the container). animationTimeline() picks the gap so the last one ends in time.
  */
 
-import { ANIMATION_TIMING, WAVE_ROWS } from "../templates/animations"
+import { ANIMATION_TIMING, CASCADE_SLOTS, WAVE_ROWS } from "../templates/animations"
 
 /** Sections per plugin that get their own slot; later ones share the last slot. */
 const MAX_SECTIONS_PER_PLUGIN = 24
@@ -54,6 +54,19 @@ function waveRowRules(): string {
   for (let r = 2; r <= WAVE_ROWS; r++) {
     rules.push(`#svg-main .weeb-anim .weeb-wave > :nth-child(${r}){--weeb-r:${r - 1}}`)
   }
+  return rules.join("\n")
+}
+
+/**
+ * Place of each item in a cascade. The first child gets 0 explicitly: a cascade can sit
+ * inside an item of another one, and would otherwise inherit that item's place.
+ */
+function cascadeIndexRules(): string {
+  const rules: string[] = []
+  for (let i = 1; i < CASCADE_SLOTS; i++) {
+    rules.push(`#svg-main .weeb-anim .weeb-seq > :nth-child(${i}){--weeb-idx:${i - 1}}`)
+  }
+  rules.push(`#svg-main .weeb-anim .weeb-seq > :nth-child(n+${CASCADE_SLOTS}){--weeb-idx:${CASCADE_SLOTS - 1}}`)
   return rules.join("\n")
 }
 
@@ -100,7 +113,7 @@ export const ANIMATIONS_CSS = `
   display: inline-block;
 }
 #svg-main .weeb-anim .weeb-num::after {
-  content: counter(weeb-i) var(--weeb-unit, "");
+  content: var(--weeb-prefix, "") counter(weeb-i) var(--weeb-unit, "");
   counter-reset: weeb-i ${COUNT_INTEGER} weeb-f ${COUNT_FRACTION};
   position: absolute;
   left: 0;
@@ -110,10 +123,10 @@ export const ANIMATIONS_CSS = `
   visibility: hidden;
 }
 #svg-main .weeb-anim .weeb-num-1::after {
-  content: counter(weeb-i) "." counter(weeb-f) var(--weeb-unit, "");
+  content: var(--weeb-prefix, "") counter(weeb-i) "." counter(weeb-f) var(--weeb-unit, "");
 }
 #svg-main .weeb-anim .weeb-num-2::after {
-  content: counter(weeb-i) "." counter(weeb-f, decimal-leading-zero) var(--weeb-unit, "");
+  content: var(--weeb-prefix, "") counter(weeb-i) "." counter(weeb-f, decimal-leading-zero) var(--weeb-unit, "");
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -168,6 +181,16 @@ ${waveRowRules()}
   #svg-main .weeb-anim .weeb-wave > * {
     animation: weeb-fade ${s(t.cell)} cubic-bezier(0.2, 0.8, 0.2, 1)
       calc(var(--weeb-out, 0s) + (var(--weeb-c, 0) + var(--weeb-r, 0)) * var(--weeb-wave, 0s)) backwards;
+  }
+
+  /* Items of a list, a grid or a row of tags fade in one after the other, from the
+     section's content on: each child carries its place (--weeb-idx), the parent the gap
+     between two (--weeb-gap). See itemCascade() in templates/animations.tsx. Opacity only,
+     for the same reason as the calendar cells. */
+${cascadeIndexRules()}
+  #svg-main .weeb-anim .weeb-seq > * {
+    animation: weeb-fade ${s(t.item)} cubic-bezier(0.2, 0.8, 0.2, 1)
+      calc(var(--weeb-out, 0s) + var(--weeb-idx, 0) * var(--weeb-gap, 0s)) backwards;
   }
 }
 
