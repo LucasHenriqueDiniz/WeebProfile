@@ -971,7 +971,8 @@
     },
     "features": {
       "kicker": "WHY THIS WAY",
-      "title": "Nothing in your repository but one line",
+      "title": "In your README, just",
+      "titleHighlight": "one line",
       "items": [
         {
           "title": "No GitHub Action",

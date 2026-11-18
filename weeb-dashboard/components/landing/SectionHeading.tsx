@@ -32,10 +32,14 @@ export function SectionHeading({ kicker, tone = "cyan", title, subtitle, align =
   )
 }
 
-/** A word of a section title over a marker stroke, as in the hero's prototypes. */
+/**
+ * A word of a section title over a marker stroke, as in the hero's prototypes. `isolate`
+ * keeps the stroke's `-z-10` inside the word: without it the stroke went under the page
+ * wrapper's `bg-background` and never showed.
+ */
 export function Marker({ children }: { children: ReactNode }) {
   return (
-    <span className="relative inline-block whitespace-nowrap">
+    <span className="relative isolate inline-block whitespace-nowrap">
       <span
         aria-hidden
         className="absolute inset-x-[-3%] bottom-[8%] -z-10 h-[36%] -rotate-1 rounded-sm bg-cyan-400/70 dark:bg-cyan-400/40"
