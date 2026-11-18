@@ -7,7 +7,6 @@ import { LandingFooter } from "@/components/landing/LandingFooter"
 import { LandingHero } from "@/components/landing/LandingHero"
 import { PlatformStrip } from "@/components/landing/PlatformStrip"
 import { PluginsShowcase } from "@/components/landing/PluginsShowcase"
-import { PreviewYourCard } from "@/components/landing/PreviewYourCard"
 import { RepoShowcase } from "@/components/landing/RepoShowcase"
 import { StylesShowcase } from "@/components/landing/StylesShowcase"
 import { TemplatesShowcase } from "@/components/landing/TemplatesShowcase"
@@ -34,15 +33,13 @@ export default function HomePageClient() {
 
   return (
     <div className="relative overflow-hidden bg-background">
-      {/* Ambient backdrop: dot grid fading out down the page. The hero draws its own glow, behind the README frame. */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[900px]">
-        <div className="absolute inset-0 bg-[radial-gradient(hsl(var(--foreground)/0.07)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:linear-gradient(to_bottom,black,transparent_70%)]" />
-      </div>
-
       <Header />
-      <main className="relative pt-16">
+      {/* No top padding: the hero's band runs under the header, which has no bar of its
+          own, so the band itself makes room for it. */}
+      <main className="relative">
         <LandingHero />
-        <PreviewYourCard />
+        {/* The "try it" block that sat here asked for a username and showed the card: the
+            hero does that now. */}
         <PlatformStrip />
         <HowItWorks />
         <PluginsShowcase />

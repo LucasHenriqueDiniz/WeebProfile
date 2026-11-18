@@ -97,7 +97,8 @@
     "moreActions": "More actions"
   },
   "header": {
-    "changeLanguage": "Change language",
+    "language": "Language",
+    "preferences": "Preferences: language and theme",
     "dashboard": "Dashboard",
     "myAccount": "My Account",
     "settings": "Settings",
@@ -350,13 +351,6 @@
         "applied": "Applied"
       }
     }
-  },
-  "languageSelector": {
-    "comingSoon": "Coming soon",
-    "description": "Select your preferred interface language",
-    "noResults": "No language found",
-    "searchPlaceholder": "Search language...",
-    "title": "Change language"
   },
   "loading": {
     "loading": "LOADING"
@@ -745,7 +739,12 @@
         "purple": "Purple",
         "pink": "Pink",
         "blue": "Blue",
-        "green": "Green"
+        "green": "Green",
+        "cyan": "Cyan",
+        "orange": "Orange",
+        "red": "Red",
+        "monokai": "Monokai",
+        "custom": "Custom"
       }
     },
     "sort": {
@@ -764,33 +763,11 @@
     "shareTemplate": "Share",
     "likeTemplate": "Like",
     "unlikeTemplate": "Unlike",
-    "createdBy": "Created by",
-    "lastUpdated": "Last updated",
-    "platforms": "Platforms",
     "style": "Style",
     "theme": "Theme",
-    "preview": "Preview",
-    "description": "Description",
     "templateNotFound": "Template not found",
     "templateNotFoundDescription": "This template may have been removed or you don't have permission to view it.",
-    "templateCard": {
-      "useTemplate": "Use template",
-      "viewDetails": "View details",
-      "likes": "likes",
-      "platforms": "platforms",
-      "lastUpdated": "updated on",
-      "like": "Like",
-      "unlike": "Unlike"
-    },
-    "modal": {
-      "title": "Use template",
-      "description": "This template will be loaded into the editor for you to customize.",
-      "close": "Close",
-      "useTemplate": "Use template"
-    },
     "share": {
-      "title": "Share template",
-      "copyLink": "Copy link",
       "copied": "Copied!"
     },
     "sizes": {
@@ -798,13 +775,23 @@
       "full": "Full Width (830px)"
     },
     "detail": {
-      "createdAt": "Created at",
       "size": "Size",
-      "terminalOptions": "Terminal Options",
-      "customizations": "Customizations",
-      "customCss": "Custom CSS",
-      "customColors": "Custom Colors",
-      "applied": "Applied"
+      "inside": "What's inside",
+      "look": "Look",
+      "useHint": "Opens in the editor, where you add your own accounts.",
+      "sampleData": "Sample data. Your card shows yours.",
+      "noEmojis": "No emojis",
+      "noHeader": "No terminal header",
+      "autoColor": "Follows light and dark mode"
+    },
+    "loadError": "Couldn't load the templates.",
+    "retry": "Try again",
+    "clearFilters": "Clear filters",
+    "scratch": {
+      "title": "None of these?",
+      "subtitle": "Start from a blank card and pick the plugins, sections and theme yourself.",
+      "cta": "Start from scratch",
+      "browsePlugins": "See all plugins"
     }
   },
   "landing": {
@@ -933,7 +920,9 @@
         "anilist": "Anime and manga stats, favorites and what you're watching.",
         "devto": "Your profile, recent articles and the tags you use most.",
         "about": "A neofetch-style intro and link badges, from what you type in."
-      }
+      },
+      "all": "All",
+      "filter": "Filter by category"
     },
     "templates": {
       "kicker": "TEMPLATES",
@@ -971,7 +960,8 @@
     },
     "features": {
       "kicker": "WHY THIS WAY",
-      "title": "Nothing in your repository but one line",
+      "title": "In your README, just",
+      "titleHighlight": "one line",
       "items": [
         {
           "title": "No GitHub Action",
@@ -1027,7 +1017,29 @@
       "viewDefault": "default",
       "backHome": "Back to home",
       "cta": "Create my SVG",
-      "index": "Jump to a plugin"
+      "index": "Jump to a plugin",
+      "search": {
+        "label": "Search plugins",
+        "placeholder": "Search plugins or sections",
+        "clear": "Clear search",
+        "empty": "No plugin matches “{{query}}”."
+      },
+      "options": {
+        "heading": "What you can change",
+        "none": "Nothing to set: it draws as it is.",
+        "title": "Title",
+        "rename": "rename",
+        "hide": "hide",
+        "on": "on by default",
+        "off": "off by default",
+        "range": "{{min}} to {{max}}",
+        "default": "default {{value}}",
+        "upTo_one": "up to {{count}} item",
+        "upTo_other": "up to {{count}} items",
+        "list": "a list you fill in",
+        "text": "your text",
+        "image": "upload or link"
+      }
     }
   },
   "embed": {

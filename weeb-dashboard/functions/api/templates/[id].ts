@@ -3,7 +3,7 @@ import type { CloudflareEnv } from "../_shared/auth"
 import { getAuthUserId, unauthorized, notFound, serverError } from "../_shared/auth"
 import { getDb } from "../_shared/db"
 import { parseBody, templateUpdateSchema } from "../_shared/validation"
-import { templates, svgs } from "../../../lib/db/schema"
+import { templates, svgs, templateLikes } from "../../../lib/db/schema"
 import { templateForViewer } from "../../../lib/templates/template-layout"
 import { eq, and } from "drizzle-orm"
 
@@ -54,7 +54,21 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env,
       previewUrl = svgRow?.storageUrl || null
     }
 
-    return Response.json({ template: { ...templateForViewer(template, userId), previewUrl } })
+    // The list sends these and the detail page shows the same heart: without them a
+    // signed-in user always saw "not liked", and liking again answered 400.
+    const likes = await db
+      .select({ userId: templateLikes.userId })
+      .from(templateLikes)
+      .where(eq(templateLikes.templateId, id))
+
+    return Response.json({
+      template: {
+        ...templateForViewer(template, userId),
+        previewUrl,
+        likesCount: likes.length,
+        userLiked: userId ? likes.some((like) => like.userId === userId) : false,
+      },
+    })
   } catch (e) {
     return serverError(e)
   }

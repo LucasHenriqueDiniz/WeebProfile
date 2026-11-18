@@ -1,129 +1,113 @@
 "use client"
 
-import { useEffect, useState, useMemo } from "react"
-import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Heart, Share2, ExternalLink, Loader2, Eye, Monitor, Terminal, Check } from "lucide-react"
+import { useEffect, useState } from "react"
+import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { ArrowLeft, ArrowRight, BarChart3, Check, Heart, Share2, SquareTerminal } from "lucide-react"
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, CHIP, STICKER, TILE } from "@/components/landing/sticker"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { FaGithub } from "react-icons/fa"
+import { useAuth } from "@/hooks/useAuth"
 import { Link } from "@/i18n/navigation"
-import { templateApi } from "@/lib/api"
-import { PreviewRenderer } from "@/components/preview/PreviewRenderer"
-import { FitWidth } from "@/components/preview/FitWidth"
-import { ensureConsistentPlatforms, pluginIdsToDisplayNames, formatDate } from "@/lib/templates"
-import type { SvgTemplate } from "@/types/svg"
-import { getPluginIcon } from "@/lib/plugin-icons"
 import { useTranslations } from "@/i18n/use-translations"
-import { templateWizardHref } from "@/lib/templates/template-route"
+import { templateApi } from "@/lib/api"
+import { readStyleUiConfig, type StyleUiConfig } from "@/lib/config/svg-config-helpers"
+import { CATEGORY_STYLE } from "@/lib/landing/category-style"
+import { getPluginIcon } from "@/lib/plugin-icons"
+import { usePluginI18n } from "@/lib/plugins/i18n-helper"
+import { mapApiToTemplate } from "@/lib/template-mapper"
 import { useTemplateDescription } from "@/lib/templates/template-description"
+import { templateWizardHref } from "@/lib/templates/template-route"
+import { effectiveTheme, templatePlugins, themeSwatch } from "@/lib/templates/template-view"
+import { cn } from "@/lib/utils"
+import type { Template } from "@/types/template"
+import { TemplatePreview } from "./TemplatePreview"
 
-interface TemplateDetailClientProps {
-  templateId: string
+type LoadedTemplate = Template & { ui: StyleUiConfig }
+
+const METADATA = PLUGINS_METADATA as Record<string, any>
+
+/** A plugin's name and its sections' names in the page's language. */
+function usePluginText() {
+  const { tWithFallback } = usePluginI18n()
+  const translated = (key: string | undefined, fallback: string) =>
+    key ? tWithFallback(key.replace(/^plugins\./, ""), fallback) : fallback
+  return {
+    pluginName: (id: string) => {
+      const meta = METADATA[id]
+      return meta ? translated(meta.i18nKey?.displayName, meta.displayName) : id
+    },
+    sectionName: (pluginId: string, sectionId: string) => {
+      const section = (METADATA[pluginId]?.sections as any[] | undefined)?.find((s) => s.id === sectionId)
+      return section ? translated(section.i18nKey?.name, section.name) : sectionId
+    },
+  }
 }
 
-export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) {
+function toLoaded(apiTemplate: any): LoadedTemplate {
+  return {
+    ...mapApiToTemplate(apiTemplate),
+    size: apiTemplate.size || "full",
+    customCss: apiTemplate.customCss || undefined,
+    ui: readStyleUiConfig(apiTemplate.uiConfig),
+  }
+}
+
+/**
+ * One template: the card as it comes out, what is in it, and the way into the editor.
+ *
+ * Fetched without the session first, so a public template shows at once; once Clerk
+ * says who is visiting, a signed-in visitor fetches it again with the session, which
+ * brings their like and opens their own private templates.
+ */
+export function TemplateDetailClient({ templateId }: { templateId: string }) {
   const t = useTranslations("templatesPage")
   const templateDescription = useTemplateDescription()
-  const [template, setTemplate] = useState<SvgTemplate | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { pluginName, sectionName } = usePluginText()
+  const { user, loading: authLoading } = useAuth()
+  const [loaded, setTemplate] = useState<LoadedTemplate | null>(null)
+  // Moving from one template to another, the previous one is not this page's.
+  const template = loaded?.id === templateId ? loaded : null
+  // Which fetch last settled, so "not found" waits for the one that matters.
+  const [settled, setSettled] = useState<string | null>(null)
   const [shareCopied, setShareCopied] = useState(false)
 
-  // Preparar plugins config para PreviewRenderer
-  const pluginsConfig = useMemo(() => {
-    if (!template) return { plugins: {}, pluginsOrder: [] }
-
-    // Se o template tem pluginsConfig e pluginsOrder da API, use-os diretamente
-    if (template.pluginsConfig && template.pluginsOrder) {
-      const pluginsOrder = Array.isArray(template.pluginsOrder)
-        ? template.pluginsOrder
-        : template.pluginsOrder.split(",").filter(Boolean)
-
-      // Converter pluginsConfig para o formato esperado pelo PreviewRenderer
-      const plugins: Record<string, any> = {}
-      pluginsOrder.forEach((pluginId) => {
-        if (template.pluginsConfig && template.pluginsConfig[pluginId]) {
-          plugins[pluginId] = template.pluginsConfig[pluginId]
-        }
-      })
-
-      return { plugins, pluginsOrder }
-    }
-
-    // Fallback: criar config básico das plataformas
-    const platforms = ensureConsistentPlatforms(template)
-    const plugins: Record<string, any> = {}
-    platforms.forEach((pluginId) => {
-      if (pluginId) {
-        plugins[pluginId] = {
-          enabled: true,
-          sections: [], // Começar sem seções - o render deve lidar com isso
-        }
-      }
-    })
-
-    return { plugins, pluginsOrder: platforms }
-  }, [template])
-
+  const userId = user?.id
+  const request = `${templateId}:${userId ?? "anonymous"}`
   useEffect(() => {
-    async function fetchTemplate() {
-      try {
-        setLoading(true)
-        // Try to fetch template directly from API (works for public templates)
-        const response = await fetch(`/api/templates/${templateId}`)
-        if (!response.ok) {
-          throw new Error("Failed to fetch template")
-        }
-        const data = (await response.json()) as { template: any }
-        const processedTemplate = {
-          ...data.template,
-          platforms: ensureConsistentPlatforms(data.template),
-          size: data.template.size || "full", // Default to "full" if not specified
-        }
-        setTemplate(processedTemplate)
-      } catch (err) {
-        console.error("Error fetching template:", err)
-        setError("Failed to load template")
-      } finally {
-        setLoading(false)
-      }
+    let cancelled = false
+    const fetchTemplate = userId
+      ? templateApi.get(templateId)
+      : fetch(`/api/templates/${templateId}`).then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`)
+          return res.json() as Promise<{ template: unknown }>
+        })
+    fetchTemplate
+      .then((data) => {
+        if (!cancelled) setTemplate(toLoaded(data.template))
+      })
+      // A failure keeps a template already on screen; with none, it is "not found".
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setSettled(request)
+      })
+    return () => {
+      cancelled = true
     }
+  }, [templateId, userId, request])
 
-    fetchTemplate()
-  }, [templateId])
+  // "Not found" only once Clerk has answered and the fetch for that answer has
+  // settled. The owner of a private template reloading the page got a 401 from the
+  // anonymous fetch and saw "not found" until the signed-in one came back.
+  const loading = !template && (authLoading || settled !== request)
 
   const handleLike = async () => {
     if (!template) return
-
+    const liked = !template.liked
+    setTemplate({ ...template, liked, likes: Math.max(0, (template.likes ?? 0) + (liked ? 1 : -1)) })
     try {
-      if (template.liked) {
-        await templateApi.unlike(template.id)
-        setTemplate((prev) =>
-          prev
-            ? {
-                ...prev,
-                liked: false,
-                likes: Math.max(0, (prev.likes || 0) - 1),
-              }
-            : null
-        )
-      } else {
-        await templateApi.like(template.id)
-        setTemplate((prev) =>
-          prev
-            ? {
-                ...prev,
-                liked: true,
-                likes: (prev.likes || 0) + 1,
-              }
-            : null
-        )
-      }
-    } catch (err) {
-      console.error("Error liking template:", err)
+      if (liked) await templateApi.like(template.id)
+      else await templateApi.unlike(template.id)
+    } catch {
+      setTemplate(template)
     }
   }
 
@@ -132,395 +116,205 @@ export function TemplateDetailClient({ templateId }: TemplateDetailClientProps) 
       await navigator.clipboard.writeText(window.location.href)
       setShareCopied(true)
       setTimeout(() => setShareCopied(false), 2000)
-    } catch (err) {
-      console.error("Error copying link:", err)
+    } catch {
+      // Clipboard refused (insecure context, permissions): the address bar still has it.
     }
   }
 
-  // Enhanced preview with hover effects
-  const getTemplateAccent = (template: SvgTemplate) => {
-    const themeColors: Record<string, string> = {
-      purple: "#a855f7",
-      pink: "#ec4899",
-      blue: "#3b82f6",
-      green: "#22c55e",
-      dracula: "#8b5cf6",
-      default: "#6b7280",
-    }
-    return themeColors[template.theme] || themeColors.default
-  }
-
-  const accent = template ? getTemplateAccent(template) : "#6b7280"
-  const StyleIcon = template?.style === "terminal" ? Terminal : Monitor
+  const backLink = (
+    <Link
+      href="/templates"
+      className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+    >
+      <ArrowLeft className="h-4 w-4" />
+      {t("backToTemplates")}
+    </Link>
+  )
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="mx-auto max-w-6xl px-6 pb-24 pt-12" aria-busy>
+        {backLink}
+        <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-10">
+          <div className="space-y-3 lg:col-start-2">
+            <div className="h-5 w-24 animate-pulse rounded-full bg-muted" />
+            <div className="h-10 w-3/4 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-full animate-pulse rounded bg-muted/70" />
+            <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
+          </div>
+          <div className={cn(STICKER, "h-[420px] animate-pulse bg-muted/60 lg:col-start-1 lg:row-start-1")} />
         </div>
       </div>
     )
   }
 
-  if (error || !template) {
+  if (!template) {
     return (
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-destructive/10 mb-6">
-            <Eye className="w-10 h-10 text-destructive" />
-          </div>
-          <h1 className="text-2xl font-bold mb-2">{t("templateNotFound")}</h1>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto">{t("templateNotFoundDescription")}</p>
-          <Button asChild>
-            <Link href="/templates">{t("backToGallery")}</Link>
-          </Button>
-        </motion.div>
+      <div className="mx-auto max-w-6xl px-6 pb-24 pt-12">
+        {backLink}
+        <div className={cn(STICKER, "mt-6 px-6 py-14 text-center")}>
+          <h1 className="font-heading text-3xl font-extrabold text-foreground">{t("templateNotFound")}</h1>
+          <p className="mx-auto mt-2 max-w-md text-muted-foreground">{t("templateNotFoundDescription")}</p>
+          <Link href="/templates" className={cn(BUTTON_PRIMARY, "mt-6")}>
+            {t("backToGallery")}
+          </Link>
+        </div>
       </div>
     )
   }
 
-  const hasLikes = (template.likes ?? 0) > 0
+  const plugins = templatePlugins(template)
+  const theme = effectiveTheme(template.style, template.theme)
+  const themeLabel =
+    theme === "default"
+      ? t("filters.theme.default")
+      : t(`filters.theme.${theme}`, { defaultValue: theme.charAt(0).toUpperCase() + theme.slice(1) })
+  const StyleIcon = template.style === "terminal" ? SquareTerminal : BarChart3
   const likeLabel = template.liked ? t("unlikeTemplate") : t("likeTemplate")
   const shareLabel = shareCopied ? t("share.copied") : t("shareTemplate")
+  const extras = [
+    template.style === "terminal" && template.ui.hideTerminalEmojis && t("detail.noEmojis"),
+    template.style === "terminal" && template.ui.hideTerminalHeader && t("detail.noHeader"),
+    template.ui.colorMode === "auto" && t("detail.autoColor"),
+  ].filter((extra): extra is string => Boolean(extra))
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-8 md:py-12 relative">
-      {/* Back Button - Absolute Position */}
-      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="absolute top-0 left-0">
-        <Button variant="ghost" asChild className="gap-2">
-          <Link href="/templates">
-            <ArrowLeft className="w-4 h-4" />
-            {t("backToTemplates")}
-          </Link>
-        </Button>
-      </motion.div>
+    <div className="mx-auto max-w-6xl px-6 pb-24 pt-12">
+      {backLink}
 
-      <div
-        className={`grid gap-8 ${
-          template?.size === "half" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1 lg:grid-cols-3"
-        }`}
-      >
-        {/* Enhanced Preview Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className={template?.size === "half" ? "lg:col-span-1" : "lg:col-span-2"}
-        >
-          <Card className="overflow-hidden border-2 bg-card/50 backdrop-blur-sm">
-            <CardContent className="p-0">
-              <div className="relative bg-gradient-to-br from-muted/20 to-muted/10 rounded-lg overflow-hidden border border-border/50 min-h-[500px]">
-                {/* Animated gradient background */}
-                <motion.div
-                  className="absolute inset-0 pointer-events-none"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 1 }}
-                  style={{
-                    background: `linear-gradient(135deg, ${accent}10 0%, ${accent}05 50%, transparent 100%)`,
-                  }}
-                />
+      {/* DOM order is the phone's: title and action, the card, then what is in it. From
+          lg up the card takes the left column next to both. */}
+      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:grid-rows-[auto_1fr] lg:gap-x-10">
+        <div className="lg:col-start-2 lg:row-start-1">
+          <div className="flex flex-wrap gap-1.5">
+            <span className={cn(CHIP, "font-mono")}>
+              <StyleIcon className="h-3 w-3" />
+              {t(`filters.style.${template.style}`)}
+            </span>
+            <span className={cn(CHIP, "font-mono")}>{template.size === "full" ? "830px" : "415px"}</span>
+          </div>
+          <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground [text-wrap:balance] md:text-5xl">
+            {template.name}
+          </h1>
+          <p className="mt-3 text-[16px] leading-relaxed text-muted-foreground [text-wrap:pretty]">
+            {templateDescription(template)}
+          </p>
 
-                {/* Preview content with enhanced animation and infinite hover effect */}
-                <motion.div
-                  className="relative z-10 w-full h-full px-2 py-1 overflow-hidden"
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.5, type: "spring", stiffness: 100 }}
-                >
-                  <motion.div
-                    initial={{ y: 20 }}
-                    animate={{ y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.4 }}
-                    className="w-full max-w-4xl flex items-center justify-center"
-                  >
-                    <motion.div
-                      // w-full so FitWidth sees the column's width; shrink-wrapped, it only
-                      // ever saw the card's own 830px and the preview was cut on the right.
-                      className="relative w-full overflow-hidden rounded-lg"
-                      whileHover={{
-                        scale: 1.02,
-                        transition: { duration: 0.3 },
-                      }}
-                    >
-                      {/* Static preview container */}
-                      <FitWidth width={template.size === "full" ? 830 : 415}>
-                        <PreviewRenderer
-                          plugins={pluginsConfig.plugins}
-                          pluginsOrder={pluginsConfig.pluginsOrder}
-                          style={template.style}
-                          size={template.size}
-                          theme={template.theme}
-                          hideTerminalEmojis={template.hideTerminalEmojis}
-                          hideTerminalHeader={template.hideTerminalHeader}
-                          fontFamily={template.fontFamily}
-                          terminalHeaderText={template.terminalHeaderText}
-                          customCss={template.customCss}
-                          customThemeColors={template.customThemeColors}
-                        />
-                      </FitWidth>
-
-                      {/* Hover overlay effect */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-t from-primary/5 via-transparent to-primary/5 pointer-events-none rounded-lg"
-                        initial={{ opacity: 0 }}
-                        whileHover={{
-                          opacity: 1,
-                          transition: { duration: 0.3 },
-                        }}
-                      />
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Enhanced Info Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className={`space-y-6 ${template?.size === "half" ? "lg:col-span-1" : "lg:col-span-1"}`}
-        >
-          {/* Title and Actions with enhanced styling */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <motion.div
-                className="w-12 h-12 rounded-lg flex items-center justify-center shadow-lg"
-                style={{
-                  backgroundColor: accent,
-                  boxShadow: `0 4px 20px ${accent}40`,
-                }}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-              >
-                <StyleIcon className="w-6 h-6 text-white" />
-              </motion.div>
-              <div className="flex-1">
-                <motion.h1
-                  className="text-3xl font-bold mb-2"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  {template.name}
-                </motion.h1>
-              </div>
-            </div>
-
-            <motion.p
-              className="text-muted-foreground text-base leading-relaxed mt-4 p-4 bg-muted/30 rounded-lg border border-border/50"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              {templateDescription(template)}
-            </motion.p>
-
-            {/* One row: the main action takes the width, like and share are icons with
-                tooltips. Three labelled buttons did not fit the side column and wrapped. */}
-            <motion.div
-              className="flex gap-2"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <Button asChild className="flex-1 gap-2 shadow-lg">
-                <Link href={templateWizardHref(template.id)}>
-                  <ExternalLink className="w-4 h-4" />
-                  {t("useTemplate")}
-                </Link>
-              </Button>
+          <div className="mt-6 flex gap-2.5">
+            <Link href={templateWizardHref(template.id)} className={cn(BUTTON_PRIMARY, "flex-1 justify-center")}>
+              {t("useTemplate")}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            {/* Likes need an account: signed out, the heart only ever answered 401. */}
+            {user && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size={hasLikes ? "default" : "icon"}
+                  <button
+                    type="button"
                     onClick={handleLike}
                     aria-label={likeLabel}
-                    className={hasLikes ? "gap-1.5 px-3" : undefined}
+                    aria-pressed={Boolean(template.liked)}
+                    className={cn(BUTTON_SECONDARY, "px-3.5")}
                   >
-                    <Heart
-                      className={`w-4 h-4 transition-colors ${
-                        template.liked ? "fill-red-500 text-red-500" : "hover:text-red-500"
-                      }`}
-                    />
-                    {hasLikes && <span className="text-sm tabular-nums">{template.likes}</span>}
-                  </Button>
+                    <Heart className={cn("h-4 w-4", template.liked && "fill-pink-500 text-pink-500")} />
+                    {(template.likes ?? 0) > 0 && <span className="tabular-nums">{template.likes}</span>}
+                  </button>
                 </TooltipTrigger>
                 <TooltipContent>{likeLabel}</TooltipContent>
               </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" onClick={handleShare} aria-label={shareLabel}>
-                    {shareCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>{shareLabel}</TooltipContent>
-              </Tooltip>
-              <span className="sr-only" aria-live="polite">
-                {shareCopied ? t("share.copied") : ""}
-              </span>
-            </motion.div>
-          </div>
-
-          <Separator />
-
-          {/* Template Info */}
-          <div className="space-y-4">
-            {/* Creator */}
-            {template.user && (
-              <div>
-                <h3 className="font-semibold mb-2">{t("createdBy")}</h3>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
-                    {template.user.name.charAt(0).toUpperCase()}
-                  </div>
-                  <span className="text-sm">{template.user.name}</span>
-                </div>
-              </div>
             )}
-
-            {/* Dates */}
-            <div className="text-sm">
-              <p className="text-muted-foreground">{t("detail.createdAt")}</p>
-              <p>{template.createdAt ? formatDate(template.createdAt, "pt-BR") : "N/A"}</p>
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  aria-label={shareLabel}
+                  className={cn(BUTTON_SECONDARY, "px-3.5")}
+                >
+                  {shareCopied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>{shareLabel}</TooltipContent>
+            </Tooltip>
+            <span className="sr-only" aria-live="polite">
+              {shareCopied ? t("share.copied") : ""}
+            </span>
           </div>
+          <p className="mt-3 text-[13px] text-muted-foreground">{t("detail.useHint")}</p>
+        </div>
 
-          <Separator />
+        <figure className="min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1">
+          {/* No screentone here: the default style is transparent and the dots showed
+              through the card. */}
+          <div className={cn(STICKER, "overflow-hidden bg-background p-3 sm:p-6")}>
+            <TemplatePreview template={template} ui={template.ui} customCss={template.customCss} />
+          </div>
+          <figcaption className="mt-3 text-[13px] text-muted-foreground">{t("detail.sampleData")}</figcaption>
+        </figure>
 
-          {/* Enhanced Template Details */}
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            {/* Platforms with enhanced display */}
-            {template.platforms && template.platforms.length > 0 && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
-                <h3 className="font-semibold mb-3 text-lg">{t("platforms")}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {pluginIdsToDisplayNames(template.platforms).map((platform, index) => {
-                    const Icon = getPluginIcon(template.platforms[index]) || FaGithub
-                    return (
-                      <Badge key={template.platforms[index]} className="gap-1 px-3 py-1.5 capitalize">
-                        {Icon && <Icon className="w-3 h-3" />}
-                        {platform}
-                      </Badge>
-                    )
-                  })}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Style, Theme & Size with enhanced cards */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-3">
-                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.9 }}>
-                  <h3 className="font-semibold mb-2">{t("style")}</h3>
-                  <Badge variant="outline" className="text-sm px-3 py-1.5">
-                    {template.style === "terminal" ? (
-                      <>
-                        <Terminal className="w-3 h-3 mr-1" />
-                        Terminal
-                      </>
-                    ) : (
-                      <>
-                        <Monitor className="w-3 h-3 mr-1" />
-                        Padrão
-                      </>
-                    )}
-                  </Badge>
-                </motion.div>
-
-                <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.0 }}>
-                  <h3 className="font-semibold mb-2">{t("theme")}</h3>
-                  <Badge
-                    variant="outline"
-                    className="capitalize text-sm px-3 py-1.5 bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/30"
-                    style={{ borderColor: `${accent}30` }}
-                  >
-                    <div
-                      className="w-3 h-3 rounded-full mr-1 border border-current"
-                      style={{ backgroundColor: accent }}
-                    />
-                    {template.theme}
-                  </Badge>
-                </motion.div>
-
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1 }}>
-                  <h3 className="font-semibold mb-2">{t("detail.size")}</h3>
-                  <Badge variant="outline" className="text-sm px-3 py-1.5">
-                    <Monitor className="w-3 h-3 mr-1" />
-                    {template.size === "half" ? t("sizes.half") : t("sizes.full")}
-                  </Badge>
-                </motion.div>
-
-                {/* Terminal Options */}
-                {template.style === "terminal" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2 }}
-                    className="space-y-3"
-                  >
-                    <h3 className="font-semibold mb-2">{t("detail.terminalOptions")}</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Ocultar Emojis</span>
-                        <Badge variant={template.hideTerminalEmojis ? "default" : "secondary"} className="text-xs">
-                          {template.hideTerminalEmojis ? "Sim" : "Não"}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Ocultar Cabeçalho</span>
-                        <Badge variant={template.hideTerminalHeader ? "default" : "secondary"} className="text-xs">
-                          {template.hideTerminalHeader ? "Sim" : "Não"}
-                        </Badge>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Customization Info */}
-                {(template.customCss || template.customThemeColors) && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.3 }}
-                    className="space-y-3"
-                  >
-                    <h3 className="font-semibold mb-2">{t("detail.customizations")}</h3>
-                    <div className="space-y-2">
-                      {template.customCss && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">{t("detail.customCss")}</span>
-                          <Badge variant="default" className="text-xs">
-                            {t("detail.applied")}
-                          </Badge>
-                        </div>
-                      )}
-                      {template.customThemeColors && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">{t("detail.customColors")}</span>
-                          <Badge variant="default" className="text-xs">
-                            {Object.keys(template.customThemeColors).length} cores
-                          </Badge>
+        <div className="space-y-7 lg:col-start-2 lg:row-start-2">
+          <section>
+            <h2 className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">
+              {t("detail.inside")}
+            </h2>
+            <ul className="mt-3 space-y-3">
+              {plugins.map(({ id, sections }) => {
+                const Icon = getPluginIcon(id)
+                const category = METADATA[id]?.category as keyof typeof CATEGORY_STYLE | undefined
+                return (
+                  <li key={id} className="flex gap-3">
+                    <span className={cn(TILE, "h-9 w-9", category ? CATEGORY_STYLE[category]?.sticker : "bg-muted")}>
+                      {Icon ? <Icon className="h-4 w-4" /> : null}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="text-[15px] font-semibold text-foreground">{pluginName(id)}</div>
+                      {sections.length > 0 && (
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {sections.map((sectionId) => (
+                            <span key={sectionId} className={CHIP}>
+                              {sectionName(id, sectionId)}
+                            </span>
+                          ))}
                         </div>
                       )}
                     </div>
-                  </motion.div>
-                )}
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">
+              {t("detail.look")}
+            </h2>
+            <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-[14px]">
+              <dt className="text-muted-foreground">{t("style")}</dt>
+              <dd className="font-semibold text-foreground">{t(`filters.style.${template.style}`)}</dd>
+              <dt className="text-muted-foreground">{t("theme")}</dt>
+              <dd className="flex items-center gap-2 font-semibold text-foreground">
+                <span
+                  className="h-3.5 w-3.5 rounded-full border-2 border-foreground"
+                  style={{ backgroundColor: themeSwatch(template.style, theme, template.ui.customThemeColors) }}
+                />
+                {themeLabel}
+              </dd>
+              <dt className="text-muted-foreground">{t("detail.size")}</dt>
+              <dd className="font-semibold text-foreground">
+                {template.size === "half" ? t("sizes.half") : t("sizes.full")}
+              </dd>
+            </dl>
+            {extras.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {extras.map((extra) => (
+                  <span key={extra} className={CHIP}>
+                    {extra}
+                  </span>
+                ))}
               </div>
-            </div>
-          </motion.div>
-        </motion.div>
+            )}
+          </section>
+        </div>
       </div>
     </div>
   )

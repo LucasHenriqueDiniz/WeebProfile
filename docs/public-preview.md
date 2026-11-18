@@ -31,7 +31,7 @@ landing block ──GET /api/preview?plugin&username&style&theme&size──▶ P
 | Endpoint                              | `weeb-dashboard/functions/api/preview.ts`                                                                            |
 | Rate limit                            | `weeb-dashboard/functions/api/_shared/preview-rate-limit.ts`, table `preview_hits` (`drizzle/0005_preview_hits.sql`) |
 | Generator preview mode                | `svg-generator/src/worker.ts` (`preview: true`), `previewCredentials` in `src/db/app-credentials.ts`                 |
-| Landing block                         | `weeb-dashboard/components/landing/PreviewYourCard.tsx`                                                              |
+| Landing block                         | `weeb-dashboard/components/landing/LandingHero.tsx`                                                                  |
 | `return_to` on `/login` and `/signup` | `weeb-dashboard/lib/return-to.ts`                                                                                    |
 
 - **GET with query params**, not POST: the normalized URL is the cache key.
