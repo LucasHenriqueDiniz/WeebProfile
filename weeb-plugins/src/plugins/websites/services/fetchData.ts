@@ -7,6 +7,7 @@
  * fora do ar nunca pode derrubar o card inteiro.
  */
 
+import { MAX_ITEM_IMAGE_BYTES, validImageDataUri } from "../../../utils/image-data-uri"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { assertSafePublicUrl } from "../../../utils/url-guard"
 import { MAX_WEBSITES } from "../plugin.metadata"
@@ -117,10 +118,10 @@ async function firstEmbeddableImage(
  * The thumbnail source the user picked. A site saved before the option has none, and
  * keeps the rule it had: its own image when it has one, the page's preview otherwise.
  */
-function imageSource(item: WebsiteConfigItem, manualImage: string | null): WebsiteImageSource {
+function imageSource(item: WebsiteConfigItem, hasOwnImage: boolean): WebsiteImageSource {
   const picked = item.image_source
   if (picked === "auto" || picked === "screenshot" || picked === "custom") return picked
-  return manualImage ? "custom" : "auto"
+  return hasOwnImage ? "custom" : "auto"
 }
 
 async function resolveWebsite(
@@ -131,13 +132,17 @@ async function resolveWebsite(
   const domain = url.hostname.replace(/^www\./, "")
   const manualTitle = typeof item.title === "string" ? item.title.trim() : ""
   const manualDescription = typeof item.description === "string" ? item.description.trim() : ""
-  const manualImage = normalizeUrl(item.image)?.toString() ?? null
+  // The own image: a file uploaded in the wizard, kept in the config as a data URI and
+  // embedded as it is, or an address to fetch.
+  const uploadedImage = validImageDataUri(item.image, MAX_ITEM_IMAGE_BYTES)
+  const manualImage = uploadedImage ? null : (normalizeUrl(item.image)?.toString() ?? null)
 
   const meta = options.autofill && options.hasBudget() ? await fetchSiteMeta(url.toString()) : null
-  const source = imageSource(item, manualImage)
+  const source = imageSource(item, uploadedImage !== null || manualImage !== null)
 
-  // A screenshot comes as a data URI already; the other sources are URLs to fetch,
-  // tried in order. A failed screenshot falls back to the image, then the page's preview.
+  // A screenshot and an upload come as data URIs already; the other sources are URLs to
+  // fetch, tried in order. A failed screenshot falls back to the own image, then the
+  // page's preview.
   const screenshot =
     options.showThumbnail && source === "screenshot" && options.hasBudget()
       ? await siteScreenshot(url.toString())
@@ -146,8 +151,9 @@ async function resolveWebsite(
     source === "auto"
       ? [meta?.imageUrl ?? null, meta?.iconUrl ?? null]
       : [manualImage, meta?.imageUrl ?? null, meta?.iconUrl ?? null]
+  const ready = screenshot ?? (source === "auto" ? null : uploadedImage)
   const thumbnail = options.showThumbnail
-    ? (screenshot ?? (await firstEmbeddableImage(candidates, THUMBNAIL_MAX_BYTES, options.hasBudget)))
+    ? (ready ?? (await firstEmbeddableImage(candidates, THUMBNAIL_MAX_BYTES, options.hasBudget)))
     : null
 
   const favicon = await firstEmbeddableImage([faviconUrl(domain, 64)], FAVICON_MAX_BYTES, options.hasBudget)

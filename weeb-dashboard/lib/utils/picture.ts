@@ -24,9 +24,16 @@ export function isPictureType(type: string): type is (typeof PICTURE_TYPES)[numb
   return (PICTURE_TYPES as readonly string[]).includes(type)
 }
 
-/** Whether the file must be shrunk before it goes into the card. */
-export function needsShrinking({ bytes, width, height }: { bytes: number; width: number; height: number }): boolean {
-  return bytes > PICTURE_MAX_BYTES || Math.max(width, height) > KEEP_MAX_SIDE
+/**
+ * Whether the file must be shrunk before it goes into the card. A file is kept as it is
+ * up to KEEP_MAX_SIDE, or up to the side it would be shrunk to when that is larger (a
+ * website thumbnail is shrunk to 640).
+ */
+export function needsShrinking(
+  { bytes, width, height }: { bytes: number; width: number; height: number },
+  { maxBytes = PICTURE_MAX_BYTES, maxSide = PICTURE_MAX_SIDE }: { maxBytes?: number; maxSide?: number } = {}
+): boolean {
+  return bytes > maxBytes || Math.max(width, height) > Math.max(KEEP_MAX_SIDE, maxSide)
 }
 
 /** The size that fits the longest side in `max`, keeping the proportions. Never larger. */

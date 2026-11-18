@@ -12,6 +12,13 @@ import { matchesMagicBytes, type AcceptedMimeType } from "./image-to-base64"
 /** The most an embedded image may weigh, decoded. The wizard shrinks larger files to fit. */
 export const MAX_EMBEDDED_IMAGE_BYTES = 150_000
 
+/**
+ * The most an image inside a list option may weigh (a website's own thumbnail). Up to 12
+ * items keep theirs in the same plugins_config, and a D1 row holds 2 MB: 12 of these in
+ * base64 come to about 1.3 MB.
+ */
+export const MAX_ITEM_IMAGE_BYTES = 80_000
+
 const DATA_URI = /^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/]+={0,2})$/
 
 function decodeBase64(base64: string): Uint8Array {

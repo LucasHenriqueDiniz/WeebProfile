@@ -5,7 +5,9 @@ import type { WebsitesConfig } from "../types"
 vi.mock("./site-meta", () => ({
   fetchSiteMeta: vi.fn(),
 }))
-vi.mock("../../../utils/image-to-base64", () => ({
+// Only the network call: the magic-byte check stays real, since uploads go through it.
+vi.mock("../../../utils/image-to-base64", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../utils/image-to-base64")>()),
   urlToDataUriDirect: vi.fn(),
 }))
 
@@ -250,6 +252,29 @@ describe("fetchWebsitesData — thumbnail source", () => {
     expect(await thumbnailOf({ image: manual })).toBe(`data:${manual}`)
     expect(await thumbnailOf({ image_source: "", image: manual })).toBe(`data:${manual}`)
     expect(await thumbnailOf({})).toBe(`data:${og}`)
+  })
+
+  describe("an image uploaded in the wizard", () => {
+    const uploaded = `data:image/png;base64,${Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3]).toString("base64")}`
+
+    it("is embedded as it is, with no request, on 'custom' and on a site with no source", async () => {
+      expect(await thumbnailOf({ image_source: "custom", image: uploaded })).toBe(uploaded)
+      expect(await thumbnailOf({ image: uploaded })).toBe(uploaded)
+      expect(vi.mocked(urlToDataUriDirect)).not.toHaveBeenCalledWith(uploaded, expect.anything())
+    })
+
+    it("stands in for a screenshot that failed, and is ignored on 'auto'", async () => {
+      runtime.__weebSiteScreenshot = async () => null
+      expect(await thumbnailOf({ image_source: "screenshot", image: uploaded })).toBe(uploaded)
+      expect(await thumbnailOf({ image_source: "auto", image: uploaded })).toBe(`data:${og}`)
+    })
+
+    it("is dropped when it is not a real raster image or is too large", async () => {
+      const svg = `data:image/svg+xml;base64,${Buffer.from("<svg onload='alert(1)'/>").toString("base64")}`
+      const huge = `data:image/png;base64,${Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, ...new Array(90_000).fill(1)]).toString("base64")}`
+      expect(await thumbnailOf({ image_source: "custom", image: svg })).toBe(`data:${og}`)
+      expect(await thumbnailOf({ image_source: "custom", image: huge })).toBe(`data:${og}`)
+    })
   })
 
   it("does not take a screenshot when thumbnails are off", async () => {

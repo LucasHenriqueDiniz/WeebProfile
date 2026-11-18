@@ -64,17 +64,17 @@ export const websitesPluginMetadata = {
               options: [
                 { value: "auto", label: "The page's preview image (Open Graph)" },
                 { value: "screenshot", label: "A screenshot of the page" },
-                { value: "custom", label: "My own image (Thumbnail URL)" },
+                { value: "custom", label: "My own image (upload one or paste a URL)" },
               ],
               description:
                 "The screenshot is 1200x630, taken without cookie banners or ads, and refreshed once a week. If it fails, the preview image is used.",
             },
             {
               key: "image",
-              label: "Thumbnail URL",
-              type: "string" as const,
-              placeholder: "https://my-portfolio.dev/preview.png",
-              description: "Your own image, used when the thumbnail is 'My own image'.",
+              label: "Own image",
+              type: "image" as const,
+              description:
+                "Upload a PNG, JPEG or WebP, or paste an https:// address. Used when the thumbnail is 'My own image'.",
             },
           ],
         },

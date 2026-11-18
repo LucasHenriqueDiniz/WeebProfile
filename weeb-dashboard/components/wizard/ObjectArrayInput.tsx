@@ -7,12 +7,21 @@ import { NumberInput } from "@/components/ui/number-input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react"
+import { MAX_ITEM_IMAGE_BYTES } from "@weeb/weeb-plugins"
 import { useTranslations } from "@/i18n/use-translations"
+import { ImageInput } from "./ImageInput"
+
+/**
+ * An image inside a list item is a website's thumbnail, drawn at 260x138 in its tile:
+ * 640px keeps it sharp at 2x. Each one is kept in the card, and up to 12 share one D1
+ * row, hence the smaller limit (MAX_ITEM_IMAGE_BYTES in weeb-plugins).
+ */
+const ITEM_IMAGE_MAX_SIDE = 640
 
 export interface ObjectArrayItemField {
   key: string
   label: string
-  type: "string" | "boolean" | "number" | "select"
+  type: "string" | "boolean" | "number" | "select" | "image"
   placeholder?: string
   description?: string
   required?: boolean
@@ -158,6 +167,16 @@ export function ObjectArrayInput({
                       id={fieldId}
                       checked={fieldValue === true}
                       onCheckedChange={(checked) => updateItem(index, { [field.key]: checked })}
+                    />
+                  )}
+
+                  {field.type === "image" && (
+                    <ImageInput
+                      id={fieldId}
+                      value={typeof fieldValue === "string" ? fieldValue : ""}
+                      onChange={(newValue) => updateItem(index, { [field.key]: newValue })}
+                      maxSide={ITEM_IMAGE_MAX_SIDE}
+                      maxBytes={MAX_ITEM_IMAGE_BYTES}
                     />
                   )}
 

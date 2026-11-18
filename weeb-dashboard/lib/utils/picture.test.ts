@@ -10,6 +10,15 @@ describe("picture", () => {
     expect(needsShrinking({ bytes: 20_000, width: 1024, height: 768 })).toBe(true)
   })
 
+  // A website's own thumbnail: shrunk to 640px, under the smaller limit of list items.
+  it("takes the limits of a website thumbnail", () => {
+    const thumbnail = { maxSide: 640, maxBytes: 80_000 }
+    expect(needsShrinking({ bytes: 60_000, width: 640, height: 336 }, thumbnail)).toBe(false)
+    expect(needsShrinking({ bytes: 80_001, width: 640, height: 336 }, thumbnail)).toBe(true)
+    expect(needsShrinking({ bytes: 60_000, width: 1200, height: 630 }, thumbnail)).toBe(true)
+    expect(fitWithin(1200, 630, 640)).toEqual({ width: 640, height: 336 })
+  })
+
   it("shrinks to 384px on the longest side, keeping the proportions, and never enlarges", () => {
     expect(fitWithin(1024, 768)).toEqual({ width: 384, height: 288 })
     expect(fitWithin(600, 2400)).toEqual({ width: 96, height: 384 })
