@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { useTranslations } from "@/i18n/use-translations"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import {
+  PREVIEW_PLACEHOLDERS,
   PREVIEW_PLUGINS,
   parsePreviewRequest,
   previewQuery,
@@ -20,18 +21,6 @@ import { cn } from "@/lib/utils"
 import { SectionHeading } from "./SectionHeading"
 
 const PLATFORMS = Object.keys(PREVIEW_PLUGINS) as PreviewPluginId[]
-
-/** Well-known public accounts, so the placeholder doubles as something to try. AniList's founder keeps a private profile. */
-const PLACEHOLDERS: Record<PreviewPluginId, string> = {
-  github: "torvalds",
-  myanimelist: "Xinil",
-  anilist: "username",
-  codewars: "g964",
-  codeforces: "tourist",
-  duolingo: "luis",
-  devto: "ben",
-  steam: "steamcommunity.com/id/gabelogannewell",
-}
 
 type State =
   | { status: "idle" }
@@ -152,7 +141,7 @@ export function PreviewYourCard() {
                   id="preview-username"
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
-                  placeholder={PLACEHOLDERS[plugin]}
+                  placeholder={PREVIEW_PLACEHOLDERS[plugin]}
                   autoComplete="off"
                   spellCheck={false}
                   maxLength={120}

@@ -793,8 +793,19 @@
       "check1": "{{max}} SVGs on the free plan",
       "check2": "No GitHub Action, no YAML",
       "check3": "Sign in with GitHub",
-      "cardCaption": "An example card with {{plugins}}",
-      "cardShow": "Show the card with {{plugins}}"
+      "stepShow": "1 · Show",
+      "stepStyle": "2 · Style",
+      "stepYours": "3 · Yours",
+      "showLegend": "What to show",
+      "styleGroup": "Card style",
+      "submit": "See my card",
+      "example": "example",
+      "soraAlt": "Sora, WeebProfile's mascot",
+      "sora": {
+        "idle": "Pick what to show and tell me your username.",
+        "loading": "Building yours, one second…",
+        "ready": "All set, {{username}}! It's really yours."
+      }
     },
     "preview": {
       "kicker": "TRY IT",
