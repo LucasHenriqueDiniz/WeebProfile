@@ -226,13 +226,10 @@ function SiteHeader({ className }: { className?: string }) {
     inkShadow
   )
 
-  // Plugins and Templates have pages of their own; Repos and Styles exist only as
-  // sections of the landing. SectionLink points at "/" with the hash off the landing.
+  // Only the plugin gallery. Templates, Repos and Styles were here too; the owner took
+  // them out ("não faz sentido ter"): the landing already walks through them.
   const items: NavItemData[] = [
     { label: tNav("plugins"), section: "plugins", href: "/plugins", active: pathname.startsWith("/plugins") },
-    { label: tNav("templates"), section: "templates", href: "/templates", active: pathname.startsWith("/templates") },
-    { label: tNav("repos"), section: "repos", active: false },
-    { label: tNav("styles"), section: "styles", active: false },
   ]
 
   const name = user?.user_metadata.user_name || user?.user_metadata.full_name || user?.email || ""
@@ -255,6 +252,10 @@ function SiteHeader({ className }: { className?: string }) {
         // stays clickable.
         "pointer-events-none fixed inset-x-0 top-0 z-50",
         onBand ? "text-slate-900" : "text-foreground",
+        // With the phone menu open the header row is part of the sheet: without a fill
+        // the page showed through behind the logo and the close button.
+        menuOpen && "pointer-events-auto",
+        menuOpen && (onBand ? "bg-cyan-100" : "bg-background"),
         className
       )}
     >

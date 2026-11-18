@@ -34,7 +34,9 @@ export default function HomePageClient() {
   return (
     <div className="relative overflow-hidden bg-background">
       <Header />
-      <main className="relative pt-16">
+      {/* No top padding: the hero's band runs under the header, which has no bar of its
+          own, so the band itself makes room for it. */}
+      <main className="relative">
         <LandingHero />
         {/* The "try it" block that sat here asked for a username and showed the card: the
             hero does that now. */}
