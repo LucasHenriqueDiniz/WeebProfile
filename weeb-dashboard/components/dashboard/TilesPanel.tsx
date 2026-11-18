@@ -5,21 +5,25 @@ import { PanelCard } from "@/components/dashboard/PanelCard"
 import { useTranslations } from "@/i18n/use-translations"
 import { useToast } from "@/hooks/use-toast"
 import { svgApi } from "@/lib/api"
-import { generateTilesMarkdown } from "@/lib/utils/markdown"
+import { generateBadgesMarkdown, generateTilesMarkdown } from "@/lib/utils/markdown"
 import { publicTileUrl } from "@/lib/utils/svg-url"
 
+/** Plugins that draw tiles (Plugin.tiles in weeb-plugins): the card page shows this panel for them. */
+export const TILE_PLUGINS = ["websites", "about"] as const
+
+type StoredTile = { href: string; title: string; layout: "grid" | "inline" }
+
 /**
- * The snippet of one image per site, for a card with the websites plugin. Each image
- * sits in its own link, so a site opens with one click straight from the README.
+ * The snippets of one image per item, for a card whose plugins draw tiles: one link per
+ * site (websites) and one link per badge (About). Each image sits in its own link, so
+ * an item opens with one click straight from the README.
  *
  * The links come from what the last generation stored (GET /api/svgs/:id/tiles), so
- * each one opens the site its image shows. Hidden until there is something stored.
+ * each one opens what its image shows. A tile's place in the card is its URL, so the
+ * indexes run across both kinds. Hidden until there is something stored.
  */
-export function WebsiteTilesPanel({ svgId, generatedAt }: { svgId: string; generatedAt: string | null }) {
-  const t = useTranslations("embed.tiles")
-  const { toast } = useToast()
-  const [tiles, setTiles] = useState<Array<{ href: string; title: string }>>([])
-  const [copied, setCopied] = useState(false)
+export function TilesPanel({ svgId, generatedAt }: { svgId: string; generatedAt: string | null }) {
+  const [tiles, setTiles] = useState<StoredTile[]>([])
 
   useEffect(() => {
     let cancelled = false
@@ -34,17 +38,33 @@ export function WebsiteTilesPanel({ svgId, generatedAt }: { svgId: string; gener
     return () => {
       cancelled = true
     }
-    // Again after each generation, which may have changed the sites.
+    // Again after each generation, which may have changed the items.
   }, [svgId, generatedAt])
 
-  const snippet = generateTilesMarkdown(tiles.map((tile, i) => ({ ...tile, src: publicTileUrl(svgId, i) })))
+  const withSrc = tiles.map((tile, i) => ({ ...tile, src: publicTileUrl(svgId, i) }))
+  const sites = withSrc.filter((tile) => tile.layout !== "inline")
+  const badges = withSrc.filter((tile) => tile.layout === "inline")
+
+  return (
+    <>
+      <SnippetPanel kind="tiles" snippet={generateTilesMarkdown(sites)} count={sites.length} />
+      <SnippetPanel kind="badges" snippet={generateBadgesMarkdown(badges)} count={badges.length} />
+    </>
+  )
+}
+
+function SnippetPanel({ kind, snippet, count }: { kind: "tiles" | "badges"; snippet: string; count: number }) {
+  const t = useTranslations(`embed.${kind}`)
+  const { toast } = useToast()
+  const [copied, setCopied] = useState(false)
+
   if (!snippet) return null
 
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(snippet)
       setCopied(true)
-      toast({ title: t("toastCopied"), description: t("toastCopiedDescription", { count: tiles.length }) })
+      toast({ title: t("toastCopied"), description: t("toastCopiedDescription", { count }) })
       setTimeout(() => setCopied(false), 2000)
     } catch {
       toast({ title: t("toastError"), variant: "destructive" })

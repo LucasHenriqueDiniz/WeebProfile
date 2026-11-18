@@ -227,7 +227,7 @@ export const svgApi = {
    * Where each tile of the card links, as the last generation stored them
    */
   async tiles(id: string) {
-    return apiGet<{ tiles: Array<{ href: string; title: string }> }>(`/api/svgs/${id}/tiles`)
+    return apiGet<{ tiles: Array<{ href: string; title: string; layout: "grid" | "inline" }> }>(`/api/svgs/${id}/tiles`)
   },
 
   /**

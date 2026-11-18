@@ -63,6 +63,8 @@ export interface SvgTile {
   svg: string
   width: number
   height: number
+  /** How the README lays it out (TileLayout in weeb-plugins): "grid" for websites, "inline" for link badges. */
+  layout: "grid" | "inline"
 }
 
 export interface SvgGenerationResult {

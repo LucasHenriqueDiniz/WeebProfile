@@ -887,7 +887,8 @@
         "github_repo": "Banner, contadores, curva de estrelas, linguagens e tópicos.",
         "websites": "Seus sites, com uma miniatura de cada página.",
         "anilist": "Estatísticas de anime e mangá, favoritos e o que você está assistindo.",
-        "devto": "Seu perfil, artigos recentes e as tags que você mais usa."
+        "devto": "Seu perfil, artigos recentes e as tags que você mais usa.",
+        "about": "Uma apresentação no estilo neofetch e badges de link, a partir do que você digita."
       }
     },
     "templates": {
@@ -1005,6 +1006,16 @@
       "copied": "Copiado!",
       "toastCopied": "Copiado!",
       "toastCopiedDescription": "Snippet com {{count}} sites copiado",
+      "toastError": "Não foi possível copiar o snippet"
+    },
+    "badges": {
+      "title": "Um link por badge",
+      "description": "Cada badge de link vira uma imagem própria dentro do seu link, lado a lado como botões. Quem visita abre seu site, perfil ou email com um clique, direto do seu README. No card único são dois: primeiro a imagem, depois o link.",
+      "note": "Os links ficam escritos no seu README. Depois de adicionar, remover ou reordenar links, copie de novo. Textos e ícones se atualizam sozinhos.",
+      "copy": "Copiar",
+      "copied": "Copiado!",
+      "toastCopied": "Copiado!",
+      "toastCopiedDescription": "Snippet com {{count}} badges copiado",
       "toastError": "Não foi possível copiar o snippet"
     },
     "readme": {
