@@ -690,6 +690,16 @@
     "templateLoadError": {
       "title": "Template indisponível",
       "description": "Ele pode ter sido removido ou ficado privado. Nada no wizard foi alterado."
+    },
+    "imageInput": {
+      "upload": "Enviar imagem",
+      "replace": "Trocar",
+      "remove": "Remover",
+      "urlPlaceholder": "https://… ou envie um arquivo",
+      "uploaded": "Imagem enviada, {{size}} KB, guardada neste card",
+      "errorType": "Use um arquivo PNG, JPEG ou WebP.",
+      "errorTooBig": "Esta imagem não cabe em {{size}} KB nem reduzida. Tente uma menor.",
+      "errorRead": "Não foi possível ler esta imagem."
     }
   },
   "templatesPage": {

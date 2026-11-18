@@ -66,7 +66,7 @@ export interface ObjectArrayItemField {
 export interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
   defaultValue?: any
   min?: number
   max?: number
@@ -285,16 +285,48 @@ export const PLUGINS_METADATA = {
           }
         },
         {
+          key: "neofetch_picture",
+          label: "Picture",
+          type: "select",
+          defaultValue: "custom",
+          description: "Where the picture next to the lines comes from",
+          options: [
+            { value: "custom", label: "My image (upload one or paste a URL)" },
+            { value: "github", label: "My GitHub avatar" },
+            { value: "none", label: "No picture" }
+          ],
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_picture.label",
+            description: "plugins.about.sections.neofetch.config.neofetch_picture.description",
+            options: {
+              "custom": "plugins.about.sections.neofetch.config.neofetch_picture.options.custom",
+              "github": "plugins.about.sections.neofetch.config.neofetch_picture.options.github",
+              "none": "plugins.about.sections.neofetch.config.neofetch_picture.options.none"
+            }
+          }
+        },
+        {
           key: "neofetch_image",
-          label: "Picture URL",
-          type: "string",
+          label: "Image",
+          type: "image",
           defaultValue: "",
-          description: "An https:// address of a PNG, JPEG or WebP image, up to 400 KB",
-          tooltip: "The image is downloaded once per generation and embedded in the SVG, because a README cannot load images from inside an image. https://github.com/<you>.png works. Leave it empty for no picture.",
+          description: "Upload a PNG, JPEG or WebP, or paste an https:// address. Used with My image.",
+          tooltip: "An uploaded image is kept in the card itself, so it needs no address of its own; a large one is shrunk to 384px first. An address is downloaded once per generation and embedded, because a README cannot load images from inside an image.",
           i18nKey: {
             label: "plugins.about.sections.neofetch.config.neofetch_image.label",
             description: "plugins.about.sections.neofetch.config.neofetch_image.description",
             tooltip: "plugins.about.sections.neofetch.config.neofetch_image.tooltip"
+          }
+        },
+        {
+          key: "neofetch_github_user",
+          label: "GitHub username",
+          type: "string",
+          defaultValue: "",
+          description: "Whose avatar to show. Used with My GitHub avatar.",
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_github_user.label",
+            description: "plugins.about.sections.neofetch.config.neofetch_github_user.description"
           }
         },
         {

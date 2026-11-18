@@ -690,6 +690,16 @@
     "templateLoadError": {
       "title": "Template no disponible",
       "description": "Puede que lo hayan eliminado o hecho privado. No se cambió nada en el asistente."
+    },
+    "imageInput": {
+      "upload": "Subir imagen",
+      "replace": "Cambiar",
+      "remove": "Quitar",
+      "urlPlaceholder": "https://… o sube un archivo",
+      "uploaded": "Imagen subida, {{size}} KB, guardada en esta tarjeta",
+      "errorType": "Usa un archivo PNG, JPEG o WebP.",
+      "errorTooBig": "Esta imagen no cabe en {{size}} KB ni reducida. Prueba con una más pequeña.",
+      "errorRead": "No se pudo leer esta imagen."
     }
   },
   "templatesPage": {

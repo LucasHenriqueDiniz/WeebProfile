@@ -21,7 +21,7 @@ function shortLabel(label: string): string {
 interface ConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
   defaultValue?: unknown
   options?: { value: string; label: string }[]
   i18nKey?: { label?: string; options?: Record<string, string> }

@@ -24,10 +24,23 @@
           "label": "Lines",
           "tooltip": "Each line is a label and its value, such as Location: Brazil or Stack: TypeScript · React. A value too long for the card ends in an ellipsis."
         },
+        "neofetch_github_user": {
+          "description": "Whose avatar to show. Used with My GitHub avatar.",
+          "label": "GitHub username"
+        },
         "neofetch_image": {
-          "description": "An https:// address of a PNG, JPEG or WebP image, up to 400 KB",
-          "label": "Picture URL",
-          "tooltip": "The image is downloaded once per generation and embedded in the SVG, because a README cannot load images from inside an image. https://github.com/<you>.png works. Leave it empty for no picture."
+          "description": "Upload a PNG, JPEG or WebP, or paste an https:// address. Used with My image.",
+          "label": "Image",
+          "tooltip": "An uploaded image is kept in the card itself, so it needs no address of its own; a large one is shrunk to 384px first. An address is downloaded once per generation and embedded, because a README cannot load images from inside an image."
+        },
+        "neofetch_picture": {
+          "description": "Where the picture next to the lines comes from",
+          "label": "Picture",
+          "options": {
+            "custom": "My image (upload one or paste a URL)",
+            "github": "My GitHub avatar",
+            "none": "No picture"
+          }
         },
         "neofetch_show_cursor": {
           "label": "Show prompt at the end",
