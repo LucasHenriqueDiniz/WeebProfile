@@ -11,7 +11,7 @@ import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import type { Svg } from "@/lib/db/schema"
 import { ApiException } from "@/lib/api"
 import LoadingScreen from "@/components/loading/LoadingScreen"
-import { readStyleUiConfig } from "@/lib/config/svg-config-helpers"
+import { readSectionConfigs, readStyleUiConfig } from "@/lib/config/svg-config-helpers"
 import { useTranslations } from "@/i18n/use-translations"
 
 export default function EditSvgPage() {
@@ -134,14 +134,9 @@ export default function EditSvgPage() {
         if (pluginConfig && typeof pluginConfig === "object") {
           const activeSections = Array.isArray(pluginConfig.sections) ? pluginConfig.sections : []
 
-          // Filter sectionConfigs to only include configs for active sections
-          const allSectionConfigs = pluginConfig.sectionConfigs || {}
-          const activeSectionConfigs: Record<string, any> = {}
-          activeSections.forEach((sectionName: string) => {
-            if (allSectionConfigs[sectionName]) {
-              activeSectionConfigs[sectionName] = allSectionConfigs[sectionName]
-            }
-          })
+          // Only the active sections, with options saved at the root of the plugin's
+          // config too (cards written through the API), which the save would drop.
+          const activeSectionConfigs = readSectionConfigs(pluginName, pluginConfig, activeSections)
 
           setPluginConfig(pluginName, {
             enabled: pluginConfig.enabled === true,
