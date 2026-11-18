@@ -920,6 +920,23 @@ describe("POST / — tiles, one SVG per site", () => {
     expect(body.svg).not.toContain("background-color:transparent !important")
   })
 
+  // A class with no rule in the tile's CSS does nothing, and `border` alone draws nothing
+  // (no preflight, so no border-style). The default tile had both: no border and no
+  // background, so its text sat on GitHub's own page color.
+  it.each(["default", "terminal"])("draws the %s tile's border and surface with rules that exist", async (style) => {
+    const { body } = await post(validRequest({ style, plugins: websites, tiles: true }))
+    const svg: string = body.tiles[0].svg
+    const card = /<a href="[^"]*" target="_top"[^>]*class="([^"]*)"/.exec(svg)![1]!.split(" ")
+    const hasRule = (name: string) => {
+      // As the stylesheet writes it: bg-default-muted/10 is .bg-default-muted\/10
+      const selector = `#svg-main .${name.replace(/[/[\].:%#]/g, (c) => `\\${c}`)}`
+      return svg.includes(`${selector} {`) || svg.includes(`${selector}{`)
+    }
+
+    expect(card).toContain("border-solid")
+    expect(card.filter((name) => !hasRule(name))).toEqual([])
+  })
+
   it("answers no tiles unless they are asked for", async () => {
     expect((await post(validRequest({ plugins: websites }))).body.tiles).toBeUndefined()
   })
