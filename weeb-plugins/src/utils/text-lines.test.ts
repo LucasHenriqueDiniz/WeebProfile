@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { wrappedLineCount } from "./text-lines"
+import { textWidth, wrappedLineCount, wrappedRows } from "./text-lines"
 
 // Poppins 400 at 10px: "a" is 6.76px, a space 2.67px, "-" 5.51px. Monospace: 6px a character.
 const A4 = 4 * 6.76
@@ -56,5 +56,33 @@ describe("wrappedLineCount", () => {
     // Latin around them keeps its own width and breaks next to them.
     expect(wrappedLineCount("abc技术", { fontSize: 10, maxWidth: 38, font: "mono" })).toBe(1)
     expect(wrappedLineCount("abc技术", { fontSize: 10, maxWidth: 37, font: "mono" })).toBe(2)
+  })
+})
+
+describe("textWidth", () => {
+  // Chrome 158, Firefox 150 and WebKit 26.4 drew these 65.2px and 84.6px wide in a card.
+  it("measures Poppins 600 and 500 with their own advances", () => {
+    expect(textWidth("TypeScript", 12, "poppins", 600)).toBeCloseTo(65.23, 2)
+    expect(textWidth("github-profile", 12, "poppins", 500)).toBeCloseTo(84.62, 1)
+    expect(textWidth("TypeScript", 12, "poppins", 600)).toBeGreaterThan(textWidth("TypeScript", 12))
+  })
+
+  it("draws the monospace 0.6em in any weight", () => {
+    expect(textWidth("abc", 10, "mono", 600)).toBe(18)
+  })
+
+  it("wraps semibold text earlier than regular", () => {
+    // "TypeScript TypeScript" at 12px: 128.6px regular, 136.0px semibold
+    expect(wrappedLineCount("TypeScript TypeScript", { fontSize: 12, maxWidth: 130 })).toBe(1)
+    expect(wrappedLineCount("TypeScript TypeScript", { fontSize: 12, maxWidth: 130, weight: 600 })).toBe(2)
+  })
+})
+
+describe("wrappedRows", () => {
+  it("packs items on a row while they fit with the gap, and starts a row for the rest", () => {
+    expect(wrappedRows([], 100, 10)).toBe(0)
+    expect(wrappedRows([45, 45], 100, 10)).toBe(1)
+    expect(wrappedRows([45, 46], 100, 10)).toBe(2)
+    expect(wrappedRows([120, 10, 10], 100, 10)).toBe(2)
   })
 })

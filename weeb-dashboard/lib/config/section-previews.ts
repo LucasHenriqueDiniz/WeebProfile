@@ -79,11 +79,11 @@ export const SECTION_PREVIEWS: Record<
 
   github_repo: {
     banner: { default: [415, 161], terminal: [415, 94] },
-    stats: { default: [415, 134], terminal: [415, 52] },
-    star_graph: { default: [415, 228], terminal: [415, 153] },
-    languages: { default: [415, 152], terminal: [415, 78] },
-    topics: { default: [415, 110], terminal: [415, 44] },
-    overview: { default: [415, 276], terminal: [415, 72] },
+    stats: { default: [415, 103], terminal: [415, 52] },
+    star_graph: { default: [415, 210], terminal: [415, 153] },
+    languages: { default: [415, 120], terminal: [415, 78] },
+    topics: { default: [415, 120], terminal: [415, 44] },
+    overview: { default: [415, 250], terminal: [415, 52] },
   },
 
   lastfm: {
