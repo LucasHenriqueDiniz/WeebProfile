@@ -201,6 +201,19 @@ input[type="color"]::-moz-color-swatch {
   display: none; /* Chrome, Safari, Opera*/
 }
 
+/* Landing hero: the glow behind the example cards turns slowly. Still for anyone who
+   asked for less motion. */
+@keyframes hero-aurora {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-aurora {
+    animation: hero-aurora 24s linear infinite;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

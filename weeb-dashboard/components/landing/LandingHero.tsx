@@ -25,7 +25,8 @@ import { useLocale, useTranslations } from "@/i18n/use-translations"
  * be read); one 415px card that never moved, under a title that says the README is
  * alive; then that card rotating, still squeezed beside the title under purple and cyan
  * glow orbs that washed over the header. The card is the product, so it now gets the
- * full width below a centred title, on a plain background with one glow behind the frame.
+ * full width below a centred title, on a plain background: the only colour is the glow
+ * turning behind the frame, and the deck of frames under it.
  *
  * A card's animations play once, when the browser decodes the image, and an image it
  * already has stays at rest: switching back to a card's URL showed it finished. Each
@@ -120,6 +121,11 @@ function HeroReadme() {
   const pair = pairAt(showing.index)
   const caption = (cards: readonly HeroCardData[]) => t("cardCaption", { plugins: pluginNames(cards, locale) })
 
+  // The two frames behind the README shift their tilt on every change, as if the deck had
+  // been shuffled; with the transition that reads as one movement. The angles are small:
+  // at 880px wide, each degree lifts a corner by about 8px.
+  const deckTilt = showing.index % 2 === 0 ? [-2.5, 2] : [-1.25, 3.25]
+
   return (
     <figure
       className="relative mx-auto mt-14 w-full max-w-[880px] duration-1000 animate-in fade-in slide-in-from-bottom-6 fill-mode-both [animation-delay:150ms] md:mt-16"
@@ -128,53 +134,69 @@ function HeroReadme() {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -inset-x-10 -top-16 h-[420px] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.3),transparent_68%)] blur-2xl dark:bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.38),transparent_68%)]"
-      />
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-background shadow-[0_40px_120px_-40px_hsl(var(--primary)/0.45)]">
-        <div className="flex items-center gap-2 border-b border-border bg-card px-4 py-2.5 font-mono text-xs text-muted-foreground">
-          <BookOpen className="h-3.5 w-3.5" />
-          README.md
-        </div>
-        {/* The whole integration: one line. Decorative, so screen readers skip the markup. */}
+      <div className="relative isolate">
+        {/* Glow in the brand gradient, turning slowly behind the deck (globals.css). */}
         <div
           aria-hidden
-          className="flex gap-4 overflow-hidden whitespace-nowrap border-b border-border bg-card/50 px-4 py-3 font-mono text-[12.5px] leading-none text-muted-foreground"
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-20 aspect-square w-[min(125%,1000px)] -translate-x-1/2 -translate-y-1/2"
         >
-          <span className="select-none text-muted-foreground/50">1</span>
-          <span>
-            {"<img "}
-            <span className="text-foreground">src</span>
-            {"="}
-            <span className="text-primary">{'"https://weebprofile-dashboard.pages.dev/svg/a1b2c3.svg"'}</span>
-            {" />"}
-          </span>
+          <div className="hero-aurora h-full w-full rounded-full bg-[conic-gradient(from_0deg,#8b5cf6,#ec4899,#06b6d4,#8b5cf6)] opacity-40 blur-3xl dark:opacity-70" />
         </div>
-        {/* Two half cards side by side from sm up; below it, the first one alone. */}
-        <div className="grid gap-x-3 p-3 text-left sm:grid-cols-2 sm:p-4">
-          {pair.map((card, column) => (
-            <div
-              key={column}
-              className={cn("relative w-full", column === 1 && "hidden sm:block")}
-              style={{ aspectRatio: `${card.width} / ${HERO_FRAME_HEIGHT}` }}
-            >
-              <img
-                key={showing.srcs[column]}
-                src={showing.srcs[column]}
-                alt={caption([card])}
-                width={card.width}
-                height={card.height}
-                className={cn(
-                  "absolute inset-x-0 top-0 block h-auto w-full",
-                  !reducedMotion && "duration-500 animate-in fade-in"
-                )}
-              />
-            </div>
-          ))}
+        {/* The rest of the deck: there are more cards than the ones on top. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/25 via-card to-card shadow-xl transition-transform duration-700 ease-out"
+          style={{ transform: `translate(-18px, 10px) rotate(${deckTilt[0]}deg) scale(0.98)` }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 rounded-2xl border border-secondary/30 bg-gradient-to-tl from-secondary/25 via-card to-cyan-500/20 shadow-xl transition-transform duration-700 ease-out"
+          style={{ transform: `translate(16px, 16px) rotate(${deckTilt[1]}deg) scale(0.97)` }}
+        />
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-background shadow-[0_24px_80px_-28px_rgba(139,92,246,0.55)]">
+          <div className="flex items-center gap-2 border-b border-border bg-card px-4 py-2.5 font-mono text-xs text-muted-foreground">
+            <BookOpen className="h-3.5 w-3.5" />
+            README.md
+          </div>
+          {/* The whole integration: one line. Decorative, so screen readers skip the markup. */}
+          <div
+            aria-hidden
+            className="flex gap-4 overflow-hidden whitespace-nowrap border-b border-border bg-card/50 px-4 py-3 font-mono text-[12.5px] leading-none text-muted-foreground"
+          >
+            <span className="select-none text-muted-foreground/50">1</span>
+            <span>
+              {"<img "}
+              <span className="text-foreground">src</span>
+              {"="}
+              <span className="text-primary">{'"https://weebprofile-dashboard.pages.dev/svg/a1b2c3.svg"'}</span>
+              {" />"}
+            </span>
+          </div>
+          {/* Two half cards side by side from sm up; below it, the first one alone. */}
+          <div className="grid gap-x-3 p-3 text-left sm:grid-cols-2 sm:p-4">
+            {pair.map((card, column) => (
+              <div
+                key={column}
+                className={cn("relative w-full", column === 1 && "hidden sm:block")}
+                style={{ aspectRatio: `${card.width} / ${HERO_FRAME_HEIGHT}` }}
+              >
+                <img
+                  key={showing.srcs[column]}
+                  src={showing.srcs[column]}
+                  alt={caption([card])}
+                  width={card.width}
+                  height={card.height}
+                  className={cn(
+                    "absolute inset-x-0 top-0 block h-auto w-full",
+                    !reducedMotion && "duration-500 animate-in fade-in"
+                  )}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      <figcaption className="mt-4 text-center text-xs text-muted-foreground" aria-live="polite">
+      <figcaption className="mt-7 text-center text-xs text-muted-foreground" aria-live="polite">
         <span className="sm:hidden">{caption([pair[0]])}</span>
         <span className="hidden sm:inline">{caption(pair)}</span>
       </figcaption>
