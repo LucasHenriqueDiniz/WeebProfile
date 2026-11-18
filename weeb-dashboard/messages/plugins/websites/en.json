@@ -14,6 +14,34 @@
         },
         "websites_items": {
           "description": "The websites to show. Only the URL is required.",
+          "items": {
+            "description": {
+              "label": "Description",
+              "placeholder": "Personal site built with Astro"
+            },
+            "image": {
+              "description": "Upload a PNG, JPEG or WebP, or paste an https:// address. Used when the thumbnail is 'My own image'.",
+              "label": "Own image"
+            },
+            "image_source": {
+              "description": "The screenshot is 1200x630, taken without cookie banners or ads, and refreshed once a week. If it fails, the preview image is used.",
+              "label": "Thumbnail",
+              "options": {
+                "auto": "The page's preview image (Open Graph)",
+                "custom": "My own image (upload one or paste a URL)",
+                "screenshot": "A screenshot of the page"
+              }
+            },
+            "title": {
+              "label": "Title",
+              "placeholder": "My Portfolio"
+            },
+            "url": {
+              "description": "Must be an https:// address",
+              "label": "URL",
+              "placeholder": "https://my-portfolio.dev"
+            }
+          },
           "label": "Websites",
           "tooltip": "Add one entry per website. Title, description and image are filled in automatically from the page's Open Graph tags when 'Fill in from the page' is on — anything you type here wins over what is detected."
         },

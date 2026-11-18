@@ -4,6 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import type { GridItemProps } from "../../../templates/types"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { ImageComponent } from "../../../utils/image"
@@ -18,6 +19,8 @@ interface PeopleProps {
 }
 
 const DefaultPeople = ({ data, max }: { data: GithubData["people"]; max: number }) => {
+  // The avatars and the "+N more" after them.
+  const cascade = useItemCascade(data ? Math.min(data.nodes.length, max) + (data.totalCount > max ? 1 : 0) : 0)
   if (!data || data.nodes.length === 0) {
     return <div className="text-default-muted text-sm">No people found</div>
   }
@@ -25,7 +28,7 @@ const DefaultPeople = ({ data, max }: { data: GithubData["people"]; max: number 
   const people = data.nodes.slice(0, max)
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={withCascade("flex flex-wrap gap-2", cascade)} style={cascade?.style}>
       {people.map((person, index) => (
         <ExternalLink
           key={index}

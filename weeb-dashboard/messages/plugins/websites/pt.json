@@ -14,6 +14,34 @@
         },
         "websites_items": {
           "description": "Os sites a exibir. Só a URL é obrigatória.",
+          "items": {
+            "description": {
+              "label": "Descrição",
+              "placeholder": "Site pessoal feito com Astro"
+            },
+            "image": {
+              "description": "Envie um PNG, JPEG ou WebP, ou cole um endereço https://. Usada quando a miniatura é 'Minha própria imagem'.",
+              "label": "Imagem própria"
+            },
+            "image_source": {
+              "description": "A captura tem 1200x630, sai sem banner de cookies nem anúncios e é refeita uma vez por semana. Se falhar, usa a imagem de prévia.",
+              "label": "Miniatura",
+              "options": {
+                "auto": "A imagem de prévia da página (Open Graph)",
+                "custom": "Minha própria imagem (envie uma ou cole uma URL)",
+                "screenshot": "Uma captura da página"
+              }
+            },
+            "title": {
+              "label": "Título",
+              "placeholder": "Meu portfólio"
+            },
+            "url": {
+              "description": "Precisa ser um endereço https://",
+              "label": "URL",
+              "placeholder": "https://meu-portfolio.dev"
+            }
+          },
           "label": "Sites",
           "tooltip": "Adicione uma entrada por site. Título, descrição e imagem são preenchidos automaticamente a partir das tags Open Graph da página quando 'Preencher a partir da página' está ativado — o que você digitar aqui tem prioridade sobre o detectado."
         },

@@ -1,6 +1,8 @@
 import React from "react"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { useAnimations, useItemCascade, withCascade } from "../../../templates/animations"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
@@ -30,17 +32,19 @@ function CellDivider(): React.ReactElement {
 
 // "grid" (default): quatro células com divisores finos, Stars em highlight.
 function GridStats({ data }: { data: GithubRepoData }): React.ReactElement {
+  const items = statItems(data)
+  const cascade = useItemCascade(items.length)
   return (
     <Card>
-      <div className="grid grid-cols-4">
-        {statItems(data).map((item, i) => (
+      <div className={withCascade("grid grid-cols-4", cascade)} style={cascade?.style}>
+        {items.map((item, i) => (
           <div key={item.label} className="relative px-2 py-4 text-center">
             {i > 0 && <CellDivider />}
             <div
               className="text-[21px] font-semibold leading-tight tracking-[-0.02em] text-default-text"
               style={item.hot ? { color: HL } : undefined}
             >
-              {formatCount(item.value)}
+              <AnimatedNumber value={formatCount(item.value)} />
             </div>
             <div className="mt-1 text-[10px] uppercase tracking-[0.1em] text-default-muted-light">{item.label}</div>
           </div>
@@ -53,11 +57,19 @@ function GridStats({ data }: { data: GithubRepoData }): React.ReactElement {
 // "inline": faixa única com os quatro números + delta de stars quando disponível.
 function InlineStats({ data }: { data: GithubRepoData }): React.ReactElement {
   const delta = computeStarDelta(data.starHistory)
+  const items = statItems(data)
+  // Delta draws nothing without a delta.
+  const cascade = useItemCascade(items.length + (delta ? 1 : 0))
   return (
-    <Card className="flex flex-row items-center justify-between px-[18px] py-3">
-      {statItems(data).map((item) => (
+    <Card
+      className={withCascade("flex flex-row items-center justify-between px-[18px] py-3", cascade)}
+      style={cascade?.style}
+    >
+      {items.map((item) => (
         <span key={item.label} className="flex items-baseline gap-1.5 text-xs text-default-muted">
-          <b className="text-base font-semibold text-default-text">{formatCount(item.value)}</b>
+          <b className="text-base font-semibold text-default-text">
+            <AnimatedNumber value={formatCount(item.value)} />
+          </b>
           {item.label.toLowerCase()}
         </span>
       ))}
@@ -72,25 +84,28 @@ function SparkStats({ data }: { data: GithubRepoData }): React.ReactElement {
   const hasSpark = history.length >= 2
   const coords = hasSpark ? starCoords(history, 60, 16, 0.12) : []
   const sparkPath = hasSpark ? `M ${coords.map((c) => `${c.x},${c.y}`).join(" L ")}` : ""
+  const items = statItems(data)
+  const cascade = useItemCascade(items.length)
+  const animations = useAnimations()
 
   return (
     <Card>
-      <div className="grid grid-cols-4">
-        {statItems(data).map((item, i) => (
+      <div className={withCascade("grid grid-cols-4", cascade)} style={cascade?.style}>
+        {items.map((item, i) => (
           <div key={item.label} className="relative px-2 py-4 text-center">
             {i > 0 && <CellDivider />}
             <div
               className="text-[21px] font-semibold leading-tight tracking-[-0.02em] text-default-text"
               style={item.hot ? { color: HL } : undefined}
             >
-              {formatCount(item.value)}
+              <AnimatedNumber value={formatCount(item.value)} />
             </div>
             <div className="mt-1 text-[10px] uppercase tracking-[0.1em] text-default-muted-light">{item.label}</div>
             {item.hot && hasSpark && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 60 16"
-                className="mx-auto mt-1.5"
+                className={animations ? "mx-auto mt-1.5 weeb-bar" : "mx-auto mt-1.5"}
                 style={{ width: 60, height: 16 }}
                 aria-hidden="true"
               >
@@ -115,6 +130,7 @@ function SparkStats({ data }: { data: GithubRepoData }): React.ReactElement {
 function FeaturedStats({ data }: { data: GithubRepoData }): React.ReactElement {
   const delta = computeStarDelta(data.starHistory)
   const rest = statItems(data).filter((i) => !i.hot)
+  const cascade = useItemCascade(rest.length)
 
   return (
     <Card className="flex flex-row items-stretch">
@@ -122,15 +138,19 @@ function FeaturedStats({ data }: { data: GithubRepoData }): React.ReactElement {
         className="flex w-[150px] flex-shrink-0 flex-col items-center justify-center gap-0.5 py-5 text-white"
         style={{ background: HL }}
       >
-        <div className="text-[26px] font-bold leading-none tracking-[-0.02em]">{formatCount(data.stargazerCount)}</div>
+        <div className="text-[26px] font-bold leading-none tracking-[-0.02em]">
+          <AnimatedNumber value={formatCount(data.stargazerCount)} />
+        </div>
         <div className="text-[10px] uppercase tracking-[0.14em]" style={{ opacity: 0.85 }}>
           stars{delta ? ` · ${delta.label}` : ""}
         </div>
       </div>
-      <div className="grid flex-1 grid-cols-3 items-center">
+      <div className={withCascade("grid flex-1 grid-cols-3 items-center", cascade)} style={cascade?.style}>
         {rest.map((item) => (
           <div key={item.label} className="text-center">
-            <div className="text-lg font-semibold leading-tight text-default-text">{formatCount(item.value)}</div>
+            <div className="text-lg font-semibold leading-tight text-default-text">
+              <AnimatedNumber value={formatCount(item.value)} />
+            </div>
             <div className="text-[10px] uppercase tracking-[0.1em] text-default-muted-light">{item.label}</div>
           </div>
         ))}
@@ -140,6 +160,8 @@ function FeaturedStats({ data }: { data: GithubRepoData }): React.ReactElement {
 }
 
 export function Stats({ config, data, style = "default", size = "half" }: StatsProps): React.ReactElement {
+  // The terminal row: stars and forks.
+  const cascade = useItemCascade(2)
   if (!config.enabled || !data) return <></>
 
   const variant = config.stats_variant ?? "grid"
@@ -162,9 +184,13 @@ export function Stats({ config, data, style = "default", size = "half" }: StatsP
           terminalComponent={
             <>
               <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "stats", size })} />
-              <div className="flex items-center gap-4 px-1 py-1 text-sm">
-                <span className="text-terminal-highlight">⭐ {abbreviateNumber(data.stargazerCount)}</span>
-                <span className="text-terminal-muted">🍴 {abbreviateNumber(data.forkCount)}</span>
+              <div className={withCascade("flex items-center gap-4 px-1 py-1 text-sm", cascade)} style={cascade?.style}>
+                <span className="text-terminal-highlight">
+                  ⭐ <AnimatedNumber value={abbreviateNumber(data.stargazerCount)} />
+                </span>
+                <span className="text-terminal-muted">
+                  🍴 <AnimatedNumber value={abbreviateNumber(data.forkCount)} />
+                </span>
               </div>
             </>
           }

@@ -8,6 +8,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { TerminalList } from "../../../templates/Terminal/TerminalList"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { capitalizeLanguage } from "../../../utils/language-icons"
@@ -28,15 +29,16 @@ export function LanguagesLearning({
   style = "default",
   size = "half",
 }: LanguagesLearningProps): React.ReactElement {
+  const maxItems = config.nonEssential?.languages_learning_max || 5
+  const limitedData = (data ?? []).slice(0, maxItems)
+  const cascade = useItemCascade(limitedData.length)
+
   if (!data || data.length === 0) {
     return <></>
   }
 
   const hideTitle = config.nonEssential?.languages_learning_hide_title ?? false
   const title = config.nonEssential?.languages_learning_title || "Languages Learning"
-  const maxItems = config.nonEssential?.languages_learning_max || 5
-
-  const limitedData = data.slice(0, maxItems)
 
   const listItems: ListItemProps[] = limitedData.map((lang) => {
     const capitalizedName = capitalizeLanguage(lang.language)
@@ -69,7 +71,7 @@ export function LanguagesLearning({
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<FaLanguage />} />}
-            <div className="flex flex-col gap-1">
+            <div className={withCascade("flex flex-col gap-1", cascade)} style={cascade?.style}>
               {listItems.map((item, index) => (
                 <div key={`duolingo-list-item-${index}`} className="duolingo-list-item">
                   <div className="flex gap-2 items-center min-h-[50px] max-h-[50px]">
@@ -103,7 +105,9 @@ export function LanguagesLearning({
                 size,
               })}
             />
-            <TerminalList data={terminalLines} />
+            <CascadeGroup count={terminalLines.length}>
+              <TerminalList data={terminalLines} />
+            </CascadeGroup>
           </>
         }
       />

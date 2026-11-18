@@ -5,6 +5,8 @@
 import React from "react"
 import { FaQuestionCircle, FaReply } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -31,6 +33,8 @@ export function AnswersQuestions({
   const hideTitle = config.nonEssential?.answers_questions_hide_title || false
   const hideQuestions = config.nonEssential?.answers_questions_hide_questions || false
   const title = config.nonEssential?.answers_questions_title || "Stack Overflow Activity"
+  const stats = hideQuestions ? 1 : 2
+  const cascade = useItemCascade(stats)
 
   return (
     <section id="stackoverflow-answers-questions">
@@ -39,12 +43,14 @@ export function AnswersQuestions({
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<IoStatsChartOutline />} />}
-            <div className="flex gap-4 half:gap-3 items-center w-full">
+            <div className={withCascade("flex gap-4 half:gap-3 items-center w-full", cascade)} style={cascade?.style}>
               <div className="flex items-center gap-2 flex-1">
                 <FaReply className="text-green-500 flex-shrink-0" />
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-default-muted">Answers:</p>
-                  <p className="text-lg font-semibold text-default-highlight">{abbreviateNumber(answers)}</p>
+                  <p className="text-lg font-semibold text-default-highlight">
+                    <AnimatedNumber value={abbreviateNumber(answers)} />
+                  </p>
                 </div>
               </div>
               {!hideQuestions && (
@@ -52,7 +58,9 @@ export function AnswersQuestions({
                   <FaQuestionCircle className="text-blue-500 flex-shrink-0" />
                   <div className="flex items-center gap-2">
                     <p className="text-sm text-default-muted">Questions:</p>
-                    <p className="text-lg font-semibold text-default-highlight">{abbreviateNumber(questions)}</p>
+                    <p className="text-lg font-semibold text-default-highlight">
+                      <AnimatedNumber value={abbreviateNumber(questions)} />
+                    </p>
                   </div>
                 </div>
               )}
@@ -68,8 +76,10 @@ export function AnswersQuestions({
                 size,
               })}
             />
-            <TerminalLineWithDots title="Answers" value={abbreviateNumber(answers)} />
-            {!hideQuestions && <TerminalLineWithDots title="Questions" value={abbreviateNumber(questions)} />}
+            <CascadeGroup count={stats}>
+              <TerminalLineWithDots title="Answers" value={abbreviateNumber(answers)} />
+              {!hideQuestions && <TerminalLineWithDots title="Questions" value={abbreviateNumber(questions)} />}
+            </CascadeGroup>
           </>
         }
       />

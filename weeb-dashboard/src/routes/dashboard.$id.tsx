@@ -35,7 +35,7 @@ import { guessGithubLogin } from "@/lib/utils/github-profile"
 import { readEmbedAlt, writeEmbedAlt } from "@/lib/utils/embed-prefs"
 import { PanelCard } from "@/components/dashboard/PanelCard"
 import { SideBySidePanel } from "@/components/dashboard/SideBySidePanel"
-import { WebsiteTilesPanel } from "@/components/dashboard/WebsiteTilesPanel"
+import { TILE_PLUGINS, TilesPanel } from "@/components/dashboard/TilesPanel"
 import { ProfileReadmePanel } from "@/components/dashboard/ProfileReadmePanel"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -568,8 +568,8 @@ export default function SvgViewPage() {
               <SideBySidePanel current={svg} currentAlt={altText} others={otherHalves} />
             )}
 
-            {svg && plugins.includes("websites") && (
-              <WebsiteTilesPanel svgId={svgId} generatedAt={svg.lastGeneratedAt ?? null} />
+            {svg && TILE_PLUGINS.some((plugin) => plugins.includes(plugin)) && (
+              <TilesPanel svgId={svgId} generatedAt={svg.lastGeneratedAt ?? null} />
             )}
 
             {svg && user && <ProfileReadmePanel userId={user.id} guessedLogin={guessedLogin} />}

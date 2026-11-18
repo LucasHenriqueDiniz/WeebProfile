@@ -53,11 +53,12 @@ export interface EssentialConfigKeyMetadata {
 export interface ObjectArrayItemField {
   key: string
   label: string
-  type: "string" | "boolean" | "number" | "select"
+  type: "string" | "boolean" | "number" | "select" | "image"
   placeholder?: string
   description?: string
   required?: boolean
   options?: { value: string; label: string }[]
+  i18nKey?: Pick<I18nKeyMap, "label" | "placeholder" | "description" | "options">
 }
 
 /**
@@ -66,7 +67,7 @@ export interface ObjectArrayItemField {
 export interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
   defaultValue?: any
   min?: number
   max?: number
@@ -217,6 +218,285 @@ export const PLUGINS_METADATA = {
         "personality"
       ],
       "personality_url": "https://www.16personalities.com/br/resultados/enfj-t/m/example"
+    },
+  },
+
+  about: {
+    name: "about",
+    displayName: "About me",
+    description: "An intro in the style of neofetch and link badges, from what you type in. Nothing to connect",
+    category: "profile",
+    icon: "IdCard",
+    requiredFields: [],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "neofetch",
+        name: "Neofetch intro",
+        description: "Your picture next to a user@host title and the lines you write, like neofetch prints them",
+        i18nKey: {
+          name: "plugins.about.sections.neofetch.name",
+          description: "plugins.about.sections.neofetch.description"
+        },
+        configOptions: [
+        {
+          key: "neofetch_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "",
+          description: "Shown as user@host, like a terminal prompt",
+          tooltip: "The part before the @ and the part after it are drawn in the theme's accent color. Without an @, the whole title is.",
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_title.label",
+            description: "plugins.about.sections.neofetch.config.neofetch_title.description",
+            tooltip: "plugins.about.sections.neofetch.config.neofetch_title.tooltip"
+          }
+        },
+        {
+          key: "neofetch_fields",
+          label: "Lines",
+          type: "object-array",
+          defaultValue: [],
+          description: "Up to 10 lines of Label: value",
+          tooltip: "Each line is a label and its value, such as Location: Brazil or Stack: TypeScript · React. A value too long for the card ends in an ellipsis.",
+          itemFields: [
+            {
+              key: "label",
+              label: "Label",
+              type: "string",
+              placeholder: "Location",
+              required: true,
+              i18nKey: {
+                "label": "plugins.about.sections.neofetch.config.neofetch_fields.items.label.label",
+                "placeholder": "plugins.about.sections.neofetch.config.neofetch_fields.items.label.placeholder"
+              }
+            },
+            {
+              key: "value",
+              label: "Value",
+              type: "string",
+              placeholder: "Brazil",
+              required: true,
+              i18nKey: {
+                "label": "plugins.about.sections.neofetch.config.neofetch_fields.items.value.label",
+                "placeholder": "plugins.about.sections.neofetch.config.neofetch_fields.items.value.placeholder"
+              }
+            }
+          ],
+          maxItems: 10,
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_fields.label",
+            description: "plugins.about.sections.neofetch.config.neofetch_fields.description",
+            tooltip: "plugins.about.sections.neofetch.config.neofetch_fields.tooltip"
+          }
+        },
+        {
+          key: "neofetch_picture",
+          label: "Picture",
+          type: "select",
+          defaultValue: "custom",
+          description: "Where the picture next to the lines comes from",
+          options: [
+            { value: "custom", label: "My image (upload one or paste a URL)" },
+            { value: "github", label: "My GitHub avatar" },
+            { value: "none", label: "No picture" }
+          ],
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_picture.label",
+            description: "plugins.about.sections.neofetch.config.neofetch_picture.description",
+            options: {
+              "custom": "plugins.about.sections.neofetch.config.neofetch_picture.options.custom",
+              "github": "plugins.about.sections.neofetch.config.neofetch_picture.options.github",
+              "none": "plugins.about.sections.neofetch.config.neofetch_picture.options.none"
+            }
+          }
+        },
+        {
+          key: "neofetch_image",
+          label: "Image",
+          type: "image",
+          defaultValue: "",
+          description: "Upload a PNG, JPEG or WebP, or paste an https:// address. Used with My image.",
+          tooltip: "An uploaded image is kept in the card itself, so it needs no address of its own; a large one is shrunk to 384px first. An address is downloaded once per generation and embedded, because a README cannot load images from inside an image.",
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_image.label",
+            description: "plugins.about.sections.neofetch.config.neofetch_image.description",
+            tooltip: "plugins.about.sections.neofetch.config.neofetch_image.tooltip"
+          }
+        },
+        {
+          key: "neofetch_github_user",
+          label: "GitHub username",
+          type: "string",
+          defaultValue: "",
+          description: "Whose avatar to show. Used with My GitHub avatar.",
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_github_user.label",
+            description: "plugins.about.sections.neofetch.config.neofetch_github_user.description"
+          }
+        },
+        {
+          key: "neofetch_show_palette",
+          label: "Show color palette",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "A row of the card theme's colors under the lines, like the color blocks neofetch prints.",
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_show_palette.label",
+            tooltip: "plugins.about.sections.neofetch.config.neofetch_show_palette.tooltip"
+          }
+        },
+        {
+          key: "neofetch_show_cursor",
+          label: "Show prompt at the end",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Terminal style only: a last prompt with a block cursor, which blinks when animations are on.",
+          i18nKey: {
+            label: "plugins.about.sections.neofetch.config.neofetch_show_cursor.label",
+            tooltip: "plugins.about.sections.neofetch.config.neofetch_show_cursor.tooltip"
+          }
+        }
+        ]
+      },
+      {
+        id: "links",
+        name: "Link badges",
+        description: "A row of buttons for your site, profiles and email. Each one can also be its own image and link",
+        i18nKey: {
+          name: "plugins.about.sections.links.name",
+          description: "plugins.about.sections.links.description"
+        },
+        configOptions: [
+        {
+          key: "links_items",
+          label: "Links",
+          type: "object-array",
+          defaultValue: [],
+          description: "Up to 8 links. Only the address is required.",
+          tooltip: "An address can be a site (https://… or just example.com) or an email (you@example.com). The icon and the text are picked from the address unless you choose them.",
+          itemFields: [
+            {
+              key: "url",
+              label: "Address",
+              type: "string",
+              placeholder: "https://my-site.dev or you@example.com",
+              required: true,
+              i18nKey: {
+                "label": "plugins.about.sections.links.config.links_items.items.url.label",
+                "placeholder": "plugins.about.sections.links.config.links_items.items.url.placeholder"
+              }
+            },
+            {
+              key: "label",
+              label: "Text",
+              type: "string",
+              placeholder: "LinkedIn",
+              description: "Optional. Defaults to the site's name or domain.",
+              i18nKey: {
+                "label": "plugins.about.sections.links.config.links_items.items.label.label",
+                "placeholder": "plugins.about.sections.links.config.links_items.items.label.placeholder",
+                "description": "plugins.about.sections.links.config.links_items.items.label.description"
+              }
+            },
+            {
+              key: "icon",
+              label: "Icon",
+              type: "select",
+              options: [
+                { value: "auto", label: "From the address" },
+                { value: "website", label: "Website" },
+                { value: "email", label: "Email" },
+                { value: "github", label: "GitHub" },
+                { value: "linkedin", label: "LinkedIn" },
+                { value: "x", label: "X (Twitter)" },
+                { value: "bluesky", label: "Bluesky" },
+                { value: "mastodon", label: "Mastodon" },
+                { value: "youtube", label: "YouTube" },
+                { value: "twitch", label: "Twitch" },
+                { value: "discord", label: "Discord" },
+                { value: "instagram", label: "Instagram" },
+                { value: "devto", label: "DEV" },
+                { value: "medium", label: "Medium" },
+                { value: "kofi", label: "Ko-fi" },
+                { value: "rss", label: "RSS" }
+              ],
+              i18nKey: {
+                "label": "plugins.about.sections.links.config.links_items.items.icon.label",
+                "options": {
+                  "auto": "plugins.about.sections.links.config.links_items.items.icon.options.auto",
+                  "website": "plugins.about.sections.links.config.links_items.items.icon.options.website",
+                  "email": "plugins.about.sections.links.config.links_items.items.icon.options.email",
+                  "github": "plugins.about.sections.links.config.links_items.items.icon.options.github",
+                  "linkedin": "plugins.about.sections.links.config.links_items.items.icon.options.linkedin",
+                  "x": "plugins.about.sections.links.config.links_items.items.icon.options.x",
+                  "bluesky": "plugins.about.sections.links.config.links_items.items.icon.options.bluesky",
+                  "mastodon": "plugins.about.sections.links.config.links_items.items.icon.options.mastodon",
+                  "youtube": "plugins.about.sections.links.config.links_items.items.icon.options.youtube",
+                  "twitch": "plugins.about.sections.links.config.links_items.items.icon.options.twitch",
+                  "discord": "plugins.about.sections.links.config.links_items.items.icon.options.discord",
+                  "instagram": "plugins.about.sections.links.config.links_items.items.icon.options.instagram",
+                  "devto": "plugins.about.sections.links.config.links_items.items.icon.options.devto",
+                  "medium": "plugins.about.sections.links.config.links_items.items.icon.options.medium",
+                  "kofi": "plugins.about.sections.links.config.links_items.items.icon.options.kofi",
+                  "rss": "plugins.about.sections.links.config.links_items.items.icon.options.rss"
+                }
+              }
+            }
+          ],
+          maxItems: 8,
+          i18nKey: {
+            label: "plugins.about.sections.links.config.links_items.label",
+            description: "plugins.about.sections.links.config.links_items.description",
+            tooltip: "plugins.about.sections.links.config.links_items.tooltip"
+          }
+        },
+        {
+          key: "links_brand_colors",
+          label: "Brand colors",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Icons of known sites in their brand color (LinkedIn blue, YouTube red…). Off, every icon takes the theme's accent color.",
+          i18nKey: {
+            label: "plugins.about.sections.links.config.links_brand_colors.label",
+            tooltip: "plugins.about.sections.links.config.links_brand_colors.tooltip"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.about.displayName",
+      description: "plugins.about.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "sections": [
+        "neofetch",
+        "links"
+      ],
+      "neofetch_title": "you@earth",
+      "neofetch_fields": [
+        {
+          "label": "Location",
+          "value": "Brazil"
+        },
+        {
+          "label": "Stack",
+          "value": "TypeScript · React · Cloudflare"
+        }
+      ],
+      "links_items": [
+        {
+          "url": "https://my-site.dev"
+        },
+        {
+          "url": "you@example.com"
+        }
+      ]
     },
   },
 
@@ -1483,29 +1763,29 @@ export const PLUGINS_METADATA = {
       {
         id: "top_repositories",
         name: "Top Repositories",
-        description: "Repositories with most stars (alias for stargazers)",
+        description: "Repositories with most stars",
         i18nKey: {
           name: "plugins.github.sections.top_repositories.name",
           description: "plugins.github.sections.top_repositories.description"
         },
         configOptions: [
         {
-          key: "stargazers_hide_title",
+          key: "top_repositories_hide_title",
           label: "Hide title",
           type: "boolean",
           defaultValue: false,
           i18nKey: {
-            label: "plugins.github.sections.top_repositories.config.stargazers_hide_title.label"
+            label: "plugins.github.sections.top_repositories.config.top_repositories_hide_title.label"
           }
         },
         {
-          key: "stargazers_title",
+          key: "top_repositories_title",
           label: "Title",
           type: "string",
           defaultValue: "Top Repositories",
           i18nKey: {
-            label: "plugins.github.sections.top_repositories.config.stargazers_title.label",
-            defaultValue: "plugins.github.sections.top_repositories.config.stargazers_title.defaultValue"
+            label: "plugins.github.sections.top_repositories.config.top_repositories_title.label",
+            defaultValue: "plugins.github.sections.top_repositories.config.top_repositories_title.defaultValue"
           }
         }
         ]
@@ -1542,12 +1822,12 @@ export const PLUGINS_METADATA = {
           key: "star_lists_max",
           label: "Maximum lists",
           type: "number",
-          defaultValue: 1,
+          defaultValue: 5,
           min: 1,
           max: 20,
           step: 1,
           description: "Maximum 20 lists",
-          tooltip: "Maximum number of star lists to display. Lists are ordered by most recently created.",
+          tooltip: "Maximum number of star lists to display, in GitHub's order: the list a repository was last added to first. Private lists are never shown.",
           i18nKey: {
             label: "plugins.github.sections.star_lists.config.star_lists_max.label",
             description: "plugins.github.sections.star_lists.config.star_lists_max.description",
@@ -4163,26 +4443,62 @@ export const PLUGINS_METADATA = {
               type: "string",
               placeholder: "https://my-portfolio.dev",
               description: "Must be an https:// address",
-              required: true
+              required: true,
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.url.label",
+                "placeholder": "plugins.websites.sections.websites.config.websites_items.items.url.placeholder",
+                "description": "plugins.websites.sections.websites.config.websites_items.items.url.description"
+              }
             },
             {
               key: "title",
               label: "Title",
               type: "string",
-              placeholder: "My Portfolio"
+              placeholder: "My Portfolio",
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.title.label",
+                "placeholder": "plugins.websites.sections.websites.config.websites_items.items.title.placeholder"
+              }
             },
             {
               key: "description",
               label: "Description",
               type: "string",
-              placeholder: "Personal site built with Astro"
+              placeholder: "Personal site built with Astro",
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.description.label",
+                "placeholder": "plugins.websites.sections.websites.config.websites_items.items.description.placeholder"
+              }
+            },
+            {
+              key: "image_source",
+              label: "Thumbnail",
+              type: "select",
+              description: "The screenshot is 1200x630, taken without cookie banners or ads, and refreshed once a week. If it fails, the preview image is used.",
+              options: [
+                { value: "auto", label: "The page's preview image (Open Graph)" },
+                { value: "screenshot", label: "A screenshot of the page" },
+                { value: "custom", label: "My own image (upload one or paste a URL)" }
+              ],
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.image_source.label",
+                "description": "plugins.websites.sections.websites.config.websites_items.items.image_source.description",
+                "options": {
+                  "auto": "plugins.websites.sections.websites.config.websites_items.items.image_source.options.auto",
+                  "screenshot": "plugins.websites.sections.websites.config.websites_items.items.image_source.options.screenshot",
+                  "custom": "plugins.websites.sections.websites.config.websites_items.items.image_source.options.custom"
+                }
+              }
             },
             {
               key: "image",
-              label: "Thumbnail URL",
-              type: "string",
-              placeholder: "https://my-portfolio.dev/preview.png",
-              description: "Optional. Overrides the thumbnail detected on the page."
+              label: "Own image",
+              type: "image",
+              description: "Upload a PNG, JPEG or WebP, or paste an https:// address. Used when the thumbnail is 'My own image'.",
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.image.label",
+                "description": "plugins.websites.sections.websites.config.websites_items.items.image.description"
+              }
             }
           ],
           maxItems: 12,

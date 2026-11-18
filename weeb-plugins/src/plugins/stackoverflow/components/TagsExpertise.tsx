@@ -9,6 +9,8 @@ import { DefaultList } from "../../../templates/Default/DefaultList"
 import { TerminalList } from "../../../templates/Terminal/TerminalList"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup } from "../../../templates/animations"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { getLanguageIcon, capitalizeLanguage } from "../../../utils/language-icons"
@@ -50,7 +52,9 @@ export function TagsExpertise({
         </span>
       ) as any,
       left: (
-        <span className="text-xs font-semibold text-default-highlight">{abbreviateNumber(tag.score)} score</span>
+        <span className="text-xs font-semibold text-default-highlight">
+          <AnimatedNumber value={abbreviateNumber(tag.score)} /> score
+        </span>
       ) as any,
     }
   })
@@ -82,7 +86,9 @@ export function TagsExpertise({
                 size,
               })}
             />
-            <TerminalList data={terminalLines} />
+            <CascadeGroup count={terminalLines.length}>
+              <TerminalList data={terminalLines} />
+            </CascadeGroup>
           </>
         }
       />

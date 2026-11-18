@@ -8,14 +8,9 @@ import React from "react"
 import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
-import {
-  CONTENT_SIZE_SCALE,
-  resolveLanguagesVariant,
-  resolveStarGraphVariant,
-  type GithubRepoConfig,
-  type GithubRepoData,
-} from "./types"
+import { CONTENT_SIZE_SCALE, type GithubRepoConfig, type GithubRepoData } from "./types"
 import { bannerHeight } from "./banner-height"
+import { languagesHeight, overviewHeight, starGraphHeight, statsHeight, topicsHeight } from "./section-heights"
 import { RenderGithubRepo } from "./components/RenderGithubRepo"
 import { fetchGithubRepoData } from "./services/fetchGithubRepo"
 
@@ -48,67 +43,27 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     const cfg = config as GithubRepoConfig
     const repo = data as GithubRepoData
     const isTerminal = (config as { style?: string }).style === "terminal"
-    // Mesmo fator aplicado visualmente pelo ScaledBox - a seção inteira (fonte, ícones,
-    // gráfico, padding) escala junto, então a altura calculada precisa escalar igual.
+    // ScaledBox zooms the whole section (font, icons, chart, padding): its text wraps in the
+    // width divided by the scale, and the height scales and rounds up once.
     const scale = CONTENT_SIZE_SCALE[cfg.content_size ?? "md"]
+    const card = size === "full" ? 830 : 415
+    const scaled = (height: number) => Math.ceil(height * scale)
+    // The default style's section pads 8px each side outside the zoom; the terminal's does not.
+    const width = (isTerminal ? card : card - 16) / scale
 
+    // A card holds one section (see types.ts); the sum keeps an old multi-section config honest.
     let h = 0
-
-    if (cfg.sections.includes("banner")) {
-      // ScaledBox zooms the section: its text wraps in the width divided by the scale.
-      const width = (size === "full" ? 830 : 415) / scale
-      h += Math.ceil(bannerHeight(cfg, repo, isTerminal, width) * scale)
-    }
-
-    if (cfg.sections.includes("stats")) {
-      const statsVariant = cfg.stats_variant ?? "grid"
-      let bodyHeight = 86
-      if (statsVariant === "inline") bodyHeight = 48
-      if (statsVariant === "sparkstats") bodyHeight = 110
-      if (statsVariant === "featured") bodyHeight = 96
-      const sectionH = isTerminal ? 52 : 24 + bodyHeight
-      h += Math.round(sectionH * scale)
-    }
-
-    if (cfg.sections.includes("star_graph") && repo.starHistory && repo.starHistory.length >= 2) {
-      const variant = resolveStarGraphVariant(cfg.star_graph_variant)
-      let bodyHeight = 180 // area/steps/dots: head + gráfico 110
-      if (variant === "bars") bodyHeight = 180
-      if (variant === "milestones") bodyHeight = 130
-      if (variant === "sparkline") bodyHeight = 76
-      const sectionH = isTerminal ? 153 : 24 + bodyHeight
-      h += Math.round(sectionH * scale)
-    }
-
-    if (cfg.sections.includes("languages") && repo.languages && repo.languages.length > 0) {
-      const variant = resolveLanguagesVariant(cfg.languages_variant)
-      const count = Math.min(cfg.max_languages ?? 5, repo.languages.length)
-      let bodyHeight = 104
-      if (variant === "bars") bodyHeight = 32 + count * 22
-      if (variant === "donut") bodyHeight = 128
-      if (variant === "blocks") bodyHeight = 118
-      const sectionH = isTerminal ? 78 : 24 + bodyHeight
-      h += Math.round(sectionH * scale)
-    }
-
-    if (cfg.sections.includes("topics") && repo.topics && repo.topics.length > 0) {
-      const variant = cfg.topics_variant ?? "chips"
-      let bodyHeight = 62
-      if (variant === "hash") bodyHeight = 56
-      const sectionH = isTerminal ? 44 : 24 + bodyHeight
-      h += Math.round(sectionH * scale)
-    }
-
-    if (cfg.sections.includes("overview")) {
-      const hasChart = repo.starHistory && repo.starHistory.length >= 2
-      const sectionH = isTerminal ? 72 : 24 + (hasChart ? 228 : 130)
-      h += Math.round(sectionH * scale)
-    }
+    if (cfg.sections.includes("banner")) h += scaled(bannerHeight(cfg, repo, isTerminal, card / scale))
+    if (cfg.sections.includes("stats")) h += scaled(statsHeight(cfg, repo, isTerminal, width, scale))
+    if (cfg.sections.includes("star_graph")) h += scaled(starGraphHeight(cfg, repo, isTerminal))
+    if (cfg.sections.includes("languages")) h += scaled(languagesHeight(cfg, repo, isTerminal, width, scale))
+    if (cfg.sections.includes("topics")) h += scaled(topicsHeight(cfg, repo, isTerminal, width, scale))
+    if (cfg.sections.includes("overview")) h += scaled(overviewHeight(repo, isTerminal, width, scale))
 
     if (isTerminal && h > 0) {
-      // As constantes do terminal já incluem o espaçamento completo de cada seção -
-      // desconta o pad global (+24) que o PluginManager soma no total.
-      h -= 24
+      // The terminal heights are the whole section: take back the 24px the PluginManager adds.
+      // At least 1px: the manager drops a card of 0 or less, and the command alone at sm is 23px.
+      h = Math.max(1, h - 24)
       // The terminal header is counted once per SVG by generateSvg, not here.
     }
 

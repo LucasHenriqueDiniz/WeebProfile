@@ -9,6 +9,7 @@ import { DefaultList } from "../../../templates/Default/DefaultList"
 import { TerminalList } from "../../../templates/Terminal/TerminalList"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
+import { CascadeGroup } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { ListItemProps, TerminalLineProps } from "../../../templates/types"
 import type { CodewarsConfig, CodewarsKata } from "../types"
@@ -102,7 +103,9 @@ export function CompletedKata({
                 size,
               })}
             />
-            <TerminalList data={terminalLines} />
+            <CascadeGroup count={terminalLines.length}>
+              <TerminalList data={terminalLines} />
+            </CascadeGroup>
           </>
         }
       />

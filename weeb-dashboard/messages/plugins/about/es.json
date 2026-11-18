@@ -1,0 +1,105 @@
+{
+  "description": "Una presentación al estilo neofetch y badges de enlace, a partir de lo que escribes. Nada que conectar",
+  "displayName": "Sobre mí",
+  "sections": {
+    "links": {
+      "config": {
+        "links_brand_colors": {
+          "label": "Colores de marca",
+          "tooltip": "Íconos de sitios conocidos en el color de su marca (azul de LinkedIn, rojo de YouTube…). Apagado, cada ícono toma el color de acento del tema."
+        },
+        "links_items": {
+          "description": "Hasta 8 enlaces. Solo la dirección es obligatoria.",
+          "items": {
+            "icon": {
+              "label": "Ícono",
+              "options": {
+                "auto": "Según la dirección",
+                "bluesky": "Bluesky",
+                "devto": "DEV",
+                "discord": "Discord",
+                "email": "Email",
+                "github": "GitHub",
+                "instagram": "Instagram",
+                "kofi": "Ko-fi",
+                "linkedin": "LinkedIn",
+                "mastodon": "Mastodon",
+                "medium": "Medium",
+                "rss": "RSS",
+                "twitch": "Twitch",
+                "website": "Sitio web",
+                "x": "X (Twitter)",
+                "youtube": "YouTube"
+              }
+            },
+            "label": {
+              "description": "Opcional. Vacío, sale el nombre o el dominio del sitio.",
+              "label": "Texto",
+              "placeholder": "LinkedIn"
+            },
+            "url": {
+              "label": "Dirección",
+              "placeholder": "https://mi-sitio.dev o tu@ejemplo.com"
+            }
+          },
+          "label": "Enlaces",
+          "tooltip": "Una dirección puede ser un sitio (https://… o solo ejemplo.com) o un email (tu@ejemplo.com). El ícono y el texto salen de la dirección, salvo que los elijas."
+        }
+      },
+      "description": "Una fila de botones para tu sitio, perfiles y email. Cada uno también puede ser una imagen y un enlace propios",
+      "name": "Badges de enlace"
+    },
+    "neofetch": {
+      "config": {
+        "neofetch_fields": {
+          "description": "Hasta 10 líneas de Etiqueta: valor",
+          "items": {
+            "label": {
+              "label": "Etiqueta",
+              "placeholder": "Ubicación"
+            },
+            "value": {
+              "label": "Valor",
+              "placeholder": "Brasil"
+            }
+          },
+          "label": "Líneas",
+          "tooltip": "Cada línea es una etiqueta y su valor, como Ubicación: Brasil o Stack: TypeScript · React. Un valor demasiado largo para la tarjeta termina en puntos suspensivos."
+        },
+        "neofetch_github_user": {
+          "description": "De quién es el avatar. Se usa con Mi avatar de GitHub.",
+          "label": "Usuario de GitHub"
+        },
+        "neofetch_image": {
+          "description": "Sube un PNG, JPEG o WebP, o pega una dirección https://. Se usa con Mi imagen.",
+          "label": "Imagen",
+          "tooltip": "Una imagen subida se guarda en la propia tarjeta, así que no necesita dirección; una grande se reduce a 384px antes. Una dirección se descarga una vez por generación y se incrusta, porque un README no carga imágenes desde dentro de una imagen."
+        },
+        "neofetch_picture": {
+          "description": "De dónde sale la foto junto a las líneas",
+          "label": "Foto",
+          "options": {
+            "custom": "Mi imagen (sube una o pega una URL)",
+            "github": "Mi avatar de GitHub",
+            "none": "Sin foto"
+          }
+        },
+        "neofetch_show_cursor": {
+          "label": "Mostrar prompt al final",
+          "tooltip": "Solo en el estilo terminal: un último prompt con cursor de bloque, que parpadea cuando las animaciones están activas."
+        },
+        "neofetch_show_palette": {
+          "label": "Mostrar paleta de colores",
+          "tooltip": "Una fila con los colores del tema de la tarjeta bajo las líneas, como los bloques de color que imprime neofetch."
+        },
+        "neofetch_title": {
+          "description": "Se muestra como usuario@host, como un prompt de terminal",
+          "label": "Título",
+          "tooltip": "La parte antes de la @ y la parte después salen en el color de acento del tema. Sin @, sale todo el título."
+        }
+      },
+      "description": "Tu foto junto a un título usuario@host y las líneas que escribes, como las imprime neofetch",
+      "name": "Presentación neofetch"
+    }
+  }
+}

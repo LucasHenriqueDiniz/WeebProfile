@@ -1,10 +1,12 @@
 import React from "react"
 import { FaStar } from "react-icons/fa"
 import { RiStarFill } from "react-icons/ri"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubConfig, GithubData } from "../types"
@@ -12,6 +14,7 @@ import type { GithubConfig, GithubData } from "../types"
 const DefaultStargazers = ({ data }: { data: NonNullable<GithubData["stargazers"]> }) => {
   const maxRepos = 10
   const reposToShow = data.repositories.slice(0, maxRepos)
+  const cascade = useItemCascade(reposToShow.length)
 
   return (
     <div className="github-stargazers">
@@ -19,12 +22,14 @@ const DefaultStargazers = ({ data }: { data: NonNullable<GithubData["stargazers"
         <div className="flex items-center gap-2">
           <RiStarFill className="text-yellow-500 text-2xl" />
           <div>
-            <div className="text-2xl font-bold text-default-text">{abbreviateNumber(data.totalCount)}</div>
+            <div className="text-2xl font-bold text-default-text">
+              <AnimatedNumber value={abbreviateNumber(data.totalCount)} />
+            </div>
             <div className="text-sm text-default-muted">Total stars received</div>
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className={withCascade("flex flex-col gap-4", cascade)} style={cascade?.style}>
         {reposToShow.map((repo, index) => (
           <div key={index} className="flex items-center justify-between p-4 rounded-lg border border-default-border">
             <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -39,7 +44,9 @@ const DefaultStargazers = ({ data }: { data: NonNullable<GithubData["stargazers"
             </div>
             <div className="flex items-center gap-1.5 text-default-muted flex-shrink-0">
               <FaStar className="text-yellow-500 fill-yellow-500" size={14} />
-              <span className="text-sm font-medium">{abbreviateNumber(repo.stargazerCount)}</span>
+              <span className="text-sm font-medium">
+                <AnimatedNumber value={abbreviateNumber(repo.stargazerCount)} />
+              </span>
             </div>
           </div>
         ))}

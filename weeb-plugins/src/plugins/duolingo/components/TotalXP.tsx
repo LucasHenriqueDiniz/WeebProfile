@@ -5,6 +5,7 @@
 import React from "react"
 import { FaTrophy } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -59,7 +60,9 @@ export function TotalXP({ totalXP, config, style = "default", size = "half" }: T
                 {/* XP Info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium mb-1 opacity-90 duolingo-text-snow">Total XP</p>
-                  <p className="text-2xl font-bold duolingo-text-snow">{abbreviateNumber(totalXP)}</p>
+                  <p className="text-2xl font-bold duolingo-text-snow">
+                    <AnimatedNumber value={abbreviateNumber(totalXP)} />
+                  </p>
                 </div>
               </div>
             </div>

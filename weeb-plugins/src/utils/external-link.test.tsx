@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
-import { ExternalLink, safeHref, withDefaultScheme } from "./external-link"
+import { ExternalLink, isEmailAddress, safeHref, safeLinkHref, withDefaultScheme } from "./external-link"
 
 describe("safeHref", () => {
   it.each([
@@ -106,5 +106,30 @@ describe("ExternalLink", () => {
     )
     expect(html).not.toContain("<script>")
     expect(html).toMatch(/^<a href="https:\/\/example\.com\/\?q=[^"]*" target="_top"/)
+  })
+})
+
+describe("safeLinkHref", () => {
+  it("takes what safeHref takes", () => {
+    expect(safeLinkHref("https://example.com")).toBe("https://example.com/")
+    expect(safeLinkHref("javascript:alert(1)")).toBeNull()
+  })
+
+  // The About plugin's email badge. One plain address: a query or a second recipient
+  // would let a typed address add Bcc or headers to the visitor's mail.
+  it("takes a mailto: with one plain address and nothing after it", () => {
+    expect(safeLinkHref(" mailto:someone@example.com ")).toBe("mailto:someone@example.com")
+    expect(safeLinkHref("mailto:someone@example.com?bcc=x@y.co")).toBeNull()
+    expect(safeLinkHref("mailto:a@b.co,c@d.co")).toBeNull()
+    expect(safeLinkHref("mailto:<a@b.co>")).toBeNull()
+    expect(safeLinkHref("mailto:someone")).toBeNull()
+    expect(safeLinkHref(42)).toBeNull()
+  })
+
+  it("isEmailAddress needs a dotted domain and no spaces", () => {
+    expect(isEmailAddress("someone@example.com")).toBe(true)
+    expect(isEmailAddress("someone@localhost")).toBe(false)
+    expect(isEmailAddress("some one@example.com")).toBe(false)
+    expect(isEmailAddress(`${"a".repeat(250)}@b.co`)).toBe(false)
   })
 })

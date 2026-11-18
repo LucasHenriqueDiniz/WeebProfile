@@ -1,0 +1,105 @@
+{
+  "description": "An intro in the style of neofetch and link badges, from what you type in. Nothing to connect",
+  "displayName": "About me",
+  "sections": {
+    "links": {
+      "config": {
+        "links_brand_colors": {
+          "label": "Brand colors",
+          "tooltip": "Icons of known sites in their brand color (LinkedIn blue, YouTube red…). Off, every icon takes the theme's accent color."
+        },
+        "links_items": {
+          "description": "Up to 8 links. Only the address is required.",
+          "items": {
+            "icon": {
+              "label": "Icon",
+              "options": {
+                "auto": "From the address",
+                "bluesky": "Bluesky",
+                "devto": "DEV",
+                "discord": "Discord",
+                "email": "Email",
+                "github": "GitHub",
+                "instagram": "Instagram",
+                "kofi": "Ko-fi",
+                "linkedin": "LinkedIn",
+                "mastodon": "Mastodon",
+                "medium": "Medium",
+                "rss": "RSS",
+                "twitch": "Twitch",
+                "website": "Website",
+                "x": "X (Twitter)",
+                "youtube": "YouTube"
+              }
+            },
+            "label": {
+              "description": "Optional. Defaults to the site's name or domain.",
+              "label": "Text",
+              "placeholder": "LinkedIn"
+            },
+            "url": {
+              "label": "Address",
+              "placeholder": "https://my-site.dev or you@example.com"
+            }
+          },
+          "label": "Links",
+          "tooltip": "An address can be a site (https://… or just example.com) or an email (you@example.com). The icon and the text are picked from the address unless you choose them."
+        }
+      },
+      "description": "A row of buttons for your site, profiles and email. Each one can also be its own image and link",
+      "name": "Link badges"
+    },
+    "neofetch": {
+      "config": {
+        "neofetch_fields": {
+          "description": "Up to 10 lines of Label: value",
+          "items": {
+            "label": {
+              "label": "Label",
+              "placeholder": "Location"
+            },
+            "value": {
+              "label": "Value",
+              "placeholder": "Brazil"
+            }
+          },
+          "label": "Lines",
+          "tooltip": "Each line is a label and its value, such as Location: Brazil or Stack: TypeScript · React. A value too long for the card ends in an ellipsis."
+        },
+        "neofetch_github_user": {
+          "description": "Whose avatar to show. Used with My GitHub avatar.",
+          "label": "GitHub username"
+        },
+        "neofetch_image": {
+          "description": "Upload a PNG, JPEG or WebP, or paste an https:// address. Used with My image.",
+          "label": "Image",
+          "tooltip": "An uploaded image is kept in the card itself, so it needs no address of its own; a large one is shrunk to 384px first. An address is downloaded once per generation and embedded, because a README cannot load images from inside an image."
+        },
+        "neofetch_picture": {
+          "description": "Where the picture next to the lines comes from",
+          "label": "Picture",
+          "options": {
+            "custom": "My image (upload one or paste a URL)",
+            "github": "My GitHub avatar",
+            "none": "No picture"
+          }
+        },
+        "neofetch_show_cursor": {
+          "label": "Show prompt at the end",
+          "tooltip": "Terminal style only: a last prompt with a block cursor, which blinks when animations are on."
+        },
+        "neofetch_show_palette": {
+          "label": "Show color palette",
+          "tooltip": "A row of the card theme's colors under the lines, like the color blocks neofetch prints."
+        },
+        "neofetch_title": {
+          "description": "Shown as user@host, like a terminal prompt",
+          "label": "Title",
+          "tooltip": "The part before the @ and the part after it are drawn in the theme's accent color. Without an @, the whole title is."
+        }
+      },
+      "description": "Your picture next to a user@host title and the lines you write, like neofetch prints them",
+      "name": "Neofetch intro"
+    }
+  }
+}

@@ -690,6 +690,39 @@
     "templateLoadError": {
       "title": "Template indisponível",
       "description": "Ele pode ter sido removido ou ficado privado. Nada no wizard foi alterado."
+    },
+    "imageInput": {
+      "upload": "Enviar imagem",
+      "replace": "Trocar",
+      "remove": "Remover",
+      "urlPlaceholder": "https://… ou envie um arquivo",
+      "uploaded": "Imagem enviada, {{size}} KB, guardada neste card",
+      "errorType": "Use um arquivo PNG, JPEG ou WebP.",
+      "errorTooBig": "Esta imagem não cabe em {{size}} KB nem reduzida. Tente uma menor.",
+      "errorRead": "Não foi possível ler esta imagem."
+    },
+    "sectionConfig": {
+      "open": "Configurar seção",
+      "title": "Configurações: {{section}}",
+      "live": "As mudanças aparecem no preview em tempo real.",
+      "helpLink": "Clique no link ao lado para abrir a ajuda e obter mais informações.",
+      "helpLinkMore": "Clique no link ao lado para obter mais informações.",
+      "openHelp": "Abrir link de ajuda",
+      "on": "Ativado",
+      "off": "Desativado",
+      "addItem": "Adicionar {{item}}",
+      "arrayPlaceholder": "Digite um valor e pressione Enter",
+      "arrayEmpty": "Nenhum item adicionado. Digite um valor e pressione Enter ou clique no botão +.",
+      "removeValue": "Remover {{item}}"
+    },
+    "objectArray": {
+      "add": "Adicionar item",
+      "empty": "Nenhum item adicionado ainda.",
+      "moveUp": "Mover para cima",
+      "moveDown": "Mover para baixo",
+      "remove": "Remover item",
+      "missing": "Preencha: {{fields}}",
+      "count": "{{count}} de {{max}}"
     }
   },
   "templatesPage": {
@@ -898,7 +931,8 @@
         "github_repo": "Banner, contadores, curva de estrelas, linguagens e tópicos.",
         "websites": "Seus sites, com uma miniatura de cada página.",
         "anilist": "Estatísticas de anime e mangá, favoritos e o que você está assistindo.",
-        "devto": "Seu perfil, artigos recentes e as tags que você mais usa."
+        "devto": "Seu perfil, artigos recentes e as tags que você mais usa.",
+        "about": "Uma apresentação no estilo neofetch e badges de link, a partir do que você digita."
       }
     },
     "templates": {
@@ -1016,6 +1050,16 @@
       "copied": "Copiado!",
       "toastCopied": "Copiado!",
       "toastCopiedDescription": "Snippet com {{count}} sites copiado",
+      "toastError": "Não foi possível copiar o snippet"
+    },
+    "badges": {
+      "title": "Um link por badge",
+      "description": "Cada badge de link vira uma imagem própria dentro do seu link, lado a lado como botões. Quem visita abre seu site, perfil ou email com um clique, direto do seu README. No card único são dois: primeiro a imagem, depois o link.",
+      "note": "Os links ficam escritos no seu README. Depois de adicionar, remover ou reordenar links, copie de novo. Textos e ícones se atualizam sozinhos.",
+      "copy": "Copiar",
+      "copied": "Copiado!",
+      "toastCopied": "Copiado!",
+      "toastCopiedDescription": "Snippet com {{count}} badges copiado",
       "toastError": "Não foi possível copiar o snippet"
     },
     "readme": {

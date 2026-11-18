@@ -5,6 +5,7 @@
 
 import React from "react"
 import { AnimatedNumber } from "../AnimatedNumber"
+import { useItemCascade, withCascade } from "../animations"
 
 export interface TerminalStatisticRowProps {
   icon?: React.ReactElement | null
@@ -20,8 +21,9 @@ export function TerminalStatisticRow({
   rows: TerminalStatisticRowProps[]
   className?: string
 }): React.ReactElement {
+  const cascade = useItemCascade(rows.length)
   return (
-    <div className={`flex flex-col gap-1 w-full ${className ?? ""}`}>
+    <div className={withCascade(`flex flex-col gap-1 w-full ${className ?? ""}`, cascade)} style={cascade?.style}>
       {rows.map((row, index) => (
         <div
           key={index}

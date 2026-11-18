@@ -12,6 +12,7 @@
  */
 
 import { useMemo, useState, useEffect, useCallback, useDeferredValue } from "react"
+import { useTranslation } from "react-i18next"
 import { useShallow } from "zustand/react/shallow"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
@@ -28,6 +29,8 @@ import { useToast } from "@/hooks/use-toast"
 import { getPluginTags, type PluginTag } from "@/lib/config/plugin-tags"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
+import { usePluginI18n } from "@/lib/plugins/i18n-helper"
+import { pluginMatchesQuery, pluginSearchTexts } from "@/lib/plugins/plugin-search"
 
 export function usePluginWorkspace() {
   const { toast } = useToast()
@@ -50,6 +53,8 @@ export function usePluginWorkspace() {
   const { category, query, onlyEnabled, selectedPlugin, setCategory, setQuery, setOnlyEnabled, setSelectedPlugin } =
     uiState
 
+  const { tWithFallback } = usePluginI18n()
+  const { i18n } = useTranslation()
   const deferredQuery = useDeferredValue(query)
   const debouncedQuery = useDebouncedValue(deferredQuery, 150)
 
@@ -93,6 +98,19 @@ export function usePluginWorkspace() {
     )
   }, [groupedPlugins])
 
+  // What each plugin can be found by, in English and in the viewer's language.
+  const searchTexts = useMemo(() => {
+    const texts: Record<string, string[]> = {}
+    for (const plugin of allPlugins) {
+      const metadata = PLUGINS_METADATA[plugin.name as keyof typeof PLUGINS_METADATA]
+      if (!metadata) continue
+      texts[plugin.name] = pluginSearchTexts(plugin.name, metadata, tWithFallback)
+    }
+    return texts
+    // tWithFallback is a new function every render; what it returns changes with the language.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allPlugins, i18n.language])
+
   // Lista sempre mostra todos os plugins que batem com busca/filtro - selecionar um
   // plugin so destaca e abre o detalhe, nao filtra mais a propria lista.
   const filteredPlugins = useMemo(() => {
@@ -112,17 +130,12 @@ export function usePluginWorkspace() {
       }
 
       if (debouncedQuery) {
-        const searchLower = debouncedQuery.toLowerCase()
-        const metadata = PLUGINS_METADATA[plugin.name as keyof typeof PLUGINS_METADATA]
-        return (
-          metadata?.displayName.toLowerCase().includes(searchLower) ||
-          metadata?.description.toLowerCase().includes(searchLower)
-        )
+        return pluginMatchesQuery(searchTexts[plugin.name] ?? [], debouncedQuery)
       }
 
       return true
     })
-  }, [allPlugins, plugins, category, debouncedQuery, onlyEnabled])
+  }, [allPlugins, plugins, category, debouncedQuery, onlyEnabled, searchTexts])
 
   const selectedPluginEntry = useMemo(() => {
     if (!selectedPlugin) return null

@@ -1,9 +1,11 @@
 import React from "react"
 import { FaList } from "react-icons/fa"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import type { GridItemProps } from "../../../templates/types"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
@@ -17,7 +19,12 @@ interface StarListsProps {
   size: "half" | "full"
 }
 
+/** Repositories a list's card draws: the first 5. */
+export const shownRepositories = (list: NonNullable<GithubData["starLists"]>[number]): number =>
+  Math.min(list.repositories.length, 5)
+
 const DefaultStarLists = ({ data, max }: { data: GithubData["starLists"]; max: number }) => {
+  const cascade = useItemCascade(Math.min(data?.length ?? 0, max))
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No star lists</div>
   }
@@ -25,7 +32,7 @@ const DefaultStarLists = ({ data, max }: { data: GithubData["starLists"]; max: n
   const lists = data.slice(0, max)
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={withCascade("flex flex-col gap-4", cascade)} style={cascade?.style}>
       {lists.map((list, index) => (
         <div key={index} className="p-3 rounded-lg border border-default-border">
           <h4 className="font-semibold text-base text-default-text mb-2">{list.name}</h4>
@@ -38,13 +45,15 @@ const DefaultStarLists = ({ data, max }: { data: GithubData["starLists"]; max: n
                 className="text-sm text-default-link flex items-center gap-2"
               >
                 <span className="truncate">{repo.nameWithOwner}</span>
-                <span className="text-default-muted flex-shrink-0">⭐ {abbreviateNumber(repo.stargazerCount)}</span>
+                <span className="text-default-muted flex-shrink-0">
+                  ⭐ <AnimatedNumber value={abbreviateNumber(repo.stargazerCount)} />
+                </span>
               </ExternalLink>
             ))}
-            {list.repositories.length > 5 && (
+            {list.totalCount > shownRepositories(list) && (
               <div className="text-xs text-default-muted mt-1">
-                +{list.repositories.length - 5} more{" "}
-                {list.repositories.length - 5 === 1 ? "repository" : "repositories"}
+                +{list.totalCount - shownRepositories(list)} more{" "}
+                {list.totalCount - shownRepositories(list) === 1 ? "repository" : "repositories"}
               </div>
             )}
           </div>
@@ -68,7 +77,7 @@ export function GithubStarLists({ data, config, style, size }: StarListsProps): 
   const gridData: GridItemProps[] = lists.map((list) => ({
     title: list.name,
     subtitle: list.description || undefined,
-    value: `${list.repositories.length} repos`,
+    value: `${abbreviateNumber(list.totalCount)} repos`,
   }))
 
   return (

@@ -5,6 +5,8 @@
 import React from "react"
 import { FaStar } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -33,6 +35,8 @@ export function Reputation({
 
   const changeText =
     reputationChange >= 0 ? `+${abbreviateNumber(reputationChange)}` : abbreviateNumber(reputationChange)
+  const stats = reputationChange !== 0 ? 2 : 1
+  const cascade = useItemCascade(stats)
 
   return (
     <section id="stackoverflow-reputation">
@@ -41,13 +45,13 @@ export function Reputation({
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<IoStatsChartOutline />} />}
-            <div className="flex gap-4 half:gap-3 items-center w-full">
+            <div className={withCascade("flex gap-4 half:gap-3 items-center w-full", cascade)} style={cascade?.style}>
               <div className="flex items-center gap-2 flex-1">
                 <FaStar className="text-yellow-500 flex-shrink-0" />
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-default-muted">Reputation:</p>
                   <p className="text-xl half:text-lg font-semibold text-default-highlight tabular-nums">
-                    {abbreviateNumber(reputation)}
+                    <AnimatedNumber value={abbreviateNumber(reputation)} />
                   </p>
                 </div>
               </div>
@@ -70,8 +74,10 @@ export function Reputation({
                 size,
               })}
             />
-            <TerminalLineWithDots title="Reputation" value={abbreviateNumber(reputation)} />
-            {reputationChange !== 0 && <TerminalLineWithDots title="Change (month)" value={changeText} />}
+            <CascadeGroup count={stats}>
+              <TerminalLineWithDots title="Reputation" value={abbreviateNumber(reputation)} />
+              {reputationChange !== 0 && <TerminalLineWithDots title="Change (month)" value={changeText} />}
+            </CascadeGroup>
           </>
         }
       />

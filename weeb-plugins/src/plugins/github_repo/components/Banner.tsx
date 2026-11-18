@@ -1,6 +1,8 @@
 import React from "react"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { CascadeGroup, useAnimations, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { resolveBannerText, resolveBannerVariant } from "../types"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
@@ -28,6 +30,8 @@ interface BannerProps {
 
 // Linha de metadados compartilhada: linguagem primária, stars, forks, licença.
 function MetaRow({ data, showLanguage }: { data: GithubRepoData; showLanguage: boolean }): React.ReactElement {
+  const stars = <AnimatedNumber value={formatCount(data.stargazerCount)} />
+  const forks = <AnimatedNumber value={formatCount(data.forkCount)} />
   return (
     <div className="flex items-center gap-3.5 text-xs text-default-muted">
       {showLanguage && data.primaryLanguage && (
@@ -38,11 +42,11 @@ function MetaRow({ data, showLanguage }: { data: GithubRepoData; showLanguage: b
       )}
       {showLanguage && data.primaryLanguage && <DotSep />}
       <span>
-        <b className="font-semibold text-default-text">{formatCount(data.stargazerCount)}</b> stars
+        <b className="font-semibold text-default-text">{stars}</b> stars
       </span>
       <DotSep />
       <span>
-        <b className="font-semibold text-default-text">{formatCount(data.forkCount)}</b> forks
+        <b className="font-semibold text-default-text">{forks}</b> forks
       </span>
       {data.licenseInfo?.spdxId && (
         <>
@@ -84,16 +88,19 @@ function HeroBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
   const showAvatar = config.banner_show_avatar ?? true
   const showOwner = config.banner_show_owner ?? true
   const { title, description } = resolveBannerText(config, data)
+  const animations = useAnimations()
+  // Name, description, meta row.
+  const cascade = useItemCascade(showDescription && description ? 3 : 2)
 
   return (
     <Card>
       <div
-        className="h-[3px]"
+        className={animations ? "h-[3px] weeb-bar" : "h-[3px]"}
         style={{ background: `linear-gradient(90deg, ${HL}, color-mix(in srgb, ${HL} 30%, transparent))` }}
       />
       <div className="flex items-start gap-3.5 px-[18px] py-4">
         {showAvatar && <Mark data={data} title={title} size={44} />}
-        <div className="min-w-0 flex-1">
+        <div className={withCascade("min-w-0 flex-1", cascade)} style={cascade?.style}>
           <div className="truncate text-[22px] font-semibold leading-tight tracking-[-0.02em] text-default-text">
             {showOwner && <span className="font-normal text-default-muted">{data.owner.login} /</span>} {title}
           </div>
@@ -115,9 +122,14 @@ function MinimalBanner({ data, config }: { data: GithubRepoData; config: GithubR
   const showAvatar = config.banner_show_avatar ?? true
   const showOwner = config.banner_show_owner ?? true
   const { title, description } = resolveBannerText(config, data)
+  // Mark, name, stars.
+  const cascade = useItemCascade(showAvatar ? 3 : 2)
 
   return (
-    <Card className="flex flex-row items-center gap-3.5 px-[18px] py-3.5">
+    <Card
+      className={withCascade("flex flex-row items-center gap-3.5 px-[18px] py-3.5", cascade)}
+      style={cascade?.style}
+    >
       {showAvatar && <Mark data={data} title={title} size={40} />}
       <div className="min-w-0 flex-1">
         {/* Monta owner/título em vez de usar nameWithOwner: com título custom o
@@ -128,7 +140,9 @@ function MinimalBanner({ data, config }: { data: GithubRepoData; config: GithubR
         {showDescription && description && <div className="truncate text-xs text-default-muted">{description}</div>}
       </div>
       <div className="flex-shrink-0 text-xs text-default-muted">
-        <b className="font-semibold text-default-text">★ {formatCount(data.stargazerCount)}</b>
+        <b className="font-semibold text-default-text">
+          ★ <AnimatedNumber value={formatCount(data.stargazerCount)} />
+        </b>
       </div>
     </Card>
   )
@@ -139,10 +153,15 @@ function SplitBanner({ data, config }: { data: GithubRepoData; config: GithubRep
   const showDescription = config.banner_show_description ?? true
   const delta = computeStarDelta(data.starHistory)
   const { title, description, eyebrow } = resolveBannerText(config, data)
+  // Eyebrow, name, description.
+  const cascade = useItemCascade(showDescription && description ? 3 : 2)
 
   return (
     <Card className="flex flex-row">
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 px-[18px] py-4">
+      <div
+        className={withCascade("flex min-w-0 flex-1 flex-col justify-center gap-1.5 px-[18px] py-4", cascade)}
+        style={cascade?.style}
+      >
         <Eyebrow>{eyebrow ?? "Repository"}</Eyebrow>
         <div className="truncate text-lg font-semibold tracking-[-0.02em] text-default-text">{title}</div>
         {showDescription && description && (
@@ -154,7 +173,7 @@ function SplitBanner({ data, config }: { data: GithubRepoData; config: GithubRep
         style={{ background: HL_SOFTER }}
       >
         <div className="text-2xl font-semibold leading-none tracking-[-0.02em]" style={{ color: HL }}>
-          {formatCount(data.stargazerCount)}
+          <AnimatedNumber value={formatCount(data.stargazerCount)} />
         </div>
         <Eyebrow>stars</Eyebrow>
         <Delta delta={delta} className="mt-0.5" />
@@ -168,6 +187,8 @@ function DisplayBanner({ data, config }: { data: GithubRepoData; config: GithubR
   const showLanguage = config.banner_show_languages ?? true
   const showOwner = config.banner_show_owner ?? true
   const { title, eyebrow } = resolveBannerText(config, data)
+  // Eyebrow, name, meta row.
+  const cascade = useItemCascade(3)
 
   return (
     <Card className="relative flex flex-col justify-center">
@@ -177,7 +198,7 @@ function DisplayBanner({ data, config }: { data: GithubRepoData; config: GithubR
       >
         {title.slice(0, 1).toUpperCase()}
       </div>
-      <div className="px-[18px] py-4">
+      <div className={withCascade("px-[18px] py-4", cascade)} style={cascade?.style}>
         <Eyebrow style={{ color: HL }}>
           {eyebrow ?? (showOwner ? `${data.owner.login} / repository` : "repository")}
         </Eyebrow>
@@ -198,11 +219,13 @@ function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
   const showAvatar = config.banner_show_avatar ?? true
   const showOwner = config.banner_show_owner ?? true
   const { title, description } = resolveBannerText(config, data)
+  // Side bar, mark, name, stars.
+  const cascade = useItemCascade(showAvatar ? 4 : 3)
 
   return (
     <Card
-      className="flex flex-row items-center border-0"
-      style={{ background: "#111318", boxShadow: "0 0 0 0.5px #2a2e37" }}
+      className={withCascade("flex flex-row items-center border-0", cascade)}
+      style={{ background: "#111318", boxShadow: "0 0 0 0.5px #2a2e37", ...cascade?.style }}
     >
       <div className="self-stretch" style={{ width: 4, background: HL }} />
       {showAvatar && (
@@ -229,7 +252,7 @@ function DarkBanner({ data, config }: { data: GithubRepoData; config: GithubRepo
       </div>
       <div className="flex-shrink-0 px-[18px] text-right">
         <div className="text-2xl font-semibold leading-tight" style={{ color: HL }}>
-          {formatCount(data.stargazerCount)}
+          <AnimatedNumber value={formatCount(data.stargazerCount)} />
         </div>
         <Eyebrow style={{ color: "#8b93a3" }}>stars</Eyebrow>
       </div>
@@ -248,6 +271,10 @@ function CenteredBanner({ data, config }: { data: GithubRepoData; config: Github
   // Eyebrow custom aparece mesmo com "show owner" desligado: o texto foi digitado
   // de propósito, e sumir sem explicação é pior que a linha extra.
   const showEyebrow = eyebrow !== null || showOwner
+  // Mark, eyebrow, name, description, meta row.
+  const cascade = useItemCascade(
+    (showAvatar ? 1 : 0) + (showEyebrow ? 1 : 0) + 1 + (showDescription && description ? 1 : 0) + 1
+  )
 
   return (
     <Card className="relative flex flex-col items-center px-[18px] py-5 text-center">
@@ -257,7 +284,7 @@ function CenteredBanner({ data, config }: { data: GithubRepoData; config: Github
           background: `radial-gradient(circle at 20% 0%, ${HL_SOFT}, transparent 55%), radial-gradient(circle at 85% 100%, ${HL_SOFTER}, transparent 50%)`,
         }}
       />
-      <div className="relative flex flex-col items-center">
+      <div className={withCascade("relative flex flex-col items-center", cascade)} style={cascade?.style}>
         {showAvatar && <Mark data={data} title={title} size={48} />}
         {showEyebrow && (
           <div className={`text-xs text-default-muted ${showAvatar ? "mt-2.5" : ""}`}>
@@ -291,6 +318,8 @@ function CenteredDarkBanner({ data, config }: { data: GithubRepoData; config: Gi
   const showOwner = config.banner_show_owner ?? true
   const { title, description, eyebrow } = resolveBannerText(config, data)
   const showEyebrow = eyebrow !== null || showOwner
+  // Eyebrow, name, description.
+  const cascade = useItemCascade((showEyebrow ? 1 : 0) + 1 + (showDescription && description ? 1 : 0))
 
   return (
     <Card
@@ -315,7 +344,7 @@ function CenteredDarkBanner({ data, config }: { data: GithubRepoData; config: Gi
         <rect width="100%" height="100%" fill="url(#centered-grid)" />
         <rect width="100%" height="100%" fill="url(#centered-glow)" />
       </svg>
-      <div className="relative flex flex-col items-center gap-[9px]">
+      <div className={withCascade("relative flex flex-col items-center gap-[9px]", cascade)} style={cascade?.style}>
         {showEyebrow && <Eyebrow style={{ color: HL }}>{eyebrow ?? `${data.owner.login} / open source`}</Eyebrow>}
         <div
           className="max-w-full truncate text-[28px] font-bold leading-none tracking-[-0.03em]"
@@ -345,6 +374,8 @@ function CenteredGradientBanner({
   const showDescription = config.banner_show_description ?? true
   const showLanguage = config.banner_show_languages ?? true
   const { title, description } = resolveBannerText(config, data)
+  // Name, description, chips.
+  const cascade = useItemCascade(showDescription && description ? 3 : 2)
 
   const chip: React.CSSProperties = {
     fontSize: 11,
@@ -359,7 +390,7 @@ function CenteredGradientBanner({
       className="flex flex-col items-center justify-center border-0 px-6 py-6 text-center text-white"
       style={{ background: `linear-gradient(135deg, ${HL} 0%, color-mix(in srgb, ${HL} 65%, #c026d3) 100%)` }}
     >
-      <div className="flex flex-col items-center gap-2">
+      <div className={withCascade("flex flex-col items-center gap-2", cascade)} style={cascade?.style}>
         <div
           className="max-w-full truncate text-[27px] font-bold leading-none tracking-[-0.03em]"
           style={{ textShadow: "0 1px 2px rgb(0 0 0 / .12)" }}
@@ -372,8 +403,12 @@ function CenteredGradientBanner({
           </p>
         )}
         <div className="mt-1 flex gap-2">
-          <span style={chip}>★ {formatCount(data.stargazerCount)}</span>
-          <span style={chip}>⑂ {formatCount(data.forkCount)}</span>
+          <span style={chip}>
+            ★ <AnimatedNumber value={formatCount(data.stargazerCount)} />
+          </span>
+          <span style={chip}>
+            ⑂ <AnimatedNumber value={formatCount(data.forkCount)} />
+          </span>
           {showLanguage && data.primaryLanguage && <span style={chip}>{data.primaryLanguage.name}</span>}
         </div>
       </div>
@@ -397,6 +432,7 @@ export function Banner({ config, data, style = "default", size = "half" }: Banne
   if (!config.enabled || !data) return <></>
 
   const { title, description } = resolveBannerText(config, data)
+  const showTerminalDescription = Boolean((config.banner_show_description ?? true) && description)
 
   return (
     <section id="github-repo-banner">
@@ -411,12 +447,14 @@ export function Banner({ config, data, style = "default", size = "half" }: Banne
           terminalComponent={
             <>
               <TerminalCommand command={getPseudoCommands({ plugin: "github_repo", section: "banner", size })} />
-              <ExternalLink href={data.url} className="flex items-baseline gap-2 px-1 py-1">
-                <span className="text-terminal-highlight font-bold">{`${data.owner.login}/${title}`}</span>
-              </ExternalLink>
-              {(config.banner_show_description ?? true) && description && (
-                <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{description}</p>
-              )}
+              <CascadeGroup count={showTerminalDescription ? 2 : 1}>
+                <ExternalLink href={data.url} className="flex items-baseline gap-2 px-1 py-1">
+                  <span className="text-terminal-highlight font-bold">{`${data.owner.login}/${title}`}</span>
+                </ExternalLink>
+                {showTerminalDescription && (
+                  <p className="m-0 px-1 pb-1 text-sm text-terminal-muted line-clamp-2">{description}</p>
+                )}
+              </CascadeGroup>
             </>
           }
         />

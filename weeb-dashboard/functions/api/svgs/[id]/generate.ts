@@ -143,6 +143,11 @@ export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env
           lastGeneratedAt: now.toISOString(),
           nextRegenerationAt: nextNightFrom(now),
           forceRegenerate: false,
+          // As the cron does: the card works again, so the page stops showing the old
+          // error, and the next nightly failure backs off from one night, not from the
+          // count of failures this generation just ended.
+          failCount: 0,
+          lastError: null,
         },
         tilesFromResult(result)
       )

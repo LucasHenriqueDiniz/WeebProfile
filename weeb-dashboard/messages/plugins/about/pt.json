@@ -1,0 +1,105 @@
+{
+  "description": "Uma apresentação no estilo neofetch e badges de link, a partir do que você digita. Nada para conectar",
+  "displayName": "Sobre mim",
+  "sections": {
+    "links": {
+      "config": {
+        "links_brand_colors": {
+          "label": "Cores das marcas",
+          "tooltip": "Ícones de sites conhecidos na cor da marca (azul do LinkedIn, vermelho do YouTube…). Desligado, todo ícone usa a cor de destaque do tema."
+        },
+        "links_items": {
+          "description": "Até 8 links. Só o endereço é obrigatório.",
+          "items": {
+            "icon": {
+              "label": "Ícone",
+              "options": {
+                "auto": "Pelo endereço",
+                "bluesky": "Bluesky",
+                "devto": "DEV",
+                "discord": "Discord",
+                "email": "Email",
+                "github": "GitHub",
+                "instagram": "Instagram",
+                "kofi": "Ko-fi",
+                "linkedin": "LinkedIn",
+                "mastodon": "Mastodon",
+                "medium": "Medium",
+                "rss": "RSS",
+                "twitch": "Twitch",
+                "website": "Site",
+                "x": "X (Twitter)",
+                "youtube": "YouTube"
+              }
+            },
+            "label": {
+              "description": "Opcional. Vazio, sai o nome ou o domínio do site.",
+              "label": "Texto",
+              "placeholder": "LinkedIn"
+            },
+            "url": {
+              "label": "Endereço",
+              "placeholder": "https://meu-site.dev ou voce@exemplo.com"
+            }
+          },
+          "label": "Links",
+          "tooltip": "Um endereço pode ser um site (https://… ou só exemplo.com) ou um email (voce@exemplo.com). O ícone e o texto saem do endereço, a menos que você escolha."
+        }
+      },
+      "description": "Uma fileira de botões para o seu site, perfis e email. Cada um também pode ser uma imagem e um link próprios",
+      "name": "Badges de link"
+    },
+    "neofetch": {
+      "config": {
+        "neofetch_fields": {
+          "description": "Até 10 linhas de Rótulo: valor",
+          "items": {
+            "label": {
+              "label": "Rótulo",
+              "placeholder": "Local"
+            },
+            "value": {
+              "label": "Valor",
+              "placeholder": "Brasil"
+            }
+          },
+          "label": "Linhas",
+          "tooltip": "Cada linha é um rótulo e o seu valor, como Local: Brasil ou Stack: TypeScript · React. Um valor longo demais para o card termina em reticências."
+        },
+        "neofetch_github_user": {
+          "description": "De quem é o avatar. Usado com Meu avatar do GitHub.",
+          "label": "Usuário do GitHub"
+        },
+        "neofetch_image": {
+          "description": "Envie um PNG, JPEG ou WebP, ou cole um endereço https://. Usado com Minha imagem.",
+          "label": "Imagem",
+          "tooltip": "Uma imagem enviada fica guardada no próprio card, então não precisa de endereço; uma grande é reduzida para 384px antes. Um endereço é baixado uma vez por geração e embutido, porque um README não carrega imagens de dentro de uma imagem."
+        },
+        "neofetch_picture": {
+          "description": "De onde vem a foto ao lado das linhas",
+          "label": "Foto",
+          "options": {
+            "custom": "Minha imagem (envie uma ou cole uma URL)",
+            "github": "Meu avatar do GitHub",
+            "none": "Sem foto"
+          }
+        },
+        "neofetch_show_cursor": {
+          "label": "Mostrar prompt no fim",
+          "tooltip": "Só no estilo terminal: um último prompt com cursor em bloco, que pisca quando as animações estão ligadas."
+        },
+        "neofetch_show_palette": {
+          "label": "Mostrar paleta de cores",
+          "tooltip": "Uma fileira com as cores do tema do card embaixo das linhas, como os blocos de cor que o neofetch imprime."
+        },
+        "neofetch_title": {
+          "description": "Mostrado como usuario@host, como um prompt de terminal",
+          "label": "Título",
+          "tooltip": "A parte antes do @ e a parte depois dele saem na cor de destaque do tema. Sem @, o título inteiro sai."
+        }
+      },
+      "description": "Sua foto ao lado de um título usuario@host e das linhas que você escreve, como o neofetch imprime",
+      "name": "Apresentação neofetch"
+    }
+  }
+}

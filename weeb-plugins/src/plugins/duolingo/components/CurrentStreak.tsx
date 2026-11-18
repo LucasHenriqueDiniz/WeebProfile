@@ -5,6 +5,7 @@
 import React from "react"
 import { FaFire } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -112,7 +113,7 @@ export function CurrentStreak({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2 mb-1">
                     <span className="text-3xl font-bold drop-shadow-sm duolingo-text-snow">
-                      {abbreviateNumber(streak)}
+                      <AnimatedNumber value={abbreviateNumber(streak)} />
                     </span>
                     <span className="text-sm font-semibold opacity-90 duolingo-text-snow">days</span>
                   </div>

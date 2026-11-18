@@ -17,6 +17,11 @@ export const SECTION_PREVIEWS: Record<
     personality: { default: [415, 227], terminal: [415, 208] },
   },
 
+  about: {
+    neofetch: { default: [415, 243], terminal: [415, 298] },
+    links: { default: [415, 120], terminal: [415, 144] },
+  },
+
   anilist: {
     statistics: { default: [415, 245], terminal: [415, 208] },
     favorites_anime: { default: [415, 189], terminal: [415, 148] },
@@ -74,11 +79,11 @@ export const SECTION_PREVIEWS: Record<
 
   github_repo: {
     banner: { default: [415, 161], terminal: [415, 94] },
-    stats: { default: [415, 134], terminal: [415, 52] },
-    star_graph: { default: [415, 228], terminal: [415, 153] },
-    languages: { default: [415, 152], terminal: [415, 78] },
-    topics: { default: [415, 110], terminal: [415, 44] },
-    overview: { default: [415, 276], terminal: [415, 72] },
+    stats: { default: [415, 103], terminal: [415, 52] },
+    star_graph: { default: [415, 210], terminal: [415, 153] },
+    languages: { default: [415, 120], terminal: [415, 78] },
+    topics: { default: [415, 120], terminal: [415, 44] },
+    overview: { default: [415, 250], terminal: [415, 52] },
   },
 
   lastfm: {

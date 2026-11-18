@@ -15,7 +15,9 @@ import { Settings, X, Plus, HelpCircle, ExternalLink } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { ObjectArrayInput, type ObjectArrayItem, type ObjectArrayItemField } from "./ObjectArrayInput"
+import { ImageInput } from "./ImageInput"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
+import { translateItemFields } from "@/lib/plugins/item-fields-i18n"
 import { useTranslations } from "@/i18n/use-translations"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -23,7 +25,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
   defaultValue?: any
   min?: number
   max?: number
@@ -58,6 +60,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
   const [open, setOpen] = useState(false)
   const { tWithFallback } = usePluginI18n()
   const tPlugins = useTranslations("wizard.plugins")
+  const t = useTranslations("wizard.sectionConfig")
   const options = getSectionConfigOptions(plugin, section.id)
   const prevOpenRef = useRef(false)
 
@@ -111,7 +114,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
           size="sm"
           className="h-6 w-6 p-0 rounded-full hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition-colors"
           onClick={(e) => e.stopPropagation()}
-          title="Configurar seção"
+          title={t("open")}
         >
           <Settings className="w-3 h-3" />
         </Button>
@@ -119,12 +122,13 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
       <SheetContent side="left" className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader>
           <SheetTitle>
-            Configurações:{" "}
-            {sectionMetadata?.i18nKey?.name
-              ? tWithFallback(sectionMetadata.i18nKey.name.replace(/^plugins\./, ""), section.name)
-              : section.name}
+            {t("title", {
+              section: sectionMetadata?.i18nKey?.name
+                ? tWithFallback(sectionMetadata.i18nKey.name.replace(/^plugins\./, ""), section.name)
+                : section.name,
+            })}
           </SheetTitle>
-          <SheetDescription>As mudanças aparecem no preview em tempo real.</SheetDescription>
+          <SheetDescription>{t("live")}</SheetDescription>
         </SheetHeader>
         <div className="space-y-4 py-4">
           {options.map((option) => {
@@ -171,9 +175,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                             </TooltipTrigger>
                             <TooltipContent side="top" className="max-w-xs">
                               <p className="text-sm whitespace-pre-line">
-                                {optionDescription
-                                  ? `${optionDescription}\n\nClique no link ao lado para obter mais informações.`
-                                  : "Clique no link ao lado para abrir o link de ajuda e obter mais informações."}
+                                {optionDescription ? `${optionDescription}\n\n${t("helpLinkMore")}` : t("helpLink")}
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -184,7 +186,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                           rel="noopener noreferrer"
                           className="text-primary hover:text-primary/80 transition-colors"
                           onClick={(e) => e.stopPropagation()}
-                          title="Abrir link de ajuda"
+                          title={t("openHelp")}
                         >
                           <ExternalLink className="w-4 h-4" />
                         </a>
@@ -219,7 +221,7 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                       onCheckedChange={(checked) => updateConfig({ [option.key]: checked })}
                     />
                     <Label htmlFor={option.key} className="cursor-pointer">
-                      {value ? "Ativado" : "Desativado"}
+                      {value ? t("on") : t("off")}
                     </Label>
                   </div>
                 )}
@@ -235,6 +237,16 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                     placeholder={typeof option.defaultValue === "string" ? option.defaultValue : undefined}
                     onChange={(e) => updateConfig({ [option.key]: e.target.value })}
                   />
+                )}
+                {option.type === "image" && (
+                  <>
+                    <ImageInput
+                      id={option.key}
+                      value={typeof value === "string" ? value : ""}
+                      onChange={(newValue) => updateConfig({ [option.key]: newValue })}
+                    />
+                    {optionDescription && <p className="text-xs text-muted-foreground">{optionDescription}</p>}
+                  </>
                 )}
                 {option.type === "select" && option.options && (
                   <Select
@@ -264,16 +276,16 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                   <ArrayInput
                     value={Array.isArray(value) ? value : []}
                     onChange={(newArray) => updateConfig({ [option.key]: newArray })}
-                    placeholder={option.description || "Digite um valor e pressione Enter"}
+                    placeholder={option.description || t("arrayPlaceholder")}
                   />
                 )}
                 {option.type === "object-array" && option.itemFields && (
                   <>
                     <ObjectArrayInput
                       value={(Array.isArray(value) ? value : []) as ObjectArrayItem[]}
-                      itemFields={option.itemFields}
+                      itemFields={translateItemFields(option.itemFields, tWithFallback)}
                       maxItems={option.maxItems}
-                      addLabel={`Adicionar ${optionLabel.toLowerCase()}`}
+                      addLabel={t("addItem", { item: optionLabel.toLowerCase() })}
                       onChange={(newItems) => updateConfig({ [option.key]: newItems })}
                     />
                     {optionDescription && <p className="text-xs text-muted-foreground">{optionDescription}</p>}
@@ -298,6 +310,7 @@ interface ArrayInputProps {
 }
 
 function ArrayInput({ value, onChange, placeholder }: ArrayInputProps) {
+  const t = useTranslations("wizard.sectionConfig")
   const [inputValue, setInputValue] = useState("")
 
   const handleAdd = () => {
@@ -327,7 +340,7 @@ function ArrayInput({ value, onChange, placeholder }: ArrayInputProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder || "Digite um valor e pressione Enter"}
+          placeholder={placeholder || t("arrayPlaceholder")}
         />
         <Button
           type="button"
@@ -348,7 +361,7 @@ function ArrayInput({ value, onChange, placeholder }: ArrayInputProps) {
                 type="button"
                 onClick={() => handleRemove(item)}
                 className="ml-1 rounded-full hover:bg-destructive/20 p-0.5 transition-colors"
-                aria-label={`Remover ${item}`}
+                aria-label={t("removeValue", { item })}
               >
                 <X className="w-3 h-3" />
               </button>
@@ -356,11 +369,7 @@ function ArrayInput({ value, onChange, placeholder }: ArrayInputProps) {
           ))}
         </div>
       )}
-      {value.length === 0 && (
-        <p className="text-xs text-muted-foreground">
-          Nenhum item adicionado. Digite um valor e pressione Enter ou clique no botão +.
-        </p>
-      )}
+      {value.length === 0 && <p className="text-xs text-muted-foreground">{t("arrayEmpty")}</p>}
     </div>
   )
 }

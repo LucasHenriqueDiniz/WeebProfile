@@ -4,12 +4,21 @@
 
 import type { BasePluginConfig, NonEssentialPluginConfig } from "../shared/types/base"
 
+/**
+ * Where a site's thumbnail comes from: the page's own preview image (og:image, then its
+ * icon), a screenshot of the page, or the image the user gave in `image`. Empty or
+ * absent on sites saved before the option: those keep the old rule, `image` when there
+ * is one and the page's preview otherwise.
+ */
+export type WebsiteImageSource = "auto" | "screenshot" | "custom"
+
 /** Um item cru, como o usuário cadastrou no wizard (object-array). */
 export interface WebsiteConfigItem {
   url: string
   title?: string
   description?: string
   image?: string
+  image_source?: WebsiteImageSource | ""
 }
 
 /** Um item já resolvido, com metadados e imagens embutidas. */

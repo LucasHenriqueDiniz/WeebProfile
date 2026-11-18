@@ -893,6 +893,24 @@ describe("POST / — opt-in animations", () => {
   })
 })
 
+describe("POST / — About intro picture", () => {
+  // The wizard keeps an uploaded picture in the card as a data URI: the generator embeds
+  // it as it is, with no request, since the image has no address to fetch.
+  it("embeds an uploaded picture without fetching anything", async () => {
+    const png = `data:image/png;base64,${Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2]).toString("base64")}`
+    const fetchSpy = vi.spyOn(globalThis, "fetch")
+    const about = {
+      about: { enabled: true, sections: ["neofetch"], neofetch_title: "me@home", neofetch_image: png },
+    }
+
+    const { response, body } = await post(validRequest({ dev: false, style: "terminal", plugins: about }))
+
+    expect(response.status).toBe(200)
+    expect(body.svg).toContain(`src="${png}"`)
+    expect(fetchSpy).not.toHaveBeenCalled()
+  })
+})
+
 describe("POST / — tiles, one SVG per site", () => {
   const websites = { websites: { enabled: true, sections: ["websites"], websites_max: 3 } }
 
@@ -916,8 +934,60 @@ describe("POST / — tiles, one SVG per site", () => {
   // terminal style paints its background on the whole container, which filled it.
   it("keeps the terminal style's background off the tile's margin", async () => {
     const { body } = await post(validRequest({ style: "terminal", plugins: websites, tiles: true }))
-    expect(body.tiles[0].svg).toContain("#svg-main .terminal-container{background-color:transparent !important}")
+    expect(body.tiles[0].svg).toContain(
+      "#svg-main .terminal-container{background-color:transparent !important;border-radius:0 !important}"
+    )
     expect(body.svg).not.toContain("background-color:transparent !important")
+  })
+
+  it("marks the websites' tiles as a grid, the snippet's three to a row", async () => {
+    const { body } = await post(validRequest({ plugins: websites, tiles: true }))
+    expect(body.tiles.map((tile: any) => tile.layout)).toEqual(["grid", "grid", "grid"])
+  })
+
+  // The About plugin's link badges: each at its own width, laid inline in a README like
+  // the hand-made buttons they replace, an email included.
+  it("answers a link badge per link, inline, at its own width and 36px tall", async () => {
+    const about = {
+      about: {
+        enabled: true,
+        sections: ["links"],
+        links_items: [
+          { url: "lucashdo.com" },
+          { url: "https://www.linkedin.com/in/someone/" },
+          { url: "someone@example.com" },
+        ],
+      },
+    }
+    const { response, body } = await post(validRequest({ style: "terminal", plugins: about, tiles: true }))
+
+    expect(response.status).toBe(200)
+    expect(body.tiles.map((tile: any) => [tile.href, tile.title, tile.layout, tile.width, tile.height])).toEqual([
+      ["https://lucashdo.com/", "lucashdo.com", "inline", 153, 36],
+      ["https://www.linkedin.com/in/someone/", "LinkedIn", "inline", 122, 36],
+      ["mailto:someone@example.com", "Email", "inline", 98, 36],
+    ])
+    for (const tile of body.tiles) {
+      expect(tile.svg).toContain(`width="${tile.width}"`)
+      expect(tile.svg).toContain(`<a href="${tile.href}" target="_top"`)
+    }
+  })
+
+  // A class with no rule in the tile's CSS does nothing, and `border` alone draws nothing
+  // (no preflight, so no border-style). The default tile had both: no border and no
+  // background, so its text sat on GitHub's own page color.
+  it.each(["default", "terminal"])("draws the %s tile's border and surface with rules that exist", async (style) => {
+    const { body } = await post(validRequest({ style, plugins: websites, tiles: true }))
+    const svg: string = body.tiles[0].svg
+    const card = /<a href="[^"]*" target="_top"[^>]*class="([^"]*)"/.exec(svg)![1]!.split(" ")
+    const hasRule = (name: string) => {
+      // As the stylesheet writes it: bg-default-muted/10 is .bg-default-muted\/10
+      const selector = `#svg-main .${name.replace(/[/[\].:%#]/g, (c) => `\\${c}`)}`
+      return svg.includes(`${selector} {`) || svg.includes(`${selector}{`)
+    }
+
+    expect(card).toContain("border-solid")
+    expect(card.filter((name) => !hasRule(name))).toEqual([])
   })
 
   it("answers no tiles unless they are asked for", async () => {

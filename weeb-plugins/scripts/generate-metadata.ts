@@ -81,7 +81,7 @@ interface PluginMetadataPartial {
     configOptions?: Array<{
       key: string
       label: string
-      type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+      type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
       defaultValue?: any
       min?: number
       max?: number
@@ -94,7 +94,7 @@ interface PluginMetadataPartial {
       itemFields?: Array<{
         key: string
         label: string
-        type: "string" | "boolean" | "number" | "select"
+        type: "string" | "boolean" | "number" | "select" | "image"
         placeholder?: string
         description?: string
         required?: boolean
@@ -183,9 +183,12 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
           if (!opt.label) {
             errors.push(`sections[${index}].configOptions[${optIndex}]: missing label`)
           }
-          if (!opt.type || !["number", "boolean", "string", "select", "array", "object-array"].includes(opt.type)) {
+          if (
+            !opt.type ||
+            !["number", "boolean", "string", "select", "array", "object-array", "image"].includes(opt.type)
+          ) {
             errors.push(
-              `sections[${index}].configOptions[${optIndex}]: invalid type. Must be 'number', 'boolean', 'string', 'select', 'array', or 'object-array'`
+              `sections[${index}].configOptions[${optIndex}]: invalid type. Must be 'number', 'boolean', 'string', 'select', 'array', 'object-array' or 'image'`
             )
           }
 
@@ -213,8 +216,10 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
                 if (!field.label) {
                   errors.push(`${fieldPrefix}: missing label`)
                 }
-                if (!field.type || !["string", "boolean", "number", "select"].includes(field.type)) {
-                  errors.push(`${fieldPrefix}: invalid type. Must be 'string', 'boolean', 'number', or 'select'`)
+                if (!field.type || !["string", "boolean", "number", "select", "image"].includes(field.type)) {
+                  errors.push(
+                    `${fieldPrefix}: invalid type. Must be 'string', 'boolean', 'number', 'select' or 'image'`
+                  )
                 }
                 if (field.type === "select" && (!field.options || !Array.isArray(field.options))) {
                   errors.push(`${fieldPrefix}: select type requires options array`)
@@ -474,6 +479,29 @@ function extractStringFields(metadata: PluginMetadataPartial, pluginId: string):
           }
         })
       }
+      // The fields of each item in a list. Their labels were never extracted, so the
+      // list editor showed "Label", "Value", "Address" in every language.
+      if (option.type === "object-array" && option.itemFields) {
+        const items: Record<string, any> = {}
+        option.itemFields.forEach((field) => {
+          const base = ["sections", section.id, "config", option.key, "items", field.key]
+          const entry = (name: string, value: string, ...rest: string[]): ExtractedString => ({
+            value,
+            key: generateI18nKey(pluginId, [...base, name, ...rest]),
+            path: [...base, name, ...rest],
+          })
+          const fieldStrings: Record<string, any> = { label: entry("label", field.label) }
+          if (field.placeholder) fieldStrings.placeholder = entry("placeholder", field.placeholder)
+          if (field.description) fieldStrings.description = entry("description", field.description)
+          if (field.type === "select" && field.options) {
+            fieldStrings.options = Object.fromEntries(
+              field.options.map((opt) => [opt.value, entry("options", opt.label, opt.value)])
+            )
+          }
+          items[field.key] = fieldStrings
+        })
+        ;(extracted.sections[section.id].config[option.key] as any).items = items
+      }
     })
   })
 
@@ -520,6 +548,18 @@ function generateI18nJson(extracted: ExtractedStrings, pluginId: string): any {
               json.sections[sectionId].config[optionKey].options = {}
               Object.entries(extracted as any).forEach(([value, opt]) => {
                 json.sections[sectionId].config[optionKey].options[value] = (opt as ExtractedString).value
+              })
+            } else if (field === "items") {
+              json.sections[sectionId].config[optionKey].items = {}
+              Object.entries(extracted as any).forEach(([fieldKey, strings]) => {
+                const item: any = {}
+                Object.entries(strings as Record<string, any>).forEach(([name, value]) => {
+                  item[name] =
+                    name === "options"
+                      ? Object.fromEntries(Object.entries(value).map(([v, s]) => [v, (s as ExtractedString).value]))
+                      : (value as ExtractedString).value
+                })
+                json.sections[sectionId].config[optionKey].items[fieldKey] = item
               })
             } else {
               json.sections[sectionId].config[optionKey][field] = (extracted as ExtractedString).value
@@ -648,7 +688,7 @@ interface EnrichedMetadata extends PluginMetadataPartial {
     configOptions?: Array<{
       key: string
       label: string
-      type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+      type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
       defaultValue?: any
       min?: number
       max?: number
@@ -661,11 +701,17 @@ interface EnrichedMetadata extends PluginMetadataPartial {
       itemFields?: Array<{
         key: string
         label: string
-        type: "string" | "boolean" | "number" | "select"
+        type: "string" | "boolean" | "number" | "select" | "image"
         placeholder?: string
         description?: string
         required?: boolean
         options?: Array<{ value: string; label: string }>
+        i18nKey?: {
+          label?: string
+          placeholder?: string
+          description?: string
+          options?: Record<string, string>
+        }
       }>
       maxItems?: number
       i18nKey?: {
@@ -748,8 +794,25 @@ function enrichMetadataWithI18n(
             })
           }
 
+          const itemsExtracted = (optionExtracted as any).items as Record<string, Record<string, any>> | undefined
+          const itemFields = option.itemFields?.map((field) => {
+            const strings = itemsExtracted?.[field.key]
+            if (!strings) return field
+            const i18nKey: Record<string, any> = {}
+            for (const name of ["label", "placeholder", "description"]) {
+              if (strings[name]) i18nKey[name] = strings[name].key
+            }
+            if (strings.options) {
+              i18nKey.options = Object.fromEntries(
+                Object.entries(strings.options).map(([v, s]) => [v, (s as ExtractedString).key])
+              )
+            }
+            return { ...field, i18nKey }
+          })
+
           return {
             ...option,
+            ...(itemFields && { itemFields }),
             ...(Object.keys(optionI18nKey).length > 0 && { i18nKey: optionI18nKey }),
           }
         }),
@@ -819,11 +882,12 @@ export interface EssentialConfigKeyMetadata {
 export interface ObjectArrayItemField {
   key: string
   label: string
-  type: "string" | "boolean" | "number" | "select"
+  type: "string" | "boolean" | "number" | "select" | "image"
   placeholder?: string
   description?: string
   required?: boolean
   options?: { value: string; label: string }[]
+  i18nKey?: Pick<I18nKeyMap, "label" | "placeholder" | "description" | "options">
 }
 
 /**
@@ -832,7 +896,7 @@ export interface ObjectArrayItemField {
 export interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
   defaultValue?: any
   min?: number
   max?: number
@@ -987,6 +1051,10 @@ export const PLUGINS_METADATA = {
                           )
                           .join(",\n")
                         fieldStr += `,\n              options: [\n${fieldOptionsStr}\n              ]`
+                      }
+                      if (field.i18nKey) {
+                        const i18nKeyStr = JSON.stringify(field.i18nKey, null, 2).replace(/\n/g, "\n              ")
+                        fieldStr += `,\n              i18nKey: ${i18nKeyStr}`
                       }
                       fieldStr += "\n            }"
                       return fieldStr

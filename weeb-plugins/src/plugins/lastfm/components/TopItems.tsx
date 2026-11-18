@@ -10,6 +10,7 @@ import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
 import { TerminalList } from "../../../templates/Terminal/TerminalList"
 import TerminalTree from "../../../templates/Terminal/TerminalTree"
 import type { GridItemProps, ListItemProps, TerminalLineProps } from "../../../templates/types"
+import { CascadeGroup } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 
 interface TopItem {
@@ -107,7 +108,9 @@ export function TopItems({
                   size,
                 })}
               />
-              <TerminalList data={terminalListItems} />
+              <CascadeGroup count={terminalListItems.length}>
+                <TerminalList data={terminalListItems} />
+              </CascadeGroup>
             </>
           }
         />
@@ -176,7 +179,10 @@ export function TopItems({
                 size,
               })}
             />
-            <TerminalTree data={gridItems} title={title} />
+            {/* The tree's title and its items sit straight in the section, one block under the other. */}
+            <CascadeGroup count={gridItems.length + 1}>
+              <TerminalTree data={gridItems} title={title} />
+            </CascadeGroup>
           </>
         }
       />

@@ -4,6 +4,8 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { SteamData, SteamNonEssentialConfig } from "../types"
 import { ExternalLink } from "../../../utils/external-link"
@@ -35,6 +37,8 @@ function getSteamCoverImageUrl(game: { appid: number; header_image?: string }): 
 }
 
 export function Statistics({ data, config, style = "default", size = "half" }: StatisticsProps): React.ReactElement {
+  // The two playtime cards.
+  const cardsCascade = useItemCascade(2)
   if (!data || !data.statistics) {
     return <></>
   }
@@ -76,19 +80,26 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
                   <h2 className="text-lg half:text-base font-semibold text-default-fg">
                     {data.playerSummary.personaname}
                   </h2>
-                  <p className="text-sm half:text-xs text-default-muted mt-0.5">{stats.totalGames} games in library</p>
+                  <p className="text-sm half:text-xs text-default-muted mt-0.5">
+                    <AnimatedNumber value={stats.totalGames} /> games in library
+                  </p>
                 </div>
               </ExternalLink>
             )}
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-2 gap-3 half:gap-2.5">
+            <div
+              className={withCascade("grid grid-cols-2 gap-3 half:gap-2.5", cardsCascade)}
+              style={cardsCascade?.style}
+            >
               <div className="px-4 py-3 half:px-3 half:py-2.5 rounded-xl border border-default-border/50 bg-default-card/40 flex flex-col gap-2">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-default-muted">Total playtime</p>
                 <p className="text-xl half:text-lg font-black text-default-highlight tabular-nums">
                   {formatPlaytime(stats.totalPlaytime)}
                 </p>
-                <p className="text-xs half:text-[10px] text-default-muted">Games in library: {stats.totalGames}</p>
+                <p className="text-xs half:text-[10px] text-default-muted">
+                  Games in library: <AnimatedNumber value={stats.totalGames} />
+                </p>
               </div>
 
               <div className="px-4 py-3 half:px-3 half:py-2.5 rounded-xl border border-default-border/50 bg-default-card/40 flex flex-col gap-2">
@@ -96,7 +107,9 @@ export function Statistics({ data, config, style = "default", size = "half" }: S
                 <p className="text-xl half:text-lg font-black text-default-highlight tabular-nums">
                   {formatPlaytime(stats.recentPlaytime)}
                 </p>
-                <p className="text-xs half:text-[10px] text-default-muted">Active games: {activeGames.length}</p>
+                <p className="text-xs half:text-[10px] text-default-muted">
+                  Active games: <AnimatedNumber value={activeGames.length} />
+                </p>
               </div>
             </div>
 

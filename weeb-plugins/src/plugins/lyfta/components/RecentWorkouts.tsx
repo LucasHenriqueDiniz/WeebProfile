@@ -4,6 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
 import { formatWeightInt } from "../utils/weight"
@@ -58,13 +59,15 @@ export function RecentWorkouts({
   style = "default",
   size = "half",
 }: RecentWorkoutsProps): React.ReactElement {
+  const maxWorkouts = config.workouts_max || 4
+  const workouts = (data?.workoutSummaries ?? []).slice(0, maxWorkouts)
+  const cascade = useItemCascade(workouts.length)
+
   if (!data?.workoutSummaries?.length) return <></>
 
   const hideTitle = config.recent_workouts_hide_title || false
   const title = config.recent_workouts_title || "Recent Fitness Workouts"
-  const maxWorkouts = config.workouts_max || 4
   const weightUnit = config.weight_unit || "kg"
-  const workouts = data.workoutSummaries.slice(0, maxWorkouts)
   // how many muscle chips to show depends on available width
   const maxChips = size === "full" ? 6 : 4
 
@@ -76,7 +79,7 @@ export function RecentWorkouts({
           <div className="w-full overflow-hidden">
             {!hideTitle && <DefaultTitle title={title} icon={<FaClock />} />}
 
-            <div className="flex flex-col gap-3">
+            <div className={withCascade("flex flex-col gap-3", cascade)} style={cascade?.style}>
               {workouts.map((workout, index) => {
                 const { name: workoutName, muscles } = parseTitle(workout.title)
                 const dateStr = formatDate(workout.workout_perform_date)
@@ -162,18 +165,20 @@ export function RecentWorkouts({
                 size,
               })}
             />
-            {workouts.map((workout) => {
-              const workoutDate = new Date(workout.workout_perform_date).toLocaleDateString()
-              const volume = formatWeightInt(workout.total_volume, weightUnit)
-              return (
-                <TerminalLineWithDots
-                  key={workout.id}
-                  title={workout.title}
-                  titleClassName="max-w-[60%]"
-                  value={`${volume} - ${workoutDate}`}
-                />
-              )
-            })}
+            <CascadeGroup count={workouts.length}>
+              {workouts.map((workout) => {
+                const workoutDate = new Date(workout.workout_perform_date).toLocaleDateString()
+                const volume = formatWeightInt(workout.total_volume, weightUnit)
+                return (
+                  <TerminalLineWithDots
+                    key={workout.id}
+                    title={workout.title}
+                    titleClassName="max-w-[60%]"
+                    value={`${volume} - ${workoutDate}`}
+                  />
+                )
+              })}
+            </CascadeGroup>
           </>
         }
       />

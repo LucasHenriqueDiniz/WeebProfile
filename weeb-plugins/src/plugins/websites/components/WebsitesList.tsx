@@ -1,4 +1,5 @@
 import React from "react"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { ExternalLink } from "../../../utils/external-link"
 import { ImageComponent } from "../../../utils/image"
 import type { WebsiteEntry } from "../types"
@@ -15,9 +16,10 @@ interface WebsitesListProps {
  */
 export function WebsitesList({ websites, size, showDescription }: WebsitesListProps): React.ReactElement {
   const iconSize = size === "half" ? 20 : 24
+  const cascade = useItemCascade(websites.length)
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className={withCascade("flex flex-col gap-1.5", cascade)} style={cascade?.style}>
       {websites.map((site) => (
         <ExternalLink
           key={site.url}

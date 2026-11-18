@@ -4,6 +4,7 @@ import { RiGitMergeLine, RiGitPullRequestLine } from "react-icons/ri"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { itemCascade, useAnimations, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { formatRelativeTime, formatRelativeTimeShort } from "../../shared/utils/formatting"
 import type { GithubConfig, GithubData } from "../types"
@@ -61,15 +62,18 @@ function formatDayLabel(dateString: string): string {
 }
 
 const DefaultRecentActivity = ({ data, max }: { data: GithubData["recentActivity"]; max: number }) => {
-  if (!data || data.length === 0) {
-    return <div className="text-default-muted text-sm">No recent activity</div>
-  }
-
-  const activities = data.slice(0, max)
+  const activities = data ? data.slice(0, max) : []
   const grouped = groupActivitiesByDay(activities)
   const sortedDays = Array.from(grouped.keys()).sort((a, b) => {
     return new Date(b).getTime() - new Date(a).getTime()
   })
+  // Days cascade, and so do the events of each day: one busy day still cascades.
+  const animations = useAnimations()
+  const dayCascade = animations ? itemCascade(sortedDays.length) : null
+
+  if (!data || data.length === 0) {
+    return <div className="text-default-muted text-sm">No recent activity</div>
+  }
 
   const getIcon = (type: string) => {
     const iconClass = "text-default-muted"
@@ -135,13 +139,14 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData["recentActivity
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={withCascade("flex flex-col gap-4", dayCascade)} style={dayCascade?.style}>
       {sortedDays.map((dayKey) => {
         const dayActivities = grouped.get(dayKey)
         if (!dayActivities || dayActivities.length === 0) return null
         const firstActivity = dayActivities[0]
         if (!firstActivity) return null
         const dayLabel = formatDayLabel(firstActivity.date)
+        const eventCascade = animations ? itemCascade(dayActivities.length) : null
 
         return (
           <div key={dayKey} className="flex flex-col gap-3">
@@ -149,7 +154,7 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData["recentActivity
             <div className="text-xs font-semibold text-default-muted uppercase tracking-wide">{dayLabel}</div>
 
             {/* Lista de atividades simples */}
-            <div className="flex flex-col gap-3">
+            <div className={withCascade("flex flex-col gap-3", eventCascade)} style={eventCascade?.style}>
               {dayActivities.map((activity, index) => {
                 return (
                   <ExternalLink
@@ -207,6 +212,7 @@ const DefaultRecentActivity = ({ data, max }: { data: GithubData["recentActivity
 
 // Terminal mode: git log style
 const TerminalRecentActivity = ({ data, max }: { data: GithubData["recentActivity"]; max: number }) => {
+  const cascade = useItemCascade(Math.min(data?.length ?? 0, max))
   if (!data || data.length === 0) {
     return <div className="text-terminal-muted text-sm">No recent activity</div>
   }
@@ -233,7 +239,7 @@ const TerminalRecentActivity = ({ data, max }: { data: GithubData["recentActivit
   }
 
   return (
-    <div className="flex flex-col gap-1 font-mono text-sm">
+    <div className={withCascade("flex flex-col gap-1 font-mono text-sm", cascade)} style={cascade?.style}>
       {activities.map((activity, index) => {
         const relativeTime = formatRelativeTimeShort(activity.date)
         const typeSymbol = getTypeSymbol(activity.type)

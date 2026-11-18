@@ -7,17 +7,19 @@ import { NumberInput } from "@/components/ui/number-input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react"
+import { MAX_ITEM_IMAGE_BYTES } from "@weeb/weeb-plugins"
 import { useTranslations } from "@/i18n/use-translations"
+import { ImageInput } from "./ImageInput"
+import type { ObjectArrayItemField } from "@weeb/weeb-plugins/plugins/metadata"
 
-export interface ObjectArrayItemField {
-  key: string
-  label: string
-  type: "string" | "boolean" | "number" | "select"
-  placeholder?: string
-  description?: string
-  required?: boolean
-  options?: { value: string; label: string }[]
-}
+export type { ObjectArrayItemField }
+
+/**
+ * An image inside a list item is a website's thumbnail, drawn at 260x138 in its tile:
+ * 640px keeps it sharp at 2x. Each one is kept in the card, and up to 12 share one D1
+ * row, hence the smaller limit (MAX_ITEM_IMAGE_BYTES in weeb-plugins).
+ */
+const ITEM_IMAGE_MAX_SIDE = 640
 
 export type ObjectArrayItem = Record<string, string | number | boolean>
 
@@ -47,10 +49,11 @@ export function ObjectArrayInput({
   itemFields,
   onChange,
   maxItems,
-  addLabel = "Adicionar item",
-  emptyHint = "Nenhum item adicionado ainda.",
+  addLabel,
+  emptyHint,
 }: ObjectArrayInputProps) {
   const tPlugins = useTranslations("wizard.plugins")
+  const t = useTranslations("wizard.objectArray")
   const items = Array.isArray(value) ? value : []
   const atLimit = maxItems !== undefined && items.length >= maxItems
 
@@ -72,7 +75,7 @@ export function ObjectArrayInput({
 
   return (
     <div className="space-y-3">
-      {items.length === 0 && <p className="text-xs text-muted-foreground">{emptyHint}</p>}
+      {items.length === 0 && <p className="text-xs text-muted-foreground">{emptyHint ?? t("empty")}</p>}
 
       {items.map((item, index) => {
         const missingRequired = itemFields.filter(
@@ -96,7 +99,7 @@ export function ObjectArrayInput({
                   className="h-7 w-7"
                   onClick={() => moveItem(index, -1)}
                   disabled={index === 0}
-                  aria-label="Mover para cima"
+                  aria-label={t("moveUp")}
                 >
                   <ArrowUp className="h-3.5 w-3.5" />
                 </Button>
@@ -107,7 +110,7 @@ export function ObjectArrayInput({
                   className="h-7 w-7"
                   onClick={() => moveItem(index, 1)}
                   disabled={index === items.length - 1}
-                  aria-label="Mover para baixo"
+                  aria-label={t("moveDown")}
                 >
                   <ArrowDown className="h-3.5 w-3.5" />
                 </Button>
@@ -117,7 +120,7 @@ export function ObjectArrayInput({
                   size="icon"
                   className="h-7 w-7 text-destructive hover:text-destructive"
                   onClick={() => removeItem(index)}
-                  aria-label="Remover item"
+                  aria-label={t("remove")}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
@@ -161,6 +164,16 @@ export function ObjectArrayInput({
                     />
                   )}
 
+                  {field.type === "image" && (
+                    <ImageInput
+                      id={fieldId}
+                      value={typeof fieldValue === "string" ? fieldValue : ""}
+                      onChange={(newValue) => updateItem(index, { [field.key]: newValue })}
+                      maxSide={ITEM_IMAGE_MAX_SIDE}
+                      maxBytes={MAX_ITEM_IMAGE_BYTES}
+                    />
+                  )}
+
                   {field.type === "select" && field.options && (
                     <Select
                       value={typeof fieldValue === "string" ? fieldValue : ""}
@@ -186,7 +199,7 @@ export function ObjectArrayInput({
 
             {missingRequired.length > 0 && (
               <p className="text-xs text-destructive">
-                Preencha: {missingRequired.map((field) => field.label).join(", ")}
+                {t("missing", { fields: missingRequired.map((field) => field.label).join(", ") })}
               </p>
             )}
           </div>
@@ -202,13 +215,11 @@ export function ObjectArrayInput({
         disabled={atLimit}
       >
         <Plus className="mr-1.5 h-4 w-4" />
-        {addLabel}
+        {addLabel ?? t("add")}
       </Button>
 
       {maxItems !== undefined && (
-        <p className="text-xs text-muted-foreground">
-          {items.length} de {maxItems}
-        </p>
+        <p className="text-xs text-muted-foreground">{t("count", { count: items.length, max: maxItems })}</p>
       )}
     </div>
   )

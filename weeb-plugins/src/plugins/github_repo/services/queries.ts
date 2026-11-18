@@ -5,6 +5,7 @@ query repositoryCard($owner: String!, $repo: String!) {
     nameWithOwner
     description
     url
+    createdAt
     owner {
       login
       avatarUrl

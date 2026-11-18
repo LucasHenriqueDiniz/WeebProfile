@@ -34,6 +34,7 @@ import { DEFAULT_FAVORITES_MAX } from "../constants"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { ImageComponent } from "../../../utils/image"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { treatJapaneseName } from "../../../utils/string"
@@ -191,8 +192,9 @@ function RenderSimpleFavorites({
   hideOverlay: boolean
   size: "half" | "full"
 }): React.ReactElement {
+  const cascade = useItemCascade(data.length)
   return (
-    <div className="grid grid-cols-10 half:grid-cols-5 gap-2">
+    <div className={withCascade("grid grid-cols-10 half:grid-cols-5 gap-2", cascade)} style={cascade?.style}>
       {data.map((item, index) => (
         <SimpleFavoriteImage
           favorite={item}
@@ -514,10 +516,7 @@ export function FavoritesList({
   size,
   listStyle = "detailed",
 }: FavoritesListProps): React.ReactElement {
-  // Tratamento seguro de dados vazios
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    return <></>
-  }
+  const items = Array.isArray(data) ? data : []
 
   // Limit based on configuration (default DEFAULT_FAVORITES_MAX)
   // Use specific max for section or fallback to favorites_max global or the plugin default
@@ -533,7 +532,12 @@ export function FavoritesList({
   } else {
     MAX_ITEMS = config.favorites_max ?? DEFAULT_FAVORITES_MAX
   }
-  const displayData = data.slice(0, MAX_ITEMS)
+  const displayData = items.slice(0, MAX_ITEMS)
+  const cascade = useItemCascade(displayData.length)
+  // Tratamento seguro de dados vazios
+  if (displayData.length === 0) {
+    return <></>
+  }
 
   // Get configurations based on type
   const getConfig = () => {
@@ -584,7 +588,7 @@ export function FavoritesList({
         return (
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-            <div className="flex flex-col gap-1">
+            <div className={withCascade("flex flex-col gap-1", cascade)} style={cascade?.style}>
               {displayData.map((item, index) => (
                 <DefaultCompactFavorite
                   favorite={item}
@@ -603,7 +607,7 @@ export function FavoritesList({
           return (
             <>
               {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-              <div className="flex flex-col gap-2">
+              <div className={withCascade("flex flex-col gap-2", cascade)} style={cascade?.style}>
                 {displayData.map((item, index) => (
                   <DefaultCompactFavorite
                     favorite={item}
@@ -619,7 +623,7 @@ export function FavoritesList({
         return (
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-            <div className="flex flex-col gap-1">
+            <div className={withCascade("flex flex-col gap-1", cascade)} style={cascade?.style}>
               {displayData.map((item, index) => (
                 <DefaultDetailedFavorite
                   favorite={item as FullAnimeFavorite | FullMangaFavorite}
@@ -639,7 +643,7 @@ export function FavoritesList({
           return (
             <>
               {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-              <div className="flex flex-col gap-2">
+              <div className={withCascade("flex flex-col gap-2", cascade)} style={cascade?.style}>
                 {displayData.map((item, index) => (
                   <DefaultCompactFavorite
                     favorite={item}
@@ -655,7 +659,7 @@ export function FavoritesList({
         return (
           <>
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-            <div className="flex flex-col gap-2">
+            <div className={withCascade("flex flex-col gap-2", cascade)} style={cascade?.style}>
               {displayData.map((item, index) => (
                 <DefaultMinimalFavorite
                   favorite={item as FullAnimeFavorite | FullMangaFavorite}
@@ -686,20 +690,22 @@ export function FavoritesList({
                 })}
               />
             )}
-            {displayData.map((item, index) => (
-              <ExternalLink
-                className="block truncate"
-                href={malFavoriteUrl(type, item.mal_id)}
-                key={`${type}-simple-${item.mal_id}-${index}`}
-              >
-                <p className="sm-text font-semibold text-terminal-warning">
-                  * {"name" in item ? treatJapaneseName(item.name) : item.title}
-                </p>
-                {"type" in item && simpleMetaLine(item) !== "" && (
-                  <p className="sm-text font-semibold text-overflow text-terminal-muted">({simpleMetaLine(item)})</p>
-                )}
-              </ExternalLink>
-            ))}
+            <CascadeGroup count={displayData.length}>
+              {displayData.map((item, index) => (
+                <ExternalLink
+                  className="block truncate"
+                  href={malFavoriteUrl(type, item.mal_id)}
+                  key={`${type}-simple-${item.mal_id}-${index}`}
+                >
+                  <p className="sm-text font-semibold text-terminal-warning">
+                    * {"name" in item ? treatJapaneseName(item.name) : item.title}
+                  </p>
+                  {"type" in item && simpleMetaLine(item) !== "" && (
+                    <p className="sm-text font-semibold text-overflow text-terminal-muted">({simpleMetaLine(item)})</p>
+                  )}
+                </ExternalLink>
+              ))}
+            </CascadeGroup>
           </>
         )
 
@@ -713,7 +719,7 @@ export function FavoritesList({
                 limit: MAX_ITEMS,
               })}
             />
-            <div className="flex flex-col gap-1">
+            <div className={withCascade("flex flex-col gap-1", cascade)} style={cascade?.style}>
               {displayData.map((item, index) => (
                 <TerminalCompactFavorite
                   favorite={item}
@@ -738,7 +744,7 @@ export function FavoritesList({
                   limit: MAX_ITEMS,
                 })}
               />
-              <div className="flex flex-col gap-1">
+              <div className={withCascade("flex flex-col gap-1", cascade)} style={cascade?.style}>
                 {displayData.map((item, index) => (
                   <TerminalCompactFavorite
                     favorite={item}
@@ -760,15 +766,17 @@ export function FavoritesList({
                 limit: MAX_ITEMS,
               })}
             />
-            {displayData.map((item, index) => (
-              <TerminalDetailedFavorite
-                favorite={item as FullAnimeFavorite | FullMangaFavorite}
-                href={malFavoriteUrl(type, item.mal_id)}
-                isHalf={isHalf}
-                type={type}
-                key={`${type}-terminal-detailed-${item.mal_id}-${index}`}
-              />
-            ))}
+            <CascadeGroup count={displayData.length}>
+              {displayData.map((item, index) => (
+                <TerminalDetailedFavorite
+                  favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                  href={malFavoriteUrl(type, item.mal_id)}
+                  isHalf={isHalf}
+                  type={type}
+                  key={`${type}-terminal-detailed-${item.mal_id}-${index}`}
+                />
+              ))}
+            </CascadeGroup>
           </>
         )
 
@@ -784,7 +792,7 @@ export function FavoritesList({
                   limit: MAX_ITEMS,
                 })}
               />
-              <div className="flex flex-col gap-1">
+              <div className={withCascade("flex flex-col gap-1", cascade)} style={cascade?.style}>
                 {displayData.map((item, index) => (
                   <TerminalCompactFavorite
                     favorite={item}
@@ -806,15 +814,17 @@ export function FavoritesList({
                 limit: MAX_ITEMS,
               })}
             />
-            {displayData.map((item, index) => (
-              <TerminalMinimalFavorite
-                favorite={item as FullAnimeFavorite | FullMangaFavorite}
-                href={malFavoriteUrl(type, item.mal_id)}
-                isHalf={isHalf}
-                type={type}
-                key={`${type}-terminal-minimal-${item.mal_id}-${index}`}
-              />
-            ))}
+            <CascadeGroup count={displayData.length}>
+              {displayData.map((item, index) => (
+                <TerminalMinimalFavorite
+                  favorite={item as FullAnimeFavorite | FullMangaFavorite}
+                  href={malFavoriteUrl(type, item.mal_id)}
+                  isHalf={isHalf}
+                  type={type}
+                  key={`${type}-terminal-minimal-${item.mal_id}-${index}`}
+                />
+              ))}
+            </CascadeGroup>
           </>
         )
     }

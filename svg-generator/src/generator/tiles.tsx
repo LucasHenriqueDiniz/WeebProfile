@@ -13,11 +13,12 @@ import type { SvgConfig, SvgTile } from "../types/index.js"
 import { createSvgContainer } from "../renderer/template-renderer.js"
 
 /**
- * The terminal style paints its background on the whole container. A tile leaves a
- * transparent margin around itself, which is the gap between tiles in the README, so
- * the container goes transparent and the tile paints its own background inside it.
+ * The terminal style paints its background on the whole container and rounds its
+ * corners. A tile paints its own background inside the SVG (a website tile leaves a
+ * transparent margin, which is the gap between tiles in the README; a link badge has
+ * corners of its own), so the container is transparent and square.
  */
-const TILE_CSS = "#svg-main .terminal-container{background-color:transparent !important}"
+const TILE_CSS = "#svg-main .terminal-container{background-color:transparent !important;border-radius:0 !important}"
 
 export function renderTiles(
   config: SvgConfig,
@@ -62,7 +63,14 @@ export function renderTiles(
           customThemeColors: config.customThemeColors,
         })
       )
-      tiles.push({ href: tile.href, title: tile.title, svg, width: tile.width, height: tile.height })
+      tiles.push({
+        href: tile.href,
+        title: tile.title,
+        svg,
+        width: tile.width,
+        height: tile.height,
+        layout: tile.layout ?? "grid",
+      })
     }
   }
 
