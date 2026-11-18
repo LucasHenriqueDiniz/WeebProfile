@@ -6,6 +6,7 @@ import type { CloudflareEnv } from "./_shared/auth"
 import { PREVIEW_LIMITS, ipBucket } from "./_shared/preview-rate-limit"
 import { generatorBody } from "./preview"
 import { PREVIEW_PLUGINS } from "../../lib/preview/public-preview"
+import { isSuspended } from "../../lib/plugins/suspended"
 
 /**
  * GET /api/preview against a real local D1, so the rate limit's upsert runs as SQLite
@@ -108,6 +109,15 @@ describe("GET /api/preview, on a real D1", { timeout: 60_000 }, () => {
       expect(await hits()).toHaveLength(0)
     })
 
+    it("refuses a suspended platform with 503, before the generator and the rate limit", async () => {
+      const response = await preview("plugin=anilist&username=someone")
+
+      expect(response.status).toBe(503)
+      expect(((await response.json()) as { code: string }).code).toBe("PREVIEW_UNAVAILABLE")
+      expect(generator.calls).toHaveLength(0)
+      expect(await hits()).toHaveLength(0)
+    })
+
     it("sends the generator only the whitelisted fields, whatever else the query carries", async () => {
       const response = await preview(
         `${codewars}&userId=user_1&essentialConfigs=%7B%7D&debug=true&mock=true&customCss=x&sections=code_habits`
@@ -196,7 +206,10 @@ describe("GET /api/preview, on a real D1", { timeout: 60_000 }, () => {
       expect(generator.calls).toHaveLength(2)
     })
 
-    it("tells a private profile apart from a missing one", async () => {
+    // AniList is the only platform that answers "private", so this runs through it. While
+    // AniList is suspended the endpoint refuses it before the generator and there is no
+    // way to reach this path; the test comes back when the suspension is lifted.
+    it.skipIf(isSuspended("anilist"))("tells a private profile apart from a missing one", async () => {
       generator.reply = () =>
         Response.json({
           success: true,

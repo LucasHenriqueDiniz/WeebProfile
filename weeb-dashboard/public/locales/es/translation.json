@@ -1083,5 +1083,11 @@
     "24631805e9b581180f00b670638a0fe3": "Perfil de desarrollador con la actividad, el calendario y los repositorios destacados de GitHub.",
     "eac59bb5481ce60dc57bf2090ef24c3b": "Combina estadísticas de anime de MyAnimeList con las canciones más escuchadas en Last.fm.",
     "d7ed90cfffbbd466cec24ff05ba3abb9": "Estadísticas de Steam y desafíos completados en Codewars."
+  },
+  "pluginStatus": {
+    "suspended": "Suspendido",
+    "reasons": {
+      "anilist": "Suspendido por ahora: AniList está rechazando las llamadas de nuestro servidor. Las tarjetas de AniList no se generan hasta que se resuelva."
+    }
   }
 }

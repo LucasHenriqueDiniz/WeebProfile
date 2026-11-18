@@ -10,6 +10,7 @@ import REAL_CARDS from "@/lib/landing/hero-real-cards.json"
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
 import { getPluginIcon } from "@/lib/plugin-icons"
+import { isSuspended } from "@/lib/plugins/suspended"
 import {
   PREVIEW_PLACEHOLDERS,
   PREVIEW_PLUGINS,
@@ -95,6 +96,7 @@ const PROPS = [
 export function LandingHero() {
   const t = useTranslations("landing.hero")
   const tPreview = useTranslations("landing.preview")
+  const tStatus = useTranslations("pluginStatus")
   const { user } = useAuth()
   const [plugin, setPlugin] = useState<PreviewPluginId>("github")
   const [style, setStyle] = useState<PreviewStyle>("default")
@@ -223,19 +225,28 @@ export function LandingHero() {
                 {PLATFORMS.map((id) => {
                   const Icon = getPluginIcon(id)
                   const selected = id === plugin
+                  // A suspended platform stays in the row, struck out, with the reason as
+                  // its tooltip and accessible name: gone without a word would read as a bug.
+                  const suspended = isSuspended(id)
+                  const label = suspended ? `${pluginName(id)}: ${tStatus(`reasons.${id}`)}` : pluginName(id)
                   return (
                     <button
                       key={id}
                       type="button"
                       aria-pressed={selected}
-                      aria-label={pluginName(id)}
-                      title={pluginName(id)}
-                      onClick={() => choose({ plugin: id })}
+                      aria-disabled={suspended}
+                      aria-label={label}
+                      title={label}
+                      onClick={() => {
+                        if (!suspended) choose({ plugin: id })
+                      }}
                       className={cn(
-                        "flex h-9 w-9 items-center justify-center rounded-lg border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-1",
-                        selected
-                          ? "border-slate-900 bg-cyan-300 text-slate-900"
-                          : "border-slate-200 bg-white text-slate-500 hover:border-slate-900 hover:text-slate-900"
+                        "relative flex h-9 w-9 items-center justify-center rounded-lg border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-1",
+                        suspended
+                          ? "cursor-not-allowed border-dashed border-slate-300 bg-slate-100 text-slate-300 after:absolute after:h-0.5 after:w-7 after:-rotate-45 after:rounded-full after:bg-slate-400"
+                          : selected
+                            ? "border-slate-900 bg-cyan-300 text-slate-900"
+                            : "border-slate-200 bg-white text-slate-500 hover:border-slate-900 hover:text-slate-900"
                       )}
                     >
                       {Icon ? <Icon className="h-4 w-4" /> : pluginName(id).slice(0, 2)}

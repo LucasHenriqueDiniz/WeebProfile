@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type MouseEvent } from "react"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ArrowLeft, ArrowRight, BarChart3, SquareTerminal } from "lucide-react"
 import { Header } from "@/components/layout/Header"
+import { SuspendedBadge, SuspendedReason } from "@/components/plugins/SuspendedBadge"
 import { LandingFooter } from "@/components/landing/LandingFooter"
 import { SECTION_PREVIEWS } from "@/lib/config/section-previews"
 import { CATEGORY_STYLE } from "@/lib/landing/category-style"
@@ -239,8 +240,10 @@ export default function PluginsGalleryPage() {
                       <span className={cn("text-[11px] font-medium", CATEGORY_STYLE[plugin.category].label)}>
                         {tCat(plugin.category)}
                       </span>
+                      <SuspendedBadge pluginId={plugin.name} />
                     </div>
                     <p className="text-sm text-muted-foreground">{description}</p>
+                    <SuspendedReason pluginId={plugin.name} className="mt-1 text-[13px]" />
                   </div>
                   <span className="ml-auto whitespace-nowrap rounded-full border border-border px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
                     {sectionIds.length} {t("sections")}

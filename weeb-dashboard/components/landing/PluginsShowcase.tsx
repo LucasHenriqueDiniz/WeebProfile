@@ -2,6 +2,7 @@
 
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { ArrowUpRight } from "lucide-react"
+import { SuspendedBadge } from "@/components/plugins/SuspendedBadge"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { CATEGORY_STYLE } from "@/lib/landing/category-style"
 import { LANDING_PLUGINS } from "@/lib/landing/landing-plugins"
@@ -48,8 +49,11 @@ export function PluginsShowcase() {
                   >
                     {Icon ? <Icon className="h-5 w-5" /> : null}
                   </span>
-                  <div>
-                    <div className="font-heading text-[15px] font-bold text-foreground">{plugin.displayName}</div>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-heading text-[15px] font-bold text-foreground">
+                      {plugin.displayName}
+                      <SuspendedBadge pluginId={plugin.name} className="font-sans" />
+                    </div>
                     <div className={`text-[11px] font-medium ${cat.label}`}>{t(`categories.${plugin.category}`)}</div>
                   </div>
                 </div>

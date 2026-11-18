@@ -6,6 +6,7 @@ import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { useAuth } from "@/hooks/useAuth"
 import { useTranslations } from "@/i18n/use-translations"
 import { getPluginIcon } from "@/lib/plugin-icons"
+import { isSuspended } from "@/lib/plugins/suspended"
 import {
   PREVIEW_PLACEHOLDERS,
   PREVIEW_PLUGINS,
@@ -34,6 +35,7 @@ type State =
  */
 export function PreviewYourCard() {
   const t = useTranslations("landing.preview")
+  const tStatus = useTranslations("pluginStatus")
   const { user } = useAuth()
   const [plugin, setPlugin] = useState<PreviewPluginId>("github")
   const [username, setUsername] = useState("")
@@ -109,17 +111,24 @@ export function PreviewYourCard() {
                 {PLATFORMS.map((id) => {
                   const Icon = getPluginIcon(id)
                   const selected = id === plugin
+                  const suspended = isSuspended(id)
                   return (
                     <button
                       key={id}
                       type="button"
                       aria-pressed={selected}
-                      onClick={() => setPlugin(id)}
+                      aria-disabled={suspended}
+                      title={suspended ? tStatus(`reasons.${id}`) : undefined}
+                      onClick={() => {
+                        if (!suspended) setPlugin(id)
+                      }}
                       className={cn(
                         "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors",
-                        selected
-                          ? "border-primary bg-primary/10 text-foreground"
-                          : "border-border bg-card text-muted-foreground hover:text-foreground"
+                        suspended
+                          ? "cursor-not-allowed border-dashed border-border text-muted-foreground/50 line-through"
+                          : selected
+                            ? "border-primary bg-primary/10 text-foreground"
+                            : "border-border bg-card text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
