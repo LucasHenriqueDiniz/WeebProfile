@@ -745,7 +745,12 @@
         "purple": "Morado",
         "pink": "Rosa",
         "blue": "Azul",
-        "green": "Verde"
+        "green": "Verde",
+        "cyan": "Cian",
+        "orange": "Naranja",
+        "red": "Rojo",
+        "monokai": "Monokai",
+        "custom": "Personalizado"
       }
     },
     "sort": {

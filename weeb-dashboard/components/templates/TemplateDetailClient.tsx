@@ -46,6 +46,7 @@ function toLoaded(apiTemplate: any): LoadedTemplate {
   return {
     ...mapApiToTemplate(apiTemplate),
     size: apiTemplate.size || "full",
+    customCss: apiTemplate.customCss || undefined,
     ui: readStyleUiConfig(apiTemplate.uiConfig),
   }
 }
@@ -62,35 +63,41 @@ export function TemplateDetailClient({ templateId }: { templateId: string }) {
   const templateDescription = useTemplateDescription()
   const { pluginName, sectionName } = usePluginText()
   const { user, loading: authLoading } = useAuth()
-  const [template, setTemplate] = useState<LoadedTemplate | null>(null)
-  const [failed, setFailed] = useState(false)
+  const [loaded, setTemplate] = useState<LoadedTemplate | null>(null)
+  // Moving from one template to another, the previous one is not this page's.
+  const template = loaded?.id === templateId ? loaded : null
+  // Which fetch last settled, so "not found" waits for the one that matters.
+  const [settled, setSettled] = useState<string | null>(null)
   const [shareCopied, setShareCopied] = useState(false)
 
   const userId = user?.id
+  const request = `${templateId}:${userId ?? "anonymous"}`
   useEffect(() => {
     let cancelled = false
-    const request = userId
+    const fetchTemplate = userId
       ? templateApi.get(templateId)
       : fetch(`/api/templates/${templateId}`).then((res) => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`)
           return res.json() as Promise<{ template: unknown }>
         })
-    request
+    fetchTemplate
       .then((data) => {
-        if (cancelled) return
-        setTemplate(toLoaded(data.template))
-        setFailed(false)
+        if (!cancelled) setTemplate(toLoaded(data.template))
       })
-      .catch(() => {
-        if (!cancelled) setFailed(true)
+      // A failure keeps a template already on screen; with none, it is "not found".
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setSettled(request)
       })
     return () => {
       cancelled = true
     }
-  }, [templateId, userId])
+  }, [templateId, userId, request])
 
-  // A private template answers 401 until the session is known: not "not found" yet.
-  const loading = (!template && !failed) || (failed && !template && authLoading)
+  // "Not found" only once Clerk has answered and the fetch for that answer has
+  // settled. The owner of a private template reloading the page got a 401 from the
+  // anonymous fetch and saw "not found" until the signed-in one came back.
+  const loading = !template && (authLoading || settled !== request)
 
   const handleLike = async () => {
     if (!template) return
@@ -240,7 +247,7 @@ export function TemplateDetailClient({ templateId }: { templateId: string }) {
           {/* No screentone here: the default style is transparent and the dots showed
               through the card. */}
           <div className={cn(STICKER, "overflow-hidden bg-background p-3 sm:p-6")}>
-            <TemplatePreview template={template} ui={template.ui} />
+            <TemplatePreview template={template} ui={template.ui} customCss={template.customCss} />
           </div>
           <figcaption className="mt-3 text-[13px] text-muted-foreground">{t("detail.sampleData")}</figcaption>
         </figure>

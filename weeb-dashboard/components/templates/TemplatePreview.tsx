@@ -11,6 +11,8 @@ interface TemplatePreviewProps {
   template: Pick<Template, "pluginsConfig" | "pluginsOrder" | "platforms" | "style" | "size" | "theme">
   /** The template's ui_config, read with readStyleUiConfig. A thumbnail leaves it out. */
   ui?: StyleUiConfig
+  /** The template's own CSS (a column, not part of ui_config). */
+  customCss?: string
   /** Passed to the FitWidth box, which is what a thumbnail scrolls on hover. */
   className?: string
 }
@@ -21,7 +23,12 @@ interface TemplatePreviewProps {
  * all three), and the static image the cards fell back to was one per style: "Gamer
  * Stats" (Steam and Codewars) showed a GitHub calendar.
  */
-export const TemplatePreview = memo(function TemplatePreview({ template, ui, className }: TemplatePreviewProps) {
+export const TemplatePreview = memo(function TemplatePreview({
+  template,
+  ui,
+  customCss,
+  className,
+}: TemplatePreviewProps) {
   const { plugins, pluginsOrder } = useMemo(() => templatePreviewConfig(template), [template])
   const theme = effectiveTheme(template.style, template.theme)
 
@@ -38,6 +45,8 @@ export const TemplatePreview = memo(function TemplatePreview({ template, ui, cla
         fontFamily={ui?.fontFamily}
         customThemeColors={theme === "custom" ? ui?.customThemeColors : undefined}
         colorMode={ui?.colorMode}
+        terminalHeaderText={ui?.terminalHeaderText || undefined}
+        customCss={customCss || undefined}
         previewMode
         disableFadeIn={!ui}
       />

@@ -27,7 +27,9 @@ export function LandingTemplateCard({ template, href }: { template: Template; hr
   const templateDescription = useTemplateDescription()
   const [imageFailed, setImageFailed] = useState(false)
   const showImage = Boolean(template.preview) && !imageFailed
-  const plugins = templatePlugins(template).slice(0, 4)
+  const allPlugins = templatePlugins(template)
+  const plugins = allPlugins.slice(0, 4)
+  const hiddenPlugins = allPlugins.length - plugins.length
 
   return (
     <Link
@@ -66,6 +68,7 @@ export function LandingTemplateCard({ template, href }: { template: Template; hr
               </span>
             )
           })}
+          {hiddenPlugins > 0 && <span className={CHIP}>+{hiddenPlugins}</span>}
           <span className={cn(CHIP, "font-mono")}>{template.style}</span>
         </div>
       </div>

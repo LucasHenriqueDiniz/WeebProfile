@@ -10,12 +10,24 @@ import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
 import { templateApi } from "@/lib/api"
 import { mapApiToTemplates } from "@/lib/template-mapper"
-import { distinctValues, showsGalleryToolbar, sortTemplates } from "@/lib/templates/gallery"
+import {
+  createGalleryLoader,
+  distinctValues,
+  gallerySource,
+  showsGalleryToolbar,
+  sortTemplates,
+  type GalleryState,
+} from "@/lib/templates/gallery"
 import { cn } from "@/lib/utils"
 import type { Template } from "@/types/template"
 
 const FIELD =
   "h-11 rounded-lg border-2 border-foreground bg-card text-[14px] font-medium focus:ring-2 focus:ring-ring focus:ring-offset-0"
+
+async function fetchOwnTemplates(): Promise<Template[]> {
+  const response = await templateApi.list()
+  return mapApiToTemplates(response.templates ?? [])
+}
 
 async function fetchPublicTemplates(): Promise<Template[]> {
   const res = await fetch("/api/templates?public=true")
@@ -25,53 +37,36 @@ async function fetchPublicTemplates(): Promise<Template[]> {
 }
 
 /**
- * The templates gallery. The public list goes out at once; a signed-in visitor then
- * gets the authenticated list, which adds their own templates and their likes. The
- * page used to ask for the authenticated list first, so every signed-out visit
- * started with a 401 in the console before the public request.
+ * The templates gallery. The public list goes out at once; once Clerk knows a
+ * signed-in visitor, their own list (their templates and likes) replaces it, and only
+ * the latest request lands (createGalleryLoader). The page used to ask for the
+ * authenticated list first, so every signed-out visit started with a 401.
  */
 export function TemplatesPageClient() {
   const t = useTranslations("templatesPage")
   const tLanding = useTranslations("landing")
   const { user, loading: authLoading } = useAuth()
-  const [templates, setTemplates] = useState<Template[]>([])
-  const [loading, setLoading] = useState(true)
-  const [failed, setFailed] = useState(false)
+  const [{ templates, loading, failed }, setGallery] = useState<GalleryState>({
+    templates: [],
+    loading: true,
+    failed: false,
+  })
   const [searchTerm, setSearchTerm] = useState("")
   const [styleFilter, setStyleFilter] = useState("all")
   const [themeFilter, setThemeFilter] = useState("all")
   const [sortByValue, setSortByValue] = useState("newest")
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setFailed(false)
-    try {
-      setTemplates(await fetchPublicTemplates())
-    } catch {
-      setFailed(true)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  // One list at a time: the public one, or the visitor's own once Clerk knows them.
+  const source = gallerySource(authLoading, Boolean(user))
+  const loadGallery = useMemo(() => createGalleryLoader(setGallery), [])
+  const load = useCallback(
+    () => loadGallery(source === "mine" ? fetchOwnTemplates : fetchPublicTemplates),
+    [loadGallery, source]
+  )
 
   useEffect(() => {
     void load()
-  }, [load])
-
-  useEffect(() => {
-    if (authLoading || !user) return
-    let cancelled = false
-    templateApi
-      .list()
-      .then((response) => {
-        if (!cancelled) setTemplates(mapApiToTemplates(response.templates ?? []))
-      })
-      // The public list is already on screen.
-      .catch(() => {})
-    return () => {
-      cancelled = true
-    }
-  }, [authLoading, user?.id])
+  }, [load, user?.id])
 
   // Only the styles and themes some template uses: a filter that can come up empty
   // is a control with nothing behind it.
@@ -181,13 +176,13 @@ export function TemplatesPageClient() {
       )}
 
       <div className={showToolbar ? "mt-8" : "mt-12"} aria-busy={loading}>
-        {loading ? (
+        {loading && templates.length === 0 ? (
           <div className="grid grid-cols-1 gap-x-6 gap-y-7 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
               <LandingTemplateCardSkeleton key={i} />
             ))}
           </div>
-        ) : failed ? (
+        ) : failed && templates.length === 0 ? (
           <div className={cn(STICKER, "px-6 py-12 text-center")} role="alert">
             <h2 className="font-heading text-2xl font-extrabold text-foreground">{t("loadError")}</h2>
             <button type="button" onClick={() => void load()} className={cn(BUTTON_SECONDARY, "mt-6")}>

@@ -745,7 +745,12 @@
         "purple": "Purple",
         "pink": "Pink",
         "blue": "Blue",
-        "green": "Green"
+        "green": "Green",
+        "cyan": "Cyan",
+        "orange": "Orange",
+        "red": "Red",
+        "monokai": "Monokai",
+        "custom": "Custom"
       }
     },
     "sort": {
