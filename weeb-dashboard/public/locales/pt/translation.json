@@ -1046,7 +1046,8 @@
         "off": "desligado por padrão",
         "range": "{{min}} a {{max}}",
         "default": "padrão {{value}}",
-        "upTo": "até {{count}} itens",
+        "upTo_one": "até {{count}} item",
+        "upTo_other": "até {{count}} itens",
         "list": "uma lista que você preenche",
         "text": "seu texto",
         "image": "envie ou cole um link"

@@ -1046,7 +1046,8 @@
         "off": "desactivado por defecto",
         "range": "{{min}} a {{max}}",
         "default": "por defecto {{value}}",
-        "upTo": "hasta {{count}} elementos",
+        "upTo_one": "hasta {{count}} elemento",
+        "upTo_other": "hasta {{count}} elementos",
         "list": "una lista que tú completas",
         "text": "tu texto",
         "image": "sube o enlaza"

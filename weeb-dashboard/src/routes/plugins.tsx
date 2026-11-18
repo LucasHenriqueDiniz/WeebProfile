@@ -186,11 +186,11 @@ export default function PluginsGalleryPage() {
                 </button>
               )}
             </form>
-            {groups.length === 0 && (
-              <p role="status" className="px-1 text-[13px] text-muted-foreground">
-                {t("search.empty", { query: query.trim() })}
-              </p>
-            )}
+            {/* Always mounted: screen readers announce a live region's changes, not one that
+                appears already filled. */}
+            <p role="status" className="px-1 text-[13px] text-muted-foreground empty:hidden">
+              {groups.length === 0 ? t("search.empty", { query: query.trim() }) : null}
+            </p>
             {/* Groups by category from lg up; on a phone the headings drop and the row runs
                 on in the same order. */}
             <ul className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-2 lg:mx-0 lg:flex-col lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0">

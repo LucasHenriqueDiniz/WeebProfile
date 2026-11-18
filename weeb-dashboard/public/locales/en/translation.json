@@ -1046,7 +1046,8 @@
         "off": "off by default",
         "range": "{{min}} to {{max}}",
         "default": "default {{value}}",
-        "upTo": "up to {{count}} items",
+        "upTo_one": "up to {{count}} item",
+        "upTo_other": "up to {{count}} items",
         "list": "a list you fill in",
         "text": "your text",
         "image": "upload or link"
