@@ -933,7 +933,9 @@
         "anilist": "Anime and manga stats, favorites and what you're watching.",
         "devto": "Your profile, recent articles and the tags you use most.",
         "about": "A neofetch-style intro and link badges, from what you type in."
-      }
+      },
+      "all": "All",
+      "filter": "Filter by category"
     },
     "templates": {
       "kicker": "TEMPLATES",
@@ -1028,7 +1030,29 @@
       "viewDefault": "default",
       "backHome": "Back to home",
       "cta": "Create my SVG",
-      "index": "Jump to a plugin"
+      "index": "Jump to a plugin",
+      "search": {
+        "label": "Search plugins",
+        "placeholder": "Search plugins or sections",
+        "clear": "Clear search",
+        "empty": "No plugin matches “{{query}}”."
+      },
+      "options": {
+        "heading": "What you can change",
+        "none": "Nothing to set: it draws as it is.",
+        "title": "Title",
+        "rename": "rename",
+        "hide": "hide",
+        "on": "on by default",
+        "off": "off by default",
+        "range": "{{min}} to {{max}}",
+        "default": "default {{value}}",
+        "upTo_one": "up to {{count}} item",
+        "upTo_other": "up to {{count}} items",
+        "list": "a list you fill in",
+        "text": "your text",
+        "image": "upload or link"
+      }
     }
   },
   "embed": {
