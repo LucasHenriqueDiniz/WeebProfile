@@ -5,6 +5,8 @@ import { Link } from "@/i18n/navigation"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import type { Template } from "@/types/template"
 import { useTemplateDescription } from "@/lib/templates/template-description"
+import { cn } from "@/lib/utils"
+import { CHIP, STICKER, STICKER_LIFT } from "./sticker"
 
 // Preview local usada quando o template da API vem sem previewUrl ou com URL quebrada —
 // o card nunca renderiza uma area vazia/imagem quebrada.
@@ -36,9 +38,9 @@ export function LandingTemplateCard({ template, href }: { template: Template; hr
   return (
     <Link
       href={href ?? `/templates/${template.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_8px_40px_-12px_rgba(139,92,246,0.3)]"
+      className={cn(STICKER, STICKER_LIFT, "group flex flex-col overflow-hidden")}
     >
-      <div className="relative h-[196px] overflow-hidden border-b border-border bg-background">
+      <div className="relative h-[196px] overflow-hidden border-b-2 border-foreground bg-background">
         <img
           src={previewSrc}
           alt=""
@@ -61,18 +63,13 @@ export function LandingTemplateCard({ template, href }: { template: Template; hr
           {chipPlugins.map((plugin) => {
             const Icon = getPluginIcon(plugin.toLowerCase())
             return (
-              <span
-                key={plugin}
-                className="flex items-center gap-1 whitespace-nowrap rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
-              >
+              <span key={plugin} className={CHIP}>
                 {Icon ? <Icon className="h-3 w-3" /> : null}
                 {plugin}
               </span>
             )
           })}
-          <span className="whitespace-nowrap rounded-full border border-border px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
-            {template.style}
-          </span>
+          <span className={cn(CHIP, "font-mono")}>{template.style}</span>
         </div>
       </div>
     </Link>
