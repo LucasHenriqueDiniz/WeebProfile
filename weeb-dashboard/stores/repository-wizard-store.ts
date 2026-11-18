@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { readStyleUiConfig } from "@/lib/config/svg-config-helpers"
+import { readSectionConfigs, readStyleUiConfig } from "@/lib/config/svg-config-helpers"
 
 // O Repository é um item único (Banner OU Stats OU Star Graph OU Technologies OU
 // Topics OU Overview) - nunca uma pilha de seções como o Profile. "sections" continua
@@ -130,7 +130,7 @@ export const useRepositoryWizardStore = create<RepositoryWizardState>()((set) =>
       owner: repoConfig.owner || "",
       repo: repoConfig.repo || "",
       sections: [section],
-      sectionConfigs: repoConfig.sectionConfigs || {},
+      sectionConfigs: readSectionConfigs("github_repo", repoConfig, [section]),
       // Everything the save writes: it replaces ui_config whole, so a setting not
       // loaded here (font, header text, custom colors...) was erased by the next save.
       ...readStyleUiConfig(svg.uiConfig),

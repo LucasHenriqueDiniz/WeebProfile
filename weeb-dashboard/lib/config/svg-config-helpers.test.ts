@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { buildStyleUiConfig, readStyleUiConfig, type StyleUiConfig } from "./svg-config-helpers"
+import { buildStyleUiConfig, readSectionConfigs, readStyleUiConfig, type StyleUiConfig } from "./svg-config-helpers"
 
 /** A style the wizard holds: every field away from its default. */
 const style: StyleUiConfig = {
@@ -43,5 +43,63 @@ describe("style ui_config, saved and loaded back by the editor", () => {
     expect(
       readStyleUiConfig({ customThemeColors: { "--default-color-highlight": "#e11d48", "--x": 3 } }).customThemeColors
     ).toEqual({ "--default-color-highlight": "#e11d48" })
+  })
+})
+
+describe("readSectionConfigs", () => {
+  // A websites card as the API wrote it to D1 (11/2026): the options at the root of the
+  // plugin's config, no sectionConfigs. The editor opened it with no sites at all.
+  const sites = [
+    { url: "https://weebprofile-dashboard.pages.dev/", title: "WeebProfile", image: "https://example.com/a.jpg" },
+    { url: "https://jikan.lucashdo.com/", title: "jikan-edge", description: "MyAnimeList API at the edge" },
+  ]
+  const rootOnly = {
+    enabled: true,
+    sections: ["websites"],
+    websites_variant: "grid",
+    websites_max: 6,
+    websites_autofill: true,
+    websites_hide_title: true,
+    websites_items: sites,
+  }
+
+  it("loads options saved at the root, so the save writes them back", () => {
+    expect(readSectionConfigs("websites", rootOnly, ["websites"])).toEqual({
+      websites: {
+        websites_variant: "grid",
+        websites_max: 6,
+        websites_autofill: true,
+        websites_hide_title: true,
+        websites_items: sites,
+      },
+    })
+  })
+
+  it("keeps what sectionConfigs has over the root", () => {
+    const both = { ...rootOnly, sectionConfigs: { websites: { websites_max: 7 } } }
+    expect(readSectionConfigs("websites", both, ["websites"]).websites).toMatchObject({
+      websites_max: 7,
+      websites_items: sites,
+    })
+  })
+
+  it("gives each active section only the options it declares", () => {
+    const steam = {
+      enabled: true,
+      sections: ["statistics", "top_games"],
+      steamId: "765",
+      top_games_max: 4,
+      statistics_hide_title: true,
+      recent_games_max: 3,
+    }
+    expect(readSectionConfigs("steam", steam, ["statistics", "top_games"])).toEqual({
+      statistics: { statistics_hide_title: true },
+      top_games: { top_games_max: 4 },
+    })
+  })
+
+  it("reads a card saved by the wizard as it was", () => {
+    const nested = { enabled: true, sections: ["websites"], sectionConfigs: { websites: { websites_max: 3 } } }
+    expect(readSectionConfigs("websites", nested, ["websites"])).toEqual({ websites: { websites_max: 3 } })
   })
 })
