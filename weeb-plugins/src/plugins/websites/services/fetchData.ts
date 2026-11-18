@@ -10,7 +10,8 @@
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { assertSafePublicUrl } from "../../../utils/url-guard"
 import { MAX_WEBSITES } from "../plugin.metadata"
-import type { WebsiteConfigItem, WebsiteEntry, WebsitesConfig, WebsitesData } from "../types"
+import type { WebsiteConfigItem, WebsiteEntry, WebsiteImageSource, WebsitesConfig, WebsitesData } from "../types"
+import { siteScreenshot } from "./screenshot"
 import { fetchSiteMeta } from "./site-meta"
 import { getMockWebsitesData } from "./mock-data"
 
@@ -112,6 +113,16 @@ async function firstEmbeddableImage(
   return null
 }
 
+/**
+ * The thumbnail source the user picked. A site saved before the option has none, and
+ * keeps the rule it had: its own image when it has one, the page's preview otherwise.
+ */
+function imageSource(item: WebsiteConfigItem, manualImage: string | null): WebsiteImageSource {
+  const picked = item.image_source
+  if (picked === "auto" || picked === "screenshot" || picked === "custom") return picked
+  return manualImage ? "custom" : "auto"
+}
+
 async function resolveWebsite(
   url: URL,
   item: WebsiteConfigItem,
@@ -123,13 +134,20 @@ async function resolveWebsite(
   const manualImage = normalizeUrl(item.image)?.toString() ?? null
 
   const meta = options.autofill && options.hasBudget() ? await fetchSiteMeta(url.toString()) : null
+  const source = imageSource(item, manualImage)
 
+  // A screenshot comes as a data URI already; the other sources are URLs to fetch,
+  // tried in order. A failed screenshot falls back to the image, then the page's preview.
+  const screenshot =
+    options.showThumbnail && source === "screenshot" && options.hasBudget()
+      ? await siteScreenshot(url.toString())
+      : null
+  const candidates =
+    source === "auto"
+      ? [meta?.imageUrl ?? null, meta?.iconUrl ?? null]
+      : [manualImage, meta?.imageUrl ?? null, meta?.iconUrl ?? null]
   const thumbnail = options.showThumbnail
-    ? await firstEmbeddableImage(
-        [manualImage, meta?.imageUrl ?? null, meta?.iconUrl ?? null],
-        THUMBNAIL_MAX_BYTES,
-        options.hasBudget
-      )
+    ? (screenshot ?? (await firstEmbeddableImage(candidates, THUMBNAIL_MAX_BYTES, options.hasBudget)))
     : null
 
   const favicon = await firstEmbeddableImage([faviconUrl(domain, 64)], FAVICON_MAX_BYTES, options.hasBudget)

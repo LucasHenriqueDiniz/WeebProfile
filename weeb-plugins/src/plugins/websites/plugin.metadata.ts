@@ -58,11 +58,23 @@ export const websitesPluginMetadata = {
               placeholder: "Personal site built with Astro",
             },
             {
+              key: "image_source",
+              label: "Thumbnail",
+              type: "select" as const,
+              options: [
+                { value: "auto", label: "The page's preview image (Open Graph)" },
+                { value: "screenshot", label: "A screenshot of the page" },
+                { value: "custom", label: "My own image (Thumbnail URL)" },
+              ],
+              description:
+                "The screenshot is 1200x630, taken without cookie banners or ads, and refreshed once a week. If it fails, the preview image is used.",
+            },
+            {
               key: "image",
               label: "Thumbnail URL",
               type: "string" as const,
               placeholder: "https://my-portfolio.dev/preview.png",
-              description: "Optional. Overrides the thumbnail detected on the page.",
+              description: "Your own image, used when the thumbnail is 'My own image'.",
             },
           ],
         },

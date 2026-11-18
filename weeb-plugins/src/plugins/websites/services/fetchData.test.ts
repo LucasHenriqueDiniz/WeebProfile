@@ -188,3 +188,76 @@ describe("fetchWebsitesData", () => {
     expect(data.websites[0]?.description).toBeNull()
   })
 })
+
+describe("fetchWebsitesData — thumbnail source", () => {
+  type Runtime = typeof globalThis & { __weebSiteScreenshot?: (url: string) => Promise<string | null> }
+  const runtime = globalThis as Runtime
+  const og = "https://example.com/og.png"
+  const manual = "https://cdn.example.com/manual.png"
+
+  beforeEach(() => {
+    vi.mocked(fetchSiteMeta).mockResolvedValue({ ...emptyMeta, imageUrl: og })
+    // Every URL embeds, as "data:<url>", so the thumbnail says which one won.
+    vi.mocked(urlToDataUriDirect).mockImplementation(async (url: string) => ({ dataUri: `data:${url}` }) as never)
+  })
+
+  afterEach(() => {
+    delete runtime.__weebSiteScreenshot
+    vi.clearAllMocks()
+  })
+
+  const thumbnailOf = async (item: Record<string, unknown>) =>
+    (await fetchWebsitesData(config([{ url: "https://example.com", ...item }]))).websites[0]?.thumbnail
+
+  it("takes the screenshot the Worker provides, for the site's own URL", async () => {
+    const take = vi.fn(async () => "data:image/jpeg;base64,SHOT")
+    runtime.__weebSiteScreenshot = take
+
+    expect(await thumbnailOf({ image_source: "screenshot" })).toBe("data:image/jpeg;base64,SHOT")
+    expect(take).toHaveBeenCalledWith("https://example.com/")
+  })
+
+  it("falls back to the own image, then the preview, when there is no screenshot", async () => {
+    runtime.__weebSiteScreenshot = async () => null
+    expect(await thumbnailOf({ image_source: "screenshot", image: manual })).toBe(`data:${manual}`)
+    expect(await thumbnailOf({ image_source: "screenshot" })).toBe(`data:${og}`)
+
+    // Outside the Worker there is no screenshot function at all.
+    delete runtime.__weebSiteScreenshot
+    expect(await thumbnailOf({ image_source: "screenshot" })).toBe(`data:${og}`)
+  })
+
+  it("never asks for a screenshot unless the site picked it", async () => {
+    const take = vi.fn(async () => "data:image/jpeg;base64,SHOT")
+    runtime.__weebSiteScreenshot = take
+
+    await thumbnailOf({})
+    await thumbnailOf({ image_source: "auto" })
+    await thumbnailOf({ image_source: "custom", image: manual })
+    expect(take).not.toHaveBeenCalled()
+  })
+
+  it("uses the preview image on 'auto', even with an own image filled in", async () => {
+    expect(await thumbnailOf({ image_source: "auto", image: manual })).toBe(`data:${og}`)
+  })
+
+  it("uses the own image on 'custom'", async () => {
+    expect(await thumbnailOf({ image_source: "custom", image: manual })).toBe(`data:${manual}`)
+  })
+
+  // Sites saved before the option keep what they showed: their image when they have one.
+  it("keeps the old rule for a site with no source", async () => {
+    expect(await thumbnailOf({ image: manual })).toBe(`data:${manual}`)
+    expect(await thumbnailOf({ image_source: "", image: manual })).toBe(`data:${manual}`)
+    expect(await thumbnailOf({})).toBe(`data:${og}`)
+  })
+
+  it("does not take a screenshot when thumbnails are off", async () => {
+    const take = vi.fn(async () => "data:image/jpeg;base64,SHOT")
+    runtime.__weebSiteScreenshot = take
+    await fetchWebsitesData(
+      config([{ url: "https://example.com", image_source: "screenshot" }], { websites_show_thumbnail: false })
+    )
+    expect(take).not.toHaveBeenCalled()
+  })
+})
