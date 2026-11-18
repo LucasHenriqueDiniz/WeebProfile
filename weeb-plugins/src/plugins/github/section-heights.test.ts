@@ -22,7 +22,9 @@ import type { GithubData } from "./types"
  * audit:heights` measures it (renderPlugins, theme CSS, no terminal header), with the mock
  * changed as `VARIANTS` says and the process in UTC. Real cards from the GitHub API for
  * LucasHenriqueDiniz, antfu and torvalds, each section alone and all of them in one card,
- * measured within the same tolerance.
+ * measured within the same tolerance. activity, repositories and star_lists failed with real
+ * data until the same day; measured then for those three and jlevy (32 star lists, up to 20
+ * drawn), alone and together, all exact.
  *
  * Tolerance: never shorter than the tallest engine, at most 2px over it. Text that wraps
  * (introduction, recent activity titles, star list descriptions) is counted by
@@ -102,6 +104,14 @@ const VARIANTS = {
   "8 of 40 people": (m: GithubData): GithubData => ({
     ...m,
     people: { ...m.people!, totalCount: 40, nodes: m.people!.nodes.slice(0, 8) },
+  }),
+  // A list of 12 with its first 5 drawn: "+7 more repositories"
+  "long star list": (m: GithubData): GithubData => ({
+    ...m,
+    starLists: [
+      { ...m.starLists![0]!, totalCount: 12, repositories: m.starLists!.flatMap((list) => list.repositories) },
+      m.starLists![1]!,
+    ],
   }),
 }
 
@@ -220,6 +230,21 @@ const MEASURED: Case[] = [
   [["star_lists"], "default", "full", "mock", {}, [356, 356, 356], WRAP],
   [["star_lists"], "terminal", "half", "mock", {}, [92, 92, 92]],
   [["star_lists"], "terminal", "full", "mock", {}, [92, 92, 92]],
+  [["star_lists"], "default", "half", "long star list", {}, [440, 440, 440], WRAP],
+  [["star_lists"], "default", "full", "long star list", {}, [440, 440, 440], WRAP],
+  [["star_lists"], "terminal", "half", "long star list", {}, [92, 92, 92]],
+  [["star_lists"], "terminal", "full", "long star list", {}, [92, 92, 92]],
+  [["star_lists"], "default", "half", "long star list", { star_lists_max: 1 }, [288, 288, 288], WRAP],
+  [["activity"], "default", "half", "mock", {}, [156, 156, 156]],
+  [["activity"], "default", "full", "mock", {}, [156, 156, 156]],
+  [["activity"], "terminal", "half", "mock", {}, [232, 232, 232]],
+  [["activity"], "terminal", "full", "mock", {}, [232, 232, 232]],
+  [["activity"], "default", "half", "mock", { activity_hide_title: true }, [116, 116, 116]],
+  [["repositories"], "default", "half", "mock", {}, [132, 132, 132]],
+  [["repositories"], "default", "full", "mock", {}, [132, 132, 132]],
+  [["repositories"], "terminal", "half", "mock", {}, [212, 212, 212]],
+  [["repositories"], "terminal", "full", "mock", {}, [212, 212, 212]],
+  [["repositories"], "default", "half", "mock", { repositories_hide_title: true }, [92, 92, 92]],
   [["notable_contributions"], "default", "half", "mock", {}, [1148, 1148, 1148]],
   [["notable_contributions"], "default", "full", "mock", {}, [1148, 1148, 1148]],
   [["notable_contributions"], "terminal", "half", "mock", {}, [252, 252, 252]],
@@ -318,6 +343,8 @@ const MEASURED: Case[] = [
   [SEVEN, "default", "full", "7 gists", {}, [3650, 3647, 3650], WRAP],
   [SEVEN, "terminal", "half", "7 gists", {}, [1492, 1492, 1492]],
   [SEVEN, "terminal", "full", "7 gists", {}, [1492, 1492, 1492]],
+  [["activity", "repositories", "star_lists"], "terminal", "half", "long star list", {}, [520, 520, 520]],
+  [["activity", "repositories", "star_lists"], "default", "full", "long star list", {}, [728, 727, 728], WRAP],
 ]
 
 const plugin = PluginManager.getInstance().get("github")!

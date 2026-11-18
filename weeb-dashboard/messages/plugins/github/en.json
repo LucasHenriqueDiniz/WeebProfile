@@ -352,7 +352,7 @@
         "star_lists_max": {
           "description": "Maximum 20 lists",
           "label": "Maximum lists",
-          "tooltip": "Maximum number of star lists to display. Lists are ordered by most recently created."
+          "tooltip": "Maximum number of star lists to display, in GitHub's order: the list a repository was last added to first. Private lists are never shown."
         },
         "star_lists_title": {
           "defaultValue": "Star Lists",
@@ -395,15 +395,15 @@
     },
     "top_repositories": {
       "config": {
-        "stargazers_hide_title": {
+        "top_repositories_hide_title": {
           "label": "Hide title"
         },
-        "stargazers_title": {
+        "top_repositories_title": {
           "defaultValue": "Top Repositories",
           "label": "Title"
         }
       },
-      "description": "Repositories with most stars (alias for stargazers)",
+      "description": "Repositories with most stars",
       "name": "Top Repositories"
     }
   }

@@ -17,6 +17,7 @@
 import { type TextFont, textWidth, wrappedLineCount } from "../../utils/text-lines"
 import type { GithubConfig, GithubData } from "./types"
 import { groupActivitiesByDay } from "./components/RecentActivity"
+import { shownRepositories } from "./components/StarLists"
 
 type Size = "half" | "full"
 
@@ -206,10 +207,10 @@ export function starListsHeight(cfg: GithubConfig, gh: GithubData, size: Size, i
   if (isTerminal) return terminalGrid(lists.length)
   const inner = CONTENT_WIDTH[size] - 24 // the card's `p-3`
   const cards = lists.map((list) => {
-    const repos = Math.min(list.repositories.length, 5)
+    const repos = shownRepositories(list)
     const repoLines: number[] = Array(repos).fill(LINE)
     // "+N more" is a `text-xs` line with `mt-1`
-    if (list.repositories.length > 5) repoLines.push(4 + 16)
+    if (list.totalCount > repos) repoLines.push(4 + 16)
     // The description is clamped to two lines.
     const description = list.description ? textLines(list.description, inner, 14, "poppins", 2) * LINE + 12 : 0
     // `p-3`, the name (24px, `mb-2`), the description (`mb-3`), the repositories `gap-2`

@@ -1692,29 +1692,29 @@ export const PLUGINS_METADATA = {
       {
         id: "top_repositories",
         name: "Top Repositories",
-        description: "Repositories with most stars (alias for stargazers)",
+        description: "Repositories with most stars",
         i18nKey: {
           name: "plugins.github.sections.top_repositories.name",
           description: "plugins.github.sections.top_repositories.description"
         },
         configOptions: [
         {
-          key: "stargazers_hide_title",
+          key: "top_repositories_hide_title",
           label: "Hide title",
           type: "boolean",
           defaultValue: false,
           i18nKey: {
-            label: "plugins.github.sections.top_repositories.config.stargazers_hide_title.label"
+            label: "plugins.github.sections.top_repositories.config.top_repositories_hide_title.label"
           }
         },
         {
-          key: "stargazers_title",
+          key: "top_repositories_title",
           label: "Title",
           type: "string",
           defaultValue: "Top Repositories",
           i18nKey: {
-            label: "plugins.github.sections.top_repositories.config.stargazers_title.label",
-            defaultValue: "plugins.github.sections.top_repositories.config.stargazers_title.defaultValue"
+            label: "plugins.github.sections.top_repositories.config.top_repositories_title.label",
+            defaultValue: "plugins.github.sections.top_repositories.config.top_repositories_title.defaultValue"
           }
         }
         ]
@@ -1751,12 +1751,12 @@ export const PLUGINS_METADATA = {
           key: "star_lists_max",
           label: "Maximum lists",
           type: "number",
-          defaultValue: 1,
+          defaultValue: 5,
           min: 1,
           max: 20,
           step: 1,
           description: "Maximum 20 lists",
-          tooltip: "Maximum number of star lists to display. Lists are ordered by most recently created.",
+          tooltip: "Maximum number of star lists to display, in GitHub's order: the list a repository was last added to first. Private lists are never shown.",
           i18nKey: {
             label: "plugins.github.sections.star_lists.config.star_lists_max.label",
             description: "plugins.github.sections.star_lists.config.star_lists_max.description",

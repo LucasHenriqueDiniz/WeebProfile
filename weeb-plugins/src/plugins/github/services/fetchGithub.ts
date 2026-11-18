@@ -9,6 +9,8 @@ import {
   REPOSITORY_CONTRIBUTORS_QUERY,
   FEATURED_REPOSITORIES_QUERY,
   RECENT_ACTIVITY_QUERY,
+  REPOSITORIES_QUERY,
+  STAR_LISTS_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
 import { lastSixMonthsStart, firstDayOfLastSixMonths } from "../utils"
@@ -285,6 +287,9 @@ export async function fetchGithubData(
     request: { signal: budget },
   })
 
+  // repositories and favorite_license read the same pages: fetched once for both.
+  let ownedRepositories: Promise<OwnedRepositories> | undefined
+
   try {
     // Process each requested section
     for (const section of sections) {
@@ -348,9 +353,24 @@ export async function fetchGithubData(
           continue
         }
 
-        // Star Lists - por enquanto retornar vazio (precisa de API específica)
         if (section === "star_lists") {
-          data.starLists = []
+          data.starLists = await fetchStarLists(graphqlClient, username, config)
+          continue
+        }
+
+        // The repositories section draws the favorite license too.
+        if (section === "repositories" || section === "favorite_license") {
+          ownedRepositories ??= fetchOwnedRepositories(graphqlClient, username, config)
+          const owned = await ownedRepositories
+          if (section === "repositories") {
+            data.repositories = {
+              totalCount: owned.totalCount,
+              nodes: owned.nodes.map(({ licenseInfo: _license, ...counts }) => counts),
+            }
+            data.totalDiskUsage = owned.totalDiskUsage
+            data.sponsoringCount = owned.sponsoringCount
+          }
+          data.favoriteLicense = favoriteLicenseOf(owned.nodes)
           continue
         }
 
@@ -382,16 +402,7 @@ export async function fetchGithubData(
           continue
         }
 
-        // Preparar variáveis da query
-        const variables: any = { login: username }
-
-        // Para repositories, usar privacy (enum RepositoryPrivacy)
-        if (section === "repositories" || section === "favorite_license") {
-          // Se não especificado, buscar apenas públicos (ou todos se o token tiver permissão)
-          variables.privacy = config.repositories_use_private ? undefined : "PUBLIC"
-        }
-
-        const result = await graphqlClient<GraphQLResponse>(query, variables)
+        const result = await graphqlClient<GraphQLResponse>(query, { login: username })
 
         // Process data based on section
         switch (section) {
@@ -433,14 +444,6 @@ export async function fetchGithubData(
 
           case "calendar":
             await processCalendarData(graphqlClient, username, config, data)
-            break
-
-          case "repositories":
-            data.repositories = processRepositoriesData(result)
-            break
-
-          case "favorite_license":
-            data.favoriteLicense = processFavoriteLicenseData(result)
             break
 
           case "starred_repositories":
@@ -618,39 +621,77 @@ function processActivityData(result: GraphQLResponse): GithubData["activity"] {
 }
 
 /**
- * Processa dados de repositórios
+ * Pages of 100 repositories the repositories and favorite_license sections read, the most
+ * starred first. A page takes about 1.5 s, and the card shares a 45 s budget with code habits
+ * (up to 30 s): five pages cover every repository of all but a few users (sindresorhus has
+ * 1132), and past them the stars, forks and watchers left out are those of the least starred.
  */
-function processRepositoriesData(result: GraphQLResponse): GithubData["repositories"] {
-  const repositories =
-    result.user.repositories?.nodes.map((repo: any) => ({
-      name: repo.name,
-      description: repo.description,
-      url: repo.url,
-      stargazerCount: repo.stargazers?.totalCount || 0,
-      forkCount: repo.forkCount || 0,
-      watchers: {
-        totalCount: repo.watchers?.totalCount || 0,
-      },
-      packages: {
-        totalCount: repo.packages?.totalCount || 0,
-      },
-      primaryLanguage: repo.languages?.edges?.[0]?.node || null,
-      updatedAt: repo.updatedAt,
-    })) || []
+const MAX_REPOSITORY_PAGES = 5
 
-  return {
-    totalCount: repositories.length,
-    nodes: repositories,
-  }
+type OwnedRepository = GithubData["repositories"]["nodes"][number] & { licenseInfo: { name: string } | null }
+
+interface OwnedRepositories {
+  /** Every repository the user owns that the card counts, not only the pages read. */
+  totalCount: number
+  totalDiskUsage: number
+  sponsoringCount: number
+  nodes: OwnedRepository[]
+}
+
+interface RepositoriesPage {
+  user: {
+    repositories: {
+      totalCount: number
+      totalDiskUsage: number
+      pageInfo: { hasNextPage: boolean; endCursor: string | null }
+      nodes: Array<OwnedRepository | null>
+    }
+    sponsorshipsAsSponsor: { totalCount: number }
+  } | null
 }
 
 /**
- * Processa dados de licença favorita
+ * The user's own repositories, not forks; private ones only when the card includes them.
+ * They used to be the first 100 by update date, so the totals left out the rest and the
+ * title said 100 for a user with 258.
  */
-function processFavoriteLicenseData(result: GraphQLResponse): GithubData["favoriteLicense"] {
-  const repositories = result.user.repositories?.nodes || []
-  const total = repositories.length || 0
-  const licenses = repositories.filter((repo: any) => repo.licenseInfo).map((repo: any) => repo.licenseInfo.name)
+async function fetchOwnedRepositories(
+  graphqlClient: ReturnType<typeof graphql.defaults>,
+  username: string,
+  config: GithubConfig
+): Promise<OwnedRepositories> {
+  const nodes: OwnedRepository[] = []
+  let after: string | null = null
+  let totals = { totalCount: 0, totalDiskUsage: 0, sponsoringCount: 0 }
+
+  for (let page = 0; page < MAX_REPOSITORY_PAGES; page++) {
+    const result: RepositoriesPage = await graphqlClient<RepositoriesPage>(REPOSITORIES_QUERY, {
+      login: username,
+      // Unset asks for every repository the token can see
+      privacy: config.repositories_use_private ? undefined : "PUBLIC",
+      after,
+    })
+    if (!result.user) throw new Error(`GitHub has no user ${username}`)
+    const { repositories, sponsorshipsAsSponsor } = result.user
+    totals = {
+      totalCount: repositories.totalCount,
+      totalDiskUsage: repositories.totalDiskUsage,
+      sponsoringCount: sponsorshipsAsSponsor.totalCount,
+    }
+    for (const repo of repositories.nodes) {
+      if (repo) nodes.push(repo)
+    }
+    if (!repositories.pageInfo.hasNextPage || !repositories.pageInfo.endCursor) break
+    after = repositories.pageInfo.endCursor
+  }
+
+  return { ...totals, nodes }
+}
+
+/** The license the most of these repositories use, and how many use it. */
+function favoriteLicenseOf(repositories: OwnedRepository[]): GithubData["favoriteLicense"] {
+  const total = repositories.length
+  const licenses = repositories.flatMap((repo) => (repo.licenseInfo ? [repo.licenseInfo.name] : []))
 
   const licenseCount = new Map<string, number>()
   licenses.forEach((license) => {
@@ -672,6 +713,64 @@ function processFavoriteLicenseData(result: GraphQLResponse): GithubData["favori
     count: maxCount,
     total,
   }
+}
+
+interface StarListsAnswer {
+  user: {
+    lists: {
+      nodes: Array<{
+        name: string
+        description: string | null
+        isPrivate: boolean
+        items: {
+          totalCount: number
+          // A list holds only repositories today; anything else comes back as {}.
+          nodes: Array<
+            Partial<NonNullable<GithubData["starLists"]>[number]["repositories"][number]> & {
+              isPrivate?: boolean
+            }
+          >
+        }
+      } | null>
+    }
+  } | null
+}
+
+/** Repositories of a list the card draws. */
+const STAR_LIST_REPOSITORIES = 5
+
+/**
+ * The user's public star lists, in GitHub's order. A private list stays off the public card,
+ * and so does a private repository in a list unless the card includes private repositories.
+ * The section used to draw nothing: the fetch never asked GitHub for the lists.
+ */
+async function fetchStarLists(
+  graphqlClient: ReturnType<typeof graphql.defaults>,
+  username: string,
+  config: GithubConfig
+): Promise<NonNullable<GithubData["starLists"]>> {
+  const result = await graphqlClient<StarListsAnswer>(STAR_LISTS_QUERY, { login: username })
+  if (!result.user) throw new Error(`GitHub has no user ${username}`)
+
+  return result.user.lists.nodes.flatMap((list) => {
+    if (!list || list.isPrivate) return []
+    const repositories = list.items.nodes.filter((item) => typeof item.nameWithOwner === "string")
+    const shown = repositories.filter((repo) => shownOnCard(repo, config))
+    return [
+      {
+        name: list.name,
+        description: list.description || null,
+        // The list's size, less the private repositories found among those read
+        totalCount: list.items.totalCount - (repositories.length - shown.length),
+        repositories: shown.slice(0, STAR_LIST_REPOSITORIES).map((repo) => ({
+          name: repo.name ?? "",
+          nameWithOwner: repo.nameWithOwner ?? "",
+          url: repo.url ?? "",
+          stargazerCount: repo.stargazerCount ?? 0,
+        })),
+      },
+    ]
+  })
 }
 
 /**

@@ -17,6 +17,10 @@ interface StarListsProps {
   size: "half" | "full"
 }
 
+/** Repositories a list's card draws: the first 5. */
+export const shownRepositories = (list: NonNullable<GithubData["starLists"]>[number]): number =>
+  Math.min(list.repositories.length, 5)
+
 const DefaultStarLists = ({ data, max }: { data: GithubData["starLists"]; max: number }) => {
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No star lists</div>
@@ -41,10 +45,10 @@ const DefaultStarLists = ({ data, max }: { data: GithubData["starLists"]; max: n
                 <span className="text-default-muted flex-shrink-0">⭐ {abbreviateNumber(repo.stargazerCount)}</span>
               </ExternalLink>
             ))}
-            {list.repositories.length > 5 && (
+            {list.totalCount > shownRepositories(list) && (
               <div className="text-xs text-default-muted mt-1">
-                +{list.repositories.length - 5} more{" "}
-                {list.repositories.length - 5 === 1 ? "repository" : "repositories"}
+                +{list.totalCount - shownRepositories(list)} more{" "}
+                {list.totalCount - shownRepositories(list) === 1 ? "repository" : "repositories"}
               </div>
             )}
           </div>
@@ -68,7 +72,7 @@ export function GithubStarLists({ data, config, style, size }: StarListsProps): 
   const gridData: GridItemProps[] = lists.map((list) => ({
     title: list.name,
     subtitle: list.description || undefined,
-    value: `${list.repositories.length} repos`,
+    value: `${abbreviateNumber(list.totalCount)} repos`,
   }))
 
   return (

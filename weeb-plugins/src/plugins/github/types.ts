@@ -151,11 +151,10 @@ export interface GithubData {
     color: string
   }>
   repositories: {
+    /** Every repository the section counts; `nodes` may be fewer (see fetchOwnedRepositories). */
     totalCount: number
+    /** The counts the section sums, nothing more: asking GitHub for more timed it out. */
     nodes: Array<{
-      name: string
-      description: string | null
-      url: string
       stargazerCount: number
       forkCount: number
       watchers: {
@@ -164,11 +163,6 @@ export interface GithubData {
       packages: {
         totalCount: number
       }
-      primaryLanguage: {
-        name: string
-        color: string
-      } | null
-      updatedAt: string
     }>
   }
   totalDiskUsage: number
@@ -273,6 +267,8 @@ export interface GithubData {
   starLists?: Array<{
     name: string
     description: string | null
+    /** Repositories in the list; `repositories` holds the first few. */
+    totalCount: number
     repositories: Array<{
       name: string
       nameWithOwner: string

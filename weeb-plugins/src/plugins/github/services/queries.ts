@@ -54,6 +54,10 @@ query userCalendar($login: String!, $from: DateTime, $to: DateTime) {
 }
 `
 
+/**
+ * No `projects`: GitHub sunset Projects (classic), and asking for it answers `user: null`
+ * with a NOT_FOUND error, which took the whole section down for every user.
+ */
 export const ACTIVITY_QUERY = `
 query userActivity($login: String!) {
   user(login: $login) {
@@ -95,9 +99,6 @@ query userActivity($login: String!) {
     gists {
       totalCount
     }
-    projects {
-      totalCount
-    }
   }
 }
 `
@@ -128,78 +129,76 @@ query userLanguages($login: String!) {
 }
 `
 
+/**
+ * One page of the user's repositories, for the repositories and favorite_license sections:
+ * only the counts they draw. The query asked each of 100 repositories for its languages,
+ * releases, deployments, environments and five issue and pull request counts, none of them
+ * drawn, and GitHub gave up after 10 s with a 502 for a user with 76 repositories
+ * (17/11/2026). This one answers 100 repositories in about 1.5 s.
+ */
 export const REPOSITORIES_QUERY = `
-query userRepositories($login: String!, $privacy: RepositoryPrivacy) {
+query userRepositories($login: String!, $privacy: RepositoryPrivacy, $after: String) {
   user(login: $login) {
     repositories(
       first: 100
+      after: $after
       ownerAffiliations: [OWNER]
       isFork: false
-      orderBy: { field: UPDATED_AT, direction: DESC }
+      orderBy: { field: STARGAZERS, direction: DESC }
       privacy: $privacy
     ) {
+      totalCount
+      totalDiskUsage
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
-        updatedAt
-        name
-        description
-        url
-        owner {
-          login
-        }
-        isFork
+        stargazerCount
         forkCount
         watchers {
           totalCount
         }
-        stargazers {
+        packages {
           totalCount
-        }
-        releases {
-          totalCount
-        }
-        deployments {
-          totalCount
-        }
-        environments {
-          totalCount
-        }
-        languages(first: 8) {
-          edges {
-            size
-            node {
-              color
-              name
-            }
-          }
         }
         licenseInfo {
           name
-          spdxId
-        }
-        issues_open: issues(states: OPEN) {
-          totalCount
-        }
-        issues_closed: issues(states: CLOSED) {
-          totalCount
-        }
-        pr_open: pullRequests(states: OPEN) {
-          totalCount
-        }
-        pr_closed: pullRequests(states: CLOSED) {
-          totalCount
-        }
-        pr_merged: pullRequests(states: MERGED) {
-          totalCount
         }
       }
-      totalDiskUsage
     }
-    contributionsCollection {
-      totalCommitContributions
-      totalRepositoriesWithContributedCommits
-      totalIssueContributions
-      totalPullRequestContributions
-      totalPullRequestReviewContributions
+    sponsorshipsAsSponsor {
+      totalCount
+    }
+  }
+}
+`
+
+/**
+ * The user's star lists, in GitHub's order (the list a repository was last added to first),
+ * and the first repositories of each.
+ */
+export const STAR_LISTS_QUERY = `
+query userStarLists($login: String!) {
+  user(login: $login) {
+    lists(first: 20) {
+      nodes {
+        name
+        description
+        isPrivate
+        items(first: 10) {
+          totalCount
+          nodes {
+            ... on Repository {
+              isPrivate
+              name
+              nameWithOwner
+              url
+              stargazerCount
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -456,11 +455,9 @@ query featuredRepositories($owner: String!, $repo: String!) {
 
 export const SECTION_QUERIES = {
   profile: PROFILE_QUERY,
-  repositories: REPOSITORIES_QUERY,
   activity: ACTIVITY_QUERY,
   calendar: CALENDAR_QUERY,
   favorite_languages: LANGUAGES_QUERY,
-  favorite_license: REPOSITORIES_QUERY,
   starred_repositories: STARRED_REPOSITORIES_QUERY,
   gists: GISTS_QUERY,
   top_repositories: TOP_REPOSITORIES_QUERY,
