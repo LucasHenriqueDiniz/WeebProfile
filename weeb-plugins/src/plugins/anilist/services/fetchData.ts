@@ -121,7 +121,7 @@ export async function fetchAniListData(config: AniListConfig, dev = false, previ
     }
 
     if (!response.ok) {
-      return { ...emptyData(username), _error: `AniList responded ${response.status}.` }
+      return { ...emptyData(username), _error: await refusalMessage(response) }
     }
 
     payload = await response.json()
@@ -185,6 +185,26 @@ export async function fetchAniListData(config: AniListConfig, dev = false, previ
     favoritesAnime,
     currentlyWatching,
   }
+}
+
+/**
+ * What AniList said when it refused, for the generator's log and the dashboard's
+ * error_log: the status alone ("AniList responded 403.") did not say who refused or why.
+ *
+ * AniList's own edge answers every request leaving a Cloudflare Worker with 403 and
+ * "You have been manually blocked. Please come to the principal's office." -- the API,
+ * the site and the cover CDN alike, whatever the User-Agent (measured 2026-11-18, see
+ * docs/public-preview.md). The same request from outside Workers answers 200, so no
+ * header set here changes it. The cf-ray is what AniList asks for to look a block up.
+ */
+async function refusalMessage(response: Response): Promise<string> {
+  const body = await response.json().catch(() => null)
+  const said = String((body as any)?.errors?.[0]?.message ?? "")
+    .trim()
+    .slice(0, 200)
+  const ray = response.headers.get("cf-ray")
+  const detail = [said && `"${said}"`, ray && `cf-ray ${ray}`].filter(Boolean).join(", ")
+  return `AniList responded ${response.status}${detail ? `: ${detail}` : ""}.`
 }
 
 function emptyData(username: string): AniListData {

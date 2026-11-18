@@ -187,6 +187,21 @@ function countSolvedProblems(submissions: CodeforcesSubmissionResponse[]): Codef
 }
 
 /**
+ * Codeforces answers a handle that does not exist with HTTP 400 and
+ * `{"status":"FAILED","comment":"handles: User with handle X not found"}`. Reported as
+ * "API request failed: HTTP 400", it reached the public preview as a 502 instead of a 404.
+ */
+function saysHandleNotFound(error: ApiError): boolean {
+  if (error.statusCode !== 400 || !error.responseBody) return false
+  try {
+    const { comment } = JSON.parse(error.responseBody) as CodeforcesApiResponse<unknown>
+    return typeof comment === "string" && /\bnot found\b/i.test(comment)
+  } catch {
+    return false
+  }
+}
+
+/**
  * Busca dados do Codeforces
  */
 export async function fetchCodeforcesData(config: CodeforcesConfig, dev = false): Promise<CodeforcesData> {
@@ -262,7 +277,7 @@ export async function fetchCodeforcesData(config: CodeforcesConfig, dev = false)
   } catch (error) {
     console.error("[Codeforces] Error fetching data:", error)
 
-    if (error instanceof ApiError && error.statusCode === 404) {
+    if (error instanceof ApiError && (error.statusCode === 404 || saysHandleNotFound(error))) {
       throw new Error(`Codeforces user "${handle}" not found`)
     }
 

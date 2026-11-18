@@ -24,6 +24,7 @@ export interface ApiRequestOptions {
  */
 const DEFAULT_TIMEOUT_MS = 8_000
 const DEFAULT_RETRIES = 1
+const ERROR_BODY_MAX_CHARS = 2_000
 
 /**
  * Runs `read` on the response of a request, retrying 5xx and network failures.
@@ -64,7 +65,16 @@ async function requestWithRetry<T>(
       if (!response.ok) {
         // 4xx: não tenta novamente
         if (response.status >= 400 && response.status < 500) {
-          throw new ApiError(`API request failed: ${response.statusText}`, response.status, url)
+          // Read under this attempt's timer. Codeforces answers an unknown handle with
+          // 400 and says "not found" only in the body.
+          const responseBody = (await response.text().catch(() => "")).slice(0, ERROR_BODY_MAX_CHARS)
+          throw new ApiError(
+            `API request failed: ${response.statusText}`,
+            response.status,
+            url,
+            undefined,
+            responseBody
+          )
         }
         // 5xx: tenta novamente
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
