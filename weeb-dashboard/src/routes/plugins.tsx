@@ -1,12 +1,17 @@
-import { useEffect, useRef, useState, type MouseEvent } from "react"
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
-import { ArrowLeft, ArrowRight, BarChart3, SquareTerminal } from "lucide-react"
+import { useEffect, useState } from "react"
+import { PLUGIN_CATEGORIES, PLUGINS_METADATA, type PluginMetadata } from "@weeb/weeb-plugins/plugins/metadata"
+import { ArrowLeft, ArrowRight, BarChart3, Search, SquareTerminal, X } from "lucide-react"
 import { Header } from "@/components/layout/Header"
 import { LandingFooter } from "@/components/landing/LandingFooter"
+import { BUTTON_PRIMARY, CHIP, TILE } from "@/components/landing/sticker"
+import { SectionOptions } from "@/components/plugins/SectionOptions"
+import { SuspendedBadge, SuspendedReason } from "@/components/plugins/SuspendedBadge"
 import { SECTION_PREVIEWS } from "@/lib/config/section-previews"
 import { CATEGORY_STYLE } from "@/lib/landing/category-style"
 import { LANDING_PLUGINS } from "@/lib/landing/landing-plugins"
 import { getPluginIcon } from "@/lib/plugin-icons"
+import { catalogSearchTexts, describeSection, groupByCategory } from "@/lib/plugins/catalog"
+import { pluginMatchesQuery } from "@/lib/plugins/plugin-search"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
 import { cn } from "@/lib/utils"
 import { Link } from "@/i18n/navigation"
@@ -14,109 +19,56 @@ import { useTranslations } from "@/i18n/use-translations"
 
 type StyleId = "default" | "terminal"
 
-// Gap between the sticky index and the plugin heading it jumped to.
-const JUMP_GAP_PX = 16
+// The grid's order and list, shared with the landing.
+const PLUGINS = LANDING_PLUGINS.map(
+  (id) => PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA] as PluginMetadata
+).filter(Boolean)
 
-// Galeria pública de plugins/seções — todas as previews são os SVGs reais que o
-// gerador produz (as mesmas usadas na landing), organizadas por plugin.
+/** The plugin named by the URL's hash (/plugins#steam), or the first one. */
+function pluginFromHash(): string {
+  const id = typeof window === "undefined" ? "" : window.location.hash.slice(1)
+  return PLUGINS.some((plugin) => plugin.name === id) ? id : (PLUGINS[0]?.name ?? "")
+}
+
+/**
+ * The public gallery: every section of every plugin, as the real SVGs the generator
+ * produces (the same files the landing uses).
+ *
+ * One plugin at a time: the list picks it, the pane shows its sections. The page used to
+ * stack all fifteen plugins, 73 cards and about 11,900px, under a sticky index that had
+ * to measure the header and track the scroll to say where the reader was. The chosen
+ * plugin is in the URL's hash, so /plugins#steam still opens on Steam and can be shared.
+ *
+ * Under each section, what it lets the user change (SectionOptions). The list is grouped
+ * by category and has a search over names, descriptions, categories and section names:
+ * at 15 plugins a flat list fits, at 40 it would be taller than the screen in the
+ * sticky column and a 40-chip row to swipe through on a phone. Categories make the long
+ * list scannable and search finds a plugin without scanning at all; filter chips alone
+ * would still leave a long list in the big categories (coding has five already).
+ */
 export default function PluginsGalleryPage() {
   const t = useTranslations("landing.pluginsPage")
   const tCat = useTranslations("landing.plugins.categories")
   const { tWithFallback } = usePluginI18n()
   const [style, setStyle] = useState<StyleId>("default")
-  const indexRef = useRef<HTMLElement>(null)
+  const [activeId, setActiveId] = useState(pluginFromHash)
+  const [query, setQuery] = useState("")
 
-  // The grid's order and list, shared with the landing. This page had a list of its
-  // own that never got AniList or Dev.to.
-  const plugins = LANDING_PLUGINS.map((id) => PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]).filter(Boolean)
-  const [activeId, setActiveId] = useState<string>(plugins[0]?.name ?? "")
-  const [headerHeight, setHeaderHeight] = useState(64)
-  const [indexHeight, setIndexHeight] = useState(0)
-  const jumpingTo = useRef<string | null>(null)
-  // Room the fixed Header and the sticky index take at the top of the viewport. Each
-  // plugin section gets it as scroll-margin-top, so every way of scrolling to one --
-  // a chip in the index, a link to /plugins#steam, the router's own scrollIntoView on
-  // a hash -- stops below the index instead of under it.
-  const covered = headerHeight + indexHeight + JUMP_GAP_PX
-
-  // The index sticks right under the Header, which is fixed and sized by its content.
-  // Both heights are measured: the index wraps to two rows on some widths.
+  // Back, forward and links to another #plugin while the page is open.
   useEffect(() => {
-    const header = document.querySelector("header")
-    const index = indexRef.current
-    const measure = () => {
-      if (header) setHeaderHeight(header.getBoundingClientRect().height)
-      if (index) setIndexHeight(index.getBoundingClientRect().height)
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    if (header) observer.observe(header)
-    if (index) observer.observe(index)
-    return () => observer.disconnect()
+    const onHashChange = () => setActiveId(pluginFromHash())
+    window.addEventListener("hashchange", onHashChange)
+    return () => window.removeEventListener("hashchange", onHashChange)
   }, [])
 
-  // The page is 70+ cards long (GitHub alone has 20), so the index marks the plugin
-  // being read: the last one whose heading has scrolled up to the index.
-  useEffect(() => {
-    const update = () => {
-      if (jumpingTo.current) return
-      // The last plugins cannot scroll up to the index: the page ends first. At the
-      // bottom, the last plugin on screen is the one being read; by heading position
-      // alone the index marked 16Personalities with Websites and Repository in view.
-      const atBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2 && window.scrollY > 0
-      let current = plugins[0]?.name ?? ""
-      for (const plugin of plugins) {
-        const top = document.getElementById(plugin.name)?.getBoundingClientRect().top
-        if (top === undefined) continue
-        if (top <= covered + 1 || (atBottom && top < window.innerHeight)) current = plugin.name
-      }
-      setActiveId(current)
-    }
-    update()
-    window.addEventListener("scroll", update, { passive: true })
-    window.addEventListener("resize", update)
-    return () => {
-      window.removeEventListener("scroll", update)
-      window.removeEventListener("resize", update)
-    }
-    // plugins is derived from static metadata; its identity changing does not matter.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [covered])
-
-  // Keep the marked chip in view when the index scrolls sideways (narrow screens).
-  useEffect(() => {
-    const chip = indexRef.current?.querySelector<HTMLElement>(`[data-plugin="${activeId}"]`)
-    const list = chip?.parentElement
-    if (chip && list && list.scrollWidth > list.clientWidth) {
-      list.scrollTo({ left: chip.offsetLeft - list.clientWidth / 2 + chip.offsetWidth / 2, behavior: "smooth" })
-    }
-  }, [activeId])
-
-  // The chip scrolls by itself instead of following the #hash: the router reacts to a
-  // hash change with an instant scrollIntoView that cut the smooth scroll short. The
-  // href stays for opening a plugin in a new tab or copying its link.
-  //
-  // The clicked plugin stays marked until the scroll ends. Websites and Repository
-  // stop short of the index, and reading positions on the way there marked whatever
-  // the scroll passed or stopped on.
-  const jumpTo = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
-    event.preventDefault()
-    jumpingTo.current = id
+  const select = (id: string) => {
     setActiveId(id)
-    let fallback = 0
-    const settle = () => {
-      jumpingTo.current = null
-      window.clearTimeout(fallback)
-      window.removeEventListener("scrollend", settle)
-    }
-    window.addEventListener("scrollend", settle)
-    // scrollend never fires when the page is already there, nor in browsers without it.
-    fallback = window.setTimeout(settle, 1500)
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
+    // replaceState, not location.hash: the router answers a hash change by scrolling to
+    // the element with that id, and picking a plugin should not move the page.
+    window.history.replaceState(window.history.state, "", `#${id}`)
   }
 
-  const textOf = (plugin: (typeof plugins)[number]) => {
+  const textOf = (plugin: (typeof PLUGINS)[number]) => {
     const meta = plugin as any
     return {
       displayName: meta.i18nKey?.displayName
@@ -127,20 +79,30 @@ export default function PluginsGalleryPage() {
         : plugin.description,
     }
   }
-  const sectionIdsOf = (pluginName: string) => {
+  const sectionIdsOf = (pluginName: string, inStyle: StyleId = style) => {
     const sections = SECTION_PREVIEWS[pluginName] ?? {}
-    return Object.keys(sections).filter((id) => sections[id][style])
+    return Object.keys(sections).filter((id) => sections[id]![inStyle])
   }
 
+  const groups = groupByCategory(
+    PLUGINS.filter((item) => pluginMatchesQuery(catalogSearchTexts(item, tWithFallback, tCat(item.category)), query)),
+    PLUGIN_CATEGORIES
+  )
+  const firstMatch = groups[0]?.plugins[0]
+
+  const plugin = PLUGINS.find((item) => item.name === activeId) ?? PLUGINS[0]!
+  const { displayName, description } = textOf(plugin)
+  const Icon = getPluginIcon(plugin.name)
+  const sections = SECTION_PREVIEWS[plugin.name] ?? {}
+  const sectionIds = sectionIdsOf(plugin.name)
+
   return (
-    // overflow-x-clip, not overflow-hidden: hidden makes this div the scroll container
-    // and the sticky index would stop sticking.
-    <div className="relative overflow-x-clip bg-background">
+    <div className="relative bg-background">
       <Header variant="home" />
       <main className="relative mx-auto max-w-6xl px-6 pb-24 pt-28">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           {t("backHome")}
@@ -148,152 +110,206 @@ export default function PluginsGalleryPage() {
 
         <div className="mt-6 flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-[620px]">
-            <h1 className="font-heading text-4xl font-extrabold tracking-tight text-foreground md:text-5xl">
+            <h1 className="font-heading text-5xl font-extrabold leading-[1.02] tracking-tight text-foreground md:text-6xl">
               {t("title")}
             </h1>
-            <p className="mt-3 text-base leading-relaxed text-muted-foreground">{t("subtitle")}</p>
+            <p className="mt-4 text-[17px] leading-relaxed text-muted-foreground">{t("subtitle")}</p>
           </div>
-          {/* Toggle global de estilo — a galeria inteira troca de pele */}
-          <div className="inline-flex rounded-xl border border-border bg-card p-1">
+          {/* The whole gallery changes skin. */}
+          <div className="inline-flex rounded-xl border-2 border-foreground bg-card p-1" role="group">
             {(
               [
                 { id: "default", icon: BarChart3, label: t("viewDefault") },
                 { id: "terminal", icon: SquareTerminal, label: t("viewTerminal") },
               ] as const
-            ).map((opt) => {
-              const Icon = opt.icon
-              const isActive = style === opt.id
+            ).map((option) => {
+              const OptionIcon = option.icon
+              const isActive = style === option.id
               return (
                 <button
                   type="button"
-                  key={opt.id}
-                  onClick={() => setStyle(opt.id)}
+                  key={option.id}
+                  aria-pressed={isActive}
+                  onClick={() => setStyle(option.id)}
                   className={cn(
-                    "flex items-center gap-2 rounded-lg px-4 py-2 font-mono text-sm font-semibold transition-all",
-                    isActive
-                      ? "bg-gradient-to-r from-primary to-secondary text-white shadow-[0_0_18px_rgba(139,92,246,0.3)]"
-                      : "text-muted-foreground hover:text-foreground"
+                    "flex items-center gap-2 rounded-lg px-4 py-2 font-mono text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    isActive ? "bg-cyan-400 text-slate-950" : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
-                  {opt.label}
+                  <OptionIcon className="h-4 w-4" />
+                  {option.label}
                 </button>
               )
             })}
           </div>
         </div>
 
-        {/* Índice fixo: sem ele, chegar ao Websites era rolar ~10.000 px. Fica logo
-            abaixo do Header (fixo); a altura dos dois entra no cálculo do pulo. */}
-        <nav
-          ref={indexRef}
-          aria-label={t("index")}
-          className="sticky z-30 -mx-6 mt-8 border-b border-border/60 bg-background/90 px-6 py-3 backdrop-blur"
-          style={{ top: headerHeight }}
-        >
-          <div className="flex gap-2 overflow-x-auto pb-0.5 lg:flex-wrap lg:overflow-visible">
-            {plugins.map((plugin) => {
-              const Icon = getPluginIcon(plugin.name)
-              const isActive = plugin.name === activeId
-              return (
-                <a
-                  key={plugin.name}
-                  href={`#${plugin.name}`}
-                  data-plugin={plugin.name}
-                  aria-current={isActive ? "true" : undefined}
-                  onClick={(event) => jumpTo(event, plugin.name)}
-                  className={cn(
-                    "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors",
-                    isActive
-                      ? "border-primary/60 bg-primary/10 text-foreground"
-                      : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                  )}
+        <div className="mt-10 grid grid-cols-1 items-start gap-x-10 gap-y-6 lg:grid-cols-[250px_minmax(0,1fr)]">
+          {/* The list: a row of chips to scroll sideways on a phone, a sticky column from lg up,
+              where it scrolls on its own when it is taller than the screen. */}
+          <nav
+            aria-label={t("index")}
+            className="lg:sticky lg:top-24 lg:-mx-2 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:px-2 lg:pb-3"
+          >
+            <form
+              role="search"
+              onSubmit={(event) => {
+                // Enter opens the first match.
+                event.preventDefault()
+                if (firstMatch) select(firstMatch.name)
+              }}
+              className="relative mb-3"
+            >
+              <Search
+                aria-hidden
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") setQuery("")
+                }}
+                aria-label={t("search.label")}
+                placeholder={t("search.placeholder")}
+                className="w-full rounded-xl border-2 border-foreground bg-card py-2 pl-9 pr-9 text-[14px] text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-search-cancel-button]:hidden"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label={t("search.clear")}
+                  className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
-                  {textOf(plugin).displayName}
-                  <span className="font-mono text-[10.5px] text-muted-foreground/70">
-                    {sectionIdsOf(plugin.name).length}
-                  </span>
-                </a>
-              )
-            })}
-          </div>
-        </nav>
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </form>
+            {/* Always mounted: screen readers announce a live region's changes, not one that
+                appears already filled. */}
+            <p role="status" className="px-1 text-[13px] text-muted-foreground empty:hidden">
+              {groups.length === 0 ? t("search.empty", { query: query.trim() }) : null}
+            </p>
+            {/* Groups by category from lg up; on a phone the headings drop and the row runs
+                on in the same order. */}
+            <ul className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-2 lg:mx-0 lg:flex-col lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0">
+              {groups.map((group) => (
+                <li key={group.category} className="contents lg:block">
+                  <h3 className="hidden items-center gap-2 px-1 pb-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground lg:flex">
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "h-2.5 w-2.5 rounded-full border border-foreground",
+                        CATEGORY_STYLE[group.category].sticker
+                      )}
+                    />
+                    {tCat(group.category)}
+                    <span className="font-mono font-normal">{group.plugins.length}</span>
+                  </h3>
+                  <ul className="contents lg:flex lg:flex-col lg:gap-1.5">
+                    {group.plugins.map((item) => {
+                      const ItemIcon = getPluginIcon(item.name)
+                      const isActive = item.name === plugin.name
+                      return (
+                        <li key={item.name} className="flex-none">
+                          <button
+                            type="button"
+                            aria-current={isActive ? "true" : undefined}
+                            onClick={() => select(item.name)}
+                            className={cn(
+                              "flex w-full items-center gap-2.5 whitespace-nowrap rounded-xl border-2 px-3 py-2 text-left text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                              isActive
+                                ? "border-foreground bg-card text-foreground shadow-[4px_4px_0_0_hsl(var(--primary))]"
+                                : "border-transparent text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "flex h-7 w-7 flex-none items-center justify-center rounded-lg border-2 border-foreground text-slate-950",
+                                CATEGORY_STYLE[item.category].sticker
+                              )}
+                            >
+                              {ItemIcon ? <ItemIcon className="h-3.5 w-3.5" /> : null}
+                            </span>
+                            <span className="lg:min-w-0 lg:flex-1 lg:truncate">{textOf(item).displayName}</span>
+                            <SuspendedBadge pluginId={item.name} className="hidden xl:inline-flex" />
+                            <span className="font-mono text-[11px] font-normal text-muted-foreground">
+                              {sectionIdsOf(item.name).length}
+                            </span>
+                          </button>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <div className="mt-10 space-y-16">
-          {plugins.map((plugin) => {
-            const Icon = getPluginIcon(plugin.name)
-            const sections = SECTION_PREVIEWS[plugin.name] ?? {}
-            const sectionIds = sectionIdsOf(plugin.name)
-            const { displayName, description } = textOf(plugin)
-
-            return (
-              <section key={plugin.name} id={plugin.name} style={{ scrollMarginTop: covered }}>
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-cyan-500/10 text-primary">
-                    {Icon ? <Icon className="h-5 w-5" /> : null}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2.5">
-                      <h2 className="font-heading text-xl font-bold text-foreground">{displayName}</h2>
-                      <span className={cn("text-[11px] font-medium", CATEGORY_STYLE[plugin.category].label)}>
-                        {tCat(plugin.category)}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{description}</p>
-                  </div>
-                  <span className="ml-auto whitespace-nowrap rounded-full border border-border px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+          <section id={plugin.name} aria-live="polite" className="min-w-0 scroll-mt-24">
+            <div className="flex flex-wrap items-start gap-4 rounded-2xl border-2 border-foreground bg-card p-5 shadow-[6px_6px_0_0_hsl(var(--primary))]">
+              <span className={cn(TILE, "h-12 w-12", CATEGORY_STYLE[plugin.category].sticker)}>
+                {Icon ? <Icon className="h-6 w-6" /> : null}
+              </span>
+              <div className="min-w-0 flex-1 basis-[280px]">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h2 className="font-heading text-2xl font-extrabold leading-tight text-foreground">{displayName}</h2>
+                  <span className={CHIP}>{tCat(plugin.category)}</span>
+                  <span className={cn(CHIP, "font-mono")}>
                     {sectionIds.length} {t("sections")}
                   </span>
+                  <SuspendedBadge pluginId={plugin.name} />
                 </div>
+                <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{description}</p>
+                <SuspendedReason pluginId={plugin.name} className="mt-1.5 text-[13px]" />
+              </div>
+              <Link href="/signup" className={cn(BUTTON_PRIMARY, "px-5 py-3")}>
+                {t("cta")}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
 
-                {/* Colunas, não grade: numa grade a linha tem a altura do card mais alto, e
-                    seções de alturas muito diferentes deixavam buracos (só no GitHub, 3.541px
-                    de vazio sob os cards, a 1034px). Em colunas cada card desce logo abaixo do
-                    anterior; a ordem passa a ser de cima para baixo em cada coluna. */}
-                <div className="mt-5 columns-1 gap-5 sm:columns-2 lg:columns-3">
-                  {sectionIds.map((sectionId) => {
-                    const sectionMeta = (plugin.sections as any[])?.find((s) => s.id === sectionId)
-                    const sectionName = sectionMeta?.i18nKey?.name
-                      ? tWithFallback(sectionMeta.i18nKey.name.replace(/^plugins\./, ""), sectionMeta.name)
-                      : (sectionMeta?.name ?? sectionId)
-                    const size = sections[sectionId]?.[style]
-                    return (
-                      <figure key={sectionId} className="group mb-5 break-inside-avoid">
-                        <div className="overflow-hidden rounded-lg border border-border/60 bg-card/50 transition-colors group-hover:border-primary/40">
-                          {/* width/height reserve the card's space before the lazy image
-                              loads; without them each card was 0 px tall until then, and
-                              the page shifted under a jump from the index. */}
-                          <img
-                            src={`/previews/${plugin.name}/${style}/${sectionId}.svg`}
-                            alt={`${displayName} — ${sectionName}`}
-                            width={size?.[0]}
-                            height={size?.[1]}
-                            loading="lazy"
-                            className="block h-auto w-full"
-                          />
-                        </div>
-                        <figcaption className="mt-2 flex items-center gap-2 px-0.5">
-                          <span className="text-[13px] font-medium text-foreground">{sectionName}</span>
-                          <code className="ml-auto font-mono text-[10.5px] text-muted-foreground/60">{sectionId}</code>
-                        </figcaption>
-                      </figure>
-                    )
-                  })}
-                </div>
-              </section>
-            )
-          })}
-        </div>
-
-        <div className="mt-20 text-center">
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-secondary px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_0_34px_rgba(139,92,246,0.45)] transition-transform hover:scale-[1.02]"
-          >
-            {t("cta")}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+            {/* Columns, not a grid: a grid row is as tall as its tallest card, and sections
+                of very different heights left holes. In columns each card sits right under
+                the one before it; the order runs down each column. */}
+            <div
+              key={`${plugin.name}/${style}`}
+              className="mt-7 columns-1 gap-6 duration-300 animate-in fade-in sm:columns-2"
+            >
+              {sectionIds.map((sectionId) => {
+                const sectionMeta = plugin.sections.find((section) => section.id === sectionId)
+                const view = sectionMeta ? describeSection(sectionMeta, tWithFallback) : null
+                const sectionName = view?.name ?? sectionId
+                const size = sections[sectionId]?.[style]
+                return (
+                  <figure key={sectionId} className="mb-6 break-inside-avoid">
+                    <div className="overflow-hidden rounded-xl border-2 border-foreground/80 bg-background">
+                      {/* width/height reserve the card's space before the lazy image loads. */}
+                      <img
+                        src={`/previews/${plugin.name}/${style}/${sectionId}.svg`}
+                        alt={`${displayName}: ${sectionName}`}
+                        width={size?.[0]}
+                        height={size?.[1]}
+                        loading="lazy"
+                        className="block h-auto w-full"
+                      />
+                    </div>
+                    <figcaption className="mt-2 px-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[13.5px] font-semibold text-foreground">{sectionName}</span>
+                        <code className="ml-auto font-mono text-[11px] text-muted-foreground">{sectionId}</code>
+                      </div>
+                      {view?.description && (
+                        <p className="mt-0.5 text-[12.5px] leading-snug text-muted-foreground">{view.description}</p>
+                      )}
+                    </figcaption>
+                    {view && <SectionOptions section={view} className="mt-2.5" />}
+                  </figure>
+                )
+              })}
+            </div>
+          </section>
         </div>
       </main>
       <LandingFooter />

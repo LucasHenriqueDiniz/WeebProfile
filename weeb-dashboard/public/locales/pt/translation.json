@@ -97,7 +97,8 @@
     "moreActions": "Mais ações"
   },
   "header": {
-    "changeLanguage": "Trocar idioma",
+    "language": "Idioma",
+    "preferences": "Preferências: idioma e tema",
     "dashboard": "Dashboard",
     "myAccount": "Minha Conta",
     "settings": "Configurações",
@@ -350,13 +351,6 @@
         "applied": "Aplicado"
       }
     }
-  },
-  "languageSelector": {
-    "comingSoon": "Em breve",
-    "description": "Selecione o idioma preferido para a interface",
-    "noResults": "Nenhum idioma encontrado",
-    "searchPlaceholder": "Buscar idioma...",
-    "title": "Trocar idioma"
   },
   "loading": {
     "loading": "CARREGANDO"
@@ -745,7 +739,12 @@
         "purple": "Roxo",
         "pink": "Rosa",
         "blue": "Azul",
-        "green": "Verde"
+        "green": "Verde",
+        "cyan": "Ciano",
+        "orange": "Laranja",
+        "red": "Vermelho",
+        "monokai": "Monokai",
+        "custom": "Personalizado"
       }
     },
     "sort": {
@@ -764,33 +763,11 @@
     "shareTemplate": "Compartilhar",
     "likeTemplate": "Curtir",
     "unlikeTemplate": "Descurtir",
-    "createdBy": "Criado por",
-    "lastUpdated": "Última atualização",
-    "platforms": "Plataformas",
     "style": "Estilo",
     "theme": "Tema",
-    "preview": "Preview",
-    "description": "Descrição",
     "templateNotFound": "Template não encontrado",
     "templateNotFoundDescription": "Este template pode ter sido removido ou você não tem permissão para visualizá-lo.",
-    "templateCard": {
-      "useTemplate": "Usar template",
-      "viewDetails": "Ver detalhes",
-      "likes": "curtidas",
-      "platforms": "plataformas",
-      "lastUpdated": "atualizado em",
-      "like": "Curtir",
-      "unlike": "Descurtir"
-    },
-    "modal": {
-      "title": "Usar template",
-      "description": "Este template será carregado no editor para você personalizar.",
-      "close": "Fechar",
-      "useTemplate": "Usar template"
-    },
     "share": {
-      "title": "Compartilhar template",
-      "copyLink": "Copiar link",
       "copied": "Copiado!"
     },
     "sizes": {
@@ -798,13 +775,23 @@
       "full": "Largura Completa (830px)"
     },
     "detail": {
-      "createdAt": "Criado em",
       "size": "Tamanho",
-      "terminalOptions": "Opções do Terminal",
-      "customizations": "Personalizações",
-      "customCss": "CSS Personalizado",
-      "customColors": "Cores Customizadas",
-      "applied": "Aplicado"
+      "inside": "O que vem nele",
+      "look": "Visual",
+      "useHint": "Abre no editor, onde você coloca as suas contas.",
+      "sampleData": "Dados de exemplo. O seu card mostra os seus.",
+      "noEmojis": "Sem emojis",
+      "noHeader": "Sem cabeçalho do terminal",
+      "autoColor": "Acompanha o modo claro e escuro"
+    },
+    "loadError": "Não foi possível carregar os templates.",
+    "retry": "Tentar de novo",
+    "clearFilters": "Limpar filtros",
+    "scratch": {
+      "title": "Nenhum desses?",
+      "subtitle": "Comece de um card em branco e escolha você mesmo os plugins, as seções e o tema.",
+      "cta": "Começar do zero",
+      "browsePlugins": "Ver todos os plugins"
     }
   },
   "landing": {
@@ -826,8 +813,19 @@
       "check1": "{{max}} SVGs no plano grátis",
       "check2": "Sem GitHub Action, sem YAML",
       "check3": "Login com GitHub",
-      "cardCaption": "Um card de exemplo, com {{plugins}}",
-      "cardShow": "Mostrar o card com {{plugins}}"
+      "stepShow": "1 · Mostrar",
+      "stepStyle": "2 · Estilo",
+      "stepYours": "3 · O seu",
+      "showLegend": "O que mostrar",
+      "styleGroup": "Estilo do card",
+      "submit": "Ver meu card",
+      "example": "exemplo",
+      "soraAlt": "Sora, a mascote do WeebProfile",
+      "sora": {
+        "idle": "Escolhe o que mostrar e me diz seu usuário.",
+        "loading": "Montando o seu, um segundo…",
+        "ready": "Prontinho, {{username}}! É seu, de verdade."
+      }
     },
     "preview": {
       "kicker": "EXPERIMENTE",
@@ -922,7 +920,9 @@
         "anilist": "Estatísticas de anime e mangá, favoritos e o que você está assistindo.",
         "devto": "Seu perfil, artigos recentes e as tags que você mais usa.",
         "about": "Uma apresentação no estilo neofetch e badges de link, a partir do que você digita."
-      }
+      },
+      "all": "Todos",
+      "filter": "Filtrar por categoria"
     },
     "templates": {
       "kicker": "TEMPLATES",
@@ -960,7 +960,8 @@
     },
     "features": {
       "kicker": "POR QUE ASSIM",
-      "title": "Nada no seu repositório além de uma linha",
+      "title": "No seu README, apenas",
+      "titleHighlight": "uma linha",
       "items": [
         {
           "title": "Sem GitHub Action",
@@ -1016,7 +1017,29 @@
       "viewDefault": "default",
       "backHome": "Voltar ao início",
       "cta": "Criar meu SVG",
-      "index": "Ir para um plugin"
+      "index": "Ir para um plugin",
+      "search": {
+        "label": "Buscar plugins",
+        "placeholder": "Buscar plugin ou seção",
+        "clear": "Limpar busca",
+        "empty": "Nenhum plugin com “{{query}}”."
+      },
+      "options": {
+        "heading": "O que dá para mudar",
+        "none": "Nada a configurar: sai como está.",
+        "title": "Título",
+        "rename": "renomear",
+        "hide": "ocultar",
+        "on": "ligado por padrão",
+        "off": "desligado por padrão",
+        "range": "{{min}} a {{max}}",
+        "default": "padrão {{value}}",
+        "upTo_one": "até {{count}} item",
+        "upTo_other": "até {{count}} itens",
+        "list": "uma lista que você preenche",
+        "text": "seu texto",
+        "image": "envie ou cole um link"
+      }
     }
   },
   "embed": {
@@ -1072,5 +1095,11 @@
     "24631805e9b581180f00b670638a0fe3": "Perfil de desenvolvedor com atividade, calendário e repositórios em destaque do GitHub.",
     "eac59bb5481ce60dc57bf2090ef24c3b": "Combine estatísticas de anime do MyAnimeList com as faixas mais ouvidas no Last.fm.",
     "d7ed90cfffbbd466cec24ff05ba3abb9": "Estatísticas da Steam e desafios completados no Codewars."
+  },
+  "pluginStatus": {
+    "suspended": "Suspenso",
+    "reasons": {
+      "anilist": "Suspenso por enquanto: o AniList está recusando as chamadas do nosso servidor. Cards de AniList não geram até isso se resolver."
+    }
   }
 }

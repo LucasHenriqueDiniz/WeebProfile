@@ -29,6 +29,21 @@ export const PREVIEW_PLUGINS = {
 } as const satisfies Record<string, PreviewPlugin>
 
 export type PreviewPluginId = keyof typeof PREVIEW_PLUGINS
+
+/**
+ * A well-known public account per platform, so the field's placeholder doubles as
+ * something to try. AniList's founder keeps a private profile.
+ */
+export const PREVIEW_PLACEHOLDERS: Record<PreviewPluginId, string> = {
+  github: "torvalds",
+  myanimelist: "Xinil",
+  anilist: "username",
+  codewars: "g964",
+  codeforces: "tourist",
+  duolingo: "luis",
+  devto: "ben",
+  steam: "steamcommunity.com/id/gabelogannewell",
+}
 export type PreviewStyle = "default" | "terminal"
 export type PreviewSize = "half" | "full"
 

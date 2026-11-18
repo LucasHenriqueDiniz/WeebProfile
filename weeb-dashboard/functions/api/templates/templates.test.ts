@@ -121,6 +121,23 @@ describe("template routes on a real D1", { timeout: 60_000 }, () => {
     expectLayoutOnly(await list())
   })
 
+  it("GET /api/templates/:id says how many liked it and whether the viewer did", async () => {
+    await env.DB.prepare(
+      "INSERT INTO template_likes (id, user_id, template_id, created_at) VALUES ('like-1', 'user_fan', ?, ?)"
+    )
+      .bind(TEMPLATE_ID, new Date().toISOString())
+      .run()
+    try {
+      expect(await getOne()).toMatchObject({ likesCount: 1, userLiked: false })
+      clerk.userId = "user_fan"
+      expect(await getOne()).toMatchObject({ likesCount: 1, userLiked: true })
+      clerk.userId = "user_someone_else"
+      expect(await getOne()).toMatchObject({ likesCount: 1, userLiked: false })
+    } finally {
+      await env.DB.prepare("DELETE FROM template_likes WHERE id = 'like-1'").run()
+    }
+  })
+
   it("the author still gets their own template whole", async () => {
     clerk.userId = AUTHOR
     for (const template of [await getOne(), await list()]) {

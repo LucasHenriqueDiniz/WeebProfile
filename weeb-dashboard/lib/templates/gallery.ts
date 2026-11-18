@@ -42,3 +42,41 @@ export function sortTemplates(templates: Template[], sortBy: string): Template[]
     }
   })
 }
+
+/** Which list the gallery shows: the signed-in one adds the visitor's own templates and likes. */
+export type GallerySource = "public" | "mine"
+
+/**
+ * Public while Clerk has not answered or nobody is signed in, the visitor's own list
+ * once a session is known. While auth loads and then comes back signed out the source
+ * stays "public", so that visit asks for the list once.
+ */
+export function gallerySource(authLoading: boolean, signedIn: boolean): GallerySource {
+  return !authLoading && signedIn ? "mine" : "public"
+}
+
+export interface GalleryState {
+  templates: Template[]
+  loading: boolean
+  failed: boolean
+}
+
+/**
+ * Runs gallery fetches so that only the latest one lands. The page used to fire the
+ * public and the signed-in list side by side and keep whichever answered last: a
+ * signed-in visitor whose own list came back first saw the public list overwrite it
+ * and their private templates vanish. A failed fetch keeps what is on screen.
+ */
+export function createGalleryLoader(update: (change: (state: GalleryState) => GalleryState) => void) {
+  let latest = 0
+  return async function load(fetchList: () => Promise<Template[]>): Promise<void> {
+    const request = ++latest
+    update((state) => ({ ...state, loading: true, failed: false }))
+    try {
+      const templates = await fetchList()
+      if (request === latest) update(() => ({ templates, loading: false, failed: false }))
+    } catch {
+      if (request === latest) update((state) => ({ ...state, loading: false, failed: true }))
+    }
+  }
+}

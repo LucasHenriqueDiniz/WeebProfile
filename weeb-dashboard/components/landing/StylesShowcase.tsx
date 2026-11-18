@@ -1,16 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { BarChart3, Check, SquareTerminal, Sparkles } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { BarChart3, BookOpen, Check, SquareTerminal, Sparkles } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
+import { cn } from "@/lib/utils"
 import { SectionHeading } from "./SectionHeading"
 
 type StyleId = "default" | "terminal"
 
-// Refactor total: em vez de tres molduras estaticas, um comparador interativo — o
-// visitante alterna o estilo e ve a MESMA section (LastFM top artists) trocar de pele
-// com crossfade. E a promessa do produto ("um clique, nada se perde") demonstrada.
+/**
+ * One section in its two skins: the visitor flips the style and the same card (LastFM
+ * top artists) changes with a crossfade, in a README frame like the hero's.
+ */
 export function StylesShowcase() {
   const t = useTranslations("landing.styles")
   const [active, setActive] = useState<StyleId>("default")
@@ -21,89 +22,89 @@ export function StylesShowcase() {
   ]
 
   return (
-    <section id="styles" className="border-t border-border/60">
+    <section id="styles">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          {/* Copy + controle */}
           <div>
             <SectionHeading
               align="left"
               kicker={t("kicker")}
-              kickerClassName="text-emerald-500"
+              tone="violet"
               title={t("title")}
               subtitle={t("subtitle")}
             />
 
-            <div className="mt-7 inline-flex rounded-xl border border-border bg-card p-1">
-              {options.map((opt) => {
-                const Icon = opt.icon
-                const isActive = active === opt.id
+            <div className="mt-7 inline-flex rounded-xl border-2 border-foreground bg-card p-1" role="group">
+              {options.map((option) => {
+                const Icon = option.icon
+                const isActive = active === option.id
                 return (
                   <button
                     type="button"
-                    key={opt.id}
-                    onClick={() => setActive(opt.id)}
+                    key={option.id}
+                    aria-pressed={isActive}
+                    onClick={() => setActive(option.id)}
                     className={cn(
-                      "flex items-center gap-2 rounded-lg px-4 py-2.5 font-mono text-sm font-semibold transition-all",
-                      isActive
-                        ? "bg-gradient-to-r from-primary to-secondary text-white shadow-[0_0_20px_rgba(139,92,246,0.35)]"
-                        : "text-muted-foreground hover:text-foreground"
+                      "flex items-center gap-2 rounded-lg px-4 py-2.5 font-mono text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      isActive ? "bg-cyan-400 text-slate-950" : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <Icon className="h-4 w-4" />
-                    {opt.label}
+                    {option.label}
                     <span
-                      className={cn("text-[10px] font-normal", isActive ? "text-white/70" : "text-muted-foreground/60")}
+                      className={cn(
+                        "hidden text-[10px] font-normal sm:inline",
+                        isActive ? "text-slate-800" : "text-muted-foreground"
+                      )}
                     >
-                      {opt.note}
+                      {option.note}
                     </span>
                   </button>
                 )
               })}
             </div>
 
-            <div className="mt-6 flex flex-col gap-2.5 text-[13.5px] text-muted-foreground">
-              {[t("check1"), t("check2"), t("check3")].map((c) => (
-                <span key={c} className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 flex-shrink-0 text-emerald-500" />
-                  {c}
+            <div className="mt-6 flex flex-col gap-2.5 text-[14px] text-muted-foreground">
+              {[t("check1"), t("check2"), t("check3")].map((text) => (
+                <span key={text} className="flex items-center gap-2">
+                  <Check className="h-4 w-4 flex-shrink-0 text-foreground" strokeWidth={3} />
+                  {text}
                 </span>
               ))}
             </div>
 
-            <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-dashed border-border px-4 py-3">
-              <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary/70" />
+            <div className="mt-6 flex items-start gap-2.5 rounded-xl border-2 border-dashed border-foreground/50 px-4 py-3">
+              <Sparkles className="mt-0.5 h-4 w-4 flex-shrink-0 text-foreground" />
               <p className="text-xs leading-relaxed text-muted-foreground">
                 <span className="font-semibold text-foreground">{t("soonTitle")}.</span> {t("soonBody")}
               </p>
             </div>
           </div>
 
-          {/* Palco do preview — crossfade entre as duas peles da mesma section */}
-          <div aria-hidden className="relative">
-            <div
-              className={cn(
-                "absolute left-1/2 top-1/2 h-[75%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[110px] transition-colors duration-500",
-                active === "default" ? "bg-primary opacity-[0.16]" : "bg-emerald-500 opacity-[0.12]"
-              )}
-            />
-            <div className="relative mx-auto grid max-w-[440px]">
-              <img
-                src="/previews/lastfm/default/top_artists.svg"
-                alt=""
-                className={cn(
-                  "col-start-1 row-start-1 w-full rounded-xl transition-all duration-500 [filter:drop-shadow(0_14px_40px_rgba(0,0,0,0.3))]",
-                  active === "default" ? "opacity-100" : "pointer-events-none opacity-0 scale-[0.98]"
-                )}
-              />
-              <img
-                src="/previews/lastfm/terminal/top_artists.svg"
-                alt=""
-                className={cn(
-                  "col-start-1 row-start-1 w-full self-start rounded-xl transition-all duration-500 [filter:drop-shadow(0_14px_40px_rgba(0,0,0,0.35))]",
-                  active === "terminal" ? "opacity-100" : "pointer-events-none opacity-0 scale-[0.98]"
-                )}
-              />
+          <div
+            aria-hidden
+            className="mx-auto w-full max-w-[460px] -rotate-1 overflow-hidden rounded-2xl border-2 border-foreground bg-background shadow-[10px_10px_0_0_hsl(var(--primary))]"
+          >
+            <div className="flex items-center gap-2 border-b-2 border-foreground bg-card px-4 py-2.5 font-mono text-xs font-semibold text-foreground">
+              <BookOpen className="h-3.5 w-3.5" />
+              README.md
+              <span className="ml-auto rounded-full border-2 border-foreground/70 px-2 py-px text-[10.5px]">
+                {active}
+              </span>
+            </div>
+            <div className="grid p-2">
+              {options.map((option) => (
+                <img
+                  key={option.id}
+                  src={`/previews/lastfm/${option.id}/top_artists.svg`}
+                  alt=""
+                  loading="lazy"
+                  className={cn(
+                    "col-start-1 row-start-1 w-full self-start transition-opacity duration-500",
+                    active === option.id ? "opacity-100" : "pointer-events-none opacity-0"
+                  )}
+                />
+              ))}
             </div>
           </div>
         </div>

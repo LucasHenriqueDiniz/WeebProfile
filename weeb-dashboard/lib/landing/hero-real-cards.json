@@ -1,0 +1,65 @@
+[
+  {
+    "plugin": "codewars",
+    "style": "default",
+    "username": "Amayacrab",
+    "width": 415,
+    "height": 257
+  },
+  {
+    "plugin": "codewars",
+    "style": "terminal",
+    "username": "Amayacrab",
+    "width": 415,
+    "height": 176
+  },
+  {
+    "plugin": "duolingo",
+    "style": "default",
+    "username": "Amayacrab",
+    "width": 415,
+    "height": 347
+  },
+  {
+    "plugin": "duolingo",
+    "style": "terminal",
+    "username": "Amayacrab",
+    "width": 415,
+    "height": 172
+  },
+  {
+    "plugin": "github",
+    "style": "default",
+    "username": "LucasHenriqueDiniz",
+    "width": 415,
+    "height": 473
+  },
+  {
+    "plugin": "github",
+    "style": "terminal",
+    "username": "LucasHenriqueDiniz",
+    "width": 415,
+    "height": 472
+  },
+  {
+    "plugin": "myanimelist",
+    "style": "default",
+    "username": "Amayacrab",
+    "width": 415,
+    "height": 534
+  },
+  {
+    "plugin": "myanimelist",
+    "style": "terminal",
+    "username": "Amayacrab",
+    "width": 415,
+    "height": 708
+  },
+  {
+    "plugin": "steam",
+    "style": "default",
+    "username": "Amayacrab",
+    "width": 415,
+    "height": 666
+  }
+]

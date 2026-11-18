@@ -201,32 +201,25 @@ input[type="color"]::-moz-color-swatch {
   display: none; /* Chrome, Safari, Opera*/
 }
 
-/* Landing hero: the glow behind the example cards turns slowly. Still for anyone who
+/* Landing hero: Sora bobs and the props around the card float. Still for anyone who
    asked for less motion. */
-@keyframes hero-aurora {
-  to {
-    transform: rotate(360deg);
+@keyframes hero-float {
+  50% {
+    transform: translateY(-10px) rotate(6deg);
+  }
+}
+@keyframes hero-bob {
+  50% {
+    translate: 0 -6px;
   }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .hero-aurora {
-    animation: hero-aurora 24s linear infinite;
+  .hero-float {
+    animation: hero-float 6s ease-in-out infinite;
   }
-}
-
-/* Landing ambient glow orbs */
-@keyframes landing-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
+  .hero-bob {
+    animation: hero-bob 5s ease-in-out infinite;
   }
-  50% {
-    opacity: 0.85;
-  }
-}
-
-.animate-landing-pulse {
-  animation: landing-pulse 10s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

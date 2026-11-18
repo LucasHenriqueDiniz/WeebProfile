@@ -22,3 +22,5 @@ weeb-plugins/src/styles/tailwind-output.css
 # step CI runs before format:check -- so a formatted copy here would be undone on
 # the runner and fail the check that just passed locally.
 weeb-dashboard/lib/config/section-previews.ts
+# Written by scripts/fetch-hero-real-cards.mjs.
+weeb-dashboard/lib/landing/hero-real-cards.json

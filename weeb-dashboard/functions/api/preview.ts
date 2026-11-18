@@ -7,6 +7,7 @@ import { claimPreviewSlot } from "./_shared/preview-rate-limit"
 import { parseSteamInput } from "./_shared/steam-id"
 import { resolverViaGenerator } from "./_shared/steam-vanity"
 import { generateSvgViaService } from "./_shared/svg-generation"
+import { isSuspended } from "../../lib/plugins/suspended"
 import { PREVIEW_PLUGINS, parsePreviewRequest, type PreviewRequest } from "../../lib/preview/public-preview"
 
 /**
@@ -92,6 +93,11 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ request, env,
     const parsed = parsePreviewRequest(new URL(request.url).searchParams)
     if (!parsed.ok) return failure(400, "INVALID_PREVIEW_REQUEST", parsed.message)
     const preview = parsed.value
+    // A suspended platform cannot generate: answer before the cache, the rate limit and
+    // the generator, so a doomed request costs the visitor none of their budget.
+    if (isSuspended(preview.plugin)) {
+      return failure(503, "PREVIEW_UNAVAILABLE", "Previews for this platform are suspended for now.")
+    }
     // Steam takes a profile URL, a vanity name or the ID itself; only an ID or a vanity
     // name can be looked up, and checking now keeps a bad one out of the rate limit.
     const steamInput = preview.plugin === "steam" ? parseSteamInput(preview.username) : null

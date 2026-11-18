@@ -1,6 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
+import { SuspendedBadge, SuspendedReason } from "@/components/plugins/SuspendedBadge"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { AlertCircle, Check } from "lucide-react"
@@ -80,6 +81,7 @@ export function PluginRow({ plugin, state, isSelected, missingConfigs, onSelect 
               {credentialBadge}
             </span>
           )}
+          <SuspendedBadge pluginId={plugin.name} />
         </div>
         {/* Up to three lines, not one: the list column leaves ~180px at 1280 and the
             descriptions run 280-390px, so a single line cut all 14 of them mid-word, and
@@ -87,6 +89,7 @@ export function PluginRow({ plugin, state, isSelected, missingConfigs, onSelect 
         <p className="text-xs text-muted-foreground line-clamp-3" title={description}>
           {description}
         </p>
+        <SuspendedReason pluginId={plugin.name} className="mt-1" />
       </div>
 
       <div className="flex items-center gap-1.5 flex-shrink-0">

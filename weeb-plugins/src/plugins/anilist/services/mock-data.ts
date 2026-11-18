@@ -6,8 +6,24 @@ import type { AniListData } from "../types"
  * As capas ficam como URL do CDN do AniList: em previewMode elas são usadas como
  * estão, e fora dele o fetchData converte para data URI. Manter aqui uma URL real
  * mantém o mock parecido com o retorno de produção.
+ *
+ * O nome do arquivo no CDN leva um sufixo que não dá para derivar do id. Montada só
+ * com o id (`bx5114.jpg`), a URL respondia 404, a capa virava null e os previews de
+ * Favorite Anime e Currently Watching saíam com blocos vazios no lugar das capas. As
+ * URLs abaixo são o `coverImage.medium` que a API devolveu em 18/11/2026.
  */
-const cover = (id: number) => `https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx${id}.jpg`
+const COVER_FILES: Record<number, string> = {
+  21: "bx21-ELSYx3yMPcKM.jpg",
+  1535: "bx1535-kUgkcrfOrkUM.jpg",
+  5114: "bx5114-nSWCgQlmOMtj.jpg",
+  9253: "bx9253-tIUXF2gfU8Sg.jpg",
+  11061: "bx11061-y5gsT1hoHuHw.png",
+  16498: "bx16498-buvcRTBx4NSm.jpg",
+  21519: "bx21519-SUo3ZQuCbYhJ.png",
+  101922: "bx101922-WBsBl0ClmgYL.jpg",
+}
+
+const cover = (id: number) => `https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/${COVER_FILES[id]}`
 
 export function getMockAniListData(): AniListData {
   return {
