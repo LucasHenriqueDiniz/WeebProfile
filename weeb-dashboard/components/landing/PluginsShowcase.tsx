@@ -1,6 +1,7 @@
 "use client"
 
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { useState } from "react"
+import { PLUGIN_CATEGORIES, PLUGINS_METADATA, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { SuspendedBadge } from "@/components/plugins/SuspendedBadge"
 import { Link } from "@/i18n/navigation"
@@ -27,11 +28,18 @@ function firstPreview(plugin: string) {
 /**
  * Every plugin as a sticker: its name and category, and a window onto one of its real
  * cards, so the grid shows what each one draws instead of describing it. Each links to
- * the plugin in the gallery, where the description is.
+ * the plugin in the gallery, where the description and the options of each section are.
+ *
+ * Chips above the grid narrow it to one category: with ~40 plugins the full grid would be
+ * ten rows of cards, and the categories are what a visitor already thinks in ("my anime
+ * list", "my music"). Search lives in the gallery, where the full list is.
  */
 export function PluginsShowcase() {
   const t = useTranslations("landing.plugins")
-  const plugins = LANDING_PLUGINS.map((id) => PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]).filter(Boolean)
+  const all = LANDING_PLUGINS.map((id) => PLUGINS_METADATA[id as keyof typeof PLUGINS_METADATA]).filter(Boolean)
+  const categories = PLUGIN_CATEGORIES.filter((category) => all.some((plugin) => plugin.category === category))
+  const [category, setCategory] = useState<PluginCategory | null>(null)
+  const plugins = category ? all.filter((plugin) => plugin.category === category) : all
 
   return (
     <section id="plugins" className="border-y-2 border-foreground/10 bg-muted/40">
@@ -43,7 +51,41 @@ export function PluginsShowcase() {
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="mt-11 grid grid-cols-2 gap-x-4 gap-y-5 sm:gap-x-5 sm:gap-y-6 lg:grid-cols-4">
+        {/* One row to swipe on a phone, where wrapped chips took four lines. */}
+        <div
+          role="group"
+          aria-label={t("filter")}
+          className="-mx-6 mt-10 flex gap-2 overflow-x-auto px-6 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+        >
+          {[null, ...categories].map((option) => {
+            const isActive = option === category
+            const count = option ? all.filter((plugin) => plugin.category === option).length : all.length
+            return (
+              <button
+                type="button"
+                key={option ?? "all"}
+                aria-pressed={isActive}
+                onClick={() => setCategory(option)}
+                className={cn(
+                  "inline-flex flex-none items-center gap-1.5 rounded-full border-2 px-3 py-1 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  isActive
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-foreground/25 bg-background text-muted-foreground hover:border-foreground hover:text-foreground"
+                )}
+              >
+                {option && (
+                  <span
+                    aria-hidden
+                    className={cn("h-2.5 w-2.5 rounded-full border border-foreground", CATEGORY_STYLE[option].sticker)}
+                  />
+                )}
+                {option ? t(`categories.${option}`) : t("all")}
+                <span className="font-mono text-[11px] font-normal opacity-70">{count}</span>
+              </button>
+            )
+          })}
+        </div>
+        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-5 sm:gap-x-5 sm:gap-y-6 lg:grid-cols-4">
           {plugins.map((plugin) => {
             const Icon = getPluginIcon(plugin.name)
             const category = CATEGORY_STYLE[plugin.category]
