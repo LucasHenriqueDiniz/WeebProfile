@@ -223,8 +223,8 @@ export function notableContributionsHeight(cfg: GithubConfig, gh: GithubData, is
   const n = Math.min(gh.notableContributions?.length ?? 0, cfg.notable_contributions_max ?? 10)
   if (n === 0) return 0
   if (isTerminal) return terminalGrid(n)
-  // Cards of a fixed 100px, `gap-3`
-  return title(cfg.notable_contributions_hide_title) + stack(Array(n).fill(100), 12)
+  // Rows of a fixed 40px, no gap; the hairline between them is inside the 40px.
+  return title(cfg.notable_contributions_hide_title) + n * 40
 }
 
 const ACTIVITY_BADGES = new Set(["commit", "pr", "issue", "comment", "branch", "merged"])
@@ -232,18 +232,20 @@ const ACTIVITY_BADGES = new Set(["commit", "pr", "issue", "comment", "branch", "
 export function recentActivityHeight(cfg: GithubConfig, gh: GithubData, size: Size, isTerminal: boolean): number {
   const activities = (gh.recentActivity ?? []).slice(0, cfg.recent_activity_max ?? 10)
   if (activities.length === 0) return 0
-  // One truncated 20px line per activity, `gap-1`
-  if (isTerminal) return TERMINAL_COMMAND_HEIGHT + stack(Array(activities.length).fill(LINE), 4) + TERMINAL_BODY_PADDING
+  // One truncated 20px line per activity, no gap
+  if (isTerminal) return TERMINAL_COMMAND_HEIGHT + activities.length * LINE + TERMINAL_BODY_PADDING
 
-  // Card content beside the 14px icon and its `gap-3`, inside the card's `p-3`
-  const inner = CONTENT_WIDTH[size] - 24 - 14 - 12
+  // Event content beside the 14px icon and its `gap-3`; the event has no side padding.
+  const inner = CONTENT_WIDTH[size] - 14 - 12
   const activityHeight = (activity: (typeof activities)[number]): number => {
     // Badge and time: the badge is 20px, the time alone a 16px `text-xs` line.
     const header = ACTIVITY_BADGES.has(activity.type) ? 20 : 16
     // The title, `text-sm`, clamped to two lines
     const titleLines = textLines(activity.title, inner, 14, "poppins", 2)
-    // Files, additions, deletions and repository: `text-xs` items, `gap-2`, wrapping. The
-    // file count is in the card's font, the rest `font-mono`.
+    // Files, additions, deletions and repository: `text-xs` items, `gap-x-2`, wrapping into
+    // 16px rows with no gap between them. The file count is in the card's font, the rest
+    // `font-mono`. The repository is truncated to one line: before, a long name wrapped at
+    // its hyphens and the rows had `gap-2` between them, 24px the formula did not count.
     const items: number[] = []
     if (activity.filesChanged) {
       const { files, additions, deletions } = activity.filesChanged
@@ -251,16 +253,18 @@ export function recentActivityHeight(cfg: GithubConfig, gh: GithubData, size: Si
       if (additions > 0) items.push(textWidth(`+${additions}`, 12, "mono"))
       if (deletions > 0) items.push(textWidth(`-${deletions}`, 12, "mono"))
     }
-    items.push(textWidth(activity.repository, 12, "mono"))
+    items.push(Math.min(textWidth(activity.repository, 12, "mono"), inner))
     const footerRows = wrappedRows(items, inner, 8)
-    // `p-3`, then the three rows, each with `mb-1.5`
-    return 24 + header + 6 + titleLines * LINE + 6 + footerRows * 16 + 6
+    // `py-2`, then the three rows, the first two with `mb-1`
+    return 16 + header + 4 + titleLines * LINE + 4 + footerRows * 16
   }
-  // Activities grouped by day: the day's `text-xs` label, `gap-3`, its cards `gap-3`; days `gap-4`
+  // Activities grouped by day: the day's `text-xs` label, then its events with a 1px
+  // hairline above all but the first. Every day but the first opens with a hairline and `pt-2`.
   const days = Array.from(groupActivitiesByDay(activities).values()).map(
-    (day) => 16 + 12 + stack((day ?? []).map(activityHeight), 12)
+    (day, i) =>
+      (i > 0 ? 1 + 8 : 0) + 16 + (day ?? []).reduce((sum, a, j) => sum + (j > 0 ? 1 : 0) + activityHeight(a), 0)
   )
-  return title(cfg.recent_activity_hide_title) + stack(days, 16)
+  return title(cfg.recent_activity_hide_title) + stack(days, 0)
 }
 
 export function introductionHeight(cfg: GithubConfig, gh: GithubData, size: Size, isTerminal: boolean): number {

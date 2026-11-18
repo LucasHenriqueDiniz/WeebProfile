@@ -31,13 +31,13 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData["notableC
   const getIcon = (type: string) => {
     switch (type) {
       case "commits":
-        return <FaCode className="text-default-highlight" size={18} />
+        return <FaCode className="text-default-highlight" size={14} />
       case "prs":
-        return <RiGitPullRequestLine className="text-blue-500" size={18} />
+        return <RiGitPullRequestLine className="text-blue-500" size={14} />
       case "issues":
-        return <FaExclamationCircle className="text-yellow-500" size={18} />
+        return <FaExclamationCircle className="text-yellow-500" size={14} />
       default:
-        return <FaCodeBranch className="text-default-muted" size={18} />
+        return <FaCodeBranch className="text-default-muted" size={14} />
     }
   }
 
@@ -54,32 +54,24 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData["notableC
     }
   }
 
+  // One list: fixed 40px rows, a hairline between them (no gap, no card around each row).
   return (
-    <div className={withCascade("flex flex-col gap-3", cascade)} style={cascade?.style}>
+    <div className={withCascade("flex flex-col", cascade)} style={cascade?.style}>
       {contributions.map((contribution, index) => (
         <ExternalLink
           key={index}
           href={contribution.repositoryUrl}
-          className="flex items-start gap-3 p-4 half:p-3 rounded-lg border border-default-border h-[100px]"
+          className={`flex items-center gap-3 h-[40px] ${index > 0 ? "border-0 border-t border-solid border-default-border" : ""}`}
         >
-          <div className="flex-shrink-0 mt-0.5">
-            <div className="p-2 rounded-md bg-default-muted/10">{getIcon(contribution.type)}</div>
+          <div className="flex-shrink-0 p-1.5 rounded-md bg-default-muted/10 leading-none">
+            {getIcon(contribution.type)}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="font-semibold text-base half:text-sm text-default-text truncate">
-                {contribution.repository}
-              </span>
-            </div>
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="flex items-center gap-1.5 text-default-muted">
-                <span className="text-sm font-medium">
-                  <AnimatedNumber value={abbreviateNumber(contribution.contributions)} />{" "}
-                  {getTypeLabel(contribution.type)}
-                </span>
-              </div>
-            </div>
-          </div>
+          <span className="flex-1 min-w-0 font-semibold text-sm text-default-text truncate">
+            {contribution.repository}
+          </span>
+          <span className="flex-shrink-0 text-sm font-medium text-default-muted whitespace-nowrap">
+            <AnimatedNumber value={abbreviateNumber(contribution.contributions)} /> {getTypeLabel(contribution.type)}
+          </span>
         </ExternalLink>
       ))}
     </div>
