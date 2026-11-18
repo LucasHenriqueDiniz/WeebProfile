@@ -27,6 +27,16 @@ const tile = (n: number): GeneratedTile => ({
 })
 const tiles = (count: number) => Array.from({ length: count }, (_, n) => tile(n))
 
+/** A link badge of the About plugin: its own width, laid inline in the README. */
+const badge = (n: number, href = `https://badge${n}.example/`): GeneratedTile => ({
+  href,
+  title: `Badge ${n}`,
+  svg: `<svg xmlns="http://www.w3.org/2000/svg" width="${100 + n}" height="36"><text>badge ${n}</text></svg>`,
+  width: 100 + n,
+  height: 36,
+  layout: "inline",
+})
+
 describe("a card's tiles, on a real D1 and R2", { timeout: 30_000 }, () => {
   let proxy: Awaited<ReturnType<typeof getPlatformProxy<CloudflareEnv>>>
   let env: CloudflareEnv
@@ -132,8 +142,9 @@ describe("a card's tiles, on a real D1 and R2", { timeout: 30_000 }, () => {
     expect(await stored(id)).toEqual(["0", "1", "2", "manifest"])
 
     const manifest = await getManifest("user_store", id)
+    // A generator answer without a layout is a website's, from before link badges.
     expect(await manifest.json()).toEqual({
-      tiles: tiles(3).map(({ href, title }) => ({ href, title })),
+      tiles: tiles(3).map(({ href, title }) => ({ href, title, layout: "grid" })),
     })
 
     const second = await getTile(id, "1.svg")
@@ -155,7 +166,51 @@ describe("a card's tiles, on a real D1 and R2", { timeout: 30_000 }, () => {
     expect(await response.text()).toBe('<svg xmlns="http://www.w3.org/2000/svg" width="270" height="1"></svg>')
   })
 
-  it.each(["12.svg", "100.svg", "-1.svg", "a.svg", "1.png", "1"])("answers 404 for the tile %j", async (file) => {
+  // A card with link badges: the manifest says which tiles are badges, for the snippet.
+  it("stores a link badge's layout in the manifest, next to the websites' grid", async () => {
+    const id = await seedSvg("user_badges")
+    await generate("user_badges", id, [tile(0), badge(1), badge(2, "mailto:someone@example.com")])
+
+    expect(await (await getManifest("user_badges", id)).json()).toEqual({
+      tiles: [
+        { href: "https://site0.example/", title: "Site 0", layout: "grid" },
+        { href: "https://badge1.example/", title: "Badge 1", layout: "inline" },
+        { href: "mailto:someone@example.com", title: "Badge 2", layout: "inline" },
+      ],
+    })
+    expect(await (await getTile(id, "2.svg")).text()).toBe(badge(2).svg)
+  })
+
+  // A badge snippet sets no size: the 270px strip of a site would be a blank 270px in
+  // the middle of the badge row.
+  it("answers a one-pixel square for a place after the last link badge", async () => {
+    const id = await seedSvg("user_badge_removed")
+    await generate("user_badge_removed", id, [badge(0), badge(1), badge(2)])
+
+    await generate("user_badge_removed", id, [badge(0), badge(1)])
+
+    expect(await stored(id)).toEqual(["0", "1", "manifest"])
+    expect(await (await getTile(id, "2.svg")).text()).toBe(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'
+    )
+  })
+
+  // Manifests written before link badges carry no layout; they were all websites.
+  it("reads a manifest without layouts as the websites' grid", async () => {
+    const id = await seedSvg("user_old_manifest")
+    await generate("user_old_manifest", id, tiles(1))
+    await env.SVGS_BUCKET.put(
+      `svgs/${id}/tiles.json`,
+      JSON.stringify({ tiles: [{ href: "https://site0.example/", title: "Site 0" }] })
+    )
+
+    expect(await (await getManifest("user_old_manifest", id)).json()).toEqual({
+      tiles: [{ href: "https://site0.example/", title: "Site 0", layout: "grid" }],
+    })
+    expect(await (await getTile(id, "3.svg")).text()).toContain('width="270" height="1"')
+  })
+
+  it.each(["20.svg", "100.svg", "-1.svg", "a.svg", "1.png", "1"])("answers 404 for the tile %j", async (file) => {
     const id = await seedSvg(`user_bad_${file.replace(/\W/g, "_")}`)
     expect((await getTile(id, file)).status).toBe(404)
   })
@@ -244,9 +299,15 @@ describe("a card's tiles, on a real D1 and R2", { timeout: 30_000 }, () => {
     expect((await getManifest("user_someone_else", id)).status).toBe(404)
   })
 
-  it("never stores more tiles than the websites plugin can have sites", () => {
-    const options = PLUGINS_METADATA.websites.sections.flatMap((section) => section.configOptions)
-    const items = options.find((option) => option.key === "websites_items") as { maxItems?: number }
-    expect(items.maxItems).toBe(MAX_TILES)
+  // Every tile a card can draw has a place: the websites' sites and the About plugin's
+  // link badges, the two plugins with tiles.
+  it("has a place for every site and every link badge a card can have", () => {
+    const maxItems = (plugin: "websites" | "about", key: string) => {
+      const sections = PLUGINS_METADATA[plugin].sections as ReadonlyArray<{
+        configOptions: ReadonlyArray<{ key: string; maxItems?: number }>
+      }>
+      return sections.flatMap((section) => section.configOptions).find((option) => option.key === key)!.maxItems!
+    }
+    expect(maxItems("websites", "websites_items") + maxItems("about", "links_items")).toBe(MAX_TILES)
   })
 })

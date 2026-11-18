@@ -12,6 +12,12 @@ import type { WebsiteEntry } from "../types"
  * The SVG is wider than the card by a transparent margin on every side, which becomes
  * the gap between tiles: in the README they sit glued together, since any whitespace
  * between the <a> tags would be a space character that breaks the row.
+ *
+ * The card's classes must exist in the style's CSS, and `border` alone draws nothing:
+ * without preflight there is no border-style, so `border-solid` goes with it. Until
+ * 11/2026 the default tile used bg-default-muted/5 and border-default-border/60, which
+ * have no rule: no border, no background, and the text sat on the page's own color. The
+ * muted tints are relative to the page, so the card stands out on GitHub light and dark.
  */
 
 export const WEBSITE_TILE_WIDTH = 270
@@ -71,8 +77,8 @@ export function WebsiteTile({ site, style, showThumbnail, showDescription }: Web
         href={site.url}
         className={
           terminal
-            ? "flex flex-col overflow-hidden rounded-lg border border-terminal-muted"
-            : "flex flex-col overflow-hidden rounded-lg border border-default-border/60 bg-default-muted/5"
+            ? "flex flex-col overflow-hidden rounded-lg border border-solid border-terminal-muted"
+            : "flex flex-col overflow-hidden rounded-lg border border-solid border-default-border bg-default-muted/10"
         }
         style={{
           height: "100%",

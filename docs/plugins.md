@@ -3,22 +3,27 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 58 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 73 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
 ## Plugins
 
 - [16Personalities](#16personalities)
+- [About me](#about)
+- [AniList](#anilist)
 - [Codeforces](#codeforces)
 - [Codewars](#codewars)
+- [Dev.to](#devto)
 - [Duolingo](#duolingo)
 - [GitHub](#github)
+- [Repository](#github_repo)
 - [LastFM](#lastfm)
 - [Lyfta](#lyfta)
 - [MyAnimeList](#myanimelist)
 - [Stack Overflow](#stackoverflow)
 - [Steam](#steam)
+- [Websites](#websites)
 
 ---
 
@@ -50,6 +55,96 @@ Display your 16Personalities type with emoji and link
     <tr>
       <td><code>personality</code></td>
       <td><img src="../weeb-dashboard/public/previews/16personalities/terminal/personality.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>About me</b></summary>
+
+An intro in the style of neofetch and link badges, from what you type in. Nothing to connect
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>neofetch</code></td>
+      <td><img src="../weeb-dashboard/public/previews/about/default/neofetch.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>links</code></td>
+      <td><img src="../weeb-dashboard/public/previews/about/default/links.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>neofetch</code></td>
+      <td><img src="../weeb-dashboard/public/previews/about/terminal/neofetch.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>links</code></td>
+      <td><img src="../weeb-dashboard/public/previews/about/terminal/links.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>AniList</b></summary>
+
+Show your AniList anime and manga statistics
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>statistics</code></td>
+      <td><img src="../weeb-dashboard/public/previews/anilist/default/statistics.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>favorites_anime</code></td>
+      <td><img src="../weeb-dashboard/public/previews/anilist/default/favorites_anime.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>currently_watching</code></td>
+      <td><img src="../weeb-dashboard/public/previews/anilist/default/currently_watching.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>statistics</code></td>
+      <td><img src="../weeb-dashboard/public/previews/anilist/terminal/statistics.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>favorites_anime</code></td>
+      <td><img src="../weeb-dashboard/public/previews/anilist/terminal/favorites_anime.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>currently_watching</code></td>
+      <td><img src="../weeb-dashboard/public/previews/anilist/terminal/currently_watching.svg" width="415"></td>
     </tr>
   </table>
 
@@ -164,6 +259,55 @@ Show your Codewars kata solving statistics
     <tr>
       <td><code>leaderboard_position</code></td>
       <td><img src="../weeb-dashboard/public/previews/codewars/terminal/leaderboard_position.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>Dev.to</b></summary>
+
+Show your Dev.to profile and recent articles
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>profile</code></td>
+      <td><img src="../weeb-dashboard/public/previews/devto/default/profile.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>recent_articles</code></td>
+      <td><img src="../weeb-dashboard/public/previews/devto/default/recent_articles.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>top_tags</code></td>
+      <td><img src="../weeb-dashboard/public/previews/devto/default/top_tags.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>profile</code></td>
+      <td><img src="../weeb-dashboard/public/previews/devto/terminal/profile.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>recent_articles</code></td>
+      <td><img src="../weeb-dashboard/public/previews/devto/terminal/recent_articles.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>top_tags</code></td>
+      <td><img src="../weeb-dashboard/public/previews/devto/terminal/top_tags.svg" width="415"></td>
     </tr>
   </table>
 
@@ -398,6 +542,79 @@ Show your GitHub statistics
     <tr>
       <td><code>repository_contributors</code></td>
       <td><img src="../weeb-dashboard/public/previews/github/terminal/repository_contributors.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>Repository</b></summary>
+
+Show a card with stats for a single GitHub repository
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>banner</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/default/banner.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>stats</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/default/stats.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>star_graph</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/default/star_graph.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>languages</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/default/languages.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>topics</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/default/topics.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>overview</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/default/overview.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>banner</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/terminal/banner.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>stats</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/terminal/stats.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>star_graph</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/terminal/star_graph.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>languages</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/terminal/languages.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>topics</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/terminal/topics.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>overview</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/terminal/overview.svg" width="415"></td>
     </tr>
   </table>
 
@@ -731,6 +948,39 @@ Show your Steam gaming statistics
     <tr>
       <td><code>top_games</code></td>
       <td><img src="../weeb-dashboard/public/previews/steam/terminal/top_games.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>Websites</b></summary>
+
+Showcase your own websites, with thumbnails pulled from each page
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>websites</code></td>
+      <td><img src="../weeb-dashboard/public/previews/websites/default/websites.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>websites</code></td>
+      <td><img src="../weeb-dashboard/public/previews/websites/terminal/websites.svg" width="415"></td>
     </tr>
   </table>
 

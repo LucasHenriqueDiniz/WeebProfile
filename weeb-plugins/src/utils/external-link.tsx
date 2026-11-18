@@ -47,6 +47,30 @@ export function safeHref(raw: unknown): string | null {
 }
 
 /**
+ * One plain address: no spaces, quotes, angle brackets or the separators that would
+ * turn `mailto:` into several recipients or smuggle headers past it.
+ */
+const EMAIL_ADDRESS = /^[^\s@<>"'(),;:\\?&#%]+@[^\s@<>"'(),;:\\?&#%/]+\.[^\s@<>"'(),;:\\?&#%/]+$/
+
+export function isEmailAddress(raw: unknown): raw is string {
+  return typeof raw === "string" && raw.length <= 254 && EMAIL_ADDRESS.test(raw)
+}
+
+/**
+ * An href for a link the user typed to be clicked: an http(s) URL as safeHref takes
+ * it, or `mailto:` with exactly one address and nothing after it. The About plugin's
+ * link badges are the only links with an email; a README keeps `mailto:` hrefs.
+ */
+export function safeLinkHref(raw: unknown): string | null {
+  const web = safeHref(raw)
+  if (web) return web
+  if (typeof raw !== "string") return null
+  const match = /^mailto:(.*)$/i.exec(raw.trim())
+  if (!match) return null
+  return isEmailAddress(match[1]) ? `mailto:${match[1]}` : null
+}
+
+/**
  * Adds https:// to an address typed without a scheme ("example.com"), the way a
  * GitHub profile keeps its website. A scheme is only recognised with "://", so
  * "localhost:3000" or "example.com:8080/x" get https:// instead of being read as

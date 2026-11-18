@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm"
 import type { CloudflareEnv } from "../../api/_shared/auth"
 import { serverError } from "../../api/_shared/auth"
 import { getDb } from "../../api/_shared/db"
-import { MAX_TILES, getTileFromR2 } from "../../api/_shared/storage"
+import { MAX_TILES, getTileFromR2, getTilesManifestFromR2 } from "../../api/_shared/storage"
 import { SVG_EDGE_CACHE_SECONDS, edgeCache, svgEdgeCacheKey, svgHeaders } from "../../api/svg/[id]"
 import { svgs } from "../../../lib/db/schema"
 
@@ -16,6 +16,22 @@ import { svgs } from "../../../lib/db/schema"
  * collapses, and a row of nothing but removed sites takes no height at all.
  */
 export const EMPTY_TILE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="270" height="1"></svg>'
+
+/**
+ * The same for a link badge. A badge snippet sets no size, so the strip above would
+ * be 270px of blank in the middle of the row; one pixel square is all but nothing.
+ */
+export const EMPTY_INLINE_TILE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'
+
+/**
+ * Which empty answer a missing place gets. A place past the stored tiles held one of
+ * the last plugin's: a card lists its websites and its badges plugin by plugin, so a
+ * badge removed from the end leaves a place after the last badge.
+ */
+async function emptyTileFor(env: CloudflareEnv, id: string): Promise<string> {
+  const manifest = await getTilesManifestFromR2(env, id)
+  return manifest[manifest.length - 1]?.layout === "inline" ? EMPTY_INLINE_TILE_SVG : EMPTY_TILE_SVG
+}
 
 /** "0.svg" .. "11.svg", as the snippet writes them. */
 function tileIndex(raw: unknown): number | null {
@@ -63,7 +79,9 @@ export const onRequestGet: PagesFunction<CloudflareEnv> = async ({ env, params, 
 
     // Not cached at the edge: the place may get a site again at the next generation,
     // which changes the key anyway, but an empty answer is cheap to recompute.
-    if (tile === null) return new Response(EMPTY_TILE_SVG, { headers: svgHeaders(`${timing}, tile;desc=empty`) })
+    if (tile === null) {
+      return new Response(await emptyTileFor(env, id), { headers: svgHeaders(`${timing}, tile;desc=empty`) })
+    }
 
     if (cache && cacheKey) {
       const copy = new Response(tile, {

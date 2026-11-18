@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest"
-import { generateMarkdown, generateMarkdownForMultipleHalf, generateTilesMarkdown, linkableUrl } from "./markdown"
+import {
+  generateBadgesMarkdown,
+  generateMarkdown,
+  generateMarkdownForMultipleHalf,
+  generateTilesMarkdown,
+  linkableUrl,
+} from "./markdown"
 
 const url = "https://weebprofile-dashboard.pages.dev/svg/abc.svg"
 const other = "https://weebprofile-dashboard.pages.dev/svg/def.svg"
@@ -134,10 +140,54 @@ describe("generateTilesMarkdown", () => {
   })
 })
 
+describe("generateBadgesMarkdown", () => {
+  const src = (n: number) => `https://weebprofile-dashboard.pages.dev/svg/abc/${n}.svg`
+
+  // The README buttons they replace: each in its link, at its natural size, a space
+  // between them as the gap, so a narrow screen wraps the row like words.
+  it("links each badge's image at its natural size, separated by a space", () => {
+    expect(
+      generateBadgesMarkdown([
+        { href: "https://lucashdo.com/", title: "lucashdo.com", src: src(0) },
+        { href: "mailto:someone@example.com", title: "Email", src: src(1) },
+      ])
+    ).toBe(
+      '<p align="center">' +
+        `<a href="https://lucashdo.com/"><img alt="lucashdo.com" src="${src(0)}" /></a> ` +
+        `<a href="mailto:someone@example.com"><img alt="Email" src="${src(1)}" /></a>` +
+        "</p>"
+    )
+  })
+
+  it.each(["javascript:alert(1)", "mailto:a@b.co?bcc=c@d.co", "mailto:a@b.co,c@d.co", "mailto:"])(
+    "leaves out a badge whose link would be %j",
+    (href) => {
+      const snippet = generateBadgesMarkdown([
+        { href, title: "Bad", src: src(0) },
+        { href: "https://good.example/", title: "Good", src: src(1) },
+      ])
+      expect(snippet).not.toContain("Bad")
+      expect(snippet.match(/<a /g)).toHaveLength(1)
+    }
+  )
+
+  it("answers nothing when there is no badge", () => {
+    expect(generateBadgesMarkdown([])).toBe("")
+  })
+})
+
 describe("linkableUrl", () => {
   it("normalizes an http(s) URL and refuses anything else", () => {
     expect(linkableUrl("HTTPS://Example.COM")).toBe("https://example.com/")
     expect(linkableUrl("example.com")).toBeNull()
     expect(linkableUrl("ftp://example.com")).toBeNull()
+  })
+
+  it("takes a mailto: with one plain address and nothing after it", () => {
+    expect(linkableUrl("mailto:someone@example.com")).toBe("mailto:someone@example.com")
+    expect(linkableUrl("MAILTO:someone@example.com")).toBe("mailto:someone@example.com")
+    expect(linkableUrl("mailto:someone@example.com?subject=hi")).toBeNull()
+    expect(linkableUrl("mailto:a@b.co;c@d.co")).toBeNull()
+    expect(linkableUrl("mailto:someone")).toBeNull()
   })
 })

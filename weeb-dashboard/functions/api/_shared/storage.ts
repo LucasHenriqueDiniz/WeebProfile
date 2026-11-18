@@ -10,11 +10,18 @@ import type { CloudflareEnv } from "./auth"
  */
 
 /**
- * The most tiles a card can have: the websites plugin's MAX_WEBSITES, its only source.
- * storage.test.ts checks the two agree. Tiles at or past this index are never written,
- * so a delete of every index up to it clears whatever a card ever had.
+ * The most tiles a card can have: the websites plugin's 12 sites and the About plugin's
+ * 8 link badges, the plugins that draw them (tiles.test.ts checks the sum). Tiles at or
+ * past this index are never written, so a delete of every index up to it clears
+ * whatever a card ever had.
  */
-export const MAX_TILES = 12
+export const MAX_TILES = 20
+
+/**
+ * How a README lays the tiles out (TileLayout in weeb-plugins): "grid" for the
+ * websites, three to a row; "inline" for link badges, each at its own width.
+ */
+export type TileLayout = "grid" | "inline"
 
 /** What a generation answered for one tile (svg-generator's SvgTile). */
 export interface GeneratedTile {
@@ -23,12 +30,19 @@ export interface GeneratedTile {
   svg: string
   width: number
   height: number
+  /** Absent from a generator that predates link badges: those were all websites, "grid". */
+  layout?: TileLayout
 }
 
-/** A tile as the manifest lists it, for the snippet: no image, only its link and name. */
+/** A tile as the manifest lists it, for the snippet: no image, only its link, name and layout. */
 export interface TileManifestEntry {
   href: string
   title: string
+  layout: TileLayout
+}
+
+function tileLayout(raw: unknown): TileLayout {
+  return raw === "inline" ? "inline" : "grid"
 }
 
 function svgKey(id: string): string {
@@ -88,7 +102,7 @@ export async function saveTilesToR2(env: CloudflareEnv, id: string, tiles: Gener
   }
 
   const manifest: { tiles: TileManifestEntry[] } = {
-    tiles: kept.map(({ href, title }) => ({ href, title })),
+    tiles: kept.map(({ href, title, layout }) => ({ href, title, layout: tileLayout(layout) })),
   }
   await env.SVGS_BUCKET.put(tilesManifestKey(id), JSON.stringify(manifest), {
     httpMetadata: { contentType: "application/json" },
@@ -108,11 +122,17 @@ export async function getTileFromR2(env: CloudflareEnv, id: string, index: numbe
   return object.text()
 }
 
+/** The manifest's entries. One written before link badges has no layout: it was a website's, "grid". */
 export async function getTilesManifestFromR2(env: CloudflareEnv, id: string): Promise<TileManifestEntry[]> {
   const object = await env.SVGS_BUCKET.get(tilesManifestKey(id))
   if (!object) return []
-  const parsed = (await object.json()) as { tiles?: TileManifestEntry[] }
-  return Array.isArray(parsed.tiles) ? parsed.tiles : []
+  const parsed = (await object.json()) as { tiles?: Array<Partial<TileManifestEntry>> }
+  if (!Array.isArray(parsed.tiles)) return []
+  return parsed.tiles.map(({ href, title, layout }) => ({
+    href: String(href ?? ""),
+    title: String(title ?? ""),
+    layout: tileLayout(layout),
+  }))
 }
 
 /** The card's SVG and everything stored next to it. */
