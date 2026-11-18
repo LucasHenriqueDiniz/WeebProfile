@@ -971,7 +971,8 @@
     },
     "features": {
       "kicker": "POR QUE ASSIM",
-      "title": "Nada no seu repositório além de uma linha",
+      "title": "No seu README, apenas",
+      "titleHighlight": "uma linha",
       "items": [
         {
           "title": "Sem GitHub Action",
