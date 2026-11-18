@@ -55,6 +55,8 @@ beforeEach(() => {
   updates.length = 0
   slot.claimed = true
   delete svgRow.uiConfig
+  delete svgRow.lastError
+  delete svgRow.failCount
 })
 
 // What svg-generator/src/worker.ts answers when it cannot read the user's secrets.
@@ -196,5 +198,38 @@ describe("POST /api/svgs/:id/generate with the card's ui_config", () => {
 
   it("leaves them off for an SVG saved before the option existed", async () => {
     expect((await sentToGenerator()).animations).toBe(false)
+  })
+})
+
+describe("POST /api/svgs/:id/generate after an earlier failure", () => {
+  /** Runs the route to a published SVG, with an R2 bucket that takes every write. */
+  async function regenerateAndPublish(): Promise<Response> {
+    const { onRequestPost } = await import("./generate")
+    const env = {
+      SVG_GENERATOR: {
+        fetch: async () => Response.json({ success: true, svg: "<svg/>", pluginErrors: {}, hasErrors: false }),
+      },
+      SVGS_BUCKET: { put: async () => undefined, delete: async () => undefined },
+      R2_PUBLIC_URL: "https://r2.test",
+    } as unknown as CloudflareEnv
+    return (await onRequestPost({
+      request: new Request("https://dash/api/svgs/svg_1/generate", { method: "POST", body: "{}" }),
+      env,
+      params: { id: "svg_1" },
+    } as unknown as Parameters<typeof onRequestPost>[0])) as unknown as Response
+  }
+
+  // The card page shows last_error under the image. A manual generation used to write it
+  // on failure and never clear it, so a card that worked again kept showing the old error
+  // until the next nightly run (the cron clears it).
+  it("clears the old error and the cron's fail count once the SVG is published", async () => {
+    svgRow.lastError = "put: We encountered an internal error. Please try again. (10001)"
+    svgRow.failCount = 3
+
+    const response = await regenerateAndPublish()
+
+    expect(response.status).toBe(200)
+    expect(updates.at(-1)).toMatchObject({ status: "completed", lastError: null, failCount: 0 })
+    expect(((await response.json()) as { svg: Record<string, unknown> }).svg).toMatchObject({ lastError: null })
   })
 })
