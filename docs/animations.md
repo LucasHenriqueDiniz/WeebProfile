@@ -229,6 +229,35 @@ nos outros (chave do usuário, ou API que não responde fora da Cloudflare: Jika
   terminal que já está na `main` (33.764 px, até 2/255). No default, com capas, 85 a 99,8%
   até 2/255 e de 9 a 199 px acima de 8/255, nas capas. As barras do gráfico: 0 a 24 px.
 
+## Tiles do README
+
+Os tiles (um SVG por site do `websites` e um por badge do `about`, ver
+[`websites-tiles.md`](websites-tiles.md)) ficam lado a lado no README, cada um numa imagem.
+Até 18/11/2026 saíam sempre sem animação: o `renderTiles` não repassava a opção.
+
+- **Com a opção ligada,** cada tile entra pela posição na fileira: `--weeb-at` = posição ×
+  o passo de `animationTimeline(estilo, [quantidade de tiles])`, num `<div class="weeb-tile">`
+  em volta do tile (`animationTileStyle`). O tile não tem `<section>`, então tem regra
+  própria: fade a partir de `--weeb-at` e `--weeb-out` 100 ms depois, de onde a miniatura e
+  as linhas do `WebsiteTile` entram em cascata.
+- **Com a opção desligada,** nada muda: os 18 tiles do mock (sites e badges, dois estilos)
+  saem iguais byte a byte aos da `main` (85456c89).
+
+Medido em 18/11/2026 (Playwright 1.60), com os 7 sites do README (fetch real) e 3 badges
+(mock), nos dois estilos: 20 tiles, nos três engines se mexem, ficam em repouso iguais ao
+tile estático (documento e `<img>`), acabam até 1.360 ms e, com `reduce`, ficam parados
+(Chromium e Firefox). Numa página com os 7 tiles em `<img>`, três por linha como no README,
+o momento em que cada um aparece:
+
+| engine   | default (ms)                        | terminal (ms)                       |
+| -------- | ----------------------------------- | ----------------------------------- |
+| Chromium | 135, 337, 472, 605, 772, 906, 1078  | 179, 334, 483, 639, 735, 883, 1034  |
+| Firefox  | 322, 486, 623, 779, 918, 1090, 1207 | 303, 458, 627, 756, 886, 1043, 1180 |
+| WebKit   | 297, 489, 600, 763, 914, 1051, 1229 | 301, 485, 593, 749, 889, 1036, 1164 |
+
+Em ordem nos seis. Cada imagem começa a animar quando carrega, então num README servido
+pelo camo a ordem depende de as imagens chegarem juntas.
+
 ## Pontos de atenção
 
 - **`page.emulateMedia({ reducedMotion })` não chega no documento de um `<img>`** no Chromium

@@ -9,6 +9,7 @@
 import React from "react"
 import { renderToString } from "react-dom/server"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
+import { animationTileStyle, animationTimeline } from "@weeb/weeb-plugins/templates"
 import type { SvgConfig, SvgTile } from "../types/index.js"
 import { createSvgContainer } from "../renderer/template-renderer.js"
 
@@ -39,7 +40,12 @@ export function renderTiles(
     const plugin = manager.get(name)
     if (!plugin?.tiles) continue
 
-    for (const tile of plugin.tiles(pluginConfig, data)) {
+    const pluginTiles = plugin.tiles(pluginConfig, data)
+    // With animations on, the row comes in one tile after the other, spaced like the
+    // sections of a card so the last one still ends within the budget.
+    const step = config.animations === true ? animationTimeline(config.style, [pluginTiles.length]).step : null
+
+    pluginTiles.forEach((tile, index) => {
       const svg = renderToString(
         createSvgContainer({
           width: tile.width,
@@ -52,7 +58,15 @@ export function renderTiles(
               <style>{TILE_CSS}</style>
             </>
           ),
-          children: tile.element,
+          children:
+            step === null ? (
+              tile.element
+            ) : (
+              <div className="weeb-tile" style={animationTileStyle(index, step)}>
+                {tile.element}
+              </div>
+            ),
+          ...(step === null ? {} : { animations: { step } }),
           terminalTheme: config.terminalTheme,
           defaultTheme: config.defaultTheme,
           // A window frame on each tile would repeat the same title bar across the row.
@@ -71,7 +85,7 @@ export function renderTiles(
         height: tile.height,
         layout: tile.layout ?? "grid",
       })
-    }
+    })
   }
 
   return tiles

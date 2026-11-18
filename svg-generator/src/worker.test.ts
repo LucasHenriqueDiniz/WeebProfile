@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import type { D1Database } from "@cloudflare/workers-types"
 import { PluginManager } from "@weeb/weeb-plugins/plugins"
+import { animationTimeline } from "@weeb/weeb-plugins/templates"
 import worker, { type Env } from "./worker"
 import { PLUGIN_ERROR_HEIGHT } from "./components/PluginError"
 
@@ -943,6 +944,29 @@ describe("POST / — tiles, one SVG per site", () => {
   it("marks the websites' tiles as a grid, the snippet's three to a row", async () => {
     const { body } = await post(validRequest({ plugins: websites, tiles: true }))
     expect(body.tiles.map((tile: any) => tile.layout)).toEqual(["grid", "grid", "grid"])
+  })
+
+  // Each tile is an image of its own in the README. With animations on, each waits for
+  // its place in the row, so the row comes in one tile after the other, and what is
+  // inside the tile cascades from there.
+  it.each(["default", "terminal"] as const)("staggers the %s tiles along the row with animations on", async (style) => {
+    const { body } = await post(validRequest({ style, plugins: websites, tiles: true, animations: true }))
+    const step = Math.round(animationTimeline(style, [3]).step * 1000)
+
+    const starts = body.tiles.map((tile: any) =>
+      Number(/class="weeb-tile" style="--weeb-at:(\d+)ms"/.exec(tile.svg)?.[1])
+    )
+    expect(starts).toEqual([0, step, 2 * step])
+    for (const tile of body.tiles) {
+      expect(tile.svg).toMatch(/class="[^"]*weeb-anim[^"]*"/)
+      expect(tile.svg).toContain("weeb-seq")
+      expect(tile.svg).toContain(".weeb-tile {")
+    }
+  })
+
+  it("adds no animation markup to the tiles with animations off", async () => {
+    const { body } = await post(validRequest({ plugins: websites, tiles: true }))
+    for (const tile of body.tiles) expect(tile.svg).not.toMatch(/weeb-(tile|anim|seq)/)
   })
 
   // The About plugin's link badges: each at its own width, laid inline in a README like

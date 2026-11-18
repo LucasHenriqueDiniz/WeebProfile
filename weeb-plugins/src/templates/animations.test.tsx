@@ -11,6 +11,7 @@ import {
   CASCADE_SLOTS,
   MAX_ITEM_GAP_S,
   WAVE_ROWS,
+  animationTileStyle,
   animationTimeline,
   itemCascade,
   sectionTail,
@@ -302,5 +303,20 @@ describe("cascade rules", () => {
     expect(rule).not.toBeNull()
     const keyframes = new RegExp(`@keyframes ${rule![1]} \\{([\\s\\S]*?)\\n\\}`).exec(ANIMATIONS_CSS)
     expect([...keyframes![1]!.matchAll(/([\w-]+):/g)].map((m) => m[1])).toEqual(["opacity"])
+  })
+})
+
+describe("tiles", () => {
+  it("puts each tile at its place in the row, in whole milliseconds", () => {
+    expect(animationTileStyle(0, 0.15)).toEqual({ "--weeb-at": "0ms" })
+    expect(animationTileStyle(3, 0.15)).toEqual({ "--weeb-at": "450ms" })
+  })
+
+  // A tile has no <section>: its own rule fades it in and starts what is inside with it.
+  it("fades a tile in and starts its content from there", () => {
+    const rule = /\.weeb-tile \{([^}]*)\}/.exec(ANIMATIONS_CSS)
+    expect(rule).not.toBeNull()
+    expect(rule![1]).toContain("--weeb-out: calc(var(--weeb-at, 0s) + 100ms)")
+    expect(rule![1]).toMatch(/animation: weeb-fade /)
   })
 })

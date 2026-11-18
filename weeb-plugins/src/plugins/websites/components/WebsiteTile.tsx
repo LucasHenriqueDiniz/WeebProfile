@@ -1,6 +1,7 @@
 import React from "react"
 import { ExternalLink } from "../../../utils/external-link"
 import { ImageComponent } from "../../../utils/image"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import type { WebsiteEntry } from "../types"
 
 /**
@@ -55,6 +56,9 @@ interface WebsiteTileProps extends WebsiteTileOptions {
 export function WebsiteTile({ site, style, showThumbnail, showDescription }: WebsiteTileProps): React.ReactElement {
   const terminal = style === "terminal"
   const options = { showThumbnail, showDescription }
+  // With animations on: the thumbnail, then the text block, whose lines come in in turn.
+  const parts = useItemCascade(showThumbnail ? 2 : 1)
+  const lines = useItemCascade(showDescription ? 3 : 2)
   // Fixed and unshrinkable, with no margin: the terminal style keeps the browser's 1em
   // on <p>, which in this fixed-height column squeezed the small lines to 0px.
   const line = (height: number): React.CSSProperties => ({
@@ -75,15 +79,17 @@ export function WebsiteTile({ site, style, showThumbnail, showDescription }: Web
     >
       <ExternalLink
         href={site.url}
-        className={
+        className={withCascade(
           terminal
             ? "flex flex-col overflow-hidden rounded-lg border border-solid border-terminal-muted"
-            : "flex flex-col overflow-hidden rounded-lg border border-solid border-default-border bg-default-muted/10"
-        }
+            : "flex flex-col overflow-hidden rounded-lg border border-solid border-default-border bg-default-muted/10",
+          parts
+        )}
         style={{
           height: "100%",
           boxSizing: "border-box",
           ...(terminal ? { backgroundColor: "var(--terminal-color-background)" } : {}),
+          ...parts?.style,
         }}
       >
         {showThumbnail && (
@@ -101,8 +107,13 @@ export function WebsiteTile({ site, style, showThumbnail, showDescription }: Web
           </div>
         )}
         <div
-          className="flex flex-col min-w-0"
-          style={{ height: `${textHeight(options)}px`, padding: `${PADDING_Y}px 8px`, gap: `${LINE_GAP}px` }}
+          className={withCascade("flex flex-col min-w-0", lines)}
+          style={{
+            height: `${textHeight(options)}px`,
+            padding: `${PADDING_Y}px 8px`,
+            gap: `${LINE_GAP}px`,
+            ...lines?.style,
+          }}
         >
           <div className="flex items-center gap-1.5 min-w-0" style={line(TITLE_LINE)}>
             {!showThumbnail && (
