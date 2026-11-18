@@ -381,7 +381,9 @@ function SiteHeader({ className }: { className?: string }) {
       {menuOpen && (
         <div
           className={cn(
-            "fixed inset-x-0 bottom-0 top-16 overflow-y-auto border-t-2 md:hidden",
+            // The header lets the pointer through (pointer-events-none) and this sheet is not
+            // inside the nav, so it has to take the pointer back or no tap would reach it.
+            "pointer-events-auto fixed inset-x-0 bottom-0 top-16 overflow-y-auto border-t-2 md:hidden",
             onBand ? "border-slate-900 bg-cyan-100" : "border-foreground bg-background"
           )}
         >
