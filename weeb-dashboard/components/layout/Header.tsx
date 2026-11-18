@@ -71,20 +71,19 @@ const SECTION_TONES: Record<LandingSection, string> = {
 }
 
 /**
- * Whether the landing's cyan band ([data-header-band], the hero) is under the bar, and
- * whether the page has moved. Over the band the header takes the band's colours, which
+ * Whether the landing's cyan band ([data-header-band], the hero) is under the header.
+ * Over the band the header's stickers take the band's colours, which
  * are fixed light in both themes: the old bar stayed in the page's colour, and in the
  * dark theme it laid a 64px dark strip over the top of the cyan hero.
  * A layout effect, so the first paint already has the right colours.
  */
 function useBand() {
-  const [state, setState] = useState({ onBand: false, scrolled: false })
+  const [state, setState] = useState({ onBand: false })
   useLayoutEffect(() => {
     const update = () => {
       const band = document.querySelector("[data-header-band]")
       const onBand = !!band && band.getBoundingClientRect().bottom > HEADER_HEIGHT
-      const scrolled = window.scrollY > 4
-      setState((prev) => (prev.onBand === onBand && prev.scrolled === scrolled ? prev : { onBand, scrolled }))
+      setState((prev) => (prev.onBand === onBand ? prev : { onBand }))
     }
     update()
     window.addEventListener("scroll", update, { passive: true })
@@ -193,7 +192,7 @@ function SiteHeader({ className }: { className?: string }) {
   const router = useRouter()
   const { user, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
-  const { onBand, scrolled } = useBand()
+  const { onBand } = useBand()
 
   const tone = onBand ? "band" : "theme"
   const inkBorder = onBand ? "border-slate-900" : "border-foreground"
@@ -251,13 +250,15 @@ function SiteHeader({ className }: { className?: string }) {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-200",
-        onBand ? "bg-cyan-100 text-slate-900" : "bg-background text-foreground",
-        !onBand && scrolled && "shadow-[0_2px_0_0_hsl(var(--foreground)),0_8px_0_0_hsl(var(--primary)/0.25)]",
+        // No bar behind it: the logo, the nav and the buttons are stickers of their own that
+        // float over the page, so only they catch the pointer and the page between them
+        // stays clickable.
+        "pointer-events-none fixed inset-x-0 top-0 z-50",
+        onBand ? "text-slate-900" : "text-foreground",
         className
       )}
     >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6 lg:gap-6">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6 lg:gap-6 [&>*]:pointer-events-auto">
         <Link
           href="/"
           aria-label="WeebProfile"
@@ -345,7 +346,9 @@ function SiteHeader({ className }: { className?: string }) {
               <Link
                 href="/login"
                 className={cn(
-                  "hidden rounded-md px-2 py-1 text-sm font-semibold underline decoration-2 underline-offset-4 sm:inline",
+                  "hidden h-9 items-center rounded-lg border-2 px-3 text-sm font-semibold sm:inline-flex",
+                  inkBorder,
+                  surface,
                   FOCUS
                 )}
               >
