@@ -255,8 +255,25 @@ o momento em que cada um aparece:
 | Firefox  | 322, 486, 623, 779, 918, 1090, 1207 | 303, 458, 627, 756, 886, 1043, 1180 |
 | WebKit   | 297, 489, 600, 763, 914, 1051, 1229 | 301, 485, 593, 749, 889, 1036, 1164 |
 
-Em ordem nos seis. Cada imagem começa a animar quando carrega, então num README servido
-pelo camo a ordem depende de as imagens chegarem juntas.
+Em ordem nos seis.
+
+**No github.com** (README do perfil, deslogado, imagens pelo camo, 18/11/2026, minutos
+depois de regerar o card; 3 rodadas por engine). Momento em que cada um dos 7 tiles do
+card de sites aparece, contado da navegação, seguindo a caixa de cada `<img>` quadro a
+quadro (o layout se mexe enquanto a página carrega):
+
+| engine   | em ordem | rodadas (ms)                                                                                                                   |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Chromium | 1/3      | 3397, 2347, 1941, 2033, 2689, 2449, 2568 · 754, 754, 872, 990, 1111, 1360, 1483 · 1194, 1194, 1663, 1544, 1424, 1784, 1906     |
+| Firefox  | 3/3      | 1037, 1547, 1547, 1755, 1755, 1991, 1991 · 818, 950, 1089, 1247, 1616, 1770, 1770 · 819, 985, 1171, 1319, 1471, 1601, 1726     |
+| WebKit   | 3/3      | 1162, 1162, 1162, 1326, 1326, 1499, 1675 · 1040, 1040, 1040, 1040, 1208, 1421, 1586 · 1003, 1003, 1003, 1003, 1189, 1371, 1538 |
+
+Cada imagem começa a animar quando carrega, não quando a página carrega: um SVG em `<img>`
+não sabe da página. No Chromium as imagens chegaram com até 1,5 s de diferença (na 1ª
+rodada, logo depois de regerar, o tile 0 apareceu por último), mais que os 150 ms entre
+dois tiles, e a fileira saiu fora de ordem em 2 das 3 rodadas. Cada tile continua animando;
+só a ordem entre eles não é garantida. Valores iguais na mesma rodada caíram no mesmo
+quadro (de 100 a 190 ms entre quadros).
 
 ## Pontos de atenção
 
