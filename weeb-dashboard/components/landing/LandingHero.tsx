@@ -117,19 +117,19 @@ function HeroCard() {
         {/* Glow in the brand gradient, turning slowly behind the deck (globals.css). */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-20 aspect-square w-[150%] -translate-x-1/2 -translate-y-1/2"
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-20 aspect-square w-[175%] -translate-x-1/2 -translate-y-1/2"
         >
-          <div className="hero-aurora h-full w-full rounded-full bg-[conic-gradient(from_0deg,#8b5cf6,#ec4899,#06b6d4,#8b5cf6)] opacity-30 blur-3xl dark:opacity-45" />
+          <div className="hero-aurora h-full w-full rounded-full bg-[conic-gradient(from_0deg,#8b5cf6,#ec4899,#06b6d4,#8b5cf6)] opacity-40 blur-3xl dark:opacity-70" />
         </div>
         {/* The rest of the deck: there are more cards than the one on top. */}
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 rounded-2xl border border-border bg-card/80 shadow-xl transition-transform duration-700 ease-out"
+          className="absolute inset-0 -z-10 rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/25 via-card to-card shadow-xl transition-transform duration-700 ease-out"
           style={{ transform: `translate(-18px, 10px) rotate(${deckTilt[0]}deg) scale(0.96)` }}
         />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 rounded-2xl border border-border bg-card/60 shadow-xl transition-transform duration-700 ease-out"
+          className="absolute inset-0 -z-10 rounded-2xl border border-secondary/30 bg-gradient-to-tl from-secondary/25 via-card to-cyan-500/20 shadow-xl transition-transform duration-700 ease-out"
           style={{ transform: `translate(16px, 16px) rotate(${deckTilt[1]}deg) scale(0.93)` }}
         />
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_80px_-28px_rgba(139,92,246,0.55)]">
