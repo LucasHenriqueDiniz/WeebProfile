@@ -45,7 +45,7 @@ export const SECTION_PREVIEWS: Record<
   devto: {
     profile: { default: [415, 117], terminal: [415, 128] },
     recent_articles: { default: [415, 217], terminal: [415, 108] },
-    top_tags: { default: [415, 123], terminal: [415, 148] },
+    top_tags: { default: [415, 128], terminal: [415, 148] },
   },
 
   duolingo: {
