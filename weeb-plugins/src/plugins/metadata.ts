@@ -53,7 +53,7 @@ export interface EssentialConfigKeyMetadata {
 export interface ObjectArrayItemField {
   key: string
   label: string
-  type: "string" | "boolean" | "number" | "select"
+  type: "string" | "boolean" | "number" | "select" | "image"
   placeholder?: string
   description?: string
   required?: boolean
@@ -4419,11 +4419,21 @@ export const PLUGINS_METADATA = {
               placeholder: "Personal site built with Astro"
             },
             {
+              key: "image_source",
+              label: "Thumbnail",
+              type: "select",
+              description: "The screenshot is 1200x630, taken without cookie banners or ads, and refreshed once a week. If it fails, the preview image is used.",
+              options: [
+                { value: "auto", label: "The page's preview image (Open Graph)" },
+                { value: "screenshot", label: "A screenshot of the page" },
+                { value: "custom", label: "My own image (upload one or paste a URL)" }
+              ]
+            },
+            {
               key: "image",
-              label: "Thumbnail URL",
-              type: "string",
-              placeholder: "https://my-portfolio.dev/preview.png",
-              description: "Optional. Overrides the thumbnail detected on the page."
+              label: "Own image",
+              type: "image",
+              description: "Upload a PNG, JPEG or WebP, or paste an https:// address. Used when the thumbnail is 'My own image'."
             }
           ],
           maxItems: 12,

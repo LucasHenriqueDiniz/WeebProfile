@@ -94,7 +94,7 @@ interface PluginMetadataPartial {
       itemFields?: Array<{
         key: string
         label: string
-        type: "string" | "boolean" | "number" | "select"
+        type: "string" | "boolean" | "number" | "select" | "image"
         placeholder?: string
         description?: string
         required?: boolean
@@ -216,8 +216,10 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
                 if (!field.label) {
                   errors.push(`${fieldPrefix}: missing label`)
                 }
-                if (!field.type || !["string", "boolean", "number", "select"].includes(field.type)) {
-                  errors.push(`${fieldPrefix}: invalid type. Must be 'string', 'boolean', 'number', or 'select'`)
+                if (!field.type || !["string", "boolean", "number", "select", "image"].includes(field.type)) {
+                  errors.push(
+                    `${fieldPrefix}: invalid type. Must be 'string', 'boolean', 'number', 'select' or 'image'`
+                  )
                 }
                 if (field.type === "select" && (!field.options || !Array.isArray(field.options))) {
                   errors.push(`${fieldPrefix}: select type requires options array`)
@@ -664,7 +666,7 @@ interface EnrichedMetadata extends PluginMetadataPartial {
       itemFields?: Array<{
         key: string
         label: string
-        type: "string" | "boolean" | "number" | "select"
+        type: "string" | "boolean" | "number" | "select" | "image"
         placeholder?: string
         description?: string
         required?: boolean
@@ -822,7 +824,7 @@ export interface EssentialConfigKeyMetadata {
 export interface ObjectArrayItemField {
   key: string
   label: string
-  type: "string" | "boolean" | "number" | "select"
+  type: "string" | "boolean" | "number" | "select" | "image"
   placeholder?: string
   description?: string
   required?: boolean

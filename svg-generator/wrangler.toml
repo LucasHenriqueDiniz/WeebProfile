@@ -1,6 +1,9 @@
 name = "weeb-svg-generator"
 main = "src/worker.ts"
-compatibility_date = "2025-09-23"
+# 2026-03-24 or later: Browser Run's quickAction (screenshots, below) needs it. Not
+# later than 2026-06-10, the newest date the workerd bundled with wrangler 4.98 runs,
+# or `wrangler dev` refuses to start.
+compatibility_date = "2026-06-10"
 compatibility_flags = ["nodejs_compat"]
 
 # ============================================================
@@ -37,6 +40,19 @@ database_id = "c7eb434d-7ca2-4c5c-bf63-943e38e46158"
 [[services]]
 binding = "JIKAN_EDGE"
 service = "jikan-edge"
+
+# ============================================================
+# Screenshots for the websites plugin (src/screenshots/site-screenshot.ts): Browser
+# Run takes them, and they are kept in the dashboard's bucket under screenshots/ so a
+# page is taken once a week, not on every daily generation. In `wrangler dev` the
+# local Browser Run has no quickAction, so sites fall back to their preview image.
+# ============================================================
+[browser]
+binding = "BROWSER"
+
+[[r2_buckets]]
+binding = "SCREENSHOTS"
+bucket_name = "weebprofile-svgs"
 
 # ============================================================
 # Daily SVG regeneration.

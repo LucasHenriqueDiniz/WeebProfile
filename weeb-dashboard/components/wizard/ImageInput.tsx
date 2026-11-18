@@ -6,7 +6,7 @@ import { validImageDataUri } from "@weeb/weeb-plugins"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useTranslations } from "@/i18n/use-translations"
-import { PICTURE_MAX_BYTES, PICTURE_TYPES, dataUriBytes } from "@/lib/utils/picture"
+import { PICTURE_MAX_BYTES, PICTURE_MAX_SIDE, PICTURE_TYPES, dataUriBytes } from "@/lib/utils/picture"
 import { prepareImage } from "@/lib/utils/prepare-picture"
 
 interface ImageInputProps {
@@ -14,33 +14,43 @@ interface ImageInputProps {
   /** A data URI from an upload, an https:// URL, or "". */
   value: string
   onChange: (value: string) => void
+  /** Longest side an upload is shrunk to (the picture of the About intro: 384). */
+  maxSide?: number
+  /** Most an upload may weigh, decoded. */
+  maxBytes?: number
 }
 
 /**
  * An image option: upload a file, which is kept in the card, or paste an address.
  * The upload never leaves the browser until the card is saved with it.
  */
-export function ImageInput({ id, value, onChange }: ImageInputProps) {
+export function ImageInput({
+  id,
+  value,
+  onChange,
+  maxSide = PICTURE_MAX_SIDE,
+  maxBytes = PICTURE_MAX_BYTES,
+}: ImageInputProps) {
   const t = useTranslations("wizard.imageInput")
   const fileRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
   const uploaded = value.startsWith("data:")
-  const preview = uploaded ? validImageDataUri(value) : /^https:\/\//i.test(value) ? value : null
+  const preview = uploaded ? validImageDataUri(value, maxBytes) : /^https:\/\//i.test(value) ? value : null
 
   const pick = async (file: File | undefined) => {
     if (!file) return
     setBusy(true)
     setError(null)
     try {
-      const dataUri = await prepareImage(file)
+      const dataUri = await prepareImage(file, { maxSide, maxBytes })
       // The generator takes only what validImageDataUri takes: check before saving.
-      if (!validImageDataUri(dataUri)) throw new Error("errorTooBig")
+      if (!validImageDataUri(dataUri, maxBytes)) throw new Error("errorTooBig")
       onChange(dataUri)
     } catch (e) {
       const key = e instanceof Error && e.message.startsWith("error") ? e.message : "errorRead"
-      setError(t(key, { size: Math.round(PICTURE_MAX_BYTES / 1000) }))
+      setError(t(key, { size: Math.round(maxBytes / 1000) }))
     } finally {
       setBusy(false)
       if (fileRef.current) fileRef.current.value = ""

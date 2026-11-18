@@ -5,7 +5,9 @@ import type { WebsitesConfig } from "../types"
 vi.mock("./site-meta", () => ({
   fetchSiteMeta: vi.fn(),
 }))
-vi.mock("../../../utils/image-to-base64", () => ({
+// Only the network call: the magic-byte check stays real, since uploads go through it.
+vi.mock("../../../utils/image-to-base64", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../utils/image-to-base64")>()),
   urlToDataUriDirect: vi.fn(),
 }))
 
@@ -186,5 +188,101 @@ describe("fetchWebsitesData", () => {
       config([{ url: "https://example.com", description: "Manual" }], { websites_show_description: false })
     )
     expect(data.websites[0]?.description).toBeNull()
+  })
+})
+
+describe("fetchWebsitesData — thumbnail source", () => {
+  type Runtime = typeof globalThis & { __weebSiteScreenshot?: (url: string) => Promise<string | null> }
+  const runtime = globalThis as Runtime
+  const og = "https://example.com/og.png"
+  const manual = "https://cdn.example.com/manual.png"
+
+  beforeEach(() => {
+    vi.mocked(fetchSiteMeta).mockResolvedValue({ ...emptyMeta, imageUrl: og })
+    // Every URL embeds, as "data:<url>", so the thumbnail says which one won.
+    vi.mocked(urlToDataUriDirect).mockImplementation(async (url: string) => ({ dataUri: `data:${url}` }) as never)
+  })
+
+  afterEach(() => {
+    delete runtime.__weebSiteScreenshot
+    vi.clearAllMocks()
+  })
+
+  const thumbnailOf = async (item: Record<string, unknown>) =>
+    (await fetchWebsitesData(config([{ url: "https://example.com", ...item }]))).websites[0]?.thumbnail
+
+  it("takes the screenshot the Worker provides, for the site's own URL", async () => {
+    const take = vi.fn(async () => "data:image/jpeg;base64,SHOT")
+    runtime.__weebSiteScreenshot = take
+
+    expect(await thumbnailOf({ image_source: "screenshot" })).toBe("data:image/jpeg;base64,SHOT")
+    expect(take).toHaveBeenCalledWith("https://example.com/")
+  })
+
+  it("falls back to the own image, then the preview, when there is no screenshot", async () => {
+    runtime.__weebSiteScreenshot = async () => null
+    expect(await thumbnailOf({ image_source: "screenshot", image: manual })).toBe(`data:${manual}`)
+    expect(await thumbnailOf({ image_source: "screenshot" })).toBe(`data:${og}`)
+
+    // Outside the Worker there is no screenshot function at all.
+    delete runtime.__weebSiteScreenshot
+    expect(await thumbnailOf({ image_source: "screenshot" })).toBe(`data:${og}`)
+  })
+
+  it("never asks for a screenshot unless the site picked it", async () => {
+    const take = vi.fn(async () => "data:image/jpeg;base64,SHOT")
+    runtime.__weebSiteScreenshot = take
+
+    await thumbnailOf({})
+    await thumbnailOf({ image_source: "auto" })
+    await thumbnailOf({ image_source: "custom", image: manual })
+    expect(take).not.toHaveBeenCalled()
+  })
+
+  it("uses the preview image on 'auto', even with an own image filled in", async () => {
+    expect(await thumbnailOf({ image_source: "auto", image: manual })).toBe(`data:${og}`)
+  })
+
+  it("uses the own image on 'custom'", async () => {
+    expect(await thumbnailOf({ image_source: "custom", image: manual })).toBe(`data:${manual}`)
+  })
+
+  // Sites saved before the option keep what they showed: their image when they have one.
+  it("keeps the old rule for a site with no source", async () => {
+    expect(await thumbnailOf({ image: manual })).toBe(`data:${manual}`)
+    expect(await thumbnailOf({ image_source: "", image: manual })).toBe(`data:${manual}`)
+    expect(await thumbnailOf({})).toBe(`data:${og}`)
+  })
+
+  describe("an image uploaded in the wizard", () => {
+    const uploaded = `data:image/png;base64,${Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3]).toString("base64")}`
+
+    it("is embedded as it is, with no request, on 'custom' and on a site with no source", async () => {
+      expect(await thumbnailOf({ image_source: "custom", image: uploaded })).toBe(uploaded)
+      expect(await thumbnailOf({ image: uploaded })).toBe(uploaded)
+      expect(vi.mocked(urlToDataUriDirect)).not.toHaveBeenCalledWith(uploaded, expect.anything())
+    })
+
+    it("stands in for a screenshot that failed, and is ignored on 'auto'", async () => {
+      runtime.__weebSiteScreenshot = async () => null
+      expect(await thumbnailOf({ image_source: "screenshot", image: uploaded })).toBe(uploaded)
+      expect(await thumbnailOf({ image_source: "auto", image: uploaded })).toBe(`data:${og}`)
+    })
+
+    it("is dropped when it is not a real raster image or is too large", async () => {
+      const svg = `data:image/svg+xml;base64,${Buffer.from("<svg onload='alert(1)'/>").toString("base64")}`
+      const huge = `data:image/png;base64,${Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, ...new Array(90_000).fill(1)]).toString("base64")}`
+      expect(await thumbnailOf({ image_source: "custom", image: svg })).toBe(`data:${og}`)
+      expect(await thumbnailOf({ image_source: "custom", image: huge })).toBe(`data:${og}`)
+    })
+  })
+
+  it("does not take a screenshot when thumbnails are off", async () => {
+    const take = vi.fn(async () => "data:image/jpeg;base64,SHOT")
+    runtime.__weebSiteScreenshot = take
+    await fetchWebsitesData(
+      config([{ url: "https://example.com", image_source: "screenshot" }], { websites_show_thumbnail: false })
+    )
+    expect(take).not.toHaveBeenCalled()
   })
 })

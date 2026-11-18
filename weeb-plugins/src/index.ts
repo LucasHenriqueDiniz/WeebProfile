@@ -19,7 +19,7 @@ export * from "./utils/pseudo-commands"
 export * from "./utils/string"
 export * from "./utils/emoji"
 export { ImageComponent } from "./utils/image"
-export { MAX_EMBEDDED_IMAGE_BYTES, validImageDataUri } from "./utils/image-data-uri"
+export { MAX_EMBEDDED_IMAGE_BYTES, MAX_ITEM_IMAGE_BYTES, validImageDataUri } from "./utils/image-data-uri"
 
 // Themes
 export * from "./themes/index"

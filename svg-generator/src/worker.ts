@@ -9,13 +9,21 @@
  * Deploy:    `pnpm deploy` (wrangler deploy)
  */
 
-import type { D1Database, Fetcher, ScheduledController, ExecutionContext } from "@cloudflare/workers-types"
+import type {
+  BrowserRun,
+  D1Database,
+  ExecutionContext,
+  Fetcher,
+  R2Bucket,
+  ScheduledController,
+} from "@cloudflare/workers-types"
 import { generateSvg, validateConfig, normalizeConfig } from "./index.js"
 import { sanitizeConfig, sanitizeEssentialConfigs } from "./utils/sanitize.js"
 import { getUserEssentialConfigs, SecretsUnreadableError } from "./db/essential-configs.js"
 import { validateRequiredConfig } from "./validation/validate-required-config.js"
 import { log, hashUserId } from "./utils/log.js"
 import { withAppCredentials, previewCredentials } from "./db/app-credentials.js"
+import { makeSiteScreenshot } from "./screenshots/site-screenshot.js"
 import { isAutoColorMode, sanitizeCustomThemeColors } from "@weeb/weeb-plugins/themes/theme-utils"
 
 export interface Env {
@@ -33,6 +41,10 @@ export interface Env {
   // Read-only token used only for public previews -- see previewCredentials in
   // db/app-credentials.ts. Without it a GitHub preview reports the PAT as missing.
   GITHUB_PREVIEW_TOKEN?: string
+  // Screenshots for the websites plugin (screenshots/site-screenshot.ts). Without
+  // either, a site set to "screenshot" shows its preview image.
+  BROWSER?: BrowserRun
+  SCREENSHOTS?: R2Bucket
 }
 
 interface GenerateRequest {
@@ -85,9 +97,11 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
   const runtime = globalThis as typeof globalThis & {
     __weebJikanEdgeFetcher?: Fetcher
     __weebRequireJikanEdgeBinding?: boolean
+    __weebSiteScreenshot?: (url: string) => Promise<string | null>
   }
   runtime.__weebJikanEdgeFetcher = env.JIKAN_EDGE
   runtime.__weebRequireJikanEdgeBinding = true
+  runtime.__weebSiteScreenshot = makeSiteScreenshot(env)
 
   try {
     requestData = await request.json()
