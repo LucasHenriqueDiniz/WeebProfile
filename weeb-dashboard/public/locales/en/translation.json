@@ -764,33 +764,11 @@
     "shareTemplate": "Share",
     "likeTemplate": "Like",
     "unlikeTemplate": "Unlike",
-    "createdBy": "Created by",
-    "lastUpdated": "Last updated",
-    "platforms": "Platforms",
     "style": "Style",
     "theme": "Theme",
-    "preview": "Preview",
-    "description": "Description",
     "templateNotFound": "Template not found",
     "templateNotFoundDescription": "This template may have been removed or you don't have permission to view it.",
-    "templateCard": {
-      "useTemplate": "Use template",
-      "viewDetails": "View details",
-      "likes": "likes",
-      "platforms": "platforms",
-      "lastUpdated": "updated on",
-      "like": "Like",
-      "unlike": "Unlike"
-    },
-    "modal": {
-      "title": "Use template",
-      "description": "This template will be loaded into the editor for you to customize.",
-      "close": "Close",
-      "useTemplate": "Use template"
-    },
     "share": {
-      "title": "Share template",
-      "copyLink": "Copy link",
       "copied": "Copied!"
     },
     "sizes": {
@@ -798,13 +776,23 @@
       "full": "Full Width (830px)"
     },
     "detail": {
-      "createdAt": "Created at",
       "size": "Size",
-      "terminalOptions": "Terminal Options",
-      "customizations": "Customizations",
-      "customCss": "Custom CSS",
-      "customColors": "Custom Colors",
-      "applied": "Applied"
+      "inside": "What's inside",
+      "look": "Look",
+      "useHint": "Opens in the editor, where you add your own accounts.",
+      "sampleData": "Sample data. Your card shows yours.",
+      "noEmojis": "No emojis",
+      "noHeader": "No terminal header",
+      "autoColor": "Follows light and dark mode"
+    },
+    "loadError": "Couldn't load the templates.",
+    "retry": "Try again",
+    "clearFilters": "Clear filters",
+    "scratch": {
+      "title": "None of these?",
+      "subtitle": "Start from a blank card and pick the plugins, sections and theme yourself.",
+      "cta": "Start from scratch",
+      "browsePlugins": "See all plugins"
     }
   },
   "landing": {

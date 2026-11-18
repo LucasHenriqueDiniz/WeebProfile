@@ -2,9 +2,8 @@
 
 import { Link } from "@/i18n/navigation"
 import { useTranslations } from "@/i18n/use-translations"
-import { TemplateCardSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import type { Template } from "@/types/template"
-import { LandingTemplateCard } from "./LandingTemplateCard"
+import { LandingTemplateCard, LandingTemplateCardSkeleton } from "./LandingTemplateCard"
 import { SectionHeading } from "./SectionHeading"
 import { BUTTON_SECONDARY } from "./sticker"
 
@@ -61,7 +60,7 @@ export function TemplatesShowcase({ templates, loading = false }: TemplatesShowc
       <SectionHeading kicker={t("kicker")} tone="pink" title={t("title")} subtitle={t("subtitle")} />
       <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-7 md:grid-cols-2 lg:grid-cols-3">
         {loading && templates.length === 0
-          ? Array.from({ length: 3 }).map((_, i) => <TemplateCardSkeleton key={i} />)
+          ? Array.from({ length: 3 }).map((_, i) => <LandingTemplateCardSkeleton key={i} />)
           : visible.map((template) => (
               <LandingTemplateCard
                 key={template.id}

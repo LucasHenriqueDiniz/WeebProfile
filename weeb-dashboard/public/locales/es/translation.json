@@ -764,33 +764,11 @@
     "shareTemplate": "Compartir",
     "likeTemplate": "Me gusta",
     "unlikeTemplate": "Ya no me gusta",
-    "createdBy": "Creado por",
-    "lastUpdated": "Última actualización",
-    "platforms": "Plataformas",
     "style": "Estilo",
     "theme": "Tema",
-    "preview": "Vista previa",
-    "description": "Descripción",
     "templateNotFound": "Template no encontrado",
     "templateNotFoundDescription": "Este template pudo haber sido eliminado o no tienes permiso para verlo.",
-    "templateCard": {
-      "useTemplate": "Usar template",
-      "viewDetails": "Ver detalles",
-      "likes": "me gusta",
-      "platforms": "plataformas",
-      "lastUpdated": "actualizado el",
-      "like": "Me gusta",
-      "unlike": "Ya no me gusta"
-    },
-    "modal": {
-      "title": "Usar template",
-      "description": "Este template se cargará en el editor para que lo personalices.",
-      "close": "Cerrar",
-      "useTemplate": "Usar template"
-    },
     "share": {
-      "title": "Compartir template",
-      "copyLink": "Copiar enlace",
       "copied": "¡Copiado!"
     },
     "sizes": {
@@ -798,13 +776,23 @@
       "full": "Anchura Completa (830px)"
     },
     "detail": {
-      "createdAt": "Creado el",
       "size": "Tamaño",
-      "terminalOptions": "Opciones de Terminal",
-      "customizations": "Personalizaciones",
-      "customCss": "CSS Personalizado",
-      "customColors": "Colores Personalizados",
-      "applied": "Aplicado"
+      "inside": "Qué incluye",
+      "look": "Aspecto",
+      "useHint": "Se abre en el editor, donde pones tus propias cuentas.",
+      "sampleData": "Datos de ejemplo. Tu tarjeta muestra los tuyos.",
+      "noEmojis": "Sin emojis",
+      "noHeader": "Sin cabecera de terminal",
+      "autoColor": "Sigue el modo claro y oscuro"
+    },
+    "loadError": "No se pudieron cargar los templates.",
+    "retry": "Intentar de nuevo",
+    "clearFilters": "Limpiar filtros",
+    "scratch": {
+      "title": "¿Ninguno te convence?",
+      "subtitle": "Empieza con una tarjeta en blanco y elige tú los plugins, las secciones y el tema.",
+      "cta": "Empezar desde cero",
+      "browsePlugins": "Ver todos los plugins"
     }
   },
   "landing": {
