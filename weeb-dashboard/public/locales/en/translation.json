@@ -700,6 +700,29 @@
       "errorType": "Use a PNG, JPEG or WebP file.",
       "errorTooBig": "This image does not fit in {{size}} KB even shrunk. Try a smaller one.",
       "errorRead": "Could not read this image."
+    },
+    "sectionConfig": {
+      "open": "Configure section",
+      "title": "Settings: {{section}}",
+      "live": "Changes show up in the preview as you make them.",
+      "helpLink": "Click the link next to it to open the help page.",
+      "helpLinkMore": "Click the link next to it for more.",
+      "openHelp": "Open help link",
+      "on": "On",
+      "off": "Off",
+      "addItem": "Add {{item}}",
+      "arrayPlaceholder": "Type a value and press Enter",
+      "arrayEmpty": "No items yet. Type a value and press Enter or click +.",
+      "removeValue": "Remove {{item}}"
+    },
+    "objectArray": {
+      "add": "Add item",
+      "empty": "No items yet.",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove item",
+      "missing": "Fill in: {{fields}}",
+      "count": "{{count}} of {{max}}"
     }
   },
   "templatesPage": {

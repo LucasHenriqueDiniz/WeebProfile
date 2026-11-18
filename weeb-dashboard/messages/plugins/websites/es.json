@@ -14,6 +14,34 @@
         },
         "websites_items": {
           "description": "Los sitios web a mostrar. Solo la URL es obligatoria.",
+          "items": {
+            "description": {
+              "label": "Descripción",
+              "placeholder": "Sitio personal hecho con Astro"
+            },
+            "image": {
+              "description": "Sube un PNG, JPEG o WebP, o pega una dirección https://. Se usa cuando la miniatura es 'Mi propia imagen'.",
+              "label": "Imagen propia"
+            },
+            "image_source": {
+              "description": "La captura es de 1200x630, sin avisos de cookies ni anuncios, y se renueva una vez por semana. Si falla, se usa la imagen de vista previa.",
+              "label": "Miniatura",
+              "options": {
+                "auto": "La imagen de vista previa de la página (Open Graph)",
+                "custom": "Mi propia imagen (sube una o pega una URL)",
+                "screenshot": "Una captura de la página"
+              }
+            },
+            "title": {
+              "label": "Título",
+              "placeholder": "Mi portafolio"
+            },
+            "url": {
+              "description": "Debe ser una dirección https://",
+              "label": "URL",
+              "placeholder": "https://mi-portafolio.dev"
+            }
+          },
           "label": "Sitios web",
           "tooltip": "Añade una entrada por sitio web. El título, la descripción y la imagen se rellenan automáticamente desde las etiquetas Open Graph de la página cuando 'Rellenar desde la página' está activado — lo que escribas aquí tiene prioridad sobre lo detectado."
         },

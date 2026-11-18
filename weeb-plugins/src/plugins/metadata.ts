@@ -58,6 +58,7 @@ export interface ObjectArrayItemField {
   description?: string
   required?: boolean
   options?: { value: string; label: string }[]
+  i18nKey?: Pick<I18nKeyMap, "label" | "placeholder" | "description" | "options">
 }
 
 /**
@@ -267,14 +268,22 @@ export const PLUGINS_METADATA = {
               label: "Label",
               type: "string",
               placeholder: "Location",
-              required: true
+              required: true,
+              i18nKey: {
+                "label": "plugins.about.sections.neofetch.config.neofetch_fields.items.label.label",
+                "placeholder": "plugins.about.sections.neofetch.config.neofetch_fields.items.label.placeholder"
+              }
             },
             {
               key: "value",
               label: "Value",
               type: "string",
               placeholder: "Brazil",
-              required: true
+              required: true,
+              i18nKey: {
+                "label": "plugins.about.sections.neofetch.config.neofetch_fields.items.value.label",
+                "placeholder": "plugins.about.sections.neofetch.config.neofetch_fields.items.value.placeholder"
+              }
             }
           ],
           maxItems: 10,
@@ -375,14 +384,23 @@ export const PLUGINS_METADATA = {
               label: "Address",
               type: "string",
               placeholder: "https://my-site.dev or you@example.com",
-              required: true
+              required: true,
+              i18nKey: {
+                "label": "plugins.about.sections.links.config.links_items.items.url.label",
+                "placeholder": "plugins.about.sections.links.config.links_items.items.url.placeholder"
+              }
             },
             {
               key: "label",
               label: "Text",
               type: "string",
               placeholder: "LinkedIn",
-              description: "Optional. Defaults to the site's name or domain."
+              description: "Optional. Defaults to the site's name or domain.",
+              i18nKey: {
+                "label": "plugins.about.sections.links.config.links_items.items.label.label",
+                "placeholder": "plugins.about.sections.links.config.links_items.items.label.placeholder",
+                "description": "plugins.about.sections.links.config.links_items.items.label.description"
+              }
             },
             {
               key: "icon",
@@ -405,7 +423,28 @@ export const PLUGINS_METADATA = {
                 { value: "medium", label: "Medium" },
                 { value: "kofi", label: "Ko-fi" },
                 { value: "rss", label: "RSS" }
-              ]
+              ],
+              i18nKey: {
+                "label": "plugins.about.sections.links.config.links_items.items.icon.label",
+                "options": {
+                  "auto": "plugins.about.sections.links.config.links_items.items.icon.options.auto",
+                  "website": "plugins.about.sections.links.config.links_items.items.icon.options.website",
+                  "email": "plugins.about.sections.links.config.links_items.items.icon.options.email",
+                  "github": "plugins.about.sections.links.config.links_items.items.icon.options.github",
+                  "linkedin": "plugins.about.sections.links.config.links_items.items.icon.options.linkedin",
+                  "x": "plugins.about.sections.links.config.links_items.items.icon.options.x",
+                  "bluesky": "plugins.about.sections.links.config.links_items.items.icon.options.bluesky",
+                  "mastodon": "plugins.about.sections.links.config.links_items.items.icon.options.mastodon",
+                  "youtube": "plugins.about.sections.links.config.links_items.items.icon.options.youtube",
+                  "twitch": "plugins.about.sections.links.config.links_items.items.icon.options.twitch",
+                  "discord": "plugins.about.sections.links.config.links_items.items.icon.options.discord",
+                  "instagram": "plugins.about.sections.links.config.links_items.items.icon.options.instagram",
+                  "devto": "plugins.about.sections.links.config.links_items.items.icon.options.devto",
+                  "medium": "plugins.about.sections.links.config.links_items.items.icon.options.medium",
+                  "kofi": "plugins.about.sections.links.config.links_items.items.icon.options.kofi",
+                  "rss": "plugins.about.sections.links.config.links_items.items.icon.options.rss"
+                }
+              }
             }
           ],
           maxItems: 8,
@@ -4404,19 +4443,32 @@ export const PLUGINS_METADATA = {
               type: "string",
               placeholder: "https://my-portfolio.dev",
               description: "Must be an https:// address",
-              required: true
+              required: true,
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.url.label",
+                "placeholder": "plugins.websites.sections.websites.config.websites_items.items.url.placeholder",
+                "description": "plugins.websites.sections.websites.config.websites_items.items.url.description"
+              }
             },
             {
               key: "title",
               label: "Title",
               type: "string",
-              placeholder: "My Portfolio"
+              placeholder: "My Portfolio",
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.title.label",
+                "placeholder": "plugins.websites.sections.websites.config.websites_items.items.title.placeholder"
+              }
             },
             {
               key: "description",
               label: "Description",
               type: "string",
-              placeholder: "Personal site built with Astro"
+              placeholder: "Personal site built with Astro",
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.description.label",
+                "placeholder": "plugins.websites.sections.websites.config.websites_items.items.description.placeholder"
+              }
             },
             {
               key: "image_source",
@@ -4427,13 +4479,26 @@ export const PLUGINS_METADATA = {
                 { value: "auto", label: "The page's preview image (Open Graph)" },
                 { value: "screenshot", label: "A screenshot of the page" },
                 { value: "custom", label: "My own image (upload one or paste a URL)" }
-              ]
+              ],
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.image_source.label",
+                "description": "plugins.websites.sections.websites.config.websites_items.items.image_source.description",
+                "options": {
+                  "auto": "plugins.websites.sections.websites.config.websites_items.items.image_source.options.auto",
+                  "screenshot": "plugins.websites.sections.websites.config.websites_items.items.image_source.options.screenshot",
+                  "custom": "plugins.websites.sections.websites.config.websites_items.items.image_source.options.custom"
+                }
+              }
             },
             {
               key: "image",
               label: "Own image",
               type: "image",
-              description: "Upload a PNG, JPEG or WebP, or paste an https:// address. Used when the thumbnail is 'My own image'."
+              description: "Upload a PNG, JPEG or WebP, or paste an https:// address. Used when the thumbnail is 'My own image'.",
+              i18nKey: {
+                "label": "plugins.websites.sections.websites.config.websites_items.items.image.label",
+                "description": "plugins.websites.sections.websites.config.websites_items.items.image.description"
+              }
             }
           ],
           maxItems: 12,

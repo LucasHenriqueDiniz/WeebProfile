@@ -10,6 +10,38 @@
         },
         "links_items": {
           "description": "Hasta 8 enlaces. Solo la dirección es obligatoria.",
+          "items": {
+            "icon": {
+              "label": "Ícono",
+              "options": {
+                "auto": "Según la dirección",
+                "bluesky": "Bluesky",
+                "devto": "DEV",
+                "discord": "Discord",
+                "email": "Email",
+                "github": "GitHub",
+                "instagram": "Instagram",
+                "kofi": "Ko-fi",
+                "linkedin": "LinkedIn",
+                "mastodon": "Mastodon",
+                "medium": "Medium",
+                "rss": "RSS",
+                "twitch": "Twitch",
+                "website": "Sitio web",
+                "x": "X (Twitter)",
+                "youtube": "YouTube"
+              }
+            },
+            "label": {
+              "description": "Opcional. Vacío, sale el nombre o el dominio del sitio.",
+              "label": "Texto",
+              "placeholder": "LinkedIn"
+            },
+            "url": {
+              "label": "Dirección",
+              "placeholder": "https://mi-sitio.dev o tu@ejemplo.com"
+            }
+          },
           "label": "Enlaces",
           "tooltip": "Una dirección puede ser un sitio (https://… o solo ejemplo.com) o un email (tu@ejemplo.com). El ícono y el texto salen de la dirección, salvo que los elijas."
         }
@@ -21,6 +53,16 @@
       "config": {
         "neofetch_fields": {
           "description": "Hasta 10 líneas de Etiqueta: valor",
+          "items": {
+            "label": {
+              "label": "Etiqueta",
+              "placeholder": "Ubicación"
+            },
+            "value": {
+              "label": "Valor",
+              "placeholder": "Brasil"
+            }
+          },
           "label": "Líneas",
           "tooltip": "Cada línea es una etiqueta y su valor, como Ubicación: Brasil o Stack: TypeScript · React. Un valor demasiado largo para la tarjeta termina en puntos suspensivos."
         },
