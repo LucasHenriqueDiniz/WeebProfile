@@ -11,7 +11,16 @@ import type { EssentialPluginConfig } from "../shared/types/base"
 import type { LyftaConfig, LyftaData } from "./types"
 import { RenderLyfta } from "./components/RenderLyfta"
 import { fetchLyftaData } from "./services/fetchData"
-import { lyftaOptions } from "./selection"
+import {
+  favoriteExercise,
+  lastWorkoutTopExercises,
+  latestWorkout,
+  lyftaOptions,
+  overviewTileCount,
+  recentWorkouts,
+  topExercises,
+} from "./selection"
+import { parseWorkoutTitle } from "./utils/format"
 
 export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaData> = {
   name: "lyfta",
@@ -39,57 +48,54 @@ export const lyftaPlugin: Plugin<PluginConfig & LyftaConfig, PluginData & LyftaD
     const ne = lyftaOptions(config as LyftaConfig)
     const ld = data as LyftaData
     const isTerminal = (config as { style?: string }).style === "terminal"
+    const half = size === "half"
 
-    // TerminalGrid: TerminalCommand + grid header + n rows
-    const terminalGridH = (n: number): number => (n > 0 ? 52 + n * 20 : 0)
+    // Default style, measured in Chromium (audit:heights): the sections are flex
+    // columns with an 8px gap, so a title costs its 40px plus the gap under it.
+    const title = (hidden: boolean | undefined): number => (hidden ? 0 : 40 + 8)
+    const tile = half ? 56 : 60 // StatTile
+    const tiles = (n: number): number => {
+      const rows = half ? Math.ceil(n / 2) : 1
+      return rows * tile + (rows - 1) * 8
+    }
+    const ROW = 44 // ExerciseRow, and a recent workout row
+    // Terminal: the command line (24px) and 20px per line. The body adds 8px once.
+    const terminal = (lines: number): number => 24 + lines * 20
 
     let h = 0
     for (const s of config.sections) {
       if (s === "statistics") {
-        h += isTerminal ? 91 : 132
+        if (!ld?.statistics || !ld.workouts) continue
+        const favorite = favoriteExercise(ld.workouts) ? 1 : 0
+        h += isTerminal ? terminal(5 + favorite) : title(ne.statistics_hide_title) + tiles(4) + favorite * (8 + 36)
       } else if (s === "overview") {
-        h += isTerminal ? 112 : 221
+        if (!ld?.workoutSummaries?.length) continue
+        const n = overviewTileCount(ne)
+        h += isTerminal ? terminal(n) : title(ne.overview_hide_title) + tiles(n)
       } else if (s === "last_workout") {
-        if (!ld.workouts || ld.workouts.length === 0) continue
-        const maxExercises = ne.last_workout_max_exercises ?? 5
-        const lastWorkout = [...ld.workouts].sort(
-          (a, b) => new Date(b.workout_perform_date).getTime() - new Date(a.workout_perform_date).getTime()
-        )[0]!
-        const n = Math.min(maxExercises, lastWorkout.exercises?.length ?? maxExercises)
+        const workout = ld?.workouts?.length ? latestWorkout(ld.workouts) : undefined
+        if (!workout) continue
+        const n = lastWorkoutTopExercises(workout, ne).length
         if (isTerminal) {
-          const showBodyWeight = ne.last_workout_show_body_weight !== false
-          const hasBodyWeight = showBodyWeight && (lastWorkout.body_weight ?? 0) > 0
-          h += (2 + (hasBodyWeight ? 1 : 0) + n) * 28 - 8
+          const bodyWeight = ne.last_workout_show_body_weight !== false && workout.body_weight > 0 ? 1 : 0
+          h += terminal(3 + bodyWeight + n)
         } else {
-          const base = size === "half" ? 315 : 334
-          const itemH = size === "half" ? 37 : 40
-          h += base + Math.max(0, n - 5) * itemH
+          // Header card: 2px border, 20px padding, name (20) + 6 + details (16), + 6 + chips (18).
+          const chips = parseWorkoutTitle(workout.title).muscles.length > 0 ? 6 + 18 : 0
+          const header = 2 + 20 + 20 + 6 + 16 + chips
+          h += title(ne.last_workout_hide_title) + header + (n > 0 ? 8 + n * ROW : 0)
         }
       } else if (s === "exercises") {
-        const max = ne.exercises_max ?? 5
-        // Use max as upper bound (exercises computed from workout history, not data.exercises)
-        const n = max
+        const n = ld?.workouts?.length ? topExercises(ld, ne).length : 0
         if (n === 0) continue
-        if (isTerminal) {
-          h += terminalGridH(n)
-        } else {
-          const itemH = size === "half" ? 44 : 48
-          h += 70 + n * itemH
-        }
+        h += isTerminal ? terminal(n) : title(ne.exercises_hide_title) + n * ROW
       } else if (s === "recent_workouts") {
-        const max = ne.workouts_max ?? 4
-        const n = Math.min(ld.workoutSummaries?.length ?? max, max)
+        const n = recentWorkouts(ld, ne).length
         if (n === 0) continue
-        if (isTerminal) {
-          h += 38 + n * 20
-        } else {
-          const base = size === "half" ? 52 : 54
-          const itemH = size === "half" ? 70 : 73
-          h += base + n * itemH
-        }
+        h += isTerminal ? terminal(n) : title(ne.recent_workouts_hide_title) + n * ROW + (n - 1) * 6
       }
     }
-    return h
+    return isTerminal && h > 0 ? h + 8 : h
   },
 }
 

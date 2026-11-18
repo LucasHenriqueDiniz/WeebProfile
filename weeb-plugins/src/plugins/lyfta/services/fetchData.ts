@@ -2,7 +2,7 @@
  * Fetches data from Lyfta API
  */
 
-import type { LyftaConfig, LyftaData, LyftaExerciseData, LyftaWorkout } from "../types"
+import type { LyftaConfig, LyftaData, LyftaExerciseData, LyftaStatistics, LyftaWorkout } from "../types"
 import { displayedImageUrls } from "../selection"
 import { getMockLyftaData } from "./mock-data"
 import { embedImageOrNull as embedImage } from "../../../utils/image-to-base64"
@@ -27,7 +27,7 @@ export async function fetchLyftaData(
 ): Promise<LyftaData> {
   // Em modo dev ou preview, retornar dados mock
   if (dev || previewMode) {
-    const mockData = await getMockLyftaData()
+    const mockData = mockAsOfToday(await getMockLyftaData())
 
     // Em modo preview, manter URLs originais (não converter para base64)
     if (previewMode) {
@@ -120,7 +120,11 @@ async function embedDisplayedImages(data: LyftaData, config: LyftaConfig): Promi
   }
 }
 
-function calculateStatistics(workouts: any[]): any {
+/**
+ * Lifetime numbers of the fetched workouts (the API's first page, 100 at most).
+ * Exported for the mock, which recomputes them after moving its dates to today.
+ */
+export function calculateStatistics(workouts: any[], now: Date = new Date()): LyftaStatistics {
   const totalWorkouts = workouts.length
   const totalDuration = workouts.reduce((acc, workout) => {
     const workoutDuration = workout.exercises.reduce((exerciseAcc: number, exercise: any) => {
@@ -176,39 +180,22 @@ function calculateStatistics(workouts: any[]): any {
     }
   })
 
-  // Calculate workout streak
+  // Calculate workout streak (last 30 days, one entry per day)
+  const workoutDays = new Set(workouts.map((workout) => dayKey(workout.workout_perform_date)))
   const workoutStreak = Array.from({ length: 30 }, (_, i) => {
-    const date = new Date()
+    const date = new Date(now)
     date.setDate(date.getDate() - (29 - i))
     const dateStr = date.toISOString().split("T")[0] || ""
     return {
       date: dateStr,
-      count: 0,
+      count: workoutDays.has(dateStr) ? 1 : 0,
     }
   })
 
-  // Calculate current and longest streak
-  let currentStreak = 0
-  let longestStreak = 0
-  let tempStreak = 0
-
-  workoutStreak.forEach((day) => {
-    const hasWorkout = workouts.some((workout) => {
-      const workoutDate = new Date(workout.workout_perform_date).toISOString().split("T")[0]
-      return workoutDate === day.date
-    })
-
-    if (hasWorkout) {
-      day.count = 1
-      tempStreak++
-      currentStreak = Math.max(currentStreak, tempStreak)
-    } else {
-      longestStreak = Math.max(longestStreak, tempStreak)
-      tempStreak = 0
-    }
-  })
-
-  longestStreak = Math.max(longestStreak, tempStreak)
+  const { currentStreak, longestStreak } = weekStreaks(
+    workouts.map((workout) => workout.workout_perform_date),
+    now
+  )
 
   // Calculate exercise stats
   const allExercises = workouts.flatMap((w) => w.exercises)
@@ -243,5 +230,84 @@ function calculateStatistics(workouts: any[]): any {
     lastWorkout: workouts[0] || null,
     workoutStreak,
     exerciseStats,
+  }
+}
+
+const DAY_MS = 86_400_000
+
+/** "2025-12-01", the UTC day of a Lyfta date ("2025-12-01 23:33:34" or ISO). */
+function dayKey(date: string): string {
+  const d = new Date(date)
+  return Number.isNaN(d.getTime()) ? "" : (d.toISOString().split("T")[0] ?? "")
+}
+
+/** Index of the Monday-based UTC week a date falls in. */
+function weekIndex(date: Date): number {
+  // 1970-01-01 was a Thursday: shift by 3 days so weeks start on Monday.
+  return Math.floor((date.getTime() / DAY_MS + 3) / 7)
+}
+
+/**
+ * Streaks in weeks with at least one workout: lifters rest between sessions, so a run
+ * of consecutive days is the wrong unit. These were day streaks inside the last 30
+ * days, which the section divided by 7 and floored: 0 for anyone training 3 times a
+ * week. The current streak counts the week in progress only once it has a workout,
+ * and stays alive through it otherwise.
+ */
+export function weekStreaks(dates: string[], now: Date = new Date()): { currentStreak: number; longestStreak: number } {
+  const weeks = new Set(
+    dates
+      .map((date) => new Date(date))
+      .filter((d) => !Number.isNaN(d.getTime()))
+      .map((d) => weekIndex(d))
+  )
+  if (weeks.size === 0) return { currentStreak: 0, longestStreak: 0 }
+
+  const sorted = [...weeks].sort((a, b) => a - b)
+  let longestStreak = 1
+  let run = 1
+  for (let i = 1; i < sorted.length; i++) {
+    run = sorted[i] === sorted[i - 1]! + 1 ? run + 1 : 1
+    longestStreak = Math.max(longestStreak, run)
+  }
+
+  const thisWeek = weekIndex(now)
+  let week = weeks.has(thisWeek) ? thisWeek : thisWeek - 1
+  let currentStreak = 0
+  while (weeks.has(week)) {
+    currentStreak++
+    week--
+  }
+  return { currentStreak, longestStreak }
+}
+
+/** "2025-12-01 23:33:34" moved by whole days, in the same format. */
+function shiftDate(date: string, days: number): string {
+  const d = new Date(`${date.replace(" ", "T")}Z`)
+  if (Number.isNaN(d.getTime())) return date
+  return new Date(d.getTime() + days * DAY_MS).toISOString().replace("T", " ").slice(0, 19)
+}
+
+/**
+ * The mock history moved so its latest workout is today. It was recorded in 2025, so
+ * every section that counts the last N days (overview, the streaks) drew zeros in the
+ * previews and the dashboard. Whole days, so each workout keeps its time and weekday
+ * spacing; the statistics are recomputed from the moved workouts.
+ */
+export function mockAsOfToday(data: LyftaData, now: Date = new Date()): LyftaData {
+  const latest = Math.max(
+    ...data.workouts.map((w) => new Date(`${w.workout_perform_date.replace(" ", "T")}Z`).getTime())
+  )
+  if (!Number.isFinite(latest)) return data
+  const days = Math.floor((now.getTime() - latest) / DAY_MS)
+  const workouts = data.workouts.map((w) => ({ ...w, workout_perform_date: shiftDate(w.workout_perform_date, days) }))
+  return {
+    ...data,
+    workouts,
+    workoutSummaries: data.workoutSummaries.map((w) => ({
+      ...w,
+      workout_perform_date: shiftDate(w.workout_perform_date, days),
+    })),
+    statistics: calculateStatistics(workouts, now),
   }
 }

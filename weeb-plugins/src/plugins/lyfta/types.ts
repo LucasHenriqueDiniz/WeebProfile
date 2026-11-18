@@ -58,7 +58,9 @@ export interface LyftaStatistics {
   favoriteExercise: string | null
   topMuscleGroups: Array<{ name: string; count: number }>
   weeklyActivity: Array<{ day: string; count: number }>
+  /** Weeks in a row with a workout, up to this week (see weekStreaks). */
   currentStreak: number
+  /** The longest run of weeks with a workout. */
   longestStreak: number
   lastWorkout: LyftaWorkout | null
   workoutStreak: Array<{ date: string; count: number }>

@@ -3,13 +3,13 @@ import { GiWeightLiftingUp } from "react-icons/gi"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
-import { TerminalStatisticRow } from "../../../templates/Terminal/TerminalStatisticRow"
-import { useItemCascade, withCascade } from "../../../templates/animations"
+import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
-import { formatWeight } from "../utils/weight"
-import { format1RM } from "../utils/1rm"
-import { topExercises as selectTopExercises } from "../selection"
+import { type TopExercise, topExercises as selectTopExercises } from "../selection"
+import { type WeightUnit, formatLoad, plural } from "../utils/format"
+import { ExerciseRow } from "./shared"
 
 interface ExercisesProps {
   data: LyftaData
@@ -18,69 +18,58 @@ interface ExercisesProps {
   size?: "half" | "full"
 }
 
+/** The number on the right: the estimated 1RM, or the heaviest set when 1RM is off. */
+function headline(exercise: TopExercise, show1RM: boolean, unit: WeightUnit): { value: string; caption: string } {
+  if (show1RM && exercise.best1RM > 0)
+    return { value: formatLoad(Math.round(exercise.best1RM), unit), caption: "est. 1RM" }
+  if (exercise.bestWeight > 0) return { value: formatLoad(exercise.bestWeight, unit), caption: "best set" }
+  return { value: "—", caption: "" }
+}
+
 export function Exercises({ data, config, style = "default", size = "half" }: ExercisesProps): React.ReactElement {
-  const topExercises = data?.exercises?.length ? selectTopExercises(data, config) : []
+  const topExercises = data?.workouts?.length ? selectTopExercises(data, config) : []
   const cascade = useItemCascade(topExercises.length)
-
-  if (!data || !data.exercises || data.exercises.length === 0) {
-    return <></>
-  }
-
-  const hideTitle = config.exercises_hide_title || false
-  const title = config.exercises_title || "Most Performed Exercises"
-  const weightUnit = config.weight_unit || "kg"
-  const show1RM = config.exercises_show_1rm !== false
-  const hideImages = config.exercises_hide_images === true
 
   if (topExercises.length === 0) {
     return <></>
   }
+
+  const hideTitle = config.exercises_hide_title || false
+  const title = config.exercises_title || "Top Exercises"
+  const weightUnit = config.weight_unit || "kg"
+  const show1RM = config.exercises_show_1rm !== false
+  const hideImages = config.exercises_hide_images === true
 
   return (
     <section id="lyfta-exercises">
       <RenderBasedOnStyle
         style={style}
         defaultComponent={
-          <div className="w-full overflow-hidden">
-            {!hideTitle && <DefaultTitle title={title} icon={<GiWeightLiftingUp />} />}
+          <div className="w-full overflow-hidden flex flex-col gap-2">
+            {!hideTitle && <DefaultTitle title={title} icon={<GiWeightLiftingUp />} subtitle="by sessions" />}
 
-            <div className="rounded-lg shadow-sm p-4">
-              <div className={withCascade("space-y-2", cascade)} style={cascade?.style}>
-                {topExercises.map((exercise) => {
-                  const oneRMDisplay = show1RM && exercise.best1RM > 0 ? format1RM(exercise.best1RM, weightUnit) : null
-
-                  return (
-                    <div key={exercise.name} className="flex justify-between items-center">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        {!hideImages && exercise.image && (
-                          <img
-                            src={exercise.image}
-                            alt={exercise.name}
-                            className="w-8 h-8 half:w-6 half:h-6 object-contain flex-shrink-0 rounded"
-                            loading="lazy"
-                          />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm half:text-xs font-semibold text-default-fg truncate">
-                            {exercise.name}
-                          </div>
-                          <div className="text-xs half:text-[10px] text-default-muted">
-                            {exercise.count} {exercise.count === 1 ? "session" : "sessions"}
-                          </div>
-                        </div>
-                      </div>
-                      {oneRMDisplay && (
-                        <div className="text-right flex-shrink-0">
-                          <div className="text-base half:text-sm font-bold text-default-highlight tabular-nums">
-                            {oneRMDisplay}
-                          </div>
-                          <div className="text-xs half:text-[10px] text-default-muted">est. 1RM</div>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
+            <div className={withCascade("flex flex-col", cascade)} style={cascade?.style}>
+              {topExercises.map((exercise) => {
+                const { value, caption } = headline(exercise, show1RM, weightUnit)
+                const detail = [
+                  plural(exercise.count, "session"),
+                  show1RM && exercise.bestWeight > 0 ? `best ${formatLoad(exercise.bestWeight, weightUnit)}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")
+                return (
+                  <ExerciseRow
+                    key={exercise.name}
+                    image={exercise.image}
+                    showImage={!hideImages}
+                    name={exercise.name}
+                    detail={detail}
+                    value={value}
+                    caption={caption}
+                    accent
+                  />
+                )
+              })}
             </div>
           </div>
         }
@@ -93,31 +82,20 @@ export function Exercises({ data, config, style = "default", size = "half" }: Ex
                 size,
               })}
             />
-            <div className="w-full flex gap-2 p-0 m-0">
-              <TerminalStatisticRow
-                rows={topExercises.map((exercise) => {
-                  const parts = []
-                  if (exercise.averageWeight > 0) {
-                    parts.push(`Avg: ${formatWeight(exercise.averageWeight, weightUnit)}`)
-                  }
-                  if (exercise.bestWeight > 0) {
-                    parts.push(`Best: ${formatWeight(exercise.bestWeight, weightUnit)}`)
-                  }
-                  if (show1RM && exercise.best1RM > 0) {
-                    parts.push(`1RM: ${format1RM(exercise.best1RM, weightUnit)}`)
-                  }
-                  const value =
-                    parts.length > 0
-                      ? `${exercise.count}x • ${parts.join(" • ")}`
-                      : `${exercise.count} ${exercise.count === 1 ? "time" : "times"}`
-                  return {
-                    icon: null,
-                    title: exercise.name,
-                    value,
-                  }
-                })}
-              />
-            </div>
+            <CascadeGroup count={topExercises.length}>
+              {topExercises.map((exercise) => {
+                const { value, caption } = headline(exercise, show1RM, weightUnit)
+                const label = caption === "est. 1RM" ? `1RM ${value}` : caption ? `best ${value}` : null
+                return (
+                  <TerminalLineWithDots
+                    key={exercise.name}
+                    title={exercise.name}
+                    titleClassName="max-w-[55%]"
+                    value={[`${exercise.count}x`, label].filter(Boolean).join(" · ")}
+                  />
+                )
+              })}
+            </CascadeGroup>
           </>
         }
       />

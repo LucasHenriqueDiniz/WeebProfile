@@ -5,9 +5,12 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
 import { AnimatedNumber } from "../../../templates/AnimatedNumber"
-import { CascadeGroup, itemCascade, useAnimations, withCascade } from "../../../templates/animations"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
+import { overviewSummary, overviewTileCount } from "../selection"
+import { formatDuration, formatVolume } from "../utils/format"
+import { StatTile, StatTiles } from "./shared"
 
 interface OverviewProps {
   data: LyftaData
@@ -17,8 +20,10 @@ interface OverviewProps {
 }
 
 export function Overview({ data, config, style = "default", size = "half" }: OverviewProps): React.ReactElement {
-  const animations = useAnimations()
-  if (!data || !data.workoutSummaries || data.workoutSummaries.length === 0) {
+  const tiles = overviewTileCount(config)
+  const cascade = useItemCascade(tiles)
+
+  if (!data?.workoutSummaries?.length) {
     return <></>
   }
 
@@ -30,123 +35,25 @@ export function Overview({ data, config, style = "default", size = "half" }: Ove
   const showDuration = config.overview_show_duration !== false
   const showWeeklyAvg = config.overview_show_weekly_avg !== false
 
-  const cutoffDate = new Date()
-  cutoffDate.setDate(cutoffDate.getDate() - periodDays)
-
-  const recentWorkouts = data.workoutSummaries.filter((workout) => {
-    const workoutDate = new Date(workout.workout_perform_date)
-    return workoutDate >= cutoffDate
-  })
-
-  const totalWorkouts = recentWorkouts.length
-
-  // Calculate total volume from full workouts (more accurate)
-  // Use workouts if available, otherwise fallback to workoutSummaries total_volume
-  const totalVolume =
-    data.workouts && data.workouts.length > 0
-      ? data.workouts
-          .filter((workout) => {
-            const workoutDate = new Date(workout.workout_perform_date)
-            return workoutDate >= cutoffDate
-          })
-          .reduce((acc, workout) => {
-            // Calculate volume from exercises (weight x reps)
-            const workoutVolume = workout.exercises.reduce((exerciseAcc, exercise) => {
-              const exerciseVolume = exercise.sets.reduce((setAcc, set) => {
-                if (set.weight && set.reps && set.is_completed) {
-                  const weight = parseFloat(set.weight)
-                  const reps = parseInt(set.reps, 10)
-                  if (!isNaN(weight) && !isNaN(reps)) {
-                    return setAcc + weight * reps // volume em kg
-                  }
-                }
-                return setAcc
-              }, 0)
-              return exerciseAcc + exerciseVolume
-            }, 0)
-            return acc + workoutVolume
-          }, 0)
-      : recentWorkouts.reduce((acc, w) => acc + (w.total_volume || 0) / 1000, 0) // Fallback: convert grams to kg
-
-  const totalDurationMinutes = recentWorkouts.reduce((acc, w) => {
-    if (!w.workout_duration) return acc
-    const parts = w.workout_duration.split(":")
-    if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
-      const hours = parseInt(parts[0], 10) || 0
-      const minutes = parseInt(parts[1], 10) || 0
-      const seconds = parseInt(parts[2], 10) || 0
-      return acc + hours * 60 + minutes + seconds / 60
-    }
-    return acc
-  }, 0)
-
-  const totalDurationHours = Math.floor(totalDurationMinutes / 60)
-  const totalDurationMins = Math.round(totalDurationMinutes % 60)
-  const totalDurationStr =
-    totalDurationMinutes > 0
-      ? totalDurationHours > 0
-        ? `${totalDurationHours}h ${totalDurationMins}m`
-        : `${totalDurationMins}m`
-      : "0m"
-
-  const workoutsPerWeek = periodDays > 0 ? (totalWorkouts / (periodDays / 7)).toFixed(1) : "0"
-  const showWeeklyAvgMetric = showWeeklyAvg && workoutsPerWeek !== "0"
-  const metricsCascade = animations
-    ? itemCascade(1 + Number(showVolume) + Number(showDuration) + Number(showWeeklyAvgMetric))
-    : null
+  const summary = overviewSummary(data, periodDays)
+  const perWeek = summary.perWeek.toFixed(1).replace(/\.0$/, "")
+  const volume = formatVolume(summary.volume, weightUnit)
+  const time = formatDuration(summary.minutes)
 
   return (
     <section id="lyfta-overview">
       <RenderBasedOnStyle
         style={style}
         defaultComponent={
-          <div className="w-full overflow-hidden">
-            {!hideTitle && <DefaultTitle title={title} icon={<FaChartLine />} subtitle={`${periodDays}d overview`} />}
+          <div className="w-full overflow-hidden flex flex-col gap-2">
+            {!hideTitle && <DefaultTitle title={title} icon={<FaChartLine />} subtitle={`last ${periodDays} days`} />}
 
-            <div className="rounded-lg shadow-sm p-4 mb-3 space-y-3">
-              {/* Grid 2x2 responsivo para 415px */}
-              <div className={withCascade("grid grid-cols-2 gap-3", metricsCascade)} style={metricsCascade?.style}>
-                <div className="text-center">
-                  <div className="text-2xl half:text-xl font-bold text-default-highlight tabular-nums">
-                    <AnimatedNumber value={totalWorkouts} />
-                  </div>
-                  <div className="text-xs text-default-muted">workouts ({periodDays}d)</div>
-                </div>
-
-                {showVolume && (
-                  <div className="text-center">
-                    <div className="text-2xl half:text-xl font-bold text-default-success tabular-nums">
-                      <AnimatedNumber value={totalVolume} />
-                    </div>
-                    <div className="text-xs text-default-muted">volume {weightUnit}</div>
-                  </div>
-                )}
-
-                {showDuration && (
-                  <div className="text-center">
-                    <div className="text-2xl half:text-xl font-bold text-default-highlight tabular-nums">
-                      {totalDurationMinutes > 0 ? Math.round(totalDurationMinutes / 60) : 0}h
-                    </div>
-                    <div className="text-xs text-default-muted">total duration</div>
-                  </div>
-                )}
-
-                {showWeeklyAvgMetric && (
-                  <div className="text-center">
-                    <div className="text-2xl half:text-xl font-bold text-default-success tabular-nums">
-                      {workoutsPerWeek}x
-                    </div>
-                    <div className="text-xs text-default-muted">per week (avg)</div>
-                  </div>
-                )}
-              </div>
-
-              <p className="text-[11px] text-default-muted text-center">
-                {totalWorkouts > 0
-                  ? `${totalWorkouts} workouts • ${workoutsPerWeek}x/week • ${totalDurationStr}`
-                  : "No workouts in this period"}
-              </p>
-            </div>
+            <StatTiles count={tiles} size={size} className={withCascade("", cascade)} style={cascade?.style}>
+              <StatTile label="Workouts" value={<AnimatedNumber value={summary.workouts} />} />
+              {showVolume && <StatTile label="Volume" value={<AnimatedNumber value={volume} />} />}
+              {showDuration && <StatTile label="Time" value={time} />}
+              {showWeeklyAvg && <StatTile label="Per week" value={<AnimatedNumber value={perWeek} />} />}
+            </StatTiles>
           </div>
         }
         terminalComponent={
@@ -158,11 +65,11 @@ export function Overview({ data, config, style = "default", size = "half" }: Ove
                 size,
               })}
             />
-            <CascadeGroup count={1 + Number(showWeeklyAvg) + Number(showVolume) + Number(showDuration)}>
-              <TerminalLineWithDots title={`Workouts (${periodDays}d)`} value={String(totalWorkouts)} />
-              {showWeeklyAvg && <TerminalLineWithDots title="Avg per Week" value={`${workoutsPerWeek} workouts`} />}
-              {showVolume && <TerminalLineWithDots title="Total Volume" value={`${totalVolume}${weightUnit}`} />}
-              {showDuration && <TerminalLineWithDots title="Total Duration" value={totalDurationStr} />}
+            <CascadeGroup count={tiles}>
+              <TerminalLineWithDots title={`Workouts (${periodDays}d)`} value={String(summary.workouts)} />
+              {showVolume && <TerminalLineWithDots title="Volume" value={volume} />}
+              {showDuration && <TerminalLineWithDots title="Time" value={time} />}
+              {showWeeklyAvg && <TerminalLineWithDots title="Per Week" value={`${perWeek} workouts`} />}
             </CascadeGroup>
           </>
         }
