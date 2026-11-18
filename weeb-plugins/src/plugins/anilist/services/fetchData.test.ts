@@ -133,6 +133,32 @@ describe("fetchAniListData", () => {
     expect(data.statistics.animeCount).toBe(532)
   })
 
+  // What AniList's edge answers a Cloudflare Worker, captured on 2026-11-18. The status
+  // alone ("AniList responded 403.") left the log without who refused or why.
+  it("reports what AniList said when it refuses the request, with the ray to quote", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          errors: [{ message: "You have been manually blocked. Please come to the principal's office.", status: 403 }],
+          data: null,
+        }),
+        { status: 403, headers: { "cf-ray": "a5c9120d7db4e72d-POA" } }
+      ) as never
+    )
+
+    const data = await fetchAniListData(config())
+
+    expect(data._error).toBe(
+      'AniList responded 403: "You have been manually blocked. Please come to the principal\'s office.", cf-ray a5c9120d7db4e72d-POA.'
+    )
+  })
+
+  it("reports only the status when a refusal has no readable body", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("<html>", { status: 500 }) as never)
+
+    expect((await fetchAniListData(config()))._error).toBe("AniList responded 500.")
+  })
+
   it("surfaces a network failure without throwing", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("boom"))
     expect((await fetchAniListData(config()))._error).toMatch(/could not reach/i)

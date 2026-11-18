@@ -52,7 +52,7 @@ function codeforcesApi(submissions: Submission[]) {
   return statusUrls
 }
 
-const config = (sections: string[]) => ({ enabled: true, sections, username: "tourist" }) as never
+const config = (sections: string[], username = "tourist") => ({ enabled: true, sections, username }) as never
 
 const sum = (byDifficulty: Record<string, number>) => Object.values(byDifficulty).reduce((a, b) => a + b, 0)
 
@@ -130,5 +130,27 @@ describe("Codeforces problems solved", () => {
     expect(statusUrls).toEqual([])
     expect(data.rank).toBe("legendary grandmaster")
     expect(data.recentSubmissions).toEqual([])
+  })
+
+  // Codeforces' real answer for a handle that does not exist (2026-11-18): HTTP 400, and
+  // "not found" only in the body. It used to come out as "API request failed: HTTP 400".
+  it("reports a handle that does not exist as not found, though Codeforces answers 400", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () =>
+      Response.json({ status: "FAILED", comment: "handles: User with handle nobody not found" }, { status: 400 })
+    )
+
+    await expect(fetchCodeforcesData(config(["rating_rank"], "nobody"))).rejects.toThrow(
+      'Codeforces user "nobody" not found'
+    )
+  })
+
+  it("keeps any other 400 an upstream failure", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async () =>
+      Response.json({ status: "FAILED", comment: "Call limit exceeded" }, { status: 400 })
+    )
+
+    await expect(fetchCodeforcesData(config(["rating_rank"]))).rejects.toThrow(
+      "Codeforces API request failed: HTTP 400"
+    )
   })
 })

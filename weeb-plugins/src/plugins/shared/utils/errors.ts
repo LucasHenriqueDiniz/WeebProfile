@@ -24,7 +24,9 @@ export class ApiError extends PluginError {
     message: string,
     public statusCode?: number,
     public apiName?: string,
-    cause?: Error
+    cause?: Error,
+    /** The body of a 4xx answer, when there was one: some APIs say why only there. */
+    public responseBody?: string
   ) {
     super(message, undefined, cause)
     this.name = "ApiError"

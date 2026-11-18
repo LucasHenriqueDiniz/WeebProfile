@@ -60,7 +60,7 @@ What each `fetchData` needs, checked in the code and against the live APIs on 15
 | --------------- | --------------------- | ----------------------------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------- |
 | GitHub          | username + PAT        | GraphQL has no anonymous access (`API rate limit exceeded` with no token)           | `profile`, `favorite_languages`        | yes, with `GITHUB_PREVIEW_TOKEN`                      |
 | MyAnimeList     | username              | `jikan-edge` service binding (api.jikan.moe timed out from here)                    | `statistics`, `anime_bar`              | yes                                                   |
-| AniList         | username              | public GraphQL, 1 request                                                           | `statistics`, `favorites_anime`        | yes                                                   |
+| AniList         | username              | public GraphQL, 1 request; blocks the Worker (see below)                            | `statistics`, `favorites_anime`        | no: 502 on every request today                        |
 | Codewars        | username              | public REST, up to 3 requests                                                       | `rank_honor`, `languages_proficiency`  | yes                                                   |
 | Codeforces      | handle                | public REST, up to 4 requests, throttled in code                                    | `rating_rank`, `contests_participated` | yes                                                   |
 | Duolingo        | username              | unofficial `2017-06-30/users`, 2 requests                                           | `current_streak`, `languages_learning` | yes                                                   |
@@ -72,6 +72,30 @@ What each `fetchData` needs, checked in the code and against the live APIs on 15
 | Lyfta           | apiKey                | personal key, personal data                                                         | —                                      | no                                                    |
 | Websites        | URLs                  | fetches arbitrary URLs                                                              | —                                      | no: a public SSRF-shaped fetcher                      |
 | 16Personalities | result URL            | no username                                                                         | —                                      | no                                                    |
+
+### AniList blocks the Worker
+
+Measured on 2026-11-18 with a probe Worker on this account (`wrangler dev --remote`, colo
+POA, `CF-Worker: lucas-hdo.workers.dev`), the same query that answers 200 from a laptop:
+
+| Request from the Worker                                  | Answer   |
+| -------------------------------------------------------- | -------- |
+| `POST graphql.anilist.co`, the plugin's headers (no UA)  | 403      |
+| same, with the `User-Agent` of the app, Chrome and curl  | 403 (×3) |
+| `GET anilist.co/`                                        | 403      |
+| `GET s4.anilist.co/…/cover/medium/….jpg` (the cover CDN) | 403      |
+
+Every 403 comes from AniList's own Cloudflare zone (`server: cloudflare`, no origin
+headers) with the same body: `"You have been manually blocked. Please come to the
+principal's office."` AniList put the block there, on the whole zone, and nothing the
+request carries changes it; the covers would fail even if the query went through. Not
+measured: whether it targets this account's Workers or every Worker.
+
+The preview answers 502 `PREVIEW_UPSTREAM_FAILED` on every attempt, and `error_log` records
+AniList's message and the `cf-ray` (it was a bare "AniList responded 403."). No saved card
+uses AniList (0 of 16 on that date), so the daily cron does not hit it. The way out is
+AniList lifting the block (their Discord, quoting a `cf-ray`), or the plugin leaving the
+landing page's list until then.
 
 Codeforces' `problems_solved` was left out: it counts only the last 100 submissions, so a
 legendary grandmaster shows "Total: 72".
