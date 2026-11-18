@@ -47,18 +47,24 @@ export interface AboutLink {
   icon: LinkIcon
 }
 
+/** Where the intro's picture comes from. Unset is "custom": the image, if there is one. */
+export type PictureSource = "custom" | "github" | "none"
+
 export interface NeofetchContent {
   /** "user@host": the part before the @ and the part after it are drawn in the accent color. */
   title: string
   fields: NeofetchField[]
-  /** A data URI (generation), the typed https URL (wizard preview) or null for no picture. */
+  /** A data URI (generation, or an upload), an https URL (wizard preview) or null for no picture. */
   image: string | null
 }
 
 export interface AboutNonEssentialConfig extends NonEssentialPluginConfig {
   neofetch_title?: string
   neofetch_fields?: NeofetchField[]
+  neofetch_picture?: PictureSource
+  /** A data URI from the wizard's upload, or an https URL. */
   neofetch_image?: string
+  neofetch_github_user?: string
   neofetch_show_palette?: boolean
   neofetch_show_cursor?: boolean
   links_items?: LinkConfigItem[]

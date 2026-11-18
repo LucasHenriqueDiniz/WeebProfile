@@ -15,6 +15,7 @@ import { Settings, X, Plus, HelpCircle, ExternalLink } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { ObjectArrayInput, type ObjectArrayItem, type ObjectArrayItemField } from "./ObjectArrayInput"
+import { ImageInput } from "./ImageInput"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
 import { useTranslations } from "@/i18n/use-translations"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -23,7 +24,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
   defaultValue?: any
   min?: number
   max?: number
@@ -235,6 +236,16 @@ export function SectionConfigDialog({ plugin, section, sectionConfig, onConfigCh
                     placeholder={typeof option.defaultValue === "string" ? option.defaultValue : undefined}
                     onChange={(e) => updateConfig({ [option.key]: e.target.value })}
                   />
+                )}
+                {option.type === "image" && (
+                  <>
+                    <ImageInput
+                      id={option.key}
+                      value={typeof value === "string" ? value : ""}
+                      onChange={(newValue) => updateConfig({ [option.key]: newValue })}
+                    />
+                    {optionDescription && <p className="text-xs text-muted-foreground">{optionDescription}</p>}
+                  </>
                 )}
                 {option.type === "select" && option.options && (
                   <Select

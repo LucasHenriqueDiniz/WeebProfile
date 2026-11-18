@@ -81,7 +81,7 @@ interface PluginMetadataPartial {
     configOptions?: Array<{
       key: string
       label: string
-      type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+      type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
       defaultValue?: any
       min?: number
       max?: number
@@ -183,9 +183,12 @@ function validateMetadata(metadata: PluginMetadataPartial, pluginName: string): 
           if (!opt.label) {
             errors.push(`sections[${index}].configOptions[${optIndex}]: missing label`)
           }
-          if (!opt.type || !["number", "boolean", "string", "select", "array", "object-array"].includes(opt.type)) {
+          if (
+            !opt.type ||
+            !["number", "boolean", "string", "select", "array", "object-array", "image"].includes(opt.type)
+          ) {
             errors.push(
-              `sections[${index}].configOptions[${optIndex}]: invalid type. Must be 'number', 'boolean', 'string', 'select', 'array', or 'object-array'`
+              `sections[${index}].configOptions[${optIndex}]: invalid type. Must be 'number', 'boolean', 'string', 'select', 'array', 'object-array' or 'image'`
             )
           }
 
@@ -648,7 +651,7 @@ interface EnrichedMetadata extends PluginMetadataPartial {
     configOptions?: Array<{
       key: string
       label: string
-      type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+      type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
       defaultValue?: any
       min?: number
       max?: number
@@ -832,7 +835,7 @@ export interface ObjectArrayItemField {
 export interface SectionConfigOption {
   key: string
   label: string
-  type: "number" | "boolean" | "string" | "select" | "array" | "object-array"
+  type: "number" | "boolean" | "string" | "select" | "array" | "object-array" | "image"
   defaultValue?: any
   min?: number
   max?: number

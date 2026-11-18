@@ -24,10 +24,23 @@
           "label": "Linhas",
           "tooltip": "Cada linha é um rótulo e o seu valor, como Local: Brasil ou Stack: TypeScript · React. Um valor longo demais para o card termina em reticências."
         },
+        "neofetch_github_user": {
+          "description": "De quem é o avatar. Usado com Meu avatar do GitHub.",
+          "label": "Usuário do GitHub"
+        },
         "neofetch_image": {
-          "description": "Um endereço https:// de uma imagem PNG, JPEG ou WebP, de até 400 KB",
-          "label": "URL da foto",
-          "tooltip": "A imagem é baixada uma vez por geração e embutida no SVG, porque um README não carrega imagens de dentro de uma imagem. https://github.com/<voce>.png funciona. Deixe vazio para não ter foto."
+          "description": "Envie um PNG, JPEG ou WebP, ou cole um endereço https://. Usado com Minha imagem.",
+          "label": "Imagem",
+          "tooltip": "Uma imagem enviada fica guardada no próprio card, então não precisa de endereço; uma grande é reduzida para 384px antes. Um endereço é baixado uma vez por geração e embutido, porque um README não carrega imagens de dentro de uma imagem."
+        },
+        "neofetch_picture": {
+          "description": "De onde vem a foto ao lado das linhas",
+          "label": "Foto",
+          "options": {
+            "custom": "Minha imagem (envie uma ou cole uma URL)",
+            "github": "Meu avatar do GitHub",
+            "none": "Sem foto"
+          }
         },
         "neofetch_show_cursor": {
           "label": "Mostrar prompt no fim",

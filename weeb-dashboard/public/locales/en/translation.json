@@ -690,6 +690,16 @@
     "templateLoadError": {
       "title": "Template not available",
       "description": "It may have been removed or made private. Nothing in the wizard was changed."
+    },
+    "imageInput": {
+      "upload": "Upload image",
+      "replace": "Replace",
+      "remove": "Remove",
+      "urlPlaceholder": "https://… or upload a file",
+      "uploaded": "Uploaded image, {{size}} KB, kept in this card",
+      "errorType": "Use a PNG, JPEG or WebP file.",
+      "errorTooBig": "This image does not fit in {{size}} KB even shrunk. Try a smaller one.",
+      "errorRead": "Could not read this image."
     }
   },
   "templatesPage": {

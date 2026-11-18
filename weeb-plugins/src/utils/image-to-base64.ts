@@ -4,7 +4,7 @@
  * or format conversion happens here.
  */
 const ACCEPTED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const
-type AcceptedMimeType = (typeof ACCEPTED_MIME_TYPES)[number]
+export type AcceptedMimeType = (typeof ACCEPTED_MIME_TYPES)[number]
 
 const JPEG_MAGIC = [0xff, 0xd8, 0xff]
 const PNG_MAGIC = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
@@ -21,7 +21,8 @@ function isWebp(bytes: Uint8Array): boolean {
   )
 }
 
-function matchesMagicBytes(bytes: Uint8Array, mime: AcceptedMimeType): boolean {
+/** Whether the bytes start the way an image of that MIME type does. */
+export function matchesMagicBytes(bytes: Uint8Array, mime: AcceptedMimeType): boolean {
   if (mime === "image/jpeg") return bytesStartWith(bytes, JPEG_MAGIC)
   if (mime === "image/png") return bytesStartWith(bytes, PNG_MAGIC)
   return isWebp(bytes)

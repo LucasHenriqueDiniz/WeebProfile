@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { AboutConfig } from "../types"
-import { fetchAboutData } from "./fetchData"
+import { fetchAboutData, githubAvatarUrl } from "./fetchData"
 import { MOCK_LINKS, MOCK_NEOFETCH } from "./mock-data"
 
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3, 4])
@@ -85,6 +85,55 @@ describe("fetchAboutData", () => {
     expect(data.neofetch.fields.map((field) => field.label)).toEqual(many.slice(0, 10).map((field) => field.label))
   })
 
+  describe("the picture", () => {
+    const uploaded = `data:image/png;base64,${Buffer.from(PNG).toString("base64")}`
+
+    // The wizard keeps an uploaded image in the card: a picture with no address of its
+    // own, like the pixel-art avatar drawn for the profile, needs nothing to fetch.
+    it("embeds an uploaded image as it is, with no request", async () => {
+      const data = await fetchAboutData(config({ neofetch_picture: "custom", neofetch_image: uploaded }))
+      expect(data.neofetch.image).toBe(uploaded)
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    it("leaves out an uploaded SVG, which could carry script", async () => {
+      const svg = `data:image/svg+xml;base64,${Buffer.from("<svg/>").toString("base64")}`
+      const data = await fetchAboutData(config({ neofetch_image: svg }))
+      expect(data.neofetch.image).toBeNull()
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    it("downloads the GitHub avatar of the username given", async () => {
+      const data = await fetchAboutData(
+        config({ neofetch_picture: "github", neofetch_github_user: "@LucasHenriqueDiniz", neofetch_image: uploaded })
+      )
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      expect(String(fetchMock.mock.calls[0]![0])).toBe("https://github.com/LucasHenriqueDiniz.png?size=348")
+      expect(data.neofetch.image).toBe(uploaded) // the fetch mock answers the same PNG
+    })
+
+    it("draws no picture for none, even with an image set", async () => {
+      const data = await fetchAboutData(config({ neofetch_picture: "none", neofetch_image: uploaded }))
+      expect(data.neofetch.image).toBeNull()
+    })
+
+    it("draws no picture for the GitHub avatar without a valid username", async () => {
+      const data = await fetchAboutData(config({ neofetch_picture: "github", neofetch_github_user: "../../evil" }))
+      expect(data.neofetch.image).toBeNull()
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    it("shows the avatar's address in the preview, without fetching it", async () => {
+      const data = await fetchAboutData(
+        config({ neofetch_picture: "github", neofetch_github_user: "octocat" }),
+        true,
+        true
+      )
+      expect(data.neofetch.image).toBe("https://github.com/octocat.png?size=348")
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+  })
+
   describe("in the wizard preview and the dev tools", () => {
     it("draws the mock while nothing is typed, without touching the network", async () => {
       expect(await fetchAboutData(config({}), true, true)).toEqual({ neofetch: MOCK_NEOFETCH, links: MOCK_LINKS })
@@ -118,4 +167,20 @@ describe("fetchAboutData", () => {
       expect(fetchMock).not.toHaveBeenCalled()
     })
   })
+})
+
+describe("githubAvatarUrl", () => {
+  it.each([
+    ["octocat", "https://github.com/octocat.png?size=348"],
+    [" @Lucas-Diniz ", "https://github.com/Lucas-Diniz.png?size=348"],
+  ])("%j has an avatar", (login, url) => {
+    expect(githubAvatarUrl(login)).toBe(url)
+  })
+
+  it.each(["", "a/b", "-start", "end-", "dou--ble", "x".repeat(40), "https://github.com/x", 7])(
+    "%j is not a GitHub login",
+    (login) => {
+      expect(githubAvatarUrl(login)).toBeNull()
+    }
+  )
 })

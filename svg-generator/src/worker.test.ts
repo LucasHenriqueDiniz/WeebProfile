@@ -893,6 +893,24 @@ describe("POST / — opt-in animations", () => {
   })
 })
 
+describe("POST / — About intro picture", () => {
+  // The wizard keeps an uploaded picture in the card as a data URI: the generator embeds
+  // it as it is, with no request, since the image has no address to fetch.
+  it("embeds an uploaded picture without fetching anything", async () => {
+    const png = `data:image/png;base64,${Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2]).toString("base64")}`
+    const fetchSpy = vi.spyOn(globalThis, "fetch")
+    const about = {
+      about: { enabled: true, sections: ["neofetch"], neofetch_title: "me@home", neofetch_image: png },
+    }
+
+    const { response, body } = await post(validRequest({ dev: false, style: "terminal", plugins: about }))
+
+    expect(response.status).toBe(200)
+    expect(body.svg).toContain(`src="${png}"`)
+    expect(fetchSpy).not.toHaveBeenCalled()
+  })
+})
+
 describe("POST / — tiles, one SVG per site", () => {
   const websites = { websites: { enabled: true, sections: ["websites"], websites_max: 3 } }
 

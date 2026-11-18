@@ -64,13 +64,32 @@ export const aboutPluginMetadata = {
           ],
         },
         {
+          key: "neofetch_picture",
+          label: "Picture",
+          type: "select" as const,
+          defaultValue: "custom",
+          description: "Where the picture next to the lines comes from",
+          options: [
+            { value: "custom", label: "My image (upload one or paste a URL)" },
+            { value: "github", label: "My GitHub avatar" },
+            { value: "none", label: "No picture" },
+          ],
+        },
+        {
           key: "neofetch_image",
-          label: "Picture URL",
+          label: "Image",
+          type: "image" as const,
+          defaultValue: "",
+          description: "Upload a PNG, JPEG or WebP, or paste an https:// address. Used with My image.",
+          tooltip:
+            "An uploaded image is kept in the card itself, so it needs no address of its own; a large one is shrunk to 384px first. An address is downloaded once per generation and embedded, because a README cannot load images from inside an image.",
+        },
+        {
+          key: "neofetch_github_user",
+          label: "GitHub username",
           type: "string" as const,
           defaultValue: "",
-          description: "An https:// address of a PNG, JPEG or WebP image, up to 400 KB",
-          tooltip:
-            "The image is downloaded once per generation and embedded in the SVG, because a README cannot load images from inside an image. https://github.com/<you>.png works. Leave it empty for no picture.",
+          description: "Whose avatar to show. Used with My GitHub avatar.",
         },
         {
           key: "neofetch_show_palette",

@@ -24,10 +24,23 @@
           "label": "Líneas",
           "tooltip": "Cada línea es una etiqueta y su valor, como Ubicación: Brasil o Stack: TypeScript · React. Un valor demasiado largo para la tarjeta termina en puntos suspensivos."
         },
+        "neofetch_github_user": {
+          "description": "De quién es el avatar. Se usa con Mi avatar de GitHub.",
+          "label": "Usuario de GitHub"
+        },
         "neofetch_image": {
-          "description": "Una dirección https:// de una imagen PNG, JPEG o WebP, de hasta 400 KB",
-          "label": "URL de la foto",
-          "tooltip": "La imagen se descarga una vez por generación y se incrusta en el SVG, porque un README no carga imágenes desde dentro de una imagen. https://github.com/<tu>.png funciona. Déjalo vacío para no tener foto."
+          "description": "Sube un PNG, JPEG o WebP, o pega una dirección https://. Se usa con Mi imagen.",
+          "label": "Imagen",
+          "tooltip": "Una imagen subida se guarda en la propia tarjeta, así que no necesita dirección; una grande se reduce a 384px antes. Una dirección se descarga una vez por generación y se incrusta, porque un README no carga imágenes desde dentro de una imagen."
+        },
+        "neofetch_picture": {
+          "description": "De dónde sale la foto junto a las líneas",
+          "label": "Foto",
+          "options": {
+            "custom": "Mi imagen (sube una o pega una URL)",
+            "github": "Mi avatar de GitHub",
+            "none": "Sin foto"
+          }
         },
         "neofetch_show_cursor": {
           "label": "Mostrar prompt al final",
