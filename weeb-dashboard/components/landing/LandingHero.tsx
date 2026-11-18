@@ -101,6 +101,10 @@ function HeroCard() {
   const card = HERO_CARD_LIST[showing.index]!
   const caption = t("cardCaption", { plugins: pluginNames(card, locale) })
 
+  // The two frames behind the card shift their tilt on every change, as if the deck had
+  // been shuffled; with the transition that reads as one movement.
+  const deckTilt = showing.index % 2 === 0 ? [-6, 4] : [-3, 7]
+
   return (
     <figure
       className="mx-auto w-full max-w-[415px] flex-none lg:mx-0 lg:w-[415px]"
@@ -109,28 +113,48 @@ function HeroCard() {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_80px_-28px_rgba(139,92,246,0.55)]">
-        <div className="flex items-center gap-2 border-b border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">
-          <BookOpen className="h-3.5 w-3.5" />
-          README.md
+      <div className="relative isolate">
+        {/* Glow in the brand gradient, turning slowly behind the deck (globals.css). */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-20 aspect-square w-[150%] -translate-x-1/2 -translate-y-1/2"
+        >
+          <div className="hero-aurora h-full w-full rounded-full bg-[conic-gradient(from_0deg,#8b5cf6,#ec4899,#06b6d4,#8b5cf6)] opacity-30 blur-3xl dark:opacity-45" />
         </div>
-        <div className="p-2">
-          <div className="relative w-full" style={{ aspectRatio: `${card.width} / ${HERO_FRAME_HEIGHT}` }}>
-            <img
-              key={showing.src}
-              src={showing.src}
-              alt={caption}
-              width={card.width}
-              height={card.height}
-              className={cn(
-                "absolute inset-x-0 top-0 block h-auto w-full",
-                !reducedMotion && "animate-in fade-in duration-500"
-              )}
-            />
+        {/* The rest of the deck: there are more cards than the one on top. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 rounded-2xl border border-border bg-card/80 shadow-xl transition-transform duration-700 ease-out"
+          style={{ transform: `translate(-18px, 10px) rotate(${deckTilt[0]}deg) scale(0.96)` }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 rounded-2xl border border-border bg-card/60 shadow-xl transition-transform duration-700 ease-out"
+          style={{ transform: `translate(16px, 16px) rotate(${deckTilt[1]}deg) scale(0.93)` }}
+        />
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_24px_80px_-28px_rgba(139,92,246,0.55)]">
+          <div className="flex items-center gap-2 border-b border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">
+            <BookOpen className="h-3.5 w-3.5" />
+            README.md
+          </div>
+          <div className="p-2">
+            <div className="relative w-full" style={{ aspectRatio: `${card.width} / ${HERO_FRAME_HEIGHT}` }}>
+              <img
+                key={showing.src}
+                src={showing.src}
+                alt={caption}
+                width={card.width}
+                height={card.height}
+                className={cn(
+                  "absolute inset-x-0 top-0 block h-auto w-full",
+                  !reducedMotion && "animate-in fade-in duration-500"
+                )}
+              />
+            </div>
           </div>
         </div>
       </div>
-      <figcaption className="mt-3 text-center text-xs text-muted-foreground" aria-live="polite">
+      <figcaption className="mt-6 text-center text-xs text-muted-foreground" aria-live="polite">
         {caption}
       </figcaption>
       <div className="mt-2 flex justify-center gap-1.5">
@@ -169,12 +193,6 @@ export function LandingHero() {
 
   return (
     <section id="top" className="relative flex min-h-[640px] items-center overflow-hidden">
-      {/* Painel sutil atrás do card, no lugar da esteira: ancora o card sem cobrir nada */}
-      <div
-        aria-hidden
-        className="absolute bottom-0 right-0 top-0 hidden w-[min(640px,48%)] rounded-l-3xl border-l border-border/40 bg-gradient-to-l from-primary/[0.07] via-muted/40 to-transparent dark:from-primary/10 dark:via-white/[0.03] lg:block"
-      />
-
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-16 md:py-20 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-[600px]">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3.5 py-1.5 text-xs font-semibold text-muted-foreground">
