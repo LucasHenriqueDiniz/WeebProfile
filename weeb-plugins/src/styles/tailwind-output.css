@@ -412,6 +412,14 @@
   height: 15px
 }
 
+.h-\[18px\] {
+  height: 18px
+}
+
+.h-\[36px\] {
+  height: 36px
+}
+
 .h-\[3px\] {
   height: 3px
 }
@@ -420,8 +428,16 @@
   height: 40px
 }
 
+.h-\[44px\] {
+  height: 44px
+}
+
 .h-\[50px\] {
   height: 50px
+}
+
+.h-\[60px\] {
+  height: 60px
 }
 
 .h-\[75px\] {
@@ -532,6 +548,10 @@
   width: 2rem
 }
 
+.w-9 {
+  width: 2.25rem
+}
+
 .w-\[0\.60rem\] {
   width: 0.60rem
 }
@@ -585,8 +605,8 @@
   max-width: 320px
 }
 
-.max-w-\[60\%\] {
-  max-width: 60%
+.max-w-\[55\%\] {
+  max-width: 55%
 }
 
 .max-w-full {
@@ -841,12 +861,6 @@
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse))
-}
-
-.space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.625rem * var(--tw-space-y-reverse))
 }
 
 .space-y-3 > :not([hidden]) ~ :not([hidden]) {
@@ -1476,6 +1490,14 @@
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
 }
 
+.leading-4 {
+  line-height: 1rem
+}
+
+.leading-5 {
+  line-height: 1.25rem
+}
+
 .leading-\[1\.05\] {
   line-height: 1.05
 }
@@ -1490,6 +1512,10 @@
 
 .leading-\[1\.9\] {
   line-height: 1.9
+}
+
+.leading-\[18px\] {
+  line-height: 18px
 }
 
 .leading-none {
@@ -1890,6 +1916,10 @@
   height: 1.5rem
 }
 
+#svg-main.half .half\:h-\[56px\] {
+  height: 56px
+}
+
 #svg-main.half .half\:min-h-\[100px\] {
   min-height: 100px
 }
@@ -1990,12 +2020,8 @@
   font-size: 11px
 }
 
-#svg-main.half .half\:text-\[8px\] {
-  font-size: 8px
-}
-
-#svg-main.half .half\:text-\[9px\] {
-  font-size: 9px
+#svg-main.half .half\:text-\[13px\] {
+  font-size: 13px
 }
 
 #svg-main.half .half\:text-base {
@@ -2011,11 +2037,6 @@
 #svg-main.half .half\:text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem
-}
-
-#svg-main.half .half\:text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem
 }
 
 #svg-main.half .half\:text-xs {

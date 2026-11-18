@@ -95,11 +95,11 @@ export const SECTION_PREVIEWS: Record<
   },
 
   lyfta: {
-    statistics: { default: [415, 156], terminal: [415, 115] },
-    recent_workouts: { default: [415, 356], terminal: [415, 142] },
-    exercises: { default: [415, 314], terminal: [415, 176] },
-    overview: { default: [415, 245], terminal: [415, 136] },
-    last_workout: { default: [415, 339], terminal: [415, 240] },
+    statistics: { default: [415, 236], terminal: [415, 176] },
+    recent_workouts: { default: [415, 316], terminal: [415, 156] },
+    exercises: { default: [415, 292], terminal: [415, 156] },
+    overview: { default: [415, 192], terminal: [415, 136] },
+    last_workout: { default: [415, 388], terminal: [415, 236] },
   },
 
   myanimelist: {

@@ -8,16 +8,9 @@ import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { CascadeGroup, itemCascade, useAnimations, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LyftaData, LyftaNonEssentialConfig } from "../types"
-import { formatWeight } from "../utils/weight"
-import { exerciseVolumes, lastWorkoutTopExercises, latestWorkout } from "../selection"
-
-// Format date as "DD/MM" (like example)
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  const day = date.getDate()
-  const month = date.getMonth() + 1
-  return `${day}/${month}`
-}
+import { bestSet, completedSets, lastWorkoutTopExercises, latestWorkout, workoutVolume } from "../selection"
+import { type WeightUnit, clip, formatDay, formatLoad, formatVolume, parseWorkoutTitle, plural } from "../utils/format"
+import { ExerciseRow, MuscleChips } from "./shared"
 
 interface LastWorkoutProps {
   data: LyftaData
@@ -26,114 +19,81 @@ interface LastWorkoutProps {
   size?: "half" | "full"
 }
 
+/** "20 kg × 15", or "15 reps" for a set without a load. */
+function bestSetLabel(set: { weight: number; reps: number } | null, unit: WeightUnit, compact = false): string {
+  if (!set) return ""
+  if (set.weight <= 0) return plural(set.reps, "rep")
+  return compact ? `${formatLoad(set.weight, unit)}×${set.reps}` : `${formatLoad(set.weight, unit)} × ${set.reps}`
+}
+
+function volumeLabel(kg: number, unit: WeightUnit): string {
+  return kg > 0 ? formatVolume(kg, unit) : "—"
+}
+
 export function LastWorkout({ data, config, style = "default", size = "half" }: LastWorkoutProps): React.ReactElement {
   const animations = useAnimations()
-  if (!data || !data.workouts || data.workouts.length === 0) {
-    return <></>
-  }
-
-  const hideTitle = config.last_workout_hide_title || false
-  const title = config.last_workout_title || "Latest Workout Session"
-  const weightUnit = config.weight_unit || "kg"
-  const showBodyWeight = config.last_workout_show_body_weight !== false
-
-  const lastWorkout = latestWorkout(data.workouts)
-
+  const lastWorkout = data?.workouts?.length ? latestWorkout(data.workouts) : undefined
   if (!lastWorkout) {
     return <></>
   }
 
-  const exercisesWithVolume = exerciseVolumes(lastWorkout)
-  const topExercises = lastWorkoutTopExercises(lastWorkout, config)
+  const hideTitle = config.last_workout_hide_title || false
+  const title = config.last_workout_title || "Last Workout"
+  const weightUnit = config.weight_unit || "kg"
+  const showBodyWeight = config.last_workout_show_body_weight !== false
 
-  const visibleExercises = topExercises.filter(({ volume }) => volume > 0)
-  const exercisesCascade = animations ? itemCascade(visibleExercises.length) : null
+  const exercises = lastWorkoutTopExercises(lastWorkout, config)
+  const exercisesCascade = animations ? itemCascade(exercises.length) : null
   const showBodyWeightLine = showBodyWeight && lastWorkout.body_weight > 0
 
-  const workoutDate = formatDate(lastWorkout.workout_perform_date)
-
-  // Calculate total volume from all exercises (weight x reps for each set)
-  const totalVolumeKg = exercisesWithVolume.reduce((acc, { volume }) => acc + volume, 0)
+  const { name, muscles } = parseWorkoutTitle(lastWorkout.title)
+  const date = formatDay(lastWorkout.workout_perform_date)
+  const totalVolume = formatVolume(workoutVolume(lastWorkout), weightUnit)
+  const setCount = lastWorkout.exercises.reduce((acc, e) => acc + completedSets(e).length, 0)
+  const details = [
+    date,
+    plural(lastWorkout.exercises.length, "exercise"),
+    plural(setCount, "set"),
+    showBodyWeightLine ? `BW ${formatLoad(lastWorkout.body_weight, weightUnit)}` : null,
+  ].filter(Boolean)
 
   return (
     <section id="lyfta-last-workout">
       <RenderBasedOnStyle
         style={style}
         defaultComponent={
-          <div className="w-full overflow-hidden">
+          <div className="w-full overflow-hidden flex flex-col gap-2">
             {!hideTitle && <DefaultTitle title={title} icon={<FaDumbbell />} />}
 
-            <div className="rounded-lg shadow-sm p-4">
-              {/* Header: título, data, volume / BW */}
-              <div className="flex justify-between items-start mb-3 gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm half:text-xs font-semibold text-default-fg truncate">{lastWorkout.title}</div>
-                  <div className="text-xs half:text-[10px] text-default-muted">{workoutDate}</div>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <div className="text-sm half:text-xs font-bold text-default-highlight tabular-nums">
-                    <AnimatedNumber value={totalVolumeKg} />
-                    {weightUnit}
-                  </div>
-                  {showBodyWeightLine && (
-                    <div className="text-xs half:text-[10px] text-default-muted">
-                      BW: {formatWeight(lastWorkout.body_weight * 1000, weightUnit)}
-                    </div>
-                  )}
-                </div>
+            {/* Header: name and volume over details, then the muscles it hit. */}
+            <div className="flex flex-col gap-1.5 px-3 py-2.5 rounded-lg border border-solid border-default-border bg-default-muted/10">
+              <div className="flex items-baseline justify-between gap-3">
+                <p className="flex-1 min-w-0 text-base half:text-sm leading-5 font-bold text-default-text truncate">
+                  {name}
+                </p>
+                <p className="flex-shrink-0 text-base half:text-sm leading-5 font-bold text-default-highlight tabular-nums">
+                  <AnimatedNumber value={totalVolume} />
+                </p>
               </div>
-
-              {/* Lista de exercícios com sets + volume */}
-              {visibleExercises.length > 0 && (
-                <div className={withCascade("space-y-2.5 pt-1", exercisesCascade)} style={exercisesCascade?.style}>
-                  {visibleExercises.map(({ exercise, volume }) => {
-                    const completedSets = exercise.sets.filter((set) => set.is_completed && set.weight && set.reps)
-                    const setsCount = completedSets.length || exercise.sets.length || 0
-
-                    const volumeDisplay = formatWeight(
-                      volume * 1000, // volume em kg -> grams para helper
-                      weightUnit
-                    )
-
-                    return (
-                      <div key={exercise.exercise_id} className="flex items-start gap-2">
-                        {/* Exercise image */}
-                        {exercise.exercise_image && (
-                          <img
-                            src={exercise.exercise_image}
-                            alt={exercise.excercise_name}
-                            className="w-8 h-8 half:w-6 half:h-6 object-contain flex-shrink-0 rounded"
-                            loading="lazy"
-                          />
-                        )}
-
-                        <div className="flex-1 min-w-0">
-                          {/* Exercise name - maior e destacado */}
-                          <div className="text-xs half:text-[11px] font-semibold text-default-fg truncate mb-0.5">
-                            {exercise.excercise_name}
-                          </div>
-
-                          {/* Sets and volume - menores e cor diferente */}
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] half:text-[9px] text-default-muted">
-                              {setsCount > 0 ? `${setsCount} ${setsCount === 1 ? "set" : "sets"}` : "no sets"}
-                            </span>
-                            <span className="text-[10px] half:text-[9px] font-medium text-default-success tabular-nums">
-                              {volumeDisplay} total
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-
-              {/* Fallback se nenhum exercício tiver volume > 0 */}
-              {visibleExercises.length === 0 && (
-                <p className="text-xs half:text-[10px] text-default-muted mt-1">No volume data for this workout yet.</p>
-              )}
+              <p className="text-xs half:text-[11px] leading-4 text-default-muted truncate">{details.join(" · ")}</p>
+              {muscles.length > 0 && <MuscleChips muscles={muscles} max={size === "full" ? 8 : 5} />}
             </div>
+
+            {exercises.length > 0 && (
+              <div className={withCascade("flex flex-col", exercisesCascade)} style={exercisesCascade?.style}>
+                {exercises.map(({ exercise, volume }) => (
+                  <ExerciseRow
+                    key={exercise.exercise_id}
+                    image={exercise.exercise_image}
+                    name={exercise.excercise_name.trim()}
+                    detail={[plural(completedSets(exercise).length, "set"), bestSetLabel(bestSet(exercise), weightUnit)]
+                      .filter(Boolean)
+                      .join(" · ")}
+                    value={volumeLabel(volume, weightUnit)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         }
         terminalComponent={
@@ -145,44 +105,26 @@ export function LastWorkout({ data, config, style = "default", size = "half" }: 
                 size,
               })}
             />
-            <CascadeGroup count={3 + Number(showBodyWeightLine) + topExercises.length}>
-              <TerminalLineWithDots title="Workout" value={lastWorkout.title} />
-              <TerminalLineWithDots title="Date" value={workoutDate} />
-              <TerminalLineWithDots title="Total Volume" value={`${totalVolumeKg}${weightUnit}`} />
+            <CascadeGroup count={3 + Number(showBodyWeightLine) + exercises.length}>
+              <TerminalLineWithDots title="Workout" value={clip(name, size === "half" ? 30 : 70)} />
+              <TerminalLineWithDots title="Date" value={date} />
+              <TerminalLineWithDots title="Volume" value={totalVolume} />
               {showBodyWeightLine && (
-                <TerminalLineWithDots
-                  title="Body Weight"
-                  value={formatWeight(lastWorkout.body_weight * 1000, weightUnit)}
-                />
+                <TerminalLineWithDots title="Body Weight" value={formatLoad(lastWorkout.body_weight, weightUnit)} />
               )}
-              {topExercises.map(({ exercise, volume }) => {
-                const completedSets = exercise.sets.filter((set) => set.is_completed && set.weight && set.reps)
-                const _setsCount = completedSets.length
-
-                // Encontrar o melhor set (maior peso, depois maior reps)
-                let bestSet = { weight: 0, reps: 0 }
-                for (const set of completedSets) {
-                  const weight = parseFloat(set.weight || "0")
-                  const reps = parseInt(set.reps || "0", 10)
-                  if (weight > bestSet.weight || (weight === bestSet.weight && reps > bestSet.reps)) {
-                    bestSet = { weight, reps }
-                  }
-                }
-
-                // Formatar: "Best: 15x20kg • 1160kg" (mais simples)
-                const parts: string[] = []
-                if (bestSet.weight > 0 && bestSet.reps > 0) {
-                  parts.push(`${bestSet.reps}x${formatWeight(bestSet.weight * 1000, weightUnit)}`)
-                }
-                if (volume > 0) {
-                  parts.push(formatWeight(volume * 1000, weightUnit))
-                }
-
+              {exercises.map(({ exercise, volume }) => {
+                const value = [
+                  bestSetLabel(bestSet(exercise), weightUnit, true),
+                  volume > 0 ? formatVolume(volume, weightUnit) : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")
                 return (
                   <TerminalLineWithDots
                     key={exercise.exercise_id}
-                    title={exercise.excercise_name}
-                    value={parts.join(" • ")}
+                    title={exercise.excercise_name.trim()}
+                    titleClassName="max-w-[55%]"
+                    value={value}
                   />
                 )
               })}
