@@ -793,7 +793,8 @@
       "check1": "{{max}} SVGs en el plan gratis",
       "check2": "Sin GitHub Action, sin YAML",
       "check3": "Inicia sesión con GitHub",
-      "cardCaption": "Un card de ejemplo, con {{plugins}}"
+      "cardCaption": "Un card de ejemplo, con {{plugins}}",
+      "cardShow": "Mostrar el card con {{plugins}}"
     },
     "preview": {
       "kicker": "PRUÉBALO",
