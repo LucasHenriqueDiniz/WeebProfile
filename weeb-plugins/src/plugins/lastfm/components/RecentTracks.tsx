@@ -6,6 +6,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalList } from "../../../templates/Terminal/TerminalList"
 import type { ListItemProps, TerminalLineProps } from "../../../templates/types"
+import { CascadeGroup } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { LastFmTrack } from "../types"
 
@@ -88,7 +89,9 @@ export function RecentTracks({
                 size,
               })}
             />
-            <TerminalList data={terminalListItems} />
+            <CascadeGroup count={terminalListItems.length}>
+              <TerminalList data={terminalListItems} />
+            </CascadeGroup>
           </>
         }
       />

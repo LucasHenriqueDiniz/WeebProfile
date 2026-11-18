@@ -1,6 +1,7 @@
 import React from "react"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { ScaledBox } from "./ScaledBox"
@@ -26,11 +27,12 @@ const chipStyle: React.CSSProperties = {
 // "chips" (default): pills soft-highlight + contador fantasma do excedente.
 function TopicChips({ topics, max }: { topics: string[]; max: number }): React.ReactElement | null {
   const visible = topics.slice(0, max)
-  if (visible.length === 0) return null
   const remaining = topics.length - visible.length
+  const cascade = useItemCascade(visible.length + (remaining > 0 ? 1 : 0))
+  if (visible.length === 0) return null
 
   return (
-    <Card className="flex flex-wrap items-center gap-2 px-[18px] py-4">
+    <Card className={withCascade("flex flex-wrap items-center gap-2 px-[18px] py-4", cascade)} style={cascade?.style}>
       {visible.map((topic) => (
         <span key={topic} className={chipBase} style={chipStyle}>
           {topic}
@@ -57,10 +59,14 @@ function TopicChips({ topics, max }: { topics: string[]; max: number }): React.R
 // fantasma - centralizado.
 function TopicCloud({ topics, max }: { topics: string[]; max: number }): React.ReactElement | null {
   const visible = topics.slice(0, max)
+  const cascade = useItemCascade(visible.length)
   if (visible.length === 0) return null
 
   return (
-    <Card className="flex flex-wrap items-center justify-center gap-2 px-[18px] py-4">
+    <Card
+      className={withCascade("flex flex-wrap items-center justify-center gap-2 px-[18px] py-4", cascade)}
+      style={cascade?.style}
+    >
       {visible.map((topic, i) => {
         const big = i < 2
         const ghost = !big && i % 2 === 1
@@ -95,11 +101,15 @@ const HASH_COLORS = [HL, "#3178c6", "var(--default-color-success)", "#8250df", "
 
 function TopicHash({ topics, max }: { topics: string[]; max: number }): React.ReactElement | null {
   const visible = topics.slice(0, max)
+  const cascade = useItemCascade(visible.length)
   if (visible.length === 0) return null
 
   return (
     <Card className="px-[18px] py-3.5">
-      <div className="text-sm font-medium leading-[1.9] tracking-[-0.01em]">
+      <div
+        className={withCascade("text-sm font-medium leading-[1.9] tracking-[-0.01em]", cascade)}
+        style={cascade?.style}
+      >
         {visible.map((topic, i) => (
           <span key={topic} style={{ color: HASH_COLORS[i % HASH_COLORS.length] }}>
             #{topic}
@@ -114,11 +124,12 @@ function TopicHash({ topics, max }: { topics: string[]; max: number }): React.Re
 // Terminal (pré-redesign, alturas calibradas).
 function TerminalTopics({ topics, max }: { topics: string[]; max: number }): React.ReactElement | null {
   const visible = topics.slice(0, max)
-  if (visible.length === 0) return null
   const remaining = topics.length - visible.length
+  const cascade = useItemCascade(visible.length + (remaining > 0 ? 1 : 0))
+  if (visible.length === 0) return null
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
+    <div className={withCascade("flex flex-wrap items-center gap-1.5", cascade)} style={cascade?.style}>
       {visible.map((topic) => (
         <span key={topic} className="text-xs text-terminal-muted">
           #{topic}

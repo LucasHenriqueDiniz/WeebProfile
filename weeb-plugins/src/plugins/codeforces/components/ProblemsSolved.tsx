@@ -5,6 +5,8 @@
 import React from "react"
 import { FaCheckCircle } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -55,6 +57,7 @@ export function ProblemsSolved({
       if (bIndex === -1) return -1
       return aIndex - bIndex
     })
+  const cascade = useItemCascade(sortedDifficulties.length)
 
   return (
     <section id="codeforces-problems-solved">
@@ -67,12 +70,17 @@ export function ProblemsSolved({
               <div className="flex flex-col items-start w-full gap-2">
                 <div className="flex items-center gap-2">
                   <FaCheckCircle className="text-green-500" />
-                  <p className="text-base font-semibold text-default-highlight">Total: {totalLabel}</p>
+                  <p className="text-base font-semibold text-default-highlight">
+                    Total: <AnimatedNumber value={totalLabel} />
+                  </p>
                 </div>
                 {sortedDifficulties.length > 0 && (
                   // gap-x-1: at 8px a half card's columns are 70px, and "Other: 888"
                   // (acmsguru has a few hundred problems) is 72px.
-                  <div className="grid grid-cols-10 half:grid-cols-5 gap-x-1 gap-y-2 w-full">
+                  <div
+                    className={withCascade("grid grid-cols-10 half:grid-cols-5 gap-x-1 gap-y-2 w-full", cascade)}
+                    style={cascade?.style}
+                  >
                     {sortedDifficulties.map(([difficulty, count]) => (
                       <span key={difficulty} className="text-sm text-default-muted whitespace-nowrap">
                         {difficulty}: {formatNumber(count)}
@@ -93,10 +101,12 @@ export function ProblemsSolved({
                 size,
               })}
             />
-            <TerminalLineWithDots title="Total Problems Solved" value={totalLabel} />
-            {sortedDifficulties.map(([difficulty, count]) => (
-              <TerminalLineWithDots key={difficulty} title={`Difficulty ${difficulty}`} value={formatNumber(count)} />
-            ))}
+            <CascadeGroup count={sortedDifficulties.length + 1}>
+              <TerminalLineWithDots title="Total Problems Solved" value={totalLabel} />
+              {sortedDifficulties.map(([difficulty, count]) => (
+                <TerminalLineWithDots key={difficulty} title={`Difficulty ${difficulty}`} value={formatNumber(count)} />
+              ))}
+            </CascadeGroup>
           </>
         }
       />

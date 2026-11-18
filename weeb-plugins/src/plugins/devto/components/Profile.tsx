@@ -1,6 +1,7 @@
 import React from "react"
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa"
 import { SiDevdotto } from "react-icons/si"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -21,6 +22,9 @@ export const PROFILE_AVATAR_SIZE = 48
 export function Profile({ profile, config, style = "default", size = "half" }: ProfileProps): React.ReactElement {
   const hideTitle = config.profile_hide_title === true || config.profile_hide_title === "true"
   const title = config.profile_title || "Dev.to"
+  // Default: name, username and the location/joined row.
+  const cascade = useItemCascade(3)
+  const terminalLines = 2 + (profile.location ? 1 : 0) + (profile.joinedAt ? 1 : 0)
 
   return (
     <section id="devto-profile">
@@ -38,7 +42,7 @@ export function Profile({ profile, config, style = "default", size = "half" }: P
                   style={{ width: `${PROFILE_AVATAR_SIZE}px`, height: `${PROFILE_AVATAR_SIZE}px` }}
                 />
               )}
-              <div className="flex flex-col min-w-0 flex-1">
+              <div className={withCascade("flex flex-col min-w-0 flex-1", cascade)} style={cascade?.style}>
                 <p className="text-base font-semibold truncate text-default-highlight">{profile.name}</p>
                 <p className="text-xs text-default-muted truncate">@{profile.username}</p>
                 <div className="flex gap-3 text-xs text-default-muted">
@@ -62,10 +66,12 @@ export function Profile({ profile, config, style = "default", size = "half" }: P
         terminalComponent={
           <>
             <TerminalCommand command={getPseudoCommands({ plugin: "devto", section: "profile", size })} />
-            <TerminalLineWithDots title="Name" value={profile.name} />
-            <TerminalLineWithDots title="User" value={`@${profile.username}`} />
-            {profile.location && <TerminalLineWithDots title="Location" value={profile.location} />}
-            {profile.joinedAt && <TerminalLineWithDots title="Joined" value={profile.joinedAt} />}
+            <CascadeGroup count={terminalLines}>
+              <TerminalLineWithDots title="Name" value={profile.name} />
+              <TerminalLineWithDots title="User" value={`@${profile.username}`} />
+              {profile.location && <TerminalLineWithDots title="Location" value={profile.location} />}
+              {profile.joinedAt && <TerminalLineWithDots title="Joined" value={profile.joinedAt} />}
+            </CascadeGroup>
           </>
         }
       />

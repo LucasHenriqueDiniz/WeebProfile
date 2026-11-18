@@ -1,10 +1,12 @@
 import React from "react"
 import { FaCode, FaCodeBranch, FaExclamationCircle } from "react-icons/fa"
 import { RiGitPullRequestLine } from "react-icons/ri"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import type { GridItemProps } from "../../../templates/types"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
@@ -19,6 +21,7 @@ interface NotableContributionsProps {
 }
 
 const DefaultNotableContributions = ({ data, max }: { data: GithubData["notableContributions"]; max: number }) => {
+  const cascade = useItemCascade(Math.min(data?.length ?? 0, max))
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No notable contributions</div>
   }
@@ -52,7 +55,7 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData["notableC
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className={withCascade("flex flex-col gap-3", cascade)} style={cascade?.style}>
       {contributions.map((contribution, index) => (
         <ExternalLink
           key={index}
@@ -71,7 +74,8 @@ const DefaultNotableContributions = ({ data, max }: { data: GithubData["notableC
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex items-center gap-1.5 text-default-muted">
                 <span className="text-sm font-medium">
-                  {abbreviateNumber(contribution.contributions)} {getTypeLabel(contribution.type)}
+                  <AnimatedNumber value={abbreviateNumber(contribution.contributions)} />{" "}
+                  {getTypeLabel(contribution.type)}
                 </span>
               </div>
             </div>

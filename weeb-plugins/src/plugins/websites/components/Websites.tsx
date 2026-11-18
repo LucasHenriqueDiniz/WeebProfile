@@ -4,6 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLine } from "../../../templates/Terminal/TerminalLine"
+import { CascadeGroup } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { WebsitesFeatured } from "./WebsitesFeatured"
 import { WebsitesGrid } from "./WebsitesGrid"
@@ -65,9 +66,11 @@ export function Websites({ data, config, style = "default", size = "half" }: Web
                 é usado no lugar de TerminalGrid porque suas duas colunas truncam:
                 a coluna de valor do grid é `whitespace-nowrap` e um domínio longo
                 estoura a largura do card. */}
-            {websites.map((site) => (
-              <TerminalLine key={site.url} href={site.url} right={site.title} left={site.domain} />
-            ))}
+            <CascadeGroup count={websites.length}>
+              {websites.map((site) => (
+                <TerminalLine key={site.url} href={site.url} right={site.title} left={site.domain} />
+              ))}
+            </CascadeGroup>
           </>
         }
       />

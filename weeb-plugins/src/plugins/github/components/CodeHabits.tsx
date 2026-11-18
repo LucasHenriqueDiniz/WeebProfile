@@ -1,11 +1,13 @@
 import React from "react"
 import { FaCode } from "react-icons/fa"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalHorizontalMultipleItemsBar } from "../../../templates/Terminal/TerminalHorizontalMultipleItems"
 import { TerminalLine } from "../../../templates/Terminal/TerminalLine"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { useAnimations, useItemCascade, withCascade } from "../../../templates/animations"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { randomColorWithString } from "../../../utils/string"
@@ -41,6 +43,8 @@ const DefaultCodeHabits = ({
       : 0
   const maxCommitsByDay =
     data.commitsByDay && Object.values(data.commitsByDay).length > 0 ? Math.max(...Object.values(data.commitsByDay)) : 0
+  const hourCascade = useItemCascade(24)
+  const bar = useAnimations() ? " weeb-bar" : ""
 
   return (
     <div className="flex flex-col gap-2">
@@ -48,7 +52,10 @@ const DefaultCodeHabits = ({
       {!hideHours && (
         <div className="flex flex-col">
           <h3 className="text-sm font-semibold text-default-muted">Commit activity per hour of day</h3>
-          <div className="flex justify-between items-end h-32 gap-[1px]">
+          <div
+            className={withCascade("flex justify-between items-end h-32 gap-[1px]", hourCascade)}
+            style={hourCascade?.style}
+          >
             {Array.from({ length: 24 }).map((_, hour) => {
               const commits = data.commitsByHour[hour] || 0
               const height = maxCommitsByHour ? `${Math.max((commits / maxCommitsByHour) * 100, 5)}%` : "5%"
@@ -98,7 +105,7 @@ const DefaultCodeHabits = ({
                   </div>
                   <div className="w-full rounded-sm h-2">
                     <div
-                      className="h-full bg-default-highlight rounded-sm transition-all"
+                      className={`h-full bg-default-highlight rounded-sm transition-all${bar}`}
                       style={{ width }}
                       title={`${commits} commits on ${day}`}
                     />
@@ -125,7 +132,7 @@ const DefaultCodeHabits = ({
                     </div>
                     <div className="w-full rounded-sm h-2">
                       <div
-                        className="h-full rounded-sm transition-all"
+                        className={`h-full rounded-sm transition-all${bar}`}
                         style={{
                           width: `${percentage}%`,
                           backgroundColor: color ?? randomColorWithString(lang),
@@ -146,19 +153,19 @@ const DefaultCodeHabits = ({
           <div className="grid grid-cols-3 gap-2">
             <div className="px-4 rounded-lg">
               <div className="text-2xl font-bold text-default-highlight text-center">
-                {abbreviateNumber(data.commitStats.averageChangesPerCommit || 0)}
+                <AnimatedNumber value={abbreviateNumber(data.commitStats.averageChangesPerCommit || 0)} />
               </div>
               <div className="text-xs text-default-muted text-center">Avg. Changes per Commit</div>
             </div>
             <div className="px-4 rounded-lg">
               <div className="text-2xl font-bold text-default-highlight text-center">
-                {abbreviateNumber(data.commitStats.totalFilesChanged || 0)}
+                <AnimatedNumber value={abbreviateNumber(data.commitStats.totalFilesChanged || 0)} />
               </div>
               <div className="text-xs text-default-muted text-center">Total Files Changed</div>
             </div>
             <div className="px-4 rounded-lg">
               <div className="text-2xl font-bold text-default-highlight text-center">
-                {abbreviateNumber(data.commitStats.largestCommit || 0)}
+                <AnimatedNumber value={abbreviateNumber(data.commitStats.largestCommit || 0)} />
               </div>
               <div className="text-xs text-default-muted text-center">Largest Commit (changes)</div>
             </div>
@@ -169,7 +176,7 @@ const DefaultCodeHabits = ({
       {/* Footer */}
       {!hideFooter && (
         <div className="text-xs text-default-muted text-end">
-          Computed from last {data.analyzedCommits || 0} commits
+          Computed from last <AnimatedNumber value={data.analyzedCommits || 0} /> commits
         </div>
       )}
     </div>

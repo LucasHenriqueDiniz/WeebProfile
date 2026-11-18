@@ -5,6 +5,7 @@
 import React from "react"
 import { FaTrophy } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -40,7 +41,9 @@ export function ContestsParticipated({
               <FaTrophy className="text-yellow-500 flex-shrink-0" />
               <div className="flex items-center gap-2 flex-1">
                 <p className="text-sm text-default-muted">Contests:</p>
-                <p className="text-lg font-semibold text-default-highlight">{abbreviateNumber(count)}</p>
+                <p className="text-lg font-semibold text-default-highlight">
+                  <AnimatedNumber value={abbreviateNumber(count)} />
+                </p>
               </div>
             </div>
           </div>

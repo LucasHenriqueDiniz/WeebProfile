@@ -1,10 +1,12 @@
 import React from "react"
 import { FaCodeBranch, FaExclamationCircle, FaStar } from "react-icons/fa"
 import { RiGitPullRequestLine } from "react-icons/ri"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import type { GridItemProps } from "../../../templates/types"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
@@ -25,12 +27,13 @@ const DefaultFeaturedRepositories = ({
   data: GithubData["featuredRepositories"]
   size: "half" | "full"
 }) => {
+  const cascade = useItemCascade(data?.length ?? 0)
   if (!data || data.length === 0) {
     return <div className="text-default-muted text-sm">No featured repositories</div>
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={withCascade("flex flex-col gap-4", cascade)} style={cascade?.style}>
       {data.map((repo, index) => (
         <ExternalLink
           key={index}
@@ -64,22 +67,30 @@ const DefaultFeaturedRepositories = ({
             <div className="flex items-center gap-4 flex-wrap text-sm text-default-muted">
               <div className="flex items-center gap-1.5">
                 <FaStar className="text-yellow-500 fill-yellow-500" size={14} />
-                <span className="font-medium">{abbreviateNumber(repo.stargazerCount)}</span>
+                <span className="font-medium">
+                  <AnimatedNumber value={abbreviateNumber(repo.stargazerCount)} />
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <FaCodeBranch size={14} />
-                <span className="font-medium">{abbreviateNumber(repo.forkCount)}</span>
+                <span className="font-medium">
+                  <AnimatedNumber value={abbreviateNumber(repo.forkCount)} />
+                </span>
               </div>
               {repo.issuesCount !== undefined && (
                 <div className="flex items-center gap-1.5">
                   <FaExclamationCircle size={14} />
-                  <span className="font-medium">{abbreviateNumber(repo.issuesCount)}</span>
+                  <span className="font-medium">
+                    <AnimatedNumber value={abbreviateNumber(repo.issuesCount)} />
+                  </span>
                 </div>
               )}
               {repo.pullRequestsCount !== undefined && (
                 <div className="flex items-center gap-1.5">
                   <RiGitPullRequestLine size={14} />
-                  <span className="font-medium">{abbreviateNumber(repo.pullRequestsCount)}</span>
+                  <span className="font-medium">
+                    <AnimatedNumber value={abbreviateNumber(repo.pullRequestsCount)} />
+                  </span>
                 </div>
               )}
               {repo.createdAt && (

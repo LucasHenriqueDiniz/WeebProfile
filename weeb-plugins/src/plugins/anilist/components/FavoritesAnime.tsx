@@ -4,6 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLine } from "../../../templates/Terminal/TerminalLine"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { AniListConfig, AniListMedia } from "../types"
 import { ExternalLink } from "../../../utils/external-link"
@@ -26,6 +27,10 @@ export function FavoritesAnime({
   style = "default",
   size = "half",
 }: FavoritesAnimeProps): React.ReactElement {
+  const columns = FAVORITES_COLUMNS[size]
+  const shown = (favorites ?? []).slice(0, config.favorites_anime_max ?? columns * 2)
+  const cascade = useItemCascade(shown.length)
+
   // Sem favoritos não há o que mostrar, e devolver <></> aqui é o que mantém
   // calculateHeight em zero para a mesma entrada — a invariante coberta por
   // calculate-height.test.ts.
@@ -34,9 +39,6 @@ export function FavoritesAnime({
   const hideTitle = config.favorites_anime_hide_title === true || config.favorites_anime_hide_title === "true"
   const title = config.favorites_anime_title || "Favorite Anime"
 
-  const columns = FAVORITES_COLUMNS[size]
-  const shown = favorites.slice(0, config.favorites_anime_max ?? columns * 2)
-
   return (
     <section id="anilist-favorites-anime">
       <RenderBasedOnStyle
@@ -44,7 +46,7 @@ export function FavoritesAnime({
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-            <div className="flex flex-wrap gap-2">
+            <div className={withCascade("flex flex-wrap gap-2", cascade)} style={cascade?.style}>
               {shown.map((item) => (
                 <ExternalLink
                   key={item.id}
@@ -76,9 +78,11 @@ export function FavoritesAnime({
           <>
             <TerminalCommand command={getPseudoCommands({ plugin: "anilist", section: "favorites_anime", size })} />
             {/* left vazio: um favorito não tem valor à direita, só o título. */}
-            {shown.map((item) => (
-              <TerminalLine key={item.id} href={anilistAnimeUrl(item.id)} right={item.title} left="" />
-            ))}
+            <CascadeGroup count={shown.length}>
+              {shown.map((item) => (
+                <TerminalLine key={item.id} href={anilistAnimeUrl(item.id)} right={item.title} left="" />
+              ))}
+            </CascadeGroup>
           </>
         }
       />

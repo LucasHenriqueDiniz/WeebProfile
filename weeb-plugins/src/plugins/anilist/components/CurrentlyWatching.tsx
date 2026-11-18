@@ -4,6 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalLineWithDots } from "../../../templates/Terminal/TerminalLineWithDots"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { AniListConfig, AniListWatchingEntry } from "../types"
 import { ExternalLink } from "../../../utils/external-link"
@@ -30,6 +31,9 @@ export function CurrentlyWatching({
   style = "default",
   size = "half",
 }: CurrentlyWatchingProps): React.ReactElement {
+  const shown = (entries ?? []).slice(0, config.currently_watching_max ?? 5)
+  const cascade = useItemCascade(shown.length)
+
   // A lista pode ser privada, e nesse caso a API devolve vazio. A seção some em vez
   // de mostrar um bloco sem conteúdo -- e calculateHeight devolve zero para a mesma
   // entrada, que é a invariante verificada em calculate-height.test.ts.
@@ -37,7 +41,6 @@ export function CurrentlyWatching({
 
   const hideTitle = config.currently_watching_hide_title === true || config.currently_watching_hide_title === "true"
   const title = config.currently_watching_title || "Currently Watching"
-  const shown = entries.slice(0, config.currently_watching_max ?? 5)
 
   return (
     <section id="anilist-currently-watching">
@@ -46,7 +49,10 @@ export function CurrentlyWatching({
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<FaPlay />} />}
-            <div className="flex flex-col" style={{ gap: `${WATCHING_ROW_GAP}px` }}>
+            <div
+              className={withCascade("flex flex-col", cascade)}
+              style={{ gap: `${WATCHING_ROW_GAP}px`, ...cascade?.style }}
+            >
               {shown.map((entry) => (
                 <ExternalLink
                   key={entry.id}
@@ -73,14 +79,16 @@ export function CurrentlyWatching({
         terminalComponent={
           <>
             <TerminalCommand command={getPseudoCommands({ plugin: "anilist", section: "currently_watching", size })} />
-            {shown.map((entry) => (
-              <TerminalLineWithDots
-                key={entry.id}
-                href={anilistAnimeUrl(entry.id)}
-                title={entry.title}
-                value={formatProgress(entry)}
-              />
-            ))}
+            <CascadeGroup count={shown.length}>
+              {shown.map((entry) => (
+                <TerminalLineWithDots
+                  key={entry.id}
+                  href={anilistAnimeUrl(entry.id)}
+                  title={entry.title}
+                  value={formatProgress(entry)}
+                />
+              ))}
+            </CascadeGroup>
           </>
         }
       />

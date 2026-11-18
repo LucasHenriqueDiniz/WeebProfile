@@ -4,6 +4,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalGrid } from "../../../templates/Terminal/TerminalGrid"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { SteamData, SteamNonEssentialConfig } from "../types"
 import { ExternalLink } from "../../../utils/external-link"
@@ -26,20 +27,22 @@ function getSteamIconUrl(game: { icon_image?: string; header_image?: string }): 
 }
 
 export function TopGames({ data, config, style = "default", size = "half" }: TopGamesProps): React.ReactElement {
+  const maxGames = config.top_games_max || 5
+
+  // Get top games by total playtime
+  const topGames = (data?.games ?? [])
+    .filter((game) => game.playtime_forever > 0)
+    .sort((a, b) => b.playtime_forever - a.playtime_forever)
+    .slice(0, maxGames)
+  const cascade = useItemCascade(topGames.length)
+
   if (!data || !data.games || data.games.length === 0) {
     return <></>
   }
 
   const hideTitle = config.top_games_hide_title || false
   const title = config.top_games_title || "Most Played Games"
-  const maxGames = config.top_games_max || 5
   const displayStyle = config.top_games_style || "list"
-
-  // Get top games by total playtime
-  const topGames = data.games
-    .filter((game) => game.playtime_forever > 0)
-    .sort((a, b) => b.playtime_forever - a.playtime_forever)
-    .slice(0, maxGames)
 
   if (topGames.length === 0) {
     return <></>
@@ -54,7 +57,10 @@ export function TopGames({ data, config, style = "default", size = "half" }: Top
             {!hideTitle && <DefaultTitle title={title} icon={<FaTrophy />} />}
 
             {displayStyle === "compact" ? (
-              <div className="grid grid-cols-4 gap-3 half:grid-cols-3 half:gap-2.5">
+              <div
+                className={withCascade("grid grid-cols-4 gap-3 half:grid-cols-3 half:gap-2.5", cascade)}
+                style={cascade?.style}
+              >
                 {topGames.map((game) => (
                   <ExternalLink
                     key={game.appid}
@@ -82,7 +88,7 @@ export function TopGames({ data, config, style = "default", size = "half" }: Top
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col gap-3 half:gap-2.5">
+              <div className={withCascade("flex flex-col gap-3 half:gap-2.5", cascade)} style={cascade?.style}>
                 {topGames.map((game) => {
                   const gameIconUrl = getSteamIconUrl(game)
 

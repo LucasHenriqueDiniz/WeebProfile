@@ -8,9 +8,13 @@ import {
   ANIMATION_BUDGET_S,
   ANIMATION_TIMING,
   AnimationsProvider,
+  CASCADE_SLOTS,
+  MAX_ITEM_GAP_S,
   WAVE_ROWS,
   animationTimeline,
+  itemCascade,
   sectionTail,
+  useItemCascade,
 } from "./animations"
 import { HorizontalMultipleItemsBar } from "./Default/HorizontalMultipleItemsBar"
 import { PercentageBar } from "./Default/PercentageBar"
@@ -81,7 +85,9 @@ describe("ANIMATIONS_CSS", () => {
   it("has a counter layout for every number of decimals it counts", () => {
     for (let decimals = 1; decimals <= MAX_COUNT_DECIMALS; decimals++) {
       expect(ANIMATIONS_CSS).toMatch(
-        new RegExp(`\\.weeb-num-${decimals}::after \\{\\s*content: counter\\(weeb-i\\) "\\."`)
+        new RegExp(
+          `\\.weeb-num-${decimals}::after \\{\\s*content: var\\(--weeb-prefix, ""\\) counter\\(weeb-i\\) "\\."`
+        )
       )
     }
   })
@@ -186,13 +192,19 @@ describe("with animations on", () => {
 
 describe("parseCountTarget", () => {
   it.each([
-    ["523", { to: 523, decimals: 0, unit: "" }],
-    ["1,234", { to: 1234, decimals: 0, unit: "" }],
-    ["12.3K", { to: 123, decimals: 1, unit: "K" }],
-    ["45.2%", { to: 452, decimals: 1, unit: "%" }],
-    ["68.2", { to: 682, decimals: 1, unit: "" }],
-    ["6.05", { to: 605, decimals: 2, unit: "" }],
-    ["0.5", { to: 5, decimals: 1, unit: "" }],
+    ["523", { to: 523, decimals: 0, prefix: "", unit: "" }],
+    ["1,234", { to: 1234, decimals: 0, prefix: "", unit: "" }],
+    ["12.3K", { to: 123, decimals: 1, prefix: "", unit: "K" }],
+    // github_repo's formatCount writes a lowercase k.
+    ["1.2k", { to: 12, decimals: 1, prefix: "", unit: "k" }],
+    ["34k", { to: 34, decimals: 0, prefix: "", unit: "k" }],
+    // A rank (codewars) and a number with a word after it (duolingo's streak).
+    ["#287.4K", { to: 2874, decimals: 1, prefix: "#", unit: "K" }],
+    ["123 days", { to: 123, decimals: 0, prefix: "", unit: " days" }],
+    ["45.2%", { to: 452, decimals: 1, prefix: "", unit: "%" }],
+    ["68.2", { to: 682, decimals: 1, prefix: "", unit: "" }],
+    ["6.05", { to: 605, decimals: 2, prefix: "", unit: "" }],
+    ["0.5", { to: 5, decimals: 1, prefix: "", unit: "" }],
   ])("counts %s", (text, target) => {
     expect(parseCountTarget(text)).toEqual(target)
   })
@@ -200,29 +212,95 @@ describe("parseCountTarget", () => {
   // What the overlay prints once the count is over (styles/animations.ts: the integer
   // part, then the remainder padded to the decimals) has to be the text itself, or the
   // number jumps when the real text takes over.
-  it.each(["523", "68.2", "159.5", "6.05", "6.47", "0.5", "13.1K", "45.2%", "10.00"])(
+  it.each(["523", "68.2", "159.5", "6.05", "6.47", "0.5", "13.1K", "1.2k", "45.2%", "10.00", "#287.4K", "123 days"])(
     "ends the count of %s on the text itself",
     (text) => {
-      const { to, decimals, unit } = parseCountTarget(text)!
+      const { to, decimals, prefix, unit } = parseCountTarget(text)!
       const scale = 10 ** decimals
       const fraction = decimals ? "." + String(to % scale).padStart(decimals, "0") : ""
-      expect(`${Math.floor(to / scale)}${fraction}${unit}`).toBe(text)
+      expect(`${prefix}${Math.floor(to / scale)}${fraction}${unit}`).toBe(text)
     }
   )
 
   // Text that is not a plain number, or one the counter cannot print as is, is left
   // alone rather than counted wrong.
-  it.each(["0", "0.0", "6 years", "70.4% • 4.4M lines", "MIT License (14)", "", "-3", "1.234", "8388609", "838860.9"])(
-    "leaves %j alone",
-    (text) => {
-      expect(parseCountTarget(text)).toBeNull()
-    }
-  )
+  it.each([
+    "0",
+    "0.0",
+    "3 days ago",
+    "#",
+    "70.4% • 4.4M lines",
+    "MIT License (14)",
+    "",
+    "-3",
+    "1.234",
+    "8388609",
+    "838860.9",
+  ])("leaves %j alone", (text) => {
+    expect(parseCountTarget(text)).toBeNull()
+  })
 })
 
 describe("section slots", () => {
   it("puts every section past the last slot in the last slot, not back at the start", () => {
     expect(ANIMATIONS_CSS).toContain("section:nth-of-type(n+24){--weeb-k:23}")
     expect(ANIMATIONS_CSS).not.toContain("section:nth-of-type(24){")
+  })
+})
+
+describe("itemCascade", () => {
+  const gapOf = (count: number) => parseFloat(String(Object.values(itemCascade(count).style)[0]))
+
+  // The cascade has to end with the rest of its section, or a list would stretch the
+  // card past the budget: the last item starts at most ANIMATION_TIMING.cascade in.
+  it("starts the last item within the cascade, however many items there are", () => {
+    for (let count = 1; count <= 80; count++) {
+      const lastSlot = Math.min(count, CASCADE_SLOTS) - 1
+      expect(lastSlot * gapOf(count)).toBeLessThanOrEqual(ANIMATION_TIMING.cascade + 1e-9)
+      expect(gapOf(count)).toBeLessThanOrEqual(MAX_ITEM_GAP_S)
+    }
+  })
+
+  it("does not crawl through a short list", () => {
+    expect(gapOf(3)).toBe(MAX_ITEM_GAP_S)
+    expect(gapOf(1)).toBe(0)
+  })
+
+  // Adding the cascade must not move any section on the card's timeline.
+  it("fits in the section's tail, so the timeline stays as it was", () => {
+    expect(sectionTail("default")).toBeCloseTo(0.9)
+    expect(sectionTail("terminal")).toBeCloseTo(1.15)
+    const t = ANIMATION_TIMING
+    expect(t.contentDelay + t.cascade + t.item).toBeLessThanOrEqual(sectionTail("default") + 1e-9)
+    expect(t.type + t.cascade + t.item).toBeLessThanOrEqual(sectionTail("terminal") + 1e-9)
+  })
+
+  it("adds nothing with animations off", () => {
+    let seen: unknown = "unset"
+    const Probe = () => {
+      seen = useItemCascade(5)
+      return null
+    }
+    render(<Probe />, false)
+    expect(seen).toBeNull()
+    render(<Probe />, true)
+    expect(seen).toMatchObject({ className: "weeb-seq" })
+  })
+})
+
+describe("cascade rules", () => {
+  it("gives every child its place, and every child past the last slot the last one", () => {
+    for (let i = 1; i < CASCADE_SLOTS; i++) {
+      expect(ANIMATIONS_CSS).toContain(`.weeb-seq > :nth-child(${i}){--weeb-idx:${i - 1}}`)
+    }
+    expect(ANIMATIONS_CSS).toContain(`.weeb-seq > :nth-child(n+${CASCADE_SLOTS}){--weeb-idx:${CASCADE_SLOTS - 1}}`)
+  })
+
+  // Same reason as the calendar cells: anything but opacity can end off the static card.
+  it("only fades the items in", () => {
+    const rule = /\.weeb-seq > \* \{\s*animation: ([\w-]+) /.exec(ANIMATIONS_CSS)
+    expect(rule).not.toBeNull()
+    const keyframes = new RegExp(`@keyframes ${rule![1]} \\{([\\s\\S]*?)\\n\\}`).exec(ANIMATIONS_CSS)
+    expect([...keyframes![1]!.matchAll(/([\w-]+):/g)].map((m) => m[1])).toEqual(["opacity"])
   })
 })

@@ -5,6 +5,8 @@
 import React from "react"
 import { FaTrophy } from "react-icons/fa"
 import { IoStatsChartOutline } from "react-icons/io5"
+import { AnimatedNumber } from "../../../templates/AnimatedNumber"
+import { CascadeGroup, useItemCascade, withCascade } from "../../../templates/animations"
 import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
@@ -30,6 +32,7 @@ export function RatingRank({
 }: RatingRankProps): React.ReactElement {
   const hideTitle = config.nonEssential?.rating_rank_hide_title || false
   const title = config.nonEssential?.rating_rank_title || "Codeforces Rating & Rank"
+  const cascade = useItemCascade(2)
 
   return (
     <section id="codeforces-rating-rank">
@@ -38,14 +41,16 @@ export function RatingRank({
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<IoStatsChartOutline />} />}
-            <div className="flex gap-4 half:gap-3 items-center w-full">
+            <div className={withCascade("flex gap-4 half:gap-3 items-center w-full", cascade)} style={cascade?.style}>
               <div className="flex items-center gap-2 flex-1">
                 <FaTrophy className="text-yellow-500 flex-shrink-0" />
                 <p className="text-base font-semibold text-default-highlight">{rank}</p>
               </div>
               <div className="flex items-center gap-2">
                 <p className="text-sm text-default-muted">Rating:</p>
-                <p className="text-base font-semibold text-default-highlight">{abbreviateNumber(rating)}</p>
+                <p className="text-base font-semibold text-default-highlight">
+                  <AnimatedNumber value={abbreviateNumber(rating)} />
+                </p>
               </div>
             </div>
           </div>
@@ -59,8 +64,10 @@ export function RatingRank({
                 size,
               })}
             />
-            <TerminalLineWithDots title="Rank" value={rank} />
-            <TerminalLineWithDots title="Rating" value={abbreviateNumber(rating)} />
+            <CascadeGroup count={2}>
+              <TerminalLineWithDots title="Rank" value={rank} />
+              <TerminalLineWithDots title="Rating" value={abbreviateNumber(rating)} />
+            </CascadeGroup>
           </>
         }
       />

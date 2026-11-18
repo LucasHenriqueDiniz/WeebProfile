@@ -1,5 +1,7 @@
 import React from "react"
 import type { GridItemProps } from "../types"
+import { AnimatedNumber } from "../AnimatedNumber"
+import { useItemCascade, withCascade } from "../animations"
 
 interface TerminalGridProps {
   data: GridItemProps[]
@@ -42,7 +44,7 @@ function TerminalGridItem({
       <span
         className={`text-terminal-muted text-sm w-full whitespace-nowrap pr-1 text-end ${isOdd ? "bg-terminal-stripe" : ""}`}
       >
-        {value}
+        <AnimatedNumber value={value} />
       </span>
     </>
   )
@@ -86,9 +88,14 @@ function TerminalGridHeader({
 
 export function TerminalGrid({ data, rightText, centerText, leftText }: TerminalGridProps): React.ReactElement {
   const columns = data.some((item) => item.subtitle) ? 3 : 2
+  // The cells are the grid's children: the header's, then each row's, left to right.
+  const cascade = useItemCascade((rightText ? columns : 0) + data.length * columns)
 
   return (
-    <div className={`grid ${columns === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
+    <div
+      className={withCascade(`grid ${columns === 3 ? "grid-cols-3" : "grid-cols-2"}`, cascade)}
+      style={cascade?.style}
+    >
       <TerminalGridHeader rightText={rightText} centerText={centerText} leftText={leftText} columns={columns} />
       {data.map((item, index) => (
         <TerminalGridItem key={`${index}-${item.title}`} {...item} index={index} columns={columns} />

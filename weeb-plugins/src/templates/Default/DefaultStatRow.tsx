@@ -4,6 +4,7 @@
 
 import React from "react"
 import { AnimatedNumber } from "../AnimatedNumber"
+import { useItemCascade, withCascade } from "../animations"
 
 export interface StatProps {
   title: string
@@ -45,8 +46,12 @@ export function StatisticRow({
   rows: StatisticsRowProps[]
   className?: string
 }): React.ReactElement {
+  const cascade = useItemCascade(rows.length)
   return (
-    <ul className={`flex flex-col items-start w-full gap-1 ${className ?? ""}`}>
+    <ul
+      className={withCascade(`flex flex-col items-start w-full gap-1 ${className ?? ""}`, cascade)}
+      style={cascade?.style}
+    >
       {rows.map((row, index) => (
         <Stat key={index} title={row.title} value={row.value} icon={row.icon} strong={row.strong} />
       ))}

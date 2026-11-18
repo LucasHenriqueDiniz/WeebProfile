@@ -53,6 +53,10 @@ export const ANIMATION_TIMING = {
   cell: 0.2,
   /** ...one diagonal after the other, the last one starting this long after the first. */
   wave: 0.6,
+  /** Both styles: an item of a list, grid or row of tags fades in... */
+  item: 0.2,
+  /** ...one after the other, the last one starting at most this long after the first. */
+  cascade: 0.6,
 } as const
 
 /** Gap between consecutive sections when there is room for it. */
@@ -64,8 +68,8 @@ const MAX_STEP_S = { default: 0.15, terminal: 0.4 } as const
 export function sectionTail(style: "default" | "terminal"): number {
   const t = ANIMATION_TIMING
   return style === "terminal"
-    ? Math.max(t.type + t.output, t.type + t.fill)
-    : Math.max(t.enter, t.contentDelay + t.fill, t.contentDelay + t.wave + t.cell)
+    ? Math.max(t.type + t.output, t.type + t.fill, t.type + t.cascade + t.item)
+    : Math.max(t.enter, t.contentDelay + t.fill, t.contentDelay + t.wave + t.cell, t.contentDelay + t.cascade + t.item)
 }
 
 export interface AnimationTimeline {
@@ -135,4 +139,67 @@ export function cellWave(columns: number, blocks: number): CellWave {
     style: { ["--weeb-wave" as string]: `${step}s` } as React.CSSProperties,
     columnStyle: (block, x) => ({ ["--weeb-c" as string]: columns - 1 - x + block * WAVE_ROWS }) as React.CSSProperties,
   }
+}
+
+/** Items of a cascade with a slot of their own; later ones share the last slot. */
+export const CASCADE_SLOTS = 60
+
+/** Gap between two items when there is room for it: a three-row list should not crawl. */
+export const MAX_ITEM_GAP_S = 0.08
+
+export interface ItemCascade {
+  /** Class for the element whose children are the items. */
+  className: string
+  /** Custom property for the same element: the gap between two items. */
+  style: React.CSSProperties
+}
+
+/**
+ * The items of a list, a grid or a row of tags fade in one after the other, in the order
+ * they are drawn. The items are the children of one element, which takes the class and
+ * the style returned here; the stylesheet gives each child its place from :nth-child, so
+ * the items themselves carry nothing. The last item starts at most ANIMATION_TIMING.cascade
+ * after the first, however many there are, so the cascade ends with the rest of its
+ * section and the card's timeline does not change.
+ *
+ * Never put it on a <section>: its children include the terminal command line, which
+ * has animations of its own.
+ *
+ * @param count - items drawn, children of the element
+ */
+export function itemCascade(count: number): ItemCascade {
+  const last = Math.min(count, CASCADE_SLOTS) - 1
+  // Rounded down so the last item never starts after the cascade is over.
+  const gap = last > 0 ? Math.min(MAX_ITEM_GAP_S, Math.floor((ANIMATION_TIMING.cascade / last) * 1e5) / 1e5) : 0
+  return { className: "weeb-seq", style: { ["--weeb-gap" as string]: `${gap}s` } as React.CSSProperties }
+}
+
+/** itemCascade() when animations are on, null when they are off (nothing to add). */
+export function useItemCascade(count: number): ItemCascade | null {
+  return useAnimations() ? itemCascade(count) : null
+}
+
+/** `className` plus the cascade's class, or `className` unchanged when there is none. */
+export function withCascade(className: string, cascade: ItemCascade | null): string {
+  return cascade ? `${className} ${cascade.className}` : className
+}
+
+/**
+ * Wraps items that have no element of their own around them (they sit straight inside a
+ * <section>, next to its title or terminal command) so they can cascade. With animations
+ * off it adds nothing, so the card stays the same byte for byte.
+ *
+ * The wrapper lays its items out as the section does (a flex column, styles/*: section),
+ * so wrapping them changes nothing. As a plain block it collapsed the vertical margins
+ * that the flex column keeps: MAL's terminal favorites came out 40px shorter with
+ * animations on. Only use it straight inside a <section>.
+ */
+export function CascadeGroup({ count, children }: { count: number; children: React.ReactNode }): React.ReactElement {
+  const cascade = useItemCascade(count)
+  if (!cascade) return <>{children}</>
+  return (
+    <div className={`flex flex-col ${cascade.className}`} style={cascade.style}>
+      {children}
+    </div>
+  )
 }

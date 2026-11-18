@@ -5,6 +5,7 @@ import { DefaultTitle } from "../../../templates/Default/DefaultTitle"
 import { PercentageBar } from "../../../templates/Default/PercentageBar"
 import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
+import { itemCascade, useAnimations, withCascade } from "../../../templates/animations"
 import { emojiStatus } from "../../../utils/emoji"
 import { ImageComponent } from "../../../utils/image"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
@@ -85,6 +86,7 @@ function TerminalUpdate({
   update: LastUpdatesAnime | LastUpdatesManga
   hideTerminalEmojis?: boolean
 }): React.ReactElement {
+  const animations = useAnimations()
   const isAnime = "episodes_total" in update
   const title = update.title
   const total = isAnime ? (update.episodes_total ?? 0) : update.chapters_total || 0
@@ -107,7 +109,7 @@ function TerminalUpdate({
       <div className="flex items-center">
         <span className="text-terminal-muted font-bold">{percentage ?? "?"}%</span>
         <span
-          className={`text-mal-${status.toLowerCase().split(" ").join("-")} tracking-tighter text-center w-full overflow-hidden`}
+          className={`text-mal-${status.toLowerCase().split(" ").join("-")} tracking-tighter text-center w-full overflow-hidden${animations ? " weeb-bar" : ""}`}
         >
           {progressBar}
         </span>
@@ -129,6 +131,7 @@ function TerminalUpdate({
 }
 
 export function LastUpdates({ data, config, style, hideTerminalEmojis = false }: LastUpdatesProps): React.ReactElement {
+  const animations = useAnimations()
   if (!data) {
     return <></>
   }
@@ -157,6 +160,7 @@ export function LastUpdates({ data, config, style, hideTerminalEmojis = false }:
   if (maxItems && allUpdates.length > maxItems) {
     allUpdates = allUpdates.slice(0, maxItems)
   }
+  const cascade = animations ? itemCascade(allUpdates.length) : null
 
   return (
     <section id="mal-last-updates">
@@ -180,7 +184,7 @@ export function LastUpdates({ data, config, style, hideTerminalEmojis = false }:
                 limit: maxItems,
               })}
             />
-            <div className="flex flex-col gap-2">
+            <div className={withCascade("flex flex-col gap-2", cascade)} style={cascade?.style}>
               {allUpdates.map((update, index) => (
                 <TerminalUpdate key={index} update={update} hideTerminalEmojis={hideTerminalEmojis} />
               ))}

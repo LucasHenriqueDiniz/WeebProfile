@@ -9,6 +9,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { TerminalHorizontalMultipleItemsBar } from "../../../templates/Terminal/TerminalHorizontalMultipleItemsBar"
 import { TerminalLine } from "../../../templates/Terminal/TerminalLine"
+import { useItemCascade, withCascade } from "../../../templates/animations"
 import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import type { AnimeStatistics, MangaStatistics, MyAnimeListConfig } from "../types"
@@ -34,6 +35,8 @@ function TerminalHorizontalBar({
   dropped: number
   planToWatch: number
 }): React.ReactElement {
+  // One line per status in the legend below the bar.
+  const cascade = useItemCascade(5)
   return (
     <>
       <TerminalHorizontalMultipleItemsBar
@@ -45,7 +48,7 @@ function TerminalHorizontalBar({
           { value: planToWatch, className: "text-mal-plan-to-watch" },
         ]}
       />
-      <span className="flex flex-col">
+      <span className={withCascade("flex flex-col", cascade)} style={cascade?.style}>
         <TerminalLine
           className={{ right: "text-mal-watching mt-[0.25rem]" }}
           right="██ Watching"
