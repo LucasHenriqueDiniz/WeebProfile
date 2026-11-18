@@ -201,21 +201,6 @@ input[type="color"]::-moz-color-swatch {
   display: none; /* Chrome, Safari, Opera*/
 }
 
-/* Landing ambient glow orbs */
-@keyframes landing-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.85;
-  }
-}
-
-.animate-landing-pulse {
-  animation: landing-pulse 10s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
