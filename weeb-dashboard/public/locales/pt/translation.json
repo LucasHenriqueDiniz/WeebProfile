@@ -739,7 +739,12 @@
         "purple": "Roxo",
         "pink": "Rosa",
         "blue": "Azul",
-        "green": "Verde"
+        "green": "Verde",
+        "cyan": "Ciano",
+        "orange": "Laranja",
+        "red": "Vermelho",
+        "monokai": "Monokai",
+        "custom": "Personalizado"
       }
     },
     "sort": {
@@ -758,33 +763,11 @@
     "shareTemplate": "Compartilhar",
     "likeTemplate": "Curtir",
     "unlikeTemplate": "Descurtir",
-    "createdBy": "Criado por",
-    "lastUpdated": "Última atualização",
-    "platforms": "Plataformas",
     "style": "Estilo",
     "theme": "Tema",
-    "preview": "Preview",
-    "description": "Descrição",
     "templateNotFound": "Template não encontrado",
     "templateNotFoundDescription": "Este template pode ter sido removido ou você não tem permissão para visualizá-lo.",
-    "templateCard": {
-      "useTemplate": "Usar template",
-      "viewDetails": "Ver detalhes",
-      "likes": "curtidas",
-      "platforms": "plataformas",
-      "lastUpdated": "atualizado em",
-      "like": "Curtir",
-      "unlike": "Descurtir"
-    },
-    "modal": {
-      "title": "Usar template",
-      "description": "Este template será carregado no editor para você personalizar.",
-      "close": "Fechar",
-      "useTemplate": "Usar template"
-    },
     "share": {
-      "title": "Compartilhar template",
-      "copyLink": "Copiar link",
       "copied": "Copiado!"
     },
     "sizes": {
@@ -792,13 +775,23 @@
       "full": "Largura Completa (830px)"
     },
     "detail": {
-      "createdAt": "Criado em",
       "size": "Tamanho",
-      "terminalOptions": "Opções do Terminal",
-      "customizations": "Personalizações",
-      "customCss": "CSS Personalizado",
-      "customColors": "Cores Customizadas",
-      "applied": "Aplicado"
+      "inside": "O que vem nele",
+      "look": "Visual",
+      "useHint": "Abre no editor, onde você coloca as suas contas.",
+      "sampleData": "Dados de exemplo. O seu card mostra os seus.",
+      "noEmojis": "Sem emojis",
+      "noHeader": "Sem cabeçalho do terminal",
+      "autoColor": "Acompanha o modo claro e escuro"
+    },
+    "loadError": "Não foi possível carregar os templates.",
+    "retry": "Tentar de novo",
+    "clearFilters": "Limpar filtros",
+    "scratch": {
+      "title": "Nenhum desses?",
+      "subtitle": "Comece de um card em branco e escolha você mesmo os plugins, as seções e o tema.",
+      "cta": "Começar do zero",
+      "browsePlugins": "Ver todos os plugins"
     }
   },
   "landing": {
