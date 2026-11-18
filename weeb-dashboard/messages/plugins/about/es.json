@@ -1,0 +1,50 @@
+{
+  "description": "Una presentación al estilo neofetch y badges de enlace, a partir de lo que escribes. Nada que conectar",
+  "displayName": "Sobre mí",
+  "sections": {
+    "links": {
+      "config": {
+        "links_brand_colors": {
+          "label": "Colores de marca",
+          "tooltip": "Íconos de sitios conocidos en el color de su marca (azul de LinkedIn, rojo de YouTube…). Apagado, cada ícono toma el color de acento del tema."
+        },
+        "links_items": {
+          "description": "Hasta 8 enlaces. Solo la dirección es obligatoria.",
+          "label": "Enlaces",
+          "tooltip": "Una dirección puede ser un sitio (https://… o solo ejemplo.com) o un email (tu@ejemplo.com). El ícono y el texto salen de la dirección, salvo que los elijas."
+        }
+      },
+      "description": "Una fila de botones para tu sitio, perfiles y email. Cada uno también puede ser una imagen y un enlace propios",
+      "name": "Badges de enlace"
+    },
+    "neofetch": {
+      "config": {
+        "neofetch_fields": {
+          "description": "Hasta 10 líneas de Etiqueta: valor",
+          "label": "Líneas",
+          "tooltip": "Cada línea es una etiqueta y su valor, como Ubicación: Brasil o Stack: TypeScript · React. Un valor demasiado largo para la tarjeta termina en puntos suspensivos."
+        },
+        "neofetch_image": {
+          "description": "Una dirección https:// de una imagen PNG, JPEG o WebP, de hasta 400 KB",
+          "label": "URL de la foto",
+          "tooltip": "La imagen se descarga una vez por generación y se incrusta en el SVG, porque un README no carga imágenes desde dentro de una imagen. https://github.com/<tu>.png funciona. Déjalo vacío para no tener foto."
+        },
+        "neofetch_show_cursor": {
+          "label": "Mostrar prompt al final",
+          "tooltip": "Solo en el estilo terminal: un último prompt con cursor de bloque, que parpadea cuando las animaciones están activas."
+        },
+        "neofetch_show_palette": {
+          "label": "Mostrar paleta de colores",
+          "tooltip": "Una fila con los colores del tema de la tarjeta bajo las líneas, como los bloques de color que imprime neofetch."
+        },
+        "neofetch_title": {
+          "description": "Se muestra como usuario@host, como un prompt de terminal",
+          "label": "Título",
+          "tooltip": "La parte antes de la @ y la parte después salen en el color de acento del tema. Sin @, sale todo el título."
+        }
+      },
+      "description": "Tu foto junto a un título usuario@host y las líneas que escribes, como las imprime neofetch",
+      "name": "Presentación neofetch"
+    }
+  }
+}

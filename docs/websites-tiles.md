@@ -1,4 +1,4 @@
-# One tile per site
+# One tile per site (and per link badge)
 
 ## Why
 
@@ -67,3 +67,38 @@ generator:
 - **Columns:** fixed at 3. On a 390px phone a tile is 118px wide, small but readable as
   a thumbnail. Two columns would read better on phones and worse on desktop.
 - **Camo caches each tile separately**, so a regenerated row may update one tile at a time.
+
+## Link badges (About plugin)
+
+The About plugin's links section draws its badges as tiles too (`layout: "inline"` on
+`PluginTile`), so the hand-made README buttons (a site, LinkedIn, an email) come from a
+card instead:
+
+```html
+<p align="center">
+  <a href="https://lucashdo.com/"><img alt="lucashdo.com" src="https://<host>/svg/<id>/0.svg" /></a>
+  <a href="mailto:you@example.com"><img alt="Email" src="https://<host>/svg/<id>/1.svg" /></a>
+</p>
+```
+
+(The panel writes it on one line; whitespace between the tags is fine here.)
+
+| What               | Site tiles (`grid`)                      | Link badges (`inline`)                                               |
+| ------------------ | ---------------------------------------- | -------------------------------------------------------------------- |
+| Size               | 270px wide, all the same                 | 36px tall, each as wide as its text (`badgeWidth`)                   |
+| Snippet            | `width="33%"`, tags glued, three per row | no size, a space between tags: the gap, and the row wraps like words |
+| Place with no tile | 270×1 strip                              | 1×1 square: the strip would be 270px of blank inside the row         |
+| href               | http(s)                                  | http(s) or `mailto:` with one plain address (no `?`, `,` or `;`)     |
+
+- **The manifest stores each tile's layout**, so the card page builds one snippet per
+  kind ("One link per site", "One link per badge") with the indexes they have in the
+  card. A manifest from before badges has no layout and reads as `grid`.
+- **A place past the stored tiles answers the shape of the last one**: a card lists
+  its plugins in order, so a badge removed from the end leaves a place after the last
+  badge. Reading the manifest for that costs one R2 read, only on an empty place.
+- **A badge's width is exact without a browser:** the badge always draws in its style's
+  embedded font (JetBrains Mono at 0.6em in the terminal style, Poppins in the default
+  one, sized 6% wider than its 400 widths for weight 500), whatever global font the card
+  picked. Measured 18/11/2026 in Chrome: 96 of 96 tiles (12 labels, 2 styles, 4 global
+  fonts) fit with no ellipsis; with the card's own font, 5 were cut.
+- **`MAX_TILES` is 20**: the websites' 12 sites and the About plugin's 8 links.

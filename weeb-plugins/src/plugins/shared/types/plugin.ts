@@ -82,16 +82,31 @@ export interface Plugin<TConfig extends BasePluginConfig = BasePluginConfig, TDa
   styles?: string
 }
 
+/**
+ * How a README lays a plugin's tiles out:
+ * - "grid": the same size each, three to a row at a percentage width (websites).
+ * - "inline": each at its own natural size, side by side and wrapping like text (link badges).
+ */
+export type TileLayout = "grid" | "inline"
+
 /** One item of a card drawn on its own, at a fixed size (see Plugin.tiles). */
 export interface PluginTile {
-  /** Where the tile's <a> goes in the README: an http(s) URL already through safeHref. */
+  /**
+   * Where the tile's <a> goes in the README: an http(s) URL already through safeHref,
+   * or a mailto: through safeLinkHref (utils/external-link.tsx).
+   */
   href: string
   /** Alt text for the tile's <img>. */
   title: string
   element: React.ReactElement
-  /** The SVG's size. Every tile of a plugin has the same, or a row in the README is ragged. */
+  /**
+   * The SVG's size. A "grid" plugin gives every tile the same, or a row in the README
+   * is ragged; an "inline" one gives each its own width and the same height.
+   */
   width: number
   height: number
+  /** Absent means "grid". */
+  layout?: TileLayout
 }
 
 /**

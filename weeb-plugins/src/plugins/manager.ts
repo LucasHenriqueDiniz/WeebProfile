@@ -16,6 +16,7 @@ import { devToPlugin } from "./devto/index"
 import { codeforcesPlugin } from "./codeforces/index"
 import { stackoverflowPlugin } from "./stackoverflow/index"
 import { websitesPlugin } from "./websites/index"
+import { aboutPlugin } from "./about/index"
 
 /**
  * The registry of plugins. One instance per isolate, shared by every request the
@@ -47,6 +48,7 @@ export class PluginManager {
     this.register(codeforcesPlugin)
     this.register(stackoverflowPlugin)
     this.register(websitesPlugin)
+    this.register(aboutPlugin)
   }
 
   public static getInstance(): PluginManager {

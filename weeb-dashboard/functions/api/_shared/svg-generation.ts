@@ -178,6 +178,7 @@ export function tilesFromResult(result: { tiles?: unknown }): GeneratedTile[] | 
     typeof tile.title === "string" &&
     typeof tile.svg === "string" &&
     typeof tile.width === "number" &&
-    typeof tile.height === "number"
+    typeof tile.height === "number" &&
+    (tile.layout === undefined || tile.layout === "grid" || tile.layout === "inline")
   return result.tiles.every(isTile) ? result.tiles : undefined
 }

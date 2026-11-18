@@ -83,13 +83,19 @@ export interface TileLink {
 /** Three tiles fill the 846px README column at 279px each, close to their 270px. */
 export const TILES_PER_ROW = 3
 
+/** One plain address after `mailto:`, the rule of isEmailAddress in weeb-plugins. */
+const MAILTO = /^mailto:([^\s@<>"'(),;:\\?&#%]+@[^\s@<>"'(),;:\\?&#%/]+\.[^\s@<>"'(),;:\\?&#%/]+)$/i
+
 /**
  * The URL as an href, or null unless it is an absolute http(s) URL with no
- * credentials. Same rule as safeHref in weeb-plugins (utils/external-link.tsx), which
- * the generator already applied to these: they are checked again because this is
- * where they turn into a link on the user's profile.
+ * credentials, or a `mailto:` with one plain address (a link badge's email). Same rules
+ * as safeLinkHref in weeb-plugins (utils/external-link.tsx), which the generator
+ * already applied to these: they are checked again because this is where they turn
+ * into a link on the user's profile. GitHub keeps `mailto:` hrefs in a README.
  */
 export function linkableUrl(raw: string): string | null {
+  const mail = MAILTO.exec(raw.trim())
+  if (mail) return mail[1]!.length <= 254 ? `mailto:${mail[1]}` : null
   let url: URL
   try {
     url = new URL(raw.trim())
@@ -121,4 +127,23 @@ export function generateTilesMarkdown(tiles: TileLink[]): string {
     return [`<a href="${escapeAttribute(href)}">${imgTag({ alt: tile.title, url: tile.src }, width)}</a>`]
   })
   return links.length > 0 ? `<p align="center">${links.join("")}</p>` : ""
+}
+
+/**
+ * One image per link badge, each inside its link, side by side at their own size:
+ * the README buttons the About plugin's badges replace.
+ *
+ * Unlike the site tiles, the tags are separated by a space. It is the gap between
+ * badges, and a row of badges is meant to wrap on a narrow screen like words. No
+ * width or height either: each badge is drawn at its natural 36px height.
+ */
+export function generateBadgesMarkdown(tiles: TileLink[]): string {
+  const links = tiles.flatMap((tile) => {
+    const href = linkableUrl(tile.href)
+    if (!href) return []
+    return [
+      `<a href="${escapeAttribute(href)}"><img alt="${escapeAttribute(tile.title)}" src="${escapeAttribute(tile.src)}" /></a>`,
+    ]
+  })
+  return links.length > 0 ? `<p align="center">${links.join(" ")}</p>` : ""
 }

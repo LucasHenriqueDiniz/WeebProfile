@@ -916,8 +916,43 @@ describe("POST / — tiles, one SVG per site", () => {
   // terminal style paints its background on the whole container, which filled it.
   it("keeps the terminal style's background off the tile's margin", async () => {
     const { body } = await post(validRequest({ style: "terminal", plugins: websites, tiles: true }))
-    expect(body.tiles[0].svg).toContain("#svg-main .terminal-container{background-color:transparent !important}")
+    expect(body.tiles[0].svg).toContain(
+      "#svg-main .terminal-container{background-color:transparent !important;border-radius:0 !important}"
+    )
     expect(body.svg).not.toContain("background-color:transparent !important")
+  })
+
+  it("marks the websites' tiles as a grid, the snippet's three to a row", async () => {
+    const { body } = await post(validRequest({ plugins: websites, tiles: true }))
+    expect(body.tiles.map((tile: any) => tile.layout)).toEqual(["grid", "grid", "grid"])
+  })
+
+  // The About plugin's link badges: each at its own width, laid inline in a README like
+  // the hand-made buttons they replace, an email included.
+  it("answers a link badge per link, inline, at its own width and 36px tall", async () => {
+    const about = {
+      about: {
+        enabled: true,
+        sections: ["links"],
+        links_items: [
+          { url: "lucashdo.com" },
+          { url: "https://www.linkedin.com/in/someone/" },
+          { url: "someone@example.com" },
+        ],
+      },
+    }
+    const { response, body } = await post(validRequest({ style: "terminal", plugins: about, tiles: true }))
+
+    expect(response.status).toBe(200)
+    expect(body.tiles.map((tile: any) => [tile.href, tile.title, tile.layout, tile.width, tile.height])).toEqual([
+      ["https://lucashdo.com/", "lucashdo.com", "inline", 153, 36],
+      ["https://www.linkedin.com/in/someone/", "LinkedIn", "inline", 122, 36],
+      ["mailto:someone@example.com", "Email", "inline", 98, 36],
+    ])
+    for (const tile of body.tiles) {
+      expect(tile.svg).toContain(`width="${tile.width}"`)
+      expect(tile.svg).toContain(`<a href="${tile.href}" target="_top"`)
+    }
   })
 
   // A class with no rule in the tile's CSS does nothing, and `border` alone draws nothing
