@@ -121,7 +121,8 @@ export default function SectionConfig({ pluginName, sectionId, config, onChange 
             )
           }
 
-          if (option.type === "string") {
+          // An image is a data URI or an https:// URL: here it is edited as text.
+          if (option.type === "string" || option.type === "image") {
             return (
               <div key={option.key} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={{ fontSize: "13px", color: "#c9d1d9", fontWeight: "500" }}>
