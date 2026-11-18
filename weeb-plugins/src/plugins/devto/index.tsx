@@ -14,7 +14,8 @@ import type { DevToConfig, DevToData } from "./types"
 import { RenderDevTo } from "./components/RenderDevTo"
 import { PROFILE_AVATAR_SIZE } from "./components/Profile"
 import { ARTICLE_ROW_GAP, ARTICLE_ROW_HEIGHT } from "./components/RecentArticles"
-import { TAG_CHIPS_PER_ROW, TAG_CHIP_HEIGHT, TAG_ROW_GAP } from "./components/TopTags"
+import { TAG_CHIP_GAP, TAG_CHIP_HEIGHT, shownTags, tagChipWidth, topTagsTitleHidden } from "./components/TopTags"
+import { wrappedRows } from "../../utils/text-lines"
 import { fetchDevToData } from "./services/fetchData"
 
 /** Altura do DefaultTitle mais o gap até o conteúdo. */
@@ -22,6 +23,16 @@ const DEFAULT_TITLE_H = 33 + 12
 /** TerminalCommand ocupa uma linha antes do conteúdo da seção. */
 const TERMINAL_COMMAND_H = 24
 const TERMINAL_LINE_H = 20
+
+/** Width the default style's sections get: the card minus 16px on each side (measured: 383 and 798). */
+const CONTENT_WIDTH = { half: 415 - 32, full: 830 - 32 } as const
+/**
+ * DefaultTitle is 40px (a 28px row plus `my-1.5`), and the section's column puts
+ * `gap-2.5` (half) or `gap-3` (full) under it. Top tags uses the measured values; the
+ * other sections still use DEFAULT_TITLE_H.
+ */
+const TITLE_H = 40
+const TITLE_GAP = { half: 10, full: 12 } as const
 
 export const devToPlugin: Plugin<PluginConfig & DevToConfig, PluginData & DevToData> = {
   name: "devto",
@@ -87,14 +98,15 @@ export const devToPlugin: Plugin<PluginConfig & DevToConfig, PluginData & DevToD
         }
 
         case "top_tags": {
-          const tags = devto.topTags ?? []
-          if (tags.length === 0) break
-          const shown = Math.min(tags.length, cfg.top_tags_max ?? 8)
+          const shown = shownTags(devto.topTags, cfg)
+          if (shown.length === 0) break
           if (isTerminal) {
-            height += TERMINAL_COMMAND_H + shown * TERMINAL_LINE_H
+            height += TERMINAL_COMMAND_H + shown.length * TERMINAL_LINE_H
           } else {
-            const rows = Math.ceil(shown / TAG_CHIPS_PER_ROW[size])
-            height += DEFAULT_TITLE_H + rows * TAG_CHIP_HEIGHT + Math.max(0, rows - 1) * TAG_ROW_GAP
+            // The chips wrap by their own width, so count the rows the browser packs.
+            const rows = wrappedRows(shown.map(tagChipWidth), CONTENT_WIDTH[size], TAG_CHIP_GAP)
+            const title = topTagsTitleHidden(cfg) ? 0 : TITLE_H + TITLE_GAP[size]
+            height += title + rows * TAG_CHIP_HEIGHT + (rows - 1) * TAG_CHIP_GAP
           }
           break
         }
