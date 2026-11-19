@@ -1,5 +1,6 @@
 import type { GithubData } from "../types"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { getMockLines } from "./mock-lines"
 
 export async function getMockGithubData(): Promise<GithubData> {
   // Dados reais copiados do real-data.json
@@ -5648,6 +5649,12 @@ export async function getMockGithubData(): Promise<GithubData> {
       issues: 143,
       gists: 12,
     },
+    // antfu's, from GitHub search on 18/11/2026: every state drawn, and four-digit counts
+    followup: {
+      scope: "created",
+      issues: { open: 102, closed: 534 },
+      pullRequests: { open: 18, draft: 5, merged: 1920, closed: 185 },
+    },
     totalDiskUsage: 512000,
     sponsoringCount: 3,
   } as GithubData
@@ -5729,5 +5736,6 @@ export async function getMockGithubData(): Promise<GithubData> {
       : undefined,
     repositoryContributors:
       repositoryContributors.length > 0 ? repositoryContributors : realData.repositoryContributors,
+    lines: getMockLines(),
   }
 }

@@ -17,6 +17,7 @@ import { codeforcesPlugin } from "./codeforces/index"
 import { stackoverflowPlugin } from "./stackoverflow/index"
 import { websitesPlugin } from "./websites/index"
 import { aboutPlugin } from "./about/index"
+import { wowForeverPlugin } from "./wow_forever/index"
 
 /**
  * The registry of plugins. One instance per isolate, shared by every request the
@@ -49,6 +50,7 @@ export class PluginManager {
     this.register(stackoverflowPlugin)
     this.register(websitesPlugin)
     this.register(aboutPlugin)
+    this.register(wowForeverPlugin)
   }
 
   public static getInstance(): PluginManager {

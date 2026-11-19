@@ -103,6 +103,41 @@ query userActivity($login: String!) {
 }
 `
 
+/**
+ * Issues and pull requests by state, for the followup section: one search count per state,
+ * the qualifiers built by `followupSearches` in fetchGithub.ts. The idea is the followup
+ * plugin of lowlighter/metrics (MIT); the query is written here, not copied.
+ */
+export const FOLLOWUP_QUERY = `
+query userFollowup(
+  $issuesOpen: String!
+  $issuesClosed: String!
+  $prOpen: String!
+  $prDraft: String!
+  $prMerged: String!
+  $prClosed: String!
+) {
+  issuesOpen: search(query: $issuesOpen, type: ISSUE, first: 0) {
+    issueCount
+  }
+  issuesClosed: search(query: $issuesClosed, type: ISSUE, first: 0) {
+    issueCount
+  }
+  prOpen: search(query: $prOpen, type: ISSUE, first: 0) {
+    issueCount
+  }
+  prDraft: search(query: $prDraft, type: ISSUE, first: 0) {
+    issueCount
+  }
+  prMerged: search(query: $prMerged, type: ISSUE, first: 0) {
+    issueCount
+  }
+  prClosed: search(query: $prClosed, type: ISSUE, first: 0) {
+    issueCount
+  }
+}
+`
+
 export const LANGUAGES_QUERY = `
 query userLanguages($login: String!) {
   user(login: $login) {

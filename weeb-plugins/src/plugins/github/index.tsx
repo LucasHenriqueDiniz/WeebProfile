@@ -18,8 +18,10 @@ import {
   favoriteLanguagesHeight,
   favoriteLicenseHeight,
   featuredRepositoriesHeight,
+  followupHeight,
   gistsHeight,
   introductionHeight,
+  linesHeight,
   notableContributionsHeight,
   peopleHeight,
   recentActivityHeight,
@@ -115,6 +117,9 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
         case "activity":
           h += isTerminal ? 232 : 156 - (cfg.activity_hide_title ? DEFAULT_TITLE_HEIGHT : 0)
           break
+        case "followup":
+          h += followupHeight(cfg, gh, size, isTerminal)
+          break
         case "calendar": {
           const yearMode = cfg.calendar_year_mode ?? "current_year"
           const years = gh.calendar?.years?.length ?? 1
@@ -190,6 +195,9 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           break
         case "star_lists":
           h += starListsHeight(cfg, gh, size, isTerminal)
+          break
+        case "lines":
+          h += linesHeight(cfg, gh, isTerminal)
           break
         default:
           break

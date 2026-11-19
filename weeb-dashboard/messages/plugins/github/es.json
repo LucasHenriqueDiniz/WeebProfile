@@ -144,6 +144,31 @@
       "description": "Repositorios destacados (requiere URL del repositorio)",
       "name": "Repositorios Destacados"
     },
+    "followup": {
+      "config": {
+        "followup_hide_title": {
+          "label": "Ocultar título"
+        },
+        "followup_include_archived": {
+          "label": "Incluir repositorios archivados",
+          "tooltip": "Desactívalo para dejar fuera los issues y pull requests de repositorios archivados."
+        },
+        "followup_scope": {
+          "label": "Contar",
+          "options": {
+            "created": "Abiertos por mí",
+            "repositories": "En mis repositorios"
+          },
+          "tooltip": "'Abiertos por mí' cuenta los issues y pull requests que abriste en cualquier repositorio. 'En mis repositorios' cuenta los que cualquier persona abrió en los repositorios que son tuyos."
+        },
+        "followup_title": {
+          "defaultValue": "Issues & Pull Requests",
+          "label": "Título"
+        }
+      },
+      "description": "Issues y pull requests por estado: abiertos, cerrados, fusionados y borradores",
+      "name": "Issues & Pull Requests"
+    },
     "gists": {
       "config": {
         "gists_hide_title": {
@@ -205,6 +230,48 @@
       },
       "description": "Calendario de contribuciones en 3D, con rachas, mejor día y promedio por día",
       "name": "Calendario Isométrico"
+    },
+    "lines": {
+      "config": {
+        "lines_chart_type": {
+          "label": "Tipo de gráfico",
+          "options": {
+            "area": "Área",
+            "bars": "Barras"
+          },
+          "tooltip": "Las adiciones aparecen sobre la línea, las eliminaciones debajo."
+        },
+        "lines_hide_history": {
+          "label": "Ocultar gráfico semanal"
+        },
+        "lines_hide_title": {
+          "label": "Ocultar título"
+        },
+        "lines_history_period": {
+          "label": "Período del gráfico",
+          "options": {
+            "1_year": "Últimos 12 meses",
+            "2_years": "Últimos 2 años",
+            "6_months": "Últimos 6 meses"
+          }
+        },
+        "lines_repositories_max": {
+          "description": "Máximo 50 repositorios",
+          "label": "Repositorios contados",
+          "tooltip": "Tus propios repositorios (sin forks) con push más reciente. GitHub calcula las estadísticas de cada uno en la primera petición y no cuenta líneas en repositorios con 10.000 commits o más."
+        },
+        "lines_repositories_shown": {
+          "description": "0 oculta la lista",
+          "label": "Repositorios listados",
+          "tooltip": "Los repositorios donde más líneas cambiaste, desde siempre."
+        },
+        "lines_title": {
+          "defaultValue": "Líneas de Código",
+          "label": "Título"
+        }
+      },
+      "description": "Líneas añadidas y eliminadas en tus repositorios, por semana y por repositorio",
+      "name": "Líneas de Código"
     },
     "notable_contributions": {
       "config": {

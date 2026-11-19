@@ -919,7 +919,8 @@
         "websites": "Your own websites, with a thumbnail of each page.",
         "anilist": "Anime and manga stats, favorites and what you're watching.",
         "devto": "Your profile, recent articles and the tags you use most.",
-        "about": "A neofetch-style intro and link badges, from what you type in."
+        "about": "A neofetch-style intro and link badges, from what you type in.",
+        "wow_forever": "Your WoW Forever character: render, gear and attributes."
       },
       "all": "All",
       "filter": "Filter by category"

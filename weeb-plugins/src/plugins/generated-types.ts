@@ -8,7 +8,7 @@
 /**
  * Union type of all available plugin names
  */
-export type PluginName = "16personalities" | "about" | "anilist" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites"
+export type PluginName = "16personalities" | "about" | "anilist" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites" | "wow_forever"
 
 /**
  * Union type of all available categories
@@ -26,7 +26,7 @@ export type PluginSectionIds = {
   codewars: "rank_honor" | "completed_kata" | "languages_proficiency" | "leaderboard_position"
   devto: "profile" | "recent_articles" | "top_tags"
   duolingo: "current_streak" | "total_xp" | "languages_learning"
-  github: "profile" | "activity" | "repositories" | "favorite_languages" | "favorite_license" | "calendar" | "isocalendar" | "code_habits" | "starred_repositories" | "gists" | "stargazers" | "top_repositories" | "star_lists" | "notable_contributions" | "recent_activity" | "introduction" | "featured_repositories" | "sponsorships" | "sponsors" | "people" | "repository_contributors"
+  github: "profile" | "activity" | "followup" | "repositories" | "favorite_languages" | "favorite_license" | "calendar" | "isocalendar" | "code_habits" | "lines" | "starred_repositories" | "gists" | "stargazers" | "top_repositories" | "star_lists" | "notable_contributions" | "recent_activity" | "introduction" | "featured_repositories" | "sponsorships" | "sponsors" | "people" | "repository_contributors"
   github_repo: "banner" | "stats" | "star_graph" | "languages" | "topics" | "overview"
   lastfm: "recent_tracks" | "statistics" | "top_artists" | "top_albums" | "top_tracks"
   lyfta: "statistics" | "recent_workouts" | "exercises" | "overview" | "last_workout"
@@ -34,6 +34,7 @@ export type PluginSectionIds = {
   stackoverflow: "reputation" | "badges" | "answers_questions" | "tags_expertise"
   steam: "statistics" | "recent_games" | "top_games"
   websites: "websites"
+  wow_forever: "character" | "equipment" | "stats" | "journey" | "professions" | "reputations" | "talents" | "dungeons" | "achievements" | "collection"
 }
 
 /**
@@ -55,6 +56,7 @@ export type PluginEssentialConfigKeys = {
   stackoverflow: never
   steam: "steamId"
   websites: never
+  wow_forever: never
 }
 
 /**
@@ -81,7 +83,7 @@ export type PluginConfig<T extends PluginName> = {
  * Type guard to check if it's a valid plugin name
  */
 export function isValidPluginName(name: string): name is PluginName {
-  return (["16personalities","about","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"] as readonly string[]).includes(name)
+  return (["16personalities","about","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites","wow_forever"] as readonly string[]).includes(name)
 }
 
 /**
