@@ -18,8 +18,8 @@ The process runs in UTC.
   1436 cases, 164 cut (calc under what is drawn) and 281 with more than 2px of blank space.
 - **After:** Chrome 158, Firefox 150 and WebKit 26.4 (Playwright 1.60), with the data
   variants, after merging `main` at the time (GitHub recent activity and notable
-  contributions, Duolingo flags, Lyfta, Dev.to top tags): 1880 cases.
-  - 1776 of the 1778 outside the GitHub repository terminal are exact (0 to +2 over the tallest
+  contributions, Duolingo flags, Lyfta, Dev.to top tags): 1976 cases.
+  - 1872 of the 1874 outside the GitHub repository terminal are exact (0 to +2 over the tallest
     engine). The other 2 are the repository overview at content size `sm`, which Firefox
     draws 1px taller: the card's 24px pad covers it.
   - The GitHub repository terminal sections hand in 24px less than they draw by design (the
@@ -260,16 +260,16 @@ under it. Each row is the worst case of that section, style and size over every 
 | lastfm          | top_albums              | default  | half | top_albums_hide_title=true            | 252  | 212            | +40 ✗  | defaults                            | 252  | 252/252/252    | 0     |
 | lastfm          | top_albums              | terminal | full | top_albums_style=list                 | 117  | 116            | -3 ✗   | defaults                            | 251  | 251/251/250    | 0     |
 | lastfm          | top_albums              | terminal | half | top_albums_style=list                 | 117  | 116            | -3 ✗   | defaults                            | 251  | 251/251/250    | 0     |
-| lastfm          | top_artists             | default  | full | top_artists_hide_title=true           | 291  | 251            | +40 ✗  | defaults                            | 291  | 291/290/291    | 0     |
-| lastfm          | top_artists             | default  | half | top_artists_hide_title=true           | 291  | 247            | +44 ✗  | defaults                            | 287  | 287/287/287    | 0     |
+| lastfm          | top_artists             | default  | full | top_artists_hide_title=true           | 291  | 251            | +40 ✗  | defaults                            | 252  | 252/252/252    | 0     |
+| lastfm          | top_artists             | default  | half | top_artists_hide_title=true           | 291  | 247            | +44 ✗  | defaults                            | 252  | 252/252/252    | 0     |
 | lastfm          | top_artists             | terminal | full | defaults                              | 251  | 251            | 0      | defaults                            | 251  | 251/251/250    | 0     |
 | lastfm          | top_artists             | terminal | half | defaults                              | 251  | 251            | 0      | defaults                            | 251  | 251/251/250    | 0     |
 | lastfm          | top_tracks              | default  | full | top_tracks_hide_title=true            | 252  | 212            | +40 ✗  | defaults                            | 252  | 252/252/252    | 0     |
 | lastfm          | top_tracks              | default  | half | top_tracks_hide_title=true            | 252  | 212            | +40 ✗  | defaults                            | 252  | 252/252/252    | 0     |
 | lastfm          | top_tracks              | terminal | full | defaults                              | 351  | 351            | 0      | defaults                            | 351  | 351/351/350    | 0     |
 | lastfm          | top_tracks              | terminal | half | defaults                              | 351  | 351            | 0      | defaults                            | 351  | 351/351/350    | 0     |
-| lastfm          | (all)                   | default  | full | defaults                              | 1349 | 1345           | +4 ✗   | data:1 item                         | 1123 | 1122/1120/1122 | +1    |
-| lastfm          | (all)                   | default  | half | defaults                              | 1333 | 1329           | +4 ✗   | data:no featured track              | 1227 | 1225/1223/1225 | +2    |
+| lastfm          | (all)                   | default  | full | defaults                              | 1349 | 1345           | +4 ✗   | defaults                            | 1306 | 1306/1304/1306 | 0     |
+| lastfm          | (all)                   | default  | half | defaults                              | 1333 | 1329           | +4 ✗   | data:no featured track              | 1192 | 1190/1188/1190 | +2    |
 | lastfm          | (all)                   | terminal | full | defaults                              | 1080 | 1043           | +32 ✗  | defaults                            | 1043 | 1043/1043/1038 | 0     |
 | lastfm          | (all)                   | terminal | half | defaults                              | 1080 | 1043           | +32 ✗  | defaults                            | 1043 | 1043/1043/1038 | 0     |
 | lyfta           | exercises               | default  | full | exercises_hide_title=true             | 310  | 264            | +46 ✗  | defaults                            | 268  | 268/268/268    | 0     |
@@ -302,24 +302,24 @@ under it. Each row is the worst case of that section, style and size over every 
 | myanimelist     | anime_bar               | terminal | half | defaults                              | 156  | 151            | +5 ✗   | defaults                            | 151  | 151/151/150    | 0     |
 | myanimelist     | anime_favorites         | default  | full | defaults                              | 656  | 656            | 0      | defaults                            | 656  | 656/656/656    | 0     |
 | myanimelist     | anime_favorites         | default  | half | defaults                              | 656  | 656            | 0      | defaults                            | 656  | 656/656/656    | 0     |
-| myanimelist     | anime_favorites         | terminal | full | defaults                              | 552  | 552            | 0      | defaults                            | 552  | 552/527/502    | 0     |
-| myanimelist     | anime_favorites         | terminal | half | defaults                              | 552  | 552            | 0      | defaults                            | 552  | 552/527/502    | 0     |
+| myanimelist     | anime_favorites         | terminal | full | defaults                              | 552  | 552            | 0      | defaults                            | 532  | 532/532/532    | 0     |
+| myanimelist     | anime_favorites         | terminal | half | defaults                              | 552  | 552            | 0      | defaults                            | 532  | 532/532/532    | 0     |
 | myanimelist     | character_favorites     | default  | full | defaults                              | 306  | 306            | 0      | defaults                            | 306  | 306/306/306    | 0     |
 | myanimelist     | character_favorites     | default  | half | defaults                              | 306  | 306            | 0      | defaults                            | 306  | 306/306/306    | 0     |
 | myanimelist     | character_favorites     | terminal | full | defaults                              | 128  | 128            | 0      | defaults                            | 128  | 128/128/128    | 0     |
 | myanimelist     | character_favorites     | terminal | half | defaults                              | 128  | 128            | 0      | defaults                            | 128  | 128/128/128    | 0     |
 | myanimelist     | last_activity           | default  | full | last_activity_hide_title=true         | 510  | 470            | +40 ✗  | defaults                            | 510  | 510/510/510    | 0     |
 | myanimelist     | last_activity           | default  | half | last_activity_hide_title=true         | 510  | 470            | +40 ✗  | defaults                            | 510  | 510/510/510    | 0     |
-| myanimelist     | last_activity           | terminal | full | last_activity_hide_anime=true         | 262  | 321            | -59 ✗  | defaults                            | 504  | 504/474/447    | 0     |
-| myanimelist     | last_activity           | terminal | half | last_activity_hide_anime=true         | 262  | 321            | -59 ✗  | defaults                            | 504  | 504/474/447    | 0     |
+| myanimelist     | last_activity           | terminal | full | last_activity_hide_anime=true         | 262  | 321            | -59 ✗  | defaults                            | 480  | 480/480/480    | 0     |
+| myanimelist     | last_activity           | terminal | half | last_activity_hide_anime=true         | 262  | 321            | -59 ✗  | defaults                            | 480  | 480/480/480    | 0     |
 | myanimelist     | manga_bar               | default  | full | manga_bar_hide_title=true             | 78   | 38             | +40 ✗  | defaults                            | 78   | 78/78/78       | 0     |
 | myanimelist     | manga_bar               | default  | half | manga_bar_hide_title=true             | 134  | 94             | +40 ✗  | defaults                            | 134  | 134/134/134    | 0     |
 | myanimelist     | manga_bar               | terminal | full | defaults                              | 156  | 151            | +5 ✗   | defaults                            | 151  | 151/151/150    | 0     |
 | myanimelist     | manga_bar               | terminal | half | defaults                              | 156  | 151            | +5 ✗   | defaults                            | 151  | 151/151/150    | 0     |
 | myanimelist     | manga_favorites         | default  | full | defaults                              | 656  | 656            | 0      | defaults                            | 656  | 656/656/656    | 0     |
 | myanimelist     | manga_favorites         | default  | half | defaults                              | 656  | 656            | 0      | defaults                            | 656  | 656/656/656    | 0     |
-| myanimelist     | manga_favorites         | terminal | full | defaults                              | 552  | 552            | 0      | defaults                            | 552  | 552/527/502    | 0     |
-| myanimelist     | manga_favorites         | terminal | half | defaults                              | 552  | 552            | 0      | defaults                            | 552  | 552/527/502    | 0     |
+| myanimelist     | manga_favorites         | terminal | full | defaults                              | 552  | 552            | 0      | defaults                            | 532  | 532/532/532    | 0     |
+| myanimelist     | manga_favorites         | terminal | half | defaults                              | 552  | 552            | 0      | defaults                            | 532  | 532/532/532    | 0     |
 | myanimelist     | people_favorites        | default  | full | defaults                              | 306  | 306            | 0      | defaults                            | 306  | 306/306/306    | 0     |
 | myanimelist     | people_favorites        | default  | half | defaults                              | 306  | 306            | 0      | defaults                            | 306  | 306/306/306    | 0     |
 | myanimelist     | people_favorites        | terminal | full | defaults                              | 128  | 128            | 0      | defaults                            | 128  | 128/128/128    | 0     |
@@ -334,8 +334,8 @@ under it. Each row is the worst case of that section, style and size over every 
 | myanimelist     | statistics_simple       | terminal | half | defaults                              | 112  | 112            | 0      | defaults                            | 112  | 112/112/112    | 0     |
 | myanimelist     | (all)                   | default  | full | defaults                              | 2846 | 2846           | 0      | defaults                            | 2846 | 2846/2843/2846 | 0     |
 | myanimelist     | (all)                   | default  | half | defaults                              | 3178 | 3178           | 0      | defaults                            | 3178 | 3178/3174/3178 | 0     |
-| myanimelist     | (all)                   | terminal | full | defaults                              | 2564 | 2543           | +21 ✗  | defaults                            | 2486 | 2486/2406/2327 | 0     |
-| myanimelist     | (all)                   | terminal | half | defaults                              | 2788 | 2767           | +21 ✗  | defaults                            | 2710 | 2710/2630/2551 | 0     |
+| myanimelist     | (all)                   | terminal | full | defaults                              | 2564 | 2543           | +21 ✗  | defaults                            | 2422 | 2422/2422/2420 | 0     |
+| myanimelist     | (all)                   | terminal | half | defaults                              | 2788 | 2767           | +21 ✗  | defaults                            | 2646 | 2646/2646/2644 | 0     |
 | stackoverflow   | answers_questions       | default  | full | answers_questions_hide_title=true     | 80   | 28             | +52 ✗  | defaults                            | 80   | 80/80/80       | 0     |
 | stackoverflow   | answers_questions       | default  | half | answers_questions_hide_title=true     | 80   | 28             | +52 ✗  | defaults                            | 78   | 78/78/78       | 0     |
 | stackoverflow   | answers_questions       | terminal | full | answers_questions_hide_questions=true | 64   | 44             | +20 ✗  | defaults                            | 64   | 64/64/64       | 0     |

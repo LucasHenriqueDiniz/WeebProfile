@@ -89,7 +89,7 @@ export const SECTION_PREVIEWS: Record<
   lastfm: {
     recent_tracks: { default: [415, 338], terminal: [415, 136] },
     statistics: { default: [415, 248], terminal: [415, 134] },
-    top_artists: { default: [415, 311], terminal: [415, 275] },
+    top_artists: { default: [415, 276], terminal: [415, 275] },
     top_albums: { default: [415, 276], terminal: [415, 275] },
     top_tracks: { default: [415, 276], terminal: [415, 375] },
   },
@@ -104,12 +104,12 @@ export const SECTION_PREVIEWS: Record<
 
   myanimelist: {
     statistics: { default: [415, 400], terminal: [415, 520] },
-    last_activity: { default: [415, 534], terminal: [415, 528] },
+    last_activity: { default: [415, 534], terminal: [415, 504] },
     statistics_simple: { default: [415, 124], terminal: [415, 136] },
     anime_bar: { default: [415, 158], terminal: [415, 175] },
     manga_bar: { default: [415, 158], terminal: [415, 175] },
-    anime_favorites: { default: [415, 680], terminal: [415, 576] },
-    manga_favorites: { default: [415, 680], terminal: [415, 576] },
+    anime_favorites: { default: [415, 680], terminal: [415, 556] },
+    manga_favorites: { default: [415, 680], terminal: [415, 556] },
     character_favorites: { default: [415, 330], terminal: [415, 152] },
     people_favorites: { default: [415, 330], terminal: [415, 152] },
   },
