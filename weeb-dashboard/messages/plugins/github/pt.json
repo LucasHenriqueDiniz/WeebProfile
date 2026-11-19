@@ -83,6 +83,12 @@
         "code_habits_hide_weekdays": {
           "label": "Ocultar dias da semana"
         },
+        "code_habits_timezone": {
+          "defaultValue": "UTC",
+          "description": "Fuso horário IANA das horas e dos dias da semana, ex.: America/Sao_Paulo",
+          "label": "Fuso horário",
+          "tooltip": "Os commits são contados na hora e no dia em que foram enviados, neste relógio. O card mostra o deslocamento ao lado das horas. Um fuso desconhecido vira UTC."
+        },
         "code_habits_title": {
           "defaultValue": "Hábitos de Código",
           "label": "Título"

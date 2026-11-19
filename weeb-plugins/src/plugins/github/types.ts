@@ -41,6 +41,8 @@ export interface GithubConfig {
   code_habits_hide_weekdays?: boolean
   code_habits_hide_hours?: boolean
   code_habits_hide_footer?: boolean
+  /** IANA time zone for the hours and weekdays, e.g. "America/Sao_Paulo". UTC when unset or invalid. */
+  code_habits_timezone?: string
   starred_repositories_title?: string
   starred_repositories_hide_title?: boolean
   starred_repositories_max?: number
@@ -224,6 +226,10 @@ export interface GithubData {
       largestCommit: number
     }
     analyzedCommits: number
+    /** IANA zone the hours and weekdays were counted in. Absent in data from before it existed. */
+    timeZone?: string
+    /** Its offset when the card was made, e.g. "UTC-3", shown next to the hours. */
+    timeZoneLabel?: string
   }
   // Novas seções inspiradas no lowlighter/metrics
   starredRepositories?: {

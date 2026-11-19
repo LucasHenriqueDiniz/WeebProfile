@@ -83,6 +83,12 @@
         "code_habits_hide_weekdays": {
           "label": "Ocultar días de la semana"
         },
+        "code_habits_timezone": {
+          "defaultValue": "UTC",
+          "description": "Zona horaria IANA para las horas y los días de la semana, p. ej. America/Sao_Paulo",
+          "label": "Zona horaria",
+          "tooltip": "Los commits se cuentan a la hora y el día en que se enviaron, en este reloj. La tarjeta muestra el desfase junto a las horas. Una zona desconocida pasa a UTC."
+        },
         "code_habits_title": {
           "defaultValue": "Hábitos de Código",
           "label": "Título"

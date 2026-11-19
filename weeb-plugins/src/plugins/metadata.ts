@@ -1757,6 +1757,20 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.github.sections.code_habits.config.code_habits_hide_footer.label"
           }
+        },
+        {
+          key: "code_habits_timezone",
+          label: "Time zone",
+          type: "string",
+          defaultValue: "UTC",
+          description: "IANA time zone for the hours and weekdays, e.g. America/Sao_Paulo",
+          tooltip: "Commits are counted at the hour and day they were pushed, on this clock. The card shows its offset next to the hours. An unknown zone falls back to UTC.",
+          i18nKey: {
+            label: "plugins.github.sections.code_habits.config.code_habits_timezone.label",
+            description: "plugins.github.sections.code_habits.config.code_habits_timezone.description",
+            tooltip: "plugins.github.sections.code_habits.config.code_habits_timezone.tooltip",
+            defaultValue: "plugins.github.sections.code_habits.config.code_habits_timezone.defaultValue"
+          }
         }
         ]
       },

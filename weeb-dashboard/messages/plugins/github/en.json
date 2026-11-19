@@ -83,6 +83,12 @@
         "code_habits_hide_weekdays": {
           "label": "Hide weekdays"
         },
+        "code_habits_timezone": {
+          "defaultValue": "UTC",
+          "description": "IANA time zone for the hours and weekdays, e.g. America/Sao_Paulo",
+          "label": "Time zone",
+          "tooltip": "Commits are counted at the hour and day they were pushed, on this clock. The card shows its offset next to the hours. An unknown zone falls back to UTC."
+        },
         "code_habits_title": {
           "defaultValue": "Code Habits",
           "label": "Title"

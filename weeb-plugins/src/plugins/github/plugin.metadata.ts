@@ -330,6 +330,15 @@ export const githubPluginMetadata = {
           type: "boolean" as const,
           defaultValue: false,
         },
+        {
+          key: "code_habits_timezone",
+          label: "Time zone",
+          type: "string" as const,
+          defaultValue: "UTC",
+          description: "IANA time zone for the hours and weekdays, e.g. America/Sao_Paulo",
+          tooltip:
+            "Commits are counted at the hour and day they were pushed, on this clock. The card shows its offset next to the hours. An unknown zone falls back to UTC.",
+        },
       ],
     },
     {
