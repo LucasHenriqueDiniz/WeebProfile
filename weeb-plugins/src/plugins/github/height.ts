@@ -96,6 +96,21 @@ export function favoriteLanguagesHeight(cfg: GithubConfig, languages: GithubData
   return title(cfg.favorite_languages_hide_title) + 10 + n * (4 + 24)
 }
 
+/**
+ * The followup section draws the same boxes for every count (numbers do not wrap: they are
+ * abbreviated and `whitespace-nowrap`), so its height depends only on the style, the size
+ * and the title. Default: the columns of Followup.tsx, the taller being pull requests: its
+ * 20px label line, the 10px bar and its legend rows (two states a row in full, one in half),
+ * `gap-1` apart. Terminal: per group a label line, the bar line and its legend lines (one
+ * for issues, two for pull requests), the groups `gap-2` apart.
+ */
+export function followupHeight(cfg: GithubConfig, gh: GithubData, size: Size, isTerminal: boolean): number {
+  if (!gh.followup) return 0
+  if (isTerminal) return TERMINAL_COMMAND_HEIGHT + (3 + 4) * LINE + 8 + TERMINAL_BODY_PADDING
+  const legendRows = size === "half" ? 4 : 2
+  return title(cfg.followup_hide_title) + LINE + 4 + 10 + 4 + stack(Array(legendRows).fill(LINE), 4)
+}
+
 export function favoriteLicenseHeight(cfg: GithubConfig, isTerminal: boolean): number {
   // Terminal: the tree's 19px title (18 in WebKit) and its three 20px lines. Default: the
   // 45px icon beside an `text-lg` and a `text-sm` line.

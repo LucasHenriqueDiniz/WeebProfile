@@ -1333,6 +1333,66 @@ export const PLUGINS_METADATA = {
         ]
       },
       {
+        id: "followup",
+        name: "Issues & Pull Requests",
+        description: "Issues and pull requests by state: open, closed, merged and drafts",
+        i18nKey: {
+          name: "plugins.github.sections.followup.name",
+          description: "plugins.github.sections.followup.description"
+        },
+        configOptions: [
+        {
+          key: "followup_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_hide_title.label"
+          }
+        },
+        {
+          key: "followup_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Issues & Pull Requests",
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_title.label",
+            defaultValue: "plugins.github.sections.followup.config.followup_title.defaultValue"
+          }
+        },
+        {
+          key: "followup_scope",
+          label: "Count",
+          type: "select",
+          defaultValue: "created",
+          tooltip: "'Opened by me' counts the issues and pull requests you opened on any repository. 'On my repositories' counts the ones anyone opened on repositories you own.",
+          options: [
+            { value: "created", label: "Opened by me" },
+            { value: "repositories", label: "On my repositories" }
+          ],
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_scope.label",
+            tooltip: "plugins.github.sections.followup.config.followup_scope.tooltip",
+            options: {
+              "created": "plugins.github.sections.followup.config.followup_scope.options.created",
+              "repositories": "plugins.github.sections.followup.config.followup_scope.options.repositories"
+            }
+          }
+        },
+        {
+          key: "followup_include_archived",
+          label: "Include archived repositories",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Turn off to leave out issues and pull requests of archived repositories.",
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_include_archived.label",
+            tooltip: "plugins.github.sections.followup.config.followup_include_archived.tooltip"
+          }
+        }
+        ]
+      },
+      {
         id: "repositories",
         name: "Repositories",
         description: "List of repositories",
