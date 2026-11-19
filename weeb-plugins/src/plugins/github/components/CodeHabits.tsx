@@ -13,6 +13,9 @@ import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { randomColorWithString } from "../../../utils/string"
 import type { GithubConfig, GithubData } from "../types"
 
+/** " (UTC-3)" next to the hours, so a reader knows whose clock they are on. Old data has no zone. */
+const zoneSuffix = (data: { timeZoneLabel?: string }): string => (data.timeZoneLabel ? ` (${data.timeZoneLabel})` : "")
+
 interface CodeHabitsProps {
   data: GithubData["codeHabits"]
   config: GithubConfig
@@ -51,14 +54,17 @@ const DefaultCodeHabits = ({
       {/* Commits by Hour */}
       {!hideHours && (
         <div className="flex flex-col">
-          <h3 className="text-sm font-semibold text-default-muted">Commit activity per hour of day</h3>
+          <h3 className="text-sm font-semibold text-default-muted">
+            Commit activity per hour of day{zoneSuffix(data)}
+          </h3>
           <div
             className={withCascade("flex justify-between items-end h-32 gap-[1px]", hourCascade)}
             style={hourCascade?.style}
           >
             {Array.from({ length: 24 }).map((_, hour) => {
               const commits = data.commitsByHour[hour] || 0
-              const height = maxCommitsByHour ? `${Math.max((commits / maxCommitsByHour) * 100, 5)}%` : "5%"
+              // A floor keeps one commit visible next to a hundred; an hour with none draws nothing.
+              const height = commits > 0 ? `${Math.max((commits / maxCommitsByHour) * 100, 5)}%` : "0%"
               return (
                 <div key={hour} className="flex flex-col items-center w-8 h-full">
                   <div className="w-2 rounded-t-md flex items-end h-full justify-end flex-col">
@@ -96,7 +102,7 @@ const DefaultCodeHabits = ({
           <div className="flex flex-col gap-1">
             {DAYS.map((day) => {
               const commits = data.commitsByDay[day] || 0
-              const width = maxCommitsByDay ? `${Math.max((commits / maxCommitsByDay) * 100, 5)}%` : "1%"
+              const width = commits > 0 ? `${Math.max((commits / maxCommitsByDay) * 100, 5)}%` : "0%"
               return (
                 <div key={day} className="flex flex-col">
                   <div className="flex justify-between text-xs text-default-muted mb-1 w-full text-center">
@@ -221,7 +227,7 @@ const TerminalCodeHabits = ({
     <div className="flex flex-col gap-1">
       {!hideHours && (
         <>
-          <TerminalLabel>Commits by Hour:</TerminalLabel>
+          <TerminalLabel>{`Commits by Hour${zoneSuffix(data)}:`}</TerminalLabel>
           {Array.from({ length: 24 }).map((_, hour) => {
             const commits = data.commitsByHour[hour] || 0
             return (

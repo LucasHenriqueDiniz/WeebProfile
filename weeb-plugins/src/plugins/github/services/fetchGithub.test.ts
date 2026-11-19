@@ -64,6 +64,10 @@ describe("fetchGithub with a token missing a section's scope", () => {
  */
 describe("fetchGithub code_habits", () => {
   const recent = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  let pushedAt = recent
+  afterEach(() => {
+    pushedAt = recent
+  })
   const COMMITS: Record<string, string[]> = { app: ["a1", "a2", "a3"], dotfiles: ["d1"], gone: ["g1"] }
   const LANGUAGES: Record<string, { name: string; color: string } | null> = {
     app: { name: "TypeScript", color: "#3178c6" },
@@ -84,7 +88,7 @@ describe("fetchGithub code_habits", () => {
             type: "PushEvent",
             actor: { login: "octocat" },
             repo: { name: `octocat/${repo}` },
-            created_at: recent,
+            created_at: pushedAt,
             payload: { before: `before-${repo}`, head: `head-${repo}` },
           }))
         )
@@ -111,8 +115,8 @@ describe("fetchGithub code_habits", () => {
   }
 
   const readable = () => Response.json({ stats: { additions: 10, deletions: 5, total: 15 }, files: [{}, {}, {}] })
-  const habits = async () => {
-    const data = (await github().fetchData(card(["code_habits"]) as never, false, {
+  const habits = async (options: Record<string, unknown> = {}) => {
+    const data = (await github().fetchData({ ...card(["code_habits"]), ...options } as never, false, {
       pat: "ghp_test",
     })) as unknown as GithubData
     return data.codeHabits
@@ -141,6 +145,26 @@ describe("fetchGithub code_habits", () => {
     // The charts still count the 5 pushed commits.
     expect(analyzedCommits).toBe(5)
     expect(Object.values(commitsByDay).reduce((a, b) => a + b, 0)).toBe(5)
+  })
+
+  it("counts the hour and weekday of each push on the card's time zone, not the server's", async () => {
+    // Two days ago at 01:30 UTC: 22:30 of the day before in São Paulo.
+    const pushed = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+    pushed.setUTCHours(1, 30, 0, 0)
+    pushedAt = pushed.toISOString()
+    const weekday = (date: Date, timeZone: string) => date.toLocaleDateString("en-US", { weekday: "long", timeZone })
+
+    fakeGithub(readable)
+    const utc = await habits()
+    expect(utc.commitsByHour).toEqual({ 1: 5 })
+    expect(utc.commitsByDay).toEqual({ [weekday(pushed, "UTC")]: 5 })
+    expect(utc.timeZoneLabel).toBe("UTC")
+
+    const brazil = await habits({ code_habits_timezone: "America/Sao_Paulo" })
+    expect(brazil.commitsByHour).toEqual({ 22: 5 })
+    expect(brazil.commitsByDay).toEqual({ [weekday(pushed, "America/Sao_Paulo")]: 5 })
+    expect(weekday(pushed, "America/Sao_Paulo")).not.toBe(weekday(pushed, "UTC"))
+    expect(brazil).toMatchObject({ timeZone: "America/Sao_Paulo", timeZoneLabel: "UTC-3" })
   })
 
   it("stops reading commits once the Worker's subrequest cap is hit", async () => {
