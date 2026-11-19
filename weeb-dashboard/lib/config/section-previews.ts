@@ -14,7 +14,7 @@ export const SECTION_PREVIEWS: Record<
   Record<string, { default: PreviewSize | null; terminal: PreviewSize | null }>
 > = {
   "16personalities": {
-    personality: { default: [415, 227], terminal: [415, 208] },
+    personality: { default: [415, 217], terminal: [415, 198] },
   },
 
   about: {
@@ -23,35 +23,35 @@ export const SECTION_PREVIEWS: Record<
   },
 
   anilist: {
-    statistics: { default: [415, 245], terminal: [415, 208] },
-    favorites_anime: { default: [415, 189], terminal: [415, 148] },
-    currently_watching: { default: [415, 253], terminal: [415, 108] },
+    statistics: { default: [415, 274], terminal: [415, 208] },
+    favorites_anime: { default: [415, 194], terminal: [415, 128] },
+    currently_watching: { default: [415, 258], terminal: [415, 108] },
   },
 
   codeforces: {
-    rating_rank: { default: [415, 100], terminal: [415, 88] },
-    contests_participated: { default: [415, 104], terminal: [415, 68] },
-    problems_solved: { default: [415, 156], terminal: [415, 248] },
-    recent_submissions: { default: [415, 235], terminal: [415, 96] },
+    rating_rank: { default: [415, 98], terminal: [415, 88] },
+    contests_participated: { default: [415, 102], terminal: [415, 68] },
+    problems_solved: { default: [415, 154], terminal: [415, 248] },
+    recent_submissions: { default: [415, 232], terminal: [415, 96] },
   },
 
   codewars: {
-    rank_honor: { default: [415, 100], terminal: [415, 88] },
-    completed_kata: { default: [415, 343], terminal: [415, 128] },
-    languages_proficiency: { default: [415, 343], terminal: [415, 128] },
-    leaderboard_position: { default: [415, 100], terminal: [415, 78] },
+    rank_honor: { default: [415, 98], terminal: [415, 88] },
+    completed_kata: { default: [415, 340], terminal: [415, 128] },
+    languages_proficiency: { default: [415, 340], terminal: [415, 128] },
+    leaderboard_position: { default: [415, 122], terminal: [415, 68] },
   },
 
   devto: {
-    profile: { default: [415, 117], terminal: [415, 128] },
-    recent_articles: { default: [415, 217], terminal: [415, 108] },
+    profile: { default: [415, 130], terminal: [415, 128] },
+    recent_articles: { default: [415, 198], terminal: [415, 108] },
     top_tags: { default: [415, 128], terminal: [415, 148] },
   },
 
   duolingo: {
     current_streak: { default: [415, 136], terminal: [415, 68] },
-    total_xp: { default: [415, 164], terminal: [415, 68] },
-    languages_learning: { default: [415, 235], terminal: [415, 96] },
+    total_xp: { default: [415, 162], terminal: [415, 68] },
+    languages_learning: { default: [415, 232], terminal: [415, 96] },
   },
 
   github: {
@@ -87,9 +87,9 @@ export const SECTION_PREVIEWS: Record<
   },
 
   lastfm: {
-    recent_tracks: { default: [415, 338], terminal: [415, 141] },
+    recent_tracks: { default: [415, 338], terminal: [415, 136] },
     statistics: { default: [415, 248], terminal: [415, 134] },
-    top_artists: { default: [415, 315], terminal: [415, 275] },
+    top_artists: { default: [415, 311], terminal: [415, 275] },
     top_albums: { default: [415, 276], terminal: [415, 275] },
     top_tracks: { default: [415, 276], terminal: [415, 375] },
   },
@@ -104,10 +104,10 @@ export const SECTION_PREVIEWS: Record<
 
   myanimelist: {
     statistics: { default: [415, 400], terminal: [415, 520] },
-    last_activity: { default: [415, 534], terminal: [415, 532] },
+    last_activity: { default: [415, 534], terminal: [415, 528] },
     statistics_simple: { default: [415, 124], terminal: [415, 136] },
-    anime_bar: { default: [415, 158], terminal: [415, 180] },
-    manga_bar: { default: [415, 158], terminal: [415, 180] },
+    anime_bar: { default: [415, 158], terminal: [415, 175] },
+    manga_bar: { default: [415, 158], terminal: [415, 175] },
     anime_favorites: { default: [415, 680], terminal: [415, 576] },
     manga_favorites: { default: [415, 680], terminal: [415, 576] },
     character_favorites: { default: [415, 330], terminal: [415, 152] },
@@ -115,20 +115,20 @@ export const SECTION_PREVIEWS: Record<
   },
 
   stackoverflow: {
-    reputation: { default: [415, 104], terminal: [415, 68] },
-    badges: { default: [415, 132], terminal: [415, 128] },
-    answers_questions: { default: [415, 104], terminal: [415, 88] },
-    tags_expertise: { default: [415, 343], terminal: [415, 128] },
+    reputation: { default: [415, 102], terminal: [415, 68] },
+    badges: { default: [415, 130], terminal: [415, 128] },
+    answers_questions: { default: [415, 102], terminal: [415, 88] },
+    tags_expertise: { default: [415, 340], terminal: [415, 128] },
   },
 
   steam: {
-    statistics: { default: [415, 336], terminal: [415, 156] },
+    statistics: { default: [415, 334], terminal: [415, 156] },
     recent_games: { default: [415, 384], terminal: [415, 156] },
     top_games: { default: [415, 464], terminal: [415, 176] },
   },
 
   websites: {
-    websites: { default: [415, 496], terminal: [415, 162] },
+    websites: { default: [415, 481], terminal: [415, 152] },
   },
 }
 
