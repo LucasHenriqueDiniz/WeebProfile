@@ -7,6 +7,7 @@ const PLUGIN_ORDER = [
   "myanimelist",
   "anilist",
   "steam",
+  "wow_forever",
   "codeforces",
   "codewars",
   "stackoverflow",

@@ -62,7 +62,7 @@ pnpm generate-previews                                    # Regera SVGs de previ
 
 - `CLERK_SECRET_KEY` (autenticação do dashboard)
 - `CRON_SECRET` / `INTERNAL_SECRET` (autenticam endpoints internos)
-- `SECRETS_ENCRYPTION_KEY` (cifra os `plugin_secrets`) e `STEAM_API_KEY` (credencial da aplicação no gerador)
+- `SECRETS_ENCRYPTION_KEY` (cifra os `plugin_secrets`), `STEAM_API_KEY` e `BATTLENET_CLIENT_ID`/`BATTLENET_CLIENT_SECRET` (credenciais da aplicação no gerador)
 - Tokens e API keys de plugins dos usuários (o `pat` do GitHub, a key do LastFM etc.)
 - Qualquer valor de `essentialConfig` passado aos plugins
 
@@ -211,7 +211,7 @@ Configuração em Workers & Pages → `weeb-svg-generator` → Settings → Buil
 
 - **Testes no comando de build:** o Workers Builds não espera o CI do GitHub. Teste vermelho para o build antes do `wrangler deploy`.
 - **Install explícito:** com o diretório raiz em `svg-generator/`, o lockfile e o `packageManager` ficam um nível acima. `SKIP_DEPENDENCY_INSTALL` desliga a detecção automática e o comando instala o workspace inteiro com a versão de pnpm e Node do repo (`package.json` e `.nvmrc`).
-- **Secrets do Worker** (`STEAM_API_KEY`, `CRON_SECRET`, `SECRETS_ENCRYPTION_KEY`) não são tocados pelo deploy.
+- **Secrets do Worker** (`STEAM_API_KEY`, `BATTLENET_CLIENT_ID`, `BATTLENET_CLIENT_SECRET`, `CRON_SECRET`, `SECRETS_ENCRYPTION_KEY`) não são tocados pelo deploy. Sem o client da Battle.net, o card do WoW Forever falha com "no Battle.net client configured"; o resto do gerador segue.
 - **Log dos builds:** no painel do Worker e como check run no commit do GitHub.
 - **Voltar uma versão:** `pnpm exec wrangler rollback <version-id>` em `svg-generator/` (`wrangler deployments list` mostra as versões).
 

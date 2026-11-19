@@ -1,0 +1,182 @@
+{
+  "description": "Mostre seu personagem de World of Warcraft: Forever: equipamento, atributos, profissões, reputações, talentos e mais",
+  "displayName": "WoW Forever",
+  "sections": {
+    "achievements": {
+      "config": {
+        "achievements_hide_title": {
+          "label": "Ocultar título"
+        },
+        "achievements_max": {
+          "description": "As mais recentes primeiro",
+          "label": "Máximo de conquistas"
+        },
+        "achievements_title": {
+          "defaultValue": "Conquistas",
+          "label": "Título"
+        }
+      },
+      "description": "As conquistas mais recentes, com ícone e data",
+      "name": "Conquistas"
+    },
+    "character": {
+      "config": {
+        "character": {
+          "description": "Nome e sobrenome, ou o link do personagem no armory (da Blizzard ou do wowforeverdata.com)",
+          "label": "Personagem",
+          "placeholder": "Anduin Wrynn",
+          "tooltip": "Personagens do Forever não têm reino: o nome e o sobrenome identificam um por região. A Blizzard mostra o personagem a partir do nível 10, depois que ele desloga, e desenha a imagem algumas horas depois."
+        },
+        "character_hide_title": {
+          "label": "Ocultar título"
+        },
+        "character_image": {
+          "description": "O render de corpo inteiro (cerca de 300 KB no card), o retrato (4 KB) ou nenhuma imagem",
+          "label": "Imagem",
+          "options": {
+            "avatar": "Retrato",
+            "none": "Nenhuma",
+            "render": "Render de corpo inteiro"
+          }
+        },
+        "character_title": {
+          "defaultValue": "Personagem",
+          "label": "Título"
+        },
+        "region": {
+          "description": "A região em que o personagem joga. Qualquer região procura nas quatro; o link do armory da Blizzard já define a região.",
+          "label": "Região",
+          "options": {
+            "auto": "Qualquer região",
+            "eu": "Europa (EU)",
+            "kr": "Coreia (KR)",
+            "tw": "Taiwan (TW)",
+            "us": "Américas (US)"
+          }
+        }
+      },
+      "description": "Render, nível, raça, classe, guilda e item level do personagem",
+      "name": "Personagem"
+    },
+    "collection": {
+      "config": {
+        "collection_hide_title": {
+          "label": "Ocultar título"
+        },
+        "collection_title": {
+          "defaultValue": "Coleção",
+          "label": "Título"
+        }
+      },
+      "description": "Montarias, mascotes e brinquedos",
+      "name": "Coleção"
+    },
+    "dungeons": {
+      "config": {
+        "dungeons_hide_title": {
+          "label": "Ocultar título"
+        },
+        "dungeons_max": {
+          "description": "Os com mais kills primeiro",
+          "label": "Máximo de chefes"
+        },
+        "dungeons_title": {
+          "defaultValue": "Dungeons",
+          "label": "Título"
+        }
+      },
+      "description": "Chefes de dungeon derrotados, e quantas vezes",
+      "name": "Dungeons"
+    },
+    "equipment": {
+      "config": {
+        "equipment_hide_title": {
+          "label": "Ocultar título"
+        },
+        "equipment_max": {
+          "description": "Itens na ordem dos slots, da cabeça até as armas. Camisa, tabardo e munição ficam de fora.",
+          "label": "Máximo de itens"
+        },
+        "equipment_show_icons": {
+          "description": "O ícone de cada item numa moldura da cor da qualidade (cerca de 2 KB cada)",
+          "label": "Mostrar ícones dos itens"
+        },
+        "equipment_title": {
+          "defaultValue": "Equipamento",
+          "label": "Título"
+        }
+      },
+      "description": "Os itens que o personagem usa, com qualidade e item level",
+      "name": "Equipamento"
+    },
+    "journey": {
+      "config": {
+        "journey_hide_title": {
+          "label": "Ocultar título"
+        },
+        "journey_title": {
+          "defaultValue": "Jornada",
+          "label": "Título"
+        }
+      },
+      "description": "Números de toda a vida: kills, mortes, quests, dungeons, voos e mais",
+      "name": "Jornada"
+    },
+    "professions": {
+      "config": {
+        "professions_hide_title": {
+          "label": "Ocultar título"
+        },
+        "professions_title": {
+          "defaultValue": "Profissões",
+          "label": "Título"
+        }
+      },
+      "description": "Profissões primárias e secundárias, com o nível de cada uma",
+      "name": "Profissões"
+    },
+    "reputations": {
+      "config": {
+        "reputations_hide_title": {
+          "label": "Ocultar título"
+        },
+        "reputations_max": {
+          "description": "A reputação mais alta primeiro",
+          "label": "Máximo de facções"
+        },
+        "reputations_title": {
+          "defaultValue": "Reputações",
+          "label": "Título"
+        }
+      },
+      "description": "Reputação com cada facção, da mais alta para a mais baixa",
+      "name": "Reputações"
+    },
+    "stats": {
+      "config": {
+        "stats_hide_title": {
+          "label": "Ocultar título"
+        },
+        "stats_title": {
+          "defaultValue": "Atributos",
+          "label": "Título"
+        }
+      },
+      "description": "Vida, recurso, atributos primários e armadura",
+      "name": "Atributos"
+    },
+    "talents": {
+      "config": {
+        "talents_hide_title": {
+          "label": "Ocultar título"
+        },
+        "talents_title": {
+          "defaultValue": "Talentos",
+          "label": "Título"
+        }
+      },
+      "description": "Pontos gastos em cada árvore de talentos da especialização ativa",
+      "name": "Talentos"
+    }
+  }
+}

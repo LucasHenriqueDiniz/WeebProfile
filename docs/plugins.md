@@ -3,7 +3,7 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 73 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 88 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
@@ -23,7 +23,9 @@ Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.de
 - [MyAnimeList](#myanimelist)
 - [Stack Overflow](#stackoverflow)
 - [Steam](#steam)
+- [WakaTime](#wakatime)
 - [Websites](#websites)
+- [WoW Forever](#wow_forever)
 
 ---
 
@@ -954,6 +956,71 @@ Show your Steam gaming statistics
 </details>
 
 <details close>
+  <summary><b>WakaTime</b></summary>
+
+Show the time you spent coding, by language, project, editor and operating system, from WakaTime
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>time</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/time.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>languages</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/languages.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>projects</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/projects.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>editors</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/editors.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>operating_systems</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/operating_systems.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>time</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/time.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>languages</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/languages.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>projects</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/projects.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>editors</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/editors.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>operating_systems</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/operating_systems.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
   <summary><b>Websites</b></summary>
 
 Showcase your own websites, with thumbnails pulled from each page
@@ -981,6 +1048,111 @@ Showcase your own websites, with thumbnails pulled from each page
     <tr>
       <td><code>websites</code></td>
       <td><img src="../weeb-dashboard/public/previews/websites/terminal/websites.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>WoW Forever</b></summary>
+
+Show your World of Warcraft: Forever character: gear, stats, professions, reputations, talents and more
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>character</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/character.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>equipment</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/equipment.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>stats</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/stats.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>journey</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/journey.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>professions</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/professions.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>reputations</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/reputations.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>talents</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/talents.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>dungeons</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/dungeons.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>achievements</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/achievements.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>collection</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/collection.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>character</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/character.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>equipment</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/equipment.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>stats</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/stats.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>journey</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/journey.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>professions</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/professions.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>reputations</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/reputations.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>talents</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/talents.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>dungeons</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/dungeons.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>achievements</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/achievements.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>collection</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/collection.svg" width="415"></td>
     </tr>
   </table>
 

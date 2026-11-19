@@ -31,6 +31,7 @@ Your SVG refreshes automatically on a schedule, and you can trigger a manual ref
 | [Codeforces](docs/plugins.md#codeforces)           | Coding   | Competitive programming rating and stats                |
 | [Codewars](docs/plugins.md#codewars)               | Coding   | Kata solving stats and rank                             |
 | [Stack Overflow](docs/plugins.md#stackoverflow)    | Coding   | Reputation, badges, and activity                        |
+| [WakaTime](docs/plugins.md#wakatime)               | Coding   | Coding time by language, project, editor, and OS        |
 | [Duolingo](docs/plugins.md#duolingo)               | Coding   | Streaks, XP, and languages being learned                |
 | [16Personalities](docs/plugins.md#16personalities) | Coding   | Personality type badge                                  |
 | [LastFM](docs/plugins.md#lastfm)                   | Music    | Recent tracks, top artists/albums/tracks                |
@@ -39,6 +40,7 @@ Your SVG refreshes automatically on a schedule, and you can trigger a manual ref
 | [Websites](docs/plugins.md#websites)               | Coding   | Showcase your own sites with thumbnails                 |
 | [About me](docs/plugins.md#about)                  | Profile  | Neofetch-style intro and link badges                    |
 | [Steam](docs/plugins.md#steam)                     | Gaming   | Recent and most-played games, stats                     |
+| [WoW Forever](docs/plugins.md#wow_forever)         | Gaming   | World of Warcraft: Forever character, gear, attributes  |
 | [Lyfta](docs/plugins.md#lyfta)                     | Gaming   | Workout stats and recent exercises                      |
 
 See the [plugin gallery](docs/plugins.md) for a full preview of every section, in both `default` and `terminal` styles.
