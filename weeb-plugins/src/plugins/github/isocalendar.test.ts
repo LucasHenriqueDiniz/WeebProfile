@@ -148,14 +148,14 @@ describe("isocalendar section", () => {
     const config = { ...github().config, enabled: true, sections: ["isocalendar"], style: "default", size: "half" }
     const data = { warnings: [] } as unknown as GithubData
     expect(github().calculateHeight(config as never, data as never, "half")).toBe(0)
-    expect(renderToStaticMarkup(github().render(config as never, data as never) as never)).not.toContain("weeb-iso")
+    expect(renderToStaticMarkup(github().render(config as never, data as never) as never)).not.toContain("gh-iso")
   })
 
   it("draws a cube per day, the faces shaded by theme classes", async () => {
     const config = { ...github().config, enabled: true, sections: ["isocalendar"], style: "default", size: "half" }
     const data = await github().fetchData(config as never, true)
     const html = renderToStaticMarkup(github().render(config as never, data as never) as never)
-    expect(html.match(/<title>/g)).toHaveLength((data as GithubData).isocalendar!.days.length)
+    expect(html.match(/<title>/g)).toHaveLength((data as unknown as GithubData).isocalendar!.days.length)
     expect(html).toContain("--iso-hl:var(--default-color-highlight)")
     expect(html).not.toMatch(/#9be9a8|#40c463|#30a14e|#216e39/)
   })
@@ -196,7 +196,7 @@ describe("fetchGithub isocalendar", () => {
   it("asks for its window once, a year at most", async () => {
     const data = (await github().fetchData(card(["isocalendar"], { isocalendar_duration: "full_year" }), false, {
       pat: "ghp_test",
-    })) as GithubData
+    })) as unknown as GithubData
     expect(asked).toEqual([{ from: "2025-11-20T00:00:00Z", to: "2026-11-19T23:59:59Z" }])
     expect(data.isocalendar?.start).toBe("2025-11-16")
     expect(data.isocalendar?.days).toHaveLength(365)
@@ -214,7 +214,7 @@ describe("fetchGithub isocalendar", () => {
     // The isometric calendar first: it waits for the calendar's days.
     const data = (await github().fetchData(card(["isocalendar", "calendar"], options), false, {
       pat: "ghp_test",
-    })) as GithubData
+    })) as unknown as GithubData
     expect(asked).toHaveLength(calendarOnly)
     expect(data.isocalendar?.days.at(-1)).toEqual({ date: "2026-11-19", count: 19 })
   })

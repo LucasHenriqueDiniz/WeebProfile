@@ -176,9 +176,9 @@ export const ISOCALENDAR_CSS = [0, 1, 2, 3, 4]
         ? "color-mix(in srgb, var(--iso-empty) 28%, var(--iso-bg))"
         : `color-mix(in srgb, var(--iso-hl) ${[0, 40, 60, 80, 100][level]}%, var(--iso-bg))`
     return [
-      `.weeb-iso .t${level} { fill: ${face}; }`,
-      `.weeb-iso .l${level} { fill: color-mix(in srgb, ${face} 78%, #000); }`,
-      `.weeb-iso .r${level} { fill: color-mix(in srgb, ${face} 58%, #000); }`,
+      `.gh-iso .t${level} { fill: ${face}; }`,
+      `.gh-iso .l${level} { fill: color-mix(in srgb, ${face} 78%, #000); }`,
+      `.gh-iso .r${level} { fill: color-mix(in srgb, ${face} 58%, #000); }`,
     ].join("\n")
   })
   .join("\n")

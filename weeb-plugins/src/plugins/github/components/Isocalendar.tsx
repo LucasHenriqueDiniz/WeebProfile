@@ -13,6 +13,7 @@ import { RenderBasedOnStyle } from "../../../templates/RenderBasedOnStyle"
 import { TerminalCommand } from "../../../templates/Terminal/TerminalCommand"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import {
+  ISOCALENDAR_CSS,
   ISOCALENDAR_DRAWING_HEIGHT,
   cubeLevel,
   cubePaths,
@@ -96,7 +97,7 @@ function Drawing({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="weeb-iso"
+      className="gh-iso"
       viewBox={`0 0 ${Math.round(box.width * 100) / 100} ${box.height}`}
       width={width}
       height={height}
@@ -104,6 +105,8 @@ function Drawing({
       role="img"
       aria-label={`${data.days.reduce((sum, day) => sum + day.count, 0)} contributions from ${data.days[0]?.date ?? data.start} to ${data.end}`}
     >
+      {/* Only in cards that draw the calendar; no `<`, `&` or quotes to escape. */}
+      <style>{ISOCALENDAR_CSS}</style>
       {cubes}
     </svg>
   )
