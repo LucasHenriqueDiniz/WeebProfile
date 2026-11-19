@@ -24,6 +24,7 @@ import { validateRequiredConfig } from "./validation/validate-required-config.js
 import { log, hashUserId } from "./utils/log.js"
 import { withAppCredentials, previewCredentials } from "./db/app-credentials.js"
 import { makeSiteScreenshot } from "./screenshots/site-screenshot.js"
+import { makePluginCache } from "./cache/plugin-cache.js"
 import { isAutoColorMode, sanitizeCustomThemeColors } from "@weeb/weeb-plugins/themes/theme-utils"
 
 export interface Env {
@@ -101,10 +102,12 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
     __weebJikanEdgeFetcher?: Fetcher
     __weebRequireJikanEdgeBinding?: boolean
     __weebSiteScreenshot?: (url: string) => Promise<string | null>
+    __weebPluginCache?: ReturnType<typeof makePluginCache>
   }
   runtime.__weebJikanEdgeFetcher = env.JIKAN_EDGE
   runtime.__weebRequireJikanEdgeBinding = true
   runtime.__weebSiteScreenshot = makeSiteScreenshot(env)
+  runtime.__weebPluginCache = makePluginCache(env)
 
   try {
     requestData = await request.json()

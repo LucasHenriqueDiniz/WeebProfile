@@ -9,7 +9,8 @@
 
 export const wowForeverPluginMetadata = {
   displayName: "WoW Forever",
-  description: "Show your World of Warcraft: Forever character, its gear and attributes",
+  description:
+    "Show your World of Warcraft: Forever character: gear, stats, professions, reputations, talents and more",
   category: "gaming" as const,
   icon: "Swords",
   // The character is public: name and surname, unique per region. The Battle.net client
@@ -103,6 +104,13 @@ export const wowForeverPluginMetadata = {
           max: 17,
           description: "Items in slot order, from the head down to the weapons. Shirt, tabard and ammo are left out.",
         },
+        {
+          key: "equipment_show_icons",
+          label: "Show item icons",
+          type: "boolean" as const,
+          defaultValue: true,
+          description: "Each item's icon in a frame of its quality color (about 2 KB each)",
+        },
       ],
     },
     {
@@ -121,6 +129,166 @@ export const wowForeverPluginMetadata = {
           label: "Title",
           type: "string" as const,
           defaultValue: "Attributes",
+        },
+      ],
+    },
+    {
+      id: "journey",
+      name: "Journey",
+      description: "Lifetime numbers: kills, deaths, quests, dungeons, flight paths and more",
+      configOptions: [
+        {
+          key: "journey_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "journey_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Journey",
+        },
+      ],
+    },
+    {
+      id: "professions",
+      name: "Professions",
+      description: "Primary and secondary professions, with their skill",
+      configOptions: [
+        {
+          key: "professions_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "professions_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Professions",
+        },
+      ],
+    },
+    {
+      id: "reputations",
+      name: "Reputations",
+      description: "Standing with each faction, the highest first",
+      configOptions: [
+        {
+          key: "reputations_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "reputations_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Reputations",
+        },
+        {
+          key: "reputations_max",
+          label: "Maximum factions",
+          type: "number" as const,
+          defaultValue: 6,
+          min: 1,
+          max: 15,
+          description: "Highest standing first",
+        },
+      ],
+    },
+    {
+      id: "talents",
+      name: "Talents",
+      description: "Points spent in each talent tree of the active specialization",
+      configOptions: [
+        {
+          key: "talents_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "talents_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Talents",
+        },
+      ],
+    },
+    {
+      id: "dungeons",
+      name: "Dungeons",
+      description: "Dungeon bosses defeated, and how many times",
+      configOptions: [
+        {
+          key: "dungeons_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "dungeons_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Dungeons",
+        },
+        {
+          key: "dungeons_max",
+          label: "Maximum bosses",
+          type: "number" as const,
+          defaultValue: 8,
+          min: 1,
+          max: 20,
+          description: "Most kills first",
+        },
+      ],
+    },
+    {
+      id: "achievements",
+      name: "Achievements",
+      description: "The latest achievements, with their icon and date",
+      configOptions: [
+        {
+          key: "achievements_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "achievements_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Achievements",
+        },
+        {
+          key: "achievements_max",
+          label: "Maximum achievements",
+          type: "number" as const,
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          description: "The latest first",
+        },
+      ],
+    },
+    {
+      id: "collection",
+      name: "Collection",
+      description: "Mounts, pets and toys",
+      configOptions: [
+        {
+          key: "collection_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "collection_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Collection",
         },
       ],
     },

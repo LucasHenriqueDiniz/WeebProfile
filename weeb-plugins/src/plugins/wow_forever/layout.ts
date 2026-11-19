@@ -147,20 +147,50 @@ export function characterBodyHeight(style: Style, size: Size, data: WowForeverDa
   return Math.max(image?.height ?? 0, info)
 }
 
-// ---------------------------------------------------------------- equipment
+// ---------------------------------------------------------------- lists
 
-export const EQUIPMENT = {
+/**
+ * One-line rows: equipment, dungeons, achievements, the collection. Two columns in a full
+ * card, except where a row holds a list of names (the collection).
+ */
+export const LIST = {
   columns: { half: 1, full: 2 } as Record<Size, number>,
   columnGap: 16,
   row: { default: 24, terminal: 20 } as Record<Style, number>,
   font: { default: 12.5, terminal: 12.5 } as Record<Style, number>,
-  slotWidth: { default: 74, terminal: 84 } as Record<Style, number>,
-  levelWidth: 30,
+  /** The slot, the collection's kind: the fixed column before the text. */
+  leadWidth: { default: 74, terminal: 84 } as Record<Style, number>,
+  /** An icon beside the text, inside the row's height. */
+  icon: { default: 18, terminal: 16 } as Record<Style, number>,
 } as const
 
+export function listBodyHeight(style: Style, rows: number, columns = 1): number {
+  return Math.ceil(rows / columns) * LIST.row[style]
+}
+
+/** The equipment list: an item level column at the end. */
+export const EQUIPMENT = { ...LIST, levelWidth: 30 } as const
+
 export function equipmentBodyHeight(style: Style, size: Size, items: number): number {
-  const rows = Math.ceil(items / EQUIPMENT.columns[size])
-  return rows * EQUIPMENT.row[style]
+  return listBodyHeight(style, items, LIST.columns[size])
+}
+
+// ---------------------------------------------------------------- progress
+
+/** Rows with a bar: professions, reputations, talent trees. */
+export const PROGRESS = {
+  columns: { half: 1, full: 2 } as Record<Size, number>,
+  columnGap: 20,
+  row: { default: 28, terminal: 20 } as Record<Style, number>,
+  font: { default: 12.5, terminal: 12.5 } as Record<Style, number>,
+  icon: { default: 20, terminal: 16 } as Record<Style, number>,
+  nameWidth: { default: 112, terminal: 120 } as Record<Style, number>,
+  valueWidth: { default: 64, terminal: 76 } as Record<Style, number>,
+  bar: { default: 6, terminal: 8 } as Record<Style, number>,
+} as const
+
+export function progressBodyHeight(style: Style, size: Size, rows: number): number {
+  return Math.ceil(rows / PROGRESS.columns[size]) * PROGRESS.row[style]
 }
 
 // ---------------------------------------------------------------- stats

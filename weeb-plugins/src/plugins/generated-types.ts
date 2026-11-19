@@ -34,7 +34,7 @@ export type PluginSectionIds = {
   stackoverflow: "reputation" | "badges" | "answers_questions" | "tags_expertise"
   steam: "statistics" | "recent_games" | "top_games"
   websites: "websites"
-  wow_forever: "character" | "equipment" | "stats"
+  wow_forever: "character" | "equipment" | "stats" | "journey" | "professions" | "reputations" | "talents" | "dungeons" | "achievements" | "collection"
 }
 
 /**

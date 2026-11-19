@@ -2,34 +2,48 @@ import React from "react"
 import { GiHeartPlus } from "react-icons/gi"
 import { useItemCascade } from "../../../templates/animations"
 import { STATS, statsBodyHeight, type Size, type Style } from "../layout"
-import type { WowForeverData } from "../types"
+import type { WowStat } from "../types"
 import { COLORS, WowSection, ellipsis } from "./Section"
 
 const formatStat = (value: number): string => Math.round(value).toLocaleString("en-US")
 
 interface StatsProps {
-  data: WowForeverData
+  /** The section's element id and the terminal's command. */
+  id: string
+  command: string
+  icon?: React.ReactElement
+  stats: WowStat[]
   style: Style
   size: Size
   title: string
   hideTitle: boolean
 }
 
-export function Stats({ data, style, size, title, hideTitle }: StatsProps): React.ReactElement | null {
-  const cascade = useItemCascade(data.stats.length)
-  if (data.stats.length === 0) return null
+/** Numbers in tiles (default) or "Label: value" lines (terminal): attributes, the journey. */
+export function Stats({
+  id,
+  command,
+  icon,
+  stats,
+  style,
+  size,
+  title,
+  hideTitle,
+}: StatsProps): React.ReactElement | null {
+  const cascade = useItemCascade(stats.length)
+  if (stats.length === 0) return null
   const terminal = style === "terminal"
   const colors = COLORS[style]
   const columns = STATS.columns[style][size]
 
   return (
     <WowSection
-      id="wow-forever-stats"
+      id={id}
       style={style}
       title={title}
       hideTitle={hideTitle}
-      icon={<GiHeartPlus />}
-      command={`wow stats ${data.slug}`}
+      icon={icon ?? <GiHeartPlus />}
+      command={command}
     >
       <div
         className={cascade?.className}
@@ -38,11 +52,11 @@ export function Stats({ data, style, size, title, hideTitle }: StatsProps): Reac
           gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
           gridAutoRows: terminal ? `${STATS.terminalLine}px` : undefined,
           gap: terminal ? "0 16px" : `${STATS.gap}px`,
-          height: `${statsBodyHeight(style, size, data.stats.length)}px`,
+          height: `${statsBodyHeight(style, size, stats.length)}px`,
           ...cascade?.style,
         }}
       >
-        {data.stats.map((stat) =>
+        {stats.map((stat) =>
           terminal ? (
             <div
               key={stat.label}

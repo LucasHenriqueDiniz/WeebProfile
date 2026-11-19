@@ -107,8 +107,8 @@ describe("mapEquipment", () => {
       ],
     })
     expect(items).toEqual([
-      { slot: "Head", name: "Lionheart Helm", quality: "EPIC", itemLevel: 63 },
-      { slot: "Main Hand", name: "Arcanite Reaper", quality: "EPIC", itemLevel: null },
+      { id: undefined, slot: "Head", name: "Lionheart Helm", quality: "EPIC", itemLevel: 63, icon: null },
+      { id: undefined, slot: "Main Hand", name: "Arcanite Reaper", quality: "EPIC", itemLevel: null, icon: null },
     ])
   })
 })

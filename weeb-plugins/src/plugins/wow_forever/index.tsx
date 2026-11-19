@@ -1,8 +1,9 @@
 /**
  * World of Warcraft: Forever plugin
  *
- * Shows a Forever character: its render and sheet, its gear and its attributes, read
- * from the Battle.net API with the application's own client.
+ * Shows a Forever character, read from the Battle.net API with the application's own
+ * client: its render and sheet, gear, attributes, lifetime statistics, professions,
+ * reputations, talents, dungeon bosses, recent achievements and collection.
  */
 
 import React from "react"
@@ -10,8 +11,8 @@ import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
 import { RenderWowForever } from "./components/RenderWowForever"
-import { characterBodyHeight, equipmentBodyHeight, sectionHeight, statsBodyHeight, type Size } from "./layout"
-import { resolveOptions } from "./options"
+import { sectionHeight, type Size } from "./layout"
+import { SECTION_IDS, resolveOptions, sectionBody, type SectionId } from "./options"
 import { fetchWowForeverData } from "./services/fetchData"
 import type { WowForeverConfig, WowForeverData } from "./types"
 
@@ -35,23 +36,12 @@ export const wowForeverPlugin: Plugin<PluginConfig & WowForeverConfig, PluginDat
   },
 
   calculateHeight: (config, data, size = "half") => {
-    const wow = data as WowForeverData
     const options = resolveOptions(config)
-    const { style } = options
     let height = 0
     for (const id of config.sections ?? []) {
-      if (id === "character") {
-        height += sectionHeight(style, options.characterHideTitle, characterBodyHeight(style, size, wow))
-      } else if (id === "equipment") {
-        const items = Math.min(wow.equipment.length, options.equipmentMax)
-        if (items > 0) {
-          height += sectionHeight(style, options.equipmentHideTitle, equipmentBodyHeight(style, size, items))
-        }
-      } else if (id === "stats") {
-        if (wow.stats.length > 0) {
-          height += sectionHeight(style, options.statsHideTitle, statsBodyHeight(style, size, wow.stats.length))
-        }
-      }
+      if (!(SECTION_IDS as readonly string[]).includes(id)) continue
+      const body = sectionBody(id as SectionId, data as WowForeverData, options.style, size, options)
+      if (body !== null) height += sectionHeight(options.style, options.hideTitle(id as SectionId), body)
     }
     return height
   },

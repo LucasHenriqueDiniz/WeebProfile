@@ -25,6 +25,24 @@ export interface WowForeverOptions {
   equipment_max?: number
   stats_title?: string
   stats_hide_title?: boolean
+  equipment_show_icons?: boolean
+  journey_title?: string
+  journey_hide_title?: boolean
+  professions_title?: string
+  professions_hide_title?: boolean
+  reputations_title?: string
+  reputations_hide_title?: boolean
+  reputations_max?: number
+  talents_title?: string
+  talents_hide_title?: boolean
+  dungeons_title?: string
+  dungeons_hide_title?: boolean
+  dungeons_max?: number
+  achievements_title?: string
+  achievements_hide_title?: boolean
+  achievements_max?: number
+  collection_title?: string
+  collection_hide_title?: boolean
 }
 
 export interface WowForeverNonEssentialConfig extends NonEssentialPluginConfig, WowForeverOptions {}
@@ -55,6 +73,39 @@ export interface WowItem {
   name: string
   quality: ItemQuality
   itemLevel: number | null
+  /** Data URI, or null when the section draws no icons or the API has none. */
+  icon: string | null
+}
+
+/** A row with a bar: a profession's skill, a reputation's standing, a talent tree's points. */
+export interface WowProgress {
+  name: string
+  icon: string | null
+  value: number
+  max: number
+  /** What the row prints at its end: "81 / 150", "Honored", "22". */
+  label: string
+  /** Reputation standing tier, 0 (Hated) to 7 (Exalted): the bar takes its color. */
+  tier?: number
+}
+
+export interface WowBossKill {
+  boss: string
+  dungeon: string
+  kills: number
+}
+
+export interface WowAchievement {
+  name: string
+  icon: string | null
+  /** Unix ms. */
+  completedAt: number
+}
+
+export interface WowCollection {
+  mounts: string[]
+  pets: string[]
+  toys: string[]
 }
 
 export interface WowStat {
@@ -75,4 +126,13 @@ export interface WowForeverData {
   image: { kind: "render" | "avatar"; src: string } | null
   equipment: WowItem[]
   stats: WowStat[]
+  /** Lifetime numbers from the statistics: kills, deaths, quests, dungeons, travel. */
+  journey: WowStat[]
+  professions: WowProgress[]
+  reputations: WowProgress[]
+  /** The active talent group: every tree of the class, with the points spent in it. */
+  talents: WowProgress[]
+  dungeons: WowBossKill[]
+  achievements: WowAchievement[]
+  collection: WowCollection
 }

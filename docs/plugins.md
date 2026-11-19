@@ -3,7 +3,7 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 76 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 83 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
@@ -990,7 +990,7 @@ Showcase your own websites, with thumbnails pulled from each page
 <details close>
   <summary><b>WoW Forever</b></summary>
 
-Show your World of Warcraft: Forever character, its gear and attributes
+Show your World of Warcraft: Forever character: gear, stats, professions, reputations, talents and more
 
 ### Default Style
 
@@ -1010,6 +1010,34 @@ Show your World of Warcraft: Forever character, its gear and attributes
     <tr>
       <td><code>stats</code></td>
       <td><img src="../weeb-dashboard/public/previews/wow_forever/default/stats.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>journey</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/journey.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>professions</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/professions.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>reputations</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/reputations.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>talents</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/talents.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>dungeons</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/dungeons.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>achievements</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/achievements.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>collection</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/collection.svg" width="415"></td>
     </tr>
   </table>
 
@@ -1031,6 +1059,34 @@ Show your World of Warcraft: Forever character, its gear and attributes
     <tr>
       <td><code>stats</code></td>
       <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/stats.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>journey</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/journey.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>professions</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/professions.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>reputations</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/reputations.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>talents</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/talents.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>dungeons</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/dungeons.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>achievements</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/achievements.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>collection</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/collection.svg" width="415"></td>
     </tr>
   </table>
 

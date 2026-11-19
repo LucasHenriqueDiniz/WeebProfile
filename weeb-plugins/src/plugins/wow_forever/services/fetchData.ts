@@ -1,5 +1,6 @@
 /**
- * Reads a WoW Forever character from the Battle.net API and embeds its picture.
+ * Reads a WoW Forever character from the Battle.net API: one call per route the enabled
+ * sections draw, icons through the icon cache, the render embedded as a data URI.
  */
 
 import { embedImageOrNull } from "../../../utils/image-to-base64"
@@ -14,9 +15,29 @@ import type {
   WowRegion,
   WowStat,
 } from "../types"
-import { NotServedError, getCharacter, type BattlenetCredentials } from "./battlenet"
+import { pluginCacheGet, pluginCachePut } from "../../../utils/plugin-cache"
+import { NotServedError, getCharacter, getStatic, type BattlenetCredentials } from "./battlenet"
 import { parseCharacterRef } from "./character-ref"
-import { MOCK_AVATAR_URL, MOCK_DATA, MOCK_RENDER_URL } from "./mock-data"
+import { iconFor, type IconKind } from "./icons"
+import { mockData } from "./mock-data"
+import {
+  mapAchievements,
+  mapCollection,
+  mapDungeons,
+  mapJourney,
+  mapProfessions,
+  mapReputations,
+  mapTalents,
+  type AchievementStatisticsResponse,
+  type AchievementsResponse,
+  type MountsResponse,
+  type PetsResponse,
+  type PlayableClassResponse,
+  type ProfessionsResponse,
+  type ReputationsResponse,
+  type SpecializationsResponse,
+  type ToysResponse,
+} from "./sections"
 
 /**
  * The full-body render is a 1600x1200 PNG with a transparent background, 240-500 KB.
@@ -31,9 +52,19 @@ const HIDDEN_SLOTS = new Set(["SHIRT", "TABARD", "AMMO"])
 
 /** The most slots the equipment section lists: every slot but the hidden ones. */
 export const MAX_EQUIPMENT = 17
+/** The most achievements the achievements section lists, and the default. */
+export const MAX_ACHIEVEMENTS = 10
+export const DEFAULT_ACHIEVEMENTS = 5
+
+/** A "max" option as a whole number from 1 to `limit`, `fallback` when unset. */
+export function clampMax(value: unknown, limit: number, fallback = Math.min(DEFAULT_ACHIEVEMENTS, limit)): number {
+  const n = Number(value)
+  return Number.isFinite(n) && n > 0 ? Math.min(Math.floor(n), limit) : fallback
+}
 
 interface Named {
   name?: string
+  id?: number
 }
 
 interface ProfileResponse {
@@ -55,6 +86,7 @@ interface MediaResponse {
 
 interface EquipmentResponse {
   equipped_items?: Array<{
+    item?: { id?: number }
     slot?: { type?: string; name?: string }
     name?: string
     quality?: { type?: string }
@@ -104,14 +136,16 @@ export function mapCharacter(profile: ProfileResponse, pvp: PvpSummaryResponse |
   }
 }
 
-export function mapEquipment(equipment: EquipmentResponse): WowItem[] {
+export function mapEquipment(equipment: EquipmentResponse): Array<WowItem & { id: number | undefined }> {
   return (equipment.equipped_items ?? [])
     .filter((item) => item.name && !HIDDEN_SLOTS.has(item.slot?.type ?? ""))
     .map((item) => ({
+      id: item.item?.id,
       slot: item.slot?.name ?? "",
       name: item.name!,
       quality: (item.quality?.type ?? "COMMON") as ItemQuality,
       itemLevel: item.level?.value ?? null,
+      icon: null,
     }))
 }
 
@@ -152,6 +186,52 @@ async function embedImage(media: MediaResponse | null, kind: "render" | "avatar"
   return src ? { kind, src } : null
 }
 
+/** Sections that read the lifetime statistics: both come from one response. */
+const STATISTICS_SECTIONS = ["journey", "dungeons"]
+
+function readOption<T>(config: WowForeverConfig, key: string): T | undefined {
+  return (config[key] ?? config.nonEssential?.[key]) as T | undefined
+}
+
+/** Drops the ids the mappers keep for the icon lookups. */
+const withoutId = <T extends { id?: number }>({ id: _id, ...rest }: T): Omit<T, "id"> => rest
+
+/** Fills each entry's icon, in parallel, through the icon cache. */
+async function withIcons<T extends { id?: number; icon: string | null }>(
+  entries: T[],
+  icon: (id: number) => Promise<string | null>
+): Promise<T[]> {
+  return Promise.all(entries.map(async (e) => ({ ...e, icon: e.id ? await icon(e.id) : null })))
+}
+
+/** The class's talent trees, kept like an icon: a class's trees do not change. */
+async function playableClass(
+  credentials: BattlenetCredentials,
+  region: WowRegion,
+  classId: number | undefined
+): Promise<PlayableClassResponse | null> {
+  if (!classId) return null
+  const key = `wow_forever/class/${classId}`
+  const cached = await pluginCacheGet(key)
+  if (cached) {
+    try {
+      return JSON.parse(cached) as PlayableClassResponse
+    } catch {
+      // Unreadable: fetch it again below.
+    }
+  }
+  try {
+    const response = await getStatic<PlayableClassResponse>(credentials, region, `/data/wow/playable-class/${classId}`)
+    const trees: PlayableClassResponse = {
+      specializations: (response.specializations ?? []).map(({ id, name }) => ({ id, name })),
+    }
+    await pluginCachePut(key, JSON.stringify(trees))
+    return trees
+  } catch {
+    return null
+  }
+}
+
 export async function fetchWowForeverData(
   config: WowForeverConfig,
   dev = false,
@@ -159,16 +239,13 @@ export async function fetchWowForeverData(
   previewMode = false
 ): Promise<WowForeverData> {
   const sections = config.sections ?? []
+  const has = (id: string): boolean => sections.includes(id)
   const imageKind = characterImageOption(config)
-  const wantsImage = sections.includes("character") && imageKind !== "none"
+  const wantsImage = has("character") && imageKind !== "none"
+  const itemIcons = readOption<boolean>(config, "equipment_show_icons") !== false
 
-  if (dev || previewMode) {
-    if (!wantsImage) return MOCK_DATA
-    const url = imageKind === "render" ? MOCK_RENDER_URL : MOCK_AVATAR_URL
-    // A preview keeps the URL; a dev render embeds it, as production does.
-    const src = previewMode ? url : await embedImageOrNull(url, { context: "wow_forever/mock" })
-    return { ...MOCK_DATA, image: src ? { kind: imageKind, src } : null }
-  }
+  if (dev || previewMode)
+    return mockData({ imageKind: wantsImage ? imageKind : "none", itemIcons, embed: !previewMode })
 
   const ref = parseCharacterRef(config.character, config.region)
 
@@ -201,13 +278,51 @@ export async function fetchWowForeverData(
   }
   const { region, profile } = found
   const get = <T>(route: string): Promise<T> => getCharacter<T>(credentials, region, ref.slug, route)
+  // A part a character may not have yet (no media, no talents spent, no collection).
+  const maybe = <T>(on: boolean, route: string): Promise<T | null> =>
+    on ? optional(get<T>(route)) : Promise.resolve(null)
+  const icon = (kind: IconKind) => (id: number) => iconFor(credentials, region, kind, id)
 
-  const [media, pvp, equipment, statistics] = await Promise.all([
+  const [
+    media,
+    pvp,
+    equipment,
+    statistics,
+    lifetime,
+    professions,
+    reputations,
+    specializations,
+    achievements,
+    mounts,
+    pets,
+    toys,
+    classTrees,
+  ] = await Promise.all([
     // Media lags the profile by hours after a character first appears: no picture yet.
-    wantsImage ? optional(get<MediaResponse>("/character-media")) : null,
-    sections.includes("character") ? optional(get<PvpSummaryResponse>("/pvp-summary")) : null,
-    sections.includes("equipment") ? get<EquipmentResponse>("/equipment") : null,
-    sections.includes("stats") ? get<StatisticsResponse>("/statistics") : null,
+    maybe<MediaResponse>(wantsImage, "/character-media"),
+    maybe<PvpSummaryResponse>(has("character"), "/pvp-summary"),
+    has("equipment") ? get<EquipmentResponse>("/equipment") : null,
+    has("stats") ? get<StatisticsResponse>("/statistics") : null,
+    maybe<AchievementStatisticsResponse>(STATISTICS_SECTIONS.some(has), "/achievements/statistics"),
+    maybe<ProfessionsResponse>(has("professions"), "/professions"),
+    maybe<ReputationsResponse>(has("reputations"), "/reputations"),
+    maybe<SpecializationsResponse>(has("talents"), "/specializations"),
+    maybe<AchievementsResponse>(has("achievements"), "/achievements"),
+    maybe<MountsResponse>(has("collection"), "/collections/mounts"),
+    maybe<PetsResponse>(has("collection"), "/collections/pets"),
+    maybe<ToysResponse>(has("collection"), "/collections/toys"),
+    has("talents") ? playableClass(credentials, region, profile.character_class?.id) : null,
+  ])
+
+  const achievementsMax = clampMax(readOption<number>(config, "achievements_max"), MAX_ACHIEVEMENTS)
+  const [items, professionRows, talentRows, achievementRows] = await Promise.all([
+    equipment ? (itemIcons ? withIcons(mapEquipment(equipment), icon("item")) : mapEquipment(equipment)) : [],
+    professions ? withIcons(mapProfessions(professions), icon("profession")) : [],
+    specializations
+      ? withIcons(mapTalents(specializations, classTrees, profile.level), icon("playable-specialization"))
+      : [],
+    // Only the ones the section draws get an icon looked up.
+    achievements ? withIcons(mapAchievements(achievements).slice(0, achievementsMax), icon("achievement")) : [],
   ])
 
   return {
@@ -215,7 +330,14 @@ export async function fetchWowForeverData(
     slug: ref.slug,
     character: mapCharacter(profile, pvp),
     image: wantsImage ? await embedImage(media, imageKind) : null,
-    equipment: equipment ? mapEquipment(equipment) : [],
+    equipment: items.map((r) => withoutId(r)),
     stats: statistics ? mapStats(statistics) : [],
+    journey: lifetime ? mapJourney(lifetime) : [],
+    professions: professionRows.map((r) => withoutId(r)),
+    reputations: reputations ? mapReputations(reputations) : [],
+    talents: talentRows.map((r) => withoutId(r)),
+    dungeons: lifetime ? mapDungeons(lifetime) : [],
+    achievements: achievementRows.map((r) => withoutId(r)),
+    collection: mapCollection(mounts, pets, toys),
   }
 }

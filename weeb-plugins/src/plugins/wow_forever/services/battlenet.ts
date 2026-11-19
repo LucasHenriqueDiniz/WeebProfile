@@ -90,20 +90,14 @@ export class NotServedError extends Error {
   }
 }
 
-/**
- * GET a character route. A 404 throws NotServedError, so the caller decides whether a
- * missing part is fatal (the profile) or just absent (the render, the PvP summary).
- */
-export async function getCharacter<T>(
+/** GET any route of a Forever namespace. A 404 throws NotServedError. */
+async function apiGet<T>(
   credentials: BattlenetCredentials,
   region: WowRegion,
-  slug: string,
-  route = ""
+  path: string,
+  namespace: string
 ): Promise<T> {
-  const url =
-    `https://${region}.api.blizzard.com/profile/wow/character/${encodeURIComponent(slug)}${route}` +
-    `?namespace=profile-forever-${region}&locale=en_US`
-
+  const url = `https://${region}.api.blizzard.com${path}?namespace=${namespace}-forever-${region}&locale=en_US`
   for (let attempt = 0; ; attempt++) {
     const token = await accessToken(credentials)
     const response = await fetch(url, {
@@ -116,7 +110,30 @@ export async function getCharacter<T>(
       tokens.delete(credentials.clientId)
       continue
     }
-    if (response.status === 404) throw new NotServedError(`${route || "profile"}: HTTP 404`)
-    throw new Error(`Battle.net API failed on the character ${route || "profile"}: HTTP ${response.status}`)
+    if (response.status === 404) throw new NotServedError(`${path}: HTTP 404`)
+    throw new Error(
+      `Battle.net API failed on ${path.replace(/\/character\/[^/]+/, "/character")}: HTTP ${response.status}`
+    )
   }
+}
+
+/**
+ * GET a character route. A 404 throws NotServedError, so the caller decides whether a
+ * missing part is fatal (the profile) or just absent (the render, the PvP summary).
+ */
+export function getCharacter<T>(
+  credentials: BattlenetCredentials,
+  region: WowRegion,
+  slug: string,
+  route = ""
+): Promise<T> {
+  return apiGet<T>(credentials, region, `/profile/wow/character/${encodeURIComponent(slug)}${route}`, "profile")
+}
+
+/**
+ * GET game data that does not belong to a character: an item's or a profession's media, a
+ * class. The plain `static-forever` namespace follows the game's current version.
+ */
+export function getStatic<T>(credentials: BattlenetCredentials, region: WowRegion, path: string): Promise<T> {
+  return apiGet<T>(credentials, region, path, "static")
 }

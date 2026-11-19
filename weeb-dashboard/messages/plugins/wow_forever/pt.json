@@ -1,7 +1,24 @@
 {
-  "description": "Mostre seu personagem de World of Warcraft: Forever, o equipamento e os atributos",
+  "description": "Mostre seu personagem de World of Warcraft: Forever: equipamento, atributos, profissões, reputações, talentos e mais",
   "displayName": "WoW Forever",
   "sections": {
+    "achievements": {
+      "config": {
+        "achievements_hide_title": {
+          "label": "Ocultar título"
+        },
+        "achievements_max": {
+          "description": "As mais recentes primeiro",
+          "label": "Máximo de conquistas"
+        },
+        "achievements_title": {
+          "defaultValue": "Conquistas",
+          "label": "Título"
+        }
+      },
+      "description": "As conquistas mais recentes, com ícone e data",
+      "name": "Conquistas"
+    },
     "character": {
       "config": {
         "character": {
@@ -41,6 +58,36 @@
       "description": "Render, nível, raça, classe, guilda e item level do personagem",
       "name": "Personagem"
     },
+    "collection": {
+      "config": {
+        "collection_hide_title": {
+          "label": "Ocultar título"
+        },
+        "collection_title": {
+          "defaultValue": "Coleção",
+          "label": "Título"
+        }
+      },
+      "description": "Montarias, mascotes e brinquedos",
+      "name": "Coleção"
+    },
+    "dungeons": {
+      "config": {
+        "dungeons_hide_title": {
+          "label": "Ocultar título"
+        },
+        "dungeons_max": {
+          "description": "Os com mais kills primeiro",
+          "label": "Máximo de chefes"
+        },
+        "dungeons_title": {
+          "defaultValue": "Dungeons",
+          "label": "Título"
+        }
+      },
+      "description": "Chefes de dungeon derrotados, e quantas vezes",
+      "name": "Dungeons"
+    },
     "equipment": {
       "config": {
         "equipment_hide_title": {
@@ -50,6 +97,10 @@
           "description": "Itens na ordem dos slots, da cabeça até as armas. Camisa, tabardo e munição ficam de fora.",
           "label": "Máximo de itens"
         },
+        "equipment_show_icons": {
+          "description": "O ícone de cada item numa moldura da cor da qualidade (cerca de 2 KB cada)",
+          "label": "Mostrar ícones dos itens"
+        },
         "equipment_title": {
           "defaultValue": "Equipamento",
           "label": "Título"
@@ -57,6 +108,49 @@
       },
       "description": "Os itens que o personagem usa, com qualidade e item level",
       "name": "Equipamento"
+    },
+    "journey": {
+      "config": {
+        "journey_hide_title": {
+          "label": "Ocultar título"
+        },
+        "journey_title": {
+          "defaultValue": "Jornada",
+          "label": "Título"
+        }
+      },
+      "description": "Números de toda a vida: kills, mortes, quests, dungeons, voos e mais",
+      "name": "Jornada"
+    },
+    "professions": {
+      "config": {
+        "professions_hide_title": {
+          "label": "Ocultar título"
+        },
+        "professions_title": {
+          "defaultValue": "Profissões",
+          "label": "Título"
+        }
+      },
+      "description": "Profissões primárias e secundárias, com o nível de cada uma",
+      "name": "Profissões"
+    },
+    "reputations": {
+      "config": {
+        "reputations_hide_title": {
+          "label": "Ocultar título"
+        },
+        "reputations_max": {
+          "description": "A reputação mais alta primeiro",
+          "label": "Máximo de facções"
+        },
+        "reputations_title": {
+          "defaultValue": "Reputações",
+          "label": "Título"
+        }
+      },
+      "description": "Reputação com cada facção, da mais alta para a mais baixa",
+      "name": "Reputações"
     },
     "stats": {
       "config": {
@@ -70,6 +164,19 @@
       },
       "description": "Vida, recurso, atributos primários e armadura",
       "name": "Atributos"
+    },
+    "talents": {
+      "config": {
+        "talents_hide_title": {
+          "label": "Ocultar título"
+        },
+        "talents_title": {
+          "defaultValue": "Talentos",
+          "label": "Título"
+        }
+      },
+      "description": "Pontos gastos em cada árvore de talentos da especialização ativa",
+      "name": "Talentos"
     }
   }
 }
