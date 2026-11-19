@@ -4695,6 +4695,16 @@ export async function getMockGithubData(): Promise<GithubData> {
         Friday: 8,
         Saturday: 4,
       },
+      // The same 64 commits by weekday and hour: each row sums to commitsByDay, each column to commitsByHour.
+      commitsByDayHour: {
+        Sunday: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1],
+        Monday: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 2, 0, 0, 1, 1, 1, 0, 0],
+        Tuesday: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 1, 2, 0, 1, 0, 1, 1, 1, 0, 0],
+        Wednesday: [1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 2, 1, 0, 1, 0, 1, 1, 0, 1, 0],
+        Thursday: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0],
+        Friday: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0],
+        Saturday: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0],
+      },
       languages: {
         TypeScript: { count: 41, color: "#3178c6" },
         JavaScript: { count: 12, color: "#f1e05a" },

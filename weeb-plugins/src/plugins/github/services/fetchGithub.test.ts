@@ -167,6 +167,19 @@ describe("fetchGithub code_habits", () => {
     expect(brazil).toMatchObject({ timeZone: "America/Sao_Paulo", timeZoneLabel: "UTC-3" })
   })
 
+  it("counts each push by weekday and hour together, for the punch card", async () => {
+    const pushed = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+    pushed.setUTCHours(1, 30, 0, 0)
+    pushedAt = pushed.toISOString()
+    const day = pushed.toLocaleDateString("en-US", { weekday: "long", timeZone: "America/Sao_Paulo" })
+
+    fakeGithub(readable)
+    const { commitsByDayHour } = await habits({ code_habits_timezone: "America/Sao_Paulo" })
+    expect(Object.keys(commitsByDayHour ?? {})).toEqual([day])
+    expect(commitsByDayHour?.[day]?.[22]).toBe(5)
+    expect(commitsByDayHour?.[day]?.reduce((a, b) => a + b, 0)).toBe(5)
+  })
+
   it("stops reading commits once the Worker's subrequest cap is hit", async () => {
     const calls = fakeGithub(() => {
       throw new Error("Too many subrequests.")
