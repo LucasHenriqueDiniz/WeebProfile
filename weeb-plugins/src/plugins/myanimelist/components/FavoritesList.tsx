@@ -131,6 +131,13 @@ function EnhancedGenreTag({ genre }: { genre: string }): React.ReactElement {
   )
 }
 
+/**
+ * One terminal line of a detailed favorite: 20px in every engine. Left to the font, the
+ * emoji line (⭐ 🎞️ 📚 📅) was 26px in Chrome and less in Firefox and WebKit, so a card
+ * sized for Chrome had up to 10px of blank space a favorite in Safari (measured 18/11/2026).
+ */
+const TERMINAL_LINE: React.CSSProperties = { height: 20, lineHeight: "20px" }
+
 function TerminalTag({ genre }: { genre: string }): React.ReactElement {
   return (
     <span className="genre-tag text-xs px-1 py-0.5 rounded bg-terminal-muted-light text-terminal-muted border border-terminal-muted truncate">
@@ -357,7 +364,7 @@ function TerminalMetaRow({ fields, isHalf }: { fields: FavoriteFields; isHalf: b
   if (!hasTerminalMetaRow(fields, isHalf)) return null
   const { score, popularity, episodes, chapters, year, status } = fields
   return (
-    <div className="flex gap-4 items-baseline">
+    <div className="flex gap-4 items-baseline" style={TERMINAL_LINE}>
       {score !== null && <span className="text-default-muted font-bold truncate">⭐{score}</span>}
       {popularity !== null && <span className="text-default-muted font-bold truncate"># {popularity}</span>}
       {episodes !== null && <span className="text-default-muted font-bold truncate">🎞️ {episodes} EP&apos;s</span>}
@@ -373,7 +380,7 @@ function TerminalMetaRow({ fields, isHalf }: { fields: FavoriteFields; isHalf: b
 function TerminalGenres({ genres }: { genres: string[] }): React.ReactElement | null {
   if (genres.length === 0) return null
   return (
-    <div className="flex mt-1 gap-1">
+    <div className="flex mt-1 gap-1" style={TERMINAL_LINE}>
       {genres.map((genre) => (
         <TerminalTag genre={genre} key={genre} />
       ))}
@@ -396,11 +403,13 @@ function TerminalDetailedFavorite({
 
   return (
     <ExternalLink href={href} className="mt-[0.5rem]">
-      <div className="text-terminal-warning truncate">* {favorite.title}</div>
+      <div className="text-terminal-warning truncate" style={TERMINAL_LINE}>
+        * {favorite.title}
+      </div>
       <TerminalMetaRow fields={fields} isHalf={isHalf} />
       <TerminalGenres genres={fields.genres} />
       {fields.synopsis !== null && (
-        <div className="w-full overflow-hidden mt-2">
+        <div className="w-full overflow-hidden mt-2" style={TERMINAL_LINE}>
           <span className="synopsis-text line-clamp-2 truncate">{fields.synopsis}</span>
         </div>
       )}
@@ -499,7 +508,9 @@ function TerminalMinimalFavorite({
 
   return (
     <ExternalLink href={href} className="mt-[0.5rem]">
-      <div className="text-terminal-warning truncate">* {favorite.title}</div>
+      <div className="text-terminal-warning truncate" style={TERMINAL_LINE}>
+        * {favorite.title}
+      </div>
       <TerminalMetaRow fields={fields} isHalf={isHalf} />
       <TerminalGenres genres={fields.genres} />
     </ExternalLink>

@@ -21,14 +21,18 @@ const TERMINAL = {
   command: 24,
   /** detailed / minimal: each favorite is a block with an 8px top margin. */
   itemMargin: 8,
-  title: 19,
-  /** The row of numbers. Its emoji (⭐ 🎞️ 📚 📅) make the line taller than plain text. */
-  metaWithEmoji: 26,
-  metaPlain: 19,
+  /**
+   * Title, the row of numbers, the genre tags and the synopsis are 20px lines, fixed in
+   * FavoritesList (TERMINAL_LINE). Left to the font, the row of numbers was 26px in Chrome
+   * for its emoji (⭐ 🎞️ 📚 📅) and less in Firefox and WebKit.
+   */
+  title: 20,
+  metaWithEmoji: 20,
+  metaPlain: 20,
   /** 4px margin + one row of genre tags. */
   genres: 24,
   /** 8px margin + one truncated line. */
-  synopsis: 27,
+  synopsis: 28,
   /** simple: paragraphs with 14px margins: 44px for one line, 30px for each extra one. */
   simpleFirstLine: 44,
   simpleExtraLine: 30,

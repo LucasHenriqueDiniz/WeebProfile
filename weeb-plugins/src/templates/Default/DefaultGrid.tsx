@@ -7,11 +7,22 @@ import { ImageComponent } from "../../utils/image"
 import type { GridItemProps } from "../types"
 import { useItemCascade, withCascade } from "../animations"
 
+/**
+ * Cell heights: 100px, and the first cell two rows and the gap between them. Fixed, so the
+ * image cannot size the row: with `h-full` on an auto-height cell the image took its own
+ * aspect ratio, and a portrait first image grew the grid by 58px past the card's height
+ * (measured 18/11/2026, Chrome 158, Firefox 150, WebKit 26.4).
+ */
+export const DEFAULT_GRID_CELL = 100
+export const DEFAULT_GRID_GAP = 4
+export const DEFAULT_GRID_HEIGHT = 2 * DEFAULT_GRID_CELL + DEFAULT_GRID_GAP
+
 function GridItem({ image, title, value, subtitle, index }: GridItemProps & { index: number }): React.ReactElement {
   return (
     <div
       className={`relative overflow-hidden rounded-lg min-w-0 w-auto min-h-100 
       ${index === 0 ? "col-span-2 row-span-2" : ""}`}
+      style={{ height: index === 0 ? DEFAULT_GRID_HEIGHT : DEFAULT_GRID_CELL }}
     >
       <div
         className={`w-full h-full

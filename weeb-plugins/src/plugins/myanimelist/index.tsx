@@ -59,8 +59,8 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
 
     // DefaultTitle, 40px; until 11/2026 it was counted with the title hidden too (40px of
     // blank space, 80 for the two statistics blocks stacked in half). The terminal bars
-    // counted 156px for 151, and the last activity 74px an entry for 72 while a running
-    // manga's "?%" wrapped to two lines and drew 91 (53px cut). Measured 18/11/2026 in
+    // counted 156px for 151, and the last activity 74px an entry while a running manga's
+    // "?%" wrapped to two lines and drew 91 (53px cut). Measured 18/11/2026 in
     // Chrome 158, Firefox 150 and WebKit 26.4; `section-heights.test.ts` pins it.
     const title = (hidden: boolean | undefined): number => (hidden ? 0 : 40)
 
@@ -132,10 +132,11 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
           }
           const n = Math.min(total, maxItems)
           if (n === 0) break
-          // Terminal: the command, then entries of three lines (19px, 19px and the 26px status
-          // line with its emoji), `gap-1`, 8px apart, and the body's padding.
+          // Terminal: the command, then entries of three 20px lines (fixed in LastUpdates: the
+          // status line's emoji made it 26px in Chrome and less elsewhere), `gap-1`, 8px apart,
+          // and the body's padding.
           h += isTerminal
-            ? 24 + n * 72 + Math.max(0, n - 1) * 8 + 8
+            ? 24 + n * 68 + Math.max(0, n - 1) * 8 + 8
             : title(cfg.last_activity_hide_title) + n * 75 + Math.max(0, n - 1) * 4
           break
         }

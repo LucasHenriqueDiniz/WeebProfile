@@ -7,6 +7,7 @@
  */
 
 import React from "react"
+import { DEFAULT_GRID_HEIGHT } from "../../templates/Default/DefaultGrid"
 import type { Plugin } from "../shared/types/plugin"
 import type { PluginData } from "../../types/index"
 import type { LastFmConfig, LastFmData } from "./types"
@@ -14,16 +15,12 @@ import { RenderLastFm } from "./components/RenderLastFm"
 import { fetchLastFmData } from "./services/fetchLastFm"
 
 /**
- * DefaultGrid, the `default` style of the top sections, without its title: the first item two
- * rows tall beside the others. Measured with 1 to 14 items in Chrome, Firefox and WebKit:
- * the height does not follow the number of items, except a single album or track (its two
- * rows have nothing beside them to stretch to). Artists draw taller than albums and tracks.
+ * DefaultGrid, the `default` style of the top sections, without its title: two 100px rows and
+ * their 4px gap (the first item spans both), and the 8px under it. Fixed whatever the items
+ * and their images. Until 11/2026 the image of the first item sized the grid, and this was
+ * the mock's: 35px of blank space under a square artist photo, a portrait one cut the card.
  */
-function defaultGridHeight(kind: "artists" | "albums" | "tracks", n: number, size: "half" | "full"): number {
-  if (kind === "artists") return size === "half" ? 247 : 251
-  if (n === 1) return size === "half" ? 206 : 209
-  return 212
-}
+const DEFAULT_GRID_SECTION_HEIGHT = DEFAULT_GRID_HEIGHT + 8
 
 export const lastFmPlugin: Plugin<LastFmConfig, PluginData & LastFmData> = {
   name: "lastfm",
@@ -97,7 +94,6 @@ export const lastFmPlugin: Plugin<LastFmConfig, PluginData & LastFmData> = {
     const topItemHeight = (
       n: number,
       displayStyle: string,
-      kind: "artists" | "albums" | "tracks",
       hasSubtitle: boolean,
       hideTitle: boolean | undefined
     ): number => {
@@ -109,7 +105,7 @@ export const lastFmPlugin: Plugin<LastFmConfig, PluginData & LastFmData> = {
       }
       if (displayStyle === "list") return title(hideTitle) + defaultListH(n)
       if (displayStyle === "grid") return title(hideTitle) + defaultImageGridH(n)
-      return title(hideTitle) + defaultGridHeight(kind, n, size)
+      return title(hideTitle) + DEFAULT_GRID_SECTION_HEIGHT
     }
 
     let h = 0
@@ -133,15 +129,15 @@ export const lastFmPlugin: Plugin<LastFmConfig, PluginData & LastFmData> = {
       } else if (s === "top_artists") {
         const max = ne.top_artists_max ?? 5
         const n = Math.min(lfmData.topArtists?.length ?? max, max)
-        h += topItemHeight(n, ne.top_artists_style ?? "default", "artists", false, ne.top_artists_hide_title)
+        h += topItemHeight(n, ne.top_artists_style ?? "default", false, ne.top_artists_hide_title)
       } else if (s === "top_albums") {
         const max = ne.top_albums_max ?? 5
         const n = Math.min(lfmData.topAlbums?.length ?? max, max)
-        h += topItemHeight(n, ne.top_albums_style ?? "default", "albums", false, ne.top_albums_hide_title)
+        h += topItemHeight(n, ne.top_albums_style ?? "default", false, ne.top_albums_hide_title)
       } else if (s === "top_tracks") {
         const max = ne.top_tracks_max ?? 5
         const n = Math.min(lfmData.topTracks?.length ?? max, max)
-        h += topItemHeight(n, ne.top_tracks_style ?? "default", "tracks", true, ne.top_tracks_hide_title)
+        h += topItemHeight(n, ne.top_tracks_style ?? "default", true, ne.top_tracks_hide_title)
       }
     }
     // The terminal body and its padding are drawn once around all the sections.

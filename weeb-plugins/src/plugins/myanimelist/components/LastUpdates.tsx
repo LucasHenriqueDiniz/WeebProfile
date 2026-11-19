@@ -79,6 +79,13 @@ function DefaultUpdate({ update }: { update: LastUpdatesAnime | LastUpdatesManga
   )
 }
 
+/**
+ * One terminal line of an update: 20px in every engine. Left to the font, the status line's
+ * emoji made it 26px in Chrome and less in Firefox and WebKit, so a card sized for Chrome had
+ * up to 10px of blank space an entry in Safari (measured 18/11/2026).
+ */
+const TERMINAL_LINE: React.CSSProperties = { height: 20, lineHeight: "20px" }
+
 function TerminalUpdate({
   update,
   hideTerminalEmojis = false,
@@ -105,8 +112,10 @@ function TerminalUpdate({
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="text-terminal-warning truncate font-bold text-md">* {title}</div>
-      <div className="flex items-center">
+      <div className="text-terminal-warning truncate font-bold text-md" style={TERMINAL_LINE}>
+        * {title}
+      </div>
+      <div className="flex items-center" style={TERMINAL_LINE}>
         {/* nowrap: "?%" broke after the "?" and took two lines, 19px more per entry. */}
         <span className="text-terminal-muted font-bold whitespace-nowrap flex-shrink-0">{percentage ?? "?"}%</span>
         <span
@@ -118,7 +127,7 @@ function TerminalUpdate({
           {current}/{total === 0 || !total ? "?" : total}
         </span>
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between" style={TERMINAL_LINE}>
         <span className="font-bold">
           <span className={`text-mal-${status.toLowerCase().split(" ").join("-")}`}>
             {emojiStatus(status, hideTerminalEmojis)} {status}
