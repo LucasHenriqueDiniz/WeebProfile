@@ -1333,6 +1333,66 @@ export const PLUGINS_METADATA = {
         ]
       },
       {
+        id: "followup",
+        name: "Issues & Pull Requests",
+        description: "Issues and pull requests by state: open, closed, merged and drafts",
+        i18nKey: {
+          name: "plugins.github.sections.followup.name",
+          description: "plugins.github.sections.followup.description"
+        },
+        configOptions: [
+        {
+          key: "followup_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_hide_title.label"
+          }
+        },
+        {
+          key: "followup_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Issues & Pull Requests",
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_title.label",
+            defaultValue: "plugins.github.sections.followup.config.followup_title.defaultValue"
+          }
+        },
+        {
+          key: "followup_scope",
+          label: "Count",
+          type: "select",
+          defaultValue: "created",
+          tooltip: "'Opened by me' counts the issues and pull requests you opened on any repository. 'On my repositories' counts the ones anyone opened on repositories you own.",
+          options: [
+            { value: "created", label: "Opened by me" },
+            { value: "repositories", label: "On my repositories" }
+          ],
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_scope.label",
+            tooltip: "plugins.github.sections.followup.config.followup_scope.tooltip",
+            options: {
+              "created": "plugins.github.sections.followup.config.followup_scope.options.created",
+              "repositories": "plugins.github.sections.followup.config.followup_scope.options.repositories"
+            }
+          }
+        },
+        {
+          key: "followup_include_archived",
+          label: "Include archived repositories",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Turn off to leave out issues and pull requests of archived repositories.",
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_include_archived.label",
+            tooltip: "plugins.github.sections.followup.config.followup_include_archived.tooltip"
+          }
+        }
+        ]
+      },
+      {
         id: "repositories",
         name: "Repositories",
         description: "List of repositories",
@@ -1634,6 +1694,115 @@ export const PLUGINS_METADATA = {
           defaultValue: false,
           i18nKey: {
             label: "plugins.github.sections.code_habits.config.code_habits_hide_footer.label"
+          }
+        }
+        ]
+      },
+      {
+        id: "lines",
+        name: "Lines of Code",
+        description: "Lines added and deleted in your repositories, per week and per repository",
+        i18nKey: {
+          name: "plugins.github.sections.lines.name",
+          description: "plugins.github.sections.lines.description"
+        },
+        configOptions: [
+        {
+          key: "lines_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github.sections.lines.config.lines_hide_title.label"
+          }
+        },
+        {
+          key: "lines_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Lines of Code",
+          i18nKey: {
+            label: "plugins.github.sections.lines.config.lines_title.label",
+            defaultValue: "plugins.github.sections.lines.config.lines_title.defaultValue"
+          }
+        },
+        {
+          key: "lines_hide_history",
+          label: "Hide weekly chart",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github.sections.lines.config.lines_hide_history.label"
+          }
+        },
+        {
+          key: "lines_chart_type",
+          label: "Chart type",
+          type: "select",
+          defaultValue: "area",
+          tooltip: "Additions are drawn above the line, deletions below it.",
+          options: [
+            { value: "area", label: "Area" },
+            { value: "bars", label: "Bars" }
+          ],
+          i18nKey: {
+            label: "plugins.github.sections.lines.config.lines_chart_type.label",
+            tooltip: "plugins.github.sections.lines.config.lines_chart_type.tooltip",
+            options: {
+              "area": "plugins.github.sections.lines.config.lines_chart_type.options.area",
+              "bars": "plugins.github.sections.lines.config.lines_chart_type.options.bars"
+            }
+          }
+        },
+        {
+          key: "lines_history_period",
+          label: "Chart period",
+          type: "select",
+          defaultValue: "1_year",
+          options: [
+            { value: "6_months", label: "Last 6 months" },
+            { value: "1_year", label: "Last 12 months" },
+            { value: "2_years", label: "Last 2 years" }
+          ],
+          i18nKey: {
+            label: "plugins.github.sections.lines.config.lines_history_period.label",
+            options: {
+              "6_months": "plugins.github.sections.lines.config.lines_history_period.options.6_months",
+              "1_year": "plugins.github.sections.lines.config.lines_history_period.options.1_year",
+              "2_years": "plugins.github.sections.lines.config.lines_history_period.options.2_years"
+            }
+          }
+        },
+        {
+          key: "lines_repositories_shown",
+          label: "Repositories listed",
+          type: "number",
+          defaultValue: 4,
+          min: 0,
+          max: 10,
+          step: 1,
+          description: "0 hides the list",
+          tooltip: "The repositories where you changed the most lines, all time.",
+          i18nKey: {
+            label: "plugins.github.sections.lines.config.lines_repositories_shown.label",
+            description: "plugins.github.sections.lines.config.lines_repositories_shown.description",
+            tooltip: "plugins.github.sections.lines.config.lines_repositories_shown.tooltip"
+          }
+        },
+        {
+          key: "lines_repositories_max",
+          label: "Repositories counted",
+          type: "number",
+          defaultValue: 20,
+          min: 1,
+          max: 50,
+          step: 1,
+          description: "Maximum 50 repositories",
+          tooltip: "Your own repositories (not forks) pushed to most recently. GitHub computes each one's statistics on the first request and does not count lines in repositories with 10,000 commits or more.",
+          i18nKey: {
+            label: "plugins.github.sections.lines.config.lines_repositories_max.label",
+            description: "plugins.github.sections.lines.config.lines_repositories_max.description",
+            tooltip: "plugins.github.sections.lines.config.lines_repositories_max.tooltip"
           }
         }
         ]

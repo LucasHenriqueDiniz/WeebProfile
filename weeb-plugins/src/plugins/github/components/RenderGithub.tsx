@@ -6,9 +6,11 @@ import { GithubCalendar } from "./Calendar"
 import { GithubCodeHabits } from "./CodeHabits"
 import { FavoriteLanguages } from "./FavoriteLanguages"
 import { FavoriteLicense } from "./FavoriteLicense"
+import { GithubFollowup } from "./Followup"
 import { GithubFeaturedRepositories } from "./FeaturedRepositories"
 import { GithubGists } from "./Gists"
 import { GithubIntroduction } from "./Introduction"
+import { GithubLines } from "./Lines"
 import { GithubNotableContributions } from "./NotableContributions"
 import { GithubPeople } from "./People"
 import { GithubProfile } from "./Profile"
@@ -82,6 +84,8 @@ export function RenderGithub({
         )
       case "activity":
         return <GithubActivity key="activity" data={data.activity} config={config} style={style} size={size} />
+      case "followup":
+        return <GithubFollowup key="followup" data={data.followup} config={config} style={style} size={size} />
       case "calendar":
         return <GithubCalendar key="calendar" data={data.calendar} config={config} style={style} size={size} />
       case "code_habits":
@@ -139,6 +143,8 @@ export function RenderGithub({
         return <GithubSponsors key="sponsors" data={data.sponsors} config={config} style={style} size={size} />
       case "star_lists":
         return <GithubStarLists key="star_lists" data={data.starLists} config={config} style={style} size={size} />
+      case "lines":
+        return <GithubLines key="lines" data={data.lines} config={config} style={style} size={size} />
       case "notable_contributions":
         return (
           <GithubNotableContributions

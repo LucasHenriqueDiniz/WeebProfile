@@ -57,11 +57,13 @@ export const SECTION_PREVIEWS: Record<
   github: {
     profile: { default: [415, 143], terminal: [415, 156] },
     activity: { default: [415, 180], terminal: [415, 256] },
+    followup: { default: [415, 194], terminal: [415, 204] },
     repositories: { default: [415, 156], terminal: [415, 236] },
     favorite_languages: { default: [415, 354], terminal: [415, 316] },
     favorite_license: { default: [415, 112], terminal: [415, 135] },
     calendar: { default: [415, 347], terminal: [415, 181] },
     code_habits: { default: [415, 628], terminal: [415, 1136] },
+    lines: { default: [415, 376], terminal: [415, 316] },
     starred_repositories: { default: [415, 1440], terminal: [415, 304] },
     gists: { default: [415, 456], terminal: [415, 136] },
     stargazers: { default: [415, 593], terminal: [415, 196] },

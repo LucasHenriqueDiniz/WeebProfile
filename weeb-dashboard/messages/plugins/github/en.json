@@ -144,6 +144,31 @@
       "description": "Featured repositories (requires repository URL)",
       "name": "Featured Repositories"
     },
+    "followup": {
+      "config": {
+        "followup_hide_title": {
+          "label": "Hide title"
+        },
+        "followup_include_archived": {
+          "label": "Include archived repositories",
+          "tooltip": "Turn off to leave out issues and pull requests of archived repositories."
+        },
+        "followup_scope": {
+          "label": "Count",
+          "options": {
+            "created": "Opened by me",
+            "repositories": "On my repositories"
+          },
+          "tooltip": "'Opened by me' counts the issues and pull requests you opened on any repository. 'On my repositories' counts the ones anyone opened on repositories you own."
+        },
+        "followup_title": {
+          "defaultValue": "Issues & Pull Requests",
+          "label": "Title"
+        }
+      },
+      "description": "Issues and pull requests by state: open, closed, merged and drafts",
+      "name": "Issues & Pull Requests"
+    },
     "gists": {
       "config": {
         "gists_hide_title": {
@@ -179,6 +204,48 @@
       },
       "description": "User profile introduction",
       "name": "Introduction"
+    },
+    "lines": {
+      "config": {
+        "lines_chart_type": {
+          "label": "Chart type",
+          "options": {
+            "area": "Area",
+            "bars": "Bars"
+          },
+          "tooltip": "Additions are drawn above the line, deletions below it."
+        },
+        "lines_hide_history": {
+          "label": "Hide weekly chart"
+        },
+        "lines_hide_title": {
+          "label": "Hide title"
+        },
+        "lines_history_period": {
+          "label": "Chart period",
+          "options": {
+            "1_year": "Last 12 months",
+            "2_years": "Last 2 years",
+            "6_months": "Last 6 months"
+          }
+        },
+        "lines_repositories_max": {
+          "description": "Maximum 50 repositories",
+          "label": "Repositories counted",
+          "tooltip": "Your own repositories (not forks) pushed to most recently. GitHub computes each one's statistics on the first request and does not count lines in repositories with 10,000 commits or more."
+        },
+        "lines_repositories_shown": {
+          "description": "0 hides the list",
+          "label": "Repositories listed",
+          "tooltip": "The repositories where you changed the most lines, all time."
+        },
+        "lines_title": {
+          "defaultValue": "Lines of Code",
+          "label": "Title"
+        }
+      },
+      "description": "Lines added and deleted in your repositories, per week and per repository",
+      "name": "Lines of Code"
     },
     "notable_contributions": {
       "config": {
