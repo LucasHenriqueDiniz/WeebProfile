@@ -14,6 +14,7 @@ import { duolingoPlugin } from "./duolingo/index"
 import { codewarsPlugin } from "./codewars/index"
 import { devToPlugin } from "./devto/index"
 import { codeforcesPlugin } from "./codeforces/index"
+import { leetcodePlugin } from "./leetcode/index"
 import { stackoverflowPlugin } from "./stackoverflow/index"
 import { websitesPlugin } from "./websites/index"
 import { aboutPlugin } from "./about/index"
@@ -46,6 +47,7 @@ export class PluginManager {
     this.register(codewarsPlugin)
     this.register(devToPlugin)
     this.register(codeforcesPlugin)
+    this.register(leetcodePlugin)
     this.register(stackoverflowPlugin)
     this.register(websitesPlugin)
     this.register(aboutPlugin)

@@ -37,6 +37,7 @@ export { getAllTags, getPluginsByTag, getPluginTags, hasPluginTag, PLUGIN_TAGS, 
 export { duolingoPlugin } from "./duolingo/index"
 export { codewarsPlugin } from "./codewars/index"
 export { codeforcesPlugin } from "./codeforces/index"
+export { leetcodePlugin } from "./leetcode/index"
 export { stackoverflowPlugin } from "./stackoverflow/index"
 export { websitesPlugin } from "./websites/index"
 export { aboutPlugin } from "./about/index"

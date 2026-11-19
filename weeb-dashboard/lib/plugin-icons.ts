@@ -6,6 +6,7 @@ import {
   SiCodewars,
   SiDevdotto,
   SiDuolingo,
+  SiLeetcode,
   SiMyanimelist,
   SiStackoverflow,
 } from "react-icons/si"
@@ -32,6 +33,7 @@ const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   steam: FaSteam,
   codewars: SiCodewars,
   codeforces: SiCodeforces,
+  leetcode: SiLeetcode,
   stackoverflow: SiStackoverflow,
   duolingo: SiDuolingo,
   spotify: FaSpotify,

@@ -26,6 +26,9 @@ const LISTS: Array<[plugin: string, section: string, key: string, n: number]> = 
   ["lastfm", "recent_tracks", "recent_tracks_max", 2],
   ["lastfm", "top_artists", "top_artists_max", 2],
   ["lastfm", "top_tracks", "top_tracks_max", 2],
+  ["leetcode", "skills", "skills_max", 2],
+  ["leetcode", "languages", "languages_max", 2],
+  ["leetcode", "recent", "recent_max", 2],
 ]
 
 // Plugin mock loaders are chatty.

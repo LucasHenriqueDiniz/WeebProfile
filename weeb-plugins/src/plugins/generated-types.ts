@@ -8,7 +8,7 @@
 /**
  * Union type of all available plugin names
  */
-export type PluginName = "16personalities" | "about" | "anilist" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites"
+export type PluginName = "16personalities" | "about" | "anilist" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "leetcode" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites"
 
 /**
  * Union type of all available categories
@@ -29,6 +29,7 @@ export type PluginSectionIds = {
   github: "profile" | "activity" | "repositories" | "favorite_languages" | "favorite_license" | "calendar" | "code_habits" | "starred_repositories" | "gists" | "stargazers" | "top_repositories" | "star_lists" | "notable_contributions" | "recent_activity" | "introduction" | "featured_repositories" | "sponsorships" | "sponsors" | "people" | "repository_contributors"
   github_repo: "banner" | "stats" | "star_graph" | "languages" | "topics" | "overview"
   lastfm: "recent_tracks" | "statistics" | "top_artists" | "top_albums" | "top_tracks"
+  leetcode: "solved" | "skills" | "languages" | "recent"
   lyfta: "statistics" | "recent_workouts" | "exercises" | "overview" | "last_workout"
   myanimelist: "statistics" | "last_activity" | "statistics_simple" | "anime_bar" | "manga_bar" | "anime_favorites" | "manga_favorites" | "character_favorites" | "people_favorites"
   stackoverflow: "reputation" | "badges" | "answers_questions" | "tags_expertise"
@@ -50,6 +51,7 @@ export type PluginEssentialConfigKeys = {
   github: "pat"
   github_repo: "pat"
   lastfm: "apiKey" | "username"
+  leetcode: never
   lyfta: "apiKey"
   myanimelist: never
   stackoverflow: never
@@ -81,7 +83,7 @@ export type PluginConfig<T extends PluginName> = {
  * Type guard to check if it's a valid plugin name
  */
 export function isValidPluginName(name: string): name is PluginName {
-  return (["16personalities","about","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"] as readonly string[]).includes(name)
+  return (["16personalities","about","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","leetcode","lyfta","myanimelist","stackoverflow","steam","websites"] as readonly string[]).includes(name)
 }
 
 /**

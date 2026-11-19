@@ -911,6 +911,7 @@
         "steam": "Recent games, most played and library hours.",
         "codeforces": "Competitive programming rating and stats.",
         "codewars": "Katas solved, rank and languages.",
+        "leetcode": "Problems solved by difficulty, skills and recent submissions.",
         "stackoverflow": "Reputation, badges and answer activity.",
         "duolingo": "Streak, XP and the languages you're learning.",
         "lyfta": "Workouts, volume and recent exercises.",

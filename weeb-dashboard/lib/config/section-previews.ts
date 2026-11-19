@@ -94,6 +94,13 @@ export const SECTION_PREVIEWS: Record<
     top_tracks: { default: [415, 276], terminal: [415, 375] },
   },
 
+  leetcode: {
+    solved: { default: [415, 182], terminal: [415, 128] },
+    skills: { default: [415, 328], terminal: [415, 248] },
+    languages: { default: [415, 198], terminal: [415, 148] },
+    recent: { default: [415, 210], terminal: [415, 128] },
+  },
+
   lyfta: {
     statistics: { default: [415, 236], terminal: [415, 176] },
     recent_workouts: { default: [415, 316], terminal: [415, 156] },
