@@ -3,7 +3,7 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 90 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 91 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
@@ -609,6 +609,10 @@ Show a card with stats for a single GitHub repository
       <td><code>overview</code></td>
       <td><img src="../weeb-dashboard/public/previews/github_repo/default/overview.svg" width="415"></td>
     </tr>
+    <tr>
+      <td><code>traffic</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/default/traffic.svg" width="415"></td>
+    </tr>
   </table>
 
 ### Terminal Style
@@ -641,6 +645,10 @@ Show a card with stats for a single GitHub repository
     <tr>
       <td><code>overview</code></td>
       <td><img src="../weeb-dashboard/public/previews/github_repo/terminal/overview.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>traffic</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github_repo/terminal/traffic.svg" width="415"></td>
     </tr>
   </table>
 

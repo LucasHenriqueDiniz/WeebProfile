@@ -4,6 +4,7 @@ import type { GithubRepoConfig, GithubRepoData } from "../types"
 import { REPOSITORY_CARD_QUERY } from "./queries"
 import { getMockGithubRepoData } from "./mock-data"
 import { fetchStarHistory } from "./star-history"
+import { fetchTraffic, TrafficPermissionError } from "./traffic"
 import { embedImageOrNull as embedImage } from "../../../utils/image-to-base64"
 
 const GITHUB_BUDGET_MS = 45_000
@@ -141,9 +142,23 @@ export async function fetchGithubRepoData(
       }))
 
     const stargazerCount = repo.stargazerCount || 0
+    const sections = config.sections ?? []
+    const wantsTraffic = sections.includes("traffic")
     // Best effort: without the history (rate limit, timeout) the card still renders,
-    // just without the chart.
-    const starHistory = await fetchStarHistory(repo.nameWithOwner, repo.createdAt, pat, stargazerCount).catch(() => [])
+    // just without the chart. A traffic card draws no star, so it skips the history
+    // (up to 100 requests for an old repository).
+    const starHistory = sections.some((s) => s !== "traffic")
+      ? await fetchStarHistory(repo.nameWithOwner, repo.createdAt, pat, stargazerCount).catch(() => [])
+      : []
+    // Not best effort: a traffic card without its traffic would be a blank chart, and a
+    // token without push access needs a message that says so.
+    const traffic = wantsTraffic
+      ? await fetchTraffic(repo.nameWithOwner, pat, {
+          clones: config.traffic_show_clones === true,
+          referrers: config.traffic_show_referrers === true,
+          paths: config.traffic_show_paths === true,
+        })
+      : null
 
     return {
       name: repo.name,
@@ -163,8 +178,10 @@ export async function fetchGithubRepoData(
       topics: (repo.repositoryTopics?.nodes || []).map((n) => n.topic.name),
       languages,
       starHistory,
+      traffic,
     }
   } catch (error) {
+    if (error instanceof TrafficPermissionError) throw error
     if (isPermissionError(error)) {
       throw new Error(
         "Your GitHub Classic Token can't read this repository. " +

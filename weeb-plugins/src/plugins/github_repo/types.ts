@@ -188,11 +188,52 @@ export interface GithubRepoConfig {
   max_topics?: number
   // Overview (compact multi-metric panel combining stats + star graph + languages)
   overview_max_languages?: number
+  // Traffic (views per day over GitHub's 14-day window; needs push access to the repo)
+  traffic_show_clones?: boolean
+  traffic_show_referrers?: boolean
+  traffic_show_paths?: boolean
+  traffic_max_items?: number
 }
 
 export interface StarHistoryPoint {
   date: string
   count: number
+}
+
+export interface TrafficDay {
+  /** Midnight UTC of the day, ISO. */
+  date: string
+  count: number
+  uniques: number
+}
+
+export interface TrafficSeries {
+  /** GitHub's totals over the window: uniques are not the sum of each day's. */
+  count: number
+  uniques: number
+  /** The 14 days of the window, oldest first. */
+  days: TrafficDay[]
+}
+
+export interface TrafficReferrer {
+  referrer: string
+  count: number
+  uniques: number
+}
+
+export interface TrafficPath {
+  path: string
+  title: string
+  count: number
+  uniques: number
+}
+
+export interface RepoTraffic {
+  views: TrafficSeries
+  /** null when the section does not show them (not fetched). */
+  clones: TrafficSeries | null
+  referrers: TrafficReferrer[] | null
+  paths: TrafficPath[] | null
 }
 
 export interface RepoLanguage {
@@ -225,4 +266,6 @@ export interface GithubRepoData {
   topics: string[]
   languages: RepoLanguage[]
   starHistory: StarHistoryPoint[]
+  /** Only fetched when the traffic section is on. */
+  traffic?: RepoTraffic | null
 }

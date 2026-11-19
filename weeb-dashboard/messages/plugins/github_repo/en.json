@@ -3,7 +3,7 @@
   "displayName": "Repository",
   "essentialConfig": {
     "pat": {
-      "description": "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository.",
+      "description": "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository. The Traffic section needs push access to the repository and the 'repo' scope.",
       "label": "GitHub Classic Token",
       "placeholder": "ghp_..."
     }
@@ -336,6 +336,38 @@
       },
       "description": "Repository topic tags",
       "name": "Topics"
+    },
+    "traffic": {
+      "config": {
+        "content_size": {
+          "label": "Size",
+          "options": {
+            "lg": "Large",
+            "md": "Medium (default)",
+            "sm": "Small",
+            "xl": "Extra large"
+          },
+          "tooltip": "Scales font size, icons, chart and spacing together."
+        },
+        "traffic_max_items": {
+          "label": "Maximum referrers and paths",
+          "tooltip": "Rows shown in each list."
+        },
+        "traffic_show_clones": {
+          "label": "Show clones",
+          "tooltip": "Adds the clones and unique cloners of the last 14 days, with a bar per day."
+        },
+        "traffic_show_paths": {
+          "label": "Show top paths",
+          "tooltip": "The pages of the repository with the most views (GitHub lists the top 10)."
+        },
+        "traffic_show_referrers": {
+          "label": "Show top referrers",
+          "tooltip": "The sites that sent the most views (GitHub lists the top 10)."
+        }
+      },
+      "description": "Views and unique visitors per day over GitHub's last 14 days. Only works for repositories the token's account can push to.",
+      "name": "Traffic"
     }
   }
 }
