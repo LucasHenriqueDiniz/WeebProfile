@@ -11,9 +11,12 @@ import {
   RECENT_ACTIVITY_QUERY,
   REPOSITORIES_QUERY,
   STAR_LISTS_QUERY,
+  FOLLOWUP_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
+import { fetchLinesData } from "./fetchLines"
 import { lastSixMonthsStart, firstDayOfLastSixMonths } from "../utils"
+import { duration, isocalendarFromCalendar, isocalendarWindow } from "../isocalendar"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { randomColorWithString } from "../../../utils/string"
 
@@ -245,12 +248,16 @@ export async function fetchGithubData(
   // Development mode - return mock data
   if (dev) {
     const mock = await getMockGithubData()
+    // The mock is all of 2025: the isometric calendar ends on its last day, as a fetched one
+    // ends today.
+    const window = isocalendarWindow(duration(config), newestDay(mock))
+    const isocalendar = { start: window.start, end: window.end, days: isocalendarFromCalendar(mock.calendar, window)! }
     // The mock is one fixed year. For last_6_months, answer like the fetch does: its last six
     // months and their total. The preview showed the mock's figure for the year (844) under
     // "in the last 6 months".
     return config.calendar_year_mode === "last_6_months"
-      ? { ...mock, calendar: lastSixMonthsOf(mock.calendar.weeks) }
-      : mock
+      ? { ...mock, isocalendar, calendar: lastSixMonthsOf(mock.calendar.weeks) }
+      : { ...mock, isocalendar }
   }
 
   // Validate Classic Token and username
@@ -291,8 +298,10 @@ export async function fetchGithubData(
   let ownedRepositories: Promise<OwnedRepositories> | undefined
 
   try {
-    // Process each requested section
-    for (const section of sections) {
+    // Process each requested section. The isometric calendar goes last, to reuse the days
+    // the calendar section fetched.
+    const ordered = [...sections.filter((s) => s !== "isocalendar"), ...sections.filter((s) => s === "isocalendar")]
+    for (const section of ordered) {
       try {
         // Code habits uses REST API, not GraphQL
         if (section === "code_habits") {
@@ -350,6 +359,29 @@ export async function fetchGithubData(
             console.warn(`Error fetching featured repositories:`, error.message)
             data.featuredRepositories = []
           }
+          continue
+        }
+
+        // The calendar asks GitHub for its own ranges. Through the generic query below it first
+        // asked for the default year without a range, and threw the answer away.
+        if (section === "calendar") {
+          await processCalendarData(graphqlClient, username, config, data)
+          continue
+        }
+
+        if (section === "isocalendar") {
+          data.isocalendar = await fetchIsocalendar(graphqlClient, username, config, data.calendar)
+          continue
+        }
+
+        // Lines of code: REST contributor statistics per repository, retried while GitHub computes them
+        if (section === "lines") {
+          data.lines = await fetchLinesData(rest, graphqlClient, username, config)
+          continue
+        }
+
+        if (section === "followup") {
+          data.followup = await fetchFollowup(graphqlClient, username, config)
           continue
         }
 
@@ -440,10 +472,6 @@ export async function fetchGithubData(
 
           case "activity":
             data.activity = processActivityData(result)
-            break
-
-          case "calendar":
-            await processCalendarData(graphqlClient, username, config, data)
             break
 
           case "starred_repositories":
@@ -617,6 +645,63 @@ function processActivityData(result: GraphQLResponse): GithubData["activity"] {
     pullRequests: user.pullRequests?.totalCount || 0,
     issues: user.issues?.totalCount || 0,
     gists: user.gists?.totalCount || 0,
+  }
+}
+
+type FollowupSearch = "issuesOpen" | "issuesClosed" | "prOpen" | "prDraft" | "prMerged" | "prClosed"
+
+/**
+ * The search behind each count of the followup section. The six are disjoint and cover
+ * every issue and pull request: a pull request is open (not a draft), an open draft, merged,
+ * or closed without merging (a closed draft included). lowlighter/metrics counted a draft of
+ * any state as a draft and left closed drafts out of closed; here "draft" means open.
+ *
+ * - `created`: what the user opened anywhere (`author:`); `repositories`: everything opened
+ *   on the user's own repositories, by anyone (`user:`).
+ * - `is:public` unless the card includes private repositories: with the `repo` scope, search
+ *   counts what the token can see, and a public card showed 665 pull requests for 366
+ *   public ones (LucasHenriqueDiniz, 18/11/2026).
+ * - `archived:false` when archived repositories are left out.
+ */
+export function followupSearches(username: string, config: GithubConfig): Record<FollowupSearch, string> {
+  const who = config.followup_scope === "repositories" ? `user:${username}` : `author:${username}`
+  const scope = [
+    who,
+    config.repositories_use_private ? "" : "is:public",
+    config.followup_include_archived === false ? "archived:false" : "",
+  ]
+    .filter(Boolean)
+    .join(" ")
+  return {
+    issuesOpen: `${scope} is:issue is:open`,
+    issuesClosed: `${scope} is:issue is:closed`,
+    prOpen: `${scope} is:pr is:open draft:false`,
+    prDraft: `${scope} is:pr is:open draft:true`,
+    prMerged: `${scope} is:pr is:merged`,
+    prClosed: `${scope} is:pr is:closed is:unmerged`,
+  }
+}
+
+/** Issues and pull requests by state: one GraphQL call, six search counts. */
+async function fetchFollowup(
+  graphqlClient: ReturnType<typeof graphql.defaults>,
+  username: string,
+  config: GithubConfig
+): Promise<NonNullable<GithubData["followup"]>> {
+  const result = await graphqlClient<Record<FollowupSearch, { issueCount: number }>>(
+    FOLLOWUP_QUERY,
+    followupSearches(username, config)
+  )
+  const count = (search: FollowupSearch) => result[search]?.issueCount ?? 0
+  return {
+    scope: config.followup_scope === "repositories" ? "repositories" : "created",
+    issues: { open: count("issuesOpen"), closed: count("issuesClosed") },
+    pullRequests: {
+      open: count("prOpen"),
+      draft: count("prDraft"),
+      merged: count("prMerged"),
+      closed: count("prClosed"),
+    },
   }
 }
 
@@ -914,6 +999,47 @@ function lastSixMonthsOf(weeks: ContributionWeek[]): GithubData["calendar"] {
     .flatMap((week) => week.contributionDays)
     .reduce((sum, day) => sum + day.contributionCount, 0)
   return { totalContributions, weeks: kept }
+}
+
+/** The newest day of the mock's calendar that is not after today. */
+function newestDay(mock: GithubData): string {
+  const today = new Date().toISOString().slice(0, 10)
+  let newest = ""
+  for (const week of mock.calendar.weeks) {
+    for (const day of week.contributionDays) if (day.date > newest && day.date <= today) newest = day.date
+  }
+  return newest || today
+}
+
+/**
+ * The isometric calendar's days, up to today (UTC). From the calendar section when it
+ * fetched all of them (no request), else in one query: the window is at most a year.
+ */
+async function fetchIsocalendar(
+  graphqlClient: ReturnType<typeof graphql.defaults>,
+  username: string,
+  config: GithubConfig,
+  calendar: GithubData["calendar"] | undefined,
+  now: Date = new Date()
+): Promise<GithubData["isocalendar"]> {
+  const window = isocalendarWindow(duration(config), now.toISOString().slice(0, 10))
+  const reused = isocalendarFromCalendar(calendar, window)
+  if (reused) return { start: window.start, end: window.end, days: reused }
+
+  const result = await graphqlClient<GraphQLResponse>(SECTION_QUERIES.calendar, {
+    login: username,
+    from: `${window.from}T00:00:00Z`,
+    to: `${window.end}T23:59:59Z`,
+  })
+  const weeks = result.user.contributionsCollection?.contributionCalendar?.weeks ?? []
+  // GitHub answers the range asked; a day it left out counts as one without contributions.
+  const known = new Map(weeks.flatMap((w) => w.contributionDays).map((d) => [d.date, d.contributionCount]))
+  const days: NonNullable<GithubData["isocalendar"]>["days"] = []
+  for (let ms = Date.parse(`${window.from}T00:00:00Z`); ms <= Date.parse(`${window.end}T00:00:00Z`); ms += 86_400_000) {
+    const date = new Date(ms).toISOString().slice(0, 10)
+    days.push({ date, count: known.get(date) ?? 0 })
+  }
+  return { start: window.start, end: window.end, days }
 }
 
 /**

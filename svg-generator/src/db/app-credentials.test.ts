@@ -15,6 +15,14 @@ describe("withAppCredentials", () => {
     expect(Object.keys(merged.steam!)).toEqual(["apikey"])
   })
 
+  it("supplies both halves of the Battle.net client to WoW Forever", () => {
+    const merged = withAppCredentials(
+      {},
+      { BATTLENET_CLIENT_ID: "client-id", BATTLENET_CLIENT_SECRET: "client-secret" }
+    )
+    expect(merged.wow_forever).toEqual({ clientid: "client-id", clientsecret: "client-secret" })
+  })
+
   it("adds nothing when the deployment has no key", () => {
     expect(withAppCredentials({}, {})).toEqual({})
   })

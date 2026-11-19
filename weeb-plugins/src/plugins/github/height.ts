@@ -18,6 +18,7 @@ import { type TextFont, textWidth, wrappedLineCount } from "../../utils/text-lin
 import type { GithubConfig, GithubData } from "./types"
 import { groupActivitiesByDay } from "./components/RecentActivity"
 import { shownRepositories } from "./components/StarLists"
+import { DEFAULT_CHART_HEIGHT, TERMINAL_CHART_HEIGHT, linesView } from "./components/Lines"
 
 type Size = "half" | "full"
 
@@ -94,6 +95,21 @@ export function favoriteLanguagesHeight(cfg: GithubConfig, languages: GithubData
   // the terminal, 24px rows under a 10px bar in the default style.
   if (isTerminal) return TERMINAL_COMMAND_HEIGHT + LINE + n * (4 + LINE) + TERMINAL_BODY_PADDING
   return title(cfg.favorite_languages_hide_title) + 10 + n * (4 + 24)
+}
+
+/**
+ * The followup section draws the same boxes for every count (numbers do not wrap: they are
+ * abbreviated and `whitespace-nowrap`), so its height depends only on the style, the size
+ * and the title. Default: the columns of Followup.tsx, the taller being pull requests: its
+ * 20px label line, the 10px bar and its legend rows (two states a row in full, one in half),
+ * `gap-1` apart. Terminal: per group a label line, the bar line and its legend lines (one
+ * for issues, two for pull requests), the groups `gap-2` apart.
+ */
+export function followupHeight(cfg: GithubConfig, gh: GithubData, size: Size, isTerminal: boolean): number {
+  if (!gh.followup) return 0
+  if (isTerminal) return TERMINAL_COMMAND_HEIGHT + (3 + 4) * LINE + 8 + TERMINAL_BODY_PADDING
+  const legendRows = size === "half" ? 4 : 2
+  return title(cfg.followup_hide_title) + LINE + 4 + 10 + 4 + stack(Array(legendRows).fill(LINE), 4)
 }
 
 export function favoriteLicenseHeight(cfg: GithubConfig, isTerminal: boolean): number {
@@ -385,4 +401,31 @@ export function repositoryContributorsHeight(cfg: GithubConfig, gh: GithubData, 
   // Cards of a 32px avatar beside two lines (20 + 16) in `p-2`, 2 or 3 columns, `gap-3`
   const rows = Math.ceil(n / (size === "full" ? 3 : 2))
   return title(cfg.repository_contributors_hide_title) + stack(Array(rows).fill(52), 12)
+}
+
+export function linesHeight(cfg: GithubConfig, gh: GithubData, isTerminal: boolean): number {
+  const view = linesView(cfg, gh.lines)
+  if (!view) return 0
+  const repositories = view.repositories.length
+  const notes = view.notes.length
+  if (isTerminal) {
+    // Three 20px lines, the chart under its `text-xs` label (`mt-2`, `mt-1`), the grid
+    // (`mt-2`, header and rows) and the notes (`mt-1`, 16px lines).
+    return (
+      TERMINAL_COMMAND_HEIGHT +
+      (view.hasLines ? 3 * LINE : 0) +
+      (view.period ? 8 + 16 + 4 + TERMINAL_CHART_HEIGHT : 0) +
+      (repositories > 0 ? 8 + LINE + repositories * LINE : 0) +
+      notes * (4 + 16) +
+      TERMINAL_BODY_PADDING
+    )
+  }
+  // One `gap-2` column: the 48px totals, the chart over its 12px labels (`mt-1`), rows of a
+  // 20px line and a 4px bar (`mt-1`) `gap-2` apart, and the notes' 16px lines.
+  const blocks: number[] = []
+  if (view.hasLines) blocks.push(48)
+  if (view.period) blocks.push(DEFAULT_CHART_HEIGHT + 4 + 12)
+  if (repositories > 0) blocks.push(stack(Array(repositories).fill(28), 8))
+  blocks.push(...Array(notes).fill(16))
+  return title(cfg.lines_hide_title) + stack(blocks, 8)
 }

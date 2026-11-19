@@ -57,11 +57,14 @@ export const SECTION_PREVIEWS: Record<
   github: {
     profile: { default: [415, 143], terminal: [415, 156] },
     activity: { default: [415, 180], terminal: [415, 256] },
+    followup: { default: [415, 194], terminal: [415, 204] },
     repositories: { default: [415, 156], terminal: [415, 236] },
     favorite_languages: { default: [415, 354], terminal: [415, 316] },
     favorite_license: { default: [415, 112], terminal: [415, 135] },
     calendar: { default: [415, 347], terminal: [415, 181] },
+    isocalendar: { default: [415, 298], terminal: [415, 290] },
     code_habits: { default: [415, 628], terminal: [415, 1136] },
+    lines: { default: [415, 376], terminal: [415, 316] },
     starred_repositories: { default: [415, 1440], terminal: [415, 304] },
     gists: { default: [415, 456], terminal: [415, 136] },
     stargazers: { default: [415, 593], terminal: [415, 196] },
@@ -136,6 +139,19 @@ export const SECTION_PREVIEWS: Record<
 
   websites: {
     websites: { default: [415, 481], terminal: [415, 152] },
+  },
+
+  wow_forever: {
+    character: { default: [415, 232], terminal: [415, 244] },
+    equipment: { default: [415, 432], terminal: [415, 364] },
+    stats: { default: [415, 176], terminal: [415, 144] },
+    journey: { default: [415, 176], terminal: [415, 144] },
+    professions: { default: [415, 156], terminal: [415, 124] },
+    reputations: { default: [415, 212], terminal: [415, 164] },
+    talents: { default: [415, 156], terminal: [415, 124] },
+    dungeons: { default: [415, 216], terminal: [415, 184] },
+    achievements: { default: [415, 192], terminal: [415, 164] },
+    collection: { default: [415, 144], terminal: [415, 124] },
   },
 }
 

@@ -17,6 +17,8 @@ import type { EssentialConfigs } from "./essential-configs.js"
 
 interface AppCredentialEnv {
   STEAM_API_KEY?: string
+  BATTLENET_CLIENT_ID?: string
+  BATTLENET_CLIENT_SECRET?: string
   GITHUB_PREVIEW_TOKEN?: string
 }
 
@@ -28,7 +30,13 @@ const APP_CREDENTIALS: Array<{
   plugin: string
   key: string
   read: (env: AppCredentialEnv) => string | undefined
-}> = [{ plugin: "steam", key: "apikey", read: (env) => env.STEAM_API_KEY }]
+}> = [
+  { plugin: "steam", key: "apikey", read: (env) => env.STEAM_API_KEY },
+  // WoW Forever reads public characters with the application's Battle.net client
+  // (client credentials grant). The pair is the application's; no user has one to give.
+  { plugin: "wow_forever", key: "clientid", read: (env) => env.BATTLENET_CLIENT_ID },
+  { plugin: "wow_forever", key: "clientsecret", read: (env) => env.BATTLENET_CLIENT_SECRET },
+]
 
 export function withAppCredentials(configs: EssentialConfigs, env: AppCredentialEnv): EssentialConfigs {
   const merged: EssentialConfigs = { ...configs }
@@ -65,7 +73,7 @@ const STEAM_ID64 = /^7656\d{13}$/
  *   config. It is an identifier anyone can look up, not a secret, so it travels in the
  *   plugin's public config and is moved here.
  *
- * The application's own credentials (Steam's key) are applied on top, as for any render.
+ * The application's own credentials (Steam's key, the Battle.net client) are applied on top, as for any render.
  */
 export function previewCredentials(
   plugins: Record<string, Record<string, unknown> | undefined>,

@@ -1,0 +1,182 @@
+{
+  "description": "Muestra tu personaje de World of Warcraft: Forever: equipo, atributos, profesiones, reputaciones, talentos y más",
+  "displayName": "WoW Forever",
+  "sections": {
+    "achievements": {
+      "config": {
+        "achievements_hide_title": {
+          "label": "Ocultar título"
+        },
+        "achievements_max": {
+          "description": "Los más recientes primero",
+          "label": "Máximo de logros"
+        },
+        "achievements_title": {
+          "defaultValue": "Logros",
+          "label": "Título"
+        }
+      },
+      "description": "Los logros más recientes, con su ícono y fecha",
+      "name": "Logros"
+    },
+    "character": {
+      "config": {
+        "character": {
+          "description": "Nombre y apellido, o el enlace del personaje en la armería (de Blizzard o de wowforeverdata.com)",
+          "label": "Personaje",
+          "placeholder": "Anduin Wrynn",
+          "tooltip": "Los personajes de Forever no tienen reino: el nombre y el apellido identifican a uno por región. Blizzard muestra el personaje desde el nivel 10, después de que cierra sesión, y dibuja su imagen unas horas más tarde."
+        },
+        "character_hide_title": {
+          "label": "Ocultar título"
+        },
+        "character_image": {
+          "description": "El render de cuerpo entero (unos 300 KB en la tarjeta), el retrato (4 KB) o ninguna imagen",
+          "label": "Imagen",
+          "options": {
+            "avatar": "Retrato",
+            "none": "Ninguna",
+            "render": "Render de cuerpo entero"
+          }
+        },
+        "character_title": {
+          "defaultValue": "Personaje",
+          "label": "Título"
+        },
+        "region": {
+          "description": "La región en la que juega el personaje. Cualquier región busca en las cuatro; el enlace de la armería de Blizzard ya la define.",
+          "label": "Región",
+          "options": {
+            "auto": "Cualquier región",
+            "eu": "Europa (EU)",
+            "kr": "Corea (KR)",
+            "tw": "Taiwán (TW)",
+            "us": "Américas (US)"
+          }
+        }
+      },
+      "description": "Render, nivel, raza, clase, hermandad e item level del personaje",
+      "name": "Personaje"
+    },
+    "collection": {
+      "config": {
+        "collection_hide_title": {
+          "label": "Ocultar título"
+        },
+        "collection_title": {
+          "defaultValue": "Colección",
+          "label": "Título"
+        }
+      },
+      "description": "Monturas, mascotas y juguetes",
+      "name": "Colección"
+    },
+    "dungeons": {
+      "config": {
+        "dungeons_hide_title": {
+          "label": "Ocultar título"
+        },
+        "dungeons_max": {
+          "description": "Los de más muertes primero",
+          "label": "Máximo de jefes"
+        },
+        "dungeons_title": {
+          "defaultValue": "Mazmorras",
+          "label": "Título"
+        }
+      },
+      "description": "Jefes de mazmorra derrotados, y cuántas veces",
+      "name": "Mazmorras"
+    },
+    "equipment": {
+      "config": {
+        "equipment_hide_title": {
+          "label": "Ocultar título"
+        },
+        "equipment_max": {
+          "description": "Objetos en el orden de las ranuras, de la cabeza a las armas. Camisa, tabardo y munición quedan fuera.",
+          "label": "Máximo de objetos"
+        },
+        "equipment_show_icons": {
+          "description": "El ícono de cada objeto en un marco del color de su calidad (unos 2 KB cada uno)",
+          "label": "Mostrar íconos de los objetos"
+        },
+        "equipment_title": {
+          "defaultValue": "Equipo",
+          "label": "Título"
+        }
+      },
+      "description": "Los objetos que lleva el personaje, con su calidad e item level",
+      "name": "Equipo"
+    },
+    "journey": {
+      "config": {
+        "journey_hide_title": {
+          "label": "Ocultar título"
+        },
+        "journey_title": {
+          "defaultValue": "Viaje",
+          "label": "Título"
+        }
+      },
+      "description": "Números de toda la vida: muertes causadas, muertes, misiones, mazmorras, vuelos y más",
+      "name": "Viaje"
+    },
+    "professions": {
+      "config": {
+        "professions_hide_title": {
+          "label": "Ocultar título"
+        },
+        "professions_title": {
+          "defaultValue": "Profesiones",
+          "label": "Título"
+        }
+      },
+      "description": "Profesiones primarias y secundarias, con su nivel",
+      "name": "Profesiones"
+    },
+    "reputations": {
+      "config": {
+        "reputations_hide_title": {
+          "label": "Ocultar título"
+        },
+        "reputations_max": {
+          "description": "La reputación más alta primero",
+          "label": "Máximo de facciones"
+        },
+        "reputations_title": {
+          "defaultValue": "Reputaciones",
+          "label": "Título"
+        }
+      },
+      "description": "Reputación con cada facción, de la más alta a la más baja",
+      "name": "Reputaciones"
+    },
+    "stats": {
+      "config": {
+        "stats_hide_title": {
+          "label": "Ocultar título"
+        },
+        "stats_title": {
+          "defaultValue": "Atributos",
+          "label": "Título"
+        }
+      },
+      "description": "Salud, recurso, atributos primarios y armadura",
+      "name": "Atributos"
+    },
+    "talents": {
+      "config": {
+        "talents_hide_title": {
+          "label": "Ocultar título"
+        },
+        "talents_title": {
+          "defaultValue": "Talentos",
+          "label": "Título"
+        }
+      },
+      "description": "Puntos gastados en cada árbol de talentos de la especialización activa",
+      "name": "Talentos"
+    }
+  }
+}

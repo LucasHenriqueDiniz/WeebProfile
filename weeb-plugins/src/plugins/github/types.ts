@@ -27,6 +27,11 @@ export interface GithubConfig {
   repositories_use_private?: boolean
   activity_title?: string
   activity_hide_title?: boolean
+  followup_title?: string
+  followup_hide_title?: boolean
+  /** Whose issues and pull requests: the ones the user opened, or the ones on the user's repositories. */
+  followup_scope?: "created" | "repositories"
+  followup_include_archived?: boolean
   calendar_title?: string
   calendar_hide_title?: boolean
   code_habits_title?: string
@@ -53,6 +58,10 @@ export interface GithubConfig {
   calendar_hide_weeks?: boolean
   calendar_hide_months?: boolean
   calendar_full_max_years?: number
+  isocalendar_hide_title?: boolean
+  isocalendar_title?: string
+  isocalendar_duration?: "half_year" | "full_year"
+  isocalendar_hide_stats?: boolean
   star_lists_hide_title?: boolean
   star_lists_title?: string
   star_lists_max?: number
@@ -84,6 +93,13 @@ export interface GithubConfig {
   repository_contributors_title?: string
   repository_contributors_repository?: string
   repository_contributors_max?: number
+  lines_hide_title?: boolean
+  lines_title?: string
+  lines_hide_history?: boolean
+  lines_chart_type?: "area" | "bars"
+  lines_history_period?: "6_months" | "1_year" | "2_years"
+  lines_repositories_shown?: number
+  lines_repositories_max?: number
 }
 
 export interface GithubData {
@@ -136,6 +152,13 @@ export interface GithubData {
     issues: number
     gists: number
   }
+  /** Issues and pull requests by state, all time (GitHub search counts). */
+  followup?: {
+    scope: "created" | "repositories"
+    issues: { open: number; closed: number }
+    /** `open` leaves drafts out; `draft` is the open drafts, a closed draft counts as closed. */
+    pullRequests: { open: number; draft: number; merged: number; closed: number }
+  }
   calendar: {
     totalContributions: number
     weeks: ContributionWeek[]
@@ -144,6 +167,15 @@ export interface GithubData {
       totalContributions: number
       weeks: ContributionWeek[]
     }>
+  }
+  /** Contributions per day of the isometric calendar's window (isocalendar.ts). */
+  isocalendar?: {
+    /** The Sunday the first column starts on. */
+    start: string
+    /** Today (UTC), the last day drawn. */
+    end: string
+    /** From the window's first day to `end`, oldest first. */
+    days: Array<{ date: string; count: number }>
   }
   languages: Array<{
     name: string
@@ -343,4 +375,20 @@ export interface GithubData {
     avatarUrl: string | null
     contributions: number
   }>
+  /** Lines added and deleted by the user, from each repository's contributor statistics. */
+  lines?: {
+    /** All time, in the repositories GitHub answered for. */
+    added: number
+    deleted: number
+    /** The last 104 weeks (Sunday, UTC), oldest first, the empty ones too. */
+    weeks: Array<{ date: string; added: number; deleted: number }>
+    /** The repositories with lines of the user, the most changed first. */
+    repositories: Array<{ name: string; added: number; deleted: number }>
+    /** Repositories asked. */
+    queried: number
+    /** Still 202 after the retries: GitHub was computing them. */
+    pending: number
+    /** 10,000 commits or more: GitHub counts no line there. */
+    tooLarge: number
+  }
 }
