@@ -83,6 +83,79 @@ export function resolveOptions(config: WowForeverConfig) {
 
 export type ResolvedOptions = ReturnType<typeof resolveOptions>
 
+/** One option per lifetime number: off hides it. */
+export const JOURNEY_TOGGLES: Record<string, string> = {
+  kills: "journey_show_kills",
+  deaths: "journey_show_deaths",
+  quests: "journey_show_quests",
+  dungeons: "journey_show_dungeons",
+  killing_blows: "journey_show_killing_blows",
+  flight_paths: "journey_show_flight_paths",
+  hearthstones: "journey_show_hearthstones",
+  duels_won: "journey_show_duels_won",
+}
+
+/** One option per attribute. "power" is mana, rage or energy, as the class has. */
+export const STAT_TOGGLES: Record<string, string> = {
+  health: "stats_show_health",
+  power: "stats_show_power",
+  strength: "stats_show_strength",
+  agility: "stats_show_agility",
+  stamina: "stats_show_stamina",
+  intellect: "stats_show_intellect",
+  spirit: "stats_show_spirit",
+  armor: "stats_show_armor",
+}
+
+/** One option per equipment slot, by the API's slot type. */
+export const SLOT_TOGGLES: Record<string, string> = {
+  HEAD: "equipment_show_head",
+  NECK: "equipment_show_neck",
+  SHOULDER: "equipment_show_shoulder",
+  BACK: "equipment_show_back",
+  CHEST: "equipment_show_chest",
+  WRIST: "equipment_show_wrist",
+  HANDS: "equipment_show_hands",
+  WAIST: "equipment_show_waist",
+  LEGS: "equipment_show_legs",
+  FEET: "equipment_show_feet",
+  FINGER_1: "equipment_show_finger_1",
+  FINGER_2: "equipment_show_finger_2",
+  TRINKET_1: "equipment_show_trinket_1",
+  TRINKET_2: "equipment_show_trinket_2",
+  MAIN_HAND: "equipment_show_main_hand",
+  OFF_HAND: "equipment_show_off_hand",
+  RANGED: "equipment_show_ranged",
+}
+
+/** A hide list: names in any case. The wizard stores a list; a typed string is split on commas. */
+function hideList(config: WowForeverConfig, key: "professions_hide" | "reputations_hide"): Set<string> {
+  const raw = read<unknown>(config, key)
+  const names = Array.isArray(raw) ? raw : typeof raw === "string" ? raw.split(",") : []
+  return new Set(names.map((n) => String(n).trim().toLowerCase()).filter(Boolean))
+}
+
+/**
+ * The data as the options show it: fields, slots and names switched off are dropped
+ * before anything is drawn or counted, so the card and calculateHeight agree.
+ */
+export function visibleData(data: WowForeverData, config: WowForeverConfig): WowForeverData {
+  const shown = (toggles: Record<string, string>, key: string): boolean => {
+    const option = toggles[key]
+    return !option || read<boolean>(config, option) !== false
+  }
+  const hiddenProfessions = hideList(config, "professions_hide")
+  const hiddenReputations = hideList(config, "reputations_hide")
+  return {
+    ...data,
+    journey: data.journey.filter((s) => shown(JOURNEY_TOGGLES, s.key)),
+    stats: data.stats.filter((s) => shown(STAT_TOGGLES, s.key)),
+    equipment: data.equipment.filter((i) => shown(SLOT_TOGGLES, i.slotType)),
+    professions: data.professions.filter((p) => !hiddenProfessions.has(p.name.toLowerCase())),
+    reputations: data.reputations.filter((r) => !hiddenReputations.has(r.name.toLowerCase())),
+  }
+}
+
 /** The collection's rows: one per kind the character has any of. */
 export function collectionRows(data: WowForeverData): Array<{ kind: string; names: string[] }> {
   const c = data.collection

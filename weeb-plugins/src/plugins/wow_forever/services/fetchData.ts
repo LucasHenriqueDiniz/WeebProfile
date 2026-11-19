@@ -141,6 +141,7 @@ export function mapEquipment(equipment: EquipmentResponse): Array<WowItem & { id
     .filter((item) => item.name && !HIDDEN_SLOTS.has(item.slot?.type ?? ""))
     .map((item) => ({
       id: item.item?.id,
+      slotType: item.slot?.type ?? "",
       slot: item.slot?.name ?? "",
       name: item.name!,
       quality: (item.quality?.type ?? "COMMON") as ItemQuality,
@@ -149,21 +150,23 @@ export function mapEquipment(equipment: EquipmentResponse): Array<WowItem & { id
     }))
 }
 
-/** The eight numbers of the character sheet, in its order. Missing ones are left out. */
+/** The eight numbers of the character sheet, in its order: key, label (or the power's own name), value. */
+export const STAT_KEYS = ["health", "power", "strength", "agility", "stamina", "intellect", "spirit", "armor"] as const
+
 export function mapStats(statistics: StatisticsResponse): WowStat[] {
-  const entries: Array<[string, number | undefined]> = [
-    ["Health", statistics.health],
-    [statistics.power_type?.name || "Power", statistics.power],
-    ["Strength", statistics.strength?.effective],
-    ["Agility", statistics.agility?.effective],
-    ["Stamina", statistics.stamina?.effective],
-    ["Intellect", statistics.intellect?.effective],
-    ["Spirit", statistics.spirit?.effective],
-    ["Armor", statistics.armor?.effective],
+  const entries: Array<[string, string, number | undefined]> = [
+    ["health", "Health", statistics.health],
+    ["power", statistics.power_type?.name || "Power", statistics.power],
+    ["strength", "Strength", statistics.strength?.effective],
+    ["agility", "Agility", statistics.agility?.effective],
+    ["stamina", "Stamina", statistics.stamina?.effective],
+    ["intellect", "Intellect", statistics.intellect?.effective],
+    ["spirit", "Spirit", statistics.spirit?.effective],
+    ["armor", "Armor", statistics.armor?.effective],
   ]
   return entries
-    .filter((entry): entry is [string, number] => typeof entry[1] === "number")
-    .map(([label, value]) => ({ label, value }))
+    .filter((entry): entry is [string, string, number] => typeof entry[2] === "number")
+    .map(([key, label, value]) => ({ key, label, value }))
 }
 
 /** A part the card can do without: a 404 leaves it out, anything else still fails the card. */

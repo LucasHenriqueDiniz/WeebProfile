@@ -97,9 +97,60 @@
           "description": "Itens na ordem dos slots, da cabeça até as armas. Camisa, tabardo e munição ficam de fora.",
           "label": "Máximo de itens"
         },
+        "equipment_show_back": {
+          "label": "Mostrar costas"
+        },
+        "equipment_show_chest": {
+          "label": "Mostrar peito"
+        },
+        "equipment_show_feet": {
+          "label": "Mostrar pés"
+        },
+        "equipment_show_finger_1": {
+          "label": "Mostrar anel 1"
+        },
+        "equipment_show_finger_2": {
+          "label": "Mostrar anel 2"
+        },
+        "equipment_show_hands": {
+          "label": "Mostrar mãos"
+        },
+        "equipment_show_head": {
+          "label": "Mostrar cabeça"
+        },
         "equipment_show_icons": {
           "description": "O ícone de cada item numa moldura da cor da qualidade (cerca de 2 KB cada)",
           "label": "Mostrar ícones dos itens"
+        },
+        "equipment_show_legs": {
+          "label": "Mostrar pernas"
+        },
+        "equipment_show_main_hand": {
+          "label": "Mostrar mão principal"
+        },
+        "equipment_show_neck": {
+          "label": "Mostrar pescoço"
+        },
+        "equipment_show_off_hand": {
+          "label": "Mostrar mão secundária"
+        },
+        "equipment_show_ranged": {
+          "label": "Mostrar arma de longo alcance ou relíquia"
+        },
+        "equipment_show_shoulder": {
+          "label": "Mostrar ombros"
+        },
+        "equipment_show_trinket_1": {
+          "label": "Mostrar berloque 1"
+        },
+        "equipment_show_trinket_2": {
+          "label": "Mostrar berloque 2"
+        },
+        "equipment_show_waist": {
+          "label": "Mostrar cintura"
+        },
+        "equipment_show_wrist": {
+          "label": "Mostrar pulsos"
         },
         "equipment_title": {
           "defaultValue": "Equipamento",
@@ -114,6 +165,30 @@
         "journey_hide_title": {
           "label": "Ocultar título"
         },
+        "journey_show_deaths": {
+          "label": "Mostrar mortes"
+        },
+        "journey_show_duels_won": {
+          "label": "Mostrar duelos vencidos"
+        },
+        "journey_show_dungeons": {
+          "label": "Mostrar dungeons"
+        },
+        "journey_show_flight_paths": {
+          "label": "Mostrar voos"
+        },
+        "journey_show_hearthstones": {
+          "label": "Mostrar hearthstones"
+        },
+        "journey_show_killing_blows": {
+          "label": "Mostrar golpes finais"
+        },
+        "journey_show_kills": {
+          "label": "Mostrar kills"
+        },
+        "journey_show_quests": {
+          "label": "Mostrar quests"
+        },
         "journey_title": {
           "defaultValue": "Jornada",
           "label": "Título"
@@ -124,6 +199,11 @@
     },
     "professions": {
       "config": {
+        "professions_hide": {
+          "description": "Profissões a deixar de fora, pelo nome",
+          "label": "Esconder profissões",
+          "placeholder": "Cooking"
+        },
         "professions_hide_title": {
           "label": "Ocultar título"
         },
@@ -137,6 +217,11 @@
     },
     "reputations": {
       "config": {
+        "reputations_hide": {
+          "description": "Facções a deixar de fora, pelo nome",
+          "label": "Esconder facções",
+          "placeholder": "Gadgetzan"
+        },
         "reputations_hide_title": {
           "label": "Ocultar título"
         },
@@ -156,6 +241,30 @@
       "config": {
         "stats_hide_title": {
           "label": "Ocultar título"
+        },
+        "stats_show_agility": {
+          "label": "Mostrar agilidade"
+        },
+        "stats_show_armor": {
+          "label": "Mostrar armadura"
+        },
+        "stats_show_health": {
+          "label": "Mostrar vida"
+        },
+        "stats_show_intellect": {
+          "label": "Mostrar intelecto"
+        },
+        "stats_show_power": {
+          "label": "Mostrar mana, fúria ou energia"
+        },
+        "stats_show_spirit": {
+          "label": "Mostrar espírito"
+        },
+        "stats_show_stamina": {
+          "label": "Mostrar vigor"
+        },
+        "stats_show_strength": {
+          "label": "Mostrar força"
         },
         "stats_title": {
           "defaultValue": "Atributos",

@@ -12,7 +12,7 @@ import type { PluginConfig, PluginData } from "../../types/index"
 import type { EssentialPluginConfig } from "../shared/types/base"
 import { RenderWowForever } from "./components/RenderWowForever"
 import { sectionHeight, type Size } from "./layout"
-import { SECTION_IDS, resolveOptions, sectionBody, type SectionId } from "./options"
+import { SECTION_IDS, resolveOptions, sectionBody, visibleData, type SectionId } from "./options"
 import { fetchWowForeverData } from "./services/fetchData"
 import type { WowForeverConfig, WowForeverData } from "./types"
 
@@ -37,10 +37,11 @@ export const wowForeverPlugin: Plugin<PluginConfig & WowForeverConfig, PluginDat
 
   calculateHeight: (config, data, size = "half") => {
     const options = resolveOptions(config)
+    const visible = visibleData(data as WowForeverData, config)
     let height = 0
     for (const id of config.sections ?? []) {
       if (!(SECTION_IDS as readonly string[]).includes(id)) continue
-      const body = sectionBody(id as SectionId, data as WowForeverData, options.style, size, options)
+      const body = sectionBody(id as SectionId, visible, options.style, size, options)
       if (body !== null) height += sectionHeight(options.style, options.hideTitle(id as SectionId), body)
     }
     return height

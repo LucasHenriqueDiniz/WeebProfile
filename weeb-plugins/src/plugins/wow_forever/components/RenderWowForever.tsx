@@ -9,7 +9,7 @@ import {
   GiTrophy,
 } from "react-icons/gi"
 import { LIST, type Size, type Style } from "../layout"
-import { SECTION_IDS, collectionRows, resolveOptions, sectionBody, type SectionId } from "../options"
+import { SECTION_IDS, collectionRows, resolveOptions, sectionBody, visibleData, type SectionId } from "../options"
 import type { WowForeverConfig, WowForeverData } from "../types"
 import { Character } from "./Character"
 import { Equipment } from "./Equipment"
@@ -32,8 +32,9 @@ const shortDate = (ms: number): string =>
 const formatCount = (n: number): string => n.toLocaleString("en-US")
 
 /** The enabled sections, in the order the card lists them. */
-export function RenderWowForever({ config, data, style, size }: RenderWowForeverProps): React.ReactElement {
+export function RenderWowForever({ config, data: fetched, style, size }: RenderWowForeverProps): React.ReactElement {
   const options = resolveOptions(config)
+  const data = visibleData(fetched, config)
   const ids = (config.sections ?? []).filter((id): id is SectionId => (SECTION_IDS as readonly string[]).includes(id))
 
   const frame = (id: SectionId, icon: React.ReactElement, command: string, body: React.ReactNode) => (

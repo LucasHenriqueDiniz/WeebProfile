@@ -97,9 +97,60 @@
           "description": "Items in slot order, from the head down to the weapons. Shirt, tabard and ammo are left out.",
           "label": "Maximum items"
         },
+        "equipment_show_back": {
+          "label": "Show back"
+        },
+        "equipment_show_chest": {
+          "label": "Show chest"
+        },
+        "equipment_show_feet": {
+          "label": "Show feet"
+        },
+        "equipment_show_finger_1": {
+          "label": "Show ring 1"
+        },
+        "equipment_show_finger_2": {
+          "label": "Show ring 2"
+        },
+        "equipment_show_hands": {
+          "label": "Show hands"
+        },
+        "equipment_show_head": {
+          "label": "Show head"
+        },
         "equipment_show_icons": {
           "description": "Each item's icon in a frame of its quality color (about 2 KB each)",
           "label": "Show item icons"
+        },
+        "equipment_show_legs": {
+          "label": "Show legs"
+        },
+        "equipment_show_main_hand": {
+          "label": "Show main hand"
+        },
+        "equipment_show_neck": {
+          "label": "Show neck"
+        },
+        "equipment_show_off_hand": {
+          "label": "Show off hand"
+        },
+        "equipment_show_ranged": {
+          "label": "Show ranged or relic"
+        },
+        "equipment_show_shoulder": {
+          "label": "Show shoulders"
+        },
+        "equipment_show_trinket_1": {
+          "label": "Show trinket 1"
+        },
+        "equipment_show_trinket_2": {
+          "label": "Show trinket 2"
+        },
+        "equipment_show_waist": {
+          "label": "Show waist"
+        },
+        "equipment_show_wrist": {
+          "label": "Show wrist"
         },
         "equipment_title": {
           "defaultValue": "Equipment",
@@ -114,6 +165,30 @@
         "journey_hide_title": {
           "label": "Hide title"
         },
+        "journey_show_deaths": {
+          "label": "Show deaths"
+        },
+        "journey_show_duels_won": {
+          "label": "Show duels won"
+        },
+        "journey_show_dungeons": {
+          "label": "Show dungeons entered"
+        },
+        "journey_show_flight_paths": {
+          "label": "Show flight paths"
+        },
+        "journey_show_hearthstones": {
+          "label": "Show hearthstones"
+        },
+        "journey_show_killing_blows": {
+          "label": "Show killing blows"
+        },
+        "journey_show_kills": {
+          "label": "Show kills"
+        },
+        "journey_show_quests": {
+          "label": "Show quests"
+        },
         "journey_title": {
           "defaultValue": "Journey",
           "label": "Title"
@@ -124,6 +199,11 @@
     },
     "professions": {
       "config": {
+        "professions_hide": {
+          "description": "Professions to leave out, by name",
+          "label": "Hide professions",
+          "placeholder": "Cooking"
+        },
         "professions_hide_title": {
           "label": "Hide title"
         },
@@ -137,6 +217,11 @@
     },
     "reputations": {
       "config": {
+        "reputations_hide": {
+          "description": "Factions to leave out, by name",
+          "label": "Hide factions",
+          "placeholder": "Gadgetzan"
+        },
         "reputations_hide_title": {
           "label": "Hide title"
         },
@@ -156,6 +241,30 @@
       "config": {
         "stats_hide_title": {
           "label": "Hide title"
+        },
+        "stats_show_agility": {
+          "label": "Show agility"
+        },
+        "stats_show_armor": {
+          "label": "Show armor"
+        },
+        "stats_show_health": {
+          "label": "Show health"
+        },
+        "stats_show_intellect": {
+          "label": "Show intellect"
+        },
+        "stats_show_power": {
+          "label": "Show mana, rage or energy"
+        },
+        "stats_show_spirit": {
+          "label": "Show spirit"
+        },
+        "stats_show_stamina": {
+          "label": "Show stamina"
+        },
+        "stats_show_strength": {
+          "label": "Show strength"
         },
         "stats_title": {
           "defaultValue": "Attributes",

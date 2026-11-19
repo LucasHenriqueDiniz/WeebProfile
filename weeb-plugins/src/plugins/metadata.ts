@@ -5210,6 +5210,159 @@ export const PLUGINS_METADATA = {
             label: "plugins.wow_forever.sections.equipment.config.equipment_show_icons.label",
             description: "plugins.wow_forever.sections.equipment.config.equipment_show_icons.description"
           }
+        },
+        {
+          key: "equipment_show_head",
+          label: "Show head",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_head.label"
+          }
+        },
+        {
+          key: "equipment_show_neck",
+          label: "Show neck",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_neck.label"
+          }
+        },
+        {
+          key: "equipment_show_shoulder",
+          label: "Show shoulders",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_shoulder.label"
+          }
+        },
+        {
+          key: "equipment_show_back",
+          label: "Show back",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_back.label"
+          }
+        },
+        {
+          key: "equipment_show_chest",
+          label: "Show chest",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_chest.label"
+          }
+        },
+        {
+          key: "equipment_show_wrist",
+          label: "Show wrist",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_wrist.label"
+          }
+        },
+        {
+          key: "equipment_show_hands",
+          label: "Show hands",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_hands.label"
+          }
+        },
+        {
+          key: "equipment_show_waist",
+          label: "Show waist",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_waist.label"
+          }
+        },
+        {
+          key: "equipment_show_legs",
+          label: "Show legs",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_legs.label"
+          }
+        },
+        {
+          key: "equipment_show_feet",
+          label: "Show feet",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_feet.label"
+          }
+        },
+        {
+          key: "equipment_show_finger_1",
+          label: "Show ring 1",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_finger_1.label"
+          }
+        },
+        {
+          key: "equipment_show_finger_2",
+          label: "Show ring 2",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_finger_2.label"
+          }
+        },
+        {
+          key: "equipment_show_trinket_1",
+          label: "Show trinket 1",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_trinket_1.label"
+          }
+        },
+        {
+          key: "equipment_show_trinket_2",
+          label: "Show trinket 2",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_trinket_2.label"
+          }
+        },
+        {
+          key: "equipment_show_main_hand",
+          label: "Show main hand",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_main_hand.label"
+          }
+        },
+        {
+          key: "equipment_show_off_hand",
+          label: "Show off hand",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_off_hand.label"
+          }
+        },
+        {
+          key: "equipment_show_ranged",
+          label: "Show ranged or relic",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_ranged.label"
+          }
         }
         ]
       },
@@ -5239,6 +5392,78 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.wow_forever.sections.stats.config.stats_title.label",
             defaultValue: "plugins.wow_forever.sections.stats.config.stats_title.defaultValue"
+          }
+        },
+        {
+          key: "stats_show_health",
+          label: "Show health",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_health.label"
+          }
+        },
+        {
+          key: "stats_show_power",
+          label: "Show mana, rage or energy",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_power.label"
+          }
+        },
+        {
+          key: "stats_show_strength",
+          label: "Show strength",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_strength.label"
+          }
+        },
+        {
+          key: "stats_show_agility",
+          label: "Show agility",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_agility.label"
+          }
+        },
+        {
+          key: "stats_show_stamina",
+          label: "Show stamina",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_stamina.label"
+          }
+        },
+        {
+          key: "stats_show_intellect",
+          label: "Show intellect",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_intellect.label"
+          }
+        },
+        {
+          key: "stats_show_spirit",
+          label: "Show spirit",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_spirit.label"
+          }
+        },
+        {
+          key: "stats_show_armor",
+          label: "Show armor",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_armor.label"
           }
         }
         ]
@@ -5270,6 +5495,78 @@ export const PLUGINS_METADATA = {
             label: "plugins.wow_forever.sections.journey.config.journey_title.label",
             defaultValue: "plugins.wow_forever.sections.journey.config.journey_title.defaultValue"
           }
+        },
+        {
+          key: "journey_show_kills",
+          label: "Show kills",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_kills.label"
+          }
+        },
+        {
+          key: "journey_show_deaths",
+          label: "Show deaths",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_deaths.label"
+          }
+        },
+        {
+          key: "journey_show_quests",
+          label: "Show quests",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_quests.label"
+          }
+        },
+        {
+          key: "journey_show_dungeons",
+          label: "Show dungeons entered",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_dungeons.label"
+          }
+        },
+        {
+          key: "journey_show_killing_blows",
+          label: "Show killing blows",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_killing_blows.label"
+          }
+        },
+        {
+          key: "journey_show_flight_paths",
+          label: "Show flight paths",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_flight_paths.label"
+          }
+        },
+        {
+          key: "journey_show_hearthstones",
+          label: "Show hearthstones",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_hearthstones.label"
+          }
+        },
+        {
+          key: "journey_show_duels_won",
+          label: "Show duels won",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_duels_won.label"
+          }
         }
         ]
       },
@@ -5299,6 +5596,19 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.wow_forever.sections.professions.config.professions_title.label",
             defaultValue: "plugins.wow_forever.sections.professions.config.professions_title.defaultValue"
+          }
+        },
+        {
+          key: "professions_hide",
+          label: "Hide professions",
+          type: "array",
+          defaultValue: [],
+          description: "Professions to leave out, by name",
+          placeholder: "Cooking",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.professions.config.professions_hide.label",
+            description: "plugins.wow_forever.sections.professions.config.professions_hide.description",
+            placeholder: "plugins.wow_forever.sections.professions.config.professions_hide.placeholder"
           }
         }
         ]
@@ -5342,6 +5652,19 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.wow_forever.sections.reputations.config.reputations_max.label",
             description: "plugins.wow_forever.sections.reputations.config.reputations_max.description"
+          }
+        },
+        {
+          key: "reputations_hide",
+          label: "Hide factions",
+          type: "array",
+          defaultValue: [],
+          description: "Factions to leave out, by name",
+          placeholder: "Gadgetzan",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.reputations.config.reputations_hide.label",
+            description: "plugins.wow_forever.sections.reputations.config.reputations_hide.description",
+            placeholder: "plugins.wow_forever.sections.reputations.config.reputations_hide.placeholder"
           }
         }
         ]
