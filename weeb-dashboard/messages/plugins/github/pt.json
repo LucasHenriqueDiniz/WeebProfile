@@ -205,6 +205,32 @@
       "description": "Introdução do perfil do usuário",
       "name": "Introdução"
     },
+    "isocalendar": {
+      "config": {
+        "isocalendar_duration": {
+          "description": "Até quando o calendário volta, terminando hoje",
+          "label": "Duração",
+          "options": {
+            "full_year": "Um ano",
+            "half_year": "Meio ano"
+          },
+          "tooltip": "Meio ano desenha as últimas 26 semanas; um ano, as últimas 53."
+        },
+        "isocalendar_hide_stats": {
+          "description": "Ocultar a sequência atual e a melhor, o melhor dia e a média por dia",
+          "label": "Ocultar estatísticas"
+        },
+        "isocalendar_hide_title": {
+          "label": "Ocultar título"
+        },
+        "isocalendar_title": {
+          "defaultValue": "Calendário Isométrico",
+          "label": "Título"
+        }
+      },
+      "description": "Calendário de contribuições em 3D, com sequências, melhor dia e média por dia",
+      "name": "Calendário Isométrico"
+    },
     "lines": {
       "config": {
         "lines_chart_type": {

@@ -58,6 +58,10 @@ export interface GithubConfig {
   calendar_hide_weeks?: boolean
   calendar_hide_months?: boolean
   calendar_full_max_years?: number
+  isocalendar_hide_title?: boolean
+  isocalendar_title?: string
+  isocalendar_duration?: "half_year" | "full_year"
+  isocalendar_hide_stats?: boolean
   star_lists_hide_title?: boolean
   star_lists_title?: string
   star_lists_max?: number
@@ -163,6 +167,15 @@ export interface GithubData {
       totalContributions: number
       weeks: ContributionWeek[]
     }>
+  }
+  /** Contributions per day of the isometric calendar's window (isocalendar.ts). */
+  isocalendar?: {
+    /** The Sunday the first column starts on. */
+    start: string
+    /** Today (UTC), the last day drawn. */
+    end: string
+    /** From the window's first day to `end`, oldest first. */
+    days: Array<{ date: string; count: number }>
   }
   languages: Array<{
     name: string
