@@ -139,6 +139,27 @@ body {
   background: hsl(var(--muted-foreground));
 }
 
+/*
+ * Right edge for `fixed` elements that span the viewport (the site header, its phone
+ * sheet, the toasts).
+ *
+ * Every Radix menu, dialog, sheet and select locks the page scroll while open: it hides
+ * the scrollbar and gives <body> a margin-right as wide as the bar, so the page does
+ * not move. A `fixed` element is placed against the viewport, not the body, so it got
+ * wider by the bar instead, and anything centred in it moved right by half the bar:
+ * 4px with our 8px bar. Chrome and Safari draw the styled bar above (::-webkit-scrollbar)
+ * even with macOS overlay scrollbars on, so everyone saw it.
+ *
+ * The lock sets this variable on <body> to the bar's width (react-remove-scroll-bar,
+ * which Radix uses), and it is unset when nothing is open. lib/scroll-lock.test.ts
+ * checks the name against the installed Radix packages.
+ */
+@layer utilities {
+  .right-scroll-lock {
+    right: var(--removed-body-scroll-bar-size, 0px);
+  }
+}
+
 /* Focus States */
 *:focus-visible {
   outline: 2px solid hsl(var(--ring));
