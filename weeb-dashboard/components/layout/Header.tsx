@@ -201,7 +201,9 @@ function SiteHeader({ className }: { className?: string }) {
         // No bar behind it: the logo, the nav and the buttons are stickers of their own that
         // float over the page, so only they catch the pointer and the page between them
         // stays clickable.
-        "pointer-events-none fixed inset-x-0 top-0 z-50",
+        // right-scroll-lock, not right-0: an open menu or dialog hides the scrollbar,
+        // and with right-0 the header grew by its width and slid sideways (globals.css).
+        "pointer-events-none fixed left-0 right-scroll-lock top-0 z-50",
         onBand ? "text-slate-900" : "text-foreground",
         // With the phone menu open the header row is part of the sheet: without a fill
         // the page showed through behind the logo and the close button.
@@ -335,7 +337,7 @@ function SiteHeader({ className }: { className?: string }) {
           className={cn(
             // The header lets the pointer through (pointer-events-none) and this sheet is not
             // inside the nav, so it has to take the pointer back or no tap would reach it.
-            "pointer-events-auto fixed inset-x-0 bottom-0 top-16 overflow-y-auto border-t-2 md:hidden",
+            "pointer-events-auto fixed bottom-0 left-0 right-scroll-lock top-16 overflow-y-auto border-t-2 md:hidden",
             onBand ? "border-slate-900 bg-cyan-100" : "border-foreground bg-background"
           )}
         >
