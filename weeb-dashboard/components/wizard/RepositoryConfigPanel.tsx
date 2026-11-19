@@ -70,7 +70,7 @@ function ConfigSummary({
       {chips.map((chip) => (
         <span
           key={chip.key}
-          className="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/5 px-2 py-1 text-[11px]"
+          className="inline-flex items-center gap-1 rounded-full border-2 border-foreground/30 px-2 py-0.5 text-[11px]"
         >
           <span className="text-muted-foreground">{chip.label}:</span>
           <span className="font-medium text-foreground">{chip.display}</span>
@@ -180,25 +180,25 @@ export function RepositoryConfigPanel() {
                 key={section.id}
                 onClick={() => selectSection(section.id)}
                 className={cn(
-                  "flex flex-col gap-2.5 p-3 rounded-lg border cursor-pointer transition-all",
+                  "flex cursor-pointer flex-col gap-2.5 rounded-xl border-2 p-3 transition-all",
                   // O controle acessivel e o radio sr-only aninhado. Sem isto, quem navega
                   // por teclado foca um input invisivel e nada muda na tela.
-                  "focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background",
+                  "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background",
                   isSelected
-                    ? "bg-primary/5 text-primary border-primary/30"
-                    : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50 hover:border-primary/20"
+                    ? "border-foreground bg-card text-foreground shadow-[4px_4px_0_0_hsl(var(--primary))]"
+                    : "border-foreground/20 bg-card text-muted-foreground hover:border-foreground/60"
                 )}
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span
                       className={cn(
-                        "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border",
-                        isSelected ? "border-primary" : "border-muted-foreground/40"
+                        "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border-2",
+                        isSelected ? "border-foreground" : "border-foreground/40"
                       )}
                       aria-hidden="true"
                     >
-                      {isSelected && <span className="h-2 w-2 rounded-full bg-primary" />}
+                      {isSelected && <span className="h-2 w-2 rounded-full bg-foreground" />}
                     </span>
                     <input
                       type="radio"

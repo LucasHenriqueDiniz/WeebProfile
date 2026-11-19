@@ -1,8 +1,6 @@
 {
   "dashboard": {
-    "allStatus": "All Statuses",
     "clearFilter": "Clear Filter",
-    "completed": "Completed",
     "copyMarkdown": "Copy Markdown",
     "createFirst": "Create Your First SVG",
     "createNew": "Create New",
@@ -17,7 +15,6 @@
     "edit": "Edit",
     "filterByStatus": "Filter by status",
     "forceGenerate": "Force Generate",
-    "generating": "Generating",
     "imageNotAvailable": "Image not available",
     "nameAZ": "Name (A-Z)",
     "newestFirst": "Newest First",
@@ -26,7 +23,6 @@
     "noSvgsDescription": "Create your first WeebProfile SVG to showcase your GitHub stats",
     "noSvgsYet": "No SVGs yet",
     "oldestFirst": "Oldest First",
-    "pending": "Pending",
     "plugins": "Plugins",
     "ready": "Ready",
     "sortBy": "Sort by",
@@ -55,10 +51,7 @@
     "view": "View",
     "quota": {
       "title": "Free plan",
-      "label": "{{count}} of {{max}} SVGs used",
-      "hint": "Each SVG updates itself on a cycle. Need inspiration?",
-      "templates": "Explore templates",
-      "docs": "Documentation"
+      "label": "{{count}} of {{max}} SVGs used"
     },
     "newPage": {
       "title": "Create new",
@@ -94,7 +87,10 @@
       "cta": "Create my first SVG",
       "freeTier": "Free for up to {{max}} SVGs"
     },
-    "moreActions": "More actions"
+    "moreActions": "More actions",
+    "filterAll": "All",
+    "failedCount_one": "{{count}} failed",
+    "failedCount_other": "{{count}} failed"
   },
   "header": {
     "language": "Language",
@@ -429,7 +425,8 @@
     "navigation": "Navigation",
     "settings": "Settings",
     "svgsUsed": "SVGs used",
-    "user": "User"
+    "user": "User",
+    "expand": "Expand"
   },
   "view": {
     "backToDashboard": "Back to Dashboard",
@@ -636,7 +633,11 @@
       "enablePluginToPreview": "Enable at least one plugin and select sections to see the preview",
       "clearSearch": "Clear search",
       "selectTitle": "Select a plugin",
-      "selectHint": "Pick a plugin from the list to set up its fields and sections."
+      "selectHint": "Pick a plugin in the row above to set up its fields and sections.",
+      "essentialConfigs": "Required settings",
+      "enablePlugin": "Turn on {{plugin}}",
+      "disablePlugin": "Turn off {{plugin}}",
+      "previewUnavailable": "Preview not available"
     },
     "repository": {
       "label": "Repository",

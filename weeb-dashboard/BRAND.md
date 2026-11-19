@@ -2,6 +2,8 @@
 
 This document defines the visual design system for WeebProfile, based on the modern, vibrant aesthetic that balances playful energy with professional polish.
 
+> **Current look: stickers.** Since 11/2026 the public site and the signed-in app use the sticker look: ink borders (`border-2 border-foreground`), hard offset shadows instead of glows, solid pastel tiles, Sora headings, no gradient fills. The shared classes are in `components/landing/sticker.ts`, and `components/ui/button` and `ui/dialog` follow them. The gradient and glow guidance below predates it.
+
 ---
 
 ## Brand Identity

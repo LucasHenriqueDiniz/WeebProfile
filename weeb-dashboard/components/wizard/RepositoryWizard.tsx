@@ -48,7 +48,7 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
     <WizardShell
       activeTab={activeTab}
       onTabChange={setActiveTab}
-      pluginsList={null}
+      pluginStrip={null}
       pluginDetail={<RepositoryConfigPanel />}
       styleConfig={
         <StyleConfiguration
@@ -78,6 +78,8 @@ export function RepositoryWizard({ isEditMode = false, editSvgId }: RepositoryWi
       selectedPlugin={owner && repo ? "github_repo" : null}
       name={owner && repo ? `${owner}/${repo}` : ""}
       kind="repository"
+      style={style}
+      setStyle={setStyle}
       size={size}
       setSize={setSize}
       // Mesma lógica do plugin habilitado em RepositoryLivePreview: o preview usa dado

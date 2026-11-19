@@ -26,7 +26,7 @@ export function PlanUsagePanel() {
   return (
     <div className="mb-8">
       <p className="text-sm font-medium text-foreground">{tAccount("planTitle")}</p>
-      <div className="mt-3 rounded-xl border border-border px-4 py-3">
+      <div className="mt-3 rounded-xl border-2 border-foreground/30 px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -35,12 +35,9 @@ export function PlanUsagePanel() {
                 {t("label", { count, max: MAX_SVGS_FREE_TIER })}
               </span>
             </div>
-            <div className="mt-2 h-1.5 w-48 max-w-full overflow-hidden rounded-full bg-muted">
+            <div className="mt-2 h-3 w-48 max-w-full overflow-hidden rounded-full border-2 border-foreground bg-card">
               <span
-                className={cn(
-                  "block h-full rounded-full transition-all",
-                  full ? "bg-amber-400" : "bg-gradient-to-r from-violet-500 to-cyan-500"
-                )}
+                className={cn("block h-full transition-all", full ? "bg-amber-400" : "bg-cyan-400")}
                 style={{ width: `${Math.min(100, (count / MAX_SVGS_FREE_TIER) * 100)}%` }}
               />
             </div>

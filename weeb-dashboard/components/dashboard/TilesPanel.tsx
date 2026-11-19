@@ -89,7 +89,7 @@ function SnippetPanel({ kind, snippet, count }: { kind: "tiles" | "badges"; snip
     >
       <p className="mb-2 text-xs text-muted-foreground">{t("description")}</p>
       <p className="mb-3 text-xs text-muted-foreground">{t("note")}</p>
-      <pre className="whitespace-pre-wrap [overflow-wrap:anywhere] rounded-lg border border-border/50 bg-muted/50 p-3 font-mono text-xs">
+      <pre className="whitespace-pre-wrap [overflow-wrap:anywhere] rounded-lg border-2 border-foreground/30 bg-muted/50 p-3 font-mono text-xs">
         <code className="text-foreground">{snippet}</code>
       </pre>
     </PanelCard>

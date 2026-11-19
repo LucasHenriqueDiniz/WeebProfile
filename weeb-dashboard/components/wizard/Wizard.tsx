@@ -2,8 +2,8 @@
 
 import { CardOrderPanel } from "./CardOrderPanel"
 import { LivePreview } from "./LivePreview"
-import { PluginListPanel } from "./PluginListPanel"
 import { PluginDetailPanel } from "./PluginDetailPanel"
+import { PluginStrip } from "./PluginStrip"
 import { PluginWorkspaceDialogs } from "./PluginWorkspaceDialogs"
 import { StyleConfiguration } from "./StyleConfiguration"
 import { WizardShell } from "./WizardShell"
@@ -62,7 +62,7 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
           ctrl.setActiveTab("plugins")
           workspace.setSelectedPlugin(first.plugin)
         }}
-        pluginsList={<PluginListPanel workspace={workspace} />}
+        pluginStrip={<PluginStrip workspace={workspace} />}
         pluginDetail={<PluginDetailPanel workspace={workspace} />}
         orderConfig={<CardOrderPanel />}
         styleConfig={
@@ -96,6 +96,8 @@ export function Wizard({ isEditMode = false, editSvgId }: WizardProps = {}) {
         selectedPlugin={workspace.selectedPlugin}
         name={name}
         kind="profile"
+        style={style}
+        setStyle={setStyle}
         size={size}
         setSize={setSize}
         contentCount={pluginsWithSections.length}

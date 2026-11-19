@@ -1,154 +1,90 @@
 "use client"
 
-import { useState } from "react"
 import { Link } from "@/i18n/navigation"
-import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
-import { Sparkles } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { useTranslations } from "@/i18n/use-translations"
 import { MAX_SVGS_FREE_TIER } from "@/lib/config/plan"
+import { BUTTON_PRIMARY, CHIP, HALFTONE, STICKER, TONE } from "@/components/landing/sticker"
+import { cn } from "@/lib/utils"
 
-const STEPS = ["signIn", "plugins", "readme"] as const
+const STEPS = [
+  { id: "signIn", tone: TONE.cyan },
+  { id: "plugins", tone: TONE.pink },
+  { id: "readme", tone: TONE.amber },
+] as const
 
-// Same limit the API enforces in functions/api/svgs/index.ts.
+/** Real profile cards, the same SVGs /templates shows, fanned out like stickers on a page. */
+const PREVIEWS = [
+  { src: "/template-previews/4b63b29a-d0da-4363-a061-1f61f6dc9a05.svg", className: "left-0 top-6 -rotate-6" },
+  { src: "/template-previews/97f42207-3990-4faa-ba99-d105b12061eb.svg", className: "right-0 top-0 rotate-3" },
+  { src: "/template-previews/6bfb8f10-e367-4c8e-905c-4f209e13f303.svg", className: "left-[18%] top-24 rotate-[-1deg]" },
+] as const
 
-const stars = [
-  { top: "10%", left: "6%", size: 2, opacity: 0.3 },
-  { top: "82%", left: "92%", size: 1.5, opacity: 0.25 },
-  { top: "18%", left: "90%", size: 2, opacity: 0.25 },
-]
-
-// Papel de parede decorativo: cards de perfil reais (os mesmos SVGs completos
-// mostrados em /templates, não seções isoladas), em grid, levemente inclinados
-// e com uma vinheta suave atrás do conteúdo - comunica "isso tudo é gerado de
-// verdade" com volume, sem apagar os cards a ponto de virarem borrão.
-const TEMPLATE_PREVIEWS = [
-  "/template-previews/4b63b29a-d0da-4363-a061-1f61f6dc9a05.svg",
-  "/template-previews/97f42207-3990-4faa-ba99-d105b12061eb.svg",
-  "/template-previews/6bfb8f10-e367-4c8e-905c-4f209e13f303.svg",
-  "/template-previews/a271c6ac-45a6-4df1-a389-579ed24a516b.svg",
-  "/template-previews/e66831e1-abab-4877-ba6a-92cbd0bd17d6.svg",
-]
-
-// Repete os 5 templates o suficiente pra preencher uma parede de 12 tiles, sem
-// dois iguais lado a lado.
-const WALL_TILES = [0, 1, 2, 3, 4, 2, 4, 0, 3, 1, 4, 2].map((i) => TEMPLATE_PREVIEWS[i])
-
-function PreviewCollageBackground() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      <div
-        className="absolute left-1/2 top-[-6%] grid w-[150%] grid-cols-3 gap-5 sm:w-[122%] sm:grid-cols-4"
-        style={{
-          // Perspectiva mais suave (distância maior + rotação menor) do que a primeira
-          // tentativa - rotateX 45deg com perspective 1000px distorcia demais e ficava
-          // estranho. Isso aqui lê como uma prateleira levemente inclinada, não uma parede
-          // caindo pra trás.
-          transform: "translateX(-50%) perspective(1800px) rotateX(28deg) rotateZ(-4deg) scale(1.05)",
-          transformOrigin: "top center",
-        }}
-      >
-        {WALL_TILES.map((src, i) => (
-          <div
-            key={i}
-            className="h-64 overflow-hidden rounded-xl border border-white/15 shadow-2xl sm:h-72"
-            style={{ opacity: 0.75 + (i % 3) * 0.08 }}
-          >
-            <img src={src} alt="" className="block h-full w-full object-cover object-top" />
-          </div>
-        ))}
-      </div>
-
-      {/* Vinheta - só o suficiente pra legibilidade do texto por cima, sem apagar os
-          cards (o problema anterior era escurecer demais e virar um borrão ilegível) */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#05070d]/15 via-[#05070d]/45 to-[#05070d]/92" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#05070d]/55 via-transparent to-[#05070d]/55" />
-    </div>
-  )
-}
-
-// Onboarding como um banner imersivo: fundo em perspectiva com seções reais do
-// produto (ver PreviewCollageBackground), texto/CTA centralizados por cima. A
-// seção fica intencionalmente escura (como o login) independente do tema do
-// site - é o mesmo tratamento que o AuthDecoration já usa.
+/**
+ * The library with nothing in it yet: the three steps and the one action on the left,
+ * real cards on the right. It used to be a dark banner over a tilted wall of templates,
+ * fixed dark whatever the theme; this follows the theme like the rest of the app.
+ */
 export function DashboardEmptyState() {
   const t = useTranslations("dashboard.emptyState")
-  const [activeStep, setActiveStep] = useState(0)
 
   return (
-    <div className="relative flex h-full min-h-[600px] items-center justify-center overflow-hidden rounded-2xl px-6 py-16">
-      <PreviewCollageBackground />
-
-      {stars.map((s, i) => (
-        <motion.span
-          key={i}
-          className="pointer-events-none absolute rounded-full bg-white"
-          style={{ top: s.top, left: s.left, width: s.size, height: s.size, opacity: s.opacity }}
-          animate={{ opacity: [s.opacity, s.opacity * 1.6, s.opacity] }}
-          transition={{ duration: 6 + i, repeat: Infinity, ease: "easeInOut" }}
-        />
-      ))}
-
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="relative z-10 max-w-xl rounded-2xl border border-white/10 bg-[#05070d]/75 px-6 py-10 text-center shadow-[0_25px_60px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md sm:px-10"
-      >
-        <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/50 px-3 py-1 font-heading text-[11px] font-bold uppercase tracking-[0.2em] backdrop-blur-sm">
-          <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
-            {t("badge")}
-          </span>
-        </span>
-        <h2 className="mb-3 font-heading text-[28px] font-extrabold leading-[1.08] text-white md:text-[36px]">
+    <div className={cn(STICKER, "relative grid overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)]")}>
+      <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-12">
+        <span className={cn(CHIP, "uppercase tracking-[0.12em]")}>{t("badge")}</span>
+        <h2 className="mt-4 font-heading text-[30px] font-extrabold leading-[1.05] tracking-tight text-foreground md:text-[40px]">
           {t("title")}
         </h2>
-        <p className="mx-auto mb-8 max-w-md text-sm leading-relaxed text-white/70 md:text-base">{t("description")}</p>
+        <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted-foreground">{t("description")}</p>
 
-        {/* Passos - lista compacta centralizada, ligados por uma linha vertical */}
-        <div className="relative mx-auto mb-8 max-w-sm space-y-4 text-left">
-          <div className="absolute bottom-2 left-[15px] top-2 w-px bg-gradient-to-b from-cyan-400/40 via-violet-400/30 to-transparent" />
+        <ol className="mt-8 max-w-md space-y-4">
           {STEPS.map((step, i) => (
-            <div
-              key={step}
-              className="relative -mx-2 flex cursor-default gap-3.5 rounded-lg px-2 py-1 transition-colors duration-200"
-              onMouseEnter={() => setActiveStep(i)}
-              style={{ background: activeStep === i ? "rgba(124,58,237,0.15)" : "transparent" }}
-            >
+            <li key={step.id} className="flex gap-3.5">
               <span
-                className="relative z-10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border text-xs font-mono font-semibold transition-colors duration-200"
-                style={
-                  activeStep === i
-                    ? {
-                        background: "linear-gradient(135deg,#7C3AED,#EC4899)",
-                        borderColor: "transparent",
-                        color: "#fff",
-                      }
-                    : { background: "#0a0f1e", borderColor: "rgba(34,211,238,0.4)", color: "#67e8f9" }
-                }
+                className={cn(
+                  "flex h-8 w-8 flex-none items-center justify-center rounded-lg border-2 border-foreground font-mono text-[13px] font-bold text-slate-950",
+                  step.tone
+                )}
               >
                 {i + 1}
               </span>
-              <div className="pt-1">
-                <h4 className="mb-0.5 text-sm font-medium text-white">{t(`steps.${step}.title`)}</h4>
-                <p className="text-xs leading-relaxed text-white/60">{t(`steps.${step}.description`)}</p>
+              <div className="pt-0.5">
+                <h3 className="text-[15px] font-semibold text-foreground">{t(`steps.${step.id}.title`)}</h3>
+                <p className="mt-0.5 text-[13.5px] leading-relaxed text-muted-foreground">
+                  {t(`steps.${step.id}.description`)}
+                </p>
               </div>
-            </div>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-9 flex flex-wrap items-center gap-4">
+          <Link href="/dashboard/new" className={BUTTON_PRIMARY}>
+            {t("cta")}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <span className={cn(CHIP, "font-mono")}>{t("freeTier", { max: MAX_SVGS_FREE_TIER })}</span>
+        </div>
+      </div>
+
+      <div aria-hidden className="relative hidden min-h-[420px] border-l-2 border-foreground bg-muted/50 lg:block">
+        <div
+          className={cn(HALFTONE, "inset-0 [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)]")}
+        />
+        <div className="absolute inset-8">
+          {PREVIEWS.map((preview) => (
+            <img
+              key={preview.src}
+              src={preview.src}
+              alt=""
+              className={cn(
+                "absolute h-[300px] w-[62%] object-cover object-top rounded-xl border-2 border-foreground bg-background shadow-[5px_5px_0_0_hsl(var(--primary))]",
+                preview.className
+              )}
+            />
           ))}
         </div>
-
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <Button asChild size="lg" className="gap-2 shadow-[0_0_25px_rgba(56,189,248,0.25)]">
-            <Link href="/dashboard/new">
-              <Sparkles className="h-4 w-4" />
-              {t("cta")}
-            </Link>
-          </Button>
-          <span className="rounded-full border border-white/20 px-3 py-1.5 font-mono text-xs text-white/60">
-            {t("freeTier", { max: MAX_SVGS_FREE_TIER })}
-          </span>
-        </div>
-      </motion.div>
+      </div>
     </div>
   )
 }

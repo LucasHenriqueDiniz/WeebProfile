@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
+import { TILE } from "@/components/landing/sticker"
+import { CATEGORY_STYLE } from "@/lib/landing/category-style"
 import { getPluginIcon } from "@/lib/plugin-icons"
 import { AlertCircle, Check, HelpCircle, ExternalLink, Sparkles, Zap } from "lucide-react"
 import React, { useCallback, useState } from "react"
@@ -212,6 +214,7 @@ export const PluginCard = React.memo(
     const publicRequiredFields = requiredFieldsWithoutSecret(metadata)
 
     const PluginIcon = getPluginIcon(plugin.name)
+    const category = (metadata as { category?: PluginCategory }).category
     const displayName = (() => {
       const meta = metadata as any
       if (meta.i18nKey?.displayName) {
@@ -233,13 +236,19 @@ export const PluginCard = React.memo(
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
             {PluginIcon && (
-              <span className="mt-0.5 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-cyan-500/10 text-primary">
+              <span
+                className={cn(
+                  TILE,
+                  "mt-0.5 h-11 w-11",
+                  category ? CATEGORY_STYLE[category].sticker : "bg-muted text-foreground"
+                )}
+              >
                 <PluginIcon className="h-5 w-5" />
               </span>
             )}
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-base font-semibold text-foreground">{displayName}</h2>
+                <h2 className="font-heading text-xl font-extrabold text-foreground">{displayName}</h2>
                 {state.enabled && (
                   <PluginConfigStatus
                     pluginName={plugin.name}
@@ -257,12 +266,15 @@ export const PluginCard = React.memo(
             type="button"
             onClick={handleTogglePlugin}
             className={cn(
-              "flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border",
+              "flex flex-shrink-0 items-center gap-1.5 rounded-lg border-2 border-foreground px-3 py-1.5 text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               state.enabled
-                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/40"
-                : "bg-background text-muted-foreground border-border hover:bg-muted hover:border-primary/30"
+                ? "bg-emerald-300 text-slate-950 shadow-[2px_2px_0_0_hsl(var(--foreground))]"
+                : "bg-card text-foreground hover:bg-accent"
             )}
-            aria-label={`${state.enabled ? "Desativar" : "Ativar"} ${displayName} plugin`}
+            aria-pressed={state.enabled}
+            aria-label={
+              state.enabled ? t("disablePlugin", { plugin: displayName }) : t("enablePlugin", { plugin: displayName })
+            }
           >
             {state.enabled ? <Check className="h-3 w-3" /> : null}
             <span>{state.enabled ? t("active") : t("inactive")}</span>
@@ -273,10 +285,10 @@ export const PluginCard = React.memo(
         {hasEssentialConfigs && (
           <div
             className={cn(
-              "space-y-2.5 p-3.5 rounded-lg border transition-colors",
+              "space-y-2.5 rounded-xl border-2 p-3.5 transition-colors",
               pluginMissingConfigs.length > 0
-                ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/50"
-                : "bg-muted/30 border-border"
+                ? "border-amber-600 bg-amber-50 dark:border-amber-400 dark:bg-amber-950/20"
+                : "border-foreground/20 bg-muted/30"
             )}
           >
             <div className="flex items-center justify-between">
@@ -291,11 +303,11 @@ export const PluginCard = React.memo(
                 ) : (
                   <Zap className="h-3 w-3" />
                 )}
-                Configurações obrigatórias
+                {t("essentialConfigs")}
               </p>
               {pluginMissingConfigs.length > 0 && (
                 <Badge variant="destructive" className="text-[10px]">
-                  {pluginMissingConfigs.length} faltando
+                  {t("configMissing", { count: pluginMissingConfigs.length })}
                 </Badge>
               )}
             </div>
@@ -535,13 +547,13 @@ export const PluginCard = React.memo(
                   key={section.id}
                   onClick={() => handleSectionToggle(section.id)}
                   className={cn(
-                    "flex flex-col gap-2.5 p-3 rounded-lg border cursor-pointer transition-all group",
+                    "group flex cursor-pointer flex-col gap-2.5 rounded-xl border-2 p-3 transition-all",
                     // O controle acessivel e o checkbox sr-only aninhado. Sem isto, quem
                     // navega por teclado foca um input invisivel e nada muda na tela.
-                    "focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background",
+                    "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background",
                     isSelected
-                      ? "bg-primary/5 text-primary border-primary/30"
-                      : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50 hover:border-primary/20"
+                      ? "border-foreground bg-card text-foreground shadow-[4px_4px_0_0_hsl(var(--primary))]"
+                      : "border-foreground/20 bg-card text-muted-foreground hover:border-foreground/60"
                   )}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -554,7 +566,15 @@ export const PluginCard = React.memo(
                         onClick={(e) => e.stopPropagation()}
                         aria-label={`${isSelected ? t("deselectSection") : t("selectSection")} ${getSectionName(section)}`}
                       />
-                      {isSelected && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border-2 border-foreground",
+                          isSelected ? "bg-cyan-400 text-slate-950" : "bg-card"
+                        )}
+                      >
+                        {isSelected && <Check className="h-3.5 w-3.5" />}
+                      </span>
                       <span className="text-sm font-medium truncate">{getSectionName(section)}</span>
                     </div>
                     {hasConfigs && isSelected && (
@@ -577,7 +597,7 @@ export const PluginCard = React.memo(
                   {previewImage && (
                     <button
                       type="button"
-                      className="max-h-72 w-full overflow-hidden rounded-md border border-border bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      className="max-h-72 w-full overflow-hidden rounded-lg border-2 border-foreground/20 bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleSectionToggle(section.id)
@@ -594,7 +614,7 @@ export const PluginCard = React.memo(
                         className="block h-auto w-full pointer-events-none"
                         draggable={false}
                         onError={(e) => {
-                          const placeholderSvg = `data:image/svg+xml,${encodeURIComponent(`<svg width="600" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="300" fill="#f3f4f6"/><text x="300" y="150" text-anchor="middle" font-family="Arial" font-size="14" fill="#6b7280">Preview não disponível</text></svg>`)}`
+                          const placeholderSvg = `data:image/svg+xml,${encodeURIComponent(`<svg width="600" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="600" height="300" fill="#f3f4f6"/><text x="300" y="150" text-anchor="middle" font-family="Arial" font-size="14" fill="#6b7280">${t("previewUnavailable")}</text></svg>`)}`
                           e.currentTarget.src = placeholderSvg
                         }}
                       />

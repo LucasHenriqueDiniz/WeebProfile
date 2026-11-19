@@ -25,8 +25,6 @@ const NewRepositorySvgPage = Lazy(() => import("./routes/dashboard.new.repositor
 const SvgViewPage = Lazy(() => import("./routes/dashboard.$id"))
 const EditSvgPage = Lazy(() => import("./routes/dashboard.$id.edit"))
 const SettingsPage = Lazy(() => import("./routes/dashboard.settings"))
-// TEMPORARY: design prototypes for the signed-in screens.
-const PrototypesPage = Lazy(() => import("./routes/dashboard.prototypes"))
 const TemplatesPage = Lazy(() => import("./routes/templates"))
 const PluginsGalleryPage = Lazy(() => import("./routes/plugins"))
 const TemplateDetailPage = Lazy(() => import("./routes/templates.$id"))
@@ -114,12 +112,6 @@ const settingsRoute = createRoute({
   component: SettingsPage,
 })
 
-const prototypesRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/dashboard/prototypes",
-  component: PrototypesPage,
-})
-
 const templatesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/templates",
@@ -151,7 +143,6 @@ const routeTree = rootRoute.addChildren([
   svgViewRoute,
   editSvgRoute,
   settingsRoute,
-  prototypesRoute,
   templatesRoute,
   pluginsGalleryRoute,
   templateDetailRoute,
