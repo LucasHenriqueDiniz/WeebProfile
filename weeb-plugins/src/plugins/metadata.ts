@@ -1564,6 +1564,68 @@ export const PLUGINS_METADATA = {
         ]
       },
       {
+        id: "isocalendar",
+        name: "Isometric Calendar",
+        description: "Contribution calendar in 3D, with streaks, best day and average per day",
+        i18nKey: {
+          name: "plugins.github.sections.isocalendar.name",
+          description: "plugins.github.sections.isocalendar.description"
+        },
+        configOptions: [
+        {
+          key: "isocalendar_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github.sections.isocalendar.config.isocalendar_hide_title.label"
+          }
+        },
+        {
+          key: "isocalendar_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Isometric Calendar",
+          i18nKey: {
+            label: "plugins.github.sections.isocalendar.config.isocalendar_title.label",
+            defaultValue: "plugins.github.sections.isocalendar.config.isocalendar_title.defaultValue"
+          }
+        },
+        {
+          key: "isocalendar_duration",
+          label: "Duration",
+          type: "select",
+          defaultValue: "half_year",
+          description: "How far back the calendar goes, ending today",
+          tooltip: "Half a year draws the last 26 weeks, a full year the last 53.",
+          options: [
+            { value: "half_year", label: "Half a year" },
+            { value: "full_year", label: "Full year" }
+          ],
+          i18nKey: {
+            label: "plugins.github.sections.isocalendar.config.isocalendar_duration.label",
+            description: "plugins.github.sections.isocalendar.config.isocalendar_duration.description",
+            tooltip: "plugins.github.sections.isocalendar.config.isocalendar_duration.tooltip",
+            options: {
+              "half_year": "plugins.github.sections.isocalendar.config.isocalendar_duration.options.half_year",
+              "full_year": "plugins.github.sections.isocalendar.config.isocalendar_duration.options.full_year"
+            }
+          }
+        },
+        {
+          key: "isocalendar_hide_stats",
+          label: "Hide statistics",
+          type: "boolean",
+          defaultValue: false,
+          description: "Hide the current and best streaks, the best day and the average per day",
+          i18nKey: {
+            label: "plugins.github.sections.isocalendar.config.isocalendar_hide_stats.label",
+            description: "plugins.github.sections.isocalendar.config.isocalendar_hide_stats.description"
+          }
+        }
+        ]
+      },
+      {
         id: "code_habits",
         name: "Code Habits",
         description: "Code habits (hours, days of the week)",

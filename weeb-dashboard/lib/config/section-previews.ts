@@ -61,6 +61,7 @@ export const SECTION_PREVIEWS: Record<
     favorite_languages: { default: [415, 354], terminal: [415, 316] },
     favorite_license: { default: [415, 112], terminal: [415, 135] },
     calendar: { default: [415, 347], terminal: [415, 181] },
+    isocalendar: { default: [415, 298], terminal: [415, 290] },
     code_habits: { default: [415, 628], terminal: [415, 1136] },
     starred_repositories: { default: [415, 1440], terminal: [415, 304] },
     gists: { default: [415, 456], terminal: [415, 136] },

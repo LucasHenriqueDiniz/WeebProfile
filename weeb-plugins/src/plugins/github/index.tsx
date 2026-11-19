@@ -31,6 +31,7 @@ import {
   starredRepositoriesHeight,
   topRepositoriesHeight,
 } from "./height"
+import { ISOCALENDAR_CSS, isocalendarHeight } from "./isocalendar"
 
 type CalendarYear = NonNullable<GithubData["calendar"]["years"]>[number]
 
@@ -72,6 +73,7 @@ function multiYearCalendarHeight(
 export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & GithubData> = {
   name: "github",
   essentialConfigKeys: ["pat"], // Uses Classic Token instead of OAuth token
+  styles: ISOCALENDAR_CSS,
   config: {
     enabled: false,
     sections: [],
@@ -139,6 +141,9 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           }
           break
         }
+        case "isocalendar":
+          h += isocalendarHeight(cfg, gh, size, isTerminal)
+          break
         case "code_habits":
           h += codeHabitsHeight(cfg, gh.codeHabits, size, isTerminal)
           break

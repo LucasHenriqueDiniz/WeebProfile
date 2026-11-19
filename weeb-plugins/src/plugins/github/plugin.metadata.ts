@@ -208,6 +208,44 @@ export const githubPluginMetadata = {
       ],
     },
     {
+      id: "isocalendar",
+      name: "Isometric Calendar",
+      description: "Contribution calendar in 3D, with streaks, best day and average per day",
+      configOptions: [
+        {
+          key: "isocalendar_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "isocalendar_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Isometric Calendar",
+        },
+        {
+          key: "isocalendar_duration",
+          label: "Duration",
+          type: "select" as const,
+          defaultValue: "half_year",
+          options: [
+            { value: "half_year", label: "Half a year" },
+            { value: "full_year", label: "Full year" },
+          ],
+          description: "How far back the calendar goes, ending today",
+          tooltip: "Half a year draws the last 26 weeks, a full year the last 53.",
+        },
+        {
+          key: "isocalendar_hide_stats",
+          label: "Hide statistics",
+          type: "boolean" as const,
+          defaultValue: false,
+          description: "Hide the current and best streaks, the best day and the average per day",
+        },
+      ],
+    },
+    {
       id: "code_habits",
       name: "Code Habits",
       description: "Code habits (hours, days of the week)",

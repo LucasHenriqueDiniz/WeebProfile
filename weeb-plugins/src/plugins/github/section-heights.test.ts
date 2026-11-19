@@ -376,6 +376,24 @@ const MEASURED: Case[] = [
   [SEVEN, "terminal", "full", "7 gists", {}, [1456, 1456, 1456]],
   [["activity", "repositories", "star_lists"], "terminal", "half", "long star list", {}, [520, 520, 520]],
   [["activity", "repositories", "star_lists"], "default", "full", "long star list", {}, [728, 727, 728], WRAP],
+  // The isometric calendar: the 40px title and a drawing of a fixed height per size and
+  // duration; the statistics sit over the drawing's empty corner. Measured 18/11/2026.
+  [["isocalendar"], "default", "half", "mock", {}, [274, 274, 274]],
+  [["isocalendar"], "terminal", "half", "mock", {}, [266, 266, 266]],
+  [["isocalendar"], "default", "full", "mock", {}, [274, 274, 274]],
+  [["isocalendar"], "terminal", "full", "mock", {}, [266, 266, 266]],
+  [["isocalendar"], "default", "half", "mock", { isocalendar_hide_title: true }, [234, 234, 234]],
+  [["isocalendar"], "terminal", "half", "mock", { isocalendar_hide_title: true }, [266, 266, 266]],
+  [["isocalendar"], "default", "full", "mock", { isocalendar_hide_title: true }, [234, 234, 234]],
+  [["isocalendar"], "terminal", "full", "mock", { isocalendar_hide_title: true }, [266, 266, 266]],
+  [["isocalendar"], "default", "half", "mock", { isocalendar_duration: "full_year" }, [297, 297, 297]],
+  [["isocalendar"], "terminal", "half", "mock", { isocalendar_duration: "full_year" }, [289, 289, 289]],
+  [["isocalendar"], "default", "full", "mock", { isocalendar_duration: "full_year" }, [337, 337, 337]],
+  [["isocalendar"], "terminal", "full", "mock", { isocalendar_duration: "full_year" }, [329, 329, 329]],
+  [["isocalendar"], "default", "half", "mock", { isocalendar_hide_stats: true }, [274, 274, 274]],
+  [["isocalendar"], "terminal", "half", "mock", { isocalendar_hide_stats: true }, [266, 266, 266]],
+  [["isocalendar"], "default", "full", "mock", { isocalendar_hide_stats: true }, [274, 274, 274]],
+  [["isocalendar"], "terminal", "full", "mock", { isocalendar_hide_stats: true }, [266, 266, 266]],
 ]
 
 const plugin = PluginManager.getInstance().get("github")!

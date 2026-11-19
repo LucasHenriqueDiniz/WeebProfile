@@ -14,6 +14,7 @@ import {
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
 import { lastSixMonthsStart, firstDayOfLastSixMonths } from "../utils"
+import { duration, isocalendarFromCalendar, isocalendarWindow } from "../isocalendar"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { randomColorWithString } from "../../../utils/string"
 
@@ -245,12 +246,16 @@ export async function fetchGithubData(
   // Development mode - return mock data
   if (dev) {
     const mock = await getMockGithubData()
+    // The mock is all of 2025: the isometric calendar ends on its last day, as a fetched one
+    // ends today.
+    const window = isocalendarWindow(duration(config), newestDay(mock))
+    const isocalendar = { start: window.start, end: window.end, days: isocalendarFromCalendar(mock.calendar, window)! }
     // The mock is one fixed year. For last_6_months, answer like the fetch does: its last six
     // months and their total. The preview showed the mock's figure for the year (844) under
     // "in the last 6 months".
     return config.calendar_year_mode === "last_6_months"
-      ? { ...mock, calendar: lastSixMonthsOf(mock.calendar.weeks) }
-      : mock
+      ? { ...mock, isocalendar, calendar: lastSixMonthsOf(mock.calendar.weeks) }
+      : { ...mock, isocalendar }
   }
 
   // Validate Classic Token and username
@@ -291,8 +296,10 @@ export async function fetchGithubData(
   let ownedRepositories: Promise<OwnedRepositories> | undefined
 
   try {
-    // Process each requested section
-    for (const section of sections) {
+    // Process each requested section. The isometric calendar goes last, to reuse the days
+    // the calendar section fetched.
+    const ordered = [...sections.filter((s) => s !== "isocalendar"), ...sections.filter((s) => s === "isocalendar")]
+    for (const section of ordered) {
       try {
         // Code habits uses REST API, not GraphQL
         if (section === "code_habits") {
@@ -350,6 +357,11 @@ export async function fetchGithubData(
             console.warn(`Error fetching featured repositories:`, error.message)
             data.featuredRepositories = []
           }
+          continue
+        }
+
+        if (section === "isocalendar") {
+          data.isocalendar = await fetchIsocalendar(graphqlClient, username, config, data.calendar)
           continue
         }
 
@@ -914,6 +926,47 @@ function lastSixMonthsOf(weeks: ContributionWeek[]): GithubData["calendar"] {
     .flatMap((week) => week.contributionDays)
     .reduce((sum, day) => sum + day.contributionCount, 0)
   return { totalContributions, weeks: kept }
+}
+
+/** The newest day of the mock's calendar that is not after today. */
+function newestDay(mock: GithubData): string {
+  const today = new Date().toISOString().slice(0, 10)
+  let newest = ""
+  for (const week of mock.calendar.weeks) {
+    for (const day of week.contributionDays) if (day.date > newest && day.date <= today) newest = day.date
+  }
+  return newest || today
+}
+
+/**
+ * The isometric calendar's days, up to today (UTC). From the calendar section when it
+ * fetched all of them (no request), else in one query: the window is at most a year.
+ */
+async function fetchIsocalendar(
+  graphqlClient: ReturnType<typeof graphql.defaults>,
+  username: string,
+  config: GithubConfig,
+  calendar: GithubData["calendar"] | undefined,
+  now: Date = new Date()
+): Promise<GithubData["isocalendar"]> {
+  const window = isocalendarWindow(duration(config), now.toISOString().slice(0, 10))
+  const reused = isocalendarFromCalendar(calendar, window)
+  if (reused) return { start: window.start, end: window.end, days: reused }
+
+  const result = await graphqlClient<GraphQLResponse>(SECTION_QUERIES.calendar, {
+    login: username,
+    from: `${window.from}T00:00:00Z`,
+    to: `${window.end}T23:59:59Z`,
+  })
+  const weeks = result.user.contributionsCollection?.contributionCalendar?.weeks ?? []
+  // GitHub answers the range asked; a day it left out counts as one without contributions.
+  const known = new Map(weeks.flatMap((w) => w.contributionDays).map((d) => [d.date, d.contributionCount]))
+  const days: NonNullable<GithubData["isocalendar"]>["days"] = []
+  for (let ms = Date.parse(`${window.from}T00:00:00Z`); ms <= Date.parse(`${window.end}T00:00:00Z`); ms += 86_400_000) {
+    const date = new Date(ms).toISOString().slice(0, 10)
+    days.push({ date, count: known.get(date) ?? 0 })
+  }
+  return { start: window.start, end: window.end, days }
 }
 
 /**
