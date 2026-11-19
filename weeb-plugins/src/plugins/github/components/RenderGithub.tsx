@@ -10,6 +10,7 @@ import { GithubFollowup } from "./Followup"
 import { GithubFeaturedRepositories } from "./FeaturedRepositories"
 import { GithubGists } from "./Gists"
 import { GithubIntroduction } from "./Introduction"
+import { GithubIsocalendar } from "./Isocalendar"
 import { GithubLines } from "./Lines"
 import { GithubNotableContributions } from "./NotableContributions"
 import { GithubPeople } from "./People"
@@ -88,6 +89,8 @@ export function RenderGithub({
         return <GithubFollowup key="followup" data={data.followup} config={config} style={style} size={size} />
       case "calendar":
         return <GithubCalendar key="calendar" data={data.calendar} config={config} style={style} size={size} />
+      case "isocalendar":
+        return <GithubIsocalendar key="isocalendar" data={data.isocalendar} config={config} style={style} size={size} />
       case "code_habits":
         return <GithubCodeHabits key="code_habits" data={data.codeHabits} config={config} style={style} size={size} />
       case "starred_repositories":

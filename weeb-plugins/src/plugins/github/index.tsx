@@ -33,6 +33,7 @@ import {
   starredRepositoriesHeight,
   topRepositoriesHeight,
 } from "./height"
+import { isocalendarHeight } from "./isocalendar"
 
 type CalendarYear = NonNullable<GithubData["calendar"]["years"]>[number]
 
@@ -144,6 +145,9 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           }
           break
         }
+        case "isocalendar":
+          h += isocalendarHeight(cfg, gh, size, isTerminal)
+          break
         case "code_habits":
           h += codeHabitsHeight(cfg, gh.codeHabits, size, isTerminal)
           break
