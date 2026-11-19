@@ -1,0 +1,80 @@
+{
+  "description": "Mostre seu perfil, ratings, resultados e partidas recentes do Lichess ou Chess.com",
+  "displayName": "Xadrez",
+  "sections": {
+    "profile": {
+      "config": {
+        "profile_hide_title": {
+          "label": "Ocultar título"
+        },
+        "profile_title": {
+          "defaultValue": "Perfil de Xadrez",
+          "label": "Título"
+        },
+        "username": {
+          "description": "O link do seu perfil (lichess.org/@/nome ou chess.com/member/nome), ou lichess:nome / chess.com:nome",
+          "label": "Perfil do Lichess ou Chess.com",
+          "placeholder": "lichess.org/@/thibault",
+          "tooltip": "O mesmo nome de usuário pode ser de pessoas diferentes nos dois sites, então o card precisa saber qual. Copie o link da página do seu perfil."
+        }
+      },
+      "description": "Avatar, título, nome, país, data de entrada e seguidores ou tempo de jogo",
+      "name": "Perfil"
+    },
+    "ratings": {
+      "config": {
+        "ratings_hide_title": {
+          "label": "Ocultar título"
+        },
+        "ratings_show_best": {
+          "description": "O rating mais alto já alcançado em cada ritmo",
+          "label": "Mostrar melhor rating"
+        },
+        "ratings_show_puzzles": {
+          "label": "Mostrar problemas",
+          "tooltip": "O Lichess informa o rating atual de problemas; o Chess.com, só o mais alto."
+        },
+        "ratings_show_unplayed": {
+          "description": "Ritmos que você nunca jogou, com um traço",
+          "label": "Mostrar ritmos não jogados"
+        },
+        "ratings_title": {
+          "defaultValue": "Ratings de Xadrez",
+          "label": "Título"
+        }
+      },
+      "description": "Rating atual e melhor por ritmo de jogo, e partidas jogadas",
+      "name": "Ratings"
+    },
+    "recent_games": {
+      "config": {
+        "recent_games_hide_title": {
+          "label": "Ocultar título"
+        },
+        "recent_games_max": {
+          "description": "Máximo de 10 partidas",
+          "label": "Máximo de partidas"
+        },
+        "recent_games_title": {
+          "defaultValue": "Partidas Recentes",
+          "label": "Título"
+        }
+      },
+      "description": "Suas últimas partidas: resultado, adversário, ritmo e data",
+      "name": "Partidas recentes"
+    },
+    "results": {
+      "config": {
+        "results_hide_title": {
+          "label": "Ocultar título"
+        },
+        "results_title": {
+          "defaultValue": "Resultados de Xadrez",
+          "label": "Título"
+        }
+      },
+      "description": "Vitórias, empates e derrotas em partidas bullet, blitz, rápidas, clássicas e diárias",
+      "name": "Resultados"
+    }
+  }
+}

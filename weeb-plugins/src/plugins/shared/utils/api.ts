@@ -58,7 +58,8 @@ async function requestWithRetry<T>(
           "User-Agent": USER_AGENT,
           ...headers,
         },
-        body: body ? JSON.stringify(body) : undefined,
+        // A string goes as it is (Lichess' POST /api/users takes a plain-text list of names).
+        body: body === undefined || body === null ? undefined : typeof body === "string" ? body : JSON.stringify(body),
         signal: controller.signal,
       })
 
