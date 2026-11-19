@@ -48,6 +48,15 @@
   padding: 0;
 }
 
+/* Links: a card is an image, so a link only carries its text. Without this the
+   browser's own link style applied, blue (rgb 0 0 238) and underlined, to every link
+   in a card: GitHub repositories, activity, people and gists, the 16Personalities
+   link. :where() keeps it at zero specificity, so a class that colors a link wins. */
+:where(#svg-main a) {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Container */
 #svg-main .default-container {
   --font-family: Poppins, sans-serif;
@@ -962,10 +971,6 @@
   height: 2.25rem
 }
 
-#svg-main .h-\[100px\] {
-  height: 100px
-}
-
 #svg-main .h-\[120px\] {
   height: 120px
 }
@@ -974,12 +979,32 @@
   height: 15px
 }
 
+#svg-main .h-\[18px\] {
+  height: 18px
+}
+
+#svg-main .h-\[36px\] {
+  height: 36px
+}
+
 #svg-main .h-\[3px\] {
   height: 3px
 }
 
+#svg-main .h-\[40px\] {
+  height: 40px
+}
+
+#svg-main .h-\[44px\] {
+  height: 44px
+}
+
 #svg-main .h-\[50px\] {
   height: 50px
+}
+
+#svg-main .h-\[60px\] {
+  height: 60px
 }
 
 #svg-main .h-\[75px\] {
@@ -1090,6 +1115,10 @@
   width: 2rem
 }
 
+#svg-main .w-9 {
+  width: 2.25rem
+}
+
 #svg-main .w-\[0\.60rem\] {
   width: 0.60rem
 }
@@ -1143,8 +1172,8 @@
   max-width: 320px
 }
 
-#svg-main .max-w-\[60\%\] {
-  max-width: 60%
+#svg-main .max-w-\[55\%\] {
+  max-width: 55%
 }
 
 #svg-main .max-w-full {
@@ -1363,6 +1392,11 @@
   gap: 9px
 }
 
+#svg-main .gap-x-1 {
+  -moz-column-gap: 0.25rem;
+       column-gap: 0.25rem
+}
+
 #svg-main .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem
@@ -1394,12 +1428,6 @@
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse))
-}
-
-#svg-main .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.625rem * var(--tw-space-y-reverse))
 }
 
 #svg-main .space-y-3 > :not([hidden]) ~ :not([hidden]) {
@@ -1593,10 +1621,6 @@
   background-color: rgb(0 0 0 / 0.2)
 }
 
-#svg-main .bg-black\/25 {
-  background-color: rgb(0 0 0 / 0.25)
-}
-
 #svg-main .bg-black\/40 {
   background-color: rgb(0 0 0 / 0.4)
 }
@@ -1645,10 +1669,6 @@
   background-color: rgb(69 10 10 / var(--tw-bg-opacity, 1))
 }
 
-#svg-main .bg-red-950\/20 {
-  background-color: rgb(69 10 10 / 0.2)
-}
-
 #svg-main .bg-yellow-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1))
@@ -1674,6 +1694,10 @@
 
 #svg-main .p-1 {
   padding: 0.25rem
+}
+
+#svg-main .p-1\.5 {
+  padding: 0.375rem
 }
 
 #svg-main .p-2 {
@@ -2016,6 +2040,10 @@
   text-transform: uppercase
 }
 
+#svg-main .lowercase {
+  text-transform: lowercase
+}
+
 #svg-main .capitalize {
   text-transform: capitalize
 }
@@ -2027,6 +2055,14 @@
 #svg-main .tabular-nums {
   --tw-numeric-spacing: tabular-nums;
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
+}
+
+#svg-main .leading-4 {
+  line-height: 1rem
+}
+
+#svg-main .leading-5 {
+  line-height: 1.25rem
 }
 
 #svg-main .leading-\[1\.05\] {
@@ -2043,6 +2079,10 @@
 
 #svg-main .leading-\[1\.9\] {
   line-height: 1.9
+}
+
+#svg-main .leading-\[18px\] {
+  line-height: 18px
 }
 
 #svg-main .leading-none {
@@ -2443,6 +2483,10 @@
   height: 1.5rem
 }
 
+#svg-main.half .half\:h-\[56px\] {
+  height: 56px
+}
+
 #svg-main.half .half\:min-h-\[100px\] {
   min-height: 100px
 }
@@ -2515,10 +2559,6 @@
   gap: 0.75rem
 }
 
-#svg-main.half .half\:p-3 {
-  padding: 0.75rem
-}
-
 #svg-main.half .half\:px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem
@@ -2547,12 +2587,8 @@
   font-size: 11px
 }
 
-#svg-main.half .half\:text-\[8px\] {
-  font-size: 8px
-}
-
-#svg-main.half .half\:text-\[9px\] {
-  font-size: 9px
+#svg-main.half .half\:text-\[13px\] {
+  font-size: 13px
 }
 
 #svg-main.half .half\:text-base {
@@ -2568,11 +2604,6 @@
 #svg-main.half .half\:text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem
-}
-
-#svg-main.half .half\:text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem
 }
 
 #svg-main.half .half\:text-xs {
@@ -2600,4 +2631,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-favorite-languages"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">22 Languages</h2></div></div><div class="flex flex-col gap-1"><div class="flex h-2.5 w-full rounded overflow-hidden"><span style="width:70.43108153367653%;background-color:#3178c6"></span><span style="width:8.441460382355155%;background-color:#f1e05a"></span><span style="width:7.878225617111732%;background-color:#178600"></span><span style="width:5.161516960994023%;background-color:#663399"></span><span style="width:3.7771087923968683%;background-color:#3572A5"></span><span style="width:1.2917312797097633%;background-color:#222c37"></span><span style="width:1.2470217017980278%;background-color:#e34c26"></span><span style="width:0.7982248403911398%;background-color:#336790"></span><span style="width:0.3123893193215506%;background-color:#dea584"></span><span style="width:0.2245749581108486%;background-color:#aace60"></span><span style="width:0.17310919487935716%;background-color:#C1F12E"></span><span style="width:0.07343540148029465%;background-color:#A97BFF"></span><span style="width:0.056665297776861974%;background-color:#89e051"></span><span style="width:0.04369855730569107%;background-color:#6866fb"></span><span style="width:0.041933283231645524%;background-color:#701516"></span><span style="width:0.02378305616123179%;background-color:#7e858d"></span><span style="width:0.009805295084016615%;background-color:#000080"></span><span style="width:0.005247678383753573%;background-color:#438eff"></span><span style="width:0.0045255208080076685%;background-color:#384d54"></span><span style="width:0.0018134179124286048%;background-color:#F05138"></span><span style="width:0.0016529384511517371%;background-color:#555555"></span><span style="width:0.0009949726599165795%;background-color:#c6538c"></span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#3178c6" class="mr-2" style="color:#3178c6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>TypeScript</span><span class="text-base text-default flex items-center justify-end">70.43<!-- -->%</span><span class="text-base text-default flex items-center justify-end">4.4M<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#f1e05a" class="mr-2" style="color:#f1e05a" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>JavaScript</span><span class="text-base text-default flex items-center justify-end">8.44<!-- -->%</span><span class="text-base text-default flex items-center justify-end">526.0K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#178600" class="mr-2" style="color:#178600" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>C#</span><span class="text-base text-default flex items-center justify-end">7.88<!-- -->%</span><span class="text-base text-default flex items-center justify-end">490.9K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#663399" class="mr-2" style="color:#663399" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>CSS</span><span class="text-base text-default flex items-center justify-end">5.16<!-- -->%</span><span class="text-base text-default flex items-center justify-end">321.6K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#3572A5" class="mr-2" style="color:#3572A5" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>Python</span><span class="text-base text-default flex items-center justify-end">3.78<!-- -->%</span><span class="text-base text-default flex items-center justify-end">235.4K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#222c37" class="mr-2" style="color:#222c37" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>ShaderLab</span><span class="text-base text-default flex items-center justify-end">1.29<!-- -->%</span><span class="text-base text-default flex items-center justify-end">80.5K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#e34c26" class="mr-2" style="color:#e34c26" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>HTML</span><span class="text-base text-default flex items-center justify-end">1.25<!-- -->%</span><span class="text-base text-default flex items-center justify-end">77.7K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#336790" class="mr-2" style="color:#336790" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>PLpgSQL</span><span class="text-base text-default flex items-center justify-end">0.80<!-- -->%</span><span class="text-base text-default flex items-center justify-end">49.7K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#dea584" class="mr-2" style="color:#dea584" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>Rust</span><span class="text-base text-default flex items-center justify-end">0.31<!-- -->%</span><span class="text-base text-default flex items-center justify-end">19.5K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#aace60" class="mr-2" style="color:#aace60" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg>HLSL</span><span class="text-base text-default flex items-center justify-end">0.22<!-- -->%</span><span class="text-base text-default flex items-center justify-end">14.0K<!-- --> lines</span></div></div></section></div></div></div></div></foreignObject></svg>
+</style><div class="default-container" data-style="default" data-theme="default" style="font-family:&#x27;Poppins&#x27;, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;--default-color-surface:#ffffff;--default-color-background:#ffffff;--default-color-default:#9fa9b5;--default-color-success:#2da44e;--default-color-muted:#6e7781;--default-color-muted-light:#8c959f;--default-color-raw:#9fa9b5;--default-color-highlight:#FF7A3D"><div><div><section id="github-favorite-languages"><div class="w-full overflow-hidden flex items-center gap-1.5 border-0 border-b border-default-highlight border-solid pb-0.5 my-1.5"><div class="text-default-highlight fill-default-highlight" style="fill:var(--default-color-highlight);color:var(--default-color-highlight)"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" class="text-default-highlight fill-default-highlight" style="color:var(--default-color-highlight);fill:var(--default-color-highlight)" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z"></path></svg></div><div class="flex justify-between w-full"><h2 class="text-xl text-default-highlight font-semibold leading-none">22 Languages</h2></div></div><div class="flex flex-col gap-1"><div class="flex h-2.5 w-full rounded overflow-hidden"><span style="width:70.43108153367653%;background-color:#3178c6"></span><span style="width:8.441460382355155%;background-color:#f1e05a"></span><span style="width:7.878225617111732%;background-color:#178600"></span><span style="width:5.161516960994023%;background-color:#663399"></span><span style="width:3.7771087923968683%;background-color:#3572A5"></span><span style="width:1.2917312797097633%;background-color:#222c37"></span><span style="width:1.2470217017980278%;background-color:#e34c26"></span><span style="width:0.7982248403911398%;background-color:#336790"></span><span style="width:0.3123893193215506%;background-color:#dea584"></span><span style="width:0.2245749581108486%;background-color:#aace60"></span><span style="width:0.17310919487935716%;background-color:#C1F12E"></span><span style="width:0.07343540148029465%;background-color:#A97BFF"></span><span style="width:0.056665297776861974%;background-color:#89e051"></span><span style="width:0.04369855730569107%;background-color:#6866fb"></span><span style="width:0.041933283231645524%;background-color:#701516"></span><span style="width:0.02378305616123179%;background-color:#7e858d"></span><span style="width:0.009805295084016615%;background-color:#000080"></span><span style="width:0.005247678383753573%;background-color:#438eff"></span><span style="width:0.0045255208080076685%;background-color:#384d54"></span><span style="width:0.0018134179124286048%;background-color:#F05138"></span><span style="width:0.0016529384511517371%;background-color:#555555"></span><span style="width:0.0009949726599165795%;background-color:#c6538c"></span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#3178c6" class="mr-2 flex-shrink-0" style="color:#3178c6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">TypeScript</span></span><span class="text-base text-default flex items-center justify-end">70.43<!-- -->%</span><span class="text-base text-default flex items-center justify-end">4.4M<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#f1e05a" class="mr-2 flex-shrink-0" style="color:#f1e05a" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">JavaScript</span></span><span class="text-base text-default flex items-center justify-end">8.44<!-- -->%</span><span class="text-base text-default flex items-center justify-end">526.0K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#178600" class="mr-2 flex-shrink-0" style="color:#178600" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">C#</span></span><span class="text-base text-default flex items-center justify-end">7.88<!-- -->%</span><span class="text-base text-default flex items-center justify-end">490.9K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#663399" class="mr-2 flex-shrink-0" style="color:#663399" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">CSS</span></span><span class="text-base text-default flex items-center justify-end">5.16<!-- -->%</span><span class="text-base text-default flex items-center justify-end">321.6K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#3572A5" class="mr-2 flex-shrink-0" style="color:#3572A5" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">Python</span></span><span class="text-base text-default flex items-center justify-end">3.78<!-- -->%</span><span class="text-base text-default flex items-center justify-end">235.4K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#222c37" class="mr-2 flex-shrink-0" style="color:#222c37" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">ShaderLab</span></span><span class="text-base text-default flex items-center justify-end">1.29<!-- -->%</span><span class="text-base text-default flex items-center justify-end">80.5K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#e34c26" class="mr-2 flex-shrink-0" style="color:#e34c26" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">HTML</span></span><span class="text-base text-default flex items-center justify-end">1.25<!-- -->%</span><span class="text-base text-default flex items-center justify-end">77.7K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#336790" class="mr-2 flex-shrink-0" style="color:#336790" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">PLpgSQL</span></span><span class="text-base text-default flex items-center justify-end">0.80<!-- -->%</span><span class="text-base text-default flex items-center justify-end">49.7K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#dea584" class="mr-2 flex-shrink-0" style="color:#dea584" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">Rust</span></span><span class="text-base text-default flex items-center justify-end">0.31<!-- -->%</span><span class="text-base text-default flex items-center justify-end">19.5K<!-- --> lines</span></div><div class="grid grid-cols-3 items-center"><span class="text-base text-default flex items-center min-w-0"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" color="#aace60" class="mr-2 flex-shrink-0" style="color:#aace60" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path></svg><span class="truncate">HLSL</span></span><span class="text-base text-default flex items-center justify-end">0.22<!-- -->%</span><span class="text-base text-default flex items-center justify-end">14.0K<!-- --> lines</span></div></div></section></div></div></div></div></foreignObject></svg>

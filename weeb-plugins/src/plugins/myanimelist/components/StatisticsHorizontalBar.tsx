@@ -99,7 +99,9 @@ export function StatisticsHorizontalBar({
 
   const animeTitle = config.anime_bar_title || "Anime Statistics"
   const mangaTitle = config.manga_bar_title || "Manga Statistics"
-  const hideTitle = config.manga_bar_hide_title ?? config.anime_bar_hide_title ?? false
+  // Each bar its own option: `manga ?? anime` hid the anime bar's title whenever the manga
+  // bar's option was set, false included, and calculateHeight read the option of the bar.
+  const hideTitle = (isAnime ? config.anime_bar_hide_title : config.manga_bar_hide_title) ?? false
 
   return (
     <section id="mal-manga-or-anime-bar">

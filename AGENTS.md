@@ -154,6 +154,8 @@ A altura do SVG é calculada **estaticamente** somando o `calculateHeight()` de 
 
 **O header do terminal (32px, `TERMINAL_HEADER_HEIGHT`) não entra no `calculateHeight()`.** Ele é desenhado uma vez por SVG, acima de todos os plugins, e o `generateSvg` soma os 32px uma vez quando o estilo é terminal e o header está visível. Até 11/2026, 53 seções terminais tinham o header embutido na própria altura (o `audit:heights` media com o header desenhado): um card com três seções do Stack Overflow saía com 96px de terminal vazio com o header desligado, que é o padrão. Outras não contavam, e um card do Dev.to com o header ligado perdia os últimos 8px. O `audit:heights` mede sem o header, então ele compara exatamente o que a seção desenha.
 
+Para medir: `pnpm --filter @weeb/svg-generator audit:heights -- --plugin=<nome> --variants --engine=all`. O `--variants` passa por cada opção que muda a altura (boolean invertido, cada valor de select, número no mínimo e no máximo), o `--engine=all` mede em Chrome, Firefox e WebKit e compara com o mais alto, e `--data-variants=<módulo>` troca o mock (mais itens, sem imagem). O teste da seção copia as linhas do `--json` para um `section-heights.test.ts` que chama `wrongHeights` (`plugins/shared/measured-heights.ts`). Linha de texto em terminal precisa de `line-height` fixo: só com `sm-text` (font-size) o Firefox desenhava 17px onde o Chrome desenha 16. A auditoria de 18/11/2026, seção por seção, antes e depois, está em [`docs/section-heights-audit.md`](docs/section-heights-audit.md).
+
 ### 6. Regenerar o metadata centralizado
 
 ```bash

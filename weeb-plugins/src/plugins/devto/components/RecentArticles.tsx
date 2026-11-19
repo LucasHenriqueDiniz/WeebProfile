@@ -18,7 +18,8 @@ interface RecentArticlesProps {
 }
 
 /** Mantido em sincronia com calculateHeight em index.tsx. */
-export const ARTICLE_ROW_HEIGHT = 44
+/** The title (text-sm) and the reactions row (text-xs); 44 until 11/2026, 8px over a row. */
+export const ARTICLE_ROW_HEIGHT = 36
 export const ARTICLE_ROW_GAP = 8
 
 export function RecentArticles({

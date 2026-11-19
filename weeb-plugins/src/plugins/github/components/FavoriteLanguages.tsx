@@ -40,9 +40,11 @@ const DefaultFavoriteLanguages = ({
 
       {data.slice(0, maxItems).map((lang) => (
         <div key={lang.name} className="grid grid-cols-3 items-center">
-          <span className="text-base text-default flex items-center">
-            <GoDotFill color={lang.color} className="mr-2" />
-            {lang.name}
+          {/* One line: in half the column is 133px, and "Objective-C++" wrapped to a second
+              line the height does not count (24px cut with 20 languages, 18/11/2026). */}
+          <span className="text-base text-default flex items-center min-w-0">
+            <GoDotFill color={lang.color} className="mr-2 flex-shrink-0" />
+            <span className="truncate">{lang.name}</span>
           </span>
           <span className="text-base text-default flex items-center justify-end">
             {((lang.size / totalSize) * 100).toFixed(2)}%

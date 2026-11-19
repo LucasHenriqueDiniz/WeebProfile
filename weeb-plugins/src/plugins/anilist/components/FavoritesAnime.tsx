@@ -20,6 +20,7 @@ interface FavoritesAnimeProps {
 /** Mantido em sincronia com calculateHeight em index.tsx. */
 export const FAVORITES_COLUMNS = { half: 5, full: 10 } as const
 export const FAVORITES_COVER_HEIGHT = 120
+export const FAVORITES_GAP = 8
 
 export function FavoritesAnime({
   favorites,
@@ -46,13 +47,18 @@ export function FavoritesAnime({
         defaultComponent={
           <div className="w-full overflow-hidden flex flex-col gap-3 half:gap-2.5">
             {!hideTitle && <DefaultTitle title={title} icon={<FaHeart />} />}
-            <div className={withCascade("flex flex-wrap gap-2", cascade)} style={cascade?.style}>
+            <div
+              className={withCascade("flex flex-wrap", cascade)}
+              style={{ gap: `${FAVORITES_GAP}px`, ...cascade?.style }}
+            >
               {shown.map((item) => (
                 <ExternalLink
                   key={item.id}
                   href={anilistAnimeUrl(item.id)}
                   className="flex flex-col"
-                  style={{ width: `${100 / columns}%` }}
+                  // The gaps come out of the row: a plain 1/columns width fit one cover
+                  // less per row (4 in half) and wrapped the card past its height.
+                  style={{ width: `calc((100% - ${(columns - 1) * FAVORITES_GAP}px) / ${columns})` }}
                 >
                   {/* Capa ausente vira um bloco do mesmo tamanho: sem isso a grade
                       se desalinha e a altura real deixa de bater com a calculada. */}

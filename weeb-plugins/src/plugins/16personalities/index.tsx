@@ -10,6 +10,7 @@ import type { PluginData } from "../../types/index"
 import type { Personality16Config, Personality16Data } from "./types"
 import { RenderPersonality16 } from "./components/Render16personalities"
 import { fetchPersonality16Data } from "./services/fetchData"
+import { personalityHeight } from "./height"
 
 /**
  * 16personalities Plugin
@@ -47,19 +48,8 @@ export const personality16Plugin: Plugin<Personality16Config, PluginData & Perso
     return <RenderPersonality16 config={config} data={data as Personality16Data} style={style} size={size} />
   },
 
-  calculateHeight: (config, _data, size = "half") => {
-    const isTerminal = (config as { style?: string }).style === "terminal"
-
-    let h = 0
-    for (const s of config.sections) {
-      if (s === "personality") {
-        // +10px buffer for personality types with longer descriptions than ENFJ (test fixture)
-        if (isTerminal) h += (size === "half" ? 174 : 154) + 10
-        else h += (size === "half" ? 193 : 170) + 10
-      }
-    }
-    return h
-  },
+  calculateHeight: (config, data, size = "half") =>
+    config.sections.includes("personality") ? personalityHeight(config, data as Personality16Data, size) : 0,
 }
 
 export default personality16Plugin

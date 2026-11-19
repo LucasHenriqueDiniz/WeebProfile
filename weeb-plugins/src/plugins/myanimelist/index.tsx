@@ -57,8 +57,20 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
       type: "anime" | "manga" | "characters" | "people"
     ): number => favoritesSectionHeight({ favorites, max, listStyle, hideTitle, type, isTerminal, size })
 
+    // DefaultTitle, 40px; until 11/2026 it was counted with the title hidden too (40px of
+    // blank space, 80 for the two statistics blocks stacked in half). The terminal bars
+    // counted 156px for 151, and the last activity 74px an entry while a running manga's
+    // "?%" wrapped to two lines and drew 91 (53px cut). Measured 18/11/2026 in
+    // Chrome 158, Firefox 150 and WebKit 26.4; `section-heights.test.ts` pins it.
+    const title = (hidden: boolean | undefined): number => (hidden ? 0 : 40)
+
     let h = 0
+    // Terminal heights are each section drawn alone, with the `.terminal-body` padding (8px)
+    // under it. The body wraps all the sections once, so it is taken back off every section
+    // after the first that draws something (64px of blank space under all nine until 11/2026).
+    let drawn = 0
     for (const s of cfg.sections) {
+      const before = h
       switch (s) {
         case "statistics": {
           const statisticsMedia = cfg.statistics_media ?? "both"
@@ -79,9 +91,10 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
               h += 52 + (showAnime ? nAnime : nManga) * 20
             }
           } else if (size === "full") {
-            h += 184
+            // Anime and manga side by side, each block under its own title.
+            h += title(cfg.statistics_hide_title) + 144
           } else {
-            h += blocks * 184 + Math.max(0, blocks - 1) * 8
+            h += blocks * (title(cfg.statistics_hide_title) + 144) + Math.max(0, blocks - 1) * 8
           }
           break
         }
@@ -90,17 +103,18 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
             h += 4 * 30 - 8
           } else {
             const rows = size === "half" ? 2 : 1
-            h += 48 + rows * 24 + Math.max(0, rows - 1) * 4
+            h += title(cfg.statistics_simple_hide_title) + 8 + rows * 24 + Math.max(0, rows - 1) * 4
           }
           break
         }
         case "anime_bar":
         case "manga_bar": {
           if (isTerminal) {
-            h += 36 + 5 * 24
+            h += 151
           } else {
             const rows = size === "full" ? 1 : 3
-            h += 58 + rows * 20 + Math.max(0, rows - 1) * 8
+            const hidden = s === "anime_bar" ? cfg.anime_bar_hide_title : cfg.manga_bar_hide_title
+            h += title(hidden) + 18 + rows * 20 + Math.max(0, rows - 1) * 8
           }
           break
         }
@@ -118,7 +132,12 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
           }
           const n = Math.min(total, maxItems)
           if (n === 0) break
-          h += isTerminal ? 24 + n * 74 + Math.max(0, n - 1) * 8 : 40 + n * 75 + Math.max(0, n - 1) * 4
+          // Terminal: the command, then entries of three 20px lines (fixed in LastUpdates: the
+          // status line's emoji made it 26px in Chrome and less elsewhere), `gap-1`, 8px apart,
+          // and the body's padding.
+          h += isTerminal
+            ? 24 + n * 68 + Math.max(0, n - 1) * 8 + 8
+            : title(cfg.last_activity_hide_title) + n * 75 + Math.max(0, n - 1) * 4
           break
         }
         case "anime_favorites": {
@@ -168,8 +187,9 @@ export const myAnimeListPlugin: Plugin<PluginConfig & MyAnimeListConfig, PluginD
         default:
           break
       }
+      if (h > before) drawn++
     }
-    return h
+    return isTerminal ? h - 8 * Math.max(0, drawn - 1) : h
   },
   // MyAnimeList specific CSS
   styles: `

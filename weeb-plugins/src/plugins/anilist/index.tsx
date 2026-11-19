@@ -12,15 +12,37 @@ import type { Plugin } from "../shared/types/plugin"
 import type { PluginConfig, PluginData } from "../../types/index"
 import type { AniListConfig, AniListData } from "./types"
 import { RenderAniList } from "./components/RenderAniList"
-import { FAVORITES_COLUMNS, FAVORITES_COVER_HEIGHT } from "./components/FavoritesAnime"
+import { FAVORITES_COLUMNS, FAVORITES_COVER_HEIGHT, FAVORITES_GAP } from "./components/FavoritesAnime"
 import { WATCHING_ROW_GAP, WATCHING_ROW_HEIGHT } from "./components/CurrentlyWatching"
 import { fetchAniListData } from "./services/fetchData"
 
-/** Altura do DefaultTitle mais o gap até o conteúdo. */
-const DEFAULT_TITLE_H = 33 + 12
+/**
+ * Heights, measured 18/11/2026 in Chrome 158, Firefox 150 and WebKit 26.4 (`audit:heights`);
+ * `section-heights.test.ts` pins them.
+ *
+ * Until then the sections counted a title of 45px whether it was shown or not (up to 105px
+ * of blank space), statistics counted 22px a row for StatisticRow's 20px rows 4px apart and
+ * no gap between the anime and manga blocks (29px cut), currently watching counted every row
+ * with its 56px cover when the cover failed to embed (36px rows, 55px blank), and the terminal
+ * favorites counted 20px lines for TerminalLine's 16px.
+ */
+
+/** DefaultTitle (28px plus `my-1.5`), and the `gap-2.5`/`gap-3` after it. */
+const titleH = (hidden: boolean, size: "half" | "full"): number => (hidden ? 0 : 40 + (size === "half" ? 10 : 12))
+/** StatisticRow: four 20px rows, `gap-1`. */
+const STAT_BLOCK_H = 4 * 20 + 3 * 4
+/** `gap-4` between the anime and manga blocks, stacked in half. */
+const STAT_BLOCK_GAP = 16
+/** A watching entry without a cover: a text-sm line and a text-xs line. */
+const WATCHING_TEXT_H = 20 + 16
 /** TerminalCommand ocupa uma linha antes do conteúdo da seção. */
 const TERMINAL_COMMAND_H = 24
+/** TerminalLineWithDots. */
 const TERMINAL_LINE_H = 20
+/** TerminalLine (`sm-text`). */
+const TERMINAL_SHORT_LINE_H = 16
+
+const isHidden = (value: unknown): boolean => value === true || value === "true"
 
 export const aniListPlugin: Plugin<PluginConfig & AniListConfig, PluginData & AniListData> = {
   name: "anilist",
@@ -68,8 +90,11 @@ export const aniListPlugin: Plugin<PluginConfig & AniListConfig, PluginData & An
           } else {
             // No half os blocos empilham; no full ficam lado a lado, então a altura
             // é a de um bloco só.
-            const rows = size === "half" ? blocks * 4 : 4
-            height += DEFAULT_TITLE_H + rows * 22
+            const stacked = size === "half" ? blocks : 1
+            height +=
+              titleH(isHidden(cfg.statistics_hide_title), size) +
+              stacked * STAT_BLOCK_H +
+              (stacked - 1) * STAT_BLOCK_GAP
           }
           break
         }
@@ -80,22 +105,27 @@ export const aniListPlugin: Plugin<PluginConfig & AniListConfig, PluginData & An
           const columns = FAVORITES_COLUMNS[size]
           const shown = Math.min(favorites.length, cfg.favorites_anime_max ?? columns * 2)
           if (isTerminal) {
-            height += TERMINAL_COMMAND_H + shown * TERMINAL_LINE_H
+            height += TERMINAL_COMMAND_H + shown * TERMINAL_SHORT_LINE_H
           } else {
             const rows = Math.ceil(shown / columns)
-            height += DEFAULT_TITLE_H + rows * FAVORITES_COVER_HEIGHT + Math.max(0, rows - 1) * 8
+            height +=
+              titleH(isHidden(cfg.favorites_anime_hide_title), size) +
+              rows * FAVORITES_COVER_HEIGHT +
+              (rows - 1) * FAVORITES_GAP
           }
           break
         }
 
         case "currently_watching": {
-          const entries = anilist.currentlyWatching ?? []
+          const entries = (anilist.currentlyWatching ?? []).slice(0, cfg.currently_watching_max ?? 5)
           if (entries.length === 0) break
-          const shown = Math.min(entries.length, cfg.currently_watching_max ?? 5)
           if (isTerminal) {
-            height += TERMINAL_COMMAND_H + shown * TERMINAL_LINE_H
+            height += TERMINAL_COMMAND_H + entries.length * TERMINAL_LINE_H
           } else {
-            height += DEFAULT_TITLE_H + shown * WATCHING_ROW_HEIGHT + Math.max(0, shown - 1) * WATCHING_ROW_GAP
+            height +=
+              titleH(isHidden(cfg.currently_watching_hide_title), size) +
+              entries.reduce((sum, entry) => sum + (entry.cover ? WATCHING_ROW_HEIGHT : WATCHING_TEXT_H), 0) +
+              (entries.length - 1) * WATCHING_ROW_GAP
           }
           break
         }

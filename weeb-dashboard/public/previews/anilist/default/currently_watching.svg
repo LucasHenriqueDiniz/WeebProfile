@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="253" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg-main" width="415" height="258" class="half default flex flex-col relative" data-terminal-theme="default" data-default-theme="default"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink"><style>
     #svg-main {
   --default-color-surface: #ffffff;
   --default-color-background: #ffffff;
@@ -986,10 +986,6 @@
   height: 2.25rem
 }
 
-#svg-main .h-\[100px\] {
-  height: 100px
-}
-
 #svg-main .h-\[120px\] {
   height: 120px
 }
@@ -998,12 +994,32 @@
   height: 15px
 }
 
+#svg-main .h-\[18px\] {
+  height: 18px
+}
+
+#svg-main .h-\[36px\] {
+  height: 36px
+}
+
 #svg-main .h-\[3px\] {
   height: 3px
 }
 
+#svg-main .h-\[40px\] {
+  height: 40px
+}
+
+#svg-main .h-\[44px\] {
+  height: 44px
+}
+
 #svg-main .h-\[50px\] {
   height: 50px
+}
+
+#svg-main .h-\[60px\] {
+  height: 60px
 }
 
 #svg-main .h-\[75px\] {
@@ -1114,6 +1130,10 @@
   width: 2rem
 }
 
+#svg-main .w-9 {
+  width: 2.25rem
+}
+
 #svg-main .w-\[0\.60rem\] {
   width: 0.60rem
 }
@@ -1167,8 +1187,8 @@
   max-width: 320px
 }
 
-#svg-main .max-w-\[60\%\] {
-  max-width: 60%
+#svg-main .max-w-\[55\%\] {
+  max-width: 55%
 }
 
 #svg-main .max-w-full {
@@ -1423,12 +1443,6 @@
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse))
-}
-
-#svg-main .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.625rem * var(--tw-space-y-reverse))
 }
 
 #svg-main .space-y-3 > :not([hidden]) ~ :not([hidden]) {
@@ -1695,6 +1709,10 @@
 
 #svg-main .p-1 {
   padding: 0.25rem
+}
+
+#svg-main .p-1\.5 {
+  padding: 0.375rem
 }
 
 #svg-main .p-2 {
@@ -2037,6 +2055,10 @@
   text-transform: uppercase
 }
 
+#svg-main .lowercase {
+  text-transform: lowercase
+}
+
 #svg-main .capitalize {
   text-transform: capitalize
 }
@@ -2048,6 +2070,14 @@
 #svg-main .tabular-nums {
   --tw-numeric-spacing: tabular-nums;
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
+}
+
+#svg-main .leading-4 {
+  line-height: 1rem
+}
+
+#svg-main .leading-5 {
+  line-height: 1.25rem
 }
 
 #svg-main .leading-\[1\.05\] {
@@ -2064,6 +2094,10 @@
 
 #svg-main .leading-\[1\.9\] {
   line-height: 1.9
+}
+
+#svg-main .leading-\[18px\] {
+  line-height: 18px
 }
 
 #svg-main .leading-none {
@@ -2464,6 +2498,10 @@
   height: 1.5rem
 }
 
+#svg-main.half .half\:h-\[56px\] {
+  height: 56px
+}
+
 #svg-main.half .half\:min-h-\[100px\] {
   min-height: 100px
 }
@@ -2536,10 +2574,6 @@
   gap: 0.75rem
 }
 
-#svg-main.half .half\:p-3 {
-  padding: 0.75rem
-}
-
 #svg-main.half .half\:px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem
@@ -2568,12 +2602,8 @@
   font-size: 11px
 }
 
-#svg-main.half .half\:text-\[8px\] {
-  font-size: 8px
-}
-
-#svg-main.half .half\:text-\[9px\] {
-  font-size: 9px
+#svg-main.half .half\:text-\[13px\] {
+  font-size: 13px
 }
 
 #svg-main.half .half\:text-base {
@@ -2589,11 +2619,6 @@
 #svg-main.half .half\:text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem
-}
-
-#svg-main.half .half\:text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem
 }
 
 #svg-main.half .half\:text-xs {

@@ -696,10 +696,6 @@
   height: 2.25rem
 }
 
-#svg-main .h-\[100px\] {
-  height: 100px
-}
-
 #svg-main .h-\[120px\] {
   height: 120px
 }
@@ -708,12 +704,32 @@
   height: 15px
 }
 
+#svg-main .h-\[18px\] {
+  height: 18px
+}
+
+#svg-main .h-\[36px\] {
+  height: 36px
+}
+
 #svg-main .h-\[3px\] {
   height: 3px
 }
 
+#svg-main .h-\[40px\] {
+  height: 40px
+}
+
+#svg-main .h-\[44px\] {
+  height: 44px
+}
+
 #svg-main .h-\[50px\] {
   height: 50px
+}
+
+#svg-main .h-\[60px\] {
+  height: 60px
 }
 
 #svg-main .h-\[75px\] {
@@ -824,6 +840,10 @@
   width: 2rem
 }
 
+#svg-main .w-9 {
+  width: 2.25rem
+}
+
 #svg-main .w-\[0\.60rem\] {
   width: 0.60rem
 }
@@ -877,8 +897,8 @@
   max-width: 320px
 }
 
-#svg-main .max-w-\[60\%\] {
-  max-width: 60%
+#svg-main .max-w-\[55\%\] {
+  max-width: 55%
 }
 
 #svg-main .max-w-full {
@@ -1133,12 +1153,6 @@
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse))
-}
-
-#svg-main .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.625rem * var(--tw-space-y-reverse))
 }
 
 #svg-main .space-y-3 > :not([hidden]) ~ :not([hidden]) {
@@ -1405,6 +1419,10 @@
 
 #svg-main .p-1 {
   padding: 0.25rem
+}
+
+#svg-main .p-1\.5 {
+  padding: 0.375rem
 }
 
 #svg-main .p-2 {
@@ -1764,6 +1782,14 @@
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)
 }
 
+#svg-main .leading-4 {
+  line-height: 1rem
+}
+
+#svg-main .leading-5 {
+  line-height: 1.25rem
+}
+
 #svg-main .leading-\[1\.05\] {
   line-height: 1.05
 }
@@ -1778,6 +1804,10 @@
 
 #svg-main .leading-\[1\.9\] {
   line-height: 1.9
+}
+
+#svg-main .leading-\[18px\] {
+  line-height: 18px
 }
 
 #svg-main .leading-none {
@@ -2178,6 +2208,10 @@
   height: 1.5rem
 }
 
+#svg-main.half .half\:h-\[56px\] {
+  height: 56px
+}
+
 #svg-main.half .half\:min-h-\[100px\] {
   min-height: 100px
 }
@@ -2250,10 +2284,6 @@
   gap: 0.75rem
 }
 
-#svg-main.half .half\:p-3 {
-  padding: 0.75rem
-}
-
 #svg-main.half .half\:px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem
@@ -2282,12 +2312,8 @@
   font-size: 11px
 }
 
-#svg-main.half .half\:text-\[8px\] {
-  font-size: 8px
-}
-
-#svg-main.half .half\:text-\[9px\] {
-  font-size: 9px
+#svg-main.half .half\:text-\[13px\] {
+  font-size: 13px
 }
 
 #svg-main.half .half\:text-base {
@@ -2303,11 +2329,6 @@
 #svg-main.half .half\:text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem
-}
-
-#svg-main.half .half\:text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem
 }
 
 #svg-main.half .half\:text-xs {
@@ -2335,4 +2356,4 @@
     color: rgb(248 113 113 / var(--tw-text-opacity, 1))
   }
 }
-</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9;--terminal-color-warning:#ffaa00;--terminal-color-stripe:rgba(0, 0, 0, 0.25)"><div><div><section id="duolingo-plugin" class="duolingo-plugin-section"><section id="duolingo-languages-learning"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run duolingo languages_learning</span></div><div class="grid grid-cols-[auto_min-content] overflow-hidden px-1 "><span class="text-bold text-overflow truncate sm-text "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:15px;height:10px;flex-shrink:0;box-shadow:0 0 0 1px var(--terminal-color-muted-light);display:inline-block;vertical-align:-1px;margin-right:6px" role="img" aria-label="Flag of JP" data-flag="JP"><path fill="#FFF" d="M0 0h512v342H0z"></path><circle fill="#D80027" cx="256.5" cy="171" r="96"></circle></svg>Japanese</span><span class="text-terminal-muted truncate sm-text ">45.2K XP (Level 12)</span></div><div class="grid grid-cols-[auto_min-content] overflow-hidden px-1 "><span class="text-bold text-overflow truncate sm-text "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:15px;height:10px;flex-shrink:0;box-shadow:0 0 0 1px var(--terminal-color-muted-light);display:inline-block;vertical-align:-1px;margin-right:6px" role="img" aria-label="Flag of FR" data-flag="FR"><path fill="#FFF" d="M0 0h513v342H0z"></path><path fill="#00318A" d="M0 0h171v342H0z"></path><path fill="#D80027" d="M342 0h171v342H342z"></path></svg>French</span><span class="text-terminal-muted truncate sm-text ">28.4K XP (Level 8)</span></div><div class="grid grid-cols-[auto_min-content] overflow-hidden px-1 "><span class="text-bold text-overflow truncate sm-text "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:15px;height:10px;flex-shrink:0;box-shadow:0 0 0 1px var(--terminal-color-muted-light);display:inline-block;vertical-align:-1px;margin-right:6px" role="img" aria-label="Flag of GB" data-flag="GB"><g fill="#FFF"><path d="M0 0h513v341.3H0V0z"></path><path d="M311.7 230 513 341.3v-31.5L369.3 230h-57.6zM200.3 111.3 0 0v31.5l143.7 79.8h56.6z"></path></g><path d="M393.8 230 513 295.7V230H393.8zm-82.1 0L513 341.3v-31.5L369.3 230h-57.6zm146.9 111.3-147-81.7v81.7h147zM90.3 230 0 280.2V230h90.3zm110 14.2v97.2H25.5l174.8-97.2zm-82.1-132.9L0 45.6v65.7h118.2zm82.1 0L0 0v31.5l143.7 79.8h56.6zM53.4 0l147 81.7V0h-147zm368.3 111.3L513 61.1v50.2h-91.3zm-110-14.2V0h174.9L311.7 97.1z" fill="#0052B4"></path><g fill="#D80027"><path d="M288 0h-64v138.7H0v64h224v138.7h64V202.7h224v-64H288V0z"></path><path d="M311.7 230 513 341.3v-31.5L369.3 230h-57.6zm-168 0L0 309.9v31.5L200.3 230h-56.6zm56.6-118.7L0 0v31.5l143.7 79.8h56.6zm168 0L513 31.5V0L311.7 111.3h56.6z"></path></g></svg>English</span><span class="text-terminal-muted truncate sm-text ">23.1K XP (Level 6)</span></div></section></section></div></div></div></div></foreignObject></svg>
+</style><div class="terminal-container" data-style="terminal" data-theme="default" style="font-family:&#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, monospace;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#0d1117;--terminal-color-surface:#161b22;--terminal-color-background:#0d1117;--terminal-color-highlight:#58a6ff;--terminal-color-default:#c9d1d9;--terminal-color-success:#3fb950;--terminal-color-muted:#8b949e;--terminal-color-muted-light:#6e7681;--terminal-color-raw:#c9d1d9;--terminal-color-warning:#ffaa00;--terminal-color-stripe:rgba(0, 0, 0, 0.25)"><div><div><section id="duolingo-plugin" class="duolingo-plugin-section"><section id="duolingo-languages-learning"><div class="flex items-center gap-2 px-1 py-0.5 text-nowrap overflow-ellipsis overflow-hidden " style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;line-height:1.25rem"><span class="text-terminal-highlight font-bold select-none" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;font-weight:700">$</span><span class="font-medium" style="font-family:monospace, &#x27;Courier New&#x27;, Courier, &#x27;Lucida Console&#x27;, Monaco, ui-monospace;font-size:0.875rem;color:var(--terminal-color-default)">run duolingo languages_learning</span></div><div class="grid grid-cols-[auto_min-content] overflow-hidden px-1 " style="line-height:16px"><span class="text-bold text-overflow truncate sm-text "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:15px;height:10px;flex-shrink:0;box-shadow:0 0 0 1px var(--terminal-color-muted-light);display:inline-block;vertical-align:-1px;margin-right:6px" role="img" aria-label="Flag of JP" data-flag="JP"><path fill="#FFF" d="M0 0h512v342H0z"></path><circle fill="#D80027" cx="256.5" cy="171" r="96"></circle></svg>Japanese</span><span class="text-terminal-muted truncate sm-text ">45.2K XP (Level 12)</span></div><div class="grid grid-cols-[auto_min-content] overflow-hidden px-1 " style="line-height:16px"><span class="text-bold text-overflow truncate sm-text "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:15px;height:10px;flex-shrink:0;box-shadow:0 0 0 1px var(--terminal-color-muted-light);display:inline-block;vertical-align:-1px;margin-right:6px" role="img" aria-label="Flag of FR" data-flag="FR"><path fill="#FFF" d="M0 0h513v342H0z"></path><path fill="#00318A" d="M0 0h171v342H0z"></path><path fill="#D80027" d="M342 0h171v342H342z"></path></svg>French</span><span class="text-terminal-muted truncate sm-text ">28.4K XP (Level 8)</span></div><div class="grid grid-cols-[auto_min-content] overflow-hidden px-1 " style="line-height:16px"><span class="text-bold text-overflow truncate sm-text "><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 342" class="country-flag rounded-sm " style="width:15px;height:10px;flex-shrink:0;box-shadow:0 0 0 1px var(--terminal-color-muted-light);display:inline-block;vertical-align:-1px;margin-right:6px" role="img" aria-label="Flag of GB" data-flag="GB"><g fill="#FFF"><path d="M0 0h513v341.3H0V0z"></path><path d="M311.7 230 513 341.3v-31.5L369.3 230h-57.6zM200.3 111.3 0 0v31.5l143.7 79.8h56.6z"></path></g><path d="M393.8 230 513 295.7V230H393.8zm-82.1 0L513 341.3v-31.5L369.3 230h-57.6zm146.9 111.3-147-81.7v81.7h147zM90.3 230 0 280.2V230h90.3zm110 14.2v97.2H25.5l174.8-97.2zm-82.1-132.9L0 45.6v65.7h118.2zm82.1 0L0 0v31.5l143.7 79.8h56.6zM53.4 0l147 81.7V0h-147zm368.3 111.3L513 61.1v50.2h-91.3zm-110-14.2V0h174.9L311.7 97.1z" fill="#0052B4"></path><g fill="#D80027"><path d="M288 0h-64v138.7H0v64h224v138.7h64V202.7h224v-64H288V0z"></path><path d="M311.7 230 513 341.3v-31.5L369.3 230h-57.6zm-168 0L0 309.9v31.5L200.3 230h-56.6zm56.6-118.7L0 0v31.5l143.7 79.8h56.6zm168 0L513 31.5V0L311.7 111.3h56.6z"></path></g></svg>English</span><span class="text-terminal-muted truncate sm-text ">23.1K XP (Level 6)</span></div></section></section></div></div></div></div></foreignObject></svg>
