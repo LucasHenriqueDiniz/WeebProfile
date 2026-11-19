@@ -65,39 +65,57 @@ export const websitesPlugin: Plugin<PluginConfig & WebsitesConfig, PluginData & 
       return value === undefined ? fallback : (value as T)
     }
 
-    // Terminal: TerminalCommand + n TerminalLine (medido: 64 + n * 16).
-    if ((config as { style?: string }).style === "terminal") return 36 + n * 17
+    // Measured 18/11/2026 in Chrome 158, Firefox 150 and WebKit 26.4 (`audit:heights`);
+    // `section-heights.test.ts` pins it. Until then the terminal counted 17px a line for
+    // TerminalLine's 16 (10px over for six sites) and the default style rounded each row's
+    // text block up: 5px a grid row in half, 1.5px a list row, 3 to 16px a card.
+    //
+    // The `half:text-xs`/`half:text-sm` titles take Tailwind's own line-height (16/20px),
+    // which wins over `leading-tight`; the other lines are `leading-tight` (1.25em).
+
+    // Terminal: TerminalCommand and one TerminalLine (`sm-text`, 16px) per site.
+    if ((config as { style?: string }).style === "terminal") return 32 + n * 16
 
     const variant = read<WebsitesVariant>("websites_variant", "grid")
     const showThumbnail = read<boolean>("websites_show_thumbnail", true) !== false
     const showDescription = read<boolean>("websites_show_description", true) !== false
-    // O gap do flex container só existe quando o título está visível.
+    const half = size === "half"
+    const sites = websitesData.websites
+    const described = (site: { description?: string | null }): boolean => showDescription && !!site.description
+    // DefaultTitle (40px) and the container's `gap-2.5`, which only exists with the title.
     const titleBlockH = read<boolean>("websites_hide_title", false) ? 0 : 40 + 10
-    const gapH = 10
 
-    // Linha da lista compacta: favicon/título (+ descrição) + padding + borda.
-    const rowH = size === "half" ? (showDescription ? 38 : 30) : showDescription ? 46 : 39
-    const rowGap = 6
+    // A list row: `py-1`/`py-1.5`, then the 20/24px favicon or the title over its description.
+    const listRowH = (site: { description?: string | null }): number =>
+      (half ? 8 : 12) + Math.max(half ? 20 : 24, (half ? 16 : 17.5) + (described(site) ? (half ? 12.5 : 13.75) : 0))
+    const listH = (list: typeof sites): number =>
+      list.reduce((sum, site) => sum + listRowH(site), 0) + Math.max(0, list.length - 1) * 6
 
     let bodyH: number
     if (variant === "list") {
-      bodyH = n * rowH + Math.max(0, n - 1) * rowGap
+      bodyH = listH(sites)
     } else if (variant === "featured") {
-      const heroThumbH = showThumbnail ? (size === "half" ? 120 : 140) : 0
-      const heroTextH = showDescription ? 54 : 44
-      const restCount = n - 1
-      bodyH = heroThumbH + heroTextH
-      if (restCount > 0) bodyH += 8 + restCount * rowH + Math.max(0, restCount - 1) * rowGap
+      const [featured, ...rest] = sites
+      // Hero, then `py-2` around the 24px favicon or the title over its description.
+      const heroH =
+        (showThumbnail ? (half ? 120 : 140) : 0) +
+        16 +
+        Math.max(24, 20 + (described(featured!) ? (half ? 13.75 : 15) : 0))
+      bodyH = heroH + (rest.length > 0 ? 8 + listH(rest) : 0)
     } else {
-      const cols = size === "full" ? 4 : 2
-      const rows = Math.ceil(n / cols)
-      const cardThumbH = showThumbnail ? (size === "half" ? 72 : 88) : 0
-      // título + domínio + padding vertical do bloco de texto
-      const cardTextH = 46 + (showDescription ? 16 : 0)
-      bodyH = rows * (cardThumbH + cardTextH) + Math.max(0, rows - 1) * gapH
+      // Cards in rows of 2 (half) or 4, `gap-2.5`; each the thumbnail, then `py-1.5` around
+      // the title row, the description and the domain, `gap-0.5` apart.
+      const cols = half ? 2 : 4
+      const line = half ? 12.5 : 13.75
+      const cardH = (site: { description?: string | null }): number =>
+        (showThumbnail ? (half ? 72 : 88) : 0) + 12 + (half ? 16 : 17.5) + (described(site) ? 2 + line : 0) + 2 + line
+      bodyH = 0
+      for (let row = 0; row * cols < n; row++) {
+        bodyH += (row > 0 ? 10 : 0) + Math.max(...sites.slice(row * cols, (row + 1) * cols).map(cardH))
+      }
     }
 
-    return titleBlockH + bodyH
+    return Math.ceil(titleBlockH + bodyH)
   },
 }
 

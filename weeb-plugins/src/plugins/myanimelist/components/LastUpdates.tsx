@@ -107,13 +107,14 @@ function TerminalUpdate({
     <div className="flex flex-col gap-1">
       <div className="text-terminal-warning truncate font-bold text-md">* {title}</div>
       <div className="flex items-center">
-        <span className="text-terminal-muted font-bold">{percentage ?? "?"}%</span>
+        {/* nowrap: "?%" broke after the "?" and took two lines, 19px more per entry. */}
+        <span className="text-terminal-muted font-bold whitespace-nowrap flex-shrink-0">{percentage ?? "?"}%</span>
         <span
           className={`text-mal-${status.toLowerCase().split(" ").join("-")} tracking-tighter text-center w-full overflow-hidden${animations ? " weeb-bar" : ""}`}
         >
           {progressBar}
         </span>
-        <span className="text-terminal-muted">
+        <span className="text-terminal-muted whitespace-nowrap flex-shrink-0">
           {current}/{total === 0 || !total ? "?" : total}
         </span>
       </div>

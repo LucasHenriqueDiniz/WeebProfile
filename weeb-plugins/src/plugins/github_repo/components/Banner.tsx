@@ -33,7 +33,9 @@ function MetaRow({ data, showLanguage }: { data: GithubRepoData; showLanguage: b
   const stars = <AnimatedNumber value={formatCount(data.stargazerCount)} />
   const forks = <AnimatedNumber value={formatCount(data.forkCount)} />
   return (
-    <div className="flex items-center gap-3.5 text-xs text-default-muted">
+    // One line, clipped at the edge: the height counts one. Zoomed to content size lg or xl
+    // in a half card, "128 stars" and "24 forks" each broke onto two lines (26px cut).
+    <div className="flex items-center gap-3.5 text-xs text-default-muted whitespace-nowrap overflow-hidden">
       {showLanguage && data.primaryLanguage && (
         <span className="flex items-center gap-1.5">
           <LangDot color={data.primaryLanguage.color} />

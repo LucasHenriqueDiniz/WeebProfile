@@ -253,7 +253,9 @@ function TerminalCompactFavorite({
   const name = "name" in favorite ? treatJapaneseName(favorite.name) : favorite.title
 
   return (
-    <ExternalLink href={href} className="flex align-center sm-text gap-1">
+    // A fixed line: `sm-text` sets only the font size, and the inherited line-height drew the
+    // row 16px in Chrome and 17 in Firefox and WebKit (10px past the card for ten favorites).
+    <ExternalLink href={href} className="flex align-center sm-text gap-1" style={{ lineHeight: "16px" }}>
       <span className="text-terminal-raw">[{index + 1}]</span>
       <span className="text-terminal-warning md-2-text text-bold truncate no-underline">- {name}</span>
     </ExternalLink>
@@ -697,11 +699,17 @@ export function FavoritesList({
                   href={malFavoriteUrl(type, item.mal_id)}
                   key={`${type}-simple-${item.mal_id}-${index}`}
                 >
-                  <p className="sm-text font-semibold text-terminal-warning">
+                  {/* 16px lines, as in TerminalCompactFavorite: 17 in Firefox and WebKit otherwise. */}
+                  <p className="sm-text font-semibold text-terminal-warning" style={{ lineHeight: "16px" }}>
                     * {"name" in item ? treatJapaneseName(item.name) : item.title}
                   </p>
                   {"type" in item && simpleMetaLine(item) !== "" && (
-                    <p className="sm-text font-semibold text-overflow text-terminal-muted">({simpleMetaLine(item)})</p>
+                    <p
+                      className="sm-text font-semibold text-overflow text-terminal-muted"
+                      style={{ lineHeight: "16px" }}
+                    >
+                      ({simpleMetaLine(item)})
+                    </p>
                   )}
                 </ExternalLink>
               ))}

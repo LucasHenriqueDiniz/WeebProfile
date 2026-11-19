@@ -36,12 +36,14 @@ describe("Codeforces problems_solved height", () => {
   // a fake Codeforces API with that many difficulties (2026-11-16). The terminal
   // formula used to add 25px per difficulty against 20px rendered: 42px of empty
   // terminal under tourist's nine, and 3px cut off a card with none. Terminal values
-  // leave out the 32px header, which generateSvg adds once per SVG.
+  // leave out the 32px header, which generateSvg adds once per SVG. The default half values
+  // were 2px over until 18/11/2026: the title's gap is 10px in half, 12 in full
+  // (audit:heights, Chrome 158, Firefox 150 and WebKit 26.4).
   it.each([
-    ["default", "half", 0, 76],
-    ["default", "half", 5, 104],
-    ["default", "half", 9, 132],
-    ["default", "half", 10, 132],
+    ["default", "half", 0, 74],
+    ["default", "half", 5, 102],
+    ["default", "half", 9, 130],
+    ["default", "half", 10, 130],
     ["default", "full", 0, 76],
     ["default", "full", 9, 104],
     ["default", "full", 10, 104],

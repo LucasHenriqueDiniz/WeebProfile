@@ -22,6 +22,13 @@ import { fetchDevToData } from "./services/fetchData"
 const DEFAULT_TITLE_H = 33 + 12
 /** TerminalCommand ocupa uma linha antes do conteúdo da seção. */
 const TERMINAL_COMMAND_H = 24
+/**
+ * DefaultTitle (28px plus `my-1.5`) and the `gap-2.5`/`gap-3` after it, nothing when hidden.
+ * Profile and recent articles counted 45px either way until 11/2026 (up to 69px of blank
+ * space with the title hidden). Measured 18/11/2026, `section-heights.test.ts`.
+ */
+const titleH = (hidden: boolean, size: "half" | "full"): number => (hidden ? 0 : 40 + (size === "half" ? 10 : 12))
+const isHidden = (value: unknown): boolean => value === true || value === "true"
 const TERMINAL_LINE_H = 20
 
 /** Width the default style's sections get: the card minus 16px on each side (measured: 383 and 798). */
@@ -79,8 +86,13 @@ export const devToPlugin: Plugin<PluginConfig & DevToConfig, PluginData & DevToD
             const lines = 2 + (profile?.location ? 1 : 0) + (profile?.joinedAt ? 1 : 0)
             height += TERMINAL_COMMAND_H + lines * TERMINAL_LINE_H
           } else {
-            // Linha do avatar; o bloco de texto ao lado é mais baixo que ele.
-            height += DEFAULT_TITLE_H + PROFILE_AVATAR_SIZE
+            // The text beside the avatar: name (text-base), @username and, when either
+            // exists, the location/joined row (text-xs). With that row it is 56px, taller
+            // than the avatar; counted as the avatar until 11/2026 (15px cut).
+            const textH = 24 + 16 + (profile?.location || profile?.joinedAt ? 16 : 0)
+            height +=
+              titleH(isHidden(cfg.profile_hide_title), size) +
+              Math.max(profile?.avatar ? PROFILE_AVATAR_SIZE : 0, textH)
           }
           break
         }
@@ -92,7 +104,10 @@ export const devToPlugin: Plugin<PluginConfig & DevToConfig, PluginData & DevToD
           if (isTerminal) {
             height += TERMINAL_COMMAND_H + shown * TERMINAL_LINE_H
           } else {
-            height += DEFAULT_TITLE_H + shown * ARTICLE_ROW_HEIGHT + Math.max(0, shown - 1) * ARTICLE_ROW_GAP
+            height +=
+              titleH(isHidden(cfg.recent_articles_hide_title), size) +
+              shown * ARTICLE_ROW_HEIGHT +
+              Math.max(0, shown - 1) * ARTICLE_ROW_GAP
           }
           break
         }

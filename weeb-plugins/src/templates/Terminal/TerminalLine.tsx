@@ -30,7 +30,10 @@ export function TerminalLine({ right, className, left, style, href }: TerminalLi
     <ExternalLink
       href={href}
       className={`grid grid-cols-[auto_min-content] overflow-hidden px-1 ${className?.container || ""}`}
-      style={{ ...(style?.container ? style.container : {}) }}
+      // A fixed line: `sm-text` sets only the font size, and the inherited line-height made
+      // the line 16px in Chrome and WebKit and 17 in Firefox, so a list of ten ran 10px past
+      // the card's calculated height there (measured 18/11/2026).
+      style={{ lineHeight: "16px", ...(style?.container ? style.container : {}) }}
     >
       <span
         className={`text-bold text-overflow truncate sm-text ${className?.right || ""}`}

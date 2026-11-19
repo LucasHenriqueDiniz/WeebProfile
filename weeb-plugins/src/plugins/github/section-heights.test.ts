@@ -1,3 +1,4 @@
+import { renderToStaticMarkup } from "react-dom/server"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { PluginManager } from "../manager"
 import { PLUGINS_METADATA } from "../metadata"
@@ -159,6 +160,11 @@ const MEASURED: Case[] = [
     [134, 134, 134],
   ],
   [["favorite_languages"], "default", "half", "mock", { favorite_languages_hide_title: true }, [290, 290, 290]],
+  // Twenty of the mock's 22: "Objective-C++" wrapped to two lines in half's 133px column
+  // (634px drawn for 610) until its name was truncated, measured 18/11/2026.
+  [["favorite_languages"], "default", "half", "mock", { favorite_languages_max_languages: 20 }, [610, 610, 610]],
+  [["favorite_languages"], "default", "full", "mock", { favorite_languages_max_languages: 20 }, [610, 610, 610]],
+  [["favorite_languages"], "terminal", "half", "mock", { favorite_languages_max_languages: 20 }, [532, 532, 532]],
   [["favorite_license"], "default", "half", "mock", {}, [88, 88, 88]],
   [["favorite_license"], "default", "full", "mock", {}, [88, 88, 88]],
   [["favorite_license"], "terminal", "half", "mock", {}, [111, 111, 110]],
@@ -394,6 +400,14 @@ describe("github section heights", () => {
     expect(mock.gists?.nodes).toHaveLength(3)
     expect(mock.recentActivity?.length).toBeGreaterThanOrEqual(10)
     expect(mock.people?.nodes).toHaveLength(10)
+  })
+
+  it("keeps each favorite language name on one line, as its 24px row counts", () => {
+    const config = { ...plugin.config, enabled: true, sections: ["favorite_languages"], style: "default", size: "half" }
+    const html = renderToStaticMarkup(
+      plugin.render({ ...config, favorite_languages_max_languages: 20 } as never, mock as never) as never
+    )
+    expect(html).toContain('<span class="truncate">Objective-C++</span>')
   })
 
   it("covers what Chrome, Firefox and WebKit draw, at most 2px over (20px where text wraps)", () => {
