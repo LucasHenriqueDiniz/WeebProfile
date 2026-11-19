@@ -16,7 +16,9 @@ import { Reorder, useDragControls } from "framer-motion"
 import { ArrowDown, ArrowUp, GripVertical, ListOrdered, Layers } from "lucide-react"
 import { useCallback, useMemo } from "react"
 import { useShallow } from "zustand/react/shallow"
-import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
+import { PLUGINS_METADATA, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
+import { TILE } from "@/components/landing/sticker"
+import { CATEGORY_STYLE } from "@/lib/landing/category-style"
 import { useWizardStore } from "@/stores/wizard-store"
 import { selectPluginsWithSections } from "@/stores/wizard-selectors"
 import { getPluginIcon } from "@/lib/plugin-icons"
@@ -45,7 +47,7 @@ function MoveButtons({ index, total, onMove, label, size = "sm" }: MoveButtonsPr
   const t = useTranslations("wizard.order")
   const iconClass = size === "xs" ? "h-3 w-3" : "h-3.5 w-3.5"
   const btnClass = cn(
-    "flex items-center justify-center rounded-md border border-border text-muted-foreground transition-colors",
+    "flex items-center justify-center rounded-md border-2 border-foreground/30 text-muted-foreground transition-colors",
     "hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground",
     size === "xs" ? "h-5 w-5" : "h-6 w-6"
   )
@@ -133,6 +135,7 @@ function PluginBlock({ pluginName, index, total, sections, onMovePlugin, onReord
 
   const metadata = PLUGINS_METADATA[pluginName as keyof typeof PLUGINS_METADATA] as any
   const PluginIcon = getPluginIcon(pluginName)
+  const category = metadata?.category as PluginCategory | undefined
   const displayName = metadata?.i18nKey?.displayName
     ? tWithFallback(metadata.i18nKey.displayName.replace(/^plugins\./, ""), metadata.displayName)
     : metadata?.displayName || pluginName
@@ -142,7 +145,7 @@ function PluginBlock({ pluginName, index, total, sections, onMovePlugin, onReord
       value={pluginName}
       dragListener={false}
       dragControls={controls}
-      className="rounded-lg border border-border bg-card"
+      className="rounded-xl border-2 border-foreground bg-card"
     >
       <div className="flex items-center gap-2 px-2.5 py-2">
         <button
@@ -153,9 +156,13 @@ function PluginBlock({ pluginName, index, total, sections, onMovePlugin, onReord
         >
           <GripVertical className="h-4 w-4" />
         </button>
-        {PluginIcon && <PluginIcon className="h-4 w-4 flex-shrink-0 text-primary" />}
+        {PluginIcon && (
+          <span className={cn(TILE, "h-7 w-7 rounded-lg", category ? CATEGORY_STYLE[category].sticker : "bg-muted")}>
+            <PluginIcon className="h-3.5 w-3.5" />
+          </span>
+        )}
         <span className="flex-1 min-w-0 truncate text-sm font-medium text-foreground">{displayName}</span>
-        <span className="flex-shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+        <span className="flex-shrink-0 rounded-full border-2 border-foreground/30 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
           {sections.length} {sections.length === 1 ? t("cardSingular") : t("cardPlural")}
         </span>
         <MoveButtons index={index} total={total} onMove={onMovePlugin} label={displayName} />
@@ -165,7 +172,7 @@ function PluginBlock({ pluginName, index, total, sections, onMovePlugin, onReord
         axis="y"
         values={sections}
         onReorder={onReorderSections}
-        className="space-y-1 border-t border-border px-2.5 py-2"
+        className="space-y-1 border-t-2 border-foreground/15 px-2.5 py-2"
       >
         {sections.map((sectionId, sectionIndex) => (
           <SectionRow
@@ -207,8 +214,8 @@ export function CardOrderPanel() {
   if (visiblePlugins.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center px-6 py-12 text-center">
-        <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/15 to-cyan-500/10">
-          <ListOrdered className="h-6 w-6 text-primary/70" />
+        <span className={cn(TILE, "mb-4 h-14 w-14 bg-amber-300")}>
+          <ListOrdered className="h-6 w-6" />
         </span>
         <p className="mb-1 text-sm font-medium text-foreground">{t("emptyTitle")}</p>
         <p className="max-w-[260px] text-xs text-muted-foreground">{t("emptyDescription")}</p>

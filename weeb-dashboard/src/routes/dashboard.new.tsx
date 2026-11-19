@@ -6,6 +6,8 @@ import { useTranslations } from "@/i18n/use-translations"
 import { ArrowRight, BookMarked, UserCircle2 } from "lucide-react"
 import { useEffect } from "react"
 import { SECTION_PREVIEWS } from "@/lib/config/section-previews"
+import { HALFTONE, STICKER, STICKER_LIFT, TILE, TONE } from "@/components/landing/sticker"
+import { cn } from "@/lib/utils"
 
 /**
  * Real section previews, whole, for each kind of card. The profile option showed a
@@ -40,7 +42,7 @@ export default function NewArtifactChooserPage() {
       title: t("profileTitle"),
       description: t("profileDesc"),
       icon: UserCircle2,
-      iconClass: "from-cyan-500/20 to-cyan-500/5 text-cyan-400",
+      tone: TONE.cyan,
       previews: PREVIEWS.profile,
       href: "/dashboard/new/profile",
     },
@@ -49,7 +51,7 @@ export default function NewArtifactChooserPage() {
       title: t("repoTitle"),
       description: t("repoDesc"),
       icon: BookMarked,
-      iconClass: "from-violet-500/20 to-violet-500/5 text-violet-400",
+      tone: TONE.violet,
       previews: PREVIEWS.repository,
       href: "/dashboard/new/repository",
     },
@@ -57,11 +59,9 @@ export default function NewArtifactChooserPage() {
 
   return (
     <DashboardLayout title={t("title")} description={t("subtitle")} width="narrow">
-      {/* Sem centralizar: os cards começam na mesma calha do título do header. Antes
-          ficavam no meio do container, soltos em relação ao título e à sidebar. E sem
-          max-w-3xl: os dois cards ocupam a largura do layout em vez de 768 dos 894 px. */}
-      <div className="py-6">
-        <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2">
+      {/* Not centred: the cards start on the heading's gutter, and fill the layout's width. */}
+      <div className="pb-6">
+        <div className="grid w-full grid-cols-1 gap-7 sm:grid-cols-2">
           {options.map((option) => {
             const Icon = option.icon
             return (
@@ -69,12 +69,20 @@ export default function NewArtifactChooserPage() {
                 type="button"
                 key={option.key}
                 onClick={() => router.push(option.href)}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-left transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-[0_8px_40px_-12px_rgba(139,92,246,0.35)]"
+                className={cn(STICKER, STICKER_LIFT, "group flex flex-col overflow-hidden text-left")}
               >
-                {/* Fixed height so both cards line up; the profile stack (301 px at 415 wide)
-                    and the banner (184 px) fit whole inside it. */}
-                <div className="flex h-96 w-full items-center justify-center overflow-hidden border-b border-border bg-muted/40 p-4">
-                  <div className="w-full max-w-[415px] space-y-1 transition-transform duration-300 group-hover:scale-[1.02]">
+                {/* Fixed height from sm up so both cards line up; the profile stack (301 px
+                    at 415 wide) and the banner (184 px) fit whole inside it. On a phone the
+                    cards stack, so each takes only its own height. */}
+                <div className="relative flex w-full items-center justify-center overflow-hidden border-b-2 border-foreground bg-muted/50 p-4 sm:h-96">
+                  <div
+                    aria-hidden
+                    className={cn(
+                      HALFTONE,
+                      "right-0 top-0 h-24 w-40 [mask-image:linear-gradient(to_bottom_left,black,transparent)]"
+                    )}
+                  />
+                  <div className="relative w-full max-w-[415px] space-y-1">
                     {option.previews.map(({ plugin, section }) => {
                       const size = SECTION_PREVIEWS[plugin]?.[section]?.default
                       return (
@@ -91,16 +99,14 @@ export default function NewArtifactChooserPage() {
                   </div>
                 </div>
                 <div className="flex flex-1 flex-col gap-3 p-6">
-                  <span
-                    className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${option.iconClass}`}
-                  >
+                  <span className={cn(TILE, "h-11 w-11", option.tone)}>
                     <Icon className="h-6 w-6" />
                   </span>
                   <div className="flex-1">
-                    <p className="font-heading text-base font-bold text-foreground">{option.title}</p>
+                    <p className="font-heading text-xl font-extrabold text-foreground">{option.title}</p>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{option.description}</p>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-bold text-foreground underline decoration-2 underline-offset-4 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                     {t("cta")}
                     <ArrowRight className="h-4 w-4" />
                   </span>

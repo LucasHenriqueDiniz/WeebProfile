@@ -1,160 +1,53 @@
 /**
- * Hook para gerenciar estado UI do wizard com persistência no localStorage
- * Persiste: expandedPlugins, activeTab, category, query, onlyEnabled
+ * The wizard's view state kept across reloads: the drawer's tab and the selected plugin.
+ *
+ * It also kept the list's search, category and "only enabled" filter, which the plugin
+ * strip replaced, and each field was saved on its own, so saving one wrote the others
+ * back as empty: the selection was lost whenever the tab changed after it. The wizard
+ * calls this hook twice (controller and plugin workspace), so each field merges into what
+ * is stored instead of writing the whole state.
  */
 
-import { useState, useEffect, useCallback } from "react"
+import { useEffect, useState } from "react"
 
 export const WIZARD_UI_STATE_KEY = "wizard-ui-state"
-const STORAGE_KEY = WIZARD_UI_STATE_KEY
+
+export type WizardTab = "plugins" | "order" | "style"
 
 interface WizardUIState {
-  expandedPlugins: Set<string>
-  activeTab: "plugins" | "order" | "style"
-  category: string
-  query: string
-  onlyEnabled: boolean
+  activeTab: WizardTab
   selectedPlugin: string | null
 }
 
-const _defaultState: WizardUIState = {
-  expandedPlugins: new Set(),
-  activeTab: "plugins",
-  category: "all",
-  query: "",
-  onlyEnabled: false,
-  selectedPlugin: null,
-}
-
-function loadFromStorage(): Partial<WizardUIState> {
-  if (typeof window === "undefined") return {}
-
+function load(): WizardUIState {
+  const fallback: WizardUIState = { activeTab: "plugins", selectedPlugin: null }
+  if (typeof window === "undefined") return fallback
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored) return {}
-
-    const parsed = JSON.parse(stored)
-    return {
-      expandedPlugins: parsed.expandedPlugins ? new Set(parsed.expandedPlugins) : new Set(),
-      activeTab: parsed.activeTab || "plugins",
-      category: parsed.category || "all",
-      query: parsed.query || "",
-      onlyEnabled: parsed.onlyEnabled || false,
-      selectedPlugin: parsed.selectedPlugin || null,
-    }
+    const parsed = JSON.parse(localStorage.getItem(WIZARD_UI_STATE_KEY) ?? "{}")
+    const activeTab = ["plugins", "order", "style"].includes(parsed.activeTab) ? parsed.activeTab : "plugins"
+    const selectedPlugin = typeof parsed.selectedPlugin === "string" ? parsed.selectedPlugin : null
+    return { activeTab, selectedPlugin }
   } catch {
-    return {}
+    return fallback
   }
 }
 
-function saveToStorage(state: Partial<WizardUIState>) {
-  if (typeof window === "undefined") return
-
+function save(patch: Partial<WizardUIState>) {
   try {
-    const toSave = {
-      expandedPlugins: state.expandedPlugins ? Array.from(state.expandedPlugins) : [],
-      activeTab: state.activeTab,
-      category: state.category,
-      query: state.query,
-      onlyEnabled: state.onlyEnabled,
-      selectedPlugin: state.selectedPlugin,
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
+    const stored = JSON.parse(localStorage.getItem(WIZARD_UI_STATE_KEY) ?? "{}")
+    localStorage.setItem(WIZARD_UI_STATE_KEY, JSON.stringify({ ...stored, ...patch }))
   } catch {
-    // Ignore storage errors
+    // Storage blocked or unreadable: the view state lasts until the page reloads.
   }
 }
 
 export function useWizardUIState() {
-  const [expandedPlugins, setExpandedPlugins] = useState<Set<string>>(() => {
-    const saved = loadFromStorage()
-    return saved.expandedPlugins || new Set()
-  })
+  const [initial] = useState(load)
+  const [activeTab, setActiveTab] = useState<WizardTab>(initial.activeTab)
+  const [selectedPlugin, setSelectedPlugin] = useState<string | null>(initial.selectedPlugin)
 
-  const [activeTab, setActiveTab] = useState<"plugins" | "order" | "style">(() => {
-    const saved = loadFromStorage()
-    return saved.activeTab || "plugins"
-  })
+  useEffect(() => save({ activeTab }), [activeTab])
+  useEffect(() => save({ selectedPlugin }), [selectedPlugin])
 
-  const [category, setCategory] = useState<string>(() => {
-    const saved = loadFromStorage()
-    return saved.category || "all"
-  })
-
-  const [query, setQuery] = useState<string>(() => {
-    const saved = loadFromStorage()
-    return saved.query || ""
-  })
-
-  const [onlyEnabled, setOnlyEnabled] = useState<boolean>(() => {
-    const saved = loadFromStorage()
-    return saved.onlyEnabled || false
-  })
-
-  const [selectedPlugin, setSelectedPlugin] = useState<string | null>(() => {
-    const saved = loadFromStorage()
-    return saved.selectedPlugin || null
-  })
-
-  // Persist expandedPlugins
-  useEffect(() => {
-    saveToStorage({ expandedPlugins })
-  }, [expandedPlugins])
-
-  // Persist activeTab
-  useEffect(() => {
-    saveToStorage({ activeTab })
-  }, [activeTab])
-
-  // Debounced persistence for search/category filters (don't spam localStorage)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      saveToStorage({ category, query, onlyEnabled, selectedPlugin })
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [category, query, onlyEnabled, selectedPlugin])
-
-  const toggleExpanded = useCallback((pluginName: string) => {
-    setExpandedPlugins((prev) => {
-      const next = new Set(prev)
-      if (next.has(pluginName)) {
-        next.delete(pluginName)
-      } else {
-        next.add(pluginName)
-      }
-      return next
-    })
-  }, [])
-
-  const expandAll = useCallback(() => {
-    // This will be called with all plugin names from parent
-    // For now, just provide the function
-  }, [])
-
-  const collapseAll = useCallback(() => {
-    setExpandedPlugins(new Set())
-  }, [])
-
-  return {
-    // State
-    expandedPlugins,
-    activeTab,
-    category,
-    query,
-    onlyEnabled,
-    selectedPlugin,
-
-    // Setters
-    setExpandedPlugins,
-    setActiveTab,
-    setCategory,
-    setQuery,
-    setOnlyEnabled,
-    setSelectedPlugin,
-
-    // Helpers
-    toggleExpanded,
-    expandAll,
-    collapseAll,
-  }
+  return { activeTab, setActiveTab, selectedPlugin, setSelectedPlugin }
 }

@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,17 +14,28 @@ import { formatRelative } from "@/lib/utils/relative-time"
 import { useLocale } from "@/i18n/use-translations"
 import { usePluginI18n } from "@/lib/plugins/i18n-helper"
 import { PLUGINS_METADATA } from "@weeb/weeb-plugins/plugins/metadata"
-import { Copy, Edit2, ExternalLink, Image as ImageIcon, Loader2, MoreVertical, RefreshCw, Trash2 } from "lucide-react"
+import { Copy, Edit2, ExternalLink, Image as ImageIcon, Loader2, MoreHorizontal, RefreshCw, Trash2 } from "lucide-react"
+import type { PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
+import {
+  BUTTON_ICON,
+  BUTTON_SECONDARY_SM,
+  CHIP,
+  HALFTONE,
+  STICKER,
+  STICKER_LIFT,
+  TILE,
+} from "@/components/landing/sticker"
+import { CATEGORY_STYLE } from "@/lib/landing/category-style"
 import { motion } from "framer-motion"
 import { useState } from "react"
 
 type SectionMeta = { id: string; name: string; i18nKey?: { name?: string } }
 
 export const STATUS_DOT: Record<string, string> = {
-  completed: "bg-emerald-400",
-  generating: "bg-cyan-400 animate-pulse",
-  pending: "bg-amber-400",
-  failed: "bg-red-400",
+  completed: "bg-emerald-500",
+  generating: "bg-cyan-500 animate-pulse",
+  pending: "bg-amber-500",
+  failed: "bg-red-500",
 }
 
 interface SvgLibraryCardProps {
@@ -138,13 +148,22 @@ export function SvgLibraryCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03, duration: 0.2 }}
       className={cn(
-        "group flex cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/40",
+        STICKER,
+        STICKER_LIFT,
+        "group flex cursor-pointer flex-col overflow-hidden",
         svg.size === "full" && "lg:col-span-2"
       )}
       onClick={onView}
     >
       {/* Preview at the card's real width, up to PREVIEW_MAX_HEIGHT */}
-      <div className="flex flex-1 items-start justify-center bg-muted/30 p-4">
+      <div className="relative flex flex-1 items-start justify-center bg-muted p-4 sm:p-5">
+        <div
+          aria-hidden
+          className={cn(
+            HALFTONE,
+            "right-0 top-0 h-24 w-40 [mask-image:linear-gradient(to_bottom_left,black,transparent)]"
+          )}
+        />
         <div className="relative w-full overflow-hidden" style={{ maxWidth: width, maxHeight: PREVIEW_MAX_HEIGHT }}>
           {hasImage ? (
             <img
@@ -160,11 +179,11 @@ export function SvgLibraryCard({
               }}
             />
           ) : (
-            <div className="flex h-40 w-full items-center justify-center rounded-lg border border-dashed border-border">
+            <div className="flex h-40 w-full items-center justify-center rounded-xl border-2 border-dashed border-foreground/40">
               {svg.status === "generating" ? (
-                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                <Loader2 className="h-5 w-5 animate-spin text-foreground" />
               ) : imageErrored ? (
-                <img src="/sora/sora-head.png" alt="" className="h-8 w-8 object-contain opacity-50" />
+                <img src="/sora/sora-head.png" alt="" className="h-8 w-8 object-contain opacity-60" />
               ) : (
                 <ImageIcon className="h-5 w-5 text-muted-foreground" />
               )}
@@ -173,56 +192,83 @@ export function SvgLibraryCard({
           {cutOff && (
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-muted to-transparent"
             />
           )}
         </div>
       </div>
 
-      <div className="border-t border-border p-4">
+      <div className="border-t-2 border-foreground px-4 py-3.5 sm:px-5">
         <div className="flex items-start gap-3">
-          {/* Name + sections */}
+          {visiblePlugins.length > 0 && (
+            <span className="mt-0.5 flex flex-none items-center gap-1">
+              {visiblePlugins.map((plugin) => {
+                const Icon = getPluginIcon(plugin)
+                const category = (PLUGINS_METADATA as Record<string, { category?: PluginCategory }>)[plugin]?.category
+                return (
+                  <span
+                    key={plugin}
+                    title={plugin}
+                    className={cn(
+                      TILE,
+                      "h-8 w-8 rounded-lg",
+                      category ? CATEGORY_STYLE[category].sticker : "bg-muted text-foreground"
+                    )}
+                  >
+                    {Icon ? <Icon className="h-4 w-4" /> : null}
+                  </span>
+                )
+              })}
+              {plugins.length > visiblePlugins.length && (
+                <span className="font-mono text-[11px] text-muted-foreground">
+                  +{plugins.length - visiblePlugins.length}
+                </span>
+              )}
+            </span>
+          )}
+
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-sm font-semibold transition-colors group-hover:text-primary" title={slugPath}>
+            <h3 className="truncate font-heading text-[16px] font-bold text-foreground" title={slugPath}>
               {svg.name}
             </h3>
             {sectionsSummary ? (
-              <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{sectionsSummary}</p>
+              <p className="mt-0.5 line-clamp-2 text-[13px] text-muted-foreground">{sectionsSummary}</p>
             ) : (
               <code className="mt-0.5 block truncate font-mono text-xs text-muted-foreground">{slugPath}</code>
             )}
           </div>
 
-          {/* Actions — stop propagation so the card click (view) doesn't swallow them */}
-          {/* Nao e um elemento interativo: existe so para impedir que cliques nos
-              botoes filhos subam ate o card. Nao ha acao propria a expor ao teclado. */}
+          {/* Actions: stop propagation so the card click (view) doesn't swallow them. Not an
+              interactive element of its own, so nothing to expose to the keyboard. */}
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
           <div className="flex flex-shrink-0 items-center gap-1" onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 px-2.5 text-xs"
-              onClick={onCopyUrl}
-              aria-label={t("copyMarkdown")}
-            >
-              <Copy className="h-3.5 w-3.5 sm:mr-1.5" />
+            <button type="button" className={BUTTON_SECONDARY_SM} onClick={onCopyUrl} aria-label={t("copyMarkdown")}>
+              <Copy className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{t("copyMarkdown")}</span>
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onView} aria-label={t("view")}>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </Button>
+            </button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label={t("moreActions")}>
-                  <MoreVertical className="h-3.5 w-3.5" />
-                </Button>
+                <button type="button" className={BUTTON_ICON} aria-label={t("moreActions")}>
+                  <MoreHorizontal className="h-4 w-4" />
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={onEdit}>
+              <DropdownMenuContent
+                align="end"
+                className="rounded-xl border-2 border-foreground p-1.5 shadow-[4px_4px_0_0_hsl(var(--primary))]"
+              >
+                <DropdownMenuItem onClick={onView} className="rounded-lg">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  {t("view")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onEdit} className="rounded-lg">
                   <Edit2 className="mr-2 h-4 w-4" />
                   {t("edit")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={onForceGenerate} disabled={isGenerating || svg.status === "generating"}>
+                <DropdownMenuItem
+                  onClick={onForceGenerate}
+                  disabled={isGenerating || svg.status === "generating"}
+                  className="rounded-lg"
+                >
                   {isGenerating ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
@@ -234,7 +280,7 @@ export function SvgLibraryCard({
                 <DropdownMenuItem
                   onClick={onDelete}
                   disabled={isDeleting}
-                  className="text-destructive focus:text-destructive"
+                  className="rounded-lg text-destructive focus:text-destructive"
                 >
                   {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
                   {t("delete")}
@@ -245,40 +291,24 @@ export function SvgLibraryCard({
         </div>
 
         {/* Status · style and size · last generation, each kept on one line */}
-        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5 whitespace-nowrap">
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <span
+            className={cn(
+              CHIP,
+              svg.status === "failed" && "border-red-600 text-red-700 dark:border-red-400 dark:text-red-400"
+            )}
+          >
             <span
               className={cn("h-1.5 w-1.5 flex-shrink-0 rounded-full", STATUS_DOT[svg.status] ?? "bg-muted-foreground")}
             />
             {statusLabel}
           </span>
-          <span className="whitespace-nowrap font-mono text-[11px]">
+          <span className="whitespace-nowrap font-mono text-[11.5px]">
             {svg.style} · {width}px
           </span>
           <span className="whitespace-nowrap" title={svg.lastGeneratedAt ?? undefined}>
             {formatRelative(svg.lastGeneratedAt ?? null, locale)}
           </span>
-          {visiblePlugins.length > 0 && (
-            <span className="ml-auto flex items-center gap-1">
-              {visiblePlugins.map((plugin) => {
-                const Icon = getPluginIcon(plugin)
-                return Icon ? (
-                  <span
-                    key={plugin}
-                    title={plugin}
-                    className="flex h-5 w-5 items-center justify-center rounded bg-muted text-muted-foreground"
-                  >
-                    <Icon className="h-3 w-3" />
-                  </span>
-                ) : null
-              })}
-              {plugins.length > visiblePlugins.length && (
-                <span className="font-mono text-[10px] text-muted-foreground/70">
-                  +{plugins.length - visiblePlugins.length}
-                </span>
-              )}
-            </span>
-          )}
         </div>
       </div>
     </motion.article>
