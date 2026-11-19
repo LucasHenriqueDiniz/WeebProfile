@@ -5649,6 +5649,12 @@ export async function getMockGithubData(): Promise<GithubData> {
       issues: 143,
       gists: 12,
     },
+    // antfu's, from GitHub search on 18/11/2026: every state drawn, and four-digit counts
+    followup: {
+      scope: "created",
+      issues: { open: 102, closed: 534 },
+      pullRequests: { open: 18, draft: 5, merged: 1920, closed: 185 },
+    },
     totalDiskUsage: 512000,
     sponsoringCount: 3,
   } as GithubData

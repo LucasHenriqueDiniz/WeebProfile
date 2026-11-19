@@ -1333,6 +1333,66 @@ export const PLUGINS_METADATA = {
         ]
       },
       {
+        id: "followup",
+        name: "Issues & Pull Requests",
+        description: "Issues and pull requests by state: open, closed, merged and drafts",
+        i18nKey: {
+          name: "plugins.github.sections.followup.name",
+          description: "plugins.github.sections.followup.description"
+        },
+        configOptions: [
+        {
+          key: "followup_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_hide_title.label"
+          }
+        },
+        {
+          key: "followup_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Issues & Pull Requests",
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_title.label",
+            defaultValue: "plugins.github.sections.followup.config.followup_title.defaultValue"
+          }
+        },
+        {
+          key: "followup_scope",
+          label: "Count",
+          type: "select",
+          defaultValue: "created",
+          tooltip: "'Opened by me' counts the issues and pull requests you opened on any repository. 'On my repositories' counts the ones anyone opened on repositories you own.",
+          options: [
+            { value: "created", label: "Opened by me" },
+            { value: "repositories", label: "On my repositories" }
+          ],
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_scope.label",
+            tooltip: "plugins.github.sections.followup.config.followup_scope.tooltip",
+            options: {
+              "created": "plugins.github.sections.followup.config.followup_scope.options.created",
+              "repositories": "plugins.github.sections.followup.config.followup_scope.options.repositories"
+            }
+          }
+        },
+        {
+          key: "followup_include_archived",
+          label: "Include archived repositories",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Turn off to leave out issues and pull requests of archived repositories.",
+          i18nKey: {
+            label: "plugins.github.sections.followup.config.followup_include_archived.label",
+            tooltip: "plugins.github.sections.followup.config.followup_include_archived.tooltip"
+          }
+        }
+        ]
+      },
+      {
         id: "repositories",
         name: "Repositories",
         description: "List of repositories",
@@ -4728,6 +4788,459 @@ export const PLUGINS_METADATA = {
         }
       ],
       "websites_variant": "grid"
+    },
+  },
+
+  wow_forever: {
+    name: "wow_forever",
+    displayName: "WoW Forever",
+    description: "Show your World of Warcraft: Forever character: gear, stats, professions, reputations, talents and more",
+    category: "gaming",
+    icon: "Swords",
+    requiredFields: ["character"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "character",
+        name: "Character",
+        description: "Your character's render, level, race, class, guild and item level",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.character.name",
+          description: "plugins.wow_forever.sections.character.description"
+        },
+        configOptions: [
+        {
+          key: "character",
+          label: "Character",
+          type: "string",
+          defaultValue: "",
+          description: "Name and surname, or the character's armory link (Blizzard's or wowforeverdata.com)",
+          placeholder: "Anduin Wrynn",
+          required: true,
+          tooltip: "Forever characters have no realm: the name and the surname identify one per region. Blizzard shows a character from level 10, after it logs out, and draws its picture some hours later.",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character.label",
+            description: "plugins.wow_forever.sections.character.config.character.description",
+            tooltip: "plugins.wow_forever.sections.character.config.character.tooltip",
+            placeholder: "plugins.wow_forever.sections.character.config.character.placeholder"
+          }
+        },
+        {
+          key: "region",
+          label: "Region",
+          type: "select",
+          defaultValue: "auto",
+          description: "The region the character plays in. Any region searches all four; Blizzard's armory link sets it on its own.",
+          options: [
+            { value: "auto", label: "Any region" },
+            { value: "us", label: "Americas (US)" },
+            { value: "eu", label: "Europe (EU)" },
+            { value: "kr", label: "Korea (KR)" },
+            { value: "tw", label: "Taiwan (TW)" }
+          ],
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.region.label",
+            description: "plugins.wow_forever.sections.character.config.region.description",
+            options: {
+              "auto": "plugins.wow_forever.sections.character.config.region.options.auto",
+              "us": "plugins.wow_forever.sections.character.config.region.options.us",
+              "eu": "plugins.wow_forever.sections.character.config.region.options.eu",
+              "kr": "plugins.wow_forever.sections.character.config.region.options.kr",
+              "tw": "plugins.wow_forever.sections.character.config.region.options.tw"
+            }
+          }
+        },
+        {
+          key: "character_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character_hide_title.label"
+          }
+        },
+        {
+          key: "character_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Character",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character_title.label",
+            defaultValue: "plugins.wow_forever.sections.character.config.character_title.defaultValue"
+          }
+        },
+        {
+          key: "character_image",
+          label: "Picture",
+          type: "select",
+          defaultValue: "render",
+          description: "The full-body render (about 300 KB in the card), the portrait (4 KB) or no picture",
+          options: [
+            { value: "render", label: "Full-body render" },
+            { value: "avatar", label: "Portrait" },
+            { value: "none", label: "None" }
+          ],
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character_image.label",
+            description: "plugins.wow_forever.sections.character.config.character_image.description",
+            options: {
+              "render": "plugins.wow_forever.sections.character.config.character_image.options.render",
+              "avatar": "plugins.wow_forever.sections.character.config.character_image.options.avatar",
+              "none": "plugins.wow_forever.sections.character.config.character_image.options.none"
+            }
+          }
+        }
+        ]
+      },
+      {
+        id: "equipment",
+        name: "Equipment",
+        description: "The items the character wears, with their quality and item level",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.equipment.name",
+          description: "plugins.wow_forever.sections.equipment.description"
+        },
+        configOptions: [
+        {
+          key: "equipment_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_hide_title.label"
+          }
+        },
+        {
+          key: "equipment_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Equipment",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_title.label",
+            defaultValue: "plugins.wow_forever.sections.equipment.config.equipment_title.defaultValue"
+          }
+        },
+        {
+          key: "equipment_max",
+          label: "Maximum items",
+          type: "number",
+          defaultValue: 17,
+          min: 1,
+          max: 17,
+          description: "Items in slot order, from the head down to the weapons. Shirt, tabard and ammo are left out.",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_max.label",
+            description: "plugins.wow_forever.sections.equipment.config.equipment_max.description"
+          }
+        },
+        {
+          key: "equipment_show_icons",
+          label: "Show item icons",
+          type: "boolean",
+          defaultValue: true,
+          description: "Each item's icon in a frame of its quality color (about 2 KB each)",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_icons.label",
+            description: "plugins.wow_forever.sections.equipment.config.equipment_show_icons.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "stats",
+        name: "Attributes",
+        description: "Health, power, primary attributes and armor",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.stats.name",
+          description: "plugins.wow_forever.sections.stats.description"
+        },
+        configOptions: [
+        {
+          key: "stats_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_hide_title.label"
+          }
+        },
+        {
+          key: "stats_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Attributes",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_title.label",
+            defaultValue: "plugins.wow_forever.sections.stats.config.stats_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "journey",
+        name: "Journey",
+        description: "Lifetime numbers: kills, deaths, quests, dungeons, flight paths and more",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.journey.name",
+          description: "plugins.wow_forever.sections.journey.description"
+        },
+        configOptions: [
+        {
+          key: "journey_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_hide_title.label"
+          }
+        },
+        {
+          key: "journey_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Journey",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_title.label",
+            defaultValue: "plugins.wow_forever.sections.journey.config.journey_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "professions",
+        name: "Professions",
+        description: "Primary and secondary professions, with their skill",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.professions.name",
+          description: "plugins.wow_forever.sections.professions.description"
+        },
+        configOptions: [
+        {
+          key: "professions_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.professions.config.professions_hide_title.label"
+          }
+        },
+        {
+          key: "professions_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Professions",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.professions.config.professions_title.label",
+            defaultValue: "plugins.wow_forever.sections.professions.config.professions_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "reputations",
+        name: "Reputations",
+        description: "Standing with each faction, the highest first",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.reputations.name",
+          description: "plugins.wow_forever.sections.reputations.description"
+        },
+        configOptions: [
+        {
+          key: "reputations_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.reputations.config.reputations_hide_title.label"
+          }
+        },
+        {
+          key: "reputations_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Reputations",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.reputations.config.reputations_title.label",
+            defaultValue: "plugins.wow_forever.sections.reputations.config.reputations_title.defaultValue"
+          }
+        },
+        {
+          key: "reputations_max",
+          label: "Maximum factions",
+          type: "number",
+          defaultValue: 6,
+          min: 1,
+          max: 15,
+          description: "Highest standing first",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.reputations.config.reputations_max.label",
+            description: "plugins.wow_forever.sections.reputations.config.reputations_max.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "talents",
+        name: "Talents",
+        description: "Points spent in each talent tree of the active specialization",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.talents.name",
+          description: "plugins.wow_forever.sections.talents.description"
+        },
+        configOptions: [
+        {
+          key: "talents_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.talents.config.talents_hide_title.label"
+          }
+        },
+        {
+          key: "talents_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Talents",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.talents.config.talents_title.label",
+            defaultValue: "plugins.wow_forever.sections.talents.config.talents_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "dungeons",
+        name: "Dungeons",
+        description: "Dungeon bosses defeated, and how many times",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.dungeons.name",
+          description: "plugins.wow_forever.sections.dungeons.description"
+        },
+        configOptions: [
+        {
+          key: "dungeons_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.dungeons.config.dungeons_hide_title.label"
+          }
+        },
+        {
+          key: "dungeons_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Dungeons",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.dungeons.config.dungeons_title.label",
+            defaultValue: "plugins.wow_forever.sections.dungeons.config.dungeons_title.defaultValue"
+          }
+        },
+        {
+          key: "dungeons_max",
+          label: "Maximum bosses",
+          type: "number",
+          defaultValue: 8,
+          min: 1,
+          max: 20,
+          description: "Most kills first",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.dungeons.config.dungeons_max.label",
+            description: "plugins.wow_forever.sections.dungeons.config.dungeons_max.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "achievements",
+        name: "Achievements",
+        description: "The latest achievements, with their icon and date",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.achievements.name",
+          description: "plugins.wow_forever.sections.achievements.description"
+        },
+        configOptions: [
+        {
+          key: "achievements_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.achievements.config.achievements_hide_title.label"
+          }
+        },
+        {
+          key: "achievements_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Achievements",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.achievements.config.achievements_title.label",
+            defaultValue: "plugins.wow_forever.sections.achievements.config.achievements_title.defaultValue"
+          }
+        },
+        {
+          key: "achievements_max",
+          label: "Maximum achievements",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          description: "The latest first",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.achievements.config.achievements_max.label",
+            description: "plugins.wow_forever.sections.achievements.config.achievements_max.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "collection",
+        name: "Collection",
+        description: "Mounts, pets and toys",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.collection.name",
+          description: "plugins.wow_forever.sections.collection.description"
+        },
+        configOptions: [
+        {
+          key: "collection_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.collection.config.collection_hide_title.label"
+          }
+        },
+        {
+          key: "collection_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Collection",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.collection.config.collection_title.label",
+            defaultValue: "plugins.wow_forever.sections.collection.config.collection_title.defaultValue"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.wow_forever.displayName",
+      description: "plugins.wow_forever.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "sections": [
+        "character",
+        "equipment",
+        "stats"
+      ],
+      "character": "Anduin Wrynn"
     },
   },
 } as const satisfies Record<string, PluginMetadata>

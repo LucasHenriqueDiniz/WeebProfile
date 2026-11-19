@@ -657,6 +657,10 @@
   resize: both
 }
 
+.list-none {
+  list-style-type: none
+}
+
 .grid-flow-col {
   grid-auto-flow: column
 }

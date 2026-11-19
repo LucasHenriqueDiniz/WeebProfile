@@ -144,6 +144,31 @@
       "description": "Featured repositories (requires repository URL)",
       "name": "Featured Repositories"
     },
+    "followup": {
+      "config": {
+        "followup_hide_title": {
+          "label": "Hide title"
+        },
+        "followup_include_archived": {
+          "label": "Include archived repositories",
+          "tooltip": "Turn off to leave out issues and pull requests of archived repositories."
+        },
+        "followup_scope": {
+          "label": "Count",
+          "options": {
+            "created": "Opened by me",
+            "repositories": "On my repositories"
+          },
+          "tooltip": "'Opened by me' counts the issues and pull requests you opened on any repository. 'On my repositories' counts the ones anyone opened on repositories you own."
+        },
+        "followup_title": {
+          "defaultValue": "Issues & Pull Requests",
+          "label": "Title"
+        }
+      },
+      "description": "Issues and pull requests by state: open, closed, merged and drafts",
+      "name": "Issues & Pull Requests"
+    },
     "gists": {
       "config": {
         "gists_hide_title": {

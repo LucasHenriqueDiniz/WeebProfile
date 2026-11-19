@@ -58,6 +58,44 @@ export const githubPluginMetadata = {
       ],
     },
     {
+      id: "followup",
+      name: "Issues & Pull Requests",
+      description: "Issues and pull requests by state: open, closed, merged and drafts",
+      configOptions: [
+        {
+          key: "followup_hide_title",
+          label: "Hide title",
+          type: "boolean" as const,
+          defaultValue: false,
+        },
+        {
+          key: "followup_title",
+          label: "Title",
+          type: "string" as const,
+          defaultValue: "Issues & Pull Requests",
+        },
+        {
+          key: "followup_scope",
+          label: "Count",
+          type: "select" as const,
+          defaultValue: "created",
+          options: [
+            { value: "created", label: "Opened by me" },
+            { value: "repositories", label: "On my repositories" },
+          ],
+          tooltip:
+            "'Opened by me' counts the issues and pull requests you opened on any repository. 'On my repositories' counts the ones anyone opened on repositories you own.",
+        },
+        {
+          key: "followup_include_archived",
+          label: "Include archived repositories",
+          type: "boolean" as const,
+          defaultValue: true,
+          tooltip: "Turn off to leave out issues and pull requests of archived repositories.",
+        },
+      ],
+    },
+    {
       id: "repositories",
       name: "Repositories",
       description: "List of repositories",
