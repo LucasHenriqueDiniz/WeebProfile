@@ -59,7 +59,7 @@ export function RenderWowForever({ config, data: fetched, style, size }: RenderW
         const common = { data, style, size, title: options.title(id), hideTitle: options.hideTitle(id) }
         switch (id) {
           case "character":
-            return <Character key={id} {...common} />
+            return <Character key={id} {...common} sway={options.characterSway} />
           case "equipment":
             return <Equipment key={id} {...common} max={options.max(id)} />
           case "stats":

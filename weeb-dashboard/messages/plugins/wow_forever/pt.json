@@ -39,6 +39,10 @@
             "render": "Render de corpo inteiro"
           }
         },
+        "character_sway": {
+          "description": "O render de corpo inteiro gira devagar de um lado para o outro, com as animações do card ligadas",
+          "label": "Balançar o render"
+        },
         "character_title": {
           "defaultValue": "Personagem",
           "label": "Título"

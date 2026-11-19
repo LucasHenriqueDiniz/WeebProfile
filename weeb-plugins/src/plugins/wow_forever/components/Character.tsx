@@ -18,7 +18,7 @@ import { COLORS, WowSection, ellipsis } from "./Section"
 /** Longest a label column gets before its labels end in an ellipsis. */
 const LABEL_MAX_WIDTH: Record<Size, number> = { half: 96, full: 130 }
 
-function Picture({ data, style, size }: { data: WowForeverData; style: Style; size: Size }) {
+function Picture({ data, style, size, sway }: { data: WowForeverData; style: Style; size: Size; sway: boolean }) {
   const box = characterImageSize(style, size, data.image)
   if (!data.image || !box) return null
   const terminal = style === "terminal"
@@ -56,23 +56,34 @@ function Picture({ data, style, size }: { data: WowForeverData; style: Style; si
   const width = RENDER_SOURCE.width * scale
   const height = RENDER_SOURCE.height * scale
   const centerX = (RENDER_CROP.x + RENDER_CROP.width / 2) * scale
+  const render = (
+    <img
+      src={data.image.src}
+      alt=""
+      width={Math.round(width)}
+      height={Math.round(height)}
+      style={{
+        position: "absolute",
+        display: "block",
+        maxWidth: "none",
+        width: `${width}px`,
+        height: `${height}px`,
+        left: `${box.width / 2 - centerX}px`,
+        top: `${-RENDER_CROP.y * scale}px`,
+      }}
+    />
+  )
+  // The sway turns a layer the size of the frame, so the character turns about the
+  // frame's middle; WOW_FOREVER_CSS animates it only with card animations on.
   return (
     <div style={frame}>
-      <img
-        src={data.image.src}
-        alt=""
-        width={Math.round(width)}
-        height={Math.round(height)}
-        style={{
-          position: "absolute",
-          display: "block",
-          maxWidth: "none",
-          width: `${width}px`,
-          height: `${height}px`,
-          left: `${box.width / 2 - centerX}px`,
-          top: `${-RENDER_CROP.y * scale}px`,
-        }}
-      />
+      {sway ? (
+        <div className="wow-sway" style={{ position: "absolute", inset: 0 }}>
+          {render}
+        </div>
+      ) : (
+        render
+      )}
     </div>
   )
 }
@@ -83,9 +94,11 @@ interface CharacterProps {
   size: Size
   title: string
   hideTitle: boolean
+  /** Sway the full-body render from side to side, while card animations are on. */
+  sway: boolean
 }
 
-export function Character({ data, style, size, title, hideTitle }: CharacterProps): React.ReactElement {
+export function Character({ data, style, size, title, hideTitle, sway }: CharacterProps): React.ReactElement {
   const terminal = style === "terminal"
   const m = characterMetrics(style, size)
   const colors = COLORS[style]
@@ -111,7 +124,7 @@ export function Character({ data, style, size, title, hideTitle }: CharacterProp
           height: `${characterBodyHeight(style, size, data)}px`,
         }}
       >
-        <Picture data={data} style={style} size={size} />
+        <Picture data={data} style={style} size={size} sway={sway} />
         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
           <div
             style={{

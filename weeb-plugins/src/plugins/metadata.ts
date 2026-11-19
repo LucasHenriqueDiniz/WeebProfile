@@ -5156,6 +5156,17 @@ export const PLUGINS_METADATA = {
               "none": "plugins.wow_forever.sections.character.config.character_image.options.none"
             }
           }
+        },
+        {
+          key: "character_sway",
+          label: "Sway the render",
+          type: "boolean",
+          defaultValue: true,
+          description: "The full-body render turns slowly from side to side, while card animations are on",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character_sway.label",
+            description: "plugins.wow_forever.sections.character.config.character_sway.description"
+          }
         }
         ]
       },

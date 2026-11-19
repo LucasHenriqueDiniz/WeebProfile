@@ -76,6 +76,13 @@ export const wowForeverPluginMetadata = {
             { value: "none", label: "None" },
           ],
         },
+        {
+          key: "character_sway",
+          label: "Sway the render",
+          type: "boolean" as const,
+          defaultValue: true,
+          description: "The full-body render turns slowly from side to side, while card animations are on",
+        },
       ],
     },
     {

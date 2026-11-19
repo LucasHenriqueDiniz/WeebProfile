@@ -73,6 +73,7 @@ export function resolveOptions(config: WowForeverConfig) {
     style: ((config as { style?: string }).style === "terminal" ? "terminal" : "default") as Style,
     title: (id: SectionId): string => read<string>(config, KEYS[id].title) || DEFAULT_TITLES[id],
     hideTitle: (id: SectionId): boolean => read<boolean>(config, KEYS[id].hide) === true,
+    characterSway: read<boolean>(config, "character_sway") !== false,
     max: (id: SectionId): number => {
       const m = MAXES[id]
       const key = KEYS[id].max

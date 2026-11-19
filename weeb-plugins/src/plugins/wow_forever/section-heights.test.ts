@@ -11,7 +11,7 @@ import type { WowForeverData } from "./types"
  * 19/11/2026 (all ten sections), measured by `pnpm --filter @weeb/svg-generator audit:heights -- --plugin=wow_forever
  * --variants --engine=all --data-variants=<VARIANTS>` (renderPlugins, theme CSS, no terminal
  * header): each section alone and all three in one card, with every option that changes the
- * height and the mock changed as `VARIANTS` says. 580 cases, all exact in the three engines, every option flipped one at a time.
+ * height and the mock changed as `VARIANTS` says. 584 cases, all exact in the three engines, every option flipped one at a time.
  * The region option is left out: it changes nothing in the mock.
  */
 
@@ -90,6 +90,10 @@ const MEASURED: Array<MeasuredCase<keyof typeof VARIANTS>> = [
   [["character"], "terminal", "half", "mock", { character_image: "none" }, [220, 220, 220]],
   [["character"], "default", "full", "mock", { character_image: "none" }, [196, 196, 196]],
   [["character"], "terminal", "full", "mock", { character_image: "none" }, [220, 220, 220]],
+  [["character"], "default", "half", "mock", { character_sway: false }, [208, 208, 208]],
+  [["character"], "terminal", "half", "mock", { character_sway: false }, [220, 220, 220]],
+  [["character"], "default", "full", "mock", { character_sway: false }, [248, 248, 248]],
+  [["character"], "terminal", "full", "mock", { character_sway: false }, [240, 240, 240]],
   [["character"], "default", "half", "no-image", {}, [180, 180, 180]],
   [["character"], "terminal", "half", "no-image", {}, [220, 220, 220]],
   [["character"], "default", "full", "no-image", {}, [196, 196, 196]],

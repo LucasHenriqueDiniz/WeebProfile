@@ -20,6 +20,7 @@ export interface WowForeverOptions {
   character_title?: string
   character_hide_title?: boolean
   character_image?: CharacterImage
+  character_sway?: boolean
   equipment_title?: string
   equipment_hide_title?: boolean
   equipment_max?: number

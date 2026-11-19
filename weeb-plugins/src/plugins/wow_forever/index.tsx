@@ -16,6 +16,34 @@ import { SECTION_IDS, resolveOptions, sectionBody, visibleData, type SectionId }
 import { fetchWowForeverData } from "./services/fetchData"
 import type { WowForeverConfig, WowForeverData } from "./types"
 
+/**
+ * The character's render sways from side to side, about the frame's middle, in
+ * perspective: the Blizzard render is a single front view, so it turns by 30 degrees
+ * each way rather than all the way round. Like the About plugin's blinking cursor it
+ * loops, only with card animations on (`weeb-anim`) and motion allowed, starting once
+ * the section has printed (`--weeb-out`). At rest the render is the still picture.
+ * Transforms do not change layout, so the height is the same.
+ */
+const WOW_FOREVER_CSS = `
+@media (prefers-reduced-motion: no-preference) {
+  #svg-main .weeb-anim .wow-sway {
+    animation: wow-sway 7s cubic-bezier(0.37, 0, 0.63, 1) var(--weeb-out, 0s) infinite;
+  }
+}
+@keyframes wow-sway {
+  0%,
+  100% {
+    transform: perspective(420px) rotateY(0deg);
+  }
+  25% {
+    transform: perspective(420px) rotateY(30deg);
+  }
+  75% {
+    transform: perspective(420px) rotateY(-30deg);
+  }
+}
+`
+
 export const wowForeverPlugin: Plugin<PluginConfig & WowForeverConfig, PluginData & WowForeverData> = {
   name: "wow_forever",
   // No user secret: the character is public, and the Battle.net client that reads it
@@ -46,6 +74,8 @@ export const wowForeverPlugin: Plugin<PluginConfig & WowForeverConfig, PluginDat
     }
     return height
   },
+
+  styles: WOW_FOREVER_CSS,
 }
 
 export default wowForeverPlugin

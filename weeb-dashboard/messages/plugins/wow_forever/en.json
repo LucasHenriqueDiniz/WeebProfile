@@ -39,6 +39,10 @@
             "render": "Full-body render"
           }
         },
+        "character_sway": {
+          "description": "The full-body render turns slowly from side to side, while card animations are on",
+          "label": "Sway the render"
+        },
         "character_title": {
           "defaultValue": "Character",
           "label": "Title"
