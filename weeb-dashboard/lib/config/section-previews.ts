@@ -127,6 +127,14 @@ export const SECTION_PREVIEWS: Record<
     top_games: { default: [415, 464], terminal: [415, 176] },
   },
 
+  wakatime: {
+    time: { default: [415, 112], terminal: [415, 108] },
+    languages: { default: [415, 298], terminal: [415, 260] },
+    projects: { default: [415, 214], terminal: [415, 188] },
+    editors: { default: [415, 186], terminal: [415, 164] },
+    operating_systems: { default: [415, 130], terminal: [415, 116] },
+  },
+
   websites: {
     websites: { default: [415, 481], terminal: [415, 152] },
   },
