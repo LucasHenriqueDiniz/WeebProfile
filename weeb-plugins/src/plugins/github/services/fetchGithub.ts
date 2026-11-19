@@ -11,6 +11,7 @@ import {
   RECENT_ACTIVITY_QUERY,
   REPOSITORIES_QUERY,
   STAR_LISTS_QUERY,
+  FOLLOWUP_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
 import { lastSixMonthsStart, firstDayOfLastSixMonths } from "../utils"
@@ -353,6 +354,11 @@ export async function fetchGithubData(
           continue
         }
 
+        if (section === "followup") {
+          data.followup = await fetchFollowup(graphqlClient, username, config)
+          continue
+        }
+
         if (section === "star_lists") {
           data.starLists = await fetchStarLists(graphqlClient, username, config)
           continue
@@ -617,6 +623,63 @@ function processActivityData(result: GraphQLResponse): GithubData["activity"] {
     pullRequests: user.pullRequests?.totalCount || 0,
     issues: user.issues?.totalCount || 0,
     gists: user.gists?.totalCount || 0,
+  }
+}
+
+type FollowupSearch = "issuesOpen" | "issuesClosed" | "prOpen" | "prDraft" | "prMerged" | "prClosed"
+
+/**
+ * The search behind each count of the followup section. The six are disjoint and cover
+ * every issue and pull request: a pull request is open (not a draft), an open draft, merged,
+ * or closed without merging (a closed draft included). lowlighter/metrics counted a draft of
+ * any state as a draft and left closed drafts out of closed; here "draft" means open.
+ *
+ * - `created`: what the user opened anywhere (`author:`); `repositories`: everything opened
+ *   on the user's own repositories, by anyone (`user:`).
+ * - `is:public` unless the card includes private repositories: with the `repo` scope, search
+ *   counts what the token can see, and a public card showed 665 pull requests for 366
+ *   public ones (LucasHenriqueDiniz, 18/11/2026).
+ * - `archived:false` when archived repositories are left out.
+ */
+export function followupSearches(username: string, config: GithubConfig): Record<FollowupSearch, string> {
+  const who = config.followup_scope === "repositories" ? `user:${username}` : `author:${username}`
+  const scope = [
+    who,
+    config.repositories_use_private ? "" : "is:public",
+    config.followup_include_archived === false ? "archived:false" : "",
+  ]
+    .filter(Boolean)
+    .join(" ")
+  return {
+    issuesOpen: `${scope} is:issue is:open`,
+    issuesClosed: `${scope} is:issue is:closed`,
+    prOpen: `${scope} is:pr is:open draft:false`,
+    prDraft: `${scope} is:pr is:open draft:true`,
+    prMerged: `${scope} is:pr is:merged`,
+    prClosed: `${scope} is:pr is:closed is:unmerged`,
+  }
+}
+
+/** Issues and pull requests by state: one GraphQL call, six search counts. */
+async function fetchFollowup(
+  graphqlClient: ReturnType<typeof graphql.defaults>,
+  username: string,
+  config: GithubConfig
+): Promise<NonNullable<GithubData["followup"]>> {
+  const result = await graphqlClient<Record<FollowupSearch, { issueCount: number }>>(
+    FOLLOWUP_QUERY,
+    followupSearches(username, config)
+  )
+  const count = (search: FollowupSearch) => result[search]?.issueCount ?? 0
+  return {
+    scope: config.followup_scope === "repositories" ? "repositories" : "created",
+    issues: { open: count("issuesOpen"), closed: count("issuesClosed") },
+    pullRequests: {
+      open: count("prOpen"),
+      draft: count("prDraft"),
+      merged: count("prMerged"),
+      closed: count("prClosed"),
+    },
   }
 }
 

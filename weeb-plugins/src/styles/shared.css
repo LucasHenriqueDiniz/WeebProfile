@@ -663,6 +663,10 @@
   resize: both
 }
 
+#svg-main .list-none {
+  list-style-type: none
+}
+
 #svg-main .grid-flow-col {
   grid-auto-flow: column
 }

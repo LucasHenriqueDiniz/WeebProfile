@@ -26,7 +26,7 @@ export type PluginSectionIds = {
   codewars: "rank_honor" | "completed_kata" | "languages_proficiency" | "leaderboard_position"
   devto: "profile" | "recent_articles" | "top_tags"
   duolingo: "current_streak" | "total_xp" | "languages_learning"
-  github: "profile" | "activity" | "repositories" | "favorite_languages" | "favorite_license" | "calendar" | "code_habits" | "starred_repositories" | "gists" | "stargazers" | "top_repositories" | "star_lists" | "notable_contributions" | "recent_activity" | "introduction" | "featured_repositories" | "sponsorships" | "sponsors" | "people" | "repository_contributors"
+  github: "profile" | "activity" | "followup" | "repositories" | "favorite_languages" | "favorite_license" | "calendar" | "code_habits" | "starred_repositories" | "gists" | "stargazers" | "top_repositories" | "star_lists" | "notable_contributions" | "recent_activity" | "introduction" | "featured_repositories" | "sponsorships" | "sponsors" | "people" | "repository_contributors"
   github_repo: "banner" | "stats" | "star_graph" | "languages" | "topics" | "overview"
   lastfm: "recent_tracks" | "statistics" | "top_artists" | "top_albums" | "top_tracks"
   lyfta: "statistics" | "recent_workouts" | "exercises" | "overview" | "last_workout"

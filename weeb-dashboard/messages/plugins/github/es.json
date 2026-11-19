@@ -144,6 +144,31 @@
       "description": "Repositorios destacados (requiere URL del repositorio)",
       "name": "Repositorios Destacados"
     },
+    "followup": {
+      "config": {
+        "followup_hide_title": {
+          "label": "Ocultar título"
+        },
+        "followup_include_archived": {
+          "label": "Incluir repositorios archivados",
+          "tooltip": "Desactívalo para dejar fuera los issues y pull requests de repositorios archivados."
+        },
+        "followup_scope": {
+          "label": "Contar",
+          "options": {
+            "created": "Abiertos por mí",
+            "repositories": "En mis repositorios"
+          },
+          "tooltip": "'Abiertos por mí' cuenta los issues y pull requests que abriste en cualquier repositorio. 'En mis repositorios' cuenta los que cualquier persona abrió en los repositorios que son tuyos."
+        },
+        "followup_title": {
+          "defaultValue": "Issues & Pull Requests",
+          "label": "Título"
+        }
+      },
+      "description": "Issues y pull requests por estado: abiertos, cerrados, fusionados y borradores",
+      "name": "Issues & Pull Requests"
+    },
     "gists": {
       "config": {
         "gists_hide_title": {

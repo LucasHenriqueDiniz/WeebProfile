@@ -27,6 +27,11 @@ export interface GithubConfig {
   repositories_use_private?: boolean
   activity_title?: string
   activity_hide_title?: boolean
+  followup_title?: string
+  followup_hide_title?: boolean
+  /** Whose issues and pull requests: the ones the user opened, or the ones on the user's repositories. */
+  followup_scope?: "created" | "repositories"
+  followup_include_archived?: boolean
   calendar_title?: string
   calendar_hide_title?: boolean
   code_habits_title?: string
@@ -135,6 +140,13 @@ export interface GithubData {
     pullRequests: number
     issues: number
     gists: number
+  }
+  /** Issues and pull requests by state, all time (GitHub search counts). */
+  followup?: {
+    scope: "created" | "repositories"
+    issues: { open: number; closed: number }
+    /** `open` leaves drafts out; `draft` is the open drafts, a closed draft counts as closed. */
+    pullRequests: { open: number; draft: number; merged: number; closed: number }
   }
   calendar: {
     totalContributions: number
