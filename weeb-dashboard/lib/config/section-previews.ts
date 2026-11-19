@@ -130,6 +130,19 @@ export const SECTION_PREVIEWS: Record<
   websites: {
     websites: { default: [415, 481], terminal: [415, 152] },
   },
+
+  wow_forever: {
+    character: { default: [415, 232], terminal: [415, 244] },
+    equipment: { default: [415, 432], terminal: [415, 364] },
+    stats: { default: [415, 176], terminal: [415, 144] },
+    journey: { default: [415, 176], terminal: [415, 144] },
+    professions: { default: [415, 156], terminal: [415, 124] },
+    reputations: { default: [415, 212], terminal: [415, 164] },
+    talents: { default: [415, 156], terminal: [415, 124] },
+    dungeons: { default: [415, 216], terminal: [415, 184] },
+    achievements: { default: [415, 192], terminal: [415, 164] },
+    collection: { default: [415, 144], terminal: [415, 124] },
+  },
 }
 
 export function getSectionPreview(plugin: string, section: string, style: "default" | "terminal" = "default"): string | null {
