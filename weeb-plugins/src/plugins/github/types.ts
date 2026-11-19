@@ -43,6 +43,8 @@ export interface GithubConfig {
   code_habits_hide_footer?: boolean
   /** IANA time zone for the hours and weekdays, e.g. "America/Sao_Paulo". UTC when unset or invalid. */
   code_habits_timezone?: string
+  /** "bars" (hour and weekday charts), "punchcard" (weekday × hour dots) or "summary" (highlights and an hour strip). */
+  code_habits_variant?: "bars" | "punchcard" | "summary"
   starred_repositories_title?: string
   starred_repositories_hide_title?: boolean
   starred_repositories_max?: number
@@ -213,6 +215,8 @@ export interface GithubData {
     commitsByDay: {
       [key: string]: number
     }
+    /** Commits per weekday name and hour (24 counts), for the punch card. Absent in older data. */
+    commitsByDayHour?: Record<string, number[]>
     languages: {
       [key: string]: {
         count: number

@@ -12,6 +12,8 @@ import { abbreviateNumber } from "../../../utils/number"
 import { getPseudoCommands } from "../../../utils/pseudo-commands"
 import { randomColorWithString } from "../../../utils/string"
 import type { GithubConfig, GithubData } from "../types"
+import { type CodeHabitsVariant, codeHabitsVariant } from "./code-habits-insights"
+import { DefaultPunchcard, DefaultSummary, TerminalPunchcard, TerminalSummary } from "./CodeHabitsVariants"
 
 /** " (UTC-3)" next to the hours, so a reader knows whose clock they are on. Old data has no zone. */
 const zoneSuffix = (data: { timeZoneLabel?: string }): string => (data.timeZoneLabel ? ` (${data.timeZoneLabel})` : "")
@@ -32,6 +34,8 @@ const DefaultCodeHabits = ({
   hideWeekdays,
   hideHours,
   hideFooter,
+  variant = "bars",
+  size = "half",
 }: {
   data: GithubData["codeHabits"]
   hideLanguages?: boolean
@@ -39,6 +43,8 @@ const DefaultCodeHabits = ({
   hideWeekdays?: boolean
   hideHours?: boolean
   hideFooter?: boolean
+  variant?: CodeHabitsVariant
+  size?: "half" | "full"
 }) => {
   const maxCommitsByHour =
     data.commitsByHour && Object.values(data.commitsByHour).length > 0
@@ -51,8 +57,11 @@ const DefaultCodeHabits = ({
 
   return (
     <div className="flex flex-col gap-2">
+      {variant === "punchcard" && <DefaultPunchcard data={data} size={size} />}
+      {variant === "summary" && <DefaultSummary data={data} />}
+
       {/* Commits by Hour */}
-      {!hideHours && (
+      {variant === "bars" && !hideHours && (
         <div className="flex flex-col">
           <h3 className="text-sm font-semibold text-default-muted">
             Commit activity per hour of day{zoneSuffix(data)}
@@ -86,71 +95,75 @@ const DefaultCodeHabits = ({
       )}
 
       {/* 2x2 Grid layout */}
-      <div
-        className={`grid gap-x-2 gap-y-2 ${
-          !hideLanguages && data.languages && Object.keys(data.languages).length > 0 ? "grid-cols-2" : "grid-cols-1"
-        }`}
-      >
-        {/* Row 1: Titles */}
-        {!hideWeekdays && <h3 className="text-sm font-semibold text-default-muted">Commit activity per day of week</h3>}
-        {!hideLanguages && data.languages && Object.keys(data.languages).length > 0 && (
-          <h3 className="text-sm font-semibold text-default-muted">Language activity</h3>
-        )}
+      {variant === "bars" && (
+        <div
+          className={`grid gap-x-2 gap-y-2 ${
+            !hideLanguages && data.languages && Object.keys(data.languages).length > 0 ? "grid-cols-2" : "grid-cols-1"
+          }`}
+        >
+          {/* Row 1: Titles */}
+          {!hideWeekdays && (
+            <h3 className="text-sm font-semibold text-default-muted">Commit activity per day of week</h3>
+          )}
+          {!hideLanguages && data.languages && Object.keys(data.languages).length > 0 && (
+            <h3 className="text-sm font-semibold text-default-muted">Language activity</h3>
+          )}
 
-        {/* Row 2: Charts */}
-        {!hideWeekdays && (
-          <div className="flex flex-col gap-1">
-            {DAYS.map((day) => {
-              const commits = data.commitsByDay[day] || 0
-              const width = commits > 0 ? `${Math.max((commits / maxCommitsByDay) * 100, 5)}%` : "0%"
-              return (
-                <div key={day} className="flex flex-col">
-                  <div className="flex justify-between text-xs text-default-muted mb-1 w-full text-center">
-                    <span>{day.slice(0, 3)}</span>
-                    <span>{commits}</span>
-                  </div>
-                  <div className="w-full rounded-sm h-2">
-                    <div
-                      className={`h-full bg-default-highlight rounded-sm transition-all${bar}`}
-                      style={{ width }}
-                      title={`${commits} commits on ${day}`}
-                    />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
-
-        {!hideLanguages && data.languages && Object.keys(data.languages).length > 0 && (
-          <div className="flex flex-col gap-1">
-            {Object.entries(data.languages)
-              .sort(([, a], [, b]) => b.count - a.count)
-              .slice(0, 7)
-              .map(([lang, { count, color }]) => {
-                const total = Object.values(data.languages).reduce((acc, curr) => acc + curr.count, 0)
-                const percentage = total > 0 ? (count / total) * 100 : 0
+          {/* Row 2: Charts */}
+          {!hideWeekdays && (
+            <div className="flex flex-col gap-1">
+              {DAYS.map((day) => {
+                const commits = data.commitsByDay[day] || 0
+                const width = commits > 0 ? `${Math.max((commits / maxCommitsByDay) * 100, 5)}%` : "0%"
                 return (
-                  <div key={lang} className="flex flex-col">
-                    <div className="flex justify-between text-xs text-default-muted mb-1">
-                      <span className="capitalize">{lang}</span>
-                      <span>{percentage.toFixed(1)}%</span>
+                  <div key={day} className="flex flex-col">
+                    <div className="flex justify-between text-xs text-default-muted mb-1 w-full text-center">
+                      <span>{day.slice(0, 3)}</span>
+                      <span>{commits}</span>
                     </div>
                     <div className="w-full rounded-sm h-2">
                       <div
-                        className={`h-full rounded-sm transition-all${bar}`}
-                        style={{
-                          width: `${percentage}%`,
-                          backgroundColor: color ?? randomColorWithString(lang),
-                        }}
+                        className={`h-full bg-default-highlight rounded-sm transition-all${bar}`}
+                        style={{ width }}
+                        title={`${commits} commits on ${day}`}
                       />
                     </div>
                   </div>
                 )
               })}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+
+          {!hideLanguages && data.languages && Object.keys(data.languages).length > 0 && (
+            <div className="flex flex-col gap-1">
+              {Object.entries(data.languages)
+                .sort(([, a], [, b]) => b.count - a.count)
+                .slice(0, 7)
+                .map(([lang, { count, color }]) => {
+                  const total = Object.values(data.languages).reduce((acc, curr) => acc + curr.count, 0)
+                  const percentage = total > 0 ? (count / total) * 100 : 0
+                  return (
+                    <div key={lang} className="flex flex-col">
+                      <div className="flex justify-between text-xs text-default-muted mb-1">
+                        <span className="capitalize">{lang}</span>
+                        <span>{percentage.toFixed(1)}%</span>
+                      </div>
+                      <div className="w-full rounded-sm h-2">
+                        <div
+                          className={`h-full rounded-sm transition-all${bar}`}
+                          style={{
+                            width: `${percentage}%`,
+                            backgroundColor: color ?? randomColorWithString(lang),
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Stats */}
       {!hideStats && data.commitStats && (
@@ -203,6 +216,8 @@ const TerminalCodeHabits = ({
   hideWeekdays,
   hideHours,
   hideFooter,
+  variant = "bars",
+  size = "half",
 }: {
   data: GithubData["codeHabits"]
   hideLanguages?: boolean
@@ -210,6 +225,8 @@ const TerminalCodeHabits = ({
   hideWeekdays?: boolean
   hideHours?: boolean
   hideFooter?: boolean
+  variant?: CodeHabitsVariant
+  size?: "half" | "full"
 }) => {
   const maxCommitsByHour =
     data.commitsByHour && Object.values(data.commitsByHour).length > 0
@@ -225,7 +242,10 @@ const TerminalCodeHabits = ({
 
   return (
     <div className="flex flex-col gap-1">
-      {!hideHours && (
+      {variant === "punchcard" && <TerminalPunchcard data={data} size={size} />}
+      {variant === "summary" && <TerminalSummary data={data} size={size} />}
+
+      {variant === "bars" && !hideHours && (
         <>
           <TerminalLabel>{`Commits by Hour${zoneSuffix(data)}:`}</TerminalLabel>
           {Array.from({ length: 24 }).map((_, hour) => {
@@ -242,7 +262,7 @@ const TerminalCodeHabits = ({
       )}
 
       {/* Days */}
-      {!hideWeekdays && (
+      {variant === "bars" && !hideWeekdays && (
         <>
           <TerminalLabel>Commits by Day:</TerminalLabel>
           {DAYS.map((day) => {
@@ -259,7 +279,7 @@ const TerminalCodeHabits = ({
       )}
 
       {/* Languages */}
-      {!hideLanguages && data.languages && Object.keys(data.languages).length > 0 && (
+      {variant === "bars" && !hideLanguages && data.languages && Object.keys(data.languages).length > 0 && (
         <>
           <TerminalLabel>Recent Languages:</TerminalLabel>
           <TerminalHorizontalMultipleItemsBar
@@ -327,6 +347,7 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
   const hideWeekdays = config.code_habits_hide_weekdays ?? false
   const hideHours = config.code_habits_hide_hours ?? false
   const hideFooter = config.code_habits_hide_footer ?? false
+  const variant = codeHabitsVariant(config, data)
 
   return (
     <section id="github-code-habits">
@@ -342,6 +363,8 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
               hideWeekdays={hideWeekdays}
               hideHours={hideHours}
               hideFooter={hideFooter}
+              variant={variant}
+              size={size}
             />
           </>
         }
@@ -361,6 +384,8 @@ export function GithubCodeHabits({ data, config, style, size }: CodeHabitsProps)
               hideWeekdays={hideWeekdays}
               hideHours={hideHours}
               hideFooter={hideFooter}
+              variant={variant}
+              size={size}
             />
           </>
         }

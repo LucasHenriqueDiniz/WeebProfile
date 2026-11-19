@@ -1754,6 +1754,7 @@ async function processCodeHabitsData(
 }> {
   const commitsByDay: Record<string, number> = {}
   const commitsByHour: Record<number, number> = {}
+  const commitsByDayHour: Record<string, number[]> = {}
   const clock = codeHabitsClock(timeZone)
   const timeZoneLabel = clock.offsetLabel(new Date())
   let totalCommits = 0
@@ -2028,6 +2029,8 @@ async function processCodeHabitsData(
 
             commitsByDay[day] = (commitsByDay[day] || 0) + 1
             commitsByHour[hour] = (commitsByHour[hour] || 0) + 1
+            const dayHours = (commitsByDayHour[day] ??= Array<number>(24).fill(0))
+            dayHours[hour] = (dayHours[hour] ?? 0) + 1
             totalCommits++
           }
 
@@ -2181,6 +2184,7 @@ async function processCodeHabitsData(
     const result = {
       commitsByHour,
       commitsByDay,
+      commitsByDayHour,
       languages,
       commitStats: analyzedCommitsCount > 0 ? { averageChangesPerCommit, totalFilesChanged, largestCommit } : undefined,
       analyzedCommits: analyzedCommitsCount || totalCommits,
@@ -2248,6 +2252,7 @@ async function processCodeHabitsData(
     const emptyData = {
       commitsByHour: {},
       commitsByDay: {},
+      commitsByDayHour: {},
       languages: {},
       analyzedCommits: 0,
       timeZone: clock.timeZone,
