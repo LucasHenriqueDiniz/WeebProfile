@@ -1,0 +1,161 @@
+{
+  "description": "Mostra o tempo que você passou programando, por linguagem, projeto, editor e sistema operacional, vindo da WakaTime",
+  "displayName": "WakaTime",
+  "essentialConfig": {
+    "token": {
+      "description": "Seu token OAuth pessoal, não a API key secreta: a WakaTime deixou as API keys só para envio. Abra wakatime.com/oauth logado e copie o token em \"Your secret OAuth token\".",
+      "label": "Token pessoal da WakaTime",
+      "placeholder": "waka_tok_..."
+    }
+  },
+  "sections": {
+    "editors": {
+      "config": {
+        "editors_hide_title": {
+          "label": "Ocultar título"
+        },
+        "editors_max": {
+          "description": "Máximo 15",
+          "label": "Máximo de editores"
+        },
+        "editors_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo o período",
+            "last_30_days": "Últimos 30 dias",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 dias",
+            "last_year": "Último ano"
+          },
+          "tooltip": "O período que estes números cobrem. Seções com o mesmo período dividem uma requisição à WakaTime. Períodos longos (último ano, todo o período) podem demorar para a WakaTime calcular: o card mostra então os últimos números que ela tinha."
+        },
+        "editors_title": {
+          "defaultValue": "Editores",
+          "label": "Título"
+        }
+      },
+      "description": "Tempo em cada editor",
+      "name": "Editores"
+    },
+    "languages": {
+      "config": {
+        "languages_hide_title": {
+          "label": "Ocultar título"
+        },
+        "languages_ignore": {
+          "description": "Linguagens a esconder, separadas por vírgula",
+          "label": "Linguagens ignoradas",
+          "placeholder": "Markdown, JSON, Other",
+          "tooltip": "As porcentagens são calculadas sobre as linguagens que sobram."
+        },
+        "languages_max": {
+          "description": "Máximo 15",
+          "label": "Máximo de linguagens"
+        },
+        "languages_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo o período",
+            "last_30_days": "Últimos 30 dias",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 dias",
+            "last_year": "Último ano"
+          },
+          "tooltip": "O período que estes números cobrem. Seções com o mesmo período dividem uma requisição à WakaTime. Períodos longos (último ano, todo o período) podem demorar para a WakaTime calcular: o card mostra então os últimos números que ela tinha."
+        },
+        "languages_title": {
+          "defaultValue": "Linguagens",
+          "label": "Título"
+        }
+      },
+      "description": "Tempo em cada linguagem",
+      "name": "Linguagens"
+    },
+    "operating_systems": {
+      "config": {
+        "operating_systems_hide_title": {
+          "label": "Ocultar título"
+        },
+        "operating_systems_max": {
+          "description": "Máximo 15",
+          "label": "Máximo de sistemas operacionais"
+        },
+        "operating_systems_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo o período",
+            "last_30_days": "Últimos 30 dias",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 dias",
+            "last_year": "Último ano"
+          },
+          "tooltip": "O período que estes números cobrem. Seções com o mesmo período dividem uma requisição à WakaTime. Períodos longos (último ano, todo o período) podem demorar para a WakaTime calcular: o card mostra então os últimos números que ela tinha."
+        },
+        "operating_systems_title": {
+          "defaultValue": "Sistemas operacionais",
+          "label": "Título"
+        }
+      },
+      "description": "Tempo em cada sistema operacional",
+      "name": "Sistemas operacionais"
+    },
+    "projects": {
+      "config": {
+        "projects_hide_title": {
+          "label": "Ocultar título"
+        },
+        "projects_ignore": {
+          "description": "Projetos a esconder, separados por vírgula",
+          "label": "Projetos ocultos",
+          "placeholder": "trabalho-cliente, projeto-secreto",
+          "tooltip": "Todo projeto que a WakaTime registrou aparece, inclusive os privados. Liste aqui os que não devem ter o nome no seu README."
+        },
+        "projects_max": {
+          "description": "Máximo 15",
+          "label": "Máximo de projetos"
+        },
+        "projects_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo o período",
+            "last_30_days": "Últimos 30 dias",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 dias",
+            "last_year": "Último ano"
+          },
+          "tooltip": "O período que estes números cobrem. Seções com o mesmo período dividem uma requisição à WakaTime. Períodos longos (último ano, todo o período) podem demorar para a WakaTime calcular: o card mostra então os últimos números que ela tinha."
+        },
+        "projects_title": {
+          "defaultValue": "Projetos",
+          "label": "Título"
+        }
+      },
+      "description": "Tempo em cada projeto",
+      "name": "Projetos"
+    },
+    "time": {
+      "config": {
+        "time_hide_title": {
+          "label": "Ocultar título"
+        },
+        "time_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo o período",
+            "last_30_days": "Últimos 30 dias",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 dias",
+            "last_year": "Último ano"
+          },
+          "tooltip": "O período que estes números cobrem. Seções com o mesmo período dividem uma requisição à WakaTime. Períodos longos (último ano, todo o período) podem demorar para a WakaTime calcular: o card mostra então os últimos números que ela tinha."
+        },
+        "time_title": {
+          "defaultValue": "Tempo programando",
+          "label": "Título"
+        }
+      },
+      "description": "Tempo total programando, média diária e melhor dia",
+      "name": "Tempo programando"
+    }
+  }
+}

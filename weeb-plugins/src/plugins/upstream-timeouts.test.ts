@@ -24,6 +24,7 @@ const plugin = (name: string) => PluginManager.getInstance().get(name)!
 describe.each([
   ["steam", { enabled: true, sections: ["recent_games"] }, { apiKey: "k", steamId: "76561197960287930" }],
   ["lyfta", { enabled: true, sections: ["statistics"] }, { apiKey: "k" }],
+  ["wakatime", { enabled: true, sections: ["time", "languages", "editors"] }, { token: "t" }],
   ["github", { enabled: true, sections: ["favorite_languages"], username: "octocat" }, { pat: "ghp_x" }],
   [
     "github_repo",

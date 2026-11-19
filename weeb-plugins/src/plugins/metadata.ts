@@ -4408,6 +4408,407 @@ export const PLUGINS_METADATA = {
     },
   },
 
+  wakatime: {
+    name: "wakatime",
+    displayName: "WakaTime",
+    description: "Show the time you spent coding, by language, project, editor and operating system, from WakaTime",
+    category: "coding",
+    icon: "Timer",
+    requiredFields: [],
+    essentialConfigKeys: ["token"],
+    essentialConfigKeysMetadata: [
+        {
+          key: "token",
+          label: "WakaTime Personal Token",
+          type: "password",
+          placeholder: "waka_tok_...",
+          description: "Your personal OAuth token, not the secret API key: WakaTime made API keys write-only. Open wakatime.com/oauth while signed in and copy the token under \"Your secret OAuth token\".",
+          helpUrl: "https://wakatime.com/oauth",
+          docKey: "wakatime.token",
+          i18nKey: {
+            label: "plugins.wakatime.essentialConfig.token.label",
+            placeholder: "plugins.wakatime.essentialConfig.token.placeholder",
+            description: "plugins.wakatime.essentialConfig.token.description"
+          }
+        }
+    ],
+    sections: [
+      {
+        id: "time",
+        name: "Coding Time",
+        description: "Total coding time, daily average and best day",
+        i18nKey: {
+          name: "plugins.wakatime.sections.time.name",
+          description: "plugins.wakatime.sections.time.description"
+        },
+        configOptions: [
+        {
+          key: "time_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wakatime.sections.time.config.time_hide_title.label"
+          }
+        },
+        {
+          key: "time_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Coding Time",
+          i18nKey: {
+            label: "plugins.wakatime.sections.time.config.time_title.label",
+            defaultValue: "plugins.wakatime.sections.time.config.time_title.defaultValue"
+          }
+        },
+        {
+          key: "time_range",
+          label: "Period",
+          type: "select",
+          defaultValue: "last_7_days",
+          tooltip: "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had.",
+          options: [
+            { value: "last_7_days", label: "Last 7 days" },
+            { value: "last_30_days", label: "Last 30 days" },
+            { value: "last_6_months", label: "Last 6 months" },
+            { value: "last_year", label: "Last year" },
+            { value: "all_time", label: "All time" }
+          ],
+          i18nKey: {
+            label: "plugins.wakatime.sections.time.config.time_range.label",
+            tooltip: "plugins.wakatime.sections.time.config.time_range.tooltip",
+            options: {
+              "last_7_days": "plugins.wakatime.sections.time.config.time_range.options.last_7_days",
+              "last_30_days": "plugins.wakatime.sections.time.config.time_range.options.last_30_days",
+              "last_6_months": "plugins.wakatime.sections.time.config.time_range.options.last_6_months",
+              "last_year": "plugins.wakatime.sections.time.config.time_range.options.last_year",
+              "all_time": "plugins.wakatime.sections.time.config.time_range.options.all_time"
+            }
+          }
+        }
+        ]
+      },
+      {
+        id: "languages",
+        name: "Languages",
+        description: "Time spent in each language",
+        i18nKey: {
+          name: "plugins.wakatime.sections.languages.name",
+          description: "plugins.wakatime.sections.languages.description"
+        },
+        configOptions: [
+        {
+          key: "languages_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wakatime.sections.languages.config.languages_hide_title.label"
+          }
+        },
+        {
+          key: "languages_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Languages",
+          i18nKey: {
+            label: "plugins.wakatime.sections.languages.config.languages_title.label",
+            defaultValue: "plugins.wakatime.sections.languages.config.languages_title.defaultValue"
+          }
+        },
+        {
+          key: "languages_range",
+          label: "Period",
+          type: "select",
+          defaultValue: "last_7_days",
+          tooltip: "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had.",
+          options: [
+            { value: "last_7_days", label: "Last 7 days" },
+            { value: "last_30_days", label: "Last 30 days" },
+            { value: "last_6_months", label: "Last 6 months" },
+            { value: "last_year", label: "Last year" },
+            { value: "all_time", label: "All time" }
+          ],
+          i18nKey: {
+            label: "plugins.wakatime.sections.languages.config.languages_range.label",
+            tooltip: "plugins.wakatime.sections.languages.config.languages_range.tooltip",
+            options: {
+              "last_7_days": "plugins.wakatime.sections.languages.config.languages_range.options.last_7_days",
+              "last_30_days": "plugins.wakatime.sections.languages.config.languages_range.options.last_30_days",
+              "last_6_months": "plugins.wakatime.sections.languages.config.languages_range.options.last_6_months",
+              "last_year": "plugins.wakatime.sections.languages.config.languages_range.options.last_year",
+              "all_time": "plugins.wakatime.sections.languages.config.languages_range.options.all_time"
+            }
+          }
+        },
+        {
+          key: "languages_max",
+          label: "Maximum languages",
+          type: "number",
+          defaultValue: 8,
+          min: 1,
+          max: 15,
+          step: 1,
+          description: "Maximum 15",
+          i18nKey: {
+            label: "plugins.wakatime.sections.languages.config.languages_max.label",
+            description: "plugins.wakatime.sections.languages.config.languages_max.description"
+          }
+        },
+        {
+          key: "languages_ignore",
+          label: "Ignored languages",
+          type: "string",
+          defaultValue: "",
+          description: "Comma-separated list of languages to hide",
+          placeholder: "Markdown, JSON, Other",
+          tooltip: "The percentages are taken over the languages that remain.",
+          i18nKey: {
+            label: "plugins.wakatime.sections.languages.config.languages_ignore.label",
+            description: "plugins.wakatime.sections.languages.config.languages_ignore.description",
+            tooltip: "plugins.wakatime.sections.languages.config.languages_ignore.tooltip",
+            placeholder: "plugins.wakatime.sections.languages.config.languages_ignore.placeholder"
+          }
+        }
+        ]
+      },
+      {
+        id: "projects",
+        name: "Projects",
+        description: "Time spent in each project",
+        i18nKey: {
+          name: "plugins.wakatime.sections.projects.name",
+          description: "plugins.wakatime.sections.projects.description"
+        },
+        configOptions: [
+        {
+          key: "projects_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wakatime.sections.projects.config.projects_hide_title.label"
+          }
+        },
+        {
+          key: "projects_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Projects",
+          i18nKey: {
+            label: "plugins.wakatime.sections.projects.config.projects_title.label",
+            defaultValue: "plugins.wakatime.sections.projects.config.projects_title.defaultValue"
+          }
+        },
+        {
+          key: "projects_range",
+          label: "Period",
+          type: "select",
+          defaultValue: "last_7_days",
+          tooltip: "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had.",
+          options: [
+            { value: "last_7_days", label: "Last 7 days" },
+            { value: "last_30_days", label: "Last 30 days" },
+            { value: "last_6_months", label: "Last 6 months" },
+            { value: "last_year", label: "Last year" },
+            { value: "all_time", label: "All time" }
+          ],
+          i18nKey: {
+            label: "plugins.wakatime.sections.projects.config.projects_range.label",
+            tooltip: "plugins.wakatime.sections.projects.config.projects_range.tooltip",
+            options: {
+              "last_7_days": "plugins.wakatime.sections.projects.config.projects_range.options.last_7_days",
+              "last_30_days": "plugins.wakatime.sections.projects.config.projects_range.options.last_30_days",
+              "last_6_months": "plugins.wakatime.sections.projects.config.projects_range.options.last_6_months",
+              "last_year": "plugins.wakatime.sections.projects.config.projects_range.options.last_year",
+              "all_time": "plugins.wakatime.sections.projects.config.projects_range.options.all_time"
+            }
+          }
+        },
+        {
+          key: "projects_max",
+          label: "Maximum projects",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 15,
+          step: 1,
+          description: "Maximum 15",
+          i18nKey: {
+            label: "plugins.wakatime.sections.projects.config.projects_max.label",
+            description: "plugins.wakatime.sections.projects.config.projects_max.description"
+          }
+        },
+        {
+          key: "projects_ignore",
+          label: "Hidden projects",
+          type: "string",
+          defaultValue: "",
+          description: "Comma-separated list of projects to hide",
+          placeholder: "client-work, secret-project",
+          tooltip: "Every project WakaTime tracked shows up, private ones included. List the ones whose name should stay out of your README.",
+          i18nKey: {
+            label: "plugins.wakatime.sections.projects.config.projects_ignore.label",
+            description: "plugins.wakatime.sections.projects.config.projects_ignore.description",
+            tooltip: "plugins.wakatime.sections.projects.config.projects_ignore.tooltip",
+            placeholder: "plugins.wakatime.sections.projects.config.projects_ignore.placeholder"
+          }
+        }
+        ]
+      },
+      {
+        id: "editors",
+        name: "Editors",
+        description: "Time spent in each editor",
+        i18nKey: {
+          name: "plugins.wakatime.sections.editors.name",
+          description: "plugins.wakatime.sections.editors.description"
+        },
+        configOptions: [
+        {
+          key: "editors_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wakatime.sections.editors.config.editors_hide_title.label"
+          }
+        },
+        {
+          key: "editors_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Editors",
+          i18nKey: {
+            label: "plugins.wakatime.sections.editors.config.editors_title.label",
+            defaultValue: "plugins.wakatime.sections.editors.config.editors_title.defaultValue"
+          }
+        },
+        {
+          key: "editors_range",
+          label: "Period",
+          type: "select",
+          defaultValue: "last_7_days",
+          tooltip: "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had.",
+          options: [
+            { value: "last_7_days", label: "Last 7 days" },
+            { value: "last_30_days", label: "Last 30 days" },
+            { value: "last_6_months", label: "Last 6 months" },
+            { value: "last_year", label: "Last year" },
+            { value: "all_time", label: "All time" }
+          ],
+          i18nKey: {
+            label: "plugins.wakatime.sections.editors.config.editors_range.label",
+            tooltip: "plugins.wakatime.sections.editors.config.editors_range.tooltip",
+            options: {
+              "last_7_days": "plugins.wakatime.sections.editors.config.editors_range.options.last_7_days",
+              "last_30_days": "plugins.wakatime.sections.editors.config.editors_range.options.last_30_days",
+              "last_6_months": "plugins.wakatime.sections.editors.config.editors_range.options.last_6_months",
+              "last_year": "plugins.wakatime.sections.editors.config.editors_range.options.last_year",
+              "all_time": "plugins.wakatime.sections.editors.config.editors_range.options.all_time"
+            }
+          }
+        },
+        {
+          key: "editors_max",
+          label: "Maximum editors",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 15,
+          step: 1,
+          description: "Maximum 15",
+          i18nKey: {
+            label: "plugins.wakatime.sections.editors.config.editors_max.label",
+            description: "plugins.wakatime.sections.editors.config.editors_max.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "operating_systems",
+        name: "Operating Systems",
+        description: "Time spent in each operating system",
+        i18nKey: {
+          name: "plugins.wakatime.sections.operating_systems.name",
+          description: "plugins.wakatime.sections.operating_systems.description"
+        },
+        configOptions: [
+        {
+          key: "operating_systems_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wakatime.sections.operating_systems.config.operating_systems_hide_title.label"
+          }
+        },
+        {
+          key: "operating_systems_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Operating Systems",
+          i18nKey: {
+            label: "plugins.wakatime.sections.operating_systems.config.operating_systems_title.label",
+            defaultValue: "plugins.wakatime.sections.operating_systems.config.operating_systems_title.defaultValue"
+          }
+        },
+        {
+          key: "operating_systems_range",
+          label: "Period",
+          type: "select",
+          defaultValue: "last_7_days",
+          tooltip: "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had.",
+          options: [
+            { value: "last_7_days", label: "Last 7 days" },
+            { value: "last_30_days", label: "Last 30 days" },
+            { value: "last_6_months", label: "Last 6 months" },
+            { value: "last_year", label: "Last year" },
+            { value: "all_time", label: "All time" }
+          ],
+          i18nKey: {
+            label: "plugins.wakatime.sections.operating_systems.config.operating_systems_range.label",
+            tooltip: "plugins.wakatime.sections.operating_systems.config.operating_systems_range.tooltip",
+            options: {
+              "last_7_days": "plugins.wakatime.sections.operating_systems.config.operating_systems_range.options.last_7_days",
+              "last_30_days": "plugins.wakatime.sections.operating_systems.config.operating_systems_range.options.last_30_days",
+              "last_6_months": "plugins.wakatime.sections.operating_systems.config.operating_systems_range.options.last_6_months",
+              "last_year": "plugins.wakatime.sections.operating_systems.config.operating_systems_range.options.last_year",
+              "all_time": "plugins.wakatime.sections.operating_systems.config.operating_systems_range.options.all_time"
+            }
+          }
+        },
+        {
+          key: "operating_systems_max",
+          label: "Maximum operating systems",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 15,
+          step: 1,
+          description: "Maximum 15",
+          i18nKey: {
+            label: "plugins.wakatime.sections.operating_systems.config.operating_systems_max.label",
+            description: "plugins.wakatime.sections.operating_systems.config.operating_systems_max.description"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.wakatime.displayName",
+      description: "plugins.wakatime.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "sections": [
+        "time",
+        "languages",
+        "editors"
+      ]
+    },
+  },
+
   websites: {
     name: "websites",
     displayName: "Websites",

@@ -5,6 +5,7 @@ import { fetchCodewarsData } from "./codewars/services/fetchData"
 import { fetchCodeforcesData } from "./codeforces/services/fetchData"
 import { fetchStackOverflowData } from "./stackoverflow/services/fetchData"
 import { fetchDuolingoData } from "./duolingo/services/fetchData"
+import { fetchWakaTimeData } from "./wakatime/services/fetchData"
 
 /**
  * A provider failure must reach the generator as a throw. These six used to catch
@@ -33,6 +34,7 @@ const cases = [
     provider: "Duolingo",
     run: () => fetchDuolingoData({ username: "someone", sections: ["current_streak"] } as never),
   },
+  { provider: "WakaTime", run: () => fetchWakaTimeData({ sections: ["time"] }, false, "user-token") },
 ]
 
 afterEach(() => vi.restoreAllMocks())

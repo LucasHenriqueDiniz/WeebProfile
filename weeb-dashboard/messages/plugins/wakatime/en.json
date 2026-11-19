@@ -1,0 +1,161 @@
+{
+  "description": "Show the time you spent coding, by language, project, editor and operating system, from WakaTime",
+  "displayName": "WakaTime",
+  "essentialConfig": {
+    "token": {
+      "description": "Your personal OAuth token, not the secret API key: WakaTime made API keys write-only. Open wakatime.com/oauth while signed in and copy the token under \"Your secret OAuth token\".",
+      "label": "WakaTime Personal Token",
+      "placeholder": "waka_tok_..."
+    }
+  },
+  "sections": {
+    "editors": {
+      "config": {
+        "editors_hide_title": {
+          "label": "Hide title"
+        },
+        "editors_max": {
+          "description": "Maximum 15",
+          "label": "Maximum editors"
+        },
+        "editors_range": {
+          "label": "Period",
+          "options": {
+            "all_time": "All time",
+            "last_30_days": "Last 30 days",
+            "last_6_months": "Last 6 months",
+            "last_7_days": "Last 7 days",
+            "last_year": "Last year"
+          },
+          "tooltip": "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had."
+        },
+        "editors_title": {
+          "defaultValue": "Editors",
+          "label": "Title"
+        }
+      },
+      "description": "Time spent in each editor",
+      "name": "Editors"
+    },
+    "languages": {
+      "config": {
+        "languages_hide_title": {
+          "label": "Hide title"
+        },
+        "languages_ignore": {
+          "description": "Comma-separated list of languages to hide",
+          "label": "Ignored languages",
+          "placeholder": "Markdown, JSON, Other",
+          "tooltip": "The percentages are taken over the languages that remain."
+        },
+        "languages_max": {
+          "description": "Maximum 15",
+          "label": "Maximum languages"
+        },
+        "languages_range": {
+          "label": "Period",
+          "options": {
+            "all_time": "All time",
+            "last_30_days": "Last 30 days",
+            "last_6_months": "Last 6 months",
+            "last_7_days": "Last 7 days",
+            "last_year": "Last year"
+          },
+          "tooltip": "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had."
+        },
+        "languages_title": {
+          "defaultValue": "Languages",
+          "label": "Title"
+        }
+      },
+      "description": "Time spent in each language",
+      "name": "Languages"
+    },
+    "operating_systems": {
+      "config": {
+        "operating_systems_hide_title": {
+          "label": "Hide title"
+        },
+        "operating_systems_max": {
+          "description": "Maximum 15",
+          "label": "Maximum operating systems"
+        },
+        "operating_systems_range": {
+          "label": "Period",
+          "options": {
+            "all_time": "All time",
+            "last_30_days": "Last 30 days",
+            "last_6_months": "Last 6 months",
+            "last_7_days": "Last 7 days",
+            "last_year": "Last year"
+          },
+          "tooltip": "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had."
+        },
+        "operating_systems_title": {
+          "defaultValue": "Operating Systems",
+          "label": "Title"
+        }
+      },
+      "description": "Time spent in each operating system",
+      "name": "Operating Systems"
+    },
+    "projects": {
+      "config": {
+        "projects_hide_title": {
+          "label": "Hide title"
+        },
+        "projects_ignore": {
+          "description": "Comma-separated list of projects to hide",
+          "label": "Hidden projects",
+          "placeholder": "client-work, secret-project",
+          "tooltip": "Every project WakaTime tracked shows up, private ones included. List the ones whose name should stay out of your README."
+        },
+        "projects_max": {
+          "description": "Maximum 15",
+          "label": "Maximum projects"
+        },
+        "projects_range": {
+          "label": "Period",
+          "options": {
+            "all_time": "All time",
+            "last_30_days": "Last 30 days",
+            "last_6_months": "Last 6 months",
+            "last_7_days": "Last 7 days",
+            "last_year": "Last year"
+          },
+          "tooltip": "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had."
+        },
+        "projects_title": {
+          "defaultValue": "Projects",
+          "label": "Title"
+        }
+      },
+      "description": "Time spent in each project",
+      "name": "Projects"
+    },
+    "time": {
+      "config": {
+        "time_hide_title": {
+          "label": "Hide title"
+        },
+        "time_range": {
+          "label": "Period",
+          "options": {
+            "all_time": "All time",
+            "last_30_days": "Last 30 days",
+            "last_6_months": "Last 6 months",
+            "last_7_days": "Last 7 days",
+            "last_year": "Last year"
+          },
+          "tooltip": "The period these numbers cover. Sections with the same period share one request to WakaTime. Long periods (last year, all time) can take WakaTime a while to compute: the card then shows the last numbers it had."
+        },
+        "time_title": {
+          "defaultValue": "Coding Time",
+          "label": "Title"
+        }
+      },
+      "description": "Total coding time, daily average and best day",
+      "name": "Coding Time"
+    }
+  }
+}

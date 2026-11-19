@@ -8,7 +8,7 @@
 /**
  * Union type of all available plugin names
  */
-export type PluginName = "16personalities" | "about" | "anilist" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "websites"
+export type PluginName = "16personalities" | "about" | "anilist" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "wakatime" | "websites"
 
 /**
  * Union type of all available categories
@@ -33,6 +33,7 @@ export type PluginSectionIds = {
   myanimelist: "statistics" | "last_activity" | "statistics_simple" | "anime_bar" | "manga_bar" | "anime_favorites" | "manga_favorites" | "character_favorites" | "people_favorites"
   stackoverflow: "reputation" | "badges" | "answers_questions" | "tags_expertise"
   steam: "statistics" | "recent_games" | "top_games"
+  wakatime: "time" | "languages" | "projects" | "editors" | "operating_systems"
   websites: "websites"
 }
 
@@ -54,6 +55,7 @@ export type PluginEssentialConfigKeys = {
   myanimelist: never
   stackoverflow: never
   steam: "steamId"
+  wakatime: "token"
   websites: never
 }
 
@@ -81,7 +83,7 @@ export type PluginConfig<T extends PluginName> = {
  * Type guard to check if it's a valid plugin name
  */
 export function isValidPluginName(name: string): name is PluginName {
-  return (["16personalities","about","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","websites"] as readonly string[]).includes(name)
+  return (["16personalities","about","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","lyfta","myanimelist","stackoverflow","steam","wakatime","websites"] as readonly string[]).includes(name)
 }
 
 /**

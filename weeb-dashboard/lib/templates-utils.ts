@@ -11,6 +11,7 @@ const PLUGIN_DISPLAY_NAMES: Record<string, string> = {
   codewars: "Codewars",
   duolingo: "Duolingo",
   stackoverflow: "Stack Overflow",
+  wakatime: "WakaTime",
   lyfta: "Lyfta",
 }
 
