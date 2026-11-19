@@ -18,6 +18,12 @@ export interface PluginConfig {
 }
 
 export interface WizardState {
+  /**
+   * The saved card the store holds while it is being edited; null for a new card. The
+   * edit page and the "new card" page share this persisted store, and without it the
+   * new page took the card being edited for a draft to resume.
+   */
+  editingSvgId: string | null
   // Basic info (auto-generated, não é mais um step)
   name: string
   slug: string
@@ -86,7 +92,7 @@ export interface WizardState {
   setPreviewUrl: (url: string | null) => void
   reorderPlugins: (newOrder: string[]) => void
   reset: () => void
-  resetForEdit: () => void
+  resetForEdit: (svgId: string) => void
   validateStep: (step: number) => boolean
   loadFromTemplate: (template: any) => void
   loadFromPreview: (request: PreviewRequest) => void
@@ -135,6 +141,7 @@ function generateInitialPluginsOrder(): string[] {
 }
 
 const initialState = {
+  editingSvgId: null as string | null,
   name: "",
   slug: "",
   useProfileConfig: false,
@@ -451,9 +458,10 @@ export const useWizardStore = create<WizardState>()(
         })
       },
 
-      resetForEdit: () => {
+      resetForEdit: (svgId) => {
         set({
           ...initialState,
+          editingSvgId: svgId,
           plugins: generateInitialPluginsForEdit(),
           pluginsOrder: [],
         })
@@ -579,6 +587,7 @@ export const useWizardStore = create<WizardState>()(
     {
       name: "wizard-storage",
       partialize: (state) => ({
+        editingSvgId: state.editingSvgId,
         name: state.name,
         slug: state.slug,
         plugins: state.plugins,
