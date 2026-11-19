@@ -97,7 +97,9 @@ export function mapCharacter(profile: ProfileResponse, pvp: PvpSummaryResponse |
     faction: profile.faction?.name ?? "",
     guild: profile.guild?.name || null,
     ruleset: profile.ruleset?.name || null,
-    averageItemLevel: profile.average_item_level || null,
+    // The level of what the character wears, the gear the card lists. The average also
+    // counts better items kept in the bags (27 against 26 for the mock character).
+    averageItemLevel: profile.equipped_item_level || profile.average_item_level || null,
     honorableKills: typeof pvp?.honorable_kills === "number" ? pvp.honorable_kills : null,
   }
 }

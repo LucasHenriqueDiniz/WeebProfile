@@ -19,7 +19,8 @@ const PROFILE = {
   faction: { type: "ALLIANCE", name: "Alliance" },
   guild: { name: "Ashen Vanguard" },
   ruleset: { name: "Normal" },
-  average_item_level: 63,
+  average_item_level: 64,
+  equipped_item_level: 63,
 }
 
 type Route = (url: URL, init?: RequestInit) => Response | undefined
@@ -157,6 +158,7 @@ describe("fetchWowForeverData", () => {
       name: "Liora",
       surname: "Brightwater",
       guild: "Ashen Vanguard",
+      averageItemLevel: 63,
       honorableKills: 1284,
     })
     expect(data.image?.kind).toBe("render")
