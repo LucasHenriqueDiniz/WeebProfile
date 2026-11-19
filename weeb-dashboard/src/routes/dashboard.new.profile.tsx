@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState, useMemo } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "@/i18n/navigation"
 import { useSearchParams } from "@/src/compat/next-navigation"
 import { useAuth } from "@/hooks/useAuth"
 import LoadingScreen from "@/components/loading/LoadingScreen"
 import { Wizard } from "@/components/wizard/Wizard"
 import { useWizardStore } from "@/stores/wizard-store"
+import { selectHasResumableDraft } from "@/stores/wizard-selectors"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,7 +27,7 @@ export default function NewProfileSvgPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { reset, plugins, pluginsOrder, loadFromTemplate, loadFromPreview } = useWizardStore()
+  const { reset, loadFromTemplate, loadFromPreview } = useWizardStore()
   const { bootstrap, initialized } = useWizardBootstrapStore()
   const hasResetRef = useRef(false)
   const [showResumeDialog, setShowResumeDialog] = useState(false)
@@ -52,12 +53,8 @@ export default function NewProfileSvgPage() {
     }
   }, [previewHandoff, user, authLoading, loadFromPreview])
 
-  // Check if there are saved configurations
-  const hasSavedData = useMemo(() => {
-    if (!plugins || !pluginsOrder) return false
-    const enabledPlugins = Object.values(plugins).filter((p) => p.enabled)
-    return enabledPlugins.length > 0 || pluginsOrder.length > 0
-  }, [plugins, pluginsOrder])
+  // A new card left half-made, not a saved card the edit page loaded into the same store.
+  const hasSavedData = useWizardStore(selectHasResumableDraft)
 
   // Load template data if template ID is provided, once per template id. This effect
   // used to list isLoadingTemplate in its deps and check it here: each finished load

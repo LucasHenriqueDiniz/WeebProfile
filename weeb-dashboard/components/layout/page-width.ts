@@ -1,71 +1,34 @@
 /**
- * Largura do conteúdo — fonte única.
+ * Content width for the signed-in pages: one source.
  *
- * O motivo de isto existir: o Header e o conteúdo da página são renderizados por
- * componentes diferentes, e cada rota escolhia a própria largura. A 1920px o
- * título do Header saía em x=24 e o conteúdo do Settings em x=448 — nada
- * alinhava com nada, e cada tela desalinhava de um jeito diferente
- * (wizard 86px, lista 168px, plugins 360px, settings 424px).
+ * The page heading and the content get the same class from here, so they cannot drift
+ * apart again: at 1920px the old header's title sat at x=24 and the Settings content at
+ * x=448, and every screen was off in its own way.
  *
- * Header e conteúdo passam a receber a MESMA classe a partir daqui. Se a largura
- * mudar, muda nos dois ao mesmo tempo, que é a única forma de isso não voltar a
- * divergir.
- *
- * Alinhado à esquerda, não centralizado. Centralizar fazia header e conteúdo
- * concordarem entre si mas perderem a sidebar: no Settings a sidebar terminava em
- * x=76 e o título aparecia em x=486, com 410px de vazio no meio. Numa navegação
- * ancorada à esquerda, é a calha esquerda que amarra sidebar, header e conteúdo na
- * mesma linha vertical. `max-width` continua existindo para limitar o comprimento
- * da linha de texto — o espaço que sobra fica à direita, onde não separa nada.
+ * Left-aligned, not centred. With the navigation anchored on the left (the rail), the
+ * left gutter is what ties the rail, the heading and the content on one vertical line;
+ * centring made the heading and the content agree with each other but lose the rail.
+ * `max-width` still caps the line length, and the room left over goes to the right,
+ * where it separates nothing.
  */
 
-/**
- * `app` listas e grids · `narrow` formulários e leitura · `full` canvas sem limite ·
- * `workspace` colunas coladas na borda (wizard), com o inset igual ao dos painéis.
- */
-export type ContentWidth = "app" | "narrow" | "full" | "workspace"
+/** `app` lists and grids · `narrow` forms and reading · `full` no cap. */
+export type ContentWidth = "app" | "narrow" | "full"
 
 const MAX_WIDTH: Record<ContentWidth, string> = {
-  // Grids de card ganham uma coluna a mais que o antigo `container` (1536) sem virar
-  // uma faixa larga demais para varrer com os olhos.
+  // A card grid gets one column more than the old `container` (1536) without becoming
+  // a strip too wide to scan.
   app: "max-w-[1600px]",
-  // Formulário largo é formulário ruim: linha longa demais para ler e label longe
-  // do campo. Settings e o passo de criação ficam aqui.
+  // A wide form is a bad form: lines too long to read and labels far from their fields.
   narrow: "max-w-5xl",
-  // Workspaces que gerenciam o próprio espaço internamente (wizard, onboarding).
   full: "max-w-none",
-  workspace: "max-w-none",
 }
 
-/** Padding horizontal idêntico em toda parte — some do cálculo de alinhamento. */
+/** The same horizontal padding everywhere, so it drops out of the alignment. */
 export const CONTENT_PADDING_X = "px-4 md:px-6 lg:px-8"
 
-/**
- * O wizard não é uma página com margens: são colunas que vão até a borda. O inset
- * do header aqui é o mesmo padding interno do primeiro painel (ver PluginListPanel),
- * senão o título flutua deslocado em relação à busca logo abaixo dele.
- */
-const WORKSPACE_PADDING_X = "px-4 lg:px-5"
-
-function paddingFor(width: ContentWidth): string {
-  return width === "workspace" ? WORKSPACE_PADDING_X : CONTENT_PADDING_X
-}
-
-/** Conteúdo da página: calha à esquerda + limite de largura. */
+/** A page's content: the left gutter plus the width cap. */
 export function contentContainer(width: ContentWidth = "app"): string {
-  // Sem `mx-auto`: a calha esquerda é o que alinha com a sidebar (ver nota no topo).
-  return `w-full ${MAX_WIDTH[width]} ${paddingFor(width)}`
-}
-
-/**
- * Barras que atravessam a tela inteira (header, tab bar): mesma calha à esquerda,
- * mas SEM limite de largura.
- *
- * O `max-width` existe para não deixar a linha de texto comprida demais — isso é
- * problema de conteúdo, não de barra. Aplicá-lo ao header encalhava os botões de
- * ação no meio da tela: num viewport de 1920 a borda do header ia até 1920 e os
- * botões paravam em 1068. Só a calha esquerda precisa bater com o conteúdo.
- */
-export function barContainer(width: ContentWidth = "app"): string {
-  return `w-full ${paddingFor(width)}`
+  // No `mx-auto`: the left gutter is what lines up with the rail (see above).
+  return `w-full ${MAX_WIDTH[width]} ${CONTENT_PADDING_X}`
 }

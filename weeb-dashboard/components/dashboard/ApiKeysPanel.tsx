@@ -88,7 +88,7 @@ export function ApiKeysPanel() {
           {t("loading")}
         </div>
       ) : (
-        <ul className="divide-y divide-border/60 rounded-xl border border-border">
+        <ul className="divide-y-2 divide-foreground/10 rounded-xl border-2 border-foreground/30">
           {rows.map((row) => {
             const Icon = getPluginIcon(row.plugin) ?? KeyRound
             const configured = !!row.updatedAt

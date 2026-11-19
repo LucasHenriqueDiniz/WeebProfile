@@ -1,36 +1,22 @@
 "use client"
 
 /**
- * Shared state for the plugin workspace (list + detail panels).
- *
- * Previously this all lived inside PluginConfiguration.tsx, which rendered the list AND
- * the expanded plugin config as one accordion in a single column. Now that the list and
- * the selected plugin's detail live in two separate panels side by side, both need to
- * read/write the same state (selection, search, unlock/save flow, missing-config
- * validation) - so it's lifted into one hook called once, with the results passed down
- * as props instead of each panel holding its own (and desyncing) copy.
+ * Shared state for the plugin workspace (the plugin strip and the drawer's plugin panel):
+ * the selection, the unlock/save flow of secrets and the missing-config validation. One
+ * hook called once, its result passed down as props, so the strip and the drawer cannot
+ * hold desynced copies.
  */
 
-import { useMemo, useState, useEffect, useCallback, useDeferredValue } from "react"
-import { useTranslation } from "react-i18next"
+import { useMemo, useState, useEffect, useCallback } from "react"
 import { useShallow } from "zustand/react/shallow"
 import { useProfileConfig } from "@/hooks/useProfileConfig"
 import { useWizardBootstrapStore } from "@/stores/wizard-bootstrap-store"
-import {
-  PLUGINS_METADATA,
-  getPluginsGroupedByCategory,
-  isValidCategory,
-  type PluginCategory,
-} from "@weeb/weeb-plugins/plugins/metadata"
+import { getPluginsGroupedByCategory, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
 import { useWizardStore } from "@/stores/wizard-store"
 import { selectEnabledPluginNames, selectMissingConfigs } from "@/stores/wizard-selectors"
 import { profileApi } from "@/lib/api/client"
 import { useToast } from "@/hooks/use-toast"
-import { getPluginTags, type PluginTag } from "@/lib/config/plugin-tags"
-import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { useWizardUIState } from "@/hooks/useWizardUIState"
-import { usePluginI18n } from "@/lib/plugins/i18n-helper"
-import { pluginMatchesQuery, pluginSearchTexts } from "@/lib/plugins/plugin-search"
 
 export function usePluginWorkspace() {
   const { toast } = useToast()
@@ -50,13 +36,7 @@ export function usePluginWorkspace() {
   const [showProfileModal, setShowProfileModal] = useState(false)
 
   const uiState = useWizardUIState()
-  const { category, query, onlyEnabled, selectedPlugin, setCategory, setQuery, setOnlyEnabled, setSelectedPlugin } =
-    uiState
-
-  const { tWithFallback } = usePluginI18n()
-  const { i18n } = useTranslation()
-  const deferredQuery = useDeferredValue(query)
-  const debouncedQuery = useDebouncedValue(deferredQuery, 150)
+  const { selectedPlugin, setSelectedPlugin } = uiState
 
   const [unlockedConfigs, setUnlockedConfigs] = useState<Set<string>>(new Set())
   const [unlockDialog, setUnlockDialog] = useState<{ plugin: string; key: string } | null>(null)
@@ -98,62 +78,20 @@ export function usePluginWorkspace() {
     )
   }, [groupedPlugins])
 
-  // What each plugin can be found by, in English and in the viewer's language.
-  const searchTexts = useMemo(() => {
-    const texts: Record<string, string[]> = {}
-    for (const plugin of allPlugins) {
-      const metadata = PLUGINS_METADATA[plugin.name as keyof typeof PLUGINS_METADATA]
-      if (!metadata) continue
-      texts[plugin.name] = pluginSearchTexts(plugin.name, metadata, tWithFallback)
-    }
-    return texts
-    // tWithFallback is a new function every render; what it returns changes with the language.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allPlugins, i18n.language])
-
-  // Lista sempre mostra todos os plugins que batem com busca/filtro - selecionar um
-  // plugin so destaca e abre o detalhe, nao filtra mais a propria lista.
-  const filteredPlugins = useMemo(() => {
-    return allPlugins.filter((plugin) => {
-      const state = plugins[plugin.name]
-      if (!state) return false
-
-      if (onlyEnabled && !state.enabled) return false
-
-      if (category !== "all") {
-        if (isValidCategory(category)) {
-          if (plugin.categoryId !== category) return false
-        } else {
-          const pluginTags = getPluginTags(plugin.name)
-          if (!pluginTags.includes(category as PluginTag)) return false
-        }
-      }
-
-      if (debouncedQuery) {
-        return pluginMatchesQuery(searchTexts[plugin.name] ?? [], debouncedQuery)
-      }
-
-      return true
-    })
-  }, [allPlugins, plugins, category, debouncedQuery, onlyEnabled, searchTexts])
-
   const selectedPluginEntry = useMemo(() => {
     if (!selectedPlugin) return null
     return allPlugins.find((p) => p.name === selectedPlugin) ?? null
   }, [allPlugins, selectedPlugin])
 
-  // A new wizard opened with two of its three columns empty: "select a plugin" in the
-  // middle and a blank frame on the right. With nothing selected yet, open the first
-  // plugin in use, or GitHub, or the first one listed, so its sections and their
-  // previews are there to read. Selecting does not turn it on. Desktop only: on a
-  // phone a selection jumps from the list to the detail step (WizardShell).
+  // With nothing selected yet the drawer would open on "select a plugin": open the first
+  // plugin in use, or GitHub, so its sections and their previews are there to read.
+  // Selecting does not turn it on. Phones too: the drawer is what they open on.
   useEffect(() => {
     if (selectedPlugin) return
-    if (typeof window === "undefined" || !window.matchMedia("(min-width: 1024px)").matches) return
-    const listed = filteredPlugins.map((plugin) => plugin.name)
-    const first = enabledPlugins[0] ?? (listed.includes("github") ? "github" : listed[0])
+    const first =
+      enabledPlugins[0] ?? (allPlugins.some((plugin) => plugin.name === "github") ? "github" : allPlugins[0]?.name)
     if (first) setSelectedPlugin(first)
-  }, [selectedPlugin, enabledPlugins, filteredPlugins, setSelectedPlugin])
+  }, [selectedPlugin, enabledPlugins, allPlugins, setSelectedPlugin])
 
   const toggleSection = useCallback(
     (pluginName: string, sectionId: string) => {
@@ -244,7 +182,6 @@ export function usePluginWorkspace() {
     plugins,
     style,
     allPlugins,
-    filteredPlugins,
     enabledPlugins,
     selectedPlugin,
     selectedPluginEntry,
@@ -254,13 +191,6 @@ export function usePluginWorkspace() {
     secretsPresence,
     profile,
 
-    // Filters
-    category,
-    query,
-    onlyEnabled,
-    setCategory,
-    setQuery,
-    setOnlyEnabled,
     setSelectedPlugin,
 
     // Unlock/save flow

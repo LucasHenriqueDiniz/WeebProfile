@@ -1,8 +1,6 @@
 {
   "dashboard": {
-    "allStatus": "Todos os Status",
     "clearFilter": "Limpar Filtro",
-    "completed": "Concluído",
     "copyMarkdown": "Copiar Markdown",
     "createFirst": "Criar Seu Primeiro SVG",
     "createNew": "Criar Novo",
@@ -17,7 +15,6 @@
     "edit": "Editar",
     "filterByStatus": "Filtrar por status",
     "forceGenerate": "Forçar Geração",
-    "generating": "Gerando",
     "imageNotAvailable": "Imagem não disponível",
     "nameAZ": "Nome (A-Z)",
     "newestFirst": "Mais Recente",
@@ -26,7 +23,6 @@
     "noSvgsDescription": "Crie seu primeiro WeebProfile SVG para exibir suas estatísticas no GitHub",
     "noSvgsYet": "Nenhum SVG ainda",
     "oldestFirst": "Mais Antigo",
-    "pending": "Pendente",
     "plugins": "Plugins",
     "ready": "Pronto",
     "sortBy": "Ordenar por",
@@ -55,10 +51,7 @@
     "view": "Visualizar",
     "quota": {
       "title": "Plano grátis",
-      "label": "{{count}} de {{max}} SVGs usados",
-      "hint": "Cada SVG se atualiza sozinho em ciclo. Precisa de inspiração?",
-      "templates": "Explorar templates",
-      "docs": "Documentação"
+      "label": "{{count}} de {{max}} SVGs usados"
     },
     "newPage": {
       "title": "Criar novo",
@@ -94,7 +87,10 @@
       "cta": "Criar meu primeiro SVG",
       "freeTier": "Grátis até {{max}} SVGs"
     },
-    "moreActions": "Mais ações"
+    "moreActions": "Mais ações",
+    "filterAll": "Todos",
+    "failedCount_one": "{{count}} com erro",
+    "failedCount_other": "{{count}} com erro"
   },
   "header": {
     "language": "Idioma",
@@ -429,7 +425,8 @@
     "navigation": "Navegação",
     "settings": "Configurações",
     "svgsUsed": "SVGs usados",
-    "user": "Usuário"
+    "user": "Usuário",
+    "expand": "Expandir"
   },
   "view": {
     "backToDashboard": "Voltar ao Dashboard",
@@ -636,7 +633,11 @@
       "enablePluginToPreview": "Habilite pelo menos um plugin e selecione seções para ver o preview",
       "clearSearch": "Limpar busca",
       "selectTitle": "Selecione um plugin",
-      "selectHint": "Escolha um plugin na lista ao lado para configurar seus campos e seções."
+      "selectHint": "Escolha um plugin na faixa acima para configurar os campos e as seções dele.",
+      "essentialConfigs": "Configurações obrigatórias",
+      "enablePlugin": "Ativar {{plugin}}",
+      "disablePlugin": "Desativar {{plugin}}",
+      "previewUnavailable": "Preview não disponível"
     },
     "repository": {
       "label": "Repositório",

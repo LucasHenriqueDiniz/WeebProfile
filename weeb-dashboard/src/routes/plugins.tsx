@@ -98,7 +98,7 @@ export default function PluginsGalleryPage() {
 
   return (
     <div className="relative bg-background">
-      <Header variant="home" />
+      <Header />
       <main className="relative mx-auto max-w-6xl px-6 pb-24 pt-28">
         <Link
           href="/"

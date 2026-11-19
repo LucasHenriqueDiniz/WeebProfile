@@ -57,22 +57,16 @@ export function WizardFooter({
               disabled={isDisabled}
               variant={isDisabled ? "outline" : "default"}
               size={compact ? "sm" : "lg"}
-              className={cn(
-                "gap-2 transition-all",
-                compact ? "" : "w-full shadow-lg",
-                !isDisabled
-                  ? "bg-gradient-to-r from-violet-500 to-cyan-500 hover:opacity-90 text-white shadow-[0_0_16px_rgba(56,189,248,0.2)]"
-                  : "text-muted-foreground"
-              )}
+              className={cn(compact ? "" : "w-full", isDisabled && "text-muted-foreground")}
             >
               {isSaving ? (
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                  className="w-4 h-4 border-2 border-current border-t-transparent rounded-full"
                 />
               ) : isDisabled ? (
-                <AlertTriangle className="w-4 h-4 text-amber-500" />
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               ) : (
                 <Check className="w-4 h-4" />
               )}
@@ -110,17 +104,17 @@ export function WizardFooter({
   if (compact) return button
 
   return (
-    <div className="bg-card/95 backdrop-blur-sm pt-2 border-t-2 border-border">
+    <div>
       {hasMissingEssential && missingConfigs.length > 0 && (
-        <div className="mb-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50">
+        <div className="mb-2 rounded-xl border-2 border-foreground bg-amber-300 px-3 py-2 text-slate-950">
           <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-amber-900 dark:text-amber-200">
+              <p className="text-xs font-bold">
                 {missingConfigs.length}{" "}
                 {missingConfigs.length === 1 ? t("missingConfigs.singular") : t("missingConfigs.plural")}
               </p>
-              <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">{t("missingConfigs.fillRequired")}</p>
+              <p className="text-xs mt-0.5">{t("missingConfigs.fillRequired")}</p>
             </div>
           </div>
         </div>

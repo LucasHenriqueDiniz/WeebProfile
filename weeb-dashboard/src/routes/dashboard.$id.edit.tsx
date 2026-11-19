@@ -102,7 +102,7 @@ export default function EditSvgPage() {
 
     // Start from a clean store: no plugin enabled, nothing left from a draft or from
     // another SVG, then apply this SVG's config on top.
-    resetForEdit()
+    resetForEdit(svg.id)
     setBasicInfo(svg.name, svg.id, false) // Usar ID como slug temporário
     setStyle(svg.style as "default" | "terminal")
     setSize(svg.size as "half" | "full")

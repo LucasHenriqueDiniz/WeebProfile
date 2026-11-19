@@ -121,8 +121,21 @@ export function ThemeSwitch({ tone }: { tone: Tone }) {
   )
 }
 
-/** One button that shows both choices ("PT ☀") and opens a small menu with the two lists. */
-export function PreferencesMenu({ tone, className }: { tone: Tone; className?: string }) {
+/**
+ * One button that shows both choices ("PT ☀") and opens a small menu with the two lists.
+ * `compact` shows the language code alone, for the signed-in app's 76px rail.
+ */
+export function PreferencesMenu({
+  tone,
+  className,
+  compact = false,
+  side,
+}: {
+  tone: Tone
+  className?: string
+  compact?: boolean
+  side?: "top" | "right" | "bottom" | "left"
+}) {
   const t = useTranslations("header")
   const tTheme = useTranslations("settings.appearance")
   const { language, setLanguage } = useLanguage()
@@ -142,12 +155,17 @@ export function PreferencesMenu({ tone, className }: { tone: Tone; className?: s
       >
         <Languages className="h-3.5 w-3.5" />
         {language.toUpperCase()}
-        <span className="h-3.5 w-px bg-current opacity-30" />
-        <Current className="h-3.5 w-3.5" />
-        <ChevronDown className="h-3 w-3 opacity-70" />
+        {!compact && (
+          <>
+            <span className="h-3.5 w-px bg-current opacity-30" />
+            <Current className="h-3.5 w-3.5" />
+            <ChevronDown className="h-3 w-3 opacity-70" />
+          </>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
+        side={side}
         sideOffset={10}
         className="w-52 rounded-xl border-2 border-foreground p-1.5 shadow-[4px_4px_0_0_hsl(var(--primary))]"
       >
