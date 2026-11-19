@@ -1,5 +1,6 @@
 import type { GithubData } from "../types"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
+import { getMockLines } from "./mock-lines"
 
 export async function getMockGithubData(): Promise<GithubData> {
   // Dados reais copiados do real-data.json
@@ -5729,5 +5730,6 @@ export async function getMockGithubData(): Promise<GithubData> {
       : undefined,
     repositoryContributors:
       repositoryContributors.length > 0 ? repositoryContributors : realData.repositoryContributors,
+    lines: getMockLines(),
   }
 }

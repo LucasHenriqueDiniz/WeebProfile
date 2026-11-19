@@ -180,6 +180,48 @@
       "description": "Introdução do perfil do usuário",
       "name": "Introdução"
     },
+    "lines": {
+      "config": {
+        "lines_chart_type": {
+          "label": "Tipo de gráfico",
+          "options": {
+            "area": "Área",
+            "bars": "Barras"
+          },
+          "tooltip": "Adições aparecem acima da linha, remoções abaixo dela."
+        },
+        "lines_hide_history": {
+          "label": "Ocultar gráfico semanal"
+        },
+        "lines_hide_title": {
+          "label": "Ocultar título"
+        },
+        "lines_history_period": {
+          "label": "Período do gráfico",
+          "options": {
+            "1_year": "Últimos 12 meses",
+            "2_years": "Últimos 2 anos",
+            "6_months": "Últimos 6 meses"
+          }
+        },
+        "lines_repositories_max": {
+          "description": "Máximo de 50 repositórios",
+          "label": "Repositórios contados",
+          "tooltip": "Seus próprios repositórios (sem forks) com push mais recente. O GitHub calcula as estatísticas de cada um no primeiro pedido e não conta linhas em repositórios com 10.000 commits ou mais."
+        },
+        "lines_repositories_shown": {
+          "description": "0 oculta a lista",
+          "label": "Repositórios listados",
+          "tooltip": "Os repositórios onde você mais mudou linhas, desde sempre."
+        },
+        "lines_title": {
+          "defaultValue": "Linhas de Código",
+          "label": "Título"
+        }
+      },
+      "description": "Linhas adicionadas e removidas nos seus repositórios, por semana e por repositório",
+      "name": "Linhas de Código"
+    },
     "notable_contributions": {
       "config": {
         "notable_contributions_hide_title": {

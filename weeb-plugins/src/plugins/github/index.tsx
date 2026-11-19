@@ -20,6 +20,7 @@ import {
   featuredRepositoriesHeight,
   gistsHeight,
   introductionHeight,
+  linesHeight,
   notableContributionsHeight,
   peopleHeight,
   recentActivityHeight,
@@ -186,6 +187,9 @@ export const githubPlugin: Plugin<PluginConfig & GithubConfig, PluginData & Gith
           break
         case "star_lists":
           h += starListsHeight(cfg, gh, size, isTerminal)
+          break
+        case "lines":
+          h += linesHeight(cfg, gh, isTerminal)
           break
         default:
           break

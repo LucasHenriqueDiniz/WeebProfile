@@ -13,6 +13,7 @@ import {
   STAR_LISTS_QUERY,
 } from "./queries"
 import { getMockGithubData } from "./mock-data"
+import { fetchLinesData } from "./fetchLines"
 import { lastSixMonthsStart, firstDayOfLastSixMonths } from "../utils"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { randomColorWithString } from "../../../utils/string"
@@ -350,6 +351,12 @@ export async function fetchGithubData(
             console.warn(`Error fetching featured repositories:`, error.message)
             data.featuredRepositories = []
           }
+          continue
+        }
+
+        // Lines of code: REST contributor statistics per repository, retried while GitHub computes them
+        if (section === "lines") {
+          data.lines = await fetchLinesData(rest, graphqlClient, username, config)
           continue
         }
 
