@@ -1,8 +1,6 @@
 {
   "dashboard": {
-    "allStatus": "Todos los Estados",
     "clearFilter": "Limpiar Filtro",
-    "completed": "Completado",
     "copyMarkdown": "Copiar Markdown",
     "createFirst": "Crea Tu Primer SVG",
     "createNew": "Crear Nuevo",
@@ -17,7 +15,6 @@
     "edit": "Editar",
     "filterByStatus": "Filtrar por estado",
     "forceGenerate": "Forzar Generación",
-    "generating": "Generando",
     "imageNotAvailable": "Imagen no disponible",
     "nameAZ": "Nombre (A-Z)",
     "newestFirst": "Más Reciente",
@@ -26,7 +23,6 @@
     "noSvgsDescription": "Crea tu primer SVG de WeebProfile para mostrar tus estadísticas de GitHub",
     "noSvgsYet": "Aún no hay SVGs",
     "oldestFirst": "Más Antiguo",
-    "pending": "Pendiente",
     "plugins": "Plugins",
     "ready": "Listo",
     "sortBy": "Ordenar por",
@@ -55,10 +51,7 @@
     "view": "Ver",
     "quota": {
       "title": "Plan gratis",
-      "label": "{{count}} de {{max}} SVGs usados",
-      "hint": "Cada SVG se actualiza solo en ciclo. ¿Necesitas inspiración?",
-      "templates": "Explorar plantillas",
-      "docs": "Documentación"
+      "label": "{{count}} de {{max}} SVGs usados"
     },
     "newPage": {
       "title": "Crear nuevo",
@@ -94,7 +87,10 @@
       "cta": "Crear mi primer SVG",
       "freeTier": "Gratis hasta {{max}} SVGs"
     },
-    "moreActions": "Más acciones"
+    "moreActions": "Más acciones",
+    "filterAll": "Todos",
+    "failedCount_one": "{{count}} con error",
+    "failedCount_other": "{{count}} con error"
   },
   "header": {
     "language": "Idioma",
@@ -429,7 +425,8 @@
     "navigation": "Navegación",
     "settings": "Configuración",
     "svgsUsed": "SVGs usados",
-    "user": "Usuario"
+    "user": "Usuario",
+    "expand": "Expandir"
   },
   "view": {
     "backToDashboard": "Volver al Dashboard",
@@ -636,7 +633,11 @@
       "enablePluginToPreview": "Habilita al menos un plugin y selecciona secciones para ver la vista previa",
       "clearSearch": "Limpiar búsqueda",
       "selectTitle": "Selecciona un plugin",
-      "selectHint": "Elige un plugin de la lista para configurar sus campos y secciones."
+      "selectHint": "Elige un plugin en la fila de arriba para configurar sus campos y secciones.",
+      "essentialConfigs": "Configuración obligatoria",
+      "enablePlugin": "Activar {{plugin}}",
+      "disablePlugin": "Desactivar {{plugin}}",
+      "previewUnavailable": "Vista previa no disponible"
     },
     "repository": {
       "label": "Repositorio",
@@ -911,6 +912,7 @@
         "steam": "Juegos recientes, más jugados y horas en la biblioteca.",
         "codeforces": "Rating y estadísticas de programación competitiva.",
         "codewars": "Katas resueltos, rango y lenguajes.",
+        "leetcode": "Problemas resueltos por dificultad, habilidades y envíos recientes.",
         "stackoverflow": "Reputación, medallas y actividad en respuestas.",
         "wakatime": "Tiempo programando por lenguaje, proyecto, editor y sistema.",
         "duolingo": "Racha, XP e idiomas que estás aprendiendo.",

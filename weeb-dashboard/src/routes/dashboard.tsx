@@ -2,7 +2,6 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState"
 import { SvgLibraryCard } from "@/components/dashboard/SvgLibraryCard"
 import LoadingScreen from "@/components/loading/LoadingScreen"
-import { SvgCardSkeleton } from "@/components/sections/TemplateCardSkeleton"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,7 +11,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { BUTTON_PRIMARY, BUTTON_SECONDARY_SM, CHIP, SEGMENTED, STICKER, segment } from "@/components/landing/sticker"
 import { useAuth } from "@/hooks/useAuth"
 import { useToast } from "@/hooks/use-toast"
 import { ApiException, svgApi } from "@/lib/api"
@@ -22,165 +28,66 @@ import { generateMarkdown } from "@/lib/utils/markdown"
 import { publicSvgUrl } from "@/lib/utils/svg-url"
 import { embedAltFor } from "@/lib/utils/embed-prefs"
 import { cn } from "@/lib/utils"
-import { motion } from "framer-motion"
-import { ArrowUpDown, Filter, Loader2, Plus } from "lucide-react"
+import { ArrowUpDown, Loader2, Plus } from "lucide-react"
 import { Link, useRouter } from "@/i18n/navigation"
-import { useEffect, useMemo, useState, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "@/i18n/use-translations"
 import { MAX_SVGS_FREE_TIER } from "@/lib/config/plan"
 
-// DEV-ONLY mock data for the ?mock=full preview state. Never imported in production
-// (the whole call site is gated behind import.meta.env.DEV, which Vite strips).
-// TEMP: remove once the redesign is approved.
-const MOCK_SVGS = [
-  {
-    id: "mock-1",
-    slug: "github-stats",
-    name: "GitHub Stats",
-    style: "default",
-    size: "half",
-    status: "completed",
-    storageUrl: "/sora/sora-head.png",
-    pluginsOrder: "github,anime,music",
-    pluginsConfig: { github: { enabled: true, sections: ["profile", "calendar"] } },
-    lastGeneratedAt: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(),
-  },
-  {
-    id: "mock-2",
-    slug: "terminal-card",
-    name: "Terminal Card",
-    style: "terminal",
-    size: "full",
-    status: "generating",
-    storageUrl: null,
-    pluginsOrder: "github,steam",
-    lastGeneratedAt: null,
-    updatedAt: new Date().toISOString(),
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
-  },
-  {
-    id: "mock-3",
-    slug: "anime-list",
-    name: "Anime List",
-    style: "default",
-    size: "half",
-    status: "completed",
-    storageUrl: null,
-    pluginsOrder: "myanimelist,anilist",
-    pluginsConfig: {
-      myanimelist: { enabled: true, sections: ["statistics", "last_activity"] },
-      anilist: { enabled: true, sections: ["statistics"] },
-    },
-    lastGeneratedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
-  },
-  {
-    id: "mock-4",
-    slug: "pending-card",
-    name: "Novo card",
-    style: "default",
-    size: "half",
-    status: "pending",
-    storageUrl: null,
-    // Like the SVGs saved before pluginsOrder was persisted.
-    pluginsOrder: null,
-    pluginsConfig: { myanimelist: { enabled: true, sections: ["statistics", "last_activity"] } },
-    lastGeneratedAt: null,
-    updatedAt: new Date().toISOString(),
-    createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
-  },
-  {
-    id: "mock-5",
-    slug: "music-taste",
-    name: "Music Taste",
-    style: "default",
-    size: "half",
-    status: "completed",
-    storageUrl: null,
-    pluginsOrder: "lastfm,spotify,youtube-music",
-    lastGeneratedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString(),
-  },
+type SortOption = "newest" | "oldest" | "name" | "status"
+type FilterStatus = "all" | Svg["status"]
+
+const SORT_OPTIONS: { id: SortOption; key: string }[] = [
+  { id: "newest", key: "newestFirst" },
+  { id: "oldest", key: "oldestFirst" },
+  { id: "name", key: "nameAZ" },
+  { id: "status", key: "status" },
 ]
 
-type SortOption = "newest" | "oldest" | "name" | "status"
-type FilterStatus = "all" | "completed" | "generating" | "pending"
+/** The filters only earn their room once the library no longer fits a screen or two. */
+const FILTERS_FROM = 7
+
+function sortSvgs(svgs: Svg[], sortBy: SortOption): Svg[] {
+  const time = (value: string | null | undefined) => new Date(value || 0).getTime()
+  return [...svgs].sort((a, b) => {
+    switch (sortBy) {
+      case "oldest":
+        return time(a.createdAt) - time(b.createdAt)
+      case "name":
+        return a.name.localeCompare(b.name)
+      case "status":
+        return a.status.localeCompare(b.status)
+      default:
+        return time(b.createdAt) - time(a.createdAt)
+    }
+  })
+}
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard")
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
-  const { svgs: storeSvgs, svgsLoading: storeSvgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
-  // DEV-ONLY: ?mock=empty / ?mock=full override the list for design review without ever
-  // touching the persisted svg-store (which used to leak MOCK_SVGS into localStorage
-  // forever - see mockOverride effect below).
-  const [mockOverride, setMockOverride] = useState<Svg[] | null>(null)
-  const svgs = mockOverride ?? storeSvgs
-  const svgsLoading = mockOverride ? false : storeSvgsLoading
+  const { svgs, svgsLoading, fetchSvgs, removeSvg, updateSvg } = useSvgStore()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [generatingId, setGeneratingId] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all")
   const [sortBy, setSortBy] = useState<SortOption>("newest")
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [svgToDelete, setSvgToDelete] = useState<string | null>(null)
 
-  // Calcular contadores e flags de UI
   const total = svgs.length
-  const readyCount = svgs.filter((s) => s.status === "completed").length
-  const generatingCount = svgs.filter((s) => s.status === "generating").length
+  const countOf = (status: Svg["status"]) => svgs.filter((s) => s.status === status).length
+  const isTrulyEmpty = !svgsLoading && total === 0
 
-  const showAdvancedControls = total > 6
-  const isTrulyEmpty = !svgsLoading && svgs.length === 0
-
-  // Ref para garantir que só fazemos fetch uma vez por montagem
+  // Fetch once per mount, as soon as auth resolves. The store rehydrates from
+  // localStorage synchronously (no SSR here), so there is nothing to wait for.
   const hasFetchedRef = useRef(false)
-
-  // DEV-ONLY preview bypass: ?mock=empty or ?mock=full seeds the store with fake data
-  // instead of fetching. import.meta.env.DEV is statically replaced by Vite, so this
-  // branch is dead-code-eliminated from the production bundle.
-  // TEMP: remove once the redesign is approved.
-  useEffect(() => {
-    if (!import.meta.env.DEV) return
-    const mockFlag = new URLSearchParams(window.location.search).get("mock")
-    if (mockFlag === "empty") {
-      hasFetchedRef.current = true
-      setMockOverride([])
-    } else if (mockFlag === "full") {
-      hasFetchedRef.current = true
-      setMockOverride(MOCK_SVGS as unknown as Svg[])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // SELF-HEAL: an earlier version of the ?mock=full bypass wrote straight into the
-  // persisted svg-store, so anyone who ever loaded that URL got fake "mock-*" SVGs
-  // stuck in their dashboard forever (even with no dev server / mock flag). Strip them
-  // out of the real store once on mount.
-  useEffect(() => {
-    const hasLeakedMocks = storeSvgs.some((svg) => svg.id.startsWith("mock-"))
-    if (hasLeakedMocks) {
-      useSvgStore.setState({ svgs: storeSvgs.filter((svg) => !svg.id.startsWith("mock-")) })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // PERF: zustand's persist middleware rehydrates localStorage synchronously at module
-  // eval time in this SPA (no SSR to reconcile against), so the previous code that waited
-  // 100ms then another 200ms for "_hasHydrated" before calling fetchSvgs() was pure added
-  // latency solving a hydration-mismatch problem that only exists with SSR. Removed - fetch
-  // now fires the instant auth resolves.
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login")
       return
     }
-
     if (user && !authLoading && !hasFetchedRef.current) {
       hasFetchedRef.current = true
       fetchSvgs()
@@ -188,71 +95,58 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading])
 
-  const handleDeleteClick = (id: string) => {
-    setSvgToDelete(id)
-    setDeleteDialogOpen(true)
-  }
+  const shown = useMemo(
+    () => sortSvgs(statusFilter === "all" ? svgs : svgs.filter((svg) => svg.status === statusFilter), sortBy),
+    [svgs, statusFilter, sortBy]
+  )
+
+  const forgetImageError = (id: string) =>
+    setImageErrors((prev) => {
+      const next = new Set(prev)
+      next.delete(id)
+      return next
+    })
 
   const handleDeleteConfirm = async () => {
     if (!svgToDelete) return
-
     try {
       setDeletingId(svgToDelete)
       await svgApi.delete(svgToDelete)
       removeSvg(svgToDelete)
-      toast({
-        title: t("toast.svgDeleted"),
-        description: t("toast.deletedSuccess"),
-      })
+      toast({ title: t("toast.svgDeleted"), description: t("toast.deletedSuccess") })
     } catch (error) {
       console.error("Error deleting SVG:", error)
-      const errorMessage =
-        error instanceof ApiException
-          ? error.data.message || error.data.error || error.message
-          : t("toast.errorDeletingMessage")
       toast({
         title: t("toast.errorDeleting"),
-        description: errorMessage,
+        description:
+          error instanceof ApiException
+            ? error.data.message || error.data.error || error.message
+            : t("toast.errorDeletingMessage"),
         variant: "destructive",
       })
     } finally {
       setDeletingId(null)
       setSvgToDelete(null)
-      setDeleteDialogOpen(false)
     }
   }
 
   const handleCopyUrl = async (svg: Svg) => {
-    const url = publicSvgUrl(svg.id)
     const markdown = generateMarkdown({
       alt: embedAltFor(svg),
-      url,
+      url: publicSvgUrl(svg.id),
       size: (svg.size as "half" | "full") || "half",
     })
     await navigator.clipboard.writeText(markdown)
-    toast({
-      title: t("toast.markdownCopied"),
-      description: t("toast.markdownCopiedDescription"),
-    })
+    toast({ title: t("toast.markdownCopied"), description: t("toast.markdownCopiedDescription") })
   }
 
   const handleForceGenerate = async (svg: Svg) => {
     try {
       setGeneratingId(svg.id)
-      updateSvg(svg.id, { status: "generating" }) // Atualizar imediatamente para mostrar estado
-
-      const result = await svgApi.generate(svg.id, true) // force = true
-
-      toast({
-        title: t("toast.generationStarted"),
-        description: t("toast.generationStartedDescription"),
-      })
-
-      // A geração é assíncrona, então fazer refresh imediato e depois novamente após delay
-      // Isso garante que pegamos o status atualizado quando a geração completar
-      fetchSvgs(true) // Refresh imediato para pegar status atualizado
-
-      // Se o resultado já retornou com SVG completo, atualizar store
+      updateSvg(svg.id, { status: "generating" })
+      const result = await svgApi.generate(svg.id, true)
+      toast({ title: t("toast.generationStarted"), description: t("toast.generationStartedDescription") })
+      fetchSvgs(true)
       if (result.svg && result.svg.status === "completed") {
         updateSvg(svg.id, {
           status: result.svg.status,
@@ -260,26 +154,17 @@ export default function DashboardPage() {
           lastGeneratedAt: result.svg.lastGeneratedAt,
           updatedAt: result.svg.updatedAt || new Date().toISOString(),
         })
-        // Forçar re-render da imagem removendo do erro set se estava lá
-        setImageErrors((prev) => {
-          const next = new Set(prev)
-          next.delete(svg.id)
-          return next
-        })
+        forgetImageError(svg.id)
       }
-
-      // Fazer refresh novamente após delay para garantir dados atualizados quando geração completar
-      setTimeout(() => {
-        fetchSvgs(true) // force refresh para pegar status final após geração
-      }, 5000) // Aumentar delay para dar tempo da geração completar
+      // Generation can finish after the response: look again once it likely has.
+      setTimeout(() => fetchSvgs(true), 5000)
     } catch (error) {
-      const errorMessage =
-        error instanceof ApiException
-          ? error.data.message || error.data.error || error.message
-          : t("toast.errorGeneratingMessage")
       toast({
         title: t("toast.errorGenerating"),
-        description: errorMessage,
+        description:
+          error instanceof ApiException
+            ? error.data.message || error.data.error || error.message
+            : t("toast.errorGeneratingMessage"),
         variant: "destructive",
       })
     } finally {
@@ -287,285 +172,203 @@ export default function DashboardPage() {
     }
   }
 
-  // Calcular cooldown restante para um SVG
-  const _getCooldownRemaining = (svg: Svg) => {
-    if (!svg.lastGeneratedAt) return null
-    const lastGenerated = new Date(svg.lastGeneratedAt)
-    const now = new Date()
-    const minutesSinceLastGeneration = (now.getTime() - lastGenerated.getTime()) / (1000 * 60)
-    const COOLDOWN_MINUTES = 20
-    const remaining = COOLDOWN_MINUTES - minutesSinceLastGeneration
-    return remaining > 0 ? Math.ceil(remaining) : 0
-  }
+  if (authLoading) return <LoadingScreen />
+  if (!user) return null
 
-  // Filtrar e ordenar SVGs
-  const filteredAndSortedSvgs = useMemo(() => {
-    let filtered = [...svgs]
+  const ready = countOf("completed")
+  const generating = countOf("generating")
+  const failed = countOf("failed")
+  const filters: { id: FilterStatus; label: string; count: number }[] = [
+    { id: "all" as const, label: t("filterAll"), count: total },
+    { id: "completed" as const, label: t("status.ready"), count: ready },
+    { id: "generating" as const, label: t("status.generating"), count: generating },
+    { id: "pending" as const, label: t("status.pending"), count: countOf("pending") },
+    { id: "failed" as const, label: t("status.failed"), count: failed },
+  ].filter((filter) => filter.id === "all" || filter.count > 0 || filter.id === statusFilter)
 
-    // Filtrar por status
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((svg) => svg.status === statusFilter)
-    }
+  const summary = isTrulyEmpty ? undefined : (
+    <span className="flex flex-wrap items-center gap-2">
+      <span className={cn(CHIP, "font-mono")}>
+        {total} {t("total")}
+      </span>
+      {ready > 0 && (
+        <span className={CHIP}>
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          {t("readyCount", { count: ready })}
+        </span>
+      )}
+      {generating > 0 && (
+        <span className={CHIP}>
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-500" />
+          {t("generatingCount", { count: generating })}
+        </span>
+      )}
+      {failed > 0 && (
+        <span className={cn(CHIP, "border-red-600 text-red-700 dark:border-red-400 dark:text-red-400")}>
+          <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+          {t("failedCount", { count: failed })}
+        </span>
+      )}
+    </span>
+  )
 
-    // Ordenar
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "newest":
-          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
-        case "oldest":
-          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
-        case "name":
-          return a.name.localeCompare(b.name)
-        case "status":
-          return a.status.localeCompare(b.status)
-        default:
-          return 0
-      }
-    })
-
-    return filtered
-  }, [svgs, statusFilter, sortBy])
-
-  // Só mostrar loading completo no primeiro carregamento quando não tiver usuário
-  if (authLoading) {
-    return <LoadingScreen />
-  }
-
-  if (!user) {
-    return null
-  }
-
-  const headerActions = !isTrulyEmpty ? (
-    <Button
-      asChild
-      size="sm"
-      className="gap-1.5 bg-gradient-to-r from-violet-500 to-cyan-500 hover:opacity-90 shadow-[0_0_16px_rgba(56,189,248,0.2)]"
-    >
-      <Link href="/dashboard/new">
-        <Plus className="w-4 h-4" />
-        <span className="hidden sm:inline">{t("createNew")}</span>
+  const actions = isTrulyEmpty ? undefined : (
+    <>
+      <QuotaMeter count={total} label={t("quota.label", { count: total, max: MAX_SVGS_FREE_TIER })} />
+      <Link href="/dashboard/new" className={cn(BUTTON_PRIMARY, "px-5 py-3")}>
+        <Plus className="h-4 w-4" />
+        {t("createNew")}
       </Link>
-    </Button>
-  ) : undefined
+    </>
+  )
 
   return (
-    <DashboardLayout
-      title={t("title")}
-      description={
-        !isTrulyEmpty
-          ? [
-              `${total} ${t("total")}`,
-              readyCount > 0 && t("readyCount", { count: readyCount }),
-              generatingCount > 0 && t("generatingCount", { count: generatingCount }),
-            ]
-              .filter(Boolean)
-              .join(" · ")
-          : undefined
-      }
-      actions={headerActions}
-      // O onboarding ocupa a área inteira; a lista usa o container padrão do layout,
-      // o mesmo que o header - antes ela usava `container` (1536) e desalinhava 168px.
-      bleed={isTrulyEmpty}
-    >
-      <div className="w-full h-full">
-        {isTrulyEmpty ? (
-          <div className="h-full px-4 py-4 md:px-6 md:py-6 lg:px-8">
-            <DashboardEmptyState />
-          </div>
-        ) : (
-          <div className="space-y-5">
-            {/* Filters - apenas quando houver muitos SVGs */}
-            {showAdvancedControls && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05, duration: 0.2 }}
-                className="flex flex-col sm:flex-row gap-3 mb-5"
+    <DashboardLayout title={t("title")} description={summary} actions={actions} bleed={isTrulyEmpty}>
+      {isTrulyEmpty ? (
+        <div className="px-4 pb-6 md:px-6 lg:px-8">
+          <DashboardEmptyState />
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {total >= FILTERS_FROM && (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div
+                role="group"
+                aria-label={t("filterByStatus")}
+                className={cn(SEGMENTED, "max-w-full overflow-x-auto")}
               >
-                <div className="relative w-full sm:w-[180px]">
-                  <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
-                  <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
-                    <SelectTrigger className="w-full pl-9">
-                      <SelectValue placeholder={t("filterByStatus")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{t("allStatus")}</SelectItem>
-                      <SelectItem value="completed">{t("completed")}</SelectItem>
-                      <SelectItem value="generating">{t("generating")}</SelectItem>
-                      <SelectItem value="pending">{t("pending")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="relative w-full sm:w-[180px]">
-                  <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
-                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                    <SelectTrigger className="w-full pl-9">
-                      <SelectValue placeholder={t("sortBy")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="newest">{t("newestFirst")}</SelectItem>
-                      <SelectItem value="oldest">{t("oldestFirst")}</SelectItem>
-                      <SelectItem value="name">{t("nameAZ")}</SelectItem>
-                      <SelectItem value="status">{t("status")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Biblioteca de SVGs - um card por SVG, com a imagem publicada na largura real
-              (os de largura completa ocupam as duas colunas). Só chega aqui quando
-              !isTrulyEmpty (ver branch acima que renderiza o onboarding). */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.2 }}
-              className="grid items-start gap-5 lg:grid-cols-2"
-            >
-              {svgsLoading && svgs.length === 0
-                ? Array.from({ length: 2 }).map((_, index) => (
-                    <SvgCardSkeleton key={`skeleton-${index}`} index={index} />
-                  ))
-                : filteredAndSortedSvgs.length > 0
-                  ? filteredAndSortedSvgs.map((svg, index) => (
-                      <SvgLibraryCard
-                        key={svg.id}
-                        svg={svg}
-                        index={index}
-                        imageErrored={imageErrors.has(svg.id)}
-                        onImageError={() => setImageErrors((prev) => new Set(prev).add(svg.id))}
-                        onImageLoad={() =>
-                          setImageErrors((prev) => {
-                            const next = new Set(prev)
-                            next.delete(svg.id)
-                            return next
-                          })
-                        }
-                        onCopyUrl={() => handleCopyUrl(svg)}
-                        onView={() => router.push(`/dashboard/${svg.id}`)}
-                        onEdit={() => router.push(`/dashboard/${svg.id}/edit`)}
-                        onForceGenerate={() => handleForceGenerate(svg)}
-                        onDelete={() => handleDeleteClick(svg.id)}
-                        isGenerating={generatingId === svg.id}
-                        isDeleting={deletingId === svg.id}
-                        t={t}
-                      />
-                    ))
-                  : null}
-
-              {svgsLoading &&
-                filteredAndSortedSvgs.length > 0 &&
-                Array.from({ length: 2 }).map((_, index) => (
-                  <SvgCardSkeleton key={`loading-${index}`} index={filteredAndSortedSvgs.length + index} />
+                {filters.map((filter) => (
+                  <button
+                    key={filter.id}
+                    type="button"
+                    aria-pressed={statusFilter === filter.id}
+                    onClick={() => setStatusFilter(filter.id)}
+                    className={segment(statusFilter === filter.id)}
+                  >
+                    {filter.label}
+                    <span className="font-mono text-[11px] font-normal opacity-80">{filter.count}</span>
+                  </button>
                 ))}
-            </motion.div>
-
-            {/* Quota + atalhos - preenche o rodapé da lista com informação útil em vez de
-              espaço morto: uso do plano grátis e caminhos de descoberta */}
-            {!svgsLoading && filteredAndSortedSvgs.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25, duration: 0.2 }}
-                className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 px-5 py-4 sm:flex-row sm:items-center"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-foreground">{t("quota.title")}</span>
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {t("quota.label", { count: total, max: MAX_SVGS_FREE_TIER })}
-                    </span>
-                  </div>
-                  <div className="mt-2 h-1.5 max-w-xs overflow-hidden rounded-full bg-muted">
-                    <span
-                      className={cn(
-                        "block h-full rounded-full transition-all",
-                        total >= MAX_SVGS_FREE_TIER ? "bg-amber-400" : "bg-gradient-to-r from-violet-500 to-cyan-500"
-                      )}
-                      style={{ width: `${Math.min(100, (total / MAX_SVGS_FREE_TIER) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-shrink-0 items-center gap-2 text-sm">
-                  <span className="hidden text-xs text-muted-foreground xl:inline">{t("quota.hint")}</span>
-                  <Button asChild variant="outline" size="sm">
-                    <Link href="/templates">{t("quota.templates")}</Link>
-                  </Button>
-                  <Button asChild variant="ghost" size="sm">
-                    <a
-                      href="https://github.com/LucasHenriqueDiniz/WeebProfile"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {t("quota.docs")}
-                    </a>
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Empty State (filtro sem resultados - diferente do onboarding acima, só
-              acontece quando já existem SVGs mas o filtro ativo não bate com nenhum) */}
-            {filteredAndSortedSvgs.length === 0 && !svgsLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.15, duration: 0.2 }}
-                className="text-center py-16 md:py-20"
-              >
-                <div className="inline-flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-violet-500/10 to-cyan-500/10 mb-6">
-                  <Filter className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-bold mb-2">{t("noResultsFound")}</h3>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto text-sm md:text-base">
-                  {t("noResultsDescription")}
-                </p>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => {
-                    setStatusFilter("all")
-                    setSortBy("newest")
-                  }}
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger className={BUTTON_SECONDARY_SM} aria-label={t("sortBy")}>
+                  <ArrowUpDown className="h-3.5 w-3.5" />
+                  {t(SORT_OPTIONS.find((option) => option.id === sortBy)!.key)}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="rounded-xl border-2 border-foreground p-1.5 shadow-[4px_4px_0_0_hsl(var(--primary))]"
                 >
-                  {t("clearFilter")}
-                </Button>
-              </motion.div>
-            )}
-          </div>
-        )}
+                  <DropdownMenuRadioGroup value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+                    {SORT_OPTIONS.map((option) => (
+                      <DropdownMenuRadioItem key={option.id} value={option.id} className="rounded-lg">
+                        {t(option.key)}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
 
-        {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{t("deleteDialog.title")}</DialogTitle>
-              <DialogDescription>{t("deleteDialog.description")}</DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setDeleteDialogOpen(false)
-                  setSvgToDelete(null)
-                }}
-              >
-                {t("deleteDialog.cancel")}
+          {/* One card per SVG, the published image at its real width (the full-width ones
+              take both columns). */}
+          <div className="grid items-start gap-7 lg:grid-cols-2">
+            {svgsLoading && total === 0
+              ? Array.from({ length: 2 }).map((_, index) => <CardSkeleton key={index} />)
+              : shown.map((svg, index) => (
+                  <SvgLibraryCard
+                    key={svg.id}
+                    svg={svg}
+                    index={index}
+                    imageErrored={imageErrors.has(svg.id)}
+                    onImageError={() => setImageErrors((prev) => new Set(prev).add(svg.id))}
+                    onImageLoad={() => forgetImageError(svg.id)}
+                    onCopyUrl={() => handleCopyUrl(svg)}
+                    onView={() => router.push(`/dashboard/${svg.id}`)}
+                    onEdit={() => router.push(`/dashboard/${svg.id}/edit`)}
+                    onForceGenerate={() => handleForceGenerate(svg)}
+                    onDelete={() => setSvgToDelete(svg.id)}
+                    isGenerating={generatingId === svg.id}
+                    isDeleting={deletingId === svg.id}
+                    t={t}
+                  />
+                ))}
+          </div>
+
+          {/* A filter with no match (the library itself is not empty: that is the onboarding). */}
+          {shown.length === 0 && !svgsLoading && (
+            <div className={cn(STICKER, "mx-auto max-w-md px-6 py-10 text-center")}>
+              <h3 className="font-heading text-xl font-extrabold">{t("noResultsFound")}</h3>
+              <p className="mx-auto mb-6 mt-2 text-sm text-muted-foreground">{t("noResultsDescription")}</p>
+              <Button variant="outline" onClick={() => setStatusFilter("all")}>
+                {t("clearFilter")}
               </Button>
-              <Button variant="destructive" onClick={handleDeleteConfirm} disabled={deletingId !== null}>
-                {deletingId ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {t("deleting")}
-                  </>
-                ) : (
-                  t("deleteDialog.confirm")
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <Dialog open={svgToDelete !== null} onOpenChange={(open) => !open && setSvgToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("deleteDialog.title")}</DialogTitle>
+            <DialogDescription>{t("deleteDialog.description")}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setSvgToDelete(null)}>
+              {t("deleteDialog.cancel")}
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm} disabled={deletingId !== null}>
+              {deletingId ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {t("deleting")}
+                </>
+              ) : (
+                t("deleteDialog.confirm")
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
+  )
+}
+
+/** The free plan's use: an ink-bordered bar and the count. */
+function QuotaMeter({ count, label }: { count: number; label: string }) {
+  const atLimit = count >= MAX_SVGS_FREE_TIER
+  return (
+    <div className="flex items-center gap-2.5" title={label}>
+      <div
+        role="meter"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={MAX_SVGS_FREE_TIER}
+        aria-valuenow={count}
+        className="h-3 w-28 overflow-hidden rounded-full border-2 border-foreground bg-card"
+      >
+        <span
+          className={cn("block h-full", atLimit ? "bg-amber-400" : "bg-cyan-400")}
+          style={{ width: `${Math.min(100, (count / MAX_SVGS_FREE_TIER) * 100)}%` }}
+        />
+      </div>
+      <span className="font-mono text-[12px] text-muted-foreground">
+        {count}/{MAX_SVGS_FREE_TIER}
+      </span>
+    </div>
+  )
+}
+
+function CardSkeleton() {
+  return (
+    <div className={cn(STICKER, "overflow-hidden")} aria-hidden>
+      <div className="h-56 animate-pulse bg-muted/60" />
+      <div className="flex items-center gap-3 border-t-2 border-foreground px-5 py-4">
+        <div className="h-8 w-8 animate-pulse rounded-lg bg-muted" />
+        <div className="h-4 w-40 animate-pulse rounded bg-muted" />
+      </div>
+    </div>
   )
 }

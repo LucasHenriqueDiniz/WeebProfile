@@ -3382,6 +3382,208 @@ export const PLUGINS_METADATA = {
     },
   },
 
+  leetcode: {
+    name: "leetcode",
+    displayName: "LeetCode",
+    description: "Show your LeetCode problems solved, skills, languages and recent submissions",
+    category: "coding",
+    icon: "Code",
+    requiredFields: ["username"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "solved",
+        name: "Problems Solved",
+        description: "Problems solved by difficulty, against how many LeetCode has",
+        i18nKey: {
+          name: "plugins.leetcode.sections.solved.name",
+          description: "plugins.leetcode.sections.solved.description"
+        },
+        configOptions: [
+        {
+          key: "solved_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.leetcode.sections.solved.config.solved_hide_title.label"
+          }
+        },
+        {
+          key: "solved_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "LeetCode Problems Solved",
+          i18nKey: {
+            label: "plugins.leetcode.sections.solved.config.solved_title.label",
+            defaultValue: "plugins.leetcode.sections.solved.config.solved_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "skills",
+        name: "Skills",
+        description: "Problems solved per topic tag, most solved first",
+        i18nKey: {
+          name: "plugins.leetcode.sections.skills.name",
+          description: "plugins.leetcode.sections.skills.description"
+        },
+        configOptions: [
+        {
+          key: "skills_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.leetcode.sections.skills.config.skills_hide_title.label"
+          }
+        },
+        {
+          key: "skills_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "LeetCode Skills",
+          i18nKey: {
+            label: "plugins.leetcode.sections.skills.config.skills_title.label",
+            defaultValue: "plugins.leetcode.sections.skills.config.skills_title.defaultValue"
+          }
+        },
+        {
+          key: "skills_max",
+          label: "Maximum skills",
+          type: "number",
+          defaultValue: 10,
+          min: 1,
+          max: 30,
+          step: 1,
+          description: "Maximum 30 skills",
+          i18nKey: {
+            label: "plugins.leetcode.sections.skills.config.skills_max.label",
+            description: "plugins.leetcode.sections.skills.config.skills_max.description"
+          }
+        },
+        {
+          key: "skills_ignored",
+          label: "Ignored skills",
+          type: "string",
+          defaultValue: "",
+          description: "Comma-separated tags to hide (e.g. 'Array, String')",
+          tooltip: "Tags are matched without case. 'fundamental', 'intermediate' or 'advanced' hides every tag of that LeetCode level.",
+          i18nKey: {
+            label: "plugins.leetcode.sections.skills.config.skills_ignored.label",
+            description: "plugins.leetcode.sections.skills.config.skills_ignored.description",
+            tooltip: "plugins.leetcode.sections.skills.config.skills_ignored.tooltip"
+          }
+        }
+        ]
+      },
+      {
+        id: "languages",
+        name: "Languages",
+        description: "Problems solved per programming language",
+        i18nKey: {
+          name: "plugins.leetcode.sections.languages.name",
+          description: "plugins.leetcode.sections.languages.description"
+        },
+        configOptions: [
+        {
+          key: "languages_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.leetcode.sections.languages.config.languages_hide_title.label"
+          }
+        },
+        {
+          key: "languages_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "LeetCode Languages",
+          i18nKey: {
+            label: "plugins.leetcode.sections.languages.config.languages_title.label",
+            defaultValue: "plugins.leetcode.sections.languages.config.languages_title.defaultValue"
+          }
+        },
+        {
+          key: "languages_max",
+          label: "Maximum languages",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 languages",
+          i18nKey: {
+            label: "plugins.leetcode.sections.languages.config.languages_max.label",
+            description: "plugins.leetcode.sections.languages.config.languages_max.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "recent",
+        name: "Recent Submissions",
+        description: "Your latest accepted submissions",
+        i18nKey: {
+          name: "plugins.leetcode.sections.recent.name",
+          description: "plugins.leetcode.sections.recent.description"
+        },
+        configOptions: [
+        {
+          key: "recent_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.leetcode.sections.recent.config.recent_hide_title.label"
+          }
+        },
+        {
+          key: "recent_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Recent Accepted Submissions",
+          i18nKey: {
+            label: "plugins.leetcode.sections.recent.config.recent_title.label",
+            defaultValue: "plugins.leetcode.sections.recent.config.recent_title.defaultValue"
+          }
+        },
+        {
+          key: "recent_max",
+          label: "Maximum submissions",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 20,
+          step: 1,
+          description: "Maximum 20 submissions (LeetCode lists only the last 20)",
+          i18nKey: {
+            label: "plugins.leetcode.sections.recent.config.recent_max.label",
+            description: "plugins.leetcode.sections.recent.config.recent_max.description"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.leetcode.displayName",
+      description: "plugins.leetcode.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "username": "example",
+      "sections": [
+        "solved",
+        "skills"
+      ]
+    },
+  },
+
   lyfta: {
     name: "lyfta",
     displayName: "Lyfta",

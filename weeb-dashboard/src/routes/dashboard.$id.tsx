@@ -39,6 +39,10 @@ import { TILE_PLUGINS, TilesPanel } from "@/components/dashboard/TilesPanel"
 import { ProfileReadmePanel } from "@/components/dashboard/ProfileReadmePanel"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import type { Svg } from "@/lib/db/schema"
+import { PLUGINS_METADATA, type PluginCategory } from "@weeb/weeb-plugins/plugins/metadata"
+import { BUTTON_ICON, BUTTON_SECONDARY_SM, CHIP, HALFTONE, STICKER, TILE } from "@/components/landing/sticker"
+import { CATEGORY_STYLE } from "@/lib/landing/category-style"
 
 export default function SvgViewPage() {
   const t = useTranslations("view")
@@ -55,7 +59,8 @@ export default function SvgViewPage() {
 
   // Tentar pegar do cache imediatamente (síncrono)
   const cachedSvg = getSvgSync(svgId)
-  const [svg, setSvg] = useState<any>(cachedSvg || null)
+  const [svg, setSvg] = useState<Svg | null>(cachedSvg || null)
+  const [imageFailed, setImageFailed] = useState(false)
   const [loading, setLoading] = useState(!cachedSvg) // Só loading se não tiver cache
   const [copied, setCopied] = useState(false)
   const [generating, setGenerating] = useState(false)
@@ -261,7 +266,7 @@ export default function SvgViewPage() {
       setGenerating(true)
       await svgApi.generate(svgId, false)
       updateSvg(svgId, { status: "generating" })
-      setSvg({ ...svg, status: "generating" })
+      if (svg) setSvg({ ...svg, status: "generating" })
       toast({
         title: t("toast.generating"),
         description: t("toast.generatingDescription"),
@@ -323,9 +328,9 @@ export default function SvgViewPage() {
     return (
       <DashboardLayout>
         <div className="flex min-h-[60vh] items-center justify-center px-6">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center">
-            <img src="/sora/sora-head.png" alt="" className="mx-auto mb-4 h-12 w-12 object-contain opacity-60" />
-            <h2 className="font-heading text-lg font-bold text-foreground">{t("notFound.title")}</h2>
+          <div className={cn(STICKER, "w-full max-w-md p-8 text-center")}>
+            <img src="/sora/sora-head.png" alt="" className="mx-auto mb-4 h-12 w-12 object-contain" />
+            <h2 className="font-heading text-xl font-extrabold text-foreground">{t("notFound.title")}</h2>
             <p className="mt-2 text-sm text-muted-foreground">{t("notFound.description")}</p>
             <Button onClick={() => router.push("/dashboard")} className="mt-6 w-full">
               {t("backToDashboard")}
@@ -378,12 +383,12 @@ export default function SvgViewPage() {
 
   const headerTitle = svg?.name || t("title")
 
-  // Fora do <h1>: heading não deve conter controle. Ver Header.leading.
+  // Outside the <h1>: a heading should not contain a control.
   const headerLeading = (
     <button
       type="button"
       onClick={() => router.push("/dashboard")}
-      className="-ml-1 flex-shrink-0 p-1 text-muted-foreground transition-colors hover:text-foreground"
+      className={cn(BUTTON_ICON, "-ml-2 mt-0.5 md:mt-1.5")}
       aria-label={t("backToDashboard")}
     >
       <ArrowLeft className="h-4 w-4" />
@@ -391,25 +396,35 @@ export default function SvgViewPage() {
   )
 
   const headerActions = svg ? (
-    <div className="flex items-center gap-3">
-      <span className="hidden items-center gap-1.5 sm:flex">
+    <div className="flex items-center gap-2">
+      <span
+        className={cn(
+          CHIP,
+          svg.status === "failed" && "border-red-600 text-red-700 dark:border-red-400 dark:text-red-400"
+        )}
+      >
         <span className={cn("h-1.5 w-1.5 rounded-full", STATUS_DOT[svg.status] ?? "bg-muted-foreground")} />
-        <span className="text-xs text-muted-foreground">{statusLabel}</span>
+        {statusLabel}
       </span>
-      <Button variant="outline" size="sm" onClick={() => router.push(`/dashboard/${svgId}/edit`)} className="gap-1.5">
+      <button
+        type="button"
+        className={BUTTON_SECONDARY_SM}
+        onClick={() => router.push(`/dashboard/${svgId}/edit`)}
+        aria-label={t("edit")}
+      >
         <Edit2 className="h-3.5 w-3.5" />
         <span className="hidden sm:inline">{t("edit")}</span>
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
+      </button>
+      <button
+        type="button"
+        className={BUTTON_SECONDARY_SM}
         onClick={handleForceGenerate}
         disabled={generating || svg.status === "generating"}
-        className="gap-1.5"
+        aria-label={t("regenerate")}
       >
         {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
         <span className="hidden sm:inline">{t("regenerate")}</span>
-      </Button>
+      </button>
     </div>
   ) : undefined
 
@@ -420,13 +435,13 @@ export default function SvgViewPage() {
       description={svg ? `${t("created")} ${formatRelative(svg.createdAt, locale)}` : undefined}
       actions={headerActions}
     >
-      <div className="py-2 md:py-4">
+      <div>
         {/* Cooldown Warning */}
         {svg && cooldownRemaining !== null && cooldownRemaining > 0 && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 flex items-center gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-400"
+            className="mb-6 flex items-center gap-2.5 rounded-xl border-2 border-foreground bg-amber-300 px-4 py-3 text-sm font-medium text-slate-950"
           >
             <Clock className="h-4 w-4 flex-shrink-0" />
             <span>{t("cooldownWarning", { minutes: cooldownRemaining })}</span>
@@ -441,49 +456,40 @@ export default function SvgViewPage() {
             transition={{ delay: 0.05, duration: 0.25 }}
             className="lg:col-span-2"
           >
-            <div className="overflow-hidden rounded-2xl border border-border bg-card">
-              {imageUrl ? (
-                <div className="relative flex min-h-[420px] items-center justify-center p-6 md:p-10">
+            <div className={cn(STICKER, "overflow-hidden")}>
+              {imageUrl && !imageFailed ? (
+                // The frame takes the card's height: a fixed minimum left ~420px of dots
+                // around a full-width card drawn 280px tall on a phone.
+                <div className="relative flex items-center justify-center bg-muted/50 p-4 sm:p-6 md:min-h-[420px] md:p-10">
                   <div
                     aria-hidden
-                    className="absolute inset-0 bg-[radial-gradient(hsl(var(--foreground)/0.06)_1px,transparent_1px)] [background-size:18px_18px]"
+                    className={cn(
+                      HALFTONE,
+                      "right-0 top-0 h-28 w-48 [mask-image:linear-gradient(to_bottom_left,black,transparent)]"
+                    )}
                   />
                   <motion.img
                     key={`${svg?.id}-${cacheBuster}`}
                     src={imageUrl}
                     alt={svg?.name || "Profile SVG"}
-                    className="relative z-10 h-auto max-w-full rounded-lg shadow-2xl"
+                    className="relative z-10 h-auto max-w-full"
                     style={{ maxHeight: "560px" }}
                     initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
-                    onError={(e) => {
-                      const target = e.currentTarget
-                      target.style.display = "none"
-                      const parent = target.parentElement
-                      if (parent) {
-                        const errorMsg = t("preview.errorLoading")
-                        const errorDesc = t("preview.errorLoadingDescription")
-                        parent.innerHTML = `
-                        <div class="flex flex-col items-center justify-center p-8 text-center relative z-10">
-                          <div class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
-                            <svg class="w-8 h-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
-                          </div>
-                          <p class="text-foreground font-medium mb-2">${errorMsg}</p>
-                          <p class="text-sm text-muted-foreground">${errorDesc}</p>
-                        </div>
-                      `
-                      }
-                    }}
+                    onError={() => setImageFailed(true)}
                   />
+                </div>
+              ) : imageUrl ? (
+                <div className="flex flex-col items-center justify-center p-10 text-center">
+                  <p className="mb-2 font-semibold text-foreground">{t("preview.errorLoading")}</p>
+                  <p className="text-sm text-muted-foreground">{t("preview.errorLoadingDescription")}</p>
                 </div>
               ) : svg?.status === "failed" ? (
                 <div className="flex flex-col items-center justify-center p-12 text-center">
                   <p className="mb-2 font-medium text-destructive">{t("preview.errorGenerating")}</p>
                   {svg.lastError && (
-                    <div className="mb-4 max-w-md rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive/80">
+                    <div className="mb-4 max-w-md rounded-xl border-2 border-red-600 bg-red-50 p-3 text-sm text-red-800 dark:border-red-400 dark:bg-red-950/40 dark:text-red-300">
                       <p className="mb-1 font-medium">{t("preview.errorDetails")}</p>
                       <p className="break-words text-xs">{svg.lastError}</p>
                     </div>
@@ -501,9 +507,9 @@ export default function SvgViewPage() {
                   </Button>
                 </div>
               ) : (
-                <div className="flex min-h-[420px] flex-col items-center justify-center p-12 text-center">
-                  <span className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/15 to-cyan-500/15">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <div className="flex flex-col items-center justify-center p-12 text-center md:min-h-[420px]">
+                  <span className={cn(TILE, "mb-5 h-14 w-14 bg-cyan-300")}>
+                    <Loader2 className="h-6 w-6 animate-spin" />
                   </span>
                   <p className="mb-1 text-sm font-medium text-foreground">
                     {svg?.status === "generating" ? t("preview.generating") : t("preview.waiting")}
@@ -541,7 +547,7 @@ export default function SvgViewPage() {
               {/* Wrapped, not scrolled: the column is ~250px wide and the markdown about
                   1100px, so a horizontal scroll showed a fifth of what gets pasted. The
                   URL has no spaces, hence overflow-wrap:anywhere rather than break-words. */}
-              <pre className="whitespace-pre-wrap [overflow-wrap:anywhere] rounded-lg border border-border/50 bg-muted/50 p-3 font-mono text-xs">
+              <pre className="whitespace-pre-wrap [overflow-wrap:anywhere] rounded-lg border-2 border-foreground/30 bg-muted/50 p-3 font-mono text-xs">
                 <code className="text-foreground">{markdownCode}</code>
               </pre>
               {svg && (
@@ -581,21 +587,27 @@ export default function SvgViewPage() {
                 title={t("url.title")}
                 action={
                   <span className="flex items-center gap-1">
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={handleCopyUrl}>
+                    <button
+                      type="button"
+                      className={cn(BUTTON_ICON, "h-8 w-8")}
+                      onClick={handleCopyUrl}
+                      aria-label={t("url.copyUrl")}
+                    >
                       <Copy className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 w-7 p-0"
-                      onClick={() => window.open(publicUrl, "_blank")}
+                    </button>
+                    <a
+                      href={publicUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(BUTTON_ICON, "h-8 w-8")}
+                      aria-label={t("url.open")}
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
-                    </Button>
+                    </a>
                   </span>
                 }
               >
-                <code className="block break-all rounded-lg border border-border/50 bg-muted/50 p-3 text-xs text-muted-foreground">
+                <code className="block break-all rounded-lg border-2 border-foreground/30 bg-muted/50 p-3 text-xs text-foreground">
                   {publicUrl}
                 </code>
               </PanelCard>
@@ -617,11 +629,17 @@ export default function SvgViewPage() {
                       <dd className="flex items-center gap-1">
                         {plugins.map((plugin) => {
                           const Icon = getPluginIcon(plugin)
+                          const category = (PLUGINS_METADATA as Record<string, { category?: PluginCategory }>)[plugin]
+                            ?.category
                           return Icon ? (
                             <span
                               key={plugin}
                               title={plugin}
-                              className="flex h-6 w-6 items-center justify-center rounded bg-muted text-muted-foreground"
+                              className={cn(
+                                TILE,
+                                "h-7 w-7 rounded-lg",
+                                category ? CATEGORY_STYLE[category].sticker : "bg-muted text-foreground"
+                              )}
                             >
                               <Icon className="h-3.5 w-3.5" />
                             </span>
@@ -631,7 +649,7 @@ export default function SvgViewPage() {
                     </div>
                   )}
                   {svg.lastGeneratedAt && (
-                    <div className="flex items-center justify-between gap-4 border-t border-border/50 pt-3">
+                    <div className="flex items-center justify-between gap-4 border-t-2 border-foreground/10 pt-3">
                       <dt className="text-xs uppercase tracking-wide text-muted-foreground">
                         {t("info.lastGenerated")}
                       </dt>
@@ -640,7 +658,7 @@ export default function SvgViewPage() {
                       </dd>
                     </div>
                   )}
-                  <div className="flex items-center justify-between gap-4 border-t border-border/50 pt-3">
+                  <div className="flex items-center justify-between gap-4 border-t-2 border-foreground/10 pt-3">
                     <dt className="text-xs uppercase tracking-wide text-muted-foreground">
                       {tEmbed("nextRefresh.label")}
                     </dt>
@@ -663,7 +681,7 @@ export default function SvgViewPage() {
                         : tEmbed("nextRefresh.paused")}
                     </dd>
                   </div>
-                  <div className="flex items-center justify-between gap-4 border-t border-border/50 pt-3">
+                  <div className="flex items-center justify-between gap-4 border-t-2 border-foreground/10 pt-3">
                     <dt className="text-xs uppercase tracking-wide text-muted-foreground">{t("info.createdAt")}</dt>
                     <dd className="text-xs text-foreground" title={new Date(svg.createdAt).toLocaleString()}>
                       {formatRelative(svg.createdAt, locale)}

@@ -28,27 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import { barContainer, type ContentWidth } from "./page-width"
 import { LanguageSwitch, PreferencesMenu, ThemeSwitch } from "./preferences"
-
-interface HeaderProps {
-  className?: string
-  variant?: "home" | "dashboard"
-  /** Contextual content for the dashboard variant - each route supplies its own. */
-  title?: ReactNode
-  description?: ReactNode
-  actions?: ReactNode
-  /**
-   * Largura do conteúdo da rota. O header alinha com ela; sem isto o título fica
-   * numa coluna e a página em outra. Ver page-width.ts.
-   */
-  width?: ContentWidth
-  /**
-   * Controle que precede o título (ex: voltar). Fica FORA do <h1>: heading com
-   * botão dentro é lido pelo leitor de tela como parte do título da página.
-   */
-  leading?: ReactNode
-}
 
 const REPO = "https://github.com/LucasHenriqueDiniz/WeebProfile"
 /** The bar's height. The hero sizes itself to the first screen minus this (min-h-[calc(100svh-4rem)]). */
@@ -142,41 +122,12 @@ function UserAvatar({ src, name }: { src: string | null; name: string }) {
   )
 }
 
-export function Header({ className, variant, title, description, actions, width = "app", leading }: HeaderProps) {
-  const pathname = usePathname()
-  const detectedVariant = variant ?? (pathname?.startsWith("/dashboard") ? "dashboard" : "home")
-
-  if (detectedVariant === "home") return <SiteHeader className={className} />
-
-  // Dashboard variant - contextual per route: each page supplies title/description/actions
-  // instead of the header being a fixed, mostly-empty bar. Sidebar-toggle and identity live
-  // in the sidebar now, not here - this bar's only job is "what am I looking at, what can I
-  // do about it".
-  return (
-    <header className={cn("sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-xl", className)}>
-      {/* Mesma calha do conteúdo da rota, sem herdar o limite de largura dele: as
-          ações precisam chegar na borda direita. Ver barContainer em page-width.ts. */}
-      <div className={cn(barContainer(width), "flex min-h-16 items-center justify-between gap-4 py-3")}>
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          {leading}
-          {/* O bloco de texto é que trunca, não o <h1> sozinho: com `leading` ao lado,
-              truncar no h1 deixava a descrição alinhada na borda do container enquanto
-              o título começava depois do botão. */}
-          <div className="min-w-0">
-            {title && <h1 className="font-heading text-lg md:text-xl font-bold text-foreground truncate">{title}</h1>}
-            {description && <p className="text-xs md:text-sm text-muted-foreground truncate mt-0.5">{description}</p>}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {actions}
-          <div className="hidden md:flex items-center pl-2 ml-1 border-l border-border">
-            <PreferencesMenu tone="theme" />
-          </div>
-        </div>
-      </div>
-    </header>
-  )
+/**
+ * The site's header. The signed-in app has its own navigation (components/dashboard:
+ * the rail, the tab bar and the page heading), so this is only the public site's bar.
+ */
+export function Header({ className }: { className?: string }) {
+  return <SiteHeader className={className} />
 }
 
 /**

@@ -111,3 +111,13 @@ export function selectMissingConfigs(
     (item, index, self) => index === self.findIndex((t) => t.plugin === item.plugin && t.field === item.field)
   )
 }
+
+/**
+ * Whether the store holds a new card worth offering to resume: something turned on, and
+ * not a saved card loaded by the edit page (continuing that one would create a copy).
+ */
+export function selectHasResumableDraft(state: SelectorState & Pick<WizardState, "editingSvgId">): boolean {
+  if (state.editingSvgId) return false
+  const enabled = Object.values(state.plugins).some((plugin) => plugin?.enabled)
+  return enabled || state.pluginsOrder.length > 0
+}

@@ -139,7 +139,7 @@ export function StyleConfiguration({
         : themesFromPlugins[name]?.["--default-color-highlight"]
 
   return (
-    <div className="divide-y divide-border/60">
+    <div className="divide-y-2 divide-foreground/10">
       {/* Style selector */}
       <div className="py-4 first:pt-0 space-y-2.5">
         <p className="text-sm font-semibold text-foreground">{t("title")}</p>
@@ -156,7 +156,7 @@ export function StyleConfiguration({
                 checked={style === s}
                 onChange={() => setStyle(s as "default" | "terminal")}
               />
-              <div className="rounded-md border border-border px-3 py-2 text-center peer-checked:border-primary peer-checked:bg-primary/10 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background transition-all">
+              <div className="rounded-lg border-2 border-foreground/25 px-3 py-2 text-center transition-all hover:border-foreground/60 peer-checked:border-foreground peer-checked:bg-foreground peer-checked:text-background peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background">
                 <span className="text-sm font-medium capitalize">{t(`options.${s}`)}</span>
               </div>
             </label>
@@ -176,10 +176,10 @@ export function StyleConfiguration({
               key={t}
               onClick={() => setTheme(t)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium capitalize transition-all",
+                "flex items-center gap-1.5 rounded-full border-2 px-3 py-1 text-xs font-semibold capitalize transition-all",
                 theme === t
-                  ? "border-primary/60 bg-primary/10 text-foreground ring-1 ring-primary/30"
-                  : "border-transparent bg-muted text-muted-foreground hover:bg-muted/80"
+                  ? "border-foreground bg-card text-foreground shadow-[2px_2px_0_0_hsl(var(--primary))]"
+                  : "border-foreground/20 bg-card text-muted-foreground hover:border-foreground/60 hover:text-foreground"
               )}
             >
               <span
@@ -208,7 +208,7 @@ export function StyleConfiguration({
                 checked={colorMode === mode}
                 onChange={() => setColorMode(mode)}
               />
-              <div className="rounded-md border border-border px-3 py-2 text-center peer-checked:border-primary peer-checked:bg-primary/10 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background transition-all">
+              <div className="rounded-lg border-2 border-foreground/25 px-3 py-2 text-center transition-all hover:border-foreground/60 peer-checked:border-foreground peer-checked:bg-foreground peer-checked:text-background peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background">
                 <span className="text-sm font-medium">
                   {mode === "auto" ? t("colorModeAuto") : t("colorModeFixed")}
                 </span>
