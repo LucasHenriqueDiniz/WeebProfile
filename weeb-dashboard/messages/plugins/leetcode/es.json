@@ -1,0 +1,75 @@
+{
+  "description": "Muestra tus problemas resueltos en LeetCode, habilidades, lenguajes y envíos recientes",
+  "displayName": "LeetCode",
+  "sections": {
+    "languages": {
+      "config": {
+        "languages_hide_title": {
+          "label": "Ocultar título"
+        },
+        "languages_max": {
+          "description": "Máximo 20 lenguajes",
+          "label": "Máximo de lenguajes"
+        },
+        "languages_title": {
+          "defaultValue": "Lenguajes en LeetCode",
+          "label": "Título"
+        }
+      },
+      "description": "Problemas resueltos por lenguaje de programación",
+      "name": "Lenguajes"
+    },
+    "recent": {
+      "config": {
+        "recent_hide_title": {
+          "label": "Ocultar título"
+        },
+        "recent_max": {
+          "description": "Máximo 20 envíos (LeetCode solo lista los últimos 20)",
+          "label": "Máximo de envíos"
+        },
+        "recent_title": {
+          "defaultValue": "Envíos Aceptados Recientes",
+          "label": "Título"
+        }
+      },
+      "description": "Tus últimos envíos aceptados",
+      "name": "Envíos Recientes"
+    },
+    "skills": {
+      "config": {
+        "skills_hide_title": {
+          "label": "Ocultar título"
+        },
+        "skills_ignored": {
+          "description": "Etiquetas separadas por comas para ocultar (ej.: 'Array, String')",
+          "label": "Habilidades ignoradas",
+          "tooltip": "No distingue mayúsculas. 'fundamental', 'intermediate' o 'advanced' oculta todas las etiquetas de ese nivel de LeetCode."
+        },
+        "skills_max": {
+          "description": "Máximo 30 habilidades",
+          "label": "Máximo de habilidades"
+        },
+        "skills_title": {
+          "defaultValue": "Habilidades en LeetCode",
+          "label": "Título"
+        }
+      },
+      "description": "Problemas resueltos por etiqueta de tema, del más resuelto al menos",
+      "name": "Habilidades"
+    },
+    "solved": {
+      "config": {
+        "solved_hide_title": {
+          "label": "Ocultar título"
+        },
+        "solved_title": {
+          "defaultValue": "Problemas Resueltos en LeetCode",
+          "label": "Título"
+        }
+      },
+      "description": "Problemas resueltos por dificultad, frente al total de LeetCode",
+      "name": "Problemas Resueltos"
+    }
+  }
+}

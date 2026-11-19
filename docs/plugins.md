@@ -3,7 +3,7 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 86 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 90 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
@@ -19,6 +19,7 @@ Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.de
 - [GitHub](#github)
 - [Repository](#github_repo)
 - [LastFM](#lastfm)
+- [LeetCode](#leetcode)
 - [Lyfta](#lyfta)
 - [MyAnimeList](#myanimelist)
 - [Stack Overflow](#stackoverflow)
@@ -705,6 +706,63 @@ Show your LastFM music statistics
     <tr>
       <td><code>top_tracks</code></td>
       <td><img src="../weeb-dashboard/public/previews/lastfm/terminal/top_tracks.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>LeetCode</b></summary>
+
+Show your LeetCode problems solved, skills, languages and recent submissions
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>solved</code></td>
+      <td><img src="../weeb-dashboard/public/previews/leetcode/default/solved.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>skills</code></td>
+      <td><img src="../weeb-dashboard/public/previews/leetcode/default/skills.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>languages</code></td>
+      <td><img src="../weeb-dashboard/public/previews/leetcode/default/languages.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>recent</code></td>
+      <td><img src="../weeb-dashboard/public/previews/leetcode/default/recent.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>solved</code></td>
+      <td><img src="../weeb-dashboard/public/previews/leetcode/terminal/solved.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>skills</code></td>
+      <td><img src="../weeb-dashboard/public/previews/leetcode/terminal/skills.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>languages</code></td>
+      <td><img src="../weeb-dashboard/public/previews/leetcode/terminal/languages.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>recent</code></td>
+      <td><img src="../weeb-dashboard/public/previews/leetcode/terminal/recent.svg" width="415"></td>
     </tr>
   </table>
 

@@ -1,0 +1,75 @@
+{
+  "description": "Show your LeetCode problems solved, skills, languages and recent submissions",
+  "displayName": "LeetCode",
+  "sections": {
+    "languages": {
+      "config": {
+        "languages_hide_title": {
+          "label": "Hide title"
+        },
+        "languages_max": {
+          "description": "Maximum 20 languages",
+          "label": "Maximum languages"
+        },
+        "languages_title": {
+          "defaultValue": "LeetCode Languages",
+          "label": "Title"
+        }
+      },
+      "description": "Problems solved per programming language",
+      "name": "Languages"
+    },
+    "recent": {
+      "config": {
+        "recent_hide_title": {
+          "label": "Hide title"
+        },
+        "recent_max": {
+          "description": "Maximum 20 submissions (LeetCode lists only the last 20)",
+          "label": "Maximum submissions"
+        },
+        "recent_title": {
+          "defaultValue": "Recent Accepted Submissions",
+          "label": "Title"
+        }
+      },
+      "description": "Your latest accepted submissions",
+      "name": "Recent Submissions"
+    },
+    "skills": {
+      "config": {
+        "skills_hide_title": {
+          "label": "Hide title"
+        },
+        "skills_ignored": {
+          "description": "Comma-separated tags to hide (e.g. 'Array, String')",
+          "label": "Ignored skills",
+          "tooltip": "Tags are matched without case. 'fundamental', 'intermediate' or 'advanced' hides every tag of that LeetCode level."
+        },
+        "skills_max": {
+          "description": "Maximum 30 skills",
+          "label": "Maximum skills"
+        },
+        "skills_title": {
+          "defaultValue": "LeetCode Skills",
+          "label": "Title"
+        }
+      },
+      "description": "Problems solved per topic tag, most solved first",
+      "name": "Skills"
+    },
+    "solved": {
+      "config": {
+        "solved_hide_title": {
+          "label": "Hide title"
+        },
+        "solved_title": {
+          "defaultValue": "LeetCode Problems Solved",
+          "label": "Title"
+        }
+      },
+      "description": "Problems solved by difficulty, against how many LeetCode has",
+      "name": "Problems Solved"
+    }
+  }
+}
