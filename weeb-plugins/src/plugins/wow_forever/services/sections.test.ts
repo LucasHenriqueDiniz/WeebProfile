@@ -41,10 +41,10 @@ const STATISTICS = {
 describe("mapJourney", () => {
   it("keeps the journey's order and leaves out what the character has no number for", () => {
     expect(mapJourney(STATISTICS)).toEqual([
-      { label: "Kills", value: 3415 },
-      { label: "Deaths", value: 43 },
-      { label: "Quests", value: 342 },
-      { label: "Dungeons", value: 8 },
+      { key: "kills", label: "Kills", value: 3415 },
+      { key: "deaths", label: "Deaths", value: 43 },
+      { key: "quests", label: "Quests", value: 342 },
+      { key: "dungeons", label: "Dungeons", value: 8 },
     ])
   })
 })

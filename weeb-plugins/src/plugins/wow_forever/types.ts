@@ -43,6 +43,11 @@ export interface WowForeverOptions {
   achievements_max?: number
   collection_title?: string
   collection_hide_title?: boolean
+  /** Names to leave out, compared without case. */
+  professions_hide?: string[]
+  reputations_hide?: string[]
+  /** `journey_show_<key>`, `stats_show_<key>`, `equipment_show_<slot>`: see options.ts. */
+  [key: `${string}_show_${string}`]: boolean | undefined
 }
 
 export interface WowForeverNonEssentialConfig extends NonEssentialPluginConfig, WowForeverOptions {}
@@ -69,6 +74,8 @@ export interface WowCharacter {
 }
 
 export interface WowItem {
+  /** The API's slot type ("HEAD", "FINGER_1"): what the per-slot options name. */
+  slotType: string
   slot: string
   name: string
   quality: ItemQuality
@@ -109,6 +116,8 @@ export interface WowCollection {
 }
 
 export interface WowStat {
+  /** Stable id ("kills", "health"): what the per-field options name. */
+  key: string
   label: string
   value: number
 }

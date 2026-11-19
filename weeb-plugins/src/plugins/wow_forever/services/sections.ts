@@ -40,21 +40,25 @@ function flatten(
  * The lifetime numbers, in this order, by the statistic's English name (the API is asked
  * for en_US). Statistics the character has no entry for yet are left out.
  */
-const JOURNEY: Array<[label: string, statistic: string]> = [
-  ["Kills", "Total kills"],
-  ["Deaths", "Total deaths"],
-  ["Quests", "Quests completed"],
-  ["Dungeons", "Total 5-player dungeons entered"],
-  ["Killing blows", "Total Killing Blows"],
-  ["Flight paths", "Flight paths taken"],
-  ["Hearthstones", "Number of times hearthed"],
-  ["Duels won", "Duels won"],
+export const JOURNEY: Array<[key: string, label: string, statistic: string]> = [
+  ["kills", "Kills", "Total kills"],
+  ["deaths", "Deaths", "Total deaths"],
+  ["quests", "Quests", "Quests completed"],
+  ["dungeons", "Dungeons", "Total 5-player dungeons entered"],
+  ["killing_blows", "Killing blows", "Total Killing Blows"],
+  ["flight_paths", "Flight paths", "Flight paths taken"],
+  ["hearthstones", "Hearthstones", "Number of times hearthed"],
+  ["duels_won", "Duels won", "Duels won"],
 ]
 
 export function mapJourney(response: AchievementStatisticsResponse): WowStat[] {
   const byName = new Map<string, number>()
   for (const s of flatten(response.categories)) if (!byName.has(s.name)) byName.set(s.name, s.quantity)
-  return JOURNEY.filter(([, name]) => byName.has(name)).map(([label, name]) => ({ label, value: byName.get(name)! }))
+  return JOURNEY.filter(([, , name]) => byName.has(name)).map(([key, label, name]) => ({
+    key,
+    label,
+    value: byName.get(name)!,
+  }))
 }
 
 /** "Edwin VanCleef Kills (Deadmines)", "Bazzalan kills (Ragefire Chasm)". */
