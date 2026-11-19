@@ -38,6 +38,9 @@ export interface Env {
   // Application-owned provider credential -- see db/app-credentials.ts. Optional
   // so a deployment without it simply has no Steam data rather than failing.
   STEAM_API_KEY?: string
+  // Battle.net client for WoW Forever (client credentials), same model as STEAM_API_KEY.
+  BATTLENET_CLIENT_ID?: string
+  BATTLENET_CLIENT_SECRET?: string
   // Read-only token used only for public previews -- see previewCredentials in
   // db/app-credentials.ts. Without it a GitHub preview reports the PAT as missing.
   GITHUB_PREVIEW_TOKEN?: string

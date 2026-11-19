@@ -919,7 +919,8 @@
         "websites": "Tus sitios web, con una miniatura de cada página.",
         "anilist": "Estadísticas de anime y manga, favoritos y lo que estás viendo.",
         "devto": "Tu perfil, artículos recientes y las etiquetas que más usas.",
-        "about": "Una presentación al estilo neofetch y badges de enlace, a partir de lo que escribes."
+        "about": "Una presentación al estilo neofetch y badges de enlace, a partir de lo que escribes.",
+        "wow_forever": "Tu personaje de WoW Forever: render, equipo y atributos."
       },
       "all": "Todos",
       "filter": "Filtrar por categoría"

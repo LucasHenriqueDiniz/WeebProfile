@@ -4621,6 +4621,199 @@ export const PLUGINS_METADATA = {
       "websites_variant": "grid"
     },
   },
+
+  wow_forever: {
+    name: "wow_forever",
+    displayName: "WoW Forever",
+    description: "Show your World of Warcraft: Forever character, its gear and attributes",
+    category: "gaming",
+    icon: "Swords",
+    requiredFields: ["character","region"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "character",
+        name: "Character",
+        description: "Your character's render, level, race, class, guild and item level",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.character.name",
+          description: "plugins.wow_forever.sections.character.description"
+        },
+        configOptions: [
+        {
+          key: "character",
+          label: "Character",
+          type: "string",
+          defaultValue: "",
+          description: "Name and surname, or the character's armory link",
+          placeholder: "Anduin Wrynn",
+          required: true,
+          tooltip: "Forever characters have no realm: the name and the surname identify one per region. Blizzard shows a character from level 10, after it logs out, and draws its picture some hours later.",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character.label",
+            description: "plugins.wow_forever.sections.character.config.character.description",
+            tooltip: "plugins.wow_forever.sections.character.config.character.tooltip",
+            placeholder: "plugins.wow_forever.sections.character.config.character.placeholder"
+          }
+        },
+        {
+          key: "region",
+          label: "Region",
+          type: "select",
+          defaultValue: "us",
+          description: "The region the character plays in. An armory link sets it on its own.",
+          required: true,
+          options: [
+            { value: "us", label: "Americas (US)" },
+            { value: "eu", label: "Europe (EU)" },
+            { value: "kr", label: "Korea (KR)" },
+            { value: "tw", label: "Taiwan (TW)" }
+          ],
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.region.label",
+            description: "plugins.wow_forever.sections.character.config.region.description",
+            options: {
+              "us": "plugins.wow_forever.sections.character.config.region.options.us",
+              "eu": "plugins.wow_forever.sections.character.config.region.options.eu",
+              "kr": "plugins.wow_forever.sections.character.config.region.options.kr",
+              "tw": "plugins.wow_forever.sections.character.config.region.options.tw"
+            }
+          }
+        },
+        {
+          key: "character_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character_hide_title.label"
+          }
+        },
+        {
+          key: "character_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Character",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character_title.label",
+            defaultValue: "plugins.wow_forever.sections.character.config.character_title.defaultValue"
+          }
+        },
+        {
+          key: "character_image",
+          label: "Picture",
+          type: "select",
+          defaultValue: "render",
+          description: "The full-body render (about 300 KB in the card), the portrait (4 KB) or no picture",
+          options: [
+            { value: "render", label: "Full-body render" },
+            { value: "avatar", label: "Portrait" },
+            { value: "none", label: "None" }
+          ],
+          i18nKey: {
+            label: "plugins.wow_forever.sections.character.config.character_image.label",
+            description: "plugins.wow_forever.sections.character.config.character_image.description",
+            options: {
+              "render": "plugins.wow_forever.sections.character.config.character_image.options.render",
+              "avatar": "plugins.wow_forever.sections.character.config.character_image.options.avatar",
+              "none": "plugins.wow_forever.sections.character.config.character_image.options.none"
+            }
+          }
+        }
+        ]
+      },
+      {
+        id: "equipment",
+        name: "Equipment",
+        description: "The items the character wears, with their quality and item level",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.equipment.name",
+          description: "plugins.wow_forever.sections.equipment.description"
+        },
+        configOptions: [
+        {
+          key: "equipment_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_hide_title.label"
+          }
+        },
+        {
+          key: "equipment_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Equipment",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_title.label",
+            defaultValue: "plugins.wow_forever.sections.equipment.config.equipment_title.defaultValue"
+          }
+        },
+        {
+          key: "equipment_max",
+          label: "Maximum items",
+          type: "number",
+          defaultValue: 17,
+          min: 1,
+          max: 17,
+          description: "Items in slot order, from the head down to the weapons. Shirt, tabard and ammo are left out.",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_max.label",
+            description: "plugins.wow_forever.sections.equipment.config.equipment_max.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "stats",
+        name: "Attributes",
+        description: "Health, power, primary attributes and armor",
+        i18nKey: {
+          name: "plugins.wow_forever.sections.stats.name",
+          description: "plugins.wow_forever.sections.stats.description"
+        },
+        configOptions: [
+        {
+          key: "stats_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_hide_title.label"
+          }
+        },
+        {
+          key: "stats_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Attributes",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_title.label",
+            defaultValue: "plugins.wow_forever.sections.stats.config.stats_title.defaultValue"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.wow_forever.displayName",
+      description: "plugins.wow_forever.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "sections": [
+        "character",
+        "equipment",
+        "stats"
+      ],
+      "character": "Anduin Wrynn",
+      "region": "us"
+    },
+  },
 } as const satisfies Record<string, PluginMetadata>
 
 /**

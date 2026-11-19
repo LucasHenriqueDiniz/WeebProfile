@@ -1,0 +1,74 @@
+{
+  "description": "Show your World of Warcraft: Forever character, its gear and attributes",
+  "displayName": "WoW Forever",
+  "sections": {
+    "character": {
+      "config": {
+        "character": {
+          "description": "Name and surname, or the character's armory link",
+          "label": "Character",
+          "placeholder": "Anduin Wrynn",
+          "tooltip": "Forever characters have no realm: the name and the surname identify one per region. Blizzard shows a character from level 10, after it logs out, and draws its picture some hours later."
+        },
+        "character_hide_title": {
+          "label": "Hide title"
+        },
+        "character_image": {
+          "description": "The full-body render (about 300 KB in the card), the portrait (4 KB) or no picture",
+          "label": "Picture",
+          "options": {
+            "avatar": "Portrait",
+            "none": "None",
+            "render": "Full-body render"
+          }
+        },
+        "character_title": {
+          "defaultValue": "Character",
+          "label": "Title"
+        },
+        "region": {
+          "description": "The region the character plays in. An armory link sets it on its own.",
+          "label": "Region",
+          "options": {
+            "eu": "Europe (EU)",
+            "kr": "Korea (KR)",
+            "tw": "Taiwan (TW)",
+            "us": "Americas (US)"
+          }
+        }
+      },
+      "description": "Your character's render, level, race, class, guild and item level",
+      "name": "Character"
+    },
+    "equipment": {
+      "config": {
+        "equipment_hide_title": {
+          "label": "Hide title"
+        },
+        "equipment_max": {
+          "description": "Items in slot order, from the head down to the weapons. Shirt, tabard and ammo are left out.",
+          "label": "Maximum items"
+        },
+        "equipment_title": {
+          "defaultValue": "Equipment",
+          "label": "Title"
+        }
+      },
+      "description": "The items the character wears, with their quality and item level",
+      "name": "Equipment"
+    },
+    "stats": {
+      "config": {
+        "stats_hide_title": {
+          "label": "Hide title"
+        },
+        "stats_title": {
+          "defaultValue": "Attributes",
+          "label": "Title"
+        }
+      },
+      "description": "Health, power, primary attributes and armor",
+      "name": "Attributes"
+    }
+  }
+}

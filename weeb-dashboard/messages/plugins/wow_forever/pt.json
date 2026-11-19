@@ -1,0 +1,74 @@
+{
+  "description": "Mostre seu personagem de World of Warcraft: Forever, o equipamento e os atributos",
+  "displayName": "WoW Forever",
+  "sections": {
+    "character": {
+      "config": {
+        "character": {
+          "description": "Nome e sobrenome, ou o link do personagem no armory",
+          "label": "Personagem",
+          "placeholder": "Anduin Wrynn",
+          "tooltip": "Personagens do Forever não têm reino: o nome e o sobrenome identificam um por região. A Blizzard mostra o personagem a partir do nível 10, depois que ele desloga, e desenha a imagem algumas horas depois."
+        },
+        "character_hide_title": {
+          "label": "Ocultar título"
+        },
+        "character_image": {
+          "description": "O render de corpo inteiro (cerca de 300 KB no card), o retrato (4 KB) ou nenhuma imagem",
+          "label": "Imagem",
+          "options": {
+            "avatar": "Retrato",
+            "none": "Nenhuma",
+            "render": "Render de corpo inteiro"
+          }
+        },
+        "character_title": {
+          "defaultValue": "Personagem",
+          "label": "Título"
+        },
+        "region": {
+          "description": "A região em que o personagem joga. Um link do armory já define a região.",
+          "label": "Região",
+          "options": {
+            "eu": "Europa (EU)",
+            "kr": "Coreia (KR)",
+            "tw": "Taiwan (TW)",
+            "us": "Américas (US)"
+          }
+        }
+      },
+      "description": "Render, nível, raça, classe, guilda e item level do personagem",
+      "name": "Personagem"
+    },
+    "equipment": {
+      "config": {
+        "equipment_hide_title": {
+          "label": "Ocultar título"
+        },
+        "equipment_max": {
+          "description": "Itens na ordem dos slots, da cabeça até as armas. Camisa, tabardo e munição ficam de fora.",
+          "label": "Máximo de itens"
+        },
+        "equipment_title": {
+          "defaultValue": "Equipamento",
+          "label": "Título"
+        }
+      },
+      "description": "Os itens que o personagem usa, com qualidade e item level",
+      "name": "Equipamento"
+    },
+    "stats": {
+      "config": {
+        "stats_hide_title": {
+          "label": "Ocultar título"
+        },
+        "stats_title": {
+          "defaultValue": "Atributos",
+          "label": "Título"
+        }
+      },
+      "description": "Vida, recurso, atributos primários e armadura",
+      "name": "Atributos"
+    }
+  }
+}

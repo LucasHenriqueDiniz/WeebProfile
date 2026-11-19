@@ -9,7 +9,7 @@ import {
   SiMyanimelist,
   SiStackoverflow,
 } from "react-icons/si"
-import { GiWeightLiftingUp } from "react-icons/gi"
+import { GiCrossedSwords, GiWeightLiftingUp } from "react-icons/gi"
 import { GoRepo } from "react-icons/go"
 import type { ComponentType } from "react"
 
@@ -38,6 +38,7 @@ const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   github_repo: GoRepo,
   websites: FaGlobe,
   about: FaIdCard,
+  wow_forever: GiCrossedSwords,
 }
 
 /**
