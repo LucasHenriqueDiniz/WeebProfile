@@ -3,7 +3,7 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 73 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 76 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
@@ -24,6 +24,7 @@ Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.de
 - [Stack Overflow](#stackoverflow)
 - [Steam](#steam)
 - [Websites](#websites)
+- [WoW Forever](#wow_forever)
 
 ---
 
@@ -981,6 +982,55 @@ Showcase your own websites, with thumbnails pulled from each page
     <tr>
       <td><code>websites</code></td>
       <td><img src="../weeb-dashboard/public/previews/websites/terminal/websites.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>WoW Forever</b></summary>
+
+Show your World of Warcraft: Forever character, its gear and attributes
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>character</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/character.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>equipment</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/equipment.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>stats</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/default/stats.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>character</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/character.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>equipment</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/equipment.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>stats</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wow_forever/terminal/stats.svg" width="415"></td>
     </tr>
   </table>
 

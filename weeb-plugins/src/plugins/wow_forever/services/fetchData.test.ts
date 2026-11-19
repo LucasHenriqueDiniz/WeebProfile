@@ -50,19 +50,29 @@ beforeEach(() => clearTokenCache())
 afterEach(() => vi.unstubAllGlobals())
 
 describe("parseCharacterRef", () => {
+  const ALL = ["us", "eu", "kr", "tw"]
   it.each([
-    ["Liora Brightwater", "eu", { region: "eu", slug: "liora-brightwater" }],
-    ["  liora-brightwater ", "US", { region: "us", slug: "liora-brightwater" }],
-    ["Pröudmoore Önd", "kr", { region: "kr", slug: "pröudmoore-önd" }],
+    ["Liora Brightwater", "eu", { regions: ["eu"], slug: "liora-brightwater" }],
+    ["  liora-brightwater ", "US", { regions: ["us"], slug: "liora-brightwater" }],
+    ["Pröudmoore Önd", "kr", { regions: ["kr"], slug: "pröudmoore-önd" }],
+    // No region: every region, in order, as armories that take only the name do.
+    ["Liora Brightwater", undefined, { regions: ALL, slug: "liora-brightwater" }],
+    ["Liora Brightwater", "auto", { regions: ALL, slug: "liora-brightwater" }],
     [
       "https://worldofwarcraft.blizzard.com/en-gb/forever/eu/armory/character/judgement-judy",
       "us",
-      { region: "eu", slug: "judgement-judy" },
+      { regions: ["eu"], slug: "judgement-judy" },
     ],
     [
       "worldofwarcraft.blizzard.com/pt-br/forever/us/armory/character/p%C3%B6rt-kai/achievements",
       undefined,
-      { region: "us", slug: "pört-kai" },
+      { regions: ["us"], slug: "pört-kai" },
+    ],
+    ["https://wowforeverdata.com/armory/pequeno-ibuprofeno", "auto", { regions: ALL, slug: "pequeno-ibuprofeno" }],
+    [
+      "https://wowforeverdata.com/armory/pequeno-ibuprofeno?tab=pvp",
+      "us",
+      { regions: ["us"], slug: "pequeno-ibuprofeno" },
     ],
   ])("reads %j in %s", (character, region, expected) => {
     expect(parseCharacterRef(character, region)).toEqual(expected)
@@ -72,8 +82,8 @@ describe("parseCharacterRef", () => {
     ["", "us", /required/],
     ["Liora", "us", /name and the surname/],
     ["Liora Bright Water", "us", /name and the surname/],
+    ["https://wowforeverdata.com/armory/pequeno", "us", /name and the surname/],
     ["Liora Brightwater", "cn", /region must be one of/],
-    ["Liora Brightwater", undefined, /region must be one of/],
   ])("refuses %j in %s", (character, region, message) => {
     expect(() => parseCharacterRef(character, region)).toThrow(message)
   })
@@ -166,6 +176,27 @@ describe("fetchWowForeverData", () => {
     const data = await fetchWowForeverData(config(["character"]), false, CREDENTIALS)
     expect(data.image).toBeNull()
     expect(data.character.honorableKills).toBeNull()
+  })
+
+  it("searches the regions in order when none is set, and reads the rest where it found the character", async () => {
+    const calls = stubBattlenet({}, (url) => {
+      if (url.hostname === "kr.api.blizzard.com") {
+        if (url.pathname.endsWith("/liora-brightwater")) return Response.json(PROFILE)
+        if (url.pathname.endsWith("/equipment")) return Response.json({ equipped_items: [] })
+      }
+      return undefined
+    })
+    const data = await fetchWowForeverData(config(["equipment"], { region: "auto" }), false, CREDENTIALS)
+    const hosts = calls.filter((c) => c.url.includes("api.blizzard.com")).map((c) => new URL(c.url).hostname)
+    expect(hosts).toEqual(["us.api.blizzard.com", "eu.api.blizzard.com", "kr.api.blizzard.com", "kr.api.blizzard.com"])
+    expect(data.region).toBe("kr")
+  })
+
+  it("explains a character no region serves", async () => {
+    stubBattlenet({})
+    await expect(fetchWowForeverData(config(["character"], { region: "" }), false, CREDENTIALS)).rejects.toThrow(
+      /"liora-brightwater" was not found in any region/
+    )
   })
 
   it("explains a character the API does not serve", async () => {

@@ -5,7 +5,7 @@
     "character": {
       "config": {
         "character": {
-          "description": "Nombre y apellido, o el enlace del personaje en la armería",
+          "description": "Nombre y apellido, o el enlace del personaje en la armería (de Blizzard o de wowforeverdata.com)",
           "label": "Personaje",
           "placeholder": "Anduin Wrynn",
           "tooltip": "Los personajes de Forever no tienen reino: el nombre y el apellido identifican a uno por región. Blizzard muestra el personaje desde el nivel 10, después de que cierra sesión, y dibuja su imagen unas horas más tarde."
@@ -27,9 +27,10 @@
           "label": "Título"
         },
         "region": {
-          "description": "La región en la que juega el personaje. Un enlace de la armería ya la define.",
+          "description": "La región en la que juega el personaje. Cualquier región busca en las cuatro; el enlace de la armería de Blizzard ya la define.",
           "label": "Región",
           "options": {
+            "auto": "Cualquier región",
             "eu": "Europa (EU)",
             "kr": "Corea (KR)",
             "tw": "Taiwán (TW)",

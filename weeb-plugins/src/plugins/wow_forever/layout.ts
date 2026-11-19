@@ -84,11 +84,12 @@ export function characterMetrics(style: Style, size: Size): CharacterMetrics {
 }
 
 /**
- * Where the character stands in the 1600x1200 render, with some room around: renders put
- * the feet near y 975 and the head near y 420 for a human; taller races reach higher.
- * The frame shows this window, scaled to its width.
+ * Where the character stands in the 1600x1200 render, with some room around. Blizzard
+ * scales each race to about the same size: the feet end near y 975, the head starts near
+ * y 420 for a human and 484 for a gnome (x 632-894 and 640-980, weapon included). The
+ * frame shows this window's height, centered on its middle.
  */
-export const RENDER_CROP = { x: 480, y: 290, width: 640, height: 720 } as const
+export const RENDER_CROP = { x: 480, y: 350, width: 640, height: 650 } as const
 export const RENDER_SOURCE = { width: 1600, height: 1200 } as const
 
 export interface CharacterField {

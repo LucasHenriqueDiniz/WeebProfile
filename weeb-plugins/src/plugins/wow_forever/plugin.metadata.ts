@@ -13,8 +13,9 @@ export const wowForeverPluginMetadata = {
   category: "gaming" as const,
   icon: "Swords",
   // The character is public: name and surname, unique per region. The Battle.net client
-  // that reads it belongs to the application, so nothing here is a user secret.
-  requiredFields: ["character", "region"],
+  // that reads it belongs to the application, so nothing here is a user secret. The region
+  // is optional: without it every region is searched.
+  requiredFields: ["character"],
   essentialConfigKeys: [],
   essentialConfigKeysMetadata: [],
   sections: [
@@ -29,7 +30,7 @@ export const wowForeverPluginMetadata = {
           type: "string" as const,
           defaultValue: "",
           placeholder: "Anduin Wrynn",
-          description: "Name and surname, or the character's armory link",
+          description: "Name and surname, or the character's armory link (Blizzard's or wowforeverdata.com)",
           required: true,
           helpUrl: "https://worldofwarcraft.blizzard.com/en-us/forever/us/armory",
           tooltip:
@@ -39,10 +40,11 @@ export const wowForeverPluginMetadata = {
           key: "region",
           label: "Region",
           type: "select" as const,
-          defaultValue: "us",
-          required: true,
-          description: "The region the character plays in. An armory link sets it on its own.",
+          defaultValue: "auto",
+          description:
+            "The region the character plays in. Any region searches all four; Blizzard's armory link sets it on its own.",
           options: [
+            { value: "auto", label: "Any region" },
             { value: "us", label: "Americas (US)" },
             { value: "eu", label: "Europe (EU)" },
             { value: "kr", label: "Korea (KR)" },
@@ -127,6 +129,5 @@ export const wowForeverPluginMetadata = {
     enabled: true,
     sections: ["character", "equipment", "stats"],
     character: "Anduin Wrynn",
-    region: "us",
   },
 }

@@ -4628,7 +4628,7 @@ export const PLUGINS_METADATA = {
     description: "Show your World of Warcraft: Forever character, its gear and attributes",
     category: "gaming",
     icon: "Swords",
-    requiredFields: ["character","region"],
+    requiredFields: ["character"],
     essentialConfigKeys: [],
     essentialConfigKeysMetadata: [
 
@@ -4648,7 +4648,7 @@ export const PLUGINS_METADATA = {
           label: "Character",
           type: "string",
           defaultValue: "",
-          description: "Name and surname, or the character's armory link",
+          description: "Name and surname, or the character's armory link (Blizzard's or wowforeverdata.com)",
           placeholder: "Anduin Wrynn",
           required: true,
           tooltip: "Forever characters have no realm: the name and the surname identify one per region. Blizzard shows a character from level 10, after it logs out, and draws its picture some hours later.",
@@ -4663,10 +4663,10 @@ export const PLUGINS_METADATA = {
           key: "region",
           label: "Region",
           type: "select",
-          defaultValue: "us",
-          description: "The region the character plays in. An armory link sets it on its own.",
-          required: true,
+          defaultValue: "auto",
+          description: "The region the character plays in. Any region searches all four; Blizzard's armory link sets it on its own.",
           options: [
+            { value: "auto", label: "Any region" },
             { value: "us", label: "Americas (US)" },
             { value: "eu", label: "Europe (EU)" },
             { value: "kr", label: "Korea (KR)" },
@@ -4676,6 +4676,7 @@ export const PLUGINS_METADATA = {
             label: "plugins.wow_forever.sections.character.config.region.label",
             description: "plugins.wow_forever.sections.character.config.region.description",
             options: {
+              "auto": "plugins.wow_forever.sections.character.config.region.options.auto",
               "us": "plugins.wow_forever.sections.character.config.region.options.us",
               "eu": "plugins.wow_forever.sections.character.config.region.options.eu",
               "kr": "plugins.wow_forever.sections.character.config.region.options.kr",
@@ -4810,8 +4811,7 @@ export const PLUGINS_METADATA = {
         "equipment",
         "stats"
       ],
-      "character": "Anduin Wrynn",
-      "region": "us"
+      "character": "Anduin Wrynn"
     },
   },
 } as const satisfies Record<string, PluginMetadata>

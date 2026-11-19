@@ -1,55 +1,56 @@
 import type { WowForeverData } from "../types"
 
 /**
- * A made-up level 60 paladin in pre-raid gear. The pictures come from Blizzard's render
- * server: the generic portrait it serves when a character has none (human male), and a
- * full-body render.
+ * The project owner's character, as the API served it on 19/11/2026 (Pequeno Ibuprofeno,
+ * US): a level 31 gnome priest in leveling gear, no guild yet. The pictures are its own
+ * renders on Blizzard's server, embedded by a dev render as production does; they follow
+ * the character's current look.
  */
-export const MOCK_AVATAR_URL = "https://render.worldofwarcraft.com/shadow/avatar/1-0.jpg"
-export const MOCK_RENDER_URL = "https://render.worldofwarcraft.com/shadow/avatar/1-0.jpg"
+export const MOCK_AVATAR_URL = "https://render.worldofwarcraft.com/forever-us/character/199/46305479-avatar.jpg"
+export const MOCK_RENDER_URL = "https://render.worldofwarcraft.com/forever-us/character/199/46305479-main-raw.png"
 
 export const MOCK_DATA: WowForeverData = {
   region: "us",
-  slug: "liora-brightwater",
+  slug: "pequeno-ibuprofeno",
   character: {
-    name: "Liora",
-    surname: "Brightwater",
-    level: 60,
-    race: "Human",
-    className: "Paladin",
+    name: "Pequeno",
+    surname: "Ibuprofeno",
+    level: 31,
+    race: "Gnome",
+    className: "Priest",
     faction: "Alliance",
-    guild: "Ashen Vanguard",
+    guild: null,
     ruleset: "Normal",
-    averageItemLevel: 63,
-    honorableKills: 1284,
+    averageItemLevel: 26,
+    honorableKills: 0,
   },
   image: null,
+  // In the API's order: by inventory slot, head to ranged. The shirt is left out, as fetchData does.
   equipment: [
-    { slot: "Head", name: "Lionheart Helm", quality: "EPIC", itemLevel: 63 },
-    { slot: "Neck", name: "Mark of Fordring", quality: "RARE", itemLevel: 63 },
-    { slot: "Shoulders", name: "Truestrike Shoulders", quality: "RARE", itemLevel: 63 },
-    { slot: "Back", name: "Cape of the Black Baron", quality: "RARE", itemLevel: 63 },
-    { slot: "Chest", name: "Savage Gladiator Chain", quality: "EPIC", itemLevel: 63 },
-    { slot: "Wrist", name: "Wristguards of Stability", quality: "RARE", itemLevel: 61 },
-    { slot: "Hands", name: "Gauntlets of Might", quality: "EPIC", itemLevel: 66 },
-    { slot: "Waist", name: "Onslaught Girdle", quality: "EPIC", itemLevel: 71 },
-    { slot: "Legs", name: "Legplates of Might", quality: "EPIC", itemLevel: 66 },
-    { slot: "Feet", name: "Battlechaser's Greaves", quality: "RARE", itemLevel: 61 },
-    { slot: "Finger 1", name: "Don Julio's Band", quality: "RARE", itemLevel: 65 },
-    { slot: "Finger 2", name: "Blackstone Ring", quality: "RARE", itemLevel: 63 },
-    { slot: "Trinket 1", name: "Blackhand's Breadth", quality: "RARE", itemLevel: 63 },
-    { slot: "Trinket 2", name: "Hand of Justice", quality: "RARE", itemLevel: 58 },
-    { slot: "Main Hand", name: "Arcanite Reaper", quality: "EPIC", itemLevel: 63 },
-    { slot: "Ranged", name: "Libram of Truth", quality: "UNCOMMON", itemLevel: 54 },
+    { slot: "Head", name: "Enchanter's Cowl", quality: "UNCOMMON", itemLevel: 33 },
+    { slot: "Neck", name: "Sorcerer Collar", quality: "RARE", itemLevel: 22 },
+    { slot: "Shoulders", name: "Mantle of Honor", quality: "UNCOMMON", itemLevel: 35 },
+    { slot: "Chest", name: "Green Silk Armor", quality: "UNCOMMON", itemLevel: 33 },
+    { slot: "Waist", name: "Ivycloth Sash of the Elder", quality: "UNCOMMON", itemLevel: 26 },
+    { slot: "Legs", name: "Magistrate's Pantaloons", quality: "RARE", itemLevel: 29 },
+    { slot: "Feet", name: "Spidersilk Boots", quality: "RARE", itemLevel: 25 },
+    { slot: "Wrist", name: "Bridgebreaker Bindings", quality: "RARE", itemLevel: 29 },
+    { slot: "Hands", name: "Ivycloth Gloves of the Prophet", quality: "UNCOMMON", itemLevel: 26 },
+    { slot: "Ring 1", name: "Seal of Wrynn", quality: "RARE", itemLevel: 31 },
+    { slot: "Ring 2", name: "Ring of Forlorn Spirits", quality: "UNCOMMON", itemLevel: 35 },
+    { slot: "Trinket 1", name: "Worgenbane Talisman", quality: "RARE", itemLevel: 26 },
+    { slot: "Back", name: "Vital Cape of Healing", quality: "UNCOMMON", itemLevel: 32 },
+    { slot: "Main Hand", name: "Staff of Westfall", quality: "RARE", itemLevel: 24 },
+    { slot: "Ranged", name: "Consecrated Wand", quality: "UNCOMMON", itemLevel: 30 },
   ],
   stats: [
-    { label: "Health", value: 4912 },
-    { label: "Mana", value: 3210 },
-    { label: "Strength", value: 312 },
-    { label: "Agility", value: 128 },
-    { label: "Stamina", value: 296 },
-    { label: "Intellect", value: 141 },
-    { label: "Spirit", value: 118 },
-    { label: "Armor", value: 5644 },
+    { label: "Health", value: 727 },
+    { label: "Mana", value: 2751 },
+    { label: "Strength", value: 24 },
+    { label: "Agility", value: 34 },
+    { label: "Stamina", value: 49 },
+    { label: "Intellect", value: 149 },
+    { label: "Spirit", value: 91 },
+    { label: "Armor", value: 408 },
   ],
 }

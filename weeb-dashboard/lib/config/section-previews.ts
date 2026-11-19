@@ -130,6 +130,12 @@ export const SECTION_PREVIEWS: Record<
   websites: {
     websites: { default: [415, 481], terminal: [415, 152] },
   },
+
+  wow_forever: {
+    character: { default: [415, 232], terminal: [415, 244] },
+    equipment: { default: [415, 432], terminal: [415, 364] },
+    stats: { default: [415, 176], terminal: [415, 144] },
+  },
 }
 
 export function getSectionPreview(plugin: string, section: string, style: "default" | "terminal" = "default"): string | null {

@@ -5,7 +5,7 @@
     "character": {
       "config": {
         "character": {
-          "description": "Name and surname, or the character's armory link",
+          "description": "Name and surname, or the character's armory link (Blizzard's or wowforeverdata.com)",
           "label": "Character",
           "placeholder": "Anduin Wrynn",
           "tooltip": "Forever characters have no realm: the name and the surname identify one per region. Blizzard shows a character from level 10, after it logs out, and draws its picture some hours later."
@@ -27,9 +27,10 @@
           "label": "Title"
         },
         "region": {
-          "description": "The region the character plays in. An armory link sets it on its own.",
+          "description": "The region the character plays in. Any region searches all four; Blizzard's armory link sets it on its own.",
           "label": "Region",
           "options": {
+            "auto": "Any region",
             "eu": "Europe (EU)",
             "kr": "Korea (KR)",
             "tw": "Taiwan (TW)",

@@ -11,6 +11,7 @@ import type {
   WowForeverConfig,
   WowForeverData,
   WowItem,
+  WowRegion,
   WowStat,
 } from "../types"
 import { NotServedError, getCharacter, type BattlenetCredentials } from "./battlenet"
@@ -178,18 +179,28 @@ export async function fetchWowForeverData(
     throw new Error("WoW Forever is unavailable: the server has no Battle.net client configured.")
   }
   const credentials: BattlenetCredentials = { clientId, clientSecret }
-  const get = <T>(route = ""): Promise<T> => getCharacter<T>(credentials, ref.region, ref.slug, route)
 
-  const [profile, media, pvp, equipment, statistics] = await Promise.all([
-    get<ProfileResponse>().catch((error) => {
-      if (error instanceof NotServedError) {
-        throw new Error(
-          `WoW Forever character "${ref.slug}" was not found in ${ref.region.toUpperCase()}. ` +
-            "Blizzard only serves a character from level 10, after it logs out."
-        )
-      }
-      throw error
-    }),
+  // The profile first, region by region when the user did not pick one: names are unique
+  // per region, so the first region that serves it is the character.
+  let found: { region: WowRegion; profile: ProfileResponse } | null = null
+  for (const region of ref.regions) {
+    const profile = await optional(getCharacter<ProfileResponse>(credentials, region, ref.slug))
+    if (profile) {
+      found = { region, profile }
+      break
+    }
+  }
+  if (!found) {
+    const where = ref.regions.length === 1 ? ref.regions[0]!.toUpperCase() : "any region"
+    throw new Error(
+      `WoW Forever character "${ref.slug}" was not found in ${where}. ` +
+        "Blizzard only serves a character from level 10, after it logs out."
+    )
+  }
+  const { region, profile } = found
+  const get = <T>(route: string): Promise<T> => getCharacter<T>(credentials, region, ref.slug, route)
+
+  const [media, pvp, equipment, statistics] = await Promise.all([
     // Media lags the profile by hours after a character first appears: no picture yet.
     wantsImage ? optional(get<MediaResponse>("/character-media")) : null,
     sections.includes("character") ? optional(get<PvpSummaryResponse>("/pvp-summary")) : null,
@@ -198,7 +209,7 @@ export async function fetchWowForeverData(
   ])
 
   return {
-    region: ref.region,
+    region,
     slug: ref.slug,
     character: mapCharacter(profile, pvp),
     image: wantsImage ? await embedImage(media, imageKind) : null,
