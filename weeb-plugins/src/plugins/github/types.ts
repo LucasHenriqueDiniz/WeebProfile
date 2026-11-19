@@ -89,6 +89,13 @@ export interface GithubConfig {
   repository_contributors_title?: string
   repository_contributors_repository?: string
   repository_contributors_max?: number
+  lines_hide_title?: boolean
+  lines_title?: string
+  lines_hide_history?: boolean
+  lines_chart_type?: "area" | "bars"
+  lines_history_period?: "6_months" | "1_year" | "2_years"
+  lines_repositories_shown?: number
+  lines_repositories_max?: number
 }
 
 export interface GithubData {
@@ -355,4 +362,20 @@ export interface GithubData {
     avatarUrl: string | null
     contributions: number
   }>
+  /** Lines added and deleted by the user, from each repository's contributor statistics. */
+  lines?: {
+    /** All time, in the repositories GitHub answered for. */
+    added: number
+    deleted: number
+    /** The last 104 weeks (Sunday, UTC), oldest first, the empty ones too. */
+    weeks: Array<{ date: string; added: number; deleted: number }>
+    /** The repositories with lines of the user, the most changed first. */
+    repositories: Array<{ name: string; added: number; deleted: number }>
+    /** Repositories asked. */
+    queried: number
+    /** Still 202 after the retries: GitHub was computing them. */
+    pending: number
+    /** 10,000 commits or more: GitHub counts no line there. */
+    tooLarge: number
+  }
 }

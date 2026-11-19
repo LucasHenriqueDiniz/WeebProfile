@@ -3,7 +3,7 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 83 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 85 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
@@ -384,6 +384,10 @@ Show your GitHub statistics
       <td><img src="../weeb-dashboard/public/previews/github/default/activity.svg" width="415"></td>
     </tr>
     <tr>
+      <td><code>followup</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github/default/followup.svg" width="415"></td>
+    </tr>
+    <tr>
       <td><code>repositories</code></td>
       <td><img src="../weeb-dashboard/public/previews/github/default/repositories.svg" width="415"></td>
     </tr>
@@ -402,6 +406,10 @@ Show your GitHub statistics
     <tr>
       <td><code>code_habits</code></td>
       <td><img src="../weeb-dashboard/public/previews/github/default/code_habits.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>lines</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github/default/lines.svg" width="415"></td>
     </tr>
     <tr>
       <td><code>starred_repositories</code></td>
@@ -473,6 +481,10 @@ Show your GitHub statistics
       <td><img src="../weeb-dashboard/public/previews/github/terminal/activity.svg" width="415"></td>
     </tr>
     <tr>
+      <td><code>followup</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github/terminal/followup.svg" width="415"></td>
+    </tr>
+    <tr>
       <td><code>repositories</code></td>
       <td><img src="../weeb-dashboard/public/previews/github/terminal/repositories.svg" width="415"></td>
     </tr>
@@ -491,6 +503,10 @@ Show your GitHub statistics
     <tr>
       <td><code>code_habits</code></td>
       <td><img src="../weeb-dashboard/public/previews/github/terminal/code_habits.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>lines</code></td>
+      <td><img src="../weeb-dashboard/public/previews/github/terminal/lines.svg" width="415"></td>
     </tr>
     <tr>
       <td><code>starred_repositories</code></td>
