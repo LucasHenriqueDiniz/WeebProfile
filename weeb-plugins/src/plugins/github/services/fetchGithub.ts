@@ -360,6 +360,13 @@ export async function fetchGithubData(
           continue
         }
 
+        // The calendar asks GitHub for its own ranges. Through the generic query below it first
+        // asked for the default year without a range, and threw the answer away.
+        if (section === "calendar") {
+          await processCalendarData(graphqlClient, username, config, data)
+          continue
+        }
+
         if (section === "isocalendar") {
           data.isocalendar = await fetchIsocalendar(graphqlClient, username, config, data.calendar)
           continue
@@ -452,10 +459,6 @@ export async function fetchGithubData(
 
           case "activity":
             data.activity = processActivityData(result)
-            break
-
-          case "calendar":
-            await processCalendarData(graphqlClient, username, config, data)
             break
 
           case "starred_repositories":

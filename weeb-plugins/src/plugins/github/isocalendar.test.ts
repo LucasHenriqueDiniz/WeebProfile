@@ -227,4 +227,25 @@ describe("fetchGithub isocalendar", () => {
     await github().fetchData(card(["calendar", "isocalendar"], options), false, { pat: "ghp_test" })
     expect(asked).toHaveLength(calendarOnly + 1)
   })
+
+  // The calendar went through the query every other section makes, without a range, before
+  // asking for its own: one request in two thrown away.
+  it.each([
+    ["current_year", [{ from: "2026-01-01T00:00:00.000Z", to: "2026-12-31T23:59:59.000Z" }]],
+    [
+      "full",
+      [
+        { from: "2026-01-01T00:00:00.000Z", to: "2026-12-31T23:59:59.000Z" },
+        { from: "2025-01-01T00:00:00.000Z", to: "2025-12-31T23:59:59.000Z" },
+      ],
+    ],
+    ["last_6_months", [{ from: "2026-05-19T00:00:00.000Z", to: "2026-11-19T15:00:00.000Z" }]],
+  ])("the calendar (%s) asks only for its own ranges", async (mode, ranges) => {
+    const options = { calendar_year_mode: mode, calendar_full_max_years: 2 }
+    const data = (await github().fetchData(card(["calendar"], options), false, {
+      pat: "ghp_test",
+    })) as unknown as GithubData
+    expect(asked).toEqual(ranges)
+    expect(data.calendar.weeks.length).toBeGreaterThan(0)
+  })
 })
