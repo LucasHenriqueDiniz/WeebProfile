@@ -3,7 +3,7 @@
   "displayName": "Repository",
   "essentialConfig": {
     "pat": {
-      "description": "Reutiliza el mismo token configurado en el plugin GitHub, si ya tienes uno. Un repositorio público no necesita scopes.",
+      "description": "Reutiliza el mismo token configurado en el plugin GitHub, si ya tienes uno. Un repositorio público no necesita scopes. La sección Tráfico necesita permiso de push en el repositorio y el scope 'repo'.",
       "label": "Token Clásico de GitHub",
       "placeholder": "ghp_..."
     }
@@ -336,6 +336,38 @@
       },
       "description": "Etiquetas de temas del repositorio",
       "name": "Temas"
+    },
+    "traffic": {
+      "config": {
+        "content_size": {
+          "label": "Tamaño",
+          "options": {
+            "lg": "Grande",
+            "md": "Mediano (predeterminado)",
+            "sm": "Pequeño",
+            "xl": "Extra grande"
+          },
+          "tooltip": "Escala juntos el tamaño de fuente, los íconos, el gráfico y el espaciado."
+        },
+        "traffic_max_items": {
+          "label": "Máximo de referentes y rutas",
+          "tooltip": "Filas que se muestran en cada lista."
+        },
+        "traffic_show_clones": {
+          "label": "Mostrar clones",
+          "tooltip": "Agrega los clones y los clonadores únicos de los últimos 14 días, con una barra por día."
+        },
+        "traffic_show_paths": {
+          "label": "Mostrar rutas más vistas",
+          "tooltip": "Las páginas del repositorio con más vistas (GitHub lista las 10 primeras)."
+        },
+        "traffic_show_referrers": {
+          "label": "Mostrar principales referentes",
+          "tooltip": "Los sitios que enviaron más vistas (GitHub lista los 10 primeros)."
+        }
+      },
+      "description": "Vistas y visitantes únicos por día en los últimos 14 días de GitHub. Solo funciona en repositorios donde la cuenta del token tiene permiso de push.",
+      "name": "Tráfico"
     }
   }
 }

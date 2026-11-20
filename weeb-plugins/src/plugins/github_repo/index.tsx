@@ -11,6 +11,7 @@ import type { EssentialPluginConfig } from "../shared/types/base"
 import { CONTENT_SIZE_SCALE, type GithubRepoConfig, type GithubRepoData } from "./types"
 import { bannerHeight } from "./banner-height"
 import { languagesHeight, overviewHeight, starGraphHeight, statsHeight, topicsHeight } from "./section-heights"
+import { trafficHeight } from "./traffic-height"
 import { RenderGithubRepo } from "./components/RenderGithubRepo"
 import { fetchGithubRepoData } from "./services/fetchGithubRepo"
 
@@ -59,6 +60,7 @@ export const githubRepoPlugin: Plugin<PluginConfig & GithubRepoConfig, PluginDat
     if (cfg.sections.includes("languages")) h += scaled(languagesHeight(cfg, repo, isTerminal, width, scale))
     if (cfg.sections.includes("topics")) h += scaled(topicsHeight(cfg, repo, isTerminal, width, scale))
     if (cfg.sections.includes("overview")) h += scaled(overviewHeight(repo, isTerminal, width, scale))
+    if (cfg.sections.includes("traffic")) h += scaled(trafficHeight(cfg, repo, isTerminal, size))
 
     if (isTerminal && h > 0) {
       // The terminal heights are the whole section: take back the 24px the PluginManager adds.

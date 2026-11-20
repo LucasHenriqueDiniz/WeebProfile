@@ -1,4 +1,13 @@
-import type { GithubRepoData } from "../types"
+import type { GithubRepoData, TrafficDay } from "../types"
+
+// Two weeks of a small repository's traffic, ending on a fixed day so previews and height
+// tests do not move: GitHub's window ends on yesterday (05/11 to 18/11 on 19/11/2026).
+const mockDays = (counts: number[], uniques: number[]): TrafficDay[] =>
+  counts.map((count, i) => ({
+    date: new Date(Date.UTC(2026, 10, 5 + i)).toISOString(),
+    count,
+    uniques: uniques[i] ?? 0,
+  }))
 
 // Avatar real do owner do repo mock, embutido em base64 (96px JPEG, ~3KB) - com
 // null aqui os previews caíam no fallback de iniciais e o banner parecia quebrado.
@@ -45,5 +54,46 @@ export async function getMockGithubRepoData(): Promise<GithubRepoData> {
       { date: "2024-11-14T00:00:00Z", count: 116 },
       { date: "2025-03-01T00:00:00Z", count: 128 },
     ],
+    traffic: {
+      views: {
+        count: 677,
+        uniques: 214,
+        days: mockDays(
+          [38, 52, 61, 47, 29, 18, 22, 74, 96, 81, 63, 58, 31, 7],
+          [14, 21, 25, 19, 11, 8, 9, 30, 41, 33, 24, 22, 12, 4]
+        ),
+      },
+      clones: {
+        count: 82,
+        uniques: 31,
+        days: mockDays([5, 8, 3, 12, 6, 2, 1, 9, 14, 7, 4, 6, 3, 2], [2, 3, 1, 4, 3, 1, 1, 4, 5, 3, 2, 3, 1, 1]),
+      },
+      referrers: [
+        { referrer: "github.com", count: 312, uniques: 98 },
+        { referrer: "Google", count: 104, uniques: 61 },
+        { referrer: "news.ycombinator.com", count: 58, uniques: 44 },
+        { referrer: "reddit.com", count: 33, uniques: 21 },
+        { referrer: "dev.to", count: 12, uniques: 9 },
+        { referrer: "t.co", count: 7, uniques: 5 },
+      ],
+      paths: [
+        { path: "/weebprofile/WeebProfile", title: "Overview", count: 401, uniques: 180 },
+        { path: "/weebprofile/WeebProfile/blob/main/README.md", title: "/blob/main/README.md", count: 88, uniques: 52 },
+        {
+          path: "/weebprofile/WeebProfile/tree/main/weeb-plugins",
+          title: "/tree/main/weeb-plugins",
+          count: 41,
+          uniques: 22,
+        },
+        { path: "/weebprofile/WeebProfile/issues", title: "/issues", count: 27, uniques: 15 },
+        { path: "/weebprofile/WeebProfile/releases", title: "/releases", count: 19, uniques: 12 },
+        {
+          path: "/weebprofile/WeebProfile/blob/main/docs/plugins.md",
+          title: "/blob/main/docs/plugins.md",
+          count: 11,
+          uniques: 8,
+        },
+      ],
+    },
   }
 }

@@ -3,7 +3,7 @@
   "displayName": "Repository",
   "essentialConfig": {
     "pat": {
-      "description": "Reaproveita o mesmo token configurado no plugin GitHub, se você já tiver um. Repositório público não precisa de escopo.",
+      "description": "Reaproveita o mesmo token configurado no plugin GitHub, se você já tiver um. Repositório público não precisa de escopo. A seção Tráfego precisa de permissão de push no repositório e do escopo 'repo'.",
       "label": "Token Clássico GitHub",
       "placeholder": "ghp_..."
     }
@@ -336,6 +336,38 @@
       },
       "description": "Tags de tópicos do repositório",
       "name": "Tópicos"
+    },
+    "traffic": {
+      "config": {
+        "content_size": {
+          "label": "Tamanho",
+          "options": {
+            "lg": "Grande",
+            "md": "Médio (padrão)",
+            "sm": "Pequeno",
+            "xl": "Extra grande"
+          },
+          "tooltip": "Escala juntos o tamanho da fonte, os ícones, o gráfico e o espaçamento."
+        },
+        "traffic_max_items": {
+          "label": "Máximo de referências e caminhos",
+          "tooltip": "Linhas mostradas em cada lista."
+        },
+        "traffic_show_clones": {
+          "label": "Mostrar clones",
+          "tooltip": "Soma os clones e os clonadores únicos dos últimos 14 dias, com uma barra por dia."
+        },
+        "traffic_show_paths": {
+          "label": "Mostrar caminhos mais vistos",
+          "tooltip": "As páginas do repositório com mais visualizações (o GitHub lista as 10 primeiras)."
+        },
+        "traffic_show_referrers": {
+          "label": "Mostrar principais referências",
+          "tooltip": "Os sites que mandaram mais visualizações (o GitHub lista os 10 primeiros)."
+        }
+      },
+      "description": "Visualizações e visitantes únicos por dia nos últimos 14 dias do GitHub. Só funciona em repositórios onde a conta do token tem permissão de push.",
+      "name": "Tráfego"
     }
   }
 }
