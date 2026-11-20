@@ -654,6 +654,216 @@ export const PLUGINS_METADATA = {
     },
   },
 
+  chess: {
+    name: "chess",
+    displayName: "Chess",
+    description: "Show your Lichess or Chess.com profile, ratings, results and recent games",
+    category: "gaming",
+    icon: "Crown",
+    requiredFields: ["username"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "profile",
+        name: "Profile",
+        description: "Avatar, title, name, country, join date and followers or play time",
+        i18nKey: {
+          name: "plugins.chess.sections.profile.name",
+          description: "plugins.chess.sections.profile.description"
+        },
+        configOptions: [
+        {
+          key: "username",
+          label: "Lichess or Chess.com profile",
+          type: "string",
+          defaultValue: "",
+          description: "Your profile link (lichess.org/@/name or chess.com/member/name), or lichess:name / chess.com:name",
+          placeholder: "lichess.org/@/thibault",
+          required: true,
+          tooltip: "The same username can belong to different people on the two sites, so the card needs to know which one. Copy the link from your profile page.",
+          i18nKey: {
+            label: "plugins.chess.sections.profile.config.username.label",
+            description: "plugins.chess.sections.profile.config.username.description",
+            tooltip: "plugins.chess.sections.profile.config.username.tooltip",
+            placeholder: "plugins.chess.sections.profile.config.username.placeholder"
+          }
+        },
+        {
+          key: "profile_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.chess.sections.profile.config.profile_hide_title.label"
+          }
+        },
+        {
+          key: "profile_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Chess Profile",
+          i18nKey: {
+            label: "plugins.chess.sections.profile.config.profile_title.label",
+            defaultValue: "plugins.chess.sections.profile.config.profile_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "ratings",
+        name: "Ratings",
+        description: "Current and best rating per time control, and games played",
+        i18nKey: {
+          name: "plugins.chess.sections.ratings.name",
+          description: "plugins.chess.sections.ratings.description"
+        },
+        configOptions: [
+        {
+          key: "ratings_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_hide_title.label"
+          }
+        },
+        {
+          key: "ratings_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Chess Ratings",
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_title.label",
+            defaultValue: "plugins.chess.sections.ratings.config.ratings_title.defaultValue"
+          }
+        },
+        {
+          key: "ratings_show_best",
+          label: "Show best rating",
+          type: "boolean",
+          defaultValue: true,
+          description: "The highest rating reached in each time control",
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_show_best.label",
+            description: "plugins.chess.sections.ratings.config.ratings_show_best.description"
+          }
+        },
+        {
+          key: "ratings_show_puzzles",
+          label: "Show puzzles",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Lichess gives the current puzzle rating; Chess.com only the highest.",
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_show_puzzles.label",
+            tooltip: "plugins.chess.sections.ratings.config.ratings_show_puzzles.tooltip"
+          }
+        },
+        {
+          key: "ratings_show_unplayed",
+          label: "Show unplayed time controls",
+          type: "boolean",
+          defaultValue: false,
+          description: "Time controls you never played, with a dash",
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_show_unplayed.label",
+            description: "plugins.chess.sections.ratings.config.ratings_show_unplayed.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "results",
+        name: "Results",
+        description: "Wins, draws and losses in bullet, blitz, rapid, classical and daily games",
+        i18nKey: {
+          name: "plugins.chess.sections.results.name",
+          description: "plugins.chess.sections.results.description"
+        },
+        configOptions: [
+        {
+          key: "results_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.chess.sections.results.config.results_hide_title.label"
+          }
+        },
+        {
+          key: "results_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Chess Results",
+          i18nKey: {
+            label: "plugins.chess.sections.results.config.results_title.label",
+            defaultValue: "plugins.chess.sections.results.config.results_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "recent_games",
+        name: "Recent Games",
+        description: "Your latest games: result, opponent, time control and date",
+        i18nKey: {
+          name: "plugins.chess.sections.recent_games.name",
+          description: "plugins.chess.sections.recent_games.description"
+        },
+        configOptions: [
+        {
+          key: "recent_games_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.chess.sections.recent_games.config.recent_games_hide_title.label"
+          }
+        },
+        {
+          key: "recent_games_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Recent Games",
+          i18nKey: {
+            label: "plugins.chess.sections.recent_games.config.recent_games_title.label",
+            defaultValue: "plugins.chess.sections.recent_games.config.recent_games_title.defaultValue"
+          }
+        },
+        {
+          key: "recent_games_max",
+          label: "Maximum games",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          step: 1,
+          description: "Maximum 10 games",
+          i18nKey: {
+            label: "plugins.chess.sections.recent_games.config.recent_games_max.label",
+            description: "plugins.chess.sections.recent_games.config.recent_games_max.description"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.chess.displayName",
+      description: "plugins.chess.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "username": "lichess.org/@/example",
+      "sections": [
+        "profile",
+        "ratings"
+      ]
+    },
+  },
+
   codeforces: {
     name: "codeforces",
     displayName: "Codeforces",
@@ -1695,6 +1905,29 @@ export const PLUGINS_METADATA = {
         },
         configOptions: [
         {
+          key: "code_habits_variant",
+          label: "Layout",
+          type: "select",
+          defaultValue: "bars",
+          description: "How the commits are drawn",
+          tooltip: "Bars: commits per hour and per weekday. Punch card: a dot per weekday and hour, bigger where you commit most. Summary: peak hour, busiest day and rhythm over an hour-by-hour strip. The punch card and the summary leave the hour, weekday and language charts out.",
+          options: [
+            { value: "bars", label: "Bars (hours and weekdays)" },
+            { value: "punchcard", label: "Punch card (weekday × hour)" },
+            { value: "summary", label: "Summary (highlights and an hour strip)" }
+          ],
+          i18nKey: {
+            label: "plugins.github.sections.code_habits.config.code_habits_variant.label",
+            description: "plugins.github.sections.code_habits.config.code_habits_variant.description",
+            tooltip: "plugins.github.sections.code_habits.config.code_habits_variant.tooltip",
+            options: {
+              "bars": "plugins.github.sections.code_habits.config.code_habits_variant.options.bars",
+              "punchcard": "plugins.github.sections.code_habits.config.code_habits_variant.options.punchcard",
+              "summary": "plugins.github.sections.code_habits.config.code_habits_variant.options.summary"
+            }
+          }
+        },
+        {
           key: "code_habits_hide_title",
           label: "Hide title",
           type: "boolean",
@@ -1756,6 +1989,20 @@ export const PLUGINS_METADATA = {
           defaultValue: false,
           i18nKey: {
             label: "plugins.github.sections.code_habits.config.code_habits_hide_footer.label"
+          }
+        },
+        {
+          key: "code_habits_timezone",
+          label: "Time zone",
+          type: "string",
+          defaultValue: "UTC",
+          description: "IANA time zone for the hours and weekdays, e.g. America/Sao_Paulo",
+          tooltip: "Commits are counted at the hour and day they were pushed, on this clock. The card shows its offset next to the hours. An unknown zone falls back to UTC.",
+          i18nKey: {
+            label: "plugins.github.sections.code_habits.config.code_habits_timezone.label",
+            description: "plugins.github.sections.code_habits.config.code_habits_timezone.description",
+            tooltip: "plugins.github.sections.code_habits.config.code_habits_timezone.tooltip",
+            defaultValue: "plugins.github.sections.code_habits.config.code_habits_timezone.defaultValue"
           }
         }
         ]
@@ -5611,6 +5858,159 @@ export const PLUGINS_METADATA = {
             label: "plugins.wow_forever.sections.equipment.config.equipment_show_icons.label",
             description: "plugins.wow_forever.sections.equipment.config.equipment_show_icons.description"
           }
+        },
+        {
+          key: "equipment_show_head",
+          label: "Show head",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_head.label"
+          }
+        },
+        {
+          key: "equipment_show_neck",
+          label: "Show neck",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_neck.label"
+          }
+        },
+        {
+          key: "equipment_show_shoulder",
+          label: "Show shoulders",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_shoulder.label"
+          }
+        },
+        {
+          key: "equipment_show_back",
+          label: "Show back",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_back.label"
+          }
+        },
+        {
+          key: "equipment_show_chest",
+          label: "Show chest",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_chest.label"
+          }
+        },
+        {
+          key: "equipment_show_wrist",
+          label: "Show wrist",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_wrist.label"
+          }
+        },
+        {
+          key: "equipment_show_hands",
+          label: "Show hands",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_hands.label"
+          }
+        },
+        {
+          key: "equipment_show_waist",
+          label: "Show waist",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_waist.label"
+          }
+        },
+        {
+          key: "equipment_show_legs",
+          label: "Show legs",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_legs.label"
+          }
+        },
+        {
+          key: "equipment_show_feet",
+          label: "Show feet",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_feet.label"
+          }
+        },
+        {
+          key: "equipment_show_finger_1",
+          label: "Show ring 1",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_finger_1.label"
+          }
+        },
+        {
+          key: "equipment_show_finger_2",
+          label: "Show ring 2",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_finger_2.label"
+          }
+        },
+        {
+          key: "equipment_show_trinket_1",
+          label: "Show trinket 1",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_trinket_1.label"
+          }
+        },
+        {
+          key: "equipment_show_trinket_2",
+          label: "Show trinket 2",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_trinket_2.label"
+          }
+        },
+        {
+          key: "equipment_show_main_hand",
+          label: "Show main hand",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_main_hand.label"
+          }
+        },
+        {
+          key: "equipment_show_off_hand",
+          label: "Show off hand",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_off_hand.label"
+          }
+        },
+        {
+          key: "equipment_show_ranged",
+          label: "Show ranged or relic",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.equipment.config.equipment_show_ranged.label"
+          }
         }
         ]
       },
@@ -5640,6 +6040,78 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.wow_forever.sections.stats.config.stats_title.label",
             defaultValue: "plugins.wow_forever.sections.stats.config.stats_title.defaultValue"
+          }
+        },
+        {
+          key: "stats_show_health",
+          label: "Show health",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_health.label"
+          }
+        },
+        {
+          key: "stats_show_power",
+          label: "Show mana, rage or energy",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_power.label"
+          }
+        },
+        {
+          key: "stats_show_strength",
+          label: "Show strength",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_strength.label"
+          }
+        },
+        {
+          key: "stats_show_agility",
+          label: "Show agility",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_agility.label"
+          }
+        },
+        {
+          key: "stats_show_stamina",
+          label: "Show stamina",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_stamina.label"
+          }
+        },
+        {
+          key: "stats_show_intellect",
+          label: "Show intellect",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_intellect.label"
+          }
+        },
+        {
+          key: "stats_show_spirit",
+          label: "Show spirit",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_spirit.label"
+          }
+        },
+        {
+          key: "stats_show_armor",
+          label: "Show armor",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.stats.config.stats_show_armor.label"
           }
         }
         ]
@@ -5671,6 +6143,78 @@ export const PLUGINS_METADATA = {
             label: "plugins.wow_forever.sections.journey.config.journey_title.label",
             defaultValue: "plugins.wow_forever.sections.journey.config.journey_title.defaultValue"
           }
+        },
+        {
+          key: "journey_show_kills",
+          label: "Show kills",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_kills.label"
+          }
+        },
+        {
+          key: "journey_show_deaths",
+          label: "Show deaths",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_deaths.label"
+          }
+        },
+        {
+          key: "journey_show_quests",
+          label: "Show quests",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_quests.label"
+          }
+        },
+        {
+          key: "journey_show_dungeons",
+          label: "Show dungeons entered",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_dungeons.label"
+          }
+        },
+        {
+          key: "journey_show_killing_blows",
+          label: "Show killing blows",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_killing_blows.label"
+          }
+        },
+        {
+          key: "journey_show_flight_paths",
+          label: "Show flight paths",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_flight_paths.label"
+          }
+        },
+        {
+          key: "journey_show_hearthstones",
+          label: "Show hearthstones",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_hearthstones.label"
+          }
+        },
+        {
+          key: "journey_show_duels_won",
+          label: "Show duels won",
+          type: "boolean",
+          defaultValue: true,
+          i18nKey: {
+            label: "plugins.wow_forever.sections.journey.config.journey_show_duels_won.label"
+          }
         }
         ]
       },
@@ -5700,6 +6244,19 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.wow_forever.sections.professions.config.professions_title.label",
             defaultValue: "plugins.wow_forever.sections.professions.config.professions_title.defaultValue"
+          }
+        },
+        {
+          key: "professions_hide",
+          label: "Hide professions",
+          type: "array",
+          defaultValue: [],
+          description: "Professions to leave out, by name",
+          placeholder: "Cooking",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.professions.config.professions_hide.label",
+            description: "plugins.wow_forever.sections.professions.config.professions_hide.description",
+            placeholder: "plugins.wow_forever.sections.professions.config.professions_hide.placeholder"
           }
         }
         ]
@@ -5743,6 +6300,19 @@ export const PLUGINS_METADATA = {
           i18nKey: {
             label: "plugins.wow_forever.sections.reputations.config.reputations_max.label",
             description: "plugins.wow_forever.sections.reputations.config.reputations_max.description"
+          }
+        },
+        {
+          key: "reputations_hide",
+          label: "Hide factions",
+          type: "array",
+          defaultValue: [],
+          description: "Factions to leave out, by name",
+          placeholder: "Gadgetzan",
+          i18nKey: {
+            label: "plugins.wow_forever.sections.reputations.config.reputations_hide.label",
+            description: "plugins.wow_forever.sections.reputations.config.reputations_hide.description",
+            placeholder: "plugins.wow_forever.sections.reputations.config.reputations_hide.placeholder"
           }
         }
         ]

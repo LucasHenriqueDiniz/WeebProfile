@@ -7,6 +7,7 @@ import { fetchStackOverflowData } from "./stackoverflow/services/fetchData"
 import { fetchDuolingoData } from "./duolingo/services/fetchData"
 import { fetchWakaTimeData } from "./wakatime/services/fetchData"
 import { fetchLeetCodeData } from "./leetcode/services/fetchData"
+import { fetchChessData } from "./chess/services/fetchData"
 
 /**
  * A provider failure must reach the generator as a throw. These six used to catch
@@ -37,6 +38,11 @@ const cases = [
   },
   { provider: "WakaTime", run: () => fetchWakaTimeData({ sections: ["time"] }, false, "user-token") },
   { provider: "LeetCode", run: () => fetchLeetCodeData({ username: "someone", sections: ["solved"] } as never) },
+  { provider: "Lichess", run: () => fetchChessData({ username: "lichess:someone", sections: ["ratings"] } as never) },
+  {
+    provider: "Chess.com",
+    run: () => fetchChessData({ username: "chess.com:someone", sections: ["ratings"] } as never),
+  },
 ]
 
 afterEach(() => vi.restoreAllMocks())

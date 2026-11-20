@@ -289,6 +289,20 @@ export const githubPluginMetadata = {
       description: "Code habits (hours, days of the week)",
       configOptions: [
         {
+          key: "code_habits_variant",
+          label: "Layout",
+          type: "select" as const,
+          defaultValue: "bars",
+          description: "How the commits are drawn",
+          tooltip:
+            "Bars: commits per hour and per weekday. Punch card: a dot per weekday and hour, bigger where you commit most. Summary: peak hour, busiest day and rhythm over an hour-by-hour strip. The punch card and the summary leave the hour, weekday and language charts out.",
+          options: [
+            { value: "bars", label: "Bars (hours and weekdays)" },
+            { value: "punchcard", label: "Punch card (weekday × hour)" },
+            { value: "summary", label: "Summary (highlights and an hour strip)" },
+          ],
+        },
+        {
           key: "code_habits_hide_title",
           label: "Hide title",
           type: "boolean" as const,
@@ -329,6 +343,15 @@ export const githubPluginMetadata = {
           label: "Hide footer",
           type: "boolean" as const,
           defaultValue: false,
+        },
+        {
+          key: "code_habits_timezone",
+          label: "Time zone",
+          type: "string" as const,
+          defaultValue: "UTC",
+          description: "IANA time zone for the hours and weekdays, e.g. America/Sao_Paulo",
+          tooltip:
+            "Commits are counted at the hour and day they were pushed, on this clock. The card shows its offset next to the hours. An unknown zone falls back to UTC.",
         },
       ],
     },

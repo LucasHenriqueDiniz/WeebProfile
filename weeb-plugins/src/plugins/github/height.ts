@@ -19,6 +19,13 @@ import type { GithubConfig, GithubData } from "./types"
 import { groupActivitiesByDay } from "./components/RecentActivity"
 import { shownRepositories } from "./components/StarLists"
 import { DEFAULT_CHART_HEIGHT, TERMINAL_CHART_HEIGHT, linesView } from "./components/Lines"
+import { codeHabitsVariant } from "./components/code-habits-insights"
+import {
+  HOUR_AXIS_HEIGHT,
+  PUNCHCARD_GEOMETRY,
+  SUMMARY_STRIP_HEIGHT,
+  SUMMARY_TILE_HEIGHT,
+} from "./components/CodeHabitsVariants"
 
 type Size = "half" | "full"
 
@@ -131,15 +138,20 @@ export function codeHabitsHeight(
   const footer = !cfg.code_habits_hide_footer
   const stats = !cfg.code_habits_hide_stats && !!habits.commitStats
   const languages = cfg.code_habits_hide_languages ? 0 : Object.keys(habits.languages ?? {}).length
+  const variant = codeHabitsVariant(cfg, habits)
 
   if (isTerminal) {
     // One `gap-1` column: each block is a label (a 19px line with `my-1`) and its 20px lines.
     const label = 4 + 19 + 4
     const lines: number[] = []
-    if (hours) lines.push(label, ...Array(24).fill(LINE))
-    if (weekdays) lines.push(label, ...Array(7).fill(LINE))
+    // Punch card: a line per weekday and the hour axis. Summary: three dotted lines, the
+    // hour strip and its axis.
+    if (variant === "punchcard") lines.push(label, ...Array(7 + 1).fill(LINE))
+    if (variant === "summary") lines.push(label, ...Array(3 + 2).fill(LINE))
+    if (variant === "bars" && hours) lines.push(label, ...Array(24).fill(LINE))
+    if (variant === "bars" && weekdays) lines.push(label, ...Array(7).fill(LINE))
     // The bar, then the top 5
-    if (languages > 0) lines.push(label, LINE, ...Array(Math.min(languages, 5)).fill(LINE))
+    if (variant === "bars" && languages > 0) lines.push(label, LINE, ...Array(Math.min(languages, 5)).fill(LINE))
     if (stats) lines.push(label, LINE, LINE, LINE)
     // `text-xs` line with `mt-1`
     if (footer) lines.push(4 + 16)
@@ -164,8 +176,16 @@ export function codeHabitsHeight(
     grid = Math.max(LINE, Math.min(languages, 7) * 32 - 4)
   }
   const blocks: number[] = []
-  if (hours) blocks.push(LINE + 128)
-  blocks.push(grid)
+  if (variant === "punchcard") {
+    // Its label, `gap-2`, seven rows and the hour axis.
+    blocks.push(LINE, 7 * PUNCHCARD_GEOMETRY[size].row + HOUR_AXIS_HEIGHT)
+  } else if (variant === "summary") {
+    // The tiles, the strip's label, the strip and its axis, each `gap-2` apart.
+    blocks.push(SUMMARY_TILE_HEIGHT, LINE, SUMMARY_STRIP_HEIGHT + HOUR_AXIS_HEIGHT)
+  } else {
+    if (hours) blocks.push(LINE + 128)
+    blocks.push(grid)
+  }
   if (stats) {
     // Title, `gap-2`, then three columns (`gap-2`, `px-4`) of a `text-2xl` number over a
     // `text-xs` label: three lines in a half card, one in a full card.

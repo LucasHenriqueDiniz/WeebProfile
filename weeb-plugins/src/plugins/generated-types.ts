@@ -8,12 +8,12 @@
 /**
  * Union type of all available plugin names
  */
-export type PluginName = "16personalities" | "about" | "anilist" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "leetcode" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "wakatime" | "websites" | "wow_forever"
+export type PluginName = "16personalities" | "about" | "anilist" | "chess" | "codeforces" | "codewars" | "devto" | "duolingo" | "github" | "github_repo" | "lastfm" | "leetcode" | "lyfta" | "myanimelist" | "stackoverflow" | "steam" | "wakatime" | "websites" | "wow_forever"
 
 /**
  * Union type of all available categories
  */
-export type PluginCategory = "profile" | "anime" | "coding" | "languages" | "repository" | "music" | "fitness" | "gaming"
+export type PluginCategory = "profile" | "anime" | "gaming" | "coding" | "languages" | "repository" | "music" | "fitness"
 
 /**
  * Union type of section IDs per plugin
@@ -22,6 +22,7 @@ export type PluginSectionIds = {
   ["16personalities"]: "personality"
   about: "neofetch" | "links"
   anilist: "statistics" | "favorites_anime" | "currently_watching"
+  chess: "profile" | "ratings" | "results" | "recent_games"
   codeforces: "rating_rank" | "contests_participated" | "problems_solved" | "recent_submissions"
   codewars: "rank_honor" | "completed_kata" | "languages_proficiency" | "leaderboard_position"
   devto: "profile" | "recent_articles" | "top_tags"
@@ -46,6 +47,7 @@ export type PluginEssentialConfigKeys = {
   ["16personalities"]: never
   about: never
   anilist: never
+  chess: never
   codeforces: never
   codewars: never
   devto: never
@@ -87,12 +89,12 @@ export type PluginConfig<T extends PluginName> = {
  * Type guard to check if it's a valid plugin name
  */
 export function isValidPluginName(name: string): name is PluginName {
-  return (["16personalities","about","anilist","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","leetcode","lyfta","myanimelist","stackoverflow","steam","wakatime","websites","wow_forever"] as readonly string[]).includes(name)
+  return (["16personalities","about","anilist","chess","codeforces","codewars","devto","duolingo","github","github_repo","lastfm","leetcode","lyfta","myanimelist","stackoverflow","steam","wakatime","websites","wow_forever"] as readonly string[]).includes(name)
 }
 
 /**
  * Type guard to check if it's a valid category
  */
 export function isValidCategory(category: string): category is PluginCategory {
-  return ["profile","anime","coding","languages","repository","music","fitness","gaming"].includes(category as PluginCategory)
+  return ["profile","anime","gaming","coding","languages","repository","music","fitness"].includes(category as PluginCategory)
 }

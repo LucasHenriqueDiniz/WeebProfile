@@ -83,9 +83,25 @@
         "code_habits_hide_weekdays": {
           "label": "Hide weekdays"
         },
+        "code_habits_timezone": {
+          "defaultValue": "UTC",
+          "description": "IANA time zone for the hours and weekdays, e.g. America/Sao_Paulo",
+          "label": "Time zone",
+          "tooltip": "Commits are counted at the hour and day they were pushed, on this clock. The card shows its offset next to the hours. An unknown zone falls back to UTC."
+        },
         "code_habits_title": {
           "defaultValue": "Code Habits",
           "label": "Title"
+        },
+        "code_habits_variant": {
+          "description": "How the commits are drawn",
+          "label": "Layout",
+          "options": {
+            "bars": "Bars (hours and weekdays)",
+            "punchcard": "Punch card (weekday × hour)",
+            "summary": "Summary (highlights and an hour strip)"
+          },
+          "tooltip": "Bars: commits per hour and per weekday. Punch card: a dot per weekday and hour, bigger where you commit most. Summary: peak hour, busiest day and rhythm over an hour-by-hour strip. The punch card and the summary leave the hour, weekday and language charts out."
         }
       },
       "description": "Code habits (hours, days of the week)",

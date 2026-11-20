@@ -28,6 +28,13 @@ export const SECTION_PREVIEWS: Record<
     currently_watching: { default: [415, 258], terminal: [415, 108] },
   },
 
+  chess: {
+    profile: { default: [415, 130], terminal: [415, 168] },
+    ratings: { default: [415, 210], terminal: [415, 148] },
+    results: { default: [415, 144], terminal: [415, 128] },
+    recent_games: { default: [415, 210], terminal: [415, 128] },
+  },
+
   codeforces: {
     rating_rank: { default: [415, 98], terminal: [415, 88] },
     contests_participated: { default: [415, 102], terminal: [415, 68] },

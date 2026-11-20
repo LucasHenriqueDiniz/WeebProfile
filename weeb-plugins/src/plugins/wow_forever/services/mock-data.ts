@@ -31,6 +31,7 @@ export const MOCK_DATA: WowForeverData = {
   // In the API's order: by inventory slot, head to ranged. The shirt is left out, as fetchData does.
   equipment: [
     {
+      slotType: "HEAD",
       slot: "Head",
       name: "Enchanter's Cowl",
       quality: "UNCOMMON",
@@ -38,6 +39,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/133133.jpg",
     },
     {
+      slotType: "NECK",
       slot: "Neck",
       name: "Sorcerer Collar",
       quality: "RARE",
@@ -45,6 +47,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/133294.jpg",
     },
     {
+      slotType: "SHOULDER",
       slot: "Shoulders",
       name: "Mantle of Honor",
       quality: "UNCOMMON",
@@ -52,6 +55,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/135036.jpg",
     },
     {
+      slotType: "CHEST",
       slot: "Chest",
       name: "Green Silk Armor",
       quality: "UNCOMMON",
@@ -59,6 +63,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/132647.jpg",
     },
     {
+      slotType: "WAIST",
       slot: "Waist",
       name: "Ivycloth Sash of the Elder",
       quality: "UNCOMMON",
@@ -66,6 +71,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/132514.jpg",
     },
     {
+      slotType: "LEGS",
       slot: "Legs",
       name: "Magistrate's Pantaloons",
       quality: "RARE",
@@ -73,6 +79,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/134594.jpg",
     },
     {
+      slotType: "FEET",
       slot: "Feet",
       name: "Spidersilk Boots",
       quality: "RARE",
@@ -80,6 +87,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/132539.jpg",
     },
     {
+      slotType: "WRIST",
       slot: "Wrist",
       name: "Bridgebreaker Bindings",
       quality: "RARE",
@@ -87,6 +95,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/132606.jpg",
     },
     {
+      slotType: "HANDS",
       slot: "Hands",
       name: "Ivycloth Gloves of the Prophet",
       quality: "UNCOMMON",
@@ -94,6 +103,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/132961.jpg",
     },
     {
+      slotType: "FINGER_1",
       slot: "Ring 1",
       name: "Seal of Wrynn",
       quality: "RARE",
@@ -101,6 +111,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/133347.jpg",
     },
     {
+      slotType: "FINGER_2",
       slot: "Ring 2",
       name: "Ring of Forlorn Spirits",
       quality: "UNCOMMON",
@@ -108,6 +119,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/133343.jpg",
     },
     {
+      slotType: "TRINKET_1",
       slot: "Trinket 1",
       name: "Worgenbane Talisman",
       quality: "RARE",
@@ -115,6 +127,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/133439.jpg",
     },
     {
+      slotType: "BACK",
       slot: "Back",
       name: "Vital Cape of Healing",
       quality: "UNCOMMON",
@@ -122,6 +135,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/133767.jpg",
     },
     {
+      slotType: "MAIN_HAND",
       slot: "Main Hand",
       name: "Staff of Westfall",
       quality: "RARE",
@@ -129,6 +143,7 @@ export const MOCK_DATA: WowForeverData = {
       icon: "https://render.worldofwarcraft.com/forever-us/icons/56/135147.jpg",
     },
     {
+      slotType: "RANGED",
       slot: "Ranged",
       name: "Consecrated Wand",
       quality: "UNCOMMON",
@@ -137,45 +152,53 @@ export const MOCK_DATA: WowForeverData = {
     },
   ],
   stats: [
-    { label: "Health", value: 727 },
-    { label: "Mana", value: 2751 },
-    { label: "Strength", value: 24 },
-    { label: "Agility", value: 34 },
-    { label: "Stamina", value: 49 },
-    { label: "Intellect", value: 149 },
-    { label: "Spirit", value: 91 },
-    { label: "Armor", value: 408 },
+    { key: "health", label: "Health", value: 727 },
+    { key: "power", label: "Mana", value: 2751 },
+    { key: "strength", label: "Strength", value: 24 },
+    { key: "agility", label: "Agility", value: 34 },
+    { key: "stamina", label: "Stamina", value: 49 },
+    { key: "intellect", label: "Intellect", value: 149 },
+    { key: "spirit", label: "Spirit", value: 91 },
+    { key: "armor", label: "Armor", value: 408 },
   ],
   journey: [
     {
+      key: "kills",
       label: "Kills",
       value: 3415,
     },
     {
+      key: "deaths",
       label: "Deaths",
       value: 43,
     },
     {
+      key: "quests",
       label: "Quests",
       value: 342,
     },
     {
+      key: "dungeons",
       label: "Dungeons",
       value: 8,
     },
     {
+      key: "killing_blows",
       label: "Killing blows",
       value: 1424,
     },
     {
+      key: "flight_paths",
       label: "Flight paths",
       value: 51,
     },
     {
+      key: "hearthstones",
       label: "Hearthstones",
       value: 33,
     },
     {
+      key: "duels_won",
       label: "Duels won",
       value: 1,
     },

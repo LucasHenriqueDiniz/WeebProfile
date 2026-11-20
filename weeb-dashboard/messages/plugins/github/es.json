@@ -83,9 +83,25 @@
         "code_habits_hide_weekdays": {
           "label": "Ocultar días de la semana"
         },
+        "code_habits_timezone": {
+          "defaultValue": "UTC",
+          "description": "Zona horaria IANA para las horas y los días de la semana, p. ej. America/Sao_Paulo",
+          "label": "Zona horaria",
+          "tooltip": "Los commits se cuentan a la hora y el día en que se enviaron, en este reloj. La tarjeta muestra el desfase junto a las horas. Una zona desconocida pasa a UTC."
+        },
         "code_habits_title": {
           "defaultValue": "Hábitos de Código",
           "label": "Título"
+        },
+        "code_habits_variant": {
+          "description": "Cómo se dibujan los commits",
+          "label": "Diseño",
+          "options": {
+            "bars": "Barras (horas y días de la semana)",
+            "punchcard": "Punch card (día de la semana × hora)",
+            "summary": "Resumen (destacados y una franja por hora)"
+          },
+          "tooltip": "Barras: commits por hora y por día de la semana. Punch card: un punto por día de la semana y hora, más grande donde más haces commit. Resumen: hora pico, día más activo y ritmo sobre una franja hora a hora. El punch card y el resumen dejan fuera los gráficos de horas, días y lenguajes."
         }
       },
       "description": "Hábitos de código (horas, días de la semana)",

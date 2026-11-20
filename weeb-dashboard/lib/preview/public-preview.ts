@@ -26,6 +26,7 @@ export const PREVIEW_PLUGINS = {
   duolingo: { sections: ["current_streak", "languages_learning"], field: "username" },
   devto: { sections: ["profile", "recent_articles"], field: "username" },
   steam: { sections: ["statistics", "top_games"], field: "steamId" },
+  chess: { sections: ["profile", "ratings"], field: "username" },
 } as const satisfies Record<string, PreviewPlugin>
 
 export type PreviewPluginId = keyof typeof PREVIEW_PLUGINS
@@ -43,6 +44,7 @@ export const PREVIEW_PLACEHOLDERS: Record<PreviewPluginId, string> = {
   duolingo: "luis",
   devto: "ben",
   steam: "steamcommunity.com/id/gabelogannewell",
+  chess: "lichess.org/@/thibault",
 }
 export type PreviewStyle = "default" | "terminal"
 export type PreviewSize = "half" | "full"
@@ -68,6 +70,14 @@ const USERNAME = /^[A-Za-z0-9_][A-Za-z0-9_.-]{0,39}$/
 /** A SteamID64, a steamcommunity.com profile URL or a vanity name. Parsed further by steam-id.ts. */
 const STEAM_INPUT = /^[A-Za-z0-9_.:/-]{2,120}$/
 
+/**
+ * Chess: the profile link or `lichess:name` / `chess.com:name`. A bare name is refused
+ * here, because the same name can be two people on the two sites; the plugin parses the
+ * rest (weeb-plugins chess/services/identity.ts).
+ */
+const CHESS_INPUT =
+  /^(?:https?:\/\/)?(?:www\.)?(?:lichess\.org\/(?:@\/)?|chess\.com\/(?:[a-z]{2}(?:-[A-Za-z]{2,4})?\/)?member\/|lichess(?:\.org)?:\s?|chess(?:\.com|com)?:\s?)[A-Za-z0-9][A-Za-z0-9_-]{1,29}\/?$/i
+
 export function isPreviewPlugin(value: unknown): value is PreviewPluginId {
   return typeof value === "string" && Object.prototype.hasOwnProperty.call(PREVIEW_PLUGINS, value)
 }
@@ -83,9 +93,15 @@ export function parsePreviewRequest(params: URLSearchParams): PreviewParseResult
   }
 
   const username = (params.get("username") ?? "").trim()
-  const pattern = PREVIEW_PLUGINS[plugin].field === "steamId" ? STEAM_INPUT : USERNAME
-  if (!pattern.test(username)) {
-    return { ok: false, field: "username", message: "username is missing or has characters it cannot have" }
+  if (plugin === "chess") {
+    if (!CHESS_INPUT.test(username)) {
+      return { ok: false, field: "username", message: "Paste your Lichess or Chess.com profile link." }
+    }
+  } else {
+    const pattern = PREVIEW_PLUGINS[plugin].field === "steamId" ? STEAM_INPUT : USERNAME
+    if (!pattern.test(username)) {
+      return { ok: false, field: "username", message: "username is missing or has characters it cannot have" }
+    }
   }
 
   const style = params.get("style") ?? "default"
