@@ -19,6 +19,7 @@ import { lastSixMonthsStart, firstDayOfLastSixMonths } from "../utils"
 import { duration, isocalendarFromCalendar, isocalendarWindow } from "../isocalendar"
 import { urlToDataUriDirect } from "../../../utils/image-to-base64"
 import { randomColorWithString } from "../../../utils/string"
+import { codeHabitsClock } from "./code-habits-clock"
 
 // Under the dashboard's 60 s; code_habits stops itself at 30 s within it.
 const GITHUB_BUDGET_MS = 45_000
@@ -305,7 +306,7 @@ export async function fetchGithubData(
       try {
         // Code habits uses REST API, not GraphQL
         if (section === "code_habits") {
-          const codeHabitsResult = await processCodeHabitsData(rest, username)
+          const codeHabitsResult = await processCodeHabitsData(rest, username, 90, config.code_habits_timezone)
           data.codeHabits = codeHabitsResult.data
           if (codeHabitsResult.warning) {
             warnings.push({
@@ -1745,13 +1746,17 @@ async function fetchPrimaryLanguages(
 async function processCodeHabitsData(
   rest: Octokit,
   login: string,
-  days = 90
+  days = 90,
+  timeZone?: string
 ): Promise<{
   data: GithubData["codeHabits"]
   warning?: { type: "rate_limit" | "api_error" | "partial_data"; message: string }
 }> {
   const commitsByDay: Record<string, number> = {}
   const commitsByHour: Record<number, number> = {}
+  const commitsByDayHour: Record<string, number[]> = {}
+  const clock = codeHabitsClock(timeZone)
+  const timeZoneLabel = clock.offsetLabel(new Date())
   let totalCommits = 0
   const languages: Record<string, { count: number; color: string }> = {}
   const _fileTypes: Record<string, number> = {}
@@ -2019,12 +2024,13 @@ async function processCodeHabitsData(
 
             commitShas.push(commit)
 
-            // Count commits by day and hour based on the push event time
-            const day = commit.date.toLocaleDateString("en-US", { weekday: "long" })
-            const hour = commit.date.getHours()
+            // Count commits by day and hour of the push, on the card's clock
+            const { day, hour } = clock.hourAndDay(commit.date)
 
             commitsByDay[day] = (commitsByDay[day] || 0) + 1
             commitsByHour[hour] = (commitsByHour[hour] || 0) + 1
+            const dayHours = (commitsByDayHour[day] ??= Array<number>(24).fill(0))
+            dayHours[hour] = (dayHours[hour] ?? 0) + 1
             totalCommits++
           }
 
@@ -2178,9 +2184,12 @@ async function processCodeHabitsData(
     const result = {
       commitsByHour,
       commitsByDay,
+      commitsByDayHour,
       languages,
       commitStats: analyzedCommitsCount > 0 ? { averageChangesPerCommit, totalFilesChanged, largestCommit } : undefined,
       analyzedCommits: analyzedCommitsCount || totalCommits,
+      timeZone: clock.timeZone,
+      timeZoneLabel,
     }
 
     // Add warning if time limit was reached
@@ -2243,8 +2252,11 @@ async function processCodeHabitsData(
     const emptyData = {
       commitsByHour: {},
       commitsByDay: {},
+      commitsByDayHour: {},
       languages: {},
       analyzedCommits: 0,
+      timeZone: clock.timeZone,
+      timeZoneLabel,
     }
 
     if (isRateLimit) {

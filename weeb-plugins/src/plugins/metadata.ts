@@ -1695,6 +1695,29 @@ export const PLUGINS_METADATA = {
         },
         configOptions: [
         {
+          key: "code_habits_variant",
+          label: "Layout",
+          type: "select",
+          defaultValue: "bars",
+          description: "How the commits are drawn",
+          tooltip: "Bars: commits per hour and per weekday. Punch card: a dot per weekday and hour, bigger where you commit most. Summary: peak hour, busiest day and rhythm over an hour-by-hour strip. The punch card and the summary leave the hour, weekday and language charts out.",
+          options: [
+            { value: "bars", label: "Bars (hours and weekdays)" },
+            { value: "punchcard", label: "Punch card (weekday × hour)" },
+            { value: "summary", label: "Summary (highlights and an hour strip)" }
+          ],
+          i18nKey: {
+            label: "plugins.github.sections.code_habits.config.code_habits_variant.label",
+            description: "plugins.github.sections.code_habits.config.code_habits_variant.description",
+            tooltip: "plugins.github.sections.code_habits.config.code_habits_variant.tooltip",
+            options: {
+              "bars": "plugins.github.sections.code_habits.config.code_habits_variant.options.bars",
+              "punchcard": "plugins.github.sections.code_habits.config.code_habits_variant.options.punchcard",
+              "summary": "plugins.github.sections.code_habits.config.code_habits_variant.options.summary"
+            }
+          }
+        },
+        {
           key: "code_habits_hide_title",
           label: "Hide title",
           type: "boolean",
@@ -1756,6 +1779,20 @@ export const PLUGINS_METADATA = {
           defaultValue: false,
           i18nKey: {
             label: "plugins.github.sections.code_habits.config.code_habits_hide_footer.label"
+          }
+        },
+        {
+          key: "code_habits_timezone",
+          label: "Time zone",
+          type: "string",
+          defaultValue: "UTC",
+          description: "IANA time zone for the hours and weekdays, e.g. America/Sao_Paulo",
+          tooltip: "Commits are counted at the hour and day they were pushed, on this clock. The card shows its offset next to the hours. An unknown zone falls back to UTC.",
+          i18nKey: {
+            label: "plugins.github.sections.code_habits.config.code_habits_timezone.label",
+            description: "plugins.github.sections.code_habits.config.code_habits_timezone.description",
+            tooltip: "plugins.github.sections.code_habits.config.code_habits_timezone.tooltip",
+            defaultValue: "plugins.github.sections.code_habits.config.code_habits_timezone.defaultValue"
           }
         }
         ]

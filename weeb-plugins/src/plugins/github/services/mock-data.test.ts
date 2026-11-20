@@ -17,3 +17,19 @@ describe("GitHub mock calendars", () => {
     expect(mock.user.contributionCalendar.totalContributions).toBe(sumOfDays(mock.user.contributionCalendar.weeks))
   })
 })
+
+/** The punch card and the bars draw the same mock commits: its rows and columns add up to them. */
+describe("GitHub mock code habits", () => {
+  it("counts the same commits by weekday × hour as by weekday and by hour", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {})
+    const { codeHabits } = await getMockGithubData()
+    const matrix = codeHabits.commitsByDayHour ?? {}
+    for (const [day, count] of Object.entries(codeHabits.commitsByDay)) {
+      expect(matrix[day]?.reduce((a, b) => a + b, 0)).toBe(count)
+    }
+    for (let hour = 0; hour < 24; hour++) {
+      const column = Object.values(matrix).reduce((sum, row) => sum + (row[hour] ?? 0), 0)
+      expect(column).toBe(codeHabits.commitsByHour[hour] ?? 0)
+    }
+  })
+})
