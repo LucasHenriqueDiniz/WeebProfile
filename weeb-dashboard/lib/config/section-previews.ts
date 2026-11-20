@@ -94,6 +94,7 @@ export const SECTION_PREVIEWS: Record<
     languages: { default: [415, 120], terminal: [415, 78] },
     topics: { default: [415, 120], terminal: [415, 44] },
     overview: { default: [415, 250], terminal: [415, 52] },
+    traffic: { default: [415, 234], terminal: [415, 132] },
   },
 
   lastfm: {

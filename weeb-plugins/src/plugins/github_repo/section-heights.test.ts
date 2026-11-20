@@ -28,7 +28,7 @@ import type { GithubRepoData } from "./types"
  * style, and the terminal cases lose at most 1px of their bottom padding.
  */
 
-type Section = "stats" | "star_graph" | "languages" | "topics" | "overview"
+type Section = "stats" | "star_graph" | "languages" | "topics" | "overview" | "traffic"
 type Style = "default" | "terminal"
 type Size = "half" | "full"
 // [section, style, size, variant, options, [Chrome, Firefox, WebKit] px]
@@ -166,7 +166,45 @@ const VARIANTS = {
   }),
   transformers: (m: GithubRepoData): GithubRepoData => ({ ...m, ...TRANSFORMERS }),
   clearcut: (m: GithubRepoData): GithubRepoData => ({ ...m, ...CLEARCUT }),
+  // Traffic: no view, clone, referrer or path in the 14 days
+  "empty window": (m: GithubRepoData): GithubRepoData => {
+    const zero = (series: { days: Array<{ date: string }> }) => ({
+      count: 0,
+      uniques: 0,
+      days: series.days.map((d) => ({ date: d.date, count: 0, uniques: 0 })),
+    })
+    return {
+      ...m,
+      traffic: { views: zero(m.traffic!.views), clones: zero(m.traffic!.clones!), referrers: [], paths: [] },
+    }
+  },
+  // Traffic: GitHub's 10 referrers and paths, too long for a row, and seven-digit totals
+  "ten long rows": (m: GithubRepoData): GithubRepoData => ({
+    ...m,
+    traffic: {
+      ...m.traffic!,
+      views: { ...m.traffic!.views, count: 1234567, uniques: 98765 },
+      clones: { ...m.traffic!.clones!, count: 45678, uniques: 12345 },
+      referrers: Array.from({ length: 10 }, (_, i) => ({
+        referrer: `a-very-long-referrer-domain-name-number-${i}.example.com`,
+        count: 123456 - i * 1000,
+        uniques: 65432 - i * 100,
+      })),
+      paths: Array.from({ length: 10 }, (_, i) => ({
+        path: `/o/r/blob/main/some/deeply/nested/folder/structure/file-${i}.md`,
+        title: `/blob/main/some/deeply/nested/folder/structure/with-a-long-name/file-${i}.md`,
+        count: 99999 - i,
+        uniques: 9999 - i,
+      })),
+    },
+  }),
+  "one referrer, no paths": (m: GithubRepoData): GithubRepoData => ({
+    ...m,
+    traffic: { ...m.traffic!, referrers: m.traffic!.referrers!.slice(0, 1), paths: [] },
+  }),
 }
+
+const ALL_TRAFFIC = { traffic_show_clones: true, traffic_show_referrers: true, traffic_show_paths: true }
 
 const MEASURED: Case[] = [
   ["stats", "default", "half", "mock", { stats_variant: "grid" }, [79, 79, 79]],
@@ -284,6 +322,79 @@ const MEASURED: Case[] = [
   ["overview", "terminal", "half", "long name", { content_size: "xl" }, [148, 180, 148]],
   ["overview", "default", "half", "mock", { content_size: "sm" }, [184, 186, 184]],
   ["overview", "default", "half", "mock", { content_size: "lg" }, [314, 314, 292]],
+  // Traffic, measured 19/11/2026 (same engines)
+  ["traffic", "default", "half", "mock", {}, [210, 210, 210]],
+  ["traffic", "default", "full", "mock", {}, [210, 210, 210]],
+  ["traffic", "default", "half", "mock", { traffic_show_clones: true }, [274, 274, 274]],
+  ["traffic", "default", "half", "mock", { traffic_show_referrers: true }, [358, 358, 358]],
+  ["traffic", "default", "full", "mock", { traffic_show_paths: true }, [358, 358, 358]],
+  ["traffic", "default", "half", "mock", { traffic_max_items: 10 }, [210, 210, 210]], // no list on
+  ["traffic", "default", "half", "mock", { content_size: "sm" }, [173, 173, 173]],
+  ["traffic", "default", "half", "mock", { content_size: "lg" }, [273, 273, 273]],
+  ["traffic", "default", "half", "mock", { content_size: "xl" }, [336, 336, 336]],
+  ["traffic", "default", "half", "mock", ALL_TRAFFIC, [570, 570, 570]], // the lists stacked
+  ["traffic", "default", "full", "mock", ALL_TRAFFIC, [422, 422, 422]], // side by side
+  ["traffic", "default", "half", "empty window", ALL_TRAFFIC, [378, 378, 378]], // a "none" row each
+  ["traffic", "default", "full", "empty window", ALL_TRAFFIC, [326, 326, 326]],
+  ["traffic", "default", "half", "ten long rows", ALL_TRAFFIC, [570, 570, 570]], // cut, not wrapped
+  ["traffic", "default", "half", "one referrer, no paths", ALL_TRAFFIC, [378, 378, 378]],
+  ["traffic", "default", "half", "mock", { ...ALL_TRAFFIC, traffic_max_items: 10 }, [618, 618, 618]], // the mock has 6
+  ["traffic", "default", "half", "ten long rows", { ...ALL_TRAFFIC, traffic_max_items: 10 }, [810, 810, 810]],
+  ["traffic", "default", "full", "ten long rows", { ...ALL_TRAFFIC, traffic_max_items: 10 }, [542, 542, 542]],
+  [
+    "traffic",
+    "default",
+    "half",
+    "ten long rows",
+    { ...ALL_TRAFFIC, traffic_max_items: 10, content_size: "sm" },
+    [664, 665, 664],
+  ],
+  ["traffic", "default", "half", "mock", { ...ALL_TRAFFIC, traffic_max_items: 3, content_size: "xl" }, [759, 759, 759]],
+  ["traffic", "default", "full", "mock", { ...ALL_TRAFFIC, traffic_max_items: 3, content_size: "xl" }, [599, 599, 599]],
+  [
+    "traffic",
+    "default",
+    "full",
+    "mock",
+    { traffic_show_referrers: true, traffic_show_paths: true, traffic_max_items: 1, content_size: "lg" },
+    [341, 341, 341],
+  ],
+  ["traffic", "terminal", "half", "mock", {}, [132, 132, 132]],
+  ["traffic", "terminal", "full", "mock", {}, [132, 132, 132]],
+  ["traffic", "terminal", "half", "mock", { traffic_show_clones: true }, [176, 176, 176]],
+  ["traffic", "terminal", "half", "mock", { traffic_show_referrers: true }, [232, 232, 232]],
+  ["traffic", "terminal", "half", "mock", { content_size: "sm" }, [109, 109, 109]],
+  ["traffic", "terminal", "half", "mock", { content_size: "xl" }, [212, 212, 212]],
+  ["traffic", "terminal", "half", "mock", ALL_TRAFFIC, [376, 376, 376]],
+  ["traffic", "terminal", "full", "mock", ALL_TRAFFIC, [276, 276, 276]],
+  ["traffic", "terminal", "half", "empty window", ALL_TRAFFIC, [248, 248, 248]],
+  ["traffic", "terminal", "full", "empty window", ALL_TRAFFIC, [212, 212, 212]],
+  ["traffic", "terminal", "half", "ten long rows", { ...ALL_TRAFFIC, traffic_max_items: 10 }, [536, 536, 536]],
+  ["traffic", "terminal", "full", "ten long rows", { ...ALL_TRAFFIC, traffic_max_items: 10 }, [356, 356, 356]],
+  [
+    "traffic",
+    "terminal",
+    "half",
+    "ten long rows",
+    { ...ALL_TRAFFIC, traffic_max_items: 10, content_size: "sm" },
+    [440, 440, 440],
+  ],
+  [
+    "traffic",
+    "terminal",
+    "half",
+    "mock",
+    { ...ALL_TRAFFIC, traffic_max_items: 3, content_size: "xl" },
+    [500, 500, 500],
+  ],
+  [
+    "traffic",
+    "terminal",
+    "full",
+    "mock",
+    { traffic_show_referrers: true, traffic_show_paths: true, traffic_max_items: 1, content_size: "lg" },
+    [219, 219, 219],
+  ],
 ]
 
 const plugin = PluginManager.getInstance().get("github_repo")!

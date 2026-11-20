@@ -6,6 +6,7 @@ import { Overview } from "./Overview"
 import { StarGraph } from "./StarGraph"
 import { Stats } from "./Stats"
 import { Topics } from "./Topics"
+import { Traffic } from "./Traffic"
 
 interface RenderGithubRepoProps {
   config: GithubRepoConfig
@@ -44,6 +45,8 @@ export function RenderGithubRepo({
             return <Topics key={section} config={config} data={data} style={style} size={size} />
           case "overview":
             return <Overview key={section} config={config} data={data} style={style} size={size} />
+          case "traffic":
+            return <Traffic key={section} config={config} data={data} style={style} size={size} />
           default:
             return null
         }

@@ -2750,7 +2750,7 @@ export const PLUGINS_METADATA = {
           label: "GitHub Classic Token",
           type: "password",
           placeholder: "ghp_...",
-          description: "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository.",
+          description: "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository. The Traffic section needs push access to the repository and the 'repo' scope.",
           helpUrl: "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&default_expires_at=none",
           docKey: "github.pat",
           i18nKey: {
@@ -3201,6 +3201,87 @@ export const PLUGINS_METADATA = {
               "md": "plugins.github_repo.sections.overview.config.content_size.options.md",
               "lg": "plugins.github_repo.sections.overview.config.content_size.options.lg",
               "xl": "plugins.github_repo.sections.overview.config.content_size.options.xl"
+            }
+          }
+        }
+        ]
+      },
+      {
+        id: "traffic",
+        name: "Traffic",
+        description: "Views and unique visitors per day over GitHub's last 14 days. Only works for repositories the token's account can push to.",
+        i18nKey: {
+          name: "plugins.github_repo.sections.traffic.name",
+          description: "plugins.github_repo.sections.traffic.description"
+        },
+        configOptions: [
+        {
+          key: "traffic_show_clones",
+          label: "Show clones",
+          type: "boolean",
+          defaultValue: false,
+          tooltip: "Adds the clones and unique cloners of the last 14 days, with a bar per day.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.traffic.config.traffic_show_clones.label",
+            tooltip: "plugins.github_repo.sections.traffic.config.traffic_show_clones.tooltip"
+          }
+        },
+        {
+          key: "traffic_show_referrers",
+          label: "Show top referrers",
+          type: "boolean",
+          defaultValue: false,
+          tooltip: "The sites that sent the most views (GitHub lists the top 10).",
+          i18nKey: {
+            label: "plugins.github_repo.sections.traffic.config.traffic_show_referrers.label",
+            tooltip: "plugins.github_repo.sections.traffic.config.traffic_show_referrers.tooltip"
+          }
+        },
+        {
+          key: "traffic_show_paths",
+          label: "Show top paths",
+          type: "boolean",
+          defaultValue: false,
+          tooltip: "The pages of the repository with the most views (GitHub lists the top 10).",
+          i18nKey: {
+            label: "plugins.github_repo.sections.traffic.config.traffic_show_paths.label",
+            tooltip: "plugins.github_repo.sections.traffic.config.traffic_show_paths.tooltip"
+          }
+        },
+        {
+          key: "traffic_max_items",
+          label: "Maximum referrers and paths",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          step: 1,
+          tooltip: "Rows shown in each list.",
+          i18nKey: {
+            label: "plugins.github_repo.sections.traffic.config.traffic_max_items.label",
+            tooltip: "plugins.github_repo.sections.traffic.config.traffic_max_items.tooltip"
+          }
+        },
+        {
+          key: "content_size",
+          label: "Size",
+          type: "select",
+          defaultValue: "md",
+          tooltip: "Scales font size, icons, chart and spacing together.",
+          options: [
+            { value: "sm", label: "Small" },
+            { value: "md", label: "Medium (default)" },
+            { value: "lg", label: "Large" },
+            { value: "xl", label: "Extra large" }
+          ],
+          i18nKey: {
+            label: "plugins.github_repo.sections.traffic.config.content_size.label",
+            tooltip: "plugins.github_repo.sections.traffic.config.content_size.tooltip",
+            options: {
+              "sm": "plugins.github_repo.sections.traffic.config.content_size.options.sm",
+              "md": "plugins.github_repo.sections.traffic.config.content_size.options.md",
+              "lg": "plugins.github_repo.sections.traffic.config.content_size.options.lg",
+              "xl": "plugins.github_repo.sections.traffic.config.content_size.options.xl"
             }
           }
         }

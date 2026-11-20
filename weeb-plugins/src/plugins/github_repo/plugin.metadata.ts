@@ -41,7 +41,7 @@ export const githubRepoPluginMetadata = {
       type: "password",
       placeholder: "ghp_...",
       description:
-        "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository.",
+        "Reuses the same token configured for the GitHub plugin, if you already have one. No scopes needed for a public repository. The Traffic section needs push access to the repository and the 'repo' scope.",
       helpUrl:
         "https://github.com/settings/tokens/new?description=WeebProfile%20GitHub%20Plugin&default_expires_at=none",
       docKey: "github.pat",
@@ -241,6 +241,46 @@ export const githubRepoPluginMetadata = {
       name: "Overview",
       description: "Single combined card: identity, meta row, star count and growth chart",
       configOptions: [CONTENT_SIZE_OPTION],
+    },
+    {
+      id: "traffic",
+      name: "Traffic",
+      description:
+        "Views and unique visitors per day over GitHub's last 14 days. Only works for repositories the token's account can push to.",
+      configOptions: [
+        {
+          key: "traffic_show_clones",
+          label: "Show clones",
+          type: "boolean" as const,
+          defaultValue: false,
+          tooltip: "Adds the clones and unique cloners of the last 14 days, with a bar per day.",
+        },
+        {
+          key: "traffic_show_referrers",
+          label: "Show top referrers",
+          type: "boolean" as const,
+          defaultValue: false,
+          tooltip: "The sites that sent the most views (GitHub lists the top 10).",
+        },
+        {
+          key: "traffic_show_paths",
+          label: "Show top paths",
+          type: "boolean" as const,
+          defaultValue: false,
+          tooltip: "The pages of the repository with the most views (GitHub lists the top 10).",
+        },
+        {
+          key: "traffic_max_items",
+          label: "Maximum referrers and paths",
+          type: "number" as const,
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          step: 1,
+          tooltip: "Rows shown in each list.",
+        },
+        CONTENT_SIZE_OPTION,
+      ],
     },
   ],
 }
