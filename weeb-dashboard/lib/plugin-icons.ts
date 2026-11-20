@@ -1,4 +1,4 @@
-import { FaGithub, FaSteam, FaLastfmSquare, FaSpotify, FaGlobe, FaIdCard } from "react-icons/fa"
+import { FaGithub, FaSteam, FaLastfmSquare, FaSpotify, FaGlobe, FaIdCard, FaChessKnight } from "react-icons/fa"
 import { TbNumber16Small } from "react-icons/tb"
 import {
   SiAnilist,
@@ -41,6 +41,7 @@ const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   websites: FaGlobe,
   about: FaIdCard,
   wow_forever: GiCrossedSwords,
+  chess: FaChessKnight,
 }
 
 /**

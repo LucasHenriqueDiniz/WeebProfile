@@ -54,6 +54,26 @@ describe("parsePreviewRequest", () => {
     expect(result.ok === false && result.field).toBe(field)
   })
 
+  it.each([
+    "https://lichess.org/@/thibault",
+    "lichess.org/@/DrNykterstein",
+    "https://www.chess.com/member/Hikaru",
+    "chess.com/pt-BR/member/gothamchess/",
+    "lichess:thibault",
+    "chess.com:hikaru",
+  ])("takes a chess profile link or site:name: %s", (username) => {
+    expect(parse(`plugin=chess&username=${encodeURIComponent(username)}`).ok).toBe(true)
+  })
+
+  // The same name can be two different people on Lichess and Chess.com.
+  it.each(["thibault", "https://example.com/@/thibault", "lichess:a b", "lichess.org/@/x/../y"])(
+    "refuses a chess identifier that does not name the site: %s",
+    (username) => {
+      const result = parse(`plugin=chess&username=${encodeURIComponent(username)}`)
+      expect(result.ok === false && result.field).toBe("username")
+    }
+  )
+
   it("takes a Steam profile URL as the Steam identifier", () => {
     const result = parse("plugin=steam&username=https://steamcommunity.com/id/gabelogannewell")
     expect(result.ok).toBe(true)
