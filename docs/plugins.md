@@ -3,7 +3,7 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 90 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 94 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
@@ -12,6 +12,7 @@ Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.de
 - [16Personalities](#16personalities)
 - [About me](#about)
 - [AniList](#anilist)
+- [Chess](#chess)
 - [Codeforces](#codeforces)
 - [Codewars](#codewars)
 - [Dev.to](#devto)
@@ -147,6 +148,63 @@ Show your AniList anime and manga statistics
     <tr>
       <td><code>currently_watching</code></td>
       <td><img src="../weeb-dashboard/public/previews/anilist/terminal/currently_watching.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>Chess</b></summary>
+
+Show your Lichess or Chess.com profile, ratings, results and recent games
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>profile</code></td>
+      <td><img src="../weeb-dashboard/public/previews/chess/default/profile.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>ratings</code></td>
+      <td><img src="../weeb-dashboard/public/previews/chess/default/ratings.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>results</code></td>
+      <td><img src="../weeb-dashboard/public/previews/chess/default/results.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>recent_games</code></td>
+      <td><img src="../weeb-dashboard/public/previews/chess/default/recent_games.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>profile</code></td>
+      <td><img src="../weeb-dashboard/public/previews/chess/terminal/profile.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>ratings</code></td>
+      <td><img src="../weeb-dashboard/public/previews/chess/terminal/ratings.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>results</code></td>
+      <td><img src="../weeb-dashboard/public/previews/chess/terminal/results.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>recent_games</code></td>
+      <td><img src="../weeb-dashboard/public/previews/chess/terminal/recent_games.svg" width="415"></td>
     </tr>
   </table>
 

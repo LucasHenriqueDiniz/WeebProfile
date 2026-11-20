@@ -41,6 +41,7 @@ Your SVG refreshes automatically on a schedule, and you can trigger a manual ref
 | [About me](docs/plugins.md#about)                  | Profile  | Neofetch-style intro and link badges                    |
 | [Steam](docs/plugins.md#steam)                     | Gaming   | Recent and most-played games, stats                     |
 | [WoW Forever](docs/plugins.md#wow_forever)         | Gaming   | World of Warcraft: Forever character, gear, attributes  |
+| [Chess](docs/plugins.md#chess)                     | Gaming   | Lichess or Chess.com ratings, results, recent games     |
 | [Lyfta](docs/plugins.md#lyfta)                     | Gaming   | Workout stats and recent exercises                      |
 
 See the [plugin gallery](docs/plugins.md) for a full preview of every section, in both `default` and `terminal` styles.

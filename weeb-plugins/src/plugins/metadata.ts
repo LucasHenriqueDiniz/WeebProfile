@@ -654,6 +654,216 @@ export const PLUGINS_METADATA = {
     },
   },
 
+  chess: {
+    name: "chess",
+    displayName: "Chess",
+    description: "Show your Lichess or Chess.com profile, ratings, results and recent games",
+    category: "gaming",
+    icon: "Crown",
+    requiredFields: ["username"],
+    essentialConfigKeys: [],
+    essentialConfigKeysMetadata: [
+
+    ],
+    sections: [
+      {
+        id: "profile",
+        name: "Profile",
+        description: "Avatar, title, name, country, join date and followers or play time",
+        i18nKey: {
+          name: "plugins.chess.sections.profile.name",
+          description: "plugins.chess.sections.profile.description"
+        },
+        configOptions: [
+        {
+          key: "username",
+          label: "Lichess or Chess.com profile",
+          type: "string",
+          defaultValue: "",
+          description: "Your profile link (lichess.org/@/name or chess.com/member/name), or lichess:name / chess.com:name",
+          placeholder: "lichess.org/@/thibault",
+          required: true,
+          tooltip: "The same username can belong to different people on the two sites, so the card needs to know which one. Copy the link from your profile page.",
+          i18nKey: {
+            label: "plugins.chess.sections.profile.config.username.label",
+            description: "plugins.chess.sections.profile.config.username.description",
+            tooltip: "plugins.chess.sections.profile.config.username.tooltip",
+            placeholder: "plugins.chess.sections.profile.config.username.placeholder"
+          }
+        },
+        {
+          key: "profile_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.chess.sections.profile.config.profile_hide_title.label"
+          }
+        },
+        {
+          key: "profile_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Chess Profile",
+          i18nKey: {
+            label: "plugins.chess.sections.profile.config.profile_title.label",
+            defaultValue: "plugins.chess.sections.profile.config.profile_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "ratings",
+        name: "Ratings",
+        description: "Current and best rating per time control, and games played",
+        i18nKey: {
+          name: "plugins.chess.sections.ratings.name",
+          description: "plugins.chess.sections.ratings.description"
+        },
+        configOptions: [
+        {
+          key: "ratings_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_hide_title.label"
+          }
+        },
+        {
+          key: "ratings_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Chess Ratings",
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_title.label",
+            defaultValue: "plugins.chess.sections.ratings.config.ratings_title.defaultValue"
+          }
+        },
+        {
+          key: "ratings_show_best",
+          label: "Show best rating",
+          type: "boolean",
+          defaultValue: true,
+          description: "The highest rating reached in each time control",
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_show_best.label",
+            description: "plugins.chess.sections.ratings.config.ratings_show_best.description"
+          }
+        },
+        {
+          key: "ratings_show_puzzles",
+          label: "Show puzzles",
+          type: "boolean",
+          defaultValue: true,
+          tooltip: "Lichess gives the current puzzle rating; Chess.com only the highest.",
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_show_puzzles.label",
+            tooltip: "plugins.chess.sections.ratings.config.ratings_show_puzzles.tooltip"
+          }
+        },
+        {
+          key: "ratings_show_unplayed",
+          label: "Show unplayed time controls",
+          type: "boolean",
+          defaultValue: false,
+          description: "Time controls you never played, with a dash",
+          i18nKey: {
+            label: "plugins.chess.sections.ratings.config.ratings_show_unplayed.label",
+            description: "plugins.chess.sections.ratings.config.ratings_show_unplayed.description"
+          }
+        }
+        ]
+      },
+      {
+        id: "results",
+        name: "Results",
+        description: "Wins, draws and losses in bullet, blitz, rapid, classical and daily games",
+        i18nKey: {
+          name: "plugins.chess.sections.results.name",
+          description: "plugins.chess.sections.results.description"
+        },
+        configOptions: [
+        {
+          key: "results_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.chess.sections.results.config.results_hide_title.label"
+          }
+        },
+        {
+          key: "results_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Chess Results",
+          i18nKey: {
+            label: "plugins.chess.sections.results.config.results_title.label",
+            defaultValue: "plugins.chess.sections.results.config.results_title.defaultValue"
+          }
+        }
+        ]
+      },
+      {
+        id: "recent_games",
+        name: "Recent Games",
+        description: "Your latest games: result, opponent, time control and date",
+        i18nKey: {
+          name: "plugins.chess.sections.recent_games.name",
+          description: "plugins.chess.sections.recent_games.description"
+        },
+        configOptions: [
+        {
+          key: "recent_games_hide_title",
+          label: "Hide title",
+          type: "boolean",
+          defaultValue: false,
+          i18nKey: {
+            label: "plugins.chess.sections.recent_games.config.recent_games_hide_title.label"
+          }
+        },
+        {
+          key: "recent_games_title",
+          label: "Title",
+          type: "string",
+          defaultValue: "Recent Games",
+          i18nKey: {
+            label: "plugins.chess.sections.recent_games.config.recent_games_title.label",
+            defaultValue: "plugins.chess.sections.recent_games.config.recent_games_title.defaultValue"
+          }
+        },
+        {
+          key: "recent_games_max",
+          label: "Maximum games",
+          type: "number",
+          defaultValue: 5,
+          min: 1,
+          max: 10,
+          step: 1,
+          description: "Maximum 10 games",
+          i18nKey: {
+            label: "plugins.chess.sections.recent_games.config.recent_games_max.label",
+            description: "plugins.chess.sections.recent_games.config.recent_games_max.description"
+          }
+        }
+        ]
+      }
+    ],
+    i18nKey: {
+      displayName: "plugins.chess.displayName",
+      description: "plugins.chess.description"
+    },
+    exampleConfig: {
+      "enabled": true,
+      "username": "lichess.org/@/example",
+      "sections": [
+        "profile",
+        "ratings"
+      ]
+    },
+  },
+
   codeforces: {
     name: "codeforces",
     displayName: "Codeforces",

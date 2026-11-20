@@ -1,0 +1,80 @@
+{
+  "description": "Show your Lichess or Chess.com profile, ratings, results and recent games",
+  "displayName": "Chess",
+  "sections": {
+    "profile": {
+      "config": {
+        "profile_hide_title": {
+          "label": "Hide title"
+        },
+        "profile_title": {
+          "defaultValue": "Chess Profile",
+          "label": "Title"
+        },
+        "username": {
+          "description": "Your profile link (lichess.org/@/name or chess.com/member/name), or lichess:name / chess.com:name",
+          "label": "Lichess or Chess.com profile",
+          "placeholder": "lichess.org/@/thibault",
+          "tooltip": "The same username can belong to different people on the two sites, so the card needs to know which one. Copy the link from your profile page."
+        }
+      },
+      "description": "Avatar, title, name, country, join date and followers or play time",
+      "name": "Profile"
+    },
+    "ratings": {
+      "config": {
+        "ratings_hide_title": {
+          "label": "Hide title"
+        },
+        "ratings_show_best": {
+          "description": "The highest rating reached in each time control",
+          "label": "Show best rating"
+        },
+        "ratings_show_puzzles": {
+          "label": "Show puzzles",
+          "tooltip": "Lichess gives the current puzzle rating; Chess.com only the highest."
+        },
+        "ratings_show_unplayed": {
+          "description": "Time controls you never played, with a dash",
+          "label": "Show unplayed time controls"
+        },
+        "ratings_title": {
+          "defaultValue": "Chess Ratings",
+          "label": "Title"
+        }
+      },
+      "description": "Current and best rating per time control, and games played",
+      "name": "Ratings"
+    },
+    "recent_games": {
+      "config": {
+        "recent_games_hide_title": {
+          "label": "Hide title"
+        },
+        "recent_games_max": {
+          "description": "Maximum 10 games",
+          "label": "Maximum games"
+        },
+        "recent_games_title": {
+          "defaultValue": "Recent Games",
+          "label": "Title"
+        }
+      },
+      "description": "Your latest games: result, opponent, time control and date",
+      "name": "Recent Games"
+    },
+    "results": {
+      "config": {
+        "results_hide_title": {
+          "label": "Hide title"
+        },
+        "results_title": {
+          "defaultValue": "Chess Results",
+          "label": "Title"
+        }
+      },
+      "description": "Wins, draws and losses in bullet, blitz, rapid, classical and daily games",
+      "name": "Results"
+    }
+  }
+}
