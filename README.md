@@ -32,6 +32,7 @@ Your SVG refreshes automatically on a schedule, and you can trigger a manual ref
 | [Codewars](docs/plugins.md#codewars)               | Coding   | Kata solving stats and rank                             |
 | [LeetCode](docs/plugins.md#leetcode)               | Coding   | Problems solved, skills, languages, recent submissions  |
 | [Stack Overflow](docs/plugins.md#stackoverflow)    | Coding   | Reputation, badges, and activity                        |
+| [WakaTime](docs/plugins.md#wakatime)               | Coding   | Coding time by language, project, editor, and OS        |
 | [Duolingo](docs/plugins.md#duolingo)               | Coding   | Streaks, XP, and languages being learned                |
 | [16Personalities](docs/plugins.md#16personalities) | Coding   | Personality type badge                                  |
 | [LastFM](docs/plugins.md#lastfm)                   | Music    | Recent tracks, top artists/albums/tracks                |

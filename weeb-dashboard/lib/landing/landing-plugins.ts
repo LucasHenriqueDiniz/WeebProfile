@@ -11,6 +11,7 @@ const PLUGIN_ORDER = [
   "codeforces",
   "codewars",
   "stackoverflow",
+  "wakatime",
   "devto",
   "duolingo",
   "lyfta",

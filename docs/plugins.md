@@ -3,7 +3,7 @@
 # Galeria de plugins e seções
 
 Todos os plugins do WeebProfile e as seções disponíveis para cada um, nos estilos `default` e `terminal`.
-Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 95 seções ao todo.
+Essas imagens são geradas com dados de exemplo (mock) pelo mesmo `svg-generator` usado em produção — 100 seções ao todo.
 
 Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.dev), escolha as seções que quiser e cole o markdown gerado no seu README.
 
@@ -25,6 +25,7 @@ Pra usar de verdade, acesse o [dashboard](https://weebprofile-dashboard.pages.de
 - [MyAnimeList](#myanimelist)
 - [Stack Overflow](#stackoverflow)
 - [Steam](#steam)
+- [WakaTime](#wakatime)
 - [Websites](#websites)
 - [WoW Forever](#wow_forever)
 
@@ -1097,6 +1098,71 @@ Show your Steam gaming statistics
     <tr>
       <td><code>top_games</code></td>
       <td><img src="../weeb-dashboard/public/previews/steam/terminal/top_games.svg" width="415"></td>
+    </tr>
+  </table>
+
+</details>
+
+<details close>
+  <summary><b>WakaTime</b></summary>
+
+Show the time you spent coding, by language, project, editor and operating system, from WakaTime
+
+### Default Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Default Style</td>
+    </tr>
+    <tr>
+      <td><code>time</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/time.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>languages</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/languages.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>projects</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/projects.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>editors</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/editors.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>operating_systems</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/default/operating_systems.svg" width="415"></td>
+    </tr>
+  </table>
+
+### Terminal Style
+
+  <table>
+    <tr>
+      <td align="center">Section</td>
+      <td align="center" width="415px">Terminal Style</td>
+    </tr>
+    <tr>
+      <td><code>time</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/time.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>languages</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/languages.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>projects</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/projects.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>editors</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/editors.svg" width="415"></td>
+    </tr>
+    <tr>
+      <td><code>operating_systems</code></td>
+      <td><img src="../weeb-dashboard/public/previews/wakatime/terminal/operating_systems.svg" width="415"></td>
     </tr>
   </table>
 

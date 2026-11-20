@@ -9,6 +9,7 @@ import {
   SiLeetcode,
   SiMyanimelist,
   SiStackoverflow,
+  SiWakatime,
 } from "react-icons/si"
 import { GiCrossedSwords, GiWeightLiftingUp } from "react-icons/gi"
 import { GoRepo } from "react-icons/go"
@@ -35,6 +36,7 @@ const PLUGIN_ICON_MAP: Record<string, ComponentType<{ className?: string }>> = {
   codeforces: SiCodeforces,
   leetcode: SiLeetcode,
   stackoverflow: SiStackoverflow,
+  wakatime: SiWakatime,
   duolingo: SiDuolingo,
   spotify: FaSpotify,
   github_repo: GoRepo,

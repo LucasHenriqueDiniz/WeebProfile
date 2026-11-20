@@ -915,6 +915,7 @@
         "leetcode": "Problems solved by difficulty, skills and recent submissions.",
         "chess": "Lichess or Chess.com ratings, results and recent games.",
         "stackoverflow": "Reputation, badges and answer activity.",
+        "wakatime": "Coding time by language, project, editor and OS.",
         "duolingo": "Streak, XP and the languages you're learning.",
         "lyfta": "Workouts, volume and recent exercises.",
         "16personalities": "Your personality type as a badge.",

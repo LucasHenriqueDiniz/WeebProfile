@@ -1,0 +1,161 @@
+{
+  "description": "Muestra el tiempo que pasaste programando, por lenguaje, proyecto, editor y sistema operativo, desde WakaTime",
+  "displayName": "WakaTime",
+  "essentialConfig": {
+    "token": {
+      "description": "Tu token OAuth personal, no la API key secreta: WakaTime dejó las API keys solo para envío. Abre wakatime.com/oauth con tu sesión iniciada y copia el token de \"Your secret OAuth token\".",
+      "label": "Token personal de WakaTime",
+      "placeholder": "waka_tok_..."
+    }
+  },
+  "sections": {
+    "editors": {
+      "config": {
+        "editors_hide_title": {
+          "label": "Ocultar título"
+        },
+        "editors_max": {
+          "description": "Máximo 15",
+          "label": "Máximo de editores"
+        },
+        "editors_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo el tiempo",
+            "last_30_days": "Últimos 30 días",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 días",
+            "last_year": "Último año"
+          },
+          "tooltip": "El período que cubren estos números. Las secciones con el mismo período comparten una petición a WakaTime. Los períodos largos (último año, todo el tiempo) pueden tardar en calcularse en WakaTime: la tarjeta muestra entonces los últimos números que tenía."
+        },
+        "editors_title": {
+          "defaultValue": "Editores",
+          "label": "Título"
+        }
+      },
+      "description": "Tiempo en cada editor",
+      "name": "Editores"
+    },
+    "languages": {
+      "config": {
+        "languages_hide_title": {
+          "label": "Ocultar título"
+        },
+        "languages_ignore": {
+          "description": "Lenguajes a ocultar, separados por coma",
+          "label": "Lenguajes ignorados",
+          "placeholder": "Markdown, JSON, Other",
+          "tooltip": "Los porcentajes se calculan sobre los lenguajes que quedan."
+        },
+        "languages_max": {
+          "description": "Máximo 15",
+          "label": "Máximo de lenguajes"
+        },
+        "languages_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo el tiempo",
+            "last_30_days": "Últimos 30 días",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 días",
+            "last_year": "Último año"
+          },
+          "tooltip": "El período que cubren estos números. Las secciones con el mismo período comparten una petición a WakaTime. Los períodos largos (último año, todo el tiempo) pueden tardar en calcularse en WakaTime: la tarjeta muestra entonces los últimos números que tenía."
+        },
+        "languages_title": {
+          "defaultValue": "Lenguajes",
+          "label": "Título"
+        }
+      },
+      "description": "Tiempo en cada lenguaje",
+      "name": "Lenguajes"
+    },
+    "operating_systems": {
+      "config": {
+        "operating_systems_hide_title": {
+          "label": "Ocultar título"
+        },
+        "operating_systems_max": {
+          "description": "Máximo 15",
+          "label": "Máximo de sistemas operativos"
+        },
+        "operating_systems_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo el tiempo",
+            "last_30_days": "Últimos 30 días",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 días",
+            "last_year": "Último año"
+          },
+          "tooltip": "El período que cubren estos números. Las secciones con el mismo período comparten una petición a WakaTime. Los períodos largos (último año, todo el tiempo) pueden tardar en calcularse en WakaTime: la tarjeta muestra entonces los últimos números que tenía."
+        },
+        "operating_systems_title": {
+          "defaultValue": "Sistemas operativos",
+          "label": "Título"
+        }
+      },
+      "description": "Tiempo en cada sistema operativo",
+      "name": "Sistemas operativos"
+    },
+    "projects": {
+      "config": {
+        "projects_hide_title": {
+          "label": "Ocultar título"
+        },
+        "projects_ignore": {
+          "description": "Proyectos a ocultar, separados por coma",
+          "label": "Proyectos ocultos",
+          "placeholder": "trabajo-cliente, proyecto-secreto",
+          "tooltip": "Aparece todo proyecto que WakaTime registró, también los privados. Lista aquí los que no deben tener su nombre en tu README."
+        },
+        "projects_max": {
+          "description": "Máximo 15",
+          "label": "Máximo de proyectos"
+        },
+        "projects_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo el tiempo",
+            "last_30_days": "Últimos 30 días",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 días",
+            "last_year": "Último año"
+          },
+          "tooltip": "El período que cubren estos números. Las secciones con el mismo período comparten una petición a WakaTime. Los períodos largos (último año, todo el tiempo) pueden tardar en calcularse en WakaTime: la tarjeta muestra entonces los últimos números que tenía."
+        },
+        "projects_title": {
+          "defaultValue": "Proyectos",
+          "label": "Título"
+        }
+      },
+      "description": "Tiempo en cada proyecto",
+      "name": "Proyectos"
+    },
+    "time": {
+      "config": {
+        "time_hide_title": {
+          "label": "Ocultar título"
+        },
+        "time_range": {
+          "label": "Período",
+          "options": {
+            "all_time": "Todo el tiempo",
+            "last_30_days": "Últimos 30 días",
+            "last_6_months": "Últimos 6 meses",
+            "last_7_days": "Últimos 7 días",
+            "last_year": "Último año"
+          },
+          "tooltip": "El período que cubren estos números. Las secciones con el mismo período comparten una petición a WakaTime. Los períodos largos (último año, todo el tiempo) pueden tardar en calcularse en WakaTime: la tarjeta muestra entonces los últimos números que tenía."
+        },
+        "time_title": {
+          "defaultValue": "Tiempo programando",
+          "label": "Título"
+        }
+      },
+      "description": "Tiempo total programando, promedio diario y mejor día",
+      "name": "Tiempo programando"
+    }
+  }
+}

@@ -19,6 +19,7 @@ import { chessPlugin } from "./chess/index"
 import { stackoverflowPlugin } from "./stackoverflow/index"
 import { websitesPlugin } from "./websites/index"
 import { aboutPlugin } from "./about/index"
+import { wakatimePlugin } from "./wakatime/index"
 import { wowForeverPlugin } from "./wow_forever/index"
 
 /**
@@ -54,6 +55,7 @@ export class PluginManager {
     this.register(stackoverflowPlugin)
     this.register(websitesPlugin)
     this.register(aboutPlugin)
+    this.register(wakatimePlugin)
     this.register(wowForeverPlugin)
   }
 
